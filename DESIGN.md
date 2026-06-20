@@ -118,29 +118,29 @@ components:
 ## Overview
 
 - Product/brand: Moderno — The design system stack for modern founders
-- Audience: designers and developes
+- Audience: designers and developers
 - Product surface: dashboard web app, landing pages
 - Visual style: clean, functional, implementation-oriented
 
-**Mission:** Create implementation-ready, token-driven UI guidance for Midday that is optimized for consistency, accessibility, and fast delivery across the dashboard web app.
+This file is the **source of truth for Moderno's default theme** (`theme-moderno`): its token values and the rationale for applying them. The neutral, brand-agnostic technical contract every component obeys — semantic slots, theming rules, `data-scope`/`data-part`, guardrails — lives in [`CONTRACT.md`](CONTRACT.md). This document supplies the _values_; `CONTRACT.md` defines the _names and rules_.
+
+**Mission:** Create implementation-ready, token-driven UI guidance for Moderno that is optimized for consistency, accessibility, and fast delivery across the dashboard web app.
 
 The aesthetic is a near-black, monochrome workspace: dense data surfaces, sharp corners, and a single high-contrast off-white that serves both as primary text and as the primary action color. There is no decorative accent hue — hierarchy is built entirely from contrast, spacing, and weight.
-
-> Extraction diagnostics: audience and product surface inference confidence is low; verify generated brand context.
 
 ## Colors
 
 The palette is monochrome and dark-first. Token mapping from the extracted source:
 
-| Source token | DESIGN.md token | Value |
-|---|---|---|
-| `color.text.primary` | `text-primary` (also `primary`) | `#fafafa` |
-| `color.text.secondary` | `text-secondary` | `#616161` |
-| `color.text.tertiary` | `text-tertiary` | `#121212` |
-| `color.text.inverse` | `text-inverse` (also `on-primary`) | `#18181b` |
-| `color.surface.base` | `surface-base` | `#0d0d0d` |
-| `color.surface.muted` | `surface-muted` | `#000000` |
-| `color.border.default` | `border-default` | `#1c1c1c` |
+| Source token           | DESIGN.md token                    | Value     |
+| ---------------------- | ---------------------------------- | --------- |
+| `color.text.primary`   | `text-primary` (also `primary`)    | `#fafafa` |
+| `color.text.secondary` | `text-secondary`                   | `#616161` |
+| `color.text.tertiary`  | `text-tertiary`                    | `#121212` |
+| `color.text.inverse`   | `text-inverse` (also `on-primary`) | `#18181b` |
+| `color.surface.base`   | `surface-base`                     | `#0d0d0d` |
+| `color.surface.muted`  | `surface-muted`                    | `#000000` |
+| `color.border.default` | `border-default`                   | `#1c1c1c` |
 
 - `primary` (#fafafa) is the brand/action color: primary button fills, emphasized text, and inverse surfaces (tooltips, badges).
 - `text-tertiary` (#121212) and `text-inverse` (#18181b) are dark values intended **only on light/inverse surfaces** (e.g. on a `#fafafa` button or tooltip). Never place them on `surface-base` or `surface-muted`.
@@ -153,16 +153,16 @@ Single-family system: **Hedvig Letters Sans**, with stack `Hedvig Letters Sans, 
 
 Scale mapping from the extracted source (line-heights other than `body-md` are derived defaults):
 
-| Source token | DESIGN.md token | Size |
-|---|---|---|
-| `font.size.4xl` | `display` | 96px |
-| `font.size.3xl` | `headline-lg` | 24px |
-| `font.size.2xl` | `headline-md` | 20px |
-| `font.size.xl` | `body-lg` | 18px |
-| `font.size.lg` | `body-md` (base) | 16px |
-| `font.size.md` | `body-sm` | 14px |
-| `font.size.sm` | `label-md` | 12px |
-| `font.size.xs` | `label-sm` | 10px |
+| Source token    | DESIGN.md token  | Size |
+| --------------- | ---------------- | ---- |
+| `font.size.4xl` | `display`        | 96px |
+| `font.size.3xl` | `headline-lg`    | 24px |
+| `font.size.2xl` | `headline-md`    | 20px |
+| `font.size.xl`  | `body-lg`        | 18px |
+| `font.size.lg`  | `body-md` (base) | 16px |
+| `font.size.md`  | `body-sm`        | 14px |
+| `font.size.sm`  | `label-md`       | 12px |
+| `font.size.xs`  | `label-sm`       | 10px |
 
 Note the deliberate gap between 24px and 96px: `display` is reserved for hero/marketing moments; everything inside the dashboard lives at 24px and below.
 

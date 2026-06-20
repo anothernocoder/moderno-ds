@@ -27,7 +27,7 @@ GitHub shares one number space across issues and PRs, so a bare `#42` may be eit
 
 ## Sub-issues (epic → breakdown)
 
-`gh issue create` only makes flat issues — a `Phase 2 —` title prefix is plain text, **not** a link. Native sub-issues (the progress bars under an epic) live in GraphQL and must be linked explicitly *after* creating each child, or they land flat.
+`gh issue create` only makes flat issues — a `Phase 2 —` title prefix is plain text, **not** a link. Native sub-issues (the progress bars under an epic) live in GraphQL and must be linked explicitly _after_ creating each child, or they land flat.
 
 Link a child to its parent with the `addSubIssue` mutation, which takes node IDs (`I_kwDO…`), not issue numbers:
 

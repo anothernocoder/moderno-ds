@@ -1,0 +1,29 @@
+{
+  "name": "@moderno/tokens",
+  "version": "0.0.0",
+  "description": "Shadcn-style semantic token contract with neutral OKLCH defaults and a Tailwind v4 preset. Contains no brand identity.",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
+  "files": [
+    "src"
+  ],
+  "exports": {
+    "./css": "./src/tokens.css",
+    "./preset": "./src/preset.css",
+    "./package.json": "./package.json"
+  },
+  "peerDependencies": {
+    "tailwindcss": "^4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "tailwindcss": {
+      "optional": true
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

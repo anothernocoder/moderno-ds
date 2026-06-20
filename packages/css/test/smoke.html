@@ -1,0 +1,108 @@
+<!doctype html>
+<!--
+  Manual smoke test for the token contract.
+  Open directly in a browser: it links the neutral tokens and renders only via
+  contract variables. Use the buttons to toggle `.dark` and `[data-brand]` and
+  confirm the surface re-themes with NO change to the markup or base tokens.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@moderno/css — contract smoke</title>
+    <!--
+      Build-free equivalent of `@import "@moderno/css"`: that entrypoint is just
+      `@import "@moderno/tokens/css"`, but bare package specifiers need a bundler
+      to resolve. Opening this file straight from disk, we link the same stylesheet
+      by relative path so the fixture works with zero tooling.
+    -->
+    <link rel="stylesheet" href="../../tokens/src/tokens.css" />
+    <style>
+      body {
+        margin: 0;
+        font-family: var(--font-sans);
+        background: var(--background);
+        color: var(--foreground);
+        transition:
+          background var(--motion-normal),
+          color var(--motion-normal);
+      }
+      .wrap {
+        max-width: 40rem;
+        margin: 0 auto;
+        padding: var(--spacing-8);
+        display: grid;
+        gap: var(--spacing-5);
+      }
+      .card {
+        background: var(--card);
+        color: var(--card-foreground);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: var(--spacing-6);
+      }
+      .btn {
+        font: inherit;
+        cursor: pointer;
+        padding: var(--spacing-3) var(--spacing-5);
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        background: var(--primary);
+        color: var(--primary-foreground);
+      }
+      .btn.secondary {
+        background: var(--secondary);
+        color: var(--secondary-foreground);
+      }
+      .muted {
+        color: var(--muted-foreground);
+      }
+      .swatches {
+        display: flex;
+        gap: var(--spacing-2);
+      }
+      .swatch {
+        width: 2rem;
+        height: 2rem;
+        border-radius: var(--radius-full);
+        border: 1px solid var(--border);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <h1>Moderno token contract</h1>
+      <p class="muted">Neutral defaults. Everything below is painted by contract variables only.</p>
+
+      <div class="card">
+        <p>Card surface · primary / secondary actions</p>
+        <div style="display: flex; gap: var(--spacing-3); margin-top: var(--spacing-4)">
+          <button class="btn">Primary</button>
+          <button class="btn secondary">Secondary</button>
+        </div>
+        <div class="swatches" style="margin-top: var(--spacing-5)">
+          <span class="swatch" style="background: var(--chart-1)"></span>
+          <span class="swatch" style="background: var(--chart-2)"></span>
+          <span class="swatch" style="background: var(--chart-3)"></span>
+          <span class="swatch" style="background: var(--chart-4)"></span>
+          <span class="swatch" style="background: var(--chart-5)"></span>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: var(--spacing-3)">
+        <button class="btn" onclick="document.documentElement.classList.toggle('dark')">
+          Toggle .dark
+        </button>
+        <button
+          class="btn secondary"
+          onclick="
+            document.body.toggleAttribute('data-brand') ||
+              document.body.setAttribute('data-brand', 'contrast')
+          "
+        >
+          Toggle [data-brand=contrast]
+        </button>
+      </div>
+    </div>
+  </body>
+</html>

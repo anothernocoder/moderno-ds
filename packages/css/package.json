@@ -1,0 +1,24 @@
+{
+  "name": "@moderno/css",
+  "version": "0.0.0",
+  "description": "Single public CSS entrypoint for Moderno. Re-exports the token contract; hides internal package paths.",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
+  "files": [
+    "src"
+  ],
+  "exports": {
+    ".": "./src/index.css",
+    "./preset": "./src/preset.css",
+    "./package.json": "./package.json"
+  },
+  "dependencies": {
+    "@moderno/tokens": "workspace:*"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
