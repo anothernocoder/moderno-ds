@@ -1,0 +1,37 @@
+{
+  "name": "@moderno/charts-core",
+  "version": "0.0.0",
+  "description": "Framework-agnostic chart math: pure functions over d3-scale/d3-shape/d3-array/d3-path. No DOM, SSR-safe. Forbids d3-selection/d3-transition.",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsup"
+  },
+  "dependencies": {
+    "d3-array": "^3.2.4",
+    "d3-path": "^3.1.0",
+    "d3-scale": "^4.0.2",
+    "d3-shape": "^3.2.0"
+  },
+  "devDependencies": {
+    "@types/d3-array": "^3.2.1",
+    "@types/d3-path": "^3.1.1",
+    "@types/d3-scale": "^4.0.9",
+    "@types/d3-shape": "^3.1.7",
+    "tsup": "^8.3.5"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -1,0 +1,47 @@
+/*
+ * @moderno/core — components.css (Phase 1: skeleton + base)
+ *
+ * Styles target Ark-style [data-scope] / [data-part] attributes; variants are
+ * data-* on the root part, resolved from props by `cva`. One shared stylesheet
+ * for every framework. Per-component rules grow in Phase 2+.
+ *
+ * Contract: zero baked brand values — only references to semantic tokens
+ * (var(--…)) from @moderno/tokens. Never hardcode colour, radius, or font.
+ */
+
+@layer moderno.base, moderno.components;
+
+@layer moderno.base {
+  /* Every component subtree inherits the contract typography + text colour. */
+  :where([data-scope]) {
+    font-family: var(--font-sans);
+    color: var(--foreground);
+  }
+
+  :where([data-scope]) :where([data-part]) {
+    box-sizing: border-box;
+  }
+
+  /*
+   * Shared focus ring. Colour comes from the contract --ring slot. The width
+   * and offset are literal: a focus-ring stroke is a rendering primitive (like
+   * a 1px border), and the contract defines colour/radius/spacing/motion slots
+   * but intentionally no stroke-width token. Do not alias these to --spacing-*.
+   */
+  :where([data-scope]) :where([data-part="root"]):focus-visible {
+    outline-color: var(--ring);
+    outline-style: solid;
+    outline-width: 2px;
+    outline-offset: 2px;
+  }
+
+  /* Shared disabled affordance. */
+  :where([data-scope])[data-disabled] {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+}
+
+@layer moderno.components {
+  /* Phase 2+ adds per-component rules here (Button, Field, Dialog, Select). */
+}
