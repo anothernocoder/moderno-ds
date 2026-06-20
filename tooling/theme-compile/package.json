@@ -1,0 +1,27 @@
+{
+  "name": "@moderno/theme-compile",
+  "version": "0.0.0",
+  "description": "Validates a theme's tokens.dtcg.json and emits theme.css (semantic contract slots, OKLCH ramps) with WCAG AA contrast warnings. Shared by the Theme Builder and CI.",
+  "license": "MIT",
+  "type": "module",
+  "private": true,
+  "bin": {
+    "moderno-theme-compile": "./dist/bin.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsup"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.5"
+  }
+}

@@ -1,5 +1,5 @@
 {
   "extends": "./tsconfig.base.json",
-  "include": ["packages/**/*.ts", "*.config.ts"],
+  "include": ["packages/**/*.ts", "tooling/**/*.ts", "*.config.ts"],
   "exclude": ["packages/react", "packages/vue", "packages/solid", "packages/svelte"]
 }
