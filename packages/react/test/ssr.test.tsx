@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import type { ReactElement } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { act } from "@testing-library/react";
 import { renderToString } from "react-dom/server";
@@ -22,25 +23,35 @@ describe("SSR + hydration (React 19)", () => {
     expect(html).toContain('data-size="md"');
   });
 
-  it("hydrates with zero React warnings (no id/portal mismatch)", async () => {
+  async function hydrateAndCountWarnings(tree: ReactElement): Promise<number> {
     // Seed the container with our own trusted server markup, then hydrate it.
-    const html = renderToString(<App />);
+    const html = renderToString(tree);
     const container = document.createElement("div");
     document.body.appendChild(container);
     container.insertAdjacentHTML("afterbegin", html);
 
-    // React reports hydration mismatches via console.error — fail on any call.
+    // React reports hydration mismatches via console.error.
     const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
     let root: Root;
     await act(async () => {
-      root = hydrateRoot(container, <App />);
+      root = hydrateRoot(container, tree);
     });
-
-    expect(errSpy).not.toHaveBeenCalled();
-
+    const calls = errSpy.mock.calls.length;
     errSpy.mockRestore();
     await act(async () => {
       root.unmount();
     });
+    return calls;
+  }
+
+  it("hydrates the closed primitives with zero React warnings", async () => {
+    expect(await hydrateAndCountWarnings(<App />)).toBe(0);
+  });
+
+  it("hydrates with the Dialog + Select popovers open (portal + id path)", async () => {
+    // The harder case the spec names: open content lives in a Portal and the
+    // trigger's aria-controls / active-descendant ids come from useId — both
+    // must agree across server and client.
+    expect(await hydrateAndCountWarnings(<App open />)).toBe(0);
   });
 });

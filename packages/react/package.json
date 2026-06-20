@@ -24,6 +24,7 @@
     "@moderno/core": "workspace:*"
   },
   "peerDependencies": {
+    "@moderno/css": "workspace:*",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

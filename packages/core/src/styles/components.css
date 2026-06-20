@@ -66,9 +66,11 @@
       filter var(--motion-fast);
   }
 
-  /* Sizes — height/padding from the spacing scale, never literals. */
+  /* Sizes — heights compose from in-contract spacing slots (--spacing-1…8),
+     never a literal. `lg` exceeds the top slot, so it sums two slots via calc
+     rather than inventing an off-contract token. */
   [data-scope="button"][data-part="root"][data-size="sm"] {
-    height: var(--spacing-8);
+    height: var(--spacing-7);
     padding-inline: var(--spacing-3);
     font-size: 0.8125rem;
   }
@@ -78,7 +80,7 @@
     font-size: 0.875rem;
   }
   [data-scope="button"][data-part="root"][data-size="lg"] {
-    height: var(--spacing-10, 2.5rem);
+    height: calc(var(--spacing-8) + var(--spacing-2));
     padding-inline: var(--spacing-5);
     font-size: 0.9375rem;
   }
@@ -247,7 +249,7 @@
     font-size: 0.8125rem;
   }
   [data-scope="select"][data-size="lg"] [data-part="trigger"] {
-    height: var(--spacing-10, 2.5rem);
+    height: calc(var(--spacing-8) + var(--spacing-2));
     font-size: 0.9375rem;
   }
   [data-scope="select"][data-part="content"] {

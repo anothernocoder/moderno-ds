@@ -11,8 +11,10 @@
  *   - Select   — a collection + popover whose hidden native <select> and ids
  *                must serialise identically on server and client.
  *
- * `App` takes no props so the same tree can be `renderToString`-ed on the server
- * and `hydrateRoot`-ed on the client. The Phase-2 SSR test drives both halves;
+ * The same tree is `renderToString`-ed on the server and `hydrateRoot`-ed on the
+ * client. `open` mounts the Dialog and Select popovers so the SSR test can
+ * exercise the harder hazard the spec calls out — portal content + `useId`-based
+ * `aria-controls`/`aria-activedescendant` wiring must still hydrate clean.
  * Phases 3–4 reuse this shape for the other frameworks.
  */
 import { Button } from "../src/button.js";
@@ -29,7 +31,12 @@ const frameworks = createListCollection({
   ],
 });
 
-export function App() {
+export interface AppProps {
+  /** Mount the Dialog + Select popovers open (exercises the portal/id path). */
+  open?: boolean;
+}
+
+export function App({ open = false }: AppProps) {
   return (
     <main>
       <section aria-label="buttons">
@@ -51,7 +58,7 @@ export function App() {
         <Field.ErrorText>Email is required.</Field.ErrorText>
       </Field.Root>
 
-      <Dialog.Root>
+      <Dialog.Root defaultOpen={open}>
         <Dialog.Trigger>Open dialog</Dialog.Trigger>
         <Portal>
           <Dialog.Backdrop />
@@ -65,7 +72,7 @@ export function App() {
         </Portal>
       </Dialog.Root>
 
-      <Select.Root collection={frameworks} size="md">
+      <Select.Root collection={frameworks} size="md" defaultOpen={open}>
         <Select.Label>Framework</Select.Label>
         <Select.Control>
           <Select.Trigger>
