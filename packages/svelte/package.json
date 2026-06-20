@@ -1,0 +1,44 @@
+{
+  "name": "@moderno/svelte",
+  "version": "0.0.0",
+  "description": "Svelte 5 bindings for Moderno (and the docs island runtime): Ark UI headless behaviour + @moderno/core CVA (props → data-attributes), styled entirely by the shared components.css.",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
+  "svelte": "./dist/index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "svelte": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "svelte-package -i src -o dist",
+    "typecheck": "svelte-check --tsconfig ./tsconfig.json",
+    "test": "vitest run && vitest run --config vitest.ssr.config.ts"
+  },
+  "dependencies": {
+    "@ark-ui/svelte": "^5.22.1",
+    "@moderno/core": "workspace:*"
+  },
+  "peerDependencies": {
+    "@moderno/css": "workspace:*",
+    "svelte": "^5.0.0"
+  },
+  "devDependencies": {
+    "@sveltejs/package": "^2.5.8",
+    "@sveltejs/vite-plugin-svelte": "^4.0.4",
+    "@testing-library/svelte": "^5.3.1",
+    "@testing-library/user-event": "^14.6.1",
+    "svelte": "^5.0.0",
+    "svelte-check": "^4.6.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
