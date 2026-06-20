@@ -13,6 +13,10 @@ describe("@moderno/css — public entrypoint", () => {
     expect(indexCss).toMatch(/@import\s+["']@moderno\/tokens\/css["']/);
   });
 
+  it("re-exports the @moderno/core component stylesheet (Phase 1, F1.5)", () => {
+    expect(indexCss).toMatch(/@import\s+["']@moderno\/core\/styles\/components\.css["']/);
+  });
+
   it("forwards the Tailwind preset via the package subpath", () => {
     expect(presetCss).toMatch(/@import\s+["']@moderno\/tokens\/preset["']/);
   });
