@@ -48,9 +48,18 @@ describe("@moderno/core components.css — zero baked brand values (F1.2)", () =
     expect(css).not.toMatch(/\b(rgb|rgba|hsl|hsla|oklch|oklab)\(/i);
   });
 
-  it("paints every colour-bearing property from a contract variable", () => {
+  /*
+   * Non-brand keyword values: not literal colours, so not a contract breach.
+   * `currentColor` is the chart pattern — a series <g> sets `color` from a
+   * --chart-* slot and its shapes paint with currentColor, so the colour still
+   * traces back to a token. `none`/`transparent`/`inherit` carry no brand value.
+   */
+  const COLOR_KEYWORDS = new Set(["none", "currentcolor", "transparent", "inherit"]);
+
+  it("paints every colour-bearing property from a contract variable or a non-brand keyword", () => {
     for (const d of decls) {
       if (!COLOR_PROPS.has(d.prop)) continue;
+      if (COLOR_KEYWORDS.has(d.value.trim().toLowerCase())) continue;
       expect(d.value, `${d.prop}: ${d.value} is not a var(--…) reference`).toMatch(/var\(--/);
     }
   });

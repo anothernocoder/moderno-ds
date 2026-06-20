@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@ark-ui/react": "^5.30.0",
+    "@moderno/charts-core": "workspace:*",
     "@moderno/core": "workspace:*"
   },
   "peerDependencies": {

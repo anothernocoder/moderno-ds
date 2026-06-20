@@ -13,6 +13,16 @@ import SelectRoot from "./SelectRoot.svelte";
 export { default as Button } from "./Button.svelte";
 
 /**
+ * Charts (Phase 4) — pure SVG maps over `@moderno/charts-core` models. Each
+ * renders the identical scaffold across frameworks; they carry zero colour and
+ * paint from `--chart-*` via the data-series index in components.css.
+ */
+export { default as LineChart } from "./LineChart.svelte";
+export { default as AreaChart } from "./AreaChart.svelte";
+export { default as BarChart } from "./BarChart.svelte";
+export { default as ScatterChart } from "./ScatterChart.svelte";
+
+/**
  * Field — re-exported from `@ark-ui/svelte`. Ark wires `label[for]` ↔ control
  * `id` and emits `data-invalid`/`data-disabled`/`data-required`; the shared
  * `components.css` dresses that native output, no recipe needed.

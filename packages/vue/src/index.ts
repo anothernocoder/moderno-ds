@@ -41,3 +41,6 @@ export type {
   SelectRootProps,
   SelectValueChangeDetails,
 } from "./select.js";
+
+export { LineChart, AreaChart, BarChart, ScatterChart } from "./charts.js";
+export type { LineChartProps, AreaChartProps, BarChartProps, ScatterChartProps } from "./charts.js";
