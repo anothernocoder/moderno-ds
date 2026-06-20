@@ -33,6 +33,9 @@ export type {
   DialogCloseTriggerProps,
 } from "./dialog.js";
 
+export { LineChart, AreaChart, BarChart, ScatterChart } from "./charts.js";
+export type { LineChartProps, AreaChartProps, BarChartProps, ScatterChartProps } from "./charts.js";
+
 export { Select, createListCollection } from "./select.js";
 export type {
   SelectSize,

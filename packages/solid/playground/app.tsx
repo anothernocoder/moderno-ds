@@ -8,6 +8,33 @@ import { Button } from "../src/button.jsx";
 import { Field } from "../src/field.js";
 import { Dialog, Portal } from "../src/dialog.js";
 import { Select, createListCollection } from "../src/select.jsx";
+import { AreaChart, BarChart, LineChart, ScatterChart } from "../src/charts.jsx";
+
+// A shared sample dataset for the four chart examples (Phase 4 deliverable).
+const sales = [
+  {
+    name: "2023",
+    points: [
+      { x: 0, y: 10 },
+      { x: 1, y: 40 },
+      { x: 2, y: 30 },
+      { x: 3, y: 55 },
+      { x: 4, y: 48 },
+    ],
+  },
+  {
+    name: "2024",
+    points: [
+      { x: 0, y: 5 },
+      { x: 1, y: 18 },
+      { x: 2, y: 25 },
+      { x: 3, y: 22 },
+      { x: 4, y: 35 },
+    ],
+  },
+];
+const quarters = ["Q1", "Q2", "Q3", "Q4"];
+const revenue = [{ name: "revenue", values: [12, 28, 19, 34] }];
 
 const frameworks = createListCollection({
   items: [
@@ -77,6 +104,13 @@ export function App(props: { open?: boolean }) {
           </Select.Positioner>
         </Portal>
       </Select.Root>
+
+      <section aria-label="charts">
+        <LineChart width={320} height={180} series={sales} />
+        <AreaChart width={320} height={180} series={sales} />
+        <BarChart width={320} height={180} categories={quarters} series={revenue} />
+        <ScatterChart width={320} height={180} series={sales} />
+      </section>
     </main>
   );
 }

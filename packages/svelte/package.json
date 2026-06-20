@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@ark-ui/svelte": "^5.22.1",
+    "@moderno/charts-core": "workspace:*",
     "@moderno/core": "workspace:*"
   },
   "peerDependencies": {

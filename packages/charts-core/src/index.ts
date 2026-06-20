@@ -32,3 +32,34 @@ export {
   linePath,
 } from "./shapes.js";
 export type { Accessor, AreaOptions, CurveFactory, LineOptions } from "./shapes.js";
+
+// ── Chart builders (Phase 4): pure layout → render model ────────────────────
+export { DEFAULT_MARGIN, plotArea, resolveMargin, round } from "./types.js";
+export type { AxisTick, ChartDimensions, ChartMargin, PlotArea, XYPoint } from "./types.js";
+
+export { cartesianFrame, collectX, collectY, defaultFormat, domainFromValues } from "./frame.js";
+export type { CartesianFrame, CartesianFrameOptions } from "./frame.js";
+
+export { buildLineChart, projectPoints } from "./line.js";
+export type {
+  CartesianChartOptions,
+  CartesianSeries,
+  LineChartModel,
+  LineChartOptions,
+  LineSeriesModel,
+  ProjectedPoint,
+} from "./line.js";
+
+export { buildAreaChart } from "./area.js";
+export type { AreaChartModel, AreaChartOptions, AreaSeriesModel } from "./area.js";
+
+export { buildBarChart } from "./bar.js";
+export type { BarChartModel, BarChartOptions, BarRect, BarSeries, BarSeriesModel } from "./bar.js";
+
+export { buildScatterChart } from "./scatter.js";
+export type {
+  ScatterChartModel,
+  ScatterChartOptions,
+  ScatterPoint,
+  ScatterSeriesModel,
+} from "./scatter.js";

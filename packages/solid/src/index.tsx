@@ -41,3 +41,11 @@ export type {
   ListCollection,
   SelectValueChangeDetails,
 } from "./select.jsx";
+
+export { LineChart, AreaChart, BarChart, ScatterChart } from "./charts.jsx";
+export type {
+  LineChartProps,
+  AreaChartProps,
+  BarChartProps,
+  ScatterChartProps,
+} from "./charts.jsx";
