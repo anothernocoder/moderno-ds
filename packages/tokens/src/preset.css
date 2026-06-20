@@ -1,0 +1,58 @@
+/*
+ * @moderno/tokens/preset — Tailwind v4 preset
+ *
+ * Maps the semantic contract slots to Tailwind's theme namespaces via
+ * `@theme inline`. `inline` makes generated utilities reference the variables
+ * directly (e.g. `.bg-primary { background-color: var(--primary) }`) instead of
+ * copying values — so a runtime override of `--primary` (or a `[data-brand]`
+ * swap) re-themes utilities live, with no rebuild.
+ *
+ * Usage (consumer CSS):
+ *   @import "tailwindcss";
+ *   @import "@moderno/css";          // contract values (:root/.dark)
+ *   @import "@moderno/css/preset";   // this mapping
+ */
+
+@theme inline {
+  /* Colors → bg-*, text-*, border-*, ring-*, fill-*… utilities */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  /*
+   * Typography → font-sans / font-mono utilities.
+   * Required, not a no-op: a plain `--font-sans` in :root is just a custom
+   * property; registering it here under @theme makes it a Tailwind theme key,
+   * and `inline` points the generated utility at the runtime var.
+   */
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+
+  /* Radius → rounded-* utilities */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-full: var(--radius-full);
+}

@@ -1,0 +1,9 @@
+/*
+ * @moderno/css/preset — Tailwind v4 preset, re-exported.
+ *
+ *   @import "tailwindcss";
+ *   @import "@moderno/css";
+ *   @import "@moderno/css/preset";
+ */
+
+@import "@moderno/tokens/preset";

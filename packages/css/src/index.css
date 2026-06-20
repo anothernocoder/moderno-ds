@@ -1,0 +1,12 @@
+/*
+ * @moderno/css — the public CSS entrypoint.
+ *
+ * Consumers import this one specifier; internal package paths stay hidden.
+ *   @import "@moderno/css";
+ *
+ * Today it re-exports the token contract (:root / .dark / [data-brand]).
+ * Phase 1 adds the component stylesheet here (`@moderno/core/css`).
+ */
+
+@import "@moderno/tokens/css";
+/* Phase 1: @import "@moderno/core/styles/components.css"; */
