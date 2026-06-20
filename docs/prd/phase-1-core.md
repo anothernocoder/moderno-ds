@@ -37,7 +37,10 @@ Build the two framework-agnostic layers that all primitives and charts will depe
 ## Acceptance criteria (DoD)
 
 - [ ] Green Vitest suite for `core` and `charts-core`.
-- [ ] CVA covered with cases for each variant/size defined in CONTRACT.md.
+- [ ] CVA covered: resolution, defaults, kebab-casing, invalid-value rejection,
+      and determinism. Per-component variant tables (Button, …) live in
+      `@moderno/core` and are covered as they land from Phase 2 — CONTRACT.md
+      enumerates none in Phase 1.
 - [ ] charts-core produces correct paths/scales in Node (no DOM) → SSR-safety proof.
 - [ ] `components.css` importable via `@moderno/css` and respects the Phase 0 tokens.
 - [ ] Guardrail verified: grep the bundle for no `d3-selection`/`d3-transition`.
