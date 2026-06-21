@@ -1,0 +1,23 @@
+---
+import { useTranslations, type Locale } from "../i18n/ui.ts";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+---
+
+<button type="button" class="theme-toggle" data-theme-toggle aria-label={`${t("theme.light")} / ${t("theme.dark")}`}>
+  <span class="theme-toggle-light" aria-hidden="true">☀</span>
+  <span class="theme-toggle-dark" aria-hidden="true">☾</span>
+</button>
+
+<script>
+  const btn = document.querySelector<HTMLButtonElement>("[data-theme-toggle]");
+  btn?.addEventListener("click", () => {
+    const dark = document.documentElement.classList.toggle("dark");
+    localStorage.setItem("moderno-scheme", dark ? "dark" : "light");
+  });
+</script>

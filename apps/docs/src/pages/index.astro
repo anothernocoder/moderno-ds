@@ -1,0 +1,17 @@
+---
+import { defaultLocale } from "../i18n/ui.ts";
+const target = `/${defaultLocale}/`;
+---
+
+<!doctype html>
+<html lang={defaultLocale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="refresh" content={`0; url=${target}`} />
+    <link rel="canonical" href={target} />
+    <title>Moderno</title>
+  </head>
+  <body>
+    <a href={target}>Moderno</a>
+  </body>
+</html>

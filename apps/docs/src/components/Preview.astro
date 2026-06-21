@@ -1,0 +1,35 @@
+---
+import { uid } from "../lib/uid.ts";
+import { currentLocale, useTranslations } from "../i18n/ui.ts";
+import CodeBlock from "./CodeBlock.astro";
+
+interface Props {
+  /** Source shown under the Code tab. */
+  code: string;
+  lang?: string;
+}
+
+const { code, lang = "tsx" } = Astro.props;
+const t = useTranslations(currentLocale(Astro.currentLocale));
+// CSS-only tabs: two radios sharing one name, panels toggled by :checked. Works
+// without JS; the live demo island hydrates independently.
+const name = uid("preview");
+const previewId = `${name}-preview`;
+const codeId = `${name}-code`;
+---
+
+<div class="preview">
+  <div class="preview-tabs" role="tablist">
+    <input type="radio" name={name} id={previewId} class="preview-radio" checked />
+    <label for={previewId} class="preview-tab">{t("tabs.preview")}</label>
+    <input type="radio" name={name} id={codeId} class="preview-radio" />
+    <label for={codeId} class="preview-tab">{t("tabs.code")}</label>
+  </div>
+
+  <div class="preview-panel preview-panel--demo" role="tabpanel">
+    <slot />
+  </div>
+  <div class="preview-panel preview-panel--code" role="tabpanel">
+    <CodeBlock code={code} lang={lang} />
+  </div>
+</div>

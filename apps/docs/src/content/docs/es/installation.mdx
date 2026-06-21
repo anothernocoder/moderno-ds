@@ -1,0 +1,31 @@
+---
+title: Instalación
+description: Añade Moderno a un proyecto — instala un enlace de framework e importa la hoja de estilos compartida una vez.
+group: Inicio
+order: 1
+---
+
+import Install from "../../../components/Install.astro";
+
+Elige el enlace para tu framework. Cada enlace depende de `@moderno/core` (las
+recetas) y lo pinta `@moderno/css` (la hoja de estilos compartida).
+
+## React
+
+<Install pkg="@moderno/react" />
+
+## Importa la hoja de estilos una vez
+
+Importa `@moderno/css` una sola vez en la raíz de tu app — incluye los estilos
+de los componentes y los slots del contrato del tema por defecto.
+
+```ts
+import "@moderno/css";
+```
+
+## Generar desde el registro (opcional)
+
+También puedes extraer el código fuente con la CLI, que lee el registro servido
+en `/r/registry.json`.
+
+<Install pkg="@moderno/cli" mode="cli" />

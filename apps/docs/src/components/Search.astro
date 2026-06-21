@@ -1,0 +1,36 @@
+---
+import { useTranslations, type Locale } from "../i18n/ui.ts";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+// Each locale is indexed into its own bundle (dist/<locale>/pagefind) by the
+// postbuild `pnpm index` step, so search never mixes languages.
+const bundlePath = `/${locale}/pagefind/`;
+---
+
+<div class="search" data-pagefind-ignore>
+  <div id="search" data-bundle={bundlePath} data-placeholder={t("search.placeholder")}></div>
+</div>
+
+<link rel="stylesheet" href={`${bundlePath}pagefind-ui.css`} />
+<script>
+  // The Pagefind bundle only exists after the postbuild index step; loading it
+  // lazily keeps `astro dev` from erroring when the bundle is absent.
+  const mount = document.getElementById("search");
+  if (mount) {
+    const bundlePath = mount.dataset.bundle!;
+    const placeholder = mount.dataset.placeholder ?? "Search";
+    import(/* @vite-ignore */ `${bundlePath}pagefind-ui.js`)
+      .then(() => {
+        // @ts-expect-error — PagefindUI is attached to window by the bundle.
+        new window.PagefindUI({ element: "#search", bundlePath, showImages: false, resetStyles: false, placeholder });
+      })
+      .catch(() => {
+        /* index not built yet (dev) */
+      });
+  }
+</script>

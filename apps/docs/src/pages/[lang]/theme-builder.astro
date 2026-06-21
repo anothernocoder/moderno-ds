@@ -1,0 +1,33 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ThemeBuilder from "../../islands/ThemeBuilder.svelte";
+import { locales, useTranslations, type Locale } from "../../i18n/ui.ts";
+
+export function getStaticPaths() {
+  return locales.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Locale;
+const t = useTranslations(lang);
+
+const strings = {
+  light: t("theme.light"),
+  dark: t("theme.dark"),
+  import: t("theme.import"),
+  paste: t("theme.paste"),
+  reset: t("theme.reset"),
+  exportCss: t("theme.exportCss"),
+  exportTokens: t("theme.exportTokens"),
+  cliSnippet: t("theme.cliSnippet"),
+  contrastOk: t("theme.contrastOk"),
+  contrastFail: t("theme.contrastFail"),
+  invalid: t("theme.invalid"),
+  copied: t("copy.copied"),
+};
+---
+
+<BaseLayout locale={lang} title={t("theme.title")} description={t("theme.lead")} slug="theme-builder">
+  <h1>{t("theme.title")}</h1>
+  <p class="page-lead">{t("theme.lead")}</p>
+  <ThemeBuilder strings={strings} client:only="svelte" />
+</BaseLayout>

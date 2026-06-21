@@ -1,0 +1,30 @@
+---
+title: Gráfico de líneas
+description: Un gráfico de líneas en SVG puro mapeado desde charts-core; el color de cada serie viene de los slots --chart-* por índice.
+group: Componentes
+order: 20
+component: LineChart
+pkg: "@moderno/react"
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import LineChartDemo from "../../../islands/LineChartDemo.svelte";
+
+LineChart es un mapeo determinista desde un modelo construido por
+`@moderno/charts-core` hacia elementos `<path>`. No incluye color propio — cada
+serie se pinta con `--chart-1…5` según su índice, así se re-tematiza con el
+resto del sistema.
+
+<Preview code={`<LineChart width={520} height={260} series={series} />`}>
+  <LineChartDemo client:visible />
+</Preview>
+
+## Instalación
+
+<Install pkg="@moderno/react" />
+
+## Propiedades
+
+<PropsTable component="LineChart" />

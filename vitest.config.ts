@@ -10,7 +10,12 @@ export default defineConfig({
     name: "react-core",
     environment: "node",
     setupFiles: ["./vitest.setup.ts"],
-    include: ["packages/**/*.test.ts", "packages/**/*.test.tsx", "tooling/**/*.test.ts"],
+    include: [
+      "packages/**/*.test.ts",
+      "packages/**/*.test.tsx",
+      "tooling/**/*.test.ts",
+      "apps/**/*.test.ts",
+    ],
     // The ported framework packages own their compiler plugin + env; they run
     // as separate workspace projects (see vitest.workspace.ts).
     exclude: ["**/node_modules/**", "packages/vue/**", "packages/solid/**", "packages/svelte/**"],
