@@ -5,3 +5,4 @@ coverage
 pnpm-lock.yaml
 .agents
 skills-lock.json
+registry/themes/*/theme.css

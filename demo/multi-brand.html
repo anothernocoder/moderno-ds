@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Moderno — multi-brand switch demo</title>
+
+    <!--
+      Standalone demo for Phase 5 DoD: switching theme-moderno ↔ theme-contrast
+      via [data-brand], composed with .dark. Open directly in a browser.
+
+      theme-moderno.css defines the contract slots at :root / .dark (default
+      brand); theme-contrast.css defines them at [data-brand="contrast"] +
+      .dark companion. The controls below only toggle `class="dark"` and
+      `data-brand` on <html> — no element is restyled, only the variables remap.
+    -->
+    <link rel="stylesheet" href="../registry/themes/theme-moderno/theme.css" />
+    <link rel="stylesheet" href="../registry/themes/theme-contrast/theme.css" />
+
+    <style>
+      /* Demo-only styling, painted entirely from the contract variables. */
+      body {
+        margin: 0;
+        font-family: var(--font-sans);
+        background: var(--background);
+        color: var(--foreground);
+        transition:
+          background var(--motion-normal, 300ms),
+          color var(--motion-normal, 300ms);
+      }
+      .wrap {
+        max-width: 40rem;
+        margin: 0 auto;
+        padding: 2rem;
+        display: grid;
+        gap: 1rem;
+      }
+      .card {
+        background: var(--card);
+        color: var(--card-foreground);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 1.5rem;
+        display: grid;
+        gap: 0.75rem;
+      }
+      .btn {
+        font: inherit;
+        cursor: pointer;
+        padding: 0.5rem 1rem;
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        background: var(--primary);
+        color: var(--primary-foreground);
+      }
+      .btn-secondary {
+        background: var(--secondary);
+        color: var(--secondary-foreground);
+      }
+      .controls {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+      .swatches {
+        display: flex;
+        gap: 0.5rem;
+      }
+      .swatch {
+        width: 2rem;
+        height: 2rem;
+        border-radius: var(--radius-full);
+        border: 1px solid var(--border);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="controls">
+        <button class="btn" onclick="document.documentElement.removeAttribute('data-brand')">
+          Brand: Moderno
+        </button>
+        <button
+          class="btn"
+          onclick="document.documentElement.setAttribute('data-brand', 'contrast')"
+        >
+          Brand: Contrast
+        </button>
+        <button
+          class="btn btn-secondary"
+          onclick="document.documentElement.classList.toggle('dark')"
+        >
+          Toggle .dark
+        </button>
+      </div>
+
+      <div class="card">
+        <h2>Re-theming = remapping variables</h2>
+        <p>
+          The same markup, themed by the active <code>[data-brand]</code> and
+          <code>.dark</code> scopes. Nothing here is restyled per brand — only the contract slots
+          change.
+        </p>
+        <div class="controls">
+          <button class="btn">Primary action</button>
+          <button class="btn btn-secondary">Secondary</button>
+        </div>
+        <div class="swatches">
+          <div class="swatch" style="background: var(--chart-1)"></div>
+          <div class="swatch" style="background: var(--chart-2)"></div>
+          <div class="swatch" style="background: var(--chart-3)"></div>
+          <div class="swatch" style="background: var(--chart-4)"></div>
+          <div class="swatch" style="background: var(--chart-5)"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Default Moderno apps mount dark by default (see CONTEXT.md).
+      document.documentElement.classList.add("dark");
+    </script>
+  </body>
+</html>

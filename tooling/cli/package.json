@@ -1,0 +1,32 @@
+{
+  "name": "@moderno/cli",
+  "version": "0.0.0",
+  "description": "Moderno CLI — init/add/update/diff over the shadcn-style versioned registry, with a .moderno/manifest.json that tracks installed versions. Wraps the registry model; no runtime dependencies.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "moderno": "./dist/bin.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsup"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.5"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

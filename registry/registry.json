@@ -1,0 +1,247 @@
+{
+  "$schema": "https://moderno.style/schema/registry.json",
+  "name": "moderno",
+  "homepage": "https://moderno.style",
+  "items": [
+    {
+      "name": "theme-moderno",
+      "type": "registry:theme",
+      "version": "0.1.0",
+      "title": "Theme Moderno",
+      "description": "The default Moderno brand: near-black monochrome workspace with sharp corners. Defines the contract slots in :root (light) and .dark (dark).",
+      "dependencies": [],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "themes/theme-moderno/theme.css",
+          "type": "registry:theme",
+          "target": "src/styles/theme-moderno.css"
+        }
+      ]
+    },
+    {
+      "name": "theme-contrast",
+      "type": "registry:theme",
+      "version": "0.1.0",
+      "title": "Theme Contrast",
+      "description": "Synthetic maximum-contrast brand scoped under [data-brand=\"contrast\"], composed with .dark. Demonstrates the multi-brand switch.",
+      "dependencies": [],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "themes/theme-contrast/theme.css",
+          "type": "registry:theme",
+          "target": "src/styles/theme-contrast.css"
+        }
+      ]
+    },
+    {
+      "name": "button",
+      "type": "registry:component",
+      "version": "0.1.0",
+      "title": "Button (eject)",
+      "description": "Ejected copy of the @moderno/react Button primitive. Use only when you must own the markup; styling still comes from @moderno/css.",
+      "dependencies": ["@moderno/core", "@moderno/css"],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "primitives/react/button.tsx",
+          "type": "registry:component",
+          "target": "src/components/ui/button.tsx"
+        }
+      ]
+    },
+    {
+      "name": "login-form-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Login Form (React)",
+      "description": "Sign-in card composing the @moderno/react Field and Button primitives.",
+      "dependencies": ["@moderno/react"],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/login-form/react/login-form.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/login-form.tsx"
+        }
+      ]
+    },
+    {
+      "name": "login-form-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Login Form (Vue)",
+      "description": "Sign-in card composing the @moderno/vue Field and Button primitives.",
+      "dependencies": ["@moderno/vue"],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/login-form/vue/LoginForm.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/LoginForm.vue"
+        }
+      ]
+    },
+    {
+      "name": "login-form-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Login Form (Svelte)",
+      "description": "Sign-in card composing the @moderno/svelte Field and Button primitives.",
+      "dependencies": ["@moderno/svelte"],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/login-form/svelte/LoginForm.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/LoginForm.svelte"
+        }
+      ]
+    },
+    {
+      "name": "login-form-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Login Form (Solid)",
+      "description": "Sign-in card composing the @moderno/solid Field and Button primitives.",
+      "dependencies": ["@moderno/solid"],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/login-form/solid/login-form.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/login-form.tsx"
+        }
+      ]
+    },
+    {
+      "name": "pricing-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Pricing (React)",
+      "description": "Three-plan pricing section composing the @moderno/react Button primitive.",
+      "dependencies": ["@moderno/react"],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/pricing/react/pricing.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/pricing.tsx"
+        }
+      ]
+    },
+    {
+      "name": "pricing-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Pricing (Vue)",
+      "description": "Three-plan pricing section composing the @moderno/vue Button primitive.",
+      "dependencies": ["@moderno/vue"],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/pricing/vue/Pricing.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/Pricing.vue"
+        }
+      ]
+    },
+    {
+      "name": "pricing-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Pricing (Svelte)",
+      "description": "Three-plan pricing section composing the @moderno/svelte Button primitive.",
+      "dependencies": ["@moderno/svelte"],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/pricing/svelte/Pricing.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/Pricing.svelte"
+        }
+      ]
+    },
+    {
+      "name": "pricing-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Pricing (Solid)",
+      "description": "Three-plan pricing section composing the @moderno/solid Button primitive.",
+      "dependencies": ["@moderno/solid"],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/pricing/solid/pricing.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/pricing.tsx"
+        }
+      ]
+    },
+    {
+      "name": "empty-state-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Empty State (React)",
+      "description": "Centered no-data placeholder with a primary action, composing the @moderno/react Button primitive.",
+      "dependencies": ["@moderno/react"],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/empty-state/react/empty-state.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/empty-state.tsx"
+        }
+      ]
+    },
+    {
+      "name": "empty-state-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Empty State (Vue)",
+      "description": "Centered no-data placeholder with a primary action, composing the @moderno/vue Button primitive.",
+      "dependencies": ["@moderno/vue"],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/empty-state/vue/EmptyState.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/EmptyState.vue"
+        }
+      ]
+    },
+    {
+      "name": "empty-state-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Empty State (Svelte)",
+      "description": "Centered no-data placeholder with a primary action, composing the @moderno/svelte Button primitive.",
+      "dependencies": ["@moderno/svelte"],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/empty-state/svelte/EmptyState.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/EmptyState.svelte"
+        }
+      ]
+    },
+    {
+      "name": "empty-state-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Empty State (Solid)",
+      "description": "Centered no-data placeholder with a primary action, composing the @moderno/solid Button primitive.",
+      "dependencies": ["@moderno/solid"],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/empty-state/solid/empty-state.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/empty-state.tsx"
+        }
+      ]
+    }
+  ]
+}

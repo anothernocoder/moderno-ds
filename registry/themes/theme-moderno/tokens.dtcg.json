@@ -1,0 +1,80 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+  "$description": "Moderno default theme — near-black monochrome workspace. Brand lives in CSS variables; components reference the contract slots only. Authored from DESIGN.md; compiled by @moderno/theme-compile.",
+  "$extensions": {
+    "style.moderno.theme": {
+      "name": "theme-moderno",
+      "brand": null
+    }
+  },
+  "light": {
+    "background": { "$type": "color", "$value": "oklch(1 0 0)" },
+    "foreground": { "$type": "color", "$value": "oklch(0.205 0 0)" },
+    "card": { "$type": "color", "$value": "oklch(1 0 0)" },
+    "card-foreground": { "$type": "color", "$value": "oklch(0.205 0 0)" },
+    "popover": { "$type": "color", "$value": "oklch(1 0 0)" },
+    "popover-foreground": { "$type": "color", "$value": "oklch(0.205 0 0)" },
+    "primary": { "$type": "color", "$value": "oklch(0.205 0 0)" },
+    "primary-foreground": { "$type": "color", "$value": "oklch(0.985 0 0)" },
+    "secondary": { "$type": "color", "$value": "oklch(0.97 0 0)" },
+    "secondary-foreground": { "$type": "color", "$value": "oklch(0.205 0 0)" },
+    "muted": { "$type": "color", "$value": "oklch(0.97 0 0)" },
+    "muted-foreground": { "$type": "color", "$value": "oklch(0.505 0 0)" },
+    "accent": { "$type": "color", "$value": "oklch(0.97 0 0)" },
+    "accent-foreground": { "$type": "color", "$value": "oklch(0.205 0 0)" },
+    "destructive": { "$type": "color", "$value": "oklch(0.577 0.245 27.325)" },
+    "destructive-foreground": { "$type": "color", "$value": "oklch(0.985 0 0)" },
+    "border": { "$type": "color", "$value": "oklch(0.922 0 0)" },
+    "input": { "$type": "color", "$value": "oklch(0.922 0 0)" },
+    "ring": { "$type": "color", "$value": "oklch(0.205 0 0)" },
+    "chart-1": { "$type": "color", "$value": "oklch(0.646 0.222 41.116)" },
+    "chart-2": { "$type": "color", "$value": "oklch(0.6 0.118 184.704)" },
+    "chart-3": { "$type": "color", "$value": "oklch(0.398 0.07 227.392)" },
+    "chart-4": { "$type": "color", "$value": "oklch(0.828 0.189 84.429)" },
+    "chart-5": { "$type": "color", "$value": "oklch(0.769 0.188 70.08)" },
+    "radius": { "$type": "dimension", "$value": "0rem" },
+    "font-sans": {
+      "$type": "fontFamily",
+      "$value": "\"Hedvig Letters Sans\", ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif"
+    },
+    "font-mono": {
+      "$type": "fontFamily",
+      "$value": "ui-monospace, \"SFMono-Regular\", \"Menlo\", \"Consolas\", monospace"
+    }
+  },
+  "dark": {
+    "background": { "$type": "color", "$value": "oklch(0.16 0 0)" },
+    "foreground": { "$type": "color", "$value": "oklch(0.985 0 0)" },
+    "card": { "$type": "color", "$value": "oklch(0.205 0 0)" },
+    "card-foreground": { "$type": "color", "$value": "oklch(0.985 0 0)" },
+    "popover": { "$type": "color", "$value": "oklch(0.205 0 0)" },
+    "popover-foreground": { "$type": "color", "$value": "oklch(0.985 0 0)" },
+    "primary": { "$type": "color", "$value": "oklch(0.985 0 0)" },
+    "primary-foreground": { "$type": "color", "$value": "oklch(0.205 0 0)" },
+    "secondary": { "$type": "color", "$value": "oklch(0.269 0 0)" },
+    "secondary-foreground": { "$type": "color", "$value": "oklch(0.985 0 0)" },
+    "muted": { "$type": "color", "$value": "oklch(0.269 0 0)" },
+    "muted-foreground": { "$type": "color", "$value": "oklch(0.708 0 0)" },
+    "accent": { "$type": "color", "$value": "oklch(0.269 0 0)" },
+    "accent-foreground": { "$type": "color", "$value": "oklch(0.985 0 0)" },
+    "destructive": { "$type": "color", "$value": "oklch(0.704 0.191 22.216)" },
+    "destructive-foreground": { "$type": "color", "$value": "oklch(0.985 0 0)" },
+    "border": { "$type": "color", "$value": "oklch(0.27 0 0)" },
+    "input": { "$type": "color", "$value": "oklch(0.27 0 0)" },
+    "ring": { "$type": "color", "$value": "oklch(0.985 0 0)" },
+    "chart-1": { "$type": "color", "$value": "oklch(0.488 0.243 264.376)" },
+    "chart-2": { "$type": "color", "$value": "oklch(0.696 0.17 162.48)" },
+    "chart-3": { "$type": "color", "$value": "oklch(0.769 0.188 70.08)" },
+    "chart-4": { "$type": "color", "$value": "oklch(0.627 0.265 303.9)" },
+    "chart-5": { "$type": "color", "$value": "oklch(0.645 0.246 16.439)" },
+    "radius": { "$type": "dimension", "$value": "0rem" },
+    "font-sans": {
+      "$type": "fontFamily",
+      "$value": "\"Hedvig Letters Sans\", ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif"
+    },
+    "font-mono": {
+      "$type": "fontFamily",
+      "$value": "ui-monospace, \"SFMono-Regular\", \"Menlo\", \"Consolas\", monospace"
+    }
+  }
+}
