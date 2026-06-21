@@ -1,0 +1,30 @@
+{
+  "name": "@moderno/props-doc",
+  "version": "0.0.0",
+  "description": "Build-time prop extractor. Resolves each framework binding's exported props interface with ts-morph and emits props/<component>.json for the docs <PropsTable>. Keeps the props the consumer actually sets (recipe variants + component-declared) and drops inherited DOM attributes.",
+  "license": "MIT",
+  "type": "module",
+  "private": true,
+  "bin": {
+    "moderno-props-doc": "./dist/bin.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsup"
+  },
+  "dependencies": {
+    "ts-morph": "^24.0.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.5"
+  }
+}

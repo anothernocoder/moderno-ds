@@ -1,0 +1,25 @@
+---
+import { Code } from "astro:components";
+import { currentLocale, useTranslations } from "../i18n/ui.ts";
+
+interface Props {
+  code: string;
+  lang?: string;
+}
+
+const { code, lang = "tsx" } = Astro.props;
+const t = useTranslations(currentLocale(Astro.currentLocale));
+---
+
+<figure class="code-block">
+  <button
+    type="button"
+    class="copy-btn"
+    data-copy={code}
+    data-copied={t("copy.copied")}
+    aria-label={t("copy.code")}
+  >
+    <span aria-hidden="true">⧉</span>
+  </button>
+  <Code code={code} lang={lang as any} theme="css-variables" />
+</figure>

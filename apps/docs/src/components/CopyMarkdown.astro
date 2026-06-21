@@ -1,0 +1,24 @@
+---
+import { currentLocale, useTranslations } from "../i18n/ui.ts";
+
+// Derive locale + slug from the route so MDX can drop `<CopyMarkdown />` bare.
+const locale = currentLocale(Astro.currentLocale);
+const t = useTranslations(locale);
+const path = Astro.url.pathname.replace(/^\/+|\/+$/g, "").split("/");
+const slug = path.slice(1).join("/") || "index";
+// Fetches the page's generated `.md` twin and copies it — same source the
+// per-component `.md` files and `llms.txt` are built from.
+const mdUrl = `/${locale}/${slug}.md`;
+---
+
+<div class="page-actions">
+  <button
+    type="button"
+    class="copy-md"
+    data-copy-url={mdUrl}
+    data-copied={t("copy.copied")}
+  >
+    {t("copy.markdown")}
+  </button>
+  <a class="copy-md-link" href={mdUrl}>.md</a>
+</div>

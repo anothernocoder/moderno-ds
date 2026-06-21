@@ -1,0 +1,31 @@
+---
+title: Installation
+description: Add Moderno to a project — install a framework binding and import the shared stylesheet once.
+group: Start
+order: 1
+---
+
+import Install from "../../../components/Install.astro";
+
+Pick the binding for your framework. Every binding depends on `@moderno/core`
+(the recipes) and is painted by `@moderno/css` (the shared stylesheet).
+
+## React
+
+<Install pkg="@moderno/react" />
+
+## Import the stylesheet once
+
+Import `@moderno/css` a single time at your app root — it carries the component
+styles and the default theme's contract slots.
+
+```ts
+import "@moderno/css";
+```
+
+## Scaffold from the registry (optional)
+
+You can also eject source with the CLI, which reads the registry served at
+`/r/registry.json`.
+
+<Install pkg="@moderno/cli" mode="cli" />

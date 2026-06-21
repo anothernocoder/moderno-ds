@@ -1,0 +1,375 @@
+/*
+  Docs chrome — painted entirely from the @moderno contract token slots
+  (--background, --foreground, --border, …) so the whole site re-themes with the
+  active brand and the Theme Builder. No brand colours are hard-coded here.
+*/
+:root {
+  --docs-max: 88rem;
+  --docs-sidebar: 16rem;
+  --docs-gap: 2rem;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+code,
+pre {
+  font-family: var(--font-mono);
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  padding: 0.5rem 1rem;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  z-index: 100;
+}
+.skip-link:focus {
+  left: 0;
+}
+
+/* Header */
+.site-header {
+  display: flex;
+  align-items: center;
+  gap: var(--docs-gap);
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: color-mix(in oklch, var(--background) 92%, transparent);
+  backdrop-filter: blur(8px);
+  z-index: 50;
+}
+.brand a {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.site-nav {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.9rem;
+}
+.header-tools {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.lang-switch {
+  font-size: 0.85rem;
+  padding: 0.3rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.theme-toggle {
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--card-foreground);
+  cursor: pointer;
+}
+.theme-toggle-dark {
+  display: none;
+}
+:root.dark .theme-toggle-light {
+  display: none;
+}
+:root.dark .theme-toggle-dark {
+  display: inline;
+}
+
+/* Layout */
+.layout {
+  display: grid;
+  grid-template-columns: var(--docs-sidebar) 1fr;
+  gap: var(--docs-gap);
+  max-width: var(--docs-max);
+  margin: 0 auto;
+  padding: var(--docs-gap) 1.5rem 6rem;
+}
+.sidebar {
+  position: sticky;
+  top: 4.5rem;
+  align-self: start;
+  height: calc(100vh - 6rem);
+  overflow-y: auto;
+  font-size: 0.9rem;
+}
+.sidebar-group h2 {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted-foreground);
+  margin: 1.25rem 0 0.5rem;
+}
+.sidebar-group ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.sidebar-group a {
+  display: block;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius);
+  color: var(--muted-foreground);
+}
+.sidebar-group a[aria-current="page"] {
+  color: var(--foreground);
+  background: var(--muted);
+}
+
+main {
+  min-width: 0;
+  max-width: 48rem;
+}
+main h1 {
+  font-size: 2.2rem;
+  letter-spacing: -0.03em;
+  margin: 0 0 0.5rem;
+}
+main h2 {
+  margin-top: 2.5rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.3rem;
+}
+main :where(h1, h2, h3) {
+  scroll-margin-top: 5rem;
+}
+.page-lead {
+  color: var(--muted-foreground);
+  font-size: 1.1rem;
+}
+.page-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin: 1rem 0 2rem;
+}
+
+@media (max-width: 56rem) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+  .sidebar {
+    position: static;
+    height: auto;
+  }
+}
+
+/* Preview + tabs */
+.preview {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin: 1.5rem 0;
+  overflow: hidden;
+}
+.preview-tabs,
+.install-tabs {
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.4rem 0.5rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--muted);
+}
+.preview-radio,
+.install-radio {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.preview-tab,
+.install-tab {
+  font-size: 0.85rem;
+  padding: 0.25rem 0.7rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  color: var(--muted-foreground);
+}
+.preview-radio:checked + .preview-tab,
+.install-radio:checked + .install-tab {
+  background: var(--background);
+  color: var(--foreground);
+}
+.preview-radio:focus-visible + .preview-tab,
+.install-radio:focus-visible + .install-tab {
+  outline: 2px solid var(--ring);
+}
+.preview-panel {
+  display: none;
+}
+.preview-panel--demo {
+  padding: 2rem;
+}
+.preview-panel--code {
+  padding: 0;
+}
+/* First radio → demo panel; second radio → code panel. */
+.preview-radio:nth-of-type(1):checked ~ .preview-panel--demo,
+.preview-radio:nth-of-type(2):checked ~ .preview-panel--code {
+  display: block;
+}
+
+.demo-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+.demo-row + .demo-row {
+  margin-top: 1rem;
+}
+
+/* Code blocks */
+.code-block {
+  position: relative;
+  margin: 0;
+}
+.code-block pre {
+  margin: 0;
+  padding: 1rem 1.25rem;
+  overflow-x: auto;
+  background: var(--card);
+}
+.copy-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 1.9rem;
+  height: 1.9rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--background);
+  color: var(--foreground);
+  cursor: pointer;
+  z-index: 2;
+}
+.copy-btn[data-state="copied"] {
+  border-color: var(--primary);
+}
+
+/* Install */
+.install {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin: 1.25rem 0;
+  overflow: hidden;
+}
+.install-panel {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1rem;
+  background: var(--card);
+}
+.install-cmd {
+  font-size: 0.9rem;
+}
+.install-radio:nth-of-type(1):checked ~ .install-panel--bun,
+.install-radio:nth-of-type(2):checked ~ .install-panel--pnpm,
+.install-radio:nth-of-type(3):checked ~ .install-panel--npm {
+  display: flex;
+}
+.install-panel .copy-btn {
+  position: static;
+}
+
+/* Props table */
+.props-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin: 1.25rem 0;
+}
+.props-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+.props-table th,
+.props-table td {
+  text-align: left;
+  padding: 0.6rem 0.85rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.props-table th {
+  background: var(--muted);
+  color: var(--muted-foreground);
+  font-weight: 600;
+}
+.props-table tr:last-child td {
+  border-bottom: none;
+}
+.props-type {
+  color: var(--muted-foreground);
+}
+.props-empty {
+  color: var(--muted-foreground);
+  font-style: italic;
+}
+
+/* Copy-as-markdown */
+.copy-md,
+.copy-md-link {
+  font-size: 0.8rem;
+  padding: 0.3rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--card-foreground);
+  cursor: pointer;
+}
+
+/* Cards on the landing page */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+  gap: 1rem;
+  margin: 2rem 0;
+}
+.card {
+  display: block;
+  padding: 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--card-foreground);
+}
+.card:hover {
+  border-color: var(--ring);
+  text-decoration: none;
+}
+.card h3 {
+  margin: 0 0 0.35rem;
+}
+.card p {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: 0.9rem;
+}

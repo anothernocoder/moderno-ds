@@ -1,0 +1,41 @@
+---
+import { getCollection, render } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { locales, splitId, useTranslations, type Locale } from "../../i18n/ui.ts";
+
+export function getStaticPaths() {
+  return locales.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Locale;
+const t = useTranslations(lang);
+
+const all = await getCollection("docs");
+const home = all.find((e) => e.id === `${lang}/index`);
+const pages = all
+  .map((entry) => ({ entry, ...splitId(entry.id) }))
+  .filter((p) => p.locale === lang && p.slug !== "index")
+  .sort((a, b) => a.entry.data.order - b.entry.data.order);
+
+const title = home?.data.title ?? "Moderno";
+const description = home?.data.description ?? "Framework-agnostic design system.";
+const Body = home ? (await render(home)).Content : null;
+---
+
+<BaseLayout locale={lang} title={title} description={description} slug="index">
+  <h1>{title}</h1>
+  <p class="page-lead">{description}</p>
+  {Body && <Body />}
+
+  <h2>{t("nav.components")}</h2>
+  <div class="card-grid">
+    {
+      pages.map((p) => (
+        <a class="card" href={`/${lang}/${p.slug}`}>
+          <h3>{p.entry.data.title}</h3>
+          <p>{p.entry.data.description}</p>
+        </a>
+      ))
+    }
+  </div>
+</BaseLayout>

@@ -1,9 +1,26 @@
 packages:
   - "packages/*"
   - "tooling/*"
+  - "apps/*"
 
 allowBuilds:
   esbuild: true
+  sharp: false
+
+# Astro pulls vite 6; the framework test toolchains (vite-plugin-solid/svelte/vue)
+# are on vite 5. Pin the shared vitest toolchain to vite 5 so a single vite type
+# instance reaches each package's vitest.config.ts — astro keeps its own vite 6.
+overrides:
+  vitest>vite: "5.4.21"
+  vite-node>vite: "5.4.21"
+  "@vitest/mocker>vite": "5.4.21"
+  vite-plugin-solid>vite: "5.4.21"
+  # @moderno/svelte tests on the v4 plugin (vite 5); astro's v5 plugin keeps
+  # vite 6. Version-scope so each resolves a single matching vite.
+  "@sveltejs/vite-plugin-svelte@4>vite": "5.4.21"
+  # Astro's toolchain pulls @types/node 24; pin to one version so a single
+  # vite type instance is shared (avoids vite5-node22 vs vite5-node24 clashes).
+  "@types/node": "22.19.21"
 
 onlyBuiltDependencies:
   - esbuild

@@ -1,0 +1,32 @@
+---
+title: Button
+description: The reference primitive — a plain button carrying the recipe's variant and size data-attributes, painted entirely by the shared stylesheet.
+group: Components
+order: 10
+component: Button
+pkg: "@moderno/react"
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import ButtonDemo from "../../../islands/ButtonDemo.svelte";
+
+Button establishes the Moderno pattern: the component holds zero colour or
+radius; `data-variant`/`data-size` from the recipe key every style in
+`components.css`. Switching the theme re-skins it without touching the markup.
+
+<Preview
+  code={`<Button variant="primary">Save</Button>
+<Button variant="outline">Cancel</Button>`}
+>
+  <ButtonDemo client:visible />
+</Preview>
+
+## Installation
+
+<Install pkg="@moderno/react" />
+
+## Props
+
+<PropsTable component="Button" />

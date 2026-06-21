@@ -1,0 +1,66 @@
+---
+import { uid } from "../lib/uid.ts";
+import { currentLocale, useTranslations } from "../i18n/ui.ts";
+
+interface Props {
+  /** Package to install, e.g. `@moderno/react`. */
+  pkg: string;
+  /** `dependency` (default) or `cli` (dlx/bunx/npx execution). */
+  mode?: "dependency" | "cli";
+}
+
+const { pkg, mode = "dependency" } = Astro.props;
+const t = useTranslations(currentLocale(Astro.currentLocale));
+
+const managers =
+  mode === "cli"
+    ? [
+        { id: "bun", label: "bun", cmd: `bunx ${pkg}` },
+        { id: "pnpm", label: "pnpm", cmd: `pnpm dlx ${pkg}` },
+        { id: "npm", label: "npm", cmd: `npx ${pkg}` },
+      ]
+    : [
+        { id: "bun", label: "bun", cmd: `bun add ${pkg}` },
+        { id: "pnpm", label: "pnpm", cmd: `pnpm add ${pkg}` },
+        { id: "npm", label: "npm", cmd: `npm install ${pkg}` },
+      ];
+
+const name = uid("install");
+---
+
+<div class="install">
+  <div class="install-tabs" role="tablist">
+    {
+      managers.map((m, i) => (
+        <Fragment>
+          <input
+            type="radio"
+            name={name}
+            id={`${name}-${m.id}`}
+            class="install-radio"
+            checked={i === 0}
+          />
+          <label for={`${name}-${m.id}`} class="install-tab">
+            {m.label}
+          </label>
+        </Fragment>
+      ))
+    }
+  </div>
+  {
+    managers.map((m) => (
+      <div class={`install-panel install-panel--${m.id}`} role="tabpanel">
+        <code class="install-cmd">{m.cmd}</code>
+        <button
+          type="button"
+          class="copy-btn"
+          data-copy={m.cmd}
+          data-copied={t("copy.copied")}
+          aria-label={t("copy.code")}
+        >
+          <span aria-hidden="true">⧉</span>
+        </button>
+      </div>
+    ))
+  }
+</div>

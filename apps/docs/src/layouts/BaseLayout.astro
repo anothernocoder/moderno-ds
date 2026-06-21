@@ -1,0 +1,116 @@
+---
+import { getCollection } from "astro:content";
+import { defaultLocale, locales, splitId, useTranslations, type Locale } from "../i18n/ui.ts";
+import LanguageSwitcher from "../components/LanguageSwitcher.astro";
+import Search from "../components/Search.astro";
+import ThemeToggle from "../components/ThemeToggle.astro";
+import "../styles/docs.css";
+import "@moderno/css";
+
+interface Props {
+  locale: Locale;
+  title: string;
+  description: string;
+  /** Slug of the current page, used to build hreflang/canonical links. */
+  slug: string;
+}
+
+const { locale, title, description, slug } = Astro.props;
+const t = useTranslations(locale);
+const site = Astro.site ?? new URL("https://moderno.style");
+
+// Sidebar: this locale's pages, grouped and ordered.
+const pages = (await getCollection("docs"))
+  .map((entry) => ({ entry, ...splitId(entry.id) }))
+  .filter((p) => p.locale === locale && p.slug !== "index")
+  .sort((a, b) => a.entry.data.order - b.entry.data.order);
+
+const groups = new Map<string, typeof pages>();
+for (const p of pages) {
+  const g = p.entry.data.group;
+  if (!groups.has(g)) groups.set(g, []);
+  groups.get(g)!.push(p);
+}
+
+const canonical = new URL(`/${locale}/${slug === "index" ? "" : slug}`, site);
+const pageTitle = slug === "index" ? title : `${title} — Moderno`;
+---
+
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical.href} />
+    {
+      locales.map((l) => (
+        <link
+          rel="alternate"
+          hreflang={l}
+          href={new URL(`/${l}/${slug === "index" ? "" : slug}`, site).href}
+        />
+      ))
+    }
+    <link
+      rel="alternate"
+      hreflang="x-default"
+      href={new URL(`/${defaultLocale}/${slug === "index" ? "" : slug}`, site).href}
+    />
+    <script is:inline>
+      // Apply the persisted color scheme before paint to avoid a flash.
+      const stored = localStorage.getItem("moderno-scheme");
+      if (stored === "dark" || (!stored && matchMedia("(prefers-color-scheme: dark)").matches)) {
+        document.documentElement.classList.add("dark");
+      }
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">{t("nav.skipToContent")}</a>
+    <header class="site-header">
+      <div class="brand">
+        <a href={`/${locale}/`}>Moderno</a>
+      </div>
+      <nav class="site-nav" aria-label={t("nav.docs")}>
+        <a href={`/${locale}/`}>{t("nav.components")}</a>
+        <a href={`/${locale}/theme-builder`}>{t("nav.themeBuilder")}</a>
+      </nav>
+      <div class="header-tools">
+        <Search locale={locale} />
+        <LanguageSwitcher locale={locale} slug={slug} />
+        <ThemeToggle locale={locale} />
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside class="sidebar" aria-label={t("nav.docs")}>
+        {
+          [...groups].map(([group, items]) => (
+            <section class="sidebar-group">
+              <h2>{group}</h2>
+              <ul>
+                {items.map((p) => (
+                  <li>
+                    <a
+                      href={`/${locale}/${p.slug}`}
+                      aria-current={p.slug === slug ? "page" : undefined}
+                    >
+                      {p.entry.data.title}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))
+        }
+      </aside>
+
+      <main id="main" data-pagefind-body>
+        <slot />
+      </main>
+    </div>
+
+    <script src="../scripts/clipboard.ts"></script>
+  </body>
+</html>

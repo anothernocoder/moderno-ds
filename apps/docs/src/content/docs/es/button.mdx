@@ -1,0 +1,32 @@
+---
+title: Botón
+description: La primitiva de referencia — un botón simple que lleva los data-attributes de variante y tamaño de la receta, pintado por completo por la hoja de estilos compartida.
+group: Componentes
+order: 10
+component: Button
+pkg: "@moderno/react"
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import ButtonDemo from "../../../islands/ButtonDemo.svelte";
+
+Button establece el patrón de Moderno: el componente no lleva color ni radio;
+`data-variant`/`data-size` de la receta determinan cada estilo en
+`components.css`. Cambiar el tema lo vuelve a pintar sin tocar el marcado.
+
+<Preview
+  code={`<Button variant="primary">Guardar</Button>
+<Button variant="outline">Cancelar</Button>`}
+>
+  <ButtonDemo client:visible />
+</Preview>
+
+## Instalación
+
+<Install pkg="@moderno/react" />
+
+## Propiedades
+
+<PropsTable component="Button" />
