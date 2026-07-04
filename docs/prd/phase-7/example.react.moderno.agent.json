@@ -1,0 +1,125 @@
+{
+  "package": "@moderno/react",
+  "version": "0.1.0",
+  "kind": "components",
+  "framework": "react",
+  "generatedFrom": { "propsDoc": true, "mdxAgentBlock": true },
+  "components": [
+    {
+      "name": "Button",
+      "scope": "button",
+      "import": "import { Button } from \"@moderno/react\"",
+      "propsHash": "sha256:REPLACED_AT_BUILD",
+      "props": [
+        { "name": "size", "type": "\"sm\" | \"md\" | \"lg\"", "required": false, "default": "md" },
+        { "name": "variant", "type": "\"primary\" | \"secondary\" | \"outline\" | \"ghost\" | \"destructive\"", "required": false, "default": "primary" }
+      ],
+      "parts": [{ "name": "root" }],
+      "variants": {
+        "variant": ["primary", "secondary", "outline", "ghost", "destructive"],
+        "size": ["sm", "md", "lg"]
+      },
+      "examples": [
+        { "title": "Primary", "code": "<Button>Save</Button>" },
+        { "title": "Destructive, small", "code": "<Button variant=\"destructive\" size=\"sm\">Delete</Button>" }
+      ],
+      "guidance": {
+        "intent": "A single click action.",
+        "whenToUse": "Any imperative action: submit, open, delete.",
+        "whenNotToUse": [
+          { "case": "Navigation to a URL", "use": "an anchor / your router's Link, styled with the button recipe if needed" },
+          { "case": "On/off state", "use": "Toggle" }
+        ],
+        "gotchas": [
+          "variant/size are the only visual knobs; do not add className color overrides.",
+          "Disabled styling comes from the recipe; pass the disabled prop, don't style it."
+        ],
+        "theming": [
+          "Colors resolve from --primary / --destructive etc.; never pass a hex.",
+          "Corner radius is --radius; do not set border-radius inline."
+        ]
+      }
+    },
+    {
+      "name": "Select",
+      "scope": "select",
+      "import": "import { Select } from \"@moderno/react\"",
+      "propsHash": "sha256:REPLACED_AT_BUILD",
+      "props": [],
+      "parts": [
+        { "name": "root" },
+        { "name": "trigger" },
+        { "name": "content" },
+        { "name": "item" },
+        { "name": "label" }
+      ],
+      "guidance": {
+        "intent": "Pick one option from a known, small-to-medium list.",
+        "whenToUse": "Bounded set of choices where the trigger shows the current value.",
+        "whenNotToUse": [
+          { "case": "Free text + suggestions / large lists", "use": "Combobox" },
+          { "case": "2–5 visible mutually exclusive options", "use": "Radio Group" }
+        ],
+        "gotchas": [
+          "Content renders in a portal (popover surface); style via [data-scope=select][data-part=content], not a wrapper class."
+        ],
+        "theming": ["Floating surface uses --popover / --popover-foreground."]
+      }
+    },
+    {
+      "name": "Dialog",
+      "scope": "dialog",
+      "import": "import { Dialog } from \"@moderno/react\"",
+      "propsHash": "sha256:REPLACED_AT_BUILD",
+      "props": [],
+      "parts": [
+        { "name": "backdrop" },
+        { "name": "positioner" },
+        { "name": "content" },
+        { "name": "title" },
+        { "name": "description" }
+      ],
+      "guidance": {
+        "intent": "A modal surface that interrupts and traps focus until dismissed.",
+        "whenToUse": "A blocking decision or short focused task the user must resolve.",
+        "whenNotToUse": [
+          { "case": "Side panel / non-blocking, larger content", "use": "Drawer" },
+          { "case": "Transient, non-modal hint anchored to a trigger", "use": "Popover" }
+        ],
+        "gotchas": [
+          "Focus trap + scroll lock are handled by Ark; do not reimplement.",
+          "Always render a title part for the accessible name."
+        ],
+        "theming": ["content uses --popover surface; backdrop opacity is part-styled, not inline."]
+      }
+    },
+    {
+      "name": "Field",
+      "scope": "field",
+      "import": "import { Field } from \"@moderno/react\"",
+      "propsHash": "sha256:REPLACED_AT_BUILD",
+      "props": [],
+      "parts": [
+        { "name": "root" },
+        { "name": "label" },
+        { "name": "input" },
+        { "name": "textarea" },
+        { "name": "helper-text" },
+        { "name": "error-text" },
+        { "name": "required-indicator" }
+      ],
+      "guidance": {
+        "intent": "A labelled form control with helper/error wiring.",
+        "whenToUse": "Any text/textarea input that needs a label and validation messaging.",
+        "whenNotToUse": [
+          { "case": "Boolean input", "use": "Checkbox or Switch" }
+        ],
+        "gotchas": [
+          "label/input association is automatic via the parts; do not add htmlFor by hand.",
+          "error-text is announced; put validation copy there, not in a sibling div."
+        ],
+        "theming": ["input border uses --input; focus ring uses --ring."]
+      }
+    }
+  ]
+}
