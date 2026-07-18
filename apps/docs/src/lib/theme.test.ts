@@ -74,6 +74,22 @@ describe("default + URL persistence", () => {
     expect(buildTheme(defaultThemeState()).valid).toBe(true);
   });
 
+  it("derives the default from the registry theme-moderno item", () => {
+    const def = defaultThemeState();
+    const registry = tokensToState(modernoTokens);
+    expect(def.light).toEqual(registry.light);
+    expect(def.dark).toEqual(registry.dark);
+    // Still a blank slate for the consumer's own theme name.
+    expect(def.name).toBe("custom");
+    expect(def.brand).toBe(null);
+  });
+
+  it("returns fresh scope objects on every call (editor mutations don't stick)", () => {
+    const a = defaultThemeState();
+    a.light.primary = "oklch(0.5 0.2 250)";
+    expect(defaultThemeState().light.primary).not.toBe("oklch(0.5 0.2 250)");
+  });
+
   it("round-trips a state through encode/decode", () => {
     const state = defaultThemeState();
     state.name = "acme";
