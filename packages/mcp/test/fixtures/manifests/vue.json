@@ -1,0 +1,28 @@
+{
+  "package": "@moderno/vue",
+  "version": "0.5.0",
+  "kind": "components",
+  "framework": "vue",
+  "generatedFrom": { "propsDoc": true, "mdxAgentBlock": true },
+  "components": [
+    {
+      "name": "Button",
+      "scope": "button",
+      "import": "import { Button } from \"@moderno/vue\"",
+      "propsHash": "sha256:fixture-button-vue",
+      "props": [{ "name": "variant", "type": "\"primary\" | \"outline\"", "required": false }],
+      "parts": [{ "name": "root" }],
+      "variants": { "variant": ["primary", "outline"] },
+      "examples": [
+        {
+          "title": "Primary",
+          "code": "<script setup lang=\"ts\">\nimport { Button } from \"@moderno/vue\";\n</script>\n\n<template>\n  <Button variant=\"primary\">Save</Button>\n</template>"
+        }
+      ],
+      "guidance": {
+        "intent": "A single click action.",
+        "whenToUse": "Any imperative action: submit, open, delete."
+      }
+    }
+  ]
+}

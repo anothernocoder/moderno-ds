@@ -1,0 +1,37 @@
+{
+  "name": "@moderno/mcp",
+  "version": "0.0.0",
+  "description": "Local stdio MCP server exposing Moderno's component knowledge to coding agents: search_components, get_component_api, get_examples, get_contract. Aggregates moderno.agent.json from the consumer's node_modules at startup, so answers are pinned to the installed @moderno/* versions.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "moderno-mcp": "./dist/bin.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsup"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "@moderno/props-doc": "workspace:*",
+    "tsup": "^8.3.5"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

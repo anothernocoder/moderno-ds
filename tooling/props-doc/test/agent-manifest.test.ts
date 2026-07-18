@@ -63,6 +63,41 @@ describe("buildComponentsManifest", () => {
     expect(select.variants).toEqual({ size: ["sm", "md", "lg"] });
   });
 
+  it("attaches framework-specific examples, not the react snippet reused verbatim", () => {
+    const button = manifest.components.find((c) => c.name === "Button")!;
+    expect(button.examples).toBeDefined();
+    expect(button.examples!.length).toBeGreaterThan(0);
+    expect(button.examples![0]!.code).toContain('from "@moderno/vue"');
+    expect(button.examples![0]!.code).toContain("<script setup");
+
+    const reactManifest = buildComponentsManifest({
+      packageName: "@moderno/react",
+      version: "1.2.3",
+      framework: "react",
+      reactTsConfigFilePath: reactTsConfig,
+      guidance: {},
+    });
+    const reactButton = reactManifest.components.find((c) => c.name === "Button")!;
+    expect(reactButton.examples![0]!.code).toContain('from "@moderno/react"');
+    expect(reactButton.examples![0]!.code).not.toContain("<script setup");
+  });
+
+  it("covers every vertical-slice component with examples for every shipped framework", () => {
+    for (const framework of ["react", "vue", "svelte", "solid"] as const) {
+      const fwManifest = buildComponentsManifest({
+        packageName: `@moderno/${framework}`,
+        version: "0.1.0",
+        framework,
+        reactTsConfigFilePath: reactTsConfig,
+        guidance: {},
+      });
+      for (const component of fwManifest.components) {
+        expect(component.examples, `${framework}/${component.name}`).toBeDefined();
+        expect(component.examples!.length, `${framework}/${component.name}`).toBeGreaterThan(0);
+      }
+    }
+  });
+
   it("attaches guidance only for components a caller supplied it for", () => {
     const button = manifest.components.find((c) => c.name === "Button")!;
     expect(button.guidance).toEqual({ intent: "A single click action." });
