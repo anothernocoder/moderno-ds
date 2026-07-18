@@ -5,6 +5,20 @@ group: Components
 order: 10
 component: Button
 pkg: "@moderno/react"
+agent:
+  intent: A single click action.
+  whenToUse: "Any imperative action: submit, open, delete."
+  whenNotToUse:
+    - case: Navigation to a URL
+      use: an anchor / your router's Link, styled with the button recipe if needed
+    - case: On/off state
+      use: Toggle
+  gotchas:
+    - "variant/size are the only visual knobs; do not add className color overrides."
+    - "Disabled styling comes from the recipe; pass the disabled prop, don't style it."
+  theming:
+    - "Colors resolve from --primary / --destructive etc.; never pass a hex."
+    - "Corner radius is --radius; do not set border-radius inline."
 ---
 
 import Preview from "../../../components/Preview.astro";

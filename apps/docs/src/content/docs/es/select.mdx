@@ -1,0 +1,46 @@
+---
+title: Select
+description: Un selector de colección + popover — Ark maneja typeahead, navegación por teclado y posicionamiento; la receta size de Moderno agrega un data-size a la raíz para que components.css ajuste la densidad del trigger/menú.
+group: Componentes
+order: 40
+component: Select
+pkg: "@moderno/react"
+---
+
+import CodeBlock from "../../../components/CodeBlock.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+
+Solo `Select.Root` está envuelto, para inyectar el `data-size` de la receta
+`size`; el resto de las partes son las de Ark tal cual, pintadas por
+`components.css` según el `data-part` de Ark más `data-highlighted`/
+`data-state`. El menú se renderiza en un `Portal`, desmontado mientras está
+cerrado, así que SSR/hidratación se mantienen limpios.
+
+<CodeBlock
+  code={`<Select.Root collection={frameworks} size="md">
+  <Select.Label>Framework</Select.Label>
+  <Select.Trigger>
+    <Select.ValueText placeholder="Selecciona un framework" />
+  </Select.Trigger>
+  <Portal>
+    <Select.Positioner>
+      <Select.Content>
+        {frameworks.items.map((item) => (
+          <Select.Item key={item.value} item={item}>
+            {item.label}
+          </Select.Item>
+        ))}
+      </Select.Content>
+    </Select.Positioner>
+  </Portal>
+</Select.Root>`}
+/>
+
+## Instalación
+
+<Install pkg="@moderno/react" />
+
+## Propiedades
+
+<PropsTable component="Select" />

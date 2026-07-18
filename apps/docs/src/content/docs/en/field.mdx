@@ -1,0 +1,45 @@
+---
+title: Field
+description: A labelled form control with helper/error wiring — Ark's Field machine owns the label/id association and the invalid/disabled/required data-attributes; components.css does the rest.
+group: Components
+order: 20
+component: Field
+pkg: "@moderno/react"
+agent:
+  intent: A labelled form control with helper/error wiring.
+  whenToUse: Any text/textarea input that needs a label and validation messaging.
+  whenNotToUse:
+    - case: Boolean input
+      use: Checkbox or Switch
+  gotchas:
+    - label/input association is automatic via the parts; do not add htmlFor by hand.
+    - "error-text is announced; put validation copy there, not in a sibling div."
+  theming:
+    - input border uses --input; focus ring uses --ring.
+---
+
+import CodeBlock from "../../../components/CodeBlock.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+
+Field wires accessibility, not appearance: Ark's Field machine associates
+`label[for]` with the control's `id` and mirrors `aria-invalid`/
+`aria-describedby`/`aria-required` onto `data-invalid`/`data-disabled`/
+`data-required` — those attributes, not CVA variants, are what
+`components.css` keys the error/disabled look off.
+
+<CodeBlock
+  code={`<Field.Root invalid={hasError}>
+  <Field.Label>Email</Field.Label>
+  <Field.Input type="email" />
+  <Field.ErrorText>Enter a valid email.</Field.ErrorText>
+</Field.Root>`}
+/>
+
+## Installation
+
+<Install pkg="@moderno/react" />
+
+## Props
+
+<PropsTable component="Field" />

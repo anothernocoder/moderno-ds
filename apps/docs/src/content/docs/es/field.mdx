@@ -1,0 +1,34 @@
+---
+title: Field
+description: Un control de formulario con etiqueta y manejo de ayuda/error — la máquina Field de Ark asocia la etiqueta con el id y expone los data-attributes de inválido/deshabilitado/requerido; components.css hace el resto.
+group: Componentes
+order: 20
+component: Field
+pkg: "@moderno/react"
+---
+
+import CodeBlock from "../../../components/CodeBlock.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+
+Field resuelve accesibilidad, no apariencia: la máquina Field de Ark asocia
+`label[for]` con el `id` del control y refleja `aria-invalid`/
+`aria-describedby`/`aria-required` en `data-invalid`/`data-disabled`/
+`data-required` — esos atributos, no variantes de CVA, son los que
+`components.css` usa para el estilo de error/deshabilitado.
+
+<CodeBlock
+  code={`<Field.Root invalid={hasError}>
+  <Field.Label>Email</Field.Label>
+  <Field.Input type="email" />
+  <Field.ErrorText>Ingresa un email válido.</Field.ErrorText>
+</Field.Root>`}
+/>
+
+## Instalación
+
+<Install pkg="@moderno/react" />
+
+## Propiedades
+
+<PropsTable component="Field" />
