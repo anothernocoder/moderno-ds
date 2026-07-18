@@ -1,7 +1,7 @@
 /**
  * End-to-end: a real MCP `Client` talking to `createServer()` over an
  * in-memory transport (no stdio plumbing, same protocol path `bin.ts` uses).
- * Exercises F7.1 (four tools, valid schemas) and F7.2 (every tool honors
+ * Exercises F7.1 (five tools, valid schemas) and F7.2 (every tool honors
  * `framework`) through the actual SDK, not the pure tool functions directly.
  */
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
@@ -32,7 +32,7 @@ function structured(result: Awaited<ReturnType<Client["callTool"]>>): Record<str
 }
 
 describe("@moderno/mcp server", () => {
-  it("exposes exactly the four read tools with valid schemas", async () => {
+  it("exposes exactly the five read/verify tools with valid schemas", async () => {
     const { tools } = await client.listTools();
     const names = tools.map((t) => t.name).sort();
     expect(names).toEqual([
@@ -40,6 +40,7 @@ describe("@moderno/mcp server", () => {
       "get_contract",
       "get_examples",
       "search_components",
+      "validate_usage",
     ]);
     for (const tool of tools) {
       expect(tool.inputSchema, tool.name).toBeDefined();
@@ -91,6 +92,26 @@ describe("@moderno/mcp server", () => {
     const data = structured(result) as { slots: { color: string[] }; rules: string[] };
     expect(data.slots.color).toContain("--primary");
     expect(data.rules.length).toBeGreaterThan(0);
+  });
+
+  it("validate_usage: flags a hardcoded color, an invalid prop, and a raw-Ark import (F7.5)", async () => {
+    const result = await client.callTool({
+      name: "validate_usage",
+      arguments: {
+        framework: "react",
+        code: [
+          'import { Dialog } from "@ark-ui/react";',
+          '<Button variant="primaryy" style={{ color: "#ff0000" }}>Save</Button>',
+        ].join("\n"),
+      },
+    });
+    const { findings } = structured(result) as { findings: { ruleId: string }[] };
+    const ruleIds = findings.map((f) => f.ruleId).sort();
+    expect(ruleIds).toEqual([
+      "moderno/no-hardcoded-color",
+      "moderno/no-raw-ark",
+      "moderno/valid-props",
+    ]);
   });
 
   it("returns an MCP tool error (not a thrown exception) for an uninstalled framework", async () => {
