@@ -1,10 +1,7 @@
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import {
-  AGENT_COMPONENTS,
-  buildComponentsManifest,
-  buildContractManifest,
-} from "../src/agent-manifest.ts";
+import { AGENT_COMPONENTS, buildComponentsManifest } from "../src/agent-manifest.ts";
+import { buildContractManifest } from "../src/contract-manifest.ts";
 
 const reactTsConfig = fileURLToPath(
   new URL("../../../packages/react/tsconfig.json", import.meta.url),

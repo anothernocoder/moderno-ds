@@ -9,18 +9,19 @@
  * Guidance is read once from the English docs (`apps/docs/src/content/docs/en`)
  * and reused verbatim across every framework's manifest — see
  * `mdx-frontmatter.ts`.
+ *
+ * The `tokens` target dynamically imports `contract-manifest.ts` instead of
+ * `agent-manifest.ts` — a static top-level import would pull in
+ * `agent-manifest.ts`'s `@moderno/core` dependency even on this branch, and
+ * `@moderno/tokens`'s build has no reason to require `@moderno/core`'s `dist`
+ * to exist first (nor a package.json edge telling `pnpm -r build` to build it
+ * first).
  */
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import {
-  AGENT_COMPONENTS,
-  buildComponentsManifest,
-  buildContractManifest,
-  type AgentGuidance,
-  type Framework,
-} from "./agent-manifest.ts";
 import { readAgentGuidance } from "./mdx-frontmatter.ts";
+import type { AgentComponentSpec, AgentGuidance, Framework } from "./agent-manifest.ts";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(here, "../../..");
@@ -41,13 +42,15 @@ function readVersion(packageDir: string): string {
   return pkg.version;
 }
 
-function readAllGuidance(): Record<string, AgentGuidance | undefined> {
+function readAllGuidance(
+  components: AgentComponentSpec[],
+): Record<string, AgentGuidance | undefined> {
   return Object.fromEntries(
-    AGENT_COMPONENTS.map((c) => [c.name, readAgentGuidance(join(DOCS_EN_DIR, `${c.slug}.mdx`))]),
+    components.map((c) => [c.name, readAgentGuidance(join(DOCS_EN_DIR, `${c.slug}.mdx`))]),
   );
 }
 
-function main(): number {
+async function main(): Promise<number> {
   const [target, outDirArg] = process.argv.slice(2);
   if (!target || !(target === "tokens" || target in FRAMEWORK_PACKAGES)) {
     console.error("usage: moderno-agent-manifest <react|vue|svelte|solid|tokens> [outDir]");
@@ -60,13 +63,16 @@ function main(): number {
 
   const manifest =
     target === "tokens"
-      ? buildContractManifest(readVersion(packageDir))
-      : buildComponentsManifest({
-          ...FRAMEWORK_PACKAGES[target]!,
-          version: readVersion(packageDir),
-          reactTsConfigFilePath: REACT_TSCONFIG,
-          guidance: readAllGuidance(),
-        });
+      ? (await import("./contract-manifest.ts")).buildContractManifest(readVersion(packageDir))
+      : await (async () => {
+          const { AGENT_COMPONENTS, buildComponentsManifest } = await import("./agent-manifest.ts");
+          return buildComponentsManifest({
+            ...FRAMEWORK_PACKAGES[target]!,
+            version: readVersion(packageDir),
+            reactTsConfigFilePath: REACT_TSCONFIG,
+            guidance: readAllGuidance(AGENT_COMPONENTS),
+          });
+        })();
 
   const file = join(outDir, "moderno.agent.json");
   writeFileSync(file, JSON.stringify(manifest, null, 2) + "\n");
@@ -77,4 +83,4 @@ function main(): number {
   return 0;
 }
 
-process.exit(main());
+process.exit(await main());

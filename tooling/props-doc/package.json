@@ -21,6 +21,10 @@
       "types": "./dist/agent-manifest.d.ts",
       "import": "./dist/agent-manifest.js"
     },
+    "./contract-manifest": {
+      "types": "./dist/contract-manifest.d.ts",
+      "import": "./dist/contract-manifest.js"
+    },
     "./package.json": "./package.json"
   },
   "scripts": {

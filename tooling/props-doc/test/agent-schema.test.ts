@@ -2,11 +2,8 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import Ajv from "ajv";
 import { describe, expect, it } from "vitest";
-import {
-  buildComponentsManifest,
-  buildContractManifest,
-  type AgentGuidance,
-} from "../src/agent-manifest.ts";
+import { buildComponentsManifest, type AgentGuidance } from "../src/agent-manifest.ts";
+import { buildContractManifest } from "../src/contract-manifest.ts";
 
 const schemaPath = fileURLToPath(
   new URL("../../../docs/prd/phase-7/moderno.agent.schema.json", import.meta.url),
