@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Architecture review — moderno-ds</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module">
+      import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+      mermaid.initialize({ startOnLoad: true, theme: "neutral", securityLevel: "loose" });
+    </script>
+    <style>
+      .seam { stroke-dasharray: 4 4; }
+      .deep { background: linear-gradient(135deg, #0f172a, #1e293b); }
+      .modlabel { font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; }
+    </style>
+  </head>
+  <body class="bg-stone-50 text-slate-900 font-sans">
+    <main class="max-w-5xl mx-auto px-6 py-12 space-y-12">
+
+      <header class="space-y-3">
+        <h1 class="font-serif text-4xl">Architecture review — <span class="italic">moderno-ds</span></h1>
+        <p class="text-sm text-slate-500">2026-07-18 · packages, tooling, registry, docs</p>
+        <div class="flex flex-wrap gap-4 text-xs text-slate-600 pt-2">
+          <span class="flex items-center gap-1.5"><span class="inline-block w-4 h-3 border border-slate-400 bg-white"></span> module</span>
+          <span class="flex items-center gap-1.5"><svg width="20" height="6"><line x1="0" y1="3" x2="20" y2="3" stroke="#64748b" stroke-width="1.5" class="seam"/></svg> seam</span>
+          <span class="flex items-center gap-1.5"><svg width="20" height="6"><line x1="0" y1="3" x2="20" y2="3" stroke="#dc2626" stroke-width="2"/></svg> leak</span>
+          <span class="flex items-center gap-1.5"><span class="inline-block w-4 h-3 deep rounded-sm"></span> deep module</span>
+        </div>
+      </header>
+
+      <section id="candidates" class="space-y-10">
+
+        <!-- ============ CANDIDATE 1 ============ -->
+        <article id="c1" class="rounded-xl border border-slate-200 bg-white shadow-sm p-8 space-y-6">
+          <div class="flex items-start justify-between gap-4">
+            <h2 class="font-serif text-2xl">1 · Export the Token contract as data</h2>
+            <div class="flex gap-2 shrink-0">
+              <span class="rounded-full bg-emerald-100 text-emerald-800 text-xs font-medium px-3 py-1">Strong</span>
+              <span class="rounded-full bg-slate-100 text-slate-600 text-xs px-3 py-1">in-process</span>
+            </div>
+          </div>
+
+          <div class="font-mono text-sm text-slate-600 leading-relaxed">
+            packages/tokens/src/tokens.css · packages/tokens/src/preset.css · packages/tokens/test/contract.test.ts<br/>
+            tooling/theme-compile/src/index.ts (REQUIRED_COLOR_SLOTS, CONTRAST_PAIRS)<br/>
+            apps/docs/src/lib/theme.ts (COLOR_SLOTS — “mirrored from theme-compile”)<br/>
+            apps/docs/src/islands/ThemeBuilder.svelte (GROUPS) · CONTRACT.md
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-4">
+            <div class="rounded-lg border border-slate-200 bg-stone-50 p-4">
+              <p class="modlabel text-slate-400 mb-2">Before — six hand-copied slot lists</p>
+              <pre class="mermaid">
+flowchart TB
+  G(("Token contract<br/>no module owns it")):::ghost
+  G -. copy .-> A["tokens.css"]
+  G -. copy .-> B["preset.css"]
+  G -. copy .-> C["contract.test.ts"]
+  G -. copy .-> D["theme-compile"]
+  G -. copy .-> E["docs theme.ts"]
+  G -. copy .-> F["ThemeBuilder GROUPS<br/>(no test)"]
+  classDef ghost fill:#fff,stroke:#dc2626,stroke-dasharray:4 4,color:#dc2626;
+  classDef leak stroke:#dc2626,stroke-width:2px;
+  class A,B,C,D,E,F leak
+              </pre>
+            </div>
+            <div class="rounded-lg border border-slate-200 bg-stone-50 p-4">
+              <p class="modlabel text-slate-400 mb-2">After — one deep module, five derivations</p>
+              <pre class="mermaid">
+flowchart TB
+  T["@moderno/tokens<br/>contract data:<br/>name · type · group · contrast pair"]:::deep
+  T --> D["theme-compile<br/>derives required slots"]
+  T --> E["theme.ts<br/>derives slot lists"]
+  T --> F["GROUPS<br/>derives from group field"]
+  T --> C["contract.test<br/>asserts tokens.css satisfies it"]
+  classDef deep fill:#0f172a,color:#f8fafc,stroke:#0f172a;
+              </pre>
+            </div>
+          </div>
+
+          <div class="space-y-2 text-slate-700">
+            <p><strong>Problem</strong> — the Token contract exists only as CSS declarations plus six parallel literal arrays; the Theme Builder’s <code class="text-sm">GROUPS</code> copy is unguarded, so a new slot makes theme compile require an input the editor never renders.</p>
+            <p><strong>Solution</strong> — <code class="text-sm">@moderno/tokens</code> exports the contract as data (slot name, type, group, contrast pair); every other list becomes an import-and-derive.</p>
+          </div>
+
+          <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-1 text-sm text-slate-700 list-disc list-inside">
+            <li>locality: add a slot in one module</li>
+            <li>drift becomes impossible, not detected</li>
+            <li>editor can’t omit compiler-required slots</li>
+            <li>interface shrinks; one list replaces six</li>
+          </ul>
+
+          <div class="rounded-md bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-900">
+            ADR-0001 already concedes the friction: “schema changes require updating builder controls, compile script, and the CONTRACT.md slot contract together.” This deepening retires that consequence rather than contradicting the ADR. Ship the data as source <code>.ts</code>/JSON via <code>exports</code> — no bundler step, consistent with the CSS-package toolchain decision.
+          </div>
+        </article>
+
+        <!-- ============ CANDIDATE 2 ============ -->
+        <article id="c2" class="rounded-xl border border-slate-200 bg-white shadow-sm p-8 space-y-6">
+          <div class="flex items-start justify-between gap-4">
+            <h2 class="font-serif text-2xl">2 · Push the chart render tree into charts-core</h2>
+            <div class="flex gap-2 shrink-0">
+              <span class="rounded-full bg-emerald-100 text-emerald-800 text-xs font-medium px-3 py-1">Strong</span>
+              <span class="rounded-full bg-slate-100 text-slate-600 text-xs px-3 py-1">ports &amp; adapters</span>
+            </div>
+          </div>
+
+          <div class="font-mono text-sm text-slate-600 leading-relaxed">
+            packages/charts-core/src/* · packages/react/src/charts.tsx (269 L) · packages/vue/src/charts.ts (245 L)<br/>
+            packages/solid/src/charts.tsx (222 L) · packages/svelte/src/{ChartFrame,Line,Area,Bar,Scatter}Chart.svelte (~280 L)
+          </div>
+
+          <!-- hand-built cross-section: mass moves from bindings into the core -->
+          <div class="grid md:grid-cols-2 gap-4">
+            <div class="rounded-lg border border-slate-200 bg-stone-50 p-4">
+              <p class="modlabel text-slate-400 mb-3">Before — core stops one seam too shallow</p>
+              <div class="space-y-2">
+                <div class="border border-slate-400 bg-white rounded px-3 py-2">
+                  <p class="modlabel text-slate-500">charts-core</p>
+                  <p class="text-xs text-slate-600">scales · ticks · paths (geometry only)</p>
+                </div>
+                <svg class="mx-auto block" width="220" height="18"><line x1="110" y1="0" x2="110" y2="18" stroke="#64748b" class="seam" stroke-width="1.5"/></svg>
+                <div class="grid grid-cols-4 gap-1.5">
+                  <div class="border-2 border-red-400 bg-red-50 rounded px-1.5 py-2 text-center">
+                    <p class="modlabel text-red-700">react</p>
+                    <p class="text-[0.6rem] text-red-800 leading-tight mt-1">FrameModel copy<br/>label math<br/>SVG tree ×4 charts</p>
+                  </div>
+                  <div class="border-2 border-red-400 bg-red-50 rounded px-1.5 py-2 text-center">
+                    <p class="modlabel text-red-700">vue</p>
+                    <p class="text-[0.6rem] text-red-800 leading-tight mt-1">FrameModel copy<br/>label math<br/>SVG tree ×4 charts</p>
+                  </div>
+                  <div class="border-2 border-red-400 bg-red-50 rounded px-1.5 py-2 text-center">
+                    <p class="modlabel text-red-700">svelte</p>
+                    <p class="text-[0.6rem] text-red-800 leading-tight mt-1">FrameModel copy<br/>label math<br/>SVG tree ×5 files</p>
+                  </div>
+                  <div class="border-2 border-red-400 bg-red-50 rounded px-1.5 py-2 text-center">
+                    <p class="modlabel text-red-700">solid</p>
+                    <p class="text-[0.6rem] text-red-800 leading-tight mt-1">FrameModel copy<br/>label math<br/>SVG tree ×4 charts</p>
+                  </div>
+                </div>
+                <p class="text-[0.65rem] text-red-700 text-center italic">“byte-identical to the React reference” — asserted in a comment, tested nowhere</p>
+              </div>
+            </div>
+            <div class="rounded-lg border border-slate-200 bg-stone-50 p-4">
+              <p class="modlabel text-slate-400 mb-3">After — deep core, four thin adapters</p>
+              <div class="space-y-2">
+                <div class="deep rounded px-3 py-5 text-slate-50">
+                  <p class="modlabel text-slate-300">charts-core</p>
+                  <p class="text-xs text-slate-200">geometry <span class="text-slate-400">+</span> full render description:<br/>label anchors · axis endpoints · data-part tree · FrameModel (once)</p>
+                </div>
+                <svg class="mx-auto block" width="220" height="18"><line x1="110" y1="0" x2="110" y2="18" stroke="#64748b" class="seam" stroke-width="1.5"/></svg>
+                <div class="grid grid-cols-4 gap-1.5">
+                  <div class="border border-slate-300 bg-white rounded px-1.5 py-1 text-center"><p class="modlabel text-slate-500">react</p><p class="text-[0.6rem] text-slate-400">~15-line walker</p></div>
+                  <div class="border border-slate-300 bg-white rounded px-1.5 py-1 text-center"><p class="modlabel text-slate-500">vue</p><p class="text-[0.6rem] text-slate-400">~15-line walker</p></div>
+                  <div class="border border-slate-300 bg-white rounded px-1.5 py-1 text-center"><p class="modlabel text-slate-500">svelte</p><p class="text-[0.6rem] text-slate-400">~15-line walker</p></div>
+                  <div class="border border-slate-300 bg-white rounded px-1.5 py-1 text-center"><p class="modlabel text-slate-500">solid</p><p class="text-[0.6rem] text-slate-400">~15-line walker</p></div>
+                </div>
+                <p class="text-[0.65rem] text-emerald-700 text-center italic">one golden-SVG parity test backs the claim</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-2 text-slate-700">
+            <p><strong>Problem</strong> — charts-core computes pixel geometry but not label anchors (<code class="text-sm">bottom + LABEL_GAP + 8</code>) or the <code class="text-sm">data-part</code> SVG structure, so that knowledge leaks across the seam and is re-implemented in four templating dialects.</p>
+            <p><strong>Solution</strong> — builders emit the complete render description (or a serializable render-node tree); each Primitive binding becomes a trivial adapter that walks it.</p>
+          </div>
+
+          <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-1 text-sm text-slate-700 list-disc list-inside">
+            <li>locality: axis change edits one module</li>
+            <li>leverage: fifth chart type, one implementation</li>
+            <li>golden parity test becomes writable</li>
+            <li>~700 duplicated lines deleted</li>
+          </ul>
+        </article>
+
+        <!-- ============ CANDIDATE 3 ============ -->
+        <article id="c3" class="rounded-xl border border-slate-200 bg-white shadow-sm p-8 space-y-6">
+          <div class="flex items-start justify-between gap-4">
+            <h2 class="font-serif text-2xl">3 · Theme Builder default derives from the registry Theme item</h2>
+            <div class="flex gap-2 shrink-0">
+              <span class="rounded-full bg-amber-100 text-amber-800 text-xs font-medium px-3 py-1">Worth exploring</span>
+              <span class="rounded-full bg-slate-100 text-slate-600 text-xs px-3 py-1">in-process</span>
+            </div>
+          </div>
+
+          <div class="font-mono text-sm text-slate-600 leading-relaxed">
+            apps/docs/src/lib/theme.ts:132-195 (LIGHT / DARK) · registry/themes/theme-moderno/tokens.dtcg.json
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-4">
+            <div class="rounded-lg border border-slate-200 bg-stone-50 p-4 flex flex-col justify-center">
+              <p class="modlabel text-slate-400 mb-3">Before — two authorities</p>
+              <div class="flex items-center justify-center gap-3">
+                <div class="border border-slate-400 bg-white rounded px-3 py-4 text-center w-36">
+                  <p class="modlabel text-slate-500">registry</p>
+                  <p class="text-[0.65rem] text-slate-600">tokens.dtcg.json<br/>theme-moderno</p>
+                </div>
+                <span class="text-red-600 font-serif text-3xl" title="no test asserts equality">≟</span>
+                <div class="border-2 border-red-400 bg-red-50 rounded px-3 py-4 text-center w-36">
+                  <p class="modlabel text-red-700">theme.ts</p>
+                  <p class="text-[0.65rem] text-red-800">LIGHT / DARK<br/>hand-flattened copy, 60 L</p>
+                </div>
+              </div>
+              <p class="text-[0.65rem] text-red-700 text-center italic mt-3">edit one, the other silently diverges — no test fails</p>
+            </div>
+            <div class="rounded-lg border border-slate-200 bg-stone-50 p-4 flex flex-col justify-center">
+              <p class="modlabel text-slate-400 mb-3">After — one authority, one adapter</p>
+              <div class="flex items-center justify-center gap-3">
+                <div class="deep rounded px-3 py-4 text-center w-36 text-slate-50">
+                  <p class="modlabel text-slate-300">registry</p>
+                  <p class="text-[0.65rem] text-slate-200">tokens.dtcg.json<br/>single source of truth</p>
+                </div>
+                <div class="text-center">
+                  <svg width="70" height="20"><line x1="0" y1="10" x2="60" y2="10" stroke="#334155" stroke-width="1.5"/><polygon points="60,5 70,10 60,15" fill="#334155"/></svg>
+                  <p class="text-[0.6rem] font-mono text-slate-500 -mt-1">tokensToState()</p>
+                </div>
+                <div class="border border-slate-300 bg-white rounded px-3 py-4 text-center w-36">
+                  <p class="modlabel text-slate-500">builder state</p>
+                  <p class="text-[0.65rem] text-slate-600">defaultThemeState()<br/>derived, 3 L</p>
+                </div>
+              </div>
+              <p class="text-[0.65rem] text-emerald-700 text-center italic mt-3">the adapter already exists — it just isn’t used here</p>
+            </div>
+          </div>
+
+          <div class="space-y-2 text-slate-700">
+            <p><strong>Problem</strong> — the theme-moderno Theme item has two authorities: the DTCG file in the Registry and a hand-flattened copy inside the docs, with no test tying them together.</p>
+            <p><strong>Solution</strong> — <code class="text-sm">defaultThemeState()</code> calls the existing <code class="text-sm">tokensToState</code> adapter on the registry file; <code class="text-sm">LIGHT</code>/<code class="text-sm">DARK</code> are deleted.</p>
+          </div>
+
+          <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-1 text-sm text-slate-700 list-disc list-inside">
+            <li>deletion test passes: 60 lines vanish</li>
+            <li>Registry stays the single authority</li>
+            <li>locality: theme edits land in one file</li>
+          </ul>
+        </article>
+
+        <!-- ============ CANDIDATE 4 ============ -->
+        <article id="c4" class="rounded-xl border border-slate-200 bg-white shadow-sm p-8 space-y-6">
+          <div class="flex items-start justify-between gap-4">
+            <h2 class="font-serif text-2xl">4 · Extract the Theme Builder persistence module</h2>
+            <div class="flex gap-2 shrink-0">
+              <span class="rounded-full bg-amber-100 text-amber-800 text-xs font-medium px-3 py-1">Worth exploring</span>
+              <span class="rounded-full bg-slate-100 text-slate-600 text-xs px-3 py-1">local-substitutable</span>
+            </div>
+          </div>
+
+          <div class="font-mono text-sm text-slate-600 leading-relaxed">
+            apps/docs/src/islands/ThemeBuilder.svelte (459 L, zero tests) · apps/docs/src/lib/theme.ts (tested)
+          </div>
+
+          <!-- mass diagram -->
+          <div class="grid md:grid-cols-2 gap-4">
+            <div class="rounded-lg border border-slate-200 bg-stone-50 p-4">
+              <p class="modlabel text-slate-400 mb-3">Before — tests cover the easy mass</p>
+              <div class="flex items-end gap-4 justify-center h-56">
+                <div class="flex flex-col w-32">
+                  <div class="bg-emerald-100 border border-emerald-400 rounded-t px-2 py-1 text-center"><p class="text-[0.6rem] text-emerald-800">interface: pure helpers</p></div>
+                  <div class="bg-emerald-50 border border-t-0 border-emerald-300 rounded-b px-2 py-3 text-center h-16">
+                    <p class="modlabel text-emerald-700">theme.ts</p>
+                    <p class="text-[0.6rem] text-emerald-700">encode · decode · build<br/>✓ tested</p>
+                  </div>
+                </div>
+                <div class="flex flex-col w-40">
+                  <div class="bg-red-100 border border-red-400 rounded-t px-2 py-1 text-center"><p class="text-[0.6rem] text-red-800">interface: the whole island</p></div>
+                  <div class="bg-red-50 border border-t-0 border-red-300 rounded-b px-2 py-2 text-center h-44">
+                    <p class="modlabel text-red-700">ThemeBuilder.svelte</p>
+                    <p class="text-[0.6rem] text-red-800 leading-relaxed mt-1">?t= vs localStorage precedence<br/>silent decode failure<br/>encode-on-change $effect<br/>fetch errors swallowed<br/>✗ untested</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="rounded-lg border border-slate-200 bg-stone-50 p-4">
+              <p class="modlabel text-slate-400 mb-3">After — policy behind a small interface</p>
+              <div class="flex items-end gap-4 justify-center h-56">
+                <div class="flex flex-col w-40">
+                  <div class="bg-slate-200 border border-slate-500 rounded-t px-2 py-1 text-center"><p class="text-[0.6rem] text-slate-700">interface: hydrate() · persist()</p></div>
+                  <div class="deep border border-t-0 rounded-b px-2 py-2 text-center h-44 text-slate-50">
+                    <p class="modlabel text-slate-300">themeStore</p>
+                    <p class="text-[0.6rem] text-slate-200 leading-relaxed mt-1">precedence policy<br/>decode fallback<br/>storage + location injected<br/>✓ tested through the interface</p>
+                  </div>
+                </div>
+                <div class="flex flex-col w-32">
+                  <div class="bg-white border border-slate-300 rounded px-2 py-3 text-center h-16 flex flex-col justify-center">
+                    <p class="modlabel text-slate-500">island</p>
+                    <p class="text-[0.6rem] text-slate-500">thin view</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-2 text-slate-700">
+            <p><strong>Problem</strong> — the pure functions were extracted for testability, but the real bugs hide in how they’re called: hydration precedence, silent decode failures, and the persist-on-change effect live in untested glue.</p>
+            <p><strong>Solution</strong> — a <code class="text-sm">themeStore</code> module owns hydration and persistence policy, accepting storage and location as dependencies; the island becomes a thin view.</p>
+          </div>
+
+          <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-1 text-sm text-slate-700 list-disc list-inside">
+            <li>the interface is the test surface</li>
+            <li>hydration policy testable without a browser</li>
+            <li>two adapters justify the seam: real storage, in-memory fake</li>
+          </ul>
+        </article>
+
+        <!-- ============ CANDIDATE 5 ============ -->
+        <article id="c5" class="rounded-xl border border-slate-200 bg-white shadow-sm p-8 space-y-6">
+          <div class="flex items-start justify-between gap-4">
+            <h2 class="font-serif text-2xl">5 · Bindings stop re-deriving what core and Ark own</h2>
+            <div class="flex gap-2 shrink-0">
+              <span class="rounded-full bg-amber-100 text-amber-800 text-xs font-medium px-3 py-1">Worth exploring</span>
+              <span class="rounded-full bg-slate-100 text-slate-600 text-xs px-3 py-1">in-process · small</span>
+            </div>
+          </div>
+
+          <div class="font-mono text-sm text-slate-600 leading-relaxed">
+            packages/{vue,solid,svelte}/src/button.* · select.* (×7 files) · packages/react/src/select.tsx:31-45 · packages/core/src/recipes.ts
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-4">
+            <div class="rounded-lg border border-slate-200 bg-stone-50 p-4">
+              <p class="modlabel text-slate-400 mb-2">Before — the incantation, seven times</p>
+              <pre class="text-[0.65rem] font-mono bg-white border border-red-200 rounded p-3 overflow-x-auto text-red-900">// repeated in vue, solid, svelte × button, select…
+type ButtonVariant = NonNullable&lt;
+  VariantProps&lt;typeof buttonRecipe.variants&gt;["variant"]&gt;;
+
+// react/select.tsx: 13 Ark parts enumerated by hand
+export const Select = { Root, Label: ArkSelect.Label,
+  Control: …, Trigger: …, /* …9 more, drops any
+  part Ark adds in a future version */ };</pre>
+            </div>
+            <div class="rounded-lg border border-slate-200 bg-stone-50 p-4">
+              <p class="modlabel text-slate-400 mb-2">After — named types at the seam</p>
+              <pre class="text-[0.65rem] font-mono bg-white border border-emerald-200 rounded p-3 overflow-x-auto text-emerald-900">// @moderno/core exports next to the recipes
+export type { ButtonVariant, ButtonSize, SelectSize };
+
+// every binding imports the name
+import type { ButtonVariant } from "@moderno/core";
+
+// react joins the spread the other three use
+export const Select = { ...ArkSelect, Root };</pre>
+            </div>
+          </div>
+
+          <div class="space-y-2 text-slate-700">
+            <p><strong>Problem</strong> — each binding re-derives Component variant types with the same type-level incantation, and React’s Select hand-mirrors Ark’s part list — a shallow module that silently drops parts Ark adds later.</p>
+            <p><strong>Solution</strong> — <code class="text-sm">@moderno/core</code> exports the derived variant types beside the recipes; React adopts the spread the other three bindings already use.</p>
+          </div>
+
+          <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-1 text-sm text-slate-700 list-disc list-inside">
+            <li>leverage: one derivation, N bindings</li>
+            <li>recipe rename ripples nowhere</li>
+            <li>drift-prone hand mirror deleted</li>
+          </ul>
+        </article>
+
+        <!-- ============ CANDIDATE 6 ============ -->
+        <article id="c6" class="rounded-xl border border-slate-200 bg-white shadow-sm p-8 space-y-6">
+          <div class="flex items-start justify-between gap-4">
+            <h2 class="font-serif text-2xl">6 · Move the PropsTable manifest next to the Primitives</h2>
+            <div class="flex gap-2 shrink-0">
+              <span class="rounded-full bg-slate-200 text-slate-700 text-xs font-medium px-3 py-1">Speculative</span>
+              <span class="rounded-full bg-slate-100 text-slate-600 text-xs px-3 py-1">in-process</span>
+            </div>
+          </div>
+
+          <div class="font-mono text-sm text-slate-600 leading-relaxed">
+            tooling/props-doc/src/bin.ts:21-28 (ENTRIES, untested) · tooling/props-doc/src/index.ts (extractProps, tested)
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-4">
+            <div class="rounded-lg border border-slate-200 bg-stone-50 p-4">
+              <p class="modlabel text-slate-400 mb-2">Before — knowledge far from its subject</p>
+              <pre class="mermaid">
+flowchart LR
+  B["props-doc bin.ts<br/>ENTRIES: 6 paths +<br/>type names, hardcoded"]:::leak
+  B -. must remember .-> P["packages/react<br/>Primitives"]
+  B --> X["extractProps<br/>(deep, tested)"]
+  X --> J["props/*.json → PropsTable"]
+  classDef leak stroke:#dc2626,stroke-width:2px;
+              </pre>
+            </div>
+            <div class="rounded-lg border border-slate-200 bg-stone-50 p-4">
+              <p class="modlabel text-slate-400 mb-2">After — manifest colocated, wiring guarded</p>
+              <pre class="mermaid">
+flowchart LR
+  P["packages/react<br/>Primitives + docs manifest"]:::deep
+  P --> X["extractProps<br/>(unchanged)"]
+  X --> J["props/*.json → PropsTable"]
+  T["test: every entry resolves"] --> P
+  classDef deep fill:#0f172a,color:#f8fafc,stroke:#0f172a;
+              </pre>
+            </div>
+          </div>
+
+          <div class="space-y-2 text-slate-700">
+            <p><strong>Problem</strong> — which Primitives get a PropsTable is decided by an untested hardcoded list in a build script; a renamed export only surfaces at docs build time, and a new Primitive is silently undocumented.</p>
+            <p><strong>Solution</strong> — colocate the manifest with the Primitives (or at minimum test that every entry resolves), keeping <code class="text-sm">extractProps</code> as the deep module it already is.</p>
+          </div>
+
+          <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-1 text-sm text-slate-700 list-disc list-inside">
+            <li>locality: new Primitive, one edit</li>
+            <li>broken wiring fails in tests, not builds</li>
+          </ul>
+        </article>
+
+      </section>
+
+      <!-- ============ TOP RECOMMENDATION ============ -->
+      <section id="top-recommendation" class="rounded-xl deep text-slate-50 p-10 space-y-4">
+        <p class="modlabel text-slate-400">Top recommendation</p>
+        <h2 class="font-serif text-3xl"><a href="#c1" class="underline decoration-slate-500 underline-offset-4 hover:decoration-slate-200">Export the Token contract as data</a></h2>
+        <p class="text-slate-300 max-w-3xl">Two independent explorations converged on it; ADR-0001 already names the friction as a consequence to live with. It is the cheapest of the strong candidates, it closes the one silent user-facing failure (a contract slot the compiler requires but the Theme Builder can’t edit), and it establishes the seam that candidates 3 and 6 then follow — the same shape the codebase’s best module, the shared theme-compile color engine, already models.</p>
+      </section>
+
+      <footer class="text-xs text-slate-400 pb-8">
+        Vocabulary: <span class="italic">module · interface · implementation · depth · seam · adapter · leverage · locality</span> — per the codebase-design skill. Domain terms per CONTEXT.md.
+      </footer>
+    </main>
+  </body>
+</html>
