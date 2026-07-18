@@ -1,0 +1,54 @@
+---
+title: Dialog
+description: A modal surface — Ark's Dialog machine traps focus, restores it on close, locks scroll, and wires aria-labelledby/aria-describedby; components.css paints the backdrop/content from the popover token slots.
+group: Components
+order: 30
+component: Dialog
+pkg: "@moderno/react"
+agent:
+  intent: A modal surface that interrupts and traps focus until dismissed.
+  whenToUse: A blocking decision or short focused task the user must resolve.
+  whenNotToUse:
+    - case: Side panel / non-blocking, larger content
+      use: Drawer
+    - case: Transient, non-modal hint anchored to a trigger
+      use: Popover
+  gotchas:
+    - Focus trap + scroll lock are handled by Ark; do not reimplement.
+    - Always render a title part for the accessible name.
+  theming:
+    - content uses --popover surface; backdrop opacity is part-styled, not inline.
+---
+
+import CodeBlock from "../../../components/CodeBlock.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+
+Dialog composes as `Root > Trigger + Portal(> Backdrop + Positioner > Content)`.
+Ark drives focus trap, focus restore, scroll lock, and the `aria-labelledby`/
+`aria-describedby` wiring; content is unmounted while closed, so an SSR render
+emits only the trigger. No CVA variants — the surface comes straight from the
+`--popover` / `--popover-foreground` token slots via `components.css`.
+
+<CodeBlock
+  code={`<Dialog.Root>
+  <Dialog.Trigger>Open</Dialog.Trigger>
+  <Portal>
+    <Dialog.Backdrop />
+    <Dialog.Positioner>
+      <Dialog.Content>
+        <Dialog.Title>Delete item</Dialog.Title>
+        <Dialog.Description>This can't be undone.</Dialog.Description>
+      </Dialog.Content>
+    </Dialog.Positioner>
+  </Portal>
+</Dialog.Root>`}
+/>
+
+## Installation
+
+<Install pkg="@moderno/react" />
+
+## Props
+
+<PropsTable component="Dialog" />

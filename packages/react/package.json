@@ -13,10 +13,11 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
+    "./moderno.agent.json": "./dist/moderno.agent.json",
     "./package.json": "./package.json"
   },
   "scripts": {
-    "build": "tsup",
+    "build": "tsup && node --experimental-strip-types ../../tooling/props-doc/src/bin-agent-manifest.ts react",
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
@@ -30,6 +31,7 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
+    "@moderno/props-doc": "workspace:*",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
     "@types/react": "^19.0.0",

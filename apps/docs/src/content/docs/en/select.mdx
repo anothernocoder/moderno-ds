@@ -1,0 +1,57 @@
+---
+title: Select
+description: A collection + popover picker — Ark drives typeahead, keyboard navigation, and positioning; the Moderno size recipe folds a data-size onto the root so components.css keys the trigger/menu density off it.
+group: Components
+order: 40
+component: Select
+pkg: "@moderno/react"
+agent:
+  intent: Pick one option from a known, small-to-medium list.
+  whenToUse: Bounded set of choices where the trigger shows the current value.
+  whenNotToUse:
+    - case: Free text + suggestions / large lists
+      use: Combobox
+    - case: 2–5 visible mutually exclusive options
+      use: Radio Group
+  gotchas:
+    - "Content renders in a portal (popover surface); style via [data-scope=select][data-part=content], not a wrapper class."
+  theming:
+    - Floating surface uses --popover / --popover-foreground.
+---
+
+import CodeBlock from "../../../components/CodeBlock.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+
+Only `Select.Root` is wrapped, to inject the `size` recipe's `data-size`; every
+other part is Ark's verbatim, styled by `components.css` keyed on Ark's
+`data-part` plus `data-highlighted`/`data-state`. The menu renders in a
+`Portal`, unmounted while closed, so SSR/hydration stay clean.
+
+<CodeBlock
+  code={`<Select.Root collection={frameworks} size="md">
+  <Select.Label>Framework</Select.Label>
+  <Select.Trigger>
+    <Select.ValueText placeholder="Select a framework" />
+  </Select.Trigger>
+  <Portal>
+    <Select.Positioner>
+      <Select.Content>
+        {frameworks.items.map((item) => (
+          <Select.Item key={item.value} item={item}>
+            {item.label}
+          </Select.Item>
+        ))}
+      </Select.Content>
+    </Select.Positioner>
+  </Portal>
+</Select.Root>`}
+/>
+
+## Installation
+
+<Install pkg="@moderno/react" />
+
+## Props
+
+<PropsTable component="Select" />

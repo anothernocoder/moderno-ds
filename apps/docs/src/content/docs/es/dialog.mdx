@@ -1,0 +1,42 @@
+---
+title: Dialog
+description: Una superficie modal — la máquina Dialog de Ark atrapa el foco, lo restaura al cerrar, bloquea el scroll y conecta aria-labelledby/aria-describedby; components.css pinta el backdrop/content desde los slots de popover.
+group: Componentes
+order: 30
+component: Dialog
+pkg: "@moderno/react"
+---
+
+import CodeBlock from "../../../components/CodeBlock.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+
+Dialog se compone como `Root > Trigger + Portal(> Backdrop + Positioner >
+Content)`. Ark maneja el atrapado y restauración de foco, el bloqueo de
+scroll y la conexión `aria-labelledby`/`aria-describedby`; el contenido no se
+monta mientras está cerrado, así que un render SSR solo emite el trigger. Sin
+variantes de CVA — la superficie viene directo de los slots `--popover` /
+`--popover-foreground` vía `components.css`.
+
+<CodeBlock
+  code={`<Dialog.Root>
+  <Dialog.Trigger>Abrir</Dialog.Trigger>
+  <Portal>
+    <Dialog.Backdrop />
+    <Dialog.Positioner>
+      <Dialog.Content>
+        <Dialog.Title>Eliminar elemento</Dialog.Title>
+        <Dialog.Description>Esto no se puede deshacer.</Dialog.Description>
+      </Dialog.Content>
+    </Dialog.Positioner>
+  </Portal>
+</Dialog.Root>`}
+/>
+
+## Instalación
+
+<Install pkg="@moderno/react" />
+
+## Propiedades
+
+<PropsTable component="Dialog" />

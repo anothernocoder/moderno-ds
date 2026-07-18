@@ -17,6 +17,7 @@ export default defineConfig({
     routing: { prefixDefaultLocale: true, redirectToDefaultLocale: false },
   },
   integrations: [svelte(), mdx(), sitemap()],
+  server: { port: Number(process.env.PORT) || 4321 },
   // No image optimization in the docs (sharp is not built); pass images through.
   image: { service: passthroughImageService() },
   adapter: vercel(),
