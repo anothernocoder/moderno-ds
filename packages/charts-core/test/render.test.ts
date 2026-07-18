@@ -70,6 +70,15 @@ describe("chart render tree — shared frame", () => {
   it("emits both axis lines", () => {
     expect(find(root, "axis-line")).toHaveLength(2);
   });
+
+  it("carries data-scope on every part — components.css compounds scope+part", () => {
+    const walk = (n: ChartNode): ChartNode[] => [n, ...(n.children ?? []).flatMap(walk)];
+    for (const n of walk(root)) {
+      expect(n.attrs["data-scope"], `<${n.tag} data-part="${n.attrs["data-part"]}">`).toBe(
+        "chart",
+      );
+    }
+  });
 });
 
 describe("chart render tree — per-chart shapes", () => {
@@ -110,7 +119,7 @@ describe("chartNodeToSvg — reference serialization", () => {
   it("serializes the tree deterministically with explicit closing tags", () => {
     const svg = chartNodeToSvg(lineChartNodes(cartesian));
     expect(svg.startsWith('<svg viewBox="0 0 200 120" role="img"')).toBe(true);
-    expect(svg).toContain('<g data-part="grid">');
+    expect(svg).toContain('<g data-scope="chart" data-part="grid">');
     expect(svg).toContain("</svg>");
     expect(svg).not.toContain("/>");
     expect(chartNodeToSvg(lineChartNodes(cartesian))).toBe(svg);

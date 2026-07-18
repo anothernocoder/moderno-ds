@@ -38,6 +38,14 @@ interface FrameModel {
   yAxis: AxisTick[];
 }
 
+/**
+ * Ark-style part attributes. Every part carries the scope — the shared
+ * stylesheet compounds them (`[data-scope="chart"][data-part="line"]`).
+ */
+function part(name: string): Record<string, string> {
+  return { "data-scope": "chart", "data-part": name };
+}
+
 /** Grid, axis lines and tick labels — identical for every chart type. */
 function frameNodes(model: FrameModel): ChartNode[] {
   const { plot, xAxis, yAxis } = model;
@@ -46,24 +54,24 @@ function frameNodes(model: FrameModel): ChartNode[] {
   return [
     {
       tag: "g",
-      attrs: { "data-part": "grid" },
+      attrs: part("grid"),
       children: yAxis.map((t) => ({
         tag: "line",
-        attrs: { "data-part": "grid-line", x1: plot.x, y1: t.position, x2: right, y2: t.position },
+        attrs: { ...part("grid-line"), x1: plot.x, y1: t.position, x2: right, y2: t.position },
       })),
     },
     {
       tag: "line",
-      attrs: { "data-part": "axis-line", x1: plot.x, y1: bottom, x2: right, y2: bottom },
+      attrs: { ...part("axis-line"), x1: plot.x, y1: bottom, x2: right, y2: bottom },
     },
     {
       tag: "line",
-      attrs: { "data-part": "axis-line", x1: plot.x, y1: plot.y, x2: plot.x, y2: bottom },
+      attrs: { ...part("axis-line"), x1: plot.x, y1: plot.y, x2: plot.x, y2: bottom },
     },
     ...xAxis.map((t) => ({
       tag: "text",
       attrs: {
-        "data-part": "tick-label",
+        ...part("tick-label"),
         "data-orientation": "x",
         x: t.position,
         y: bottom + LABEL_GAP + FONT_OFFSET,
@@ -73,7 +81,7 @@ function frameNodes(model: FrameModel): ChartNode[] {
     ...yAxis.map((t) => ({
       tag: "text",
       attrs: {
-        "data-part": "tick-label",
+        ...part("tick-label"),
         "data-orientation": "y",
         x: plot.x - LABEL_GAP,
         y: t.position + 4,
@@ -90,8 +98,7 @@ function chartRoot(type: string, model: FrameModel, series: ChartNode[]): ChartN
       viewBox: `0 0 ${model.width} ${model.height}`,
       role: "img",
       preserveAspectRatio: "xMidYMid meet",
-      "data-scope": "chart",
-      "data-part": "root",
+      ...part("root"),
       "data-chart": type,
     },
     children: [...frameNodes(model), ...series],
@@ -99,7 +106,7 @@ function chartRoot(type: string, model: FrameModel, series: ChartNode[]): ChartN
 }
 
 function seriesGroup(index: number, children: ChartNode[]): ChartNode {
-  return { tag: "g", attrs: { "data-part": "series", "data-series": index }, children };
+  return { tag: "g", attrs: { ...part("series"), "data-series": index }, children };
 }
 
 /** The full line chart as a render tree: frame + one path per series. */
@@ -109,7 +116,7 @@ export function lineChartNodes(options: LineChartOptions): ChartNode {
     "line",
     model,
     model.series.map((s) =>
-      seriesGroup(s.index, [{ tag: "path", attrs: { "data-part": "line", d: s.path } }]),
+      seriesGroup(s.index, [{ tag: "path", attrs: { ...part("line"), d: s.path } }]),
     ),
   );
 }
@@ -122,8 +129,8 @@ export function areaChartNodes(options: AreaChartOptions): ChartNode {
     model,
     model.series.map((s) =>
       seriesGroup(s.index, [
-        { tag: "path", attrs: { "data-part": "area", d: s.area } },
-        { tag: "path", attrs: { "data-part": "line", d: s.line } },
+        { tag: "path", attrs: { ...part("area"), d: s.area } },
+        { tag: "path", attrs: { ...part("line"), d: s.line } },
       ]),
     ),
   );
@@ -140,7 +147,7 @@ export function barChartNodes(options: BarChartOptions): ChartNode {
         s.index,
         s.bars.map((bar) => ({
           tag: "rect",
-          attrs: { "data-part": "bar", x: bar.x, y: bar.y, width: bar.width, height: bar.height },
+          attrs: { ...part("bar"), x: bar.x, y: bar.y, width: bar.width, height: bar.height },
         })),
       ),
     ),
@@ -158,7 +165,7 @@ export function scatterChartNodes(options: ScatterChartOptions): ChartNode {
         s.index,
         s.points.map((p) => ({
           tag: "circle",
-          attrs: { "data-part": "point", cx: p.cx, cy: p.cy, r: p.r },
+          attrs: { ...part("point"), cx: p.cx, cy: p.cy, r: p.r },
         })),
       ),
     ),
