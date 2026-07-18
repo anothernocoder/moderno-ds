@@ -1,0 +1,40 @@
+{
+  "package": "@moderno/react",
+  "version": "0.5.0",
+  "kind": "components",
+  "framework": "react",
+  "generatedFrom": { "propsDoc": true, "mdxAgentBlock": true },
+  "components": [
+    {
+      "name": "Button",
+      "scope": "button",
+      "import": "import { Button } from \"@moderno/react\"",
+      "propsHash": "sha256:fixture-button",
+      "props": [{ "name": "variant", "type": "\"primary\" | \"outline\"", "required": false }],
+      "parts": [{ "name": "root" }],
+      "variants": { "variant": ["primary", "outline"] },
+      "examples": [
+        {
+          "title": "Primary",
+          "code": "import { Button } from \"@moderno/react\";\n\n<Button variant=\"primary\">Save</Button>"
+        }
+      ],
+      "guidance": {
+        "intent": "A single click action.",
+        "whenToUse": "Any imperative action: submit, open, delete."
+      }
+    },
+    {
+      "name": "Dialog",
+      "scope": "dialog",
+      "import": "import { Dialog } from \"@moderno/react\"",
+      "propsHash": "sha256:fixture-dialog",
+      "props": [],
+      "parts": [{ "name": "content" }, { "name": "title" }],
+      "guidance": {
+        "intent": "A modal surface that interrupts and traps focus until dismissed.",
+        "whenToUse": "A blocking decision or short focused task the user must resolve."
+      }
+    }
+  ]
+}

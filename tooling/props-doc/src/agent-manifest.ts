@@ -27,6 +27,7 @@ import { createHash } from "node:crypto";
 import { buttonRecipe, selectRecipe } from "@moderno/core";
 import { extractProps, type ComponentEntry, type PropDoc } from "./index.ts";
 import { ENTRIES } from "./manifest.ts";
+import { AGENT_EXAMPLES } from "./agent-examples.ts";
 
 function findEntry(name: string): ComponentEntry {
   const entry = ENTRIES.find((e) => e.name === name);
@@ -128,6 +129,11 @@ export interface AgentProp {
   description?: string;
 }
 
+export interface AgentExample {
+  title: string;
+  code: string;
+}
+
 export interface AgentComponent {
   name: string;
   scope: string;
@@ -136,6 +142,7 @@ export interface AgentComponent {
   props: AgentProp[];
   parts: AgentPart[];
   variants?: Record<string, readonly string[]>;
+  examples?: AgentExample[];
   guidance?: AgentGuidance;
 }
 
@@ -177,6 +184,7 @@ export function buildComponentsManifest(opts: BuildComponentsManifestOptions): C
   const built = components.map((c): AgentComponent => {
     const props = propsByName.get(c.name) ?? [];
     const guidance = opts.guidance[c.name];
+    const examples = AGENT_EXAMPLES[c.name]?.[opts.framework];
     return {
       name: c.name,
       scope: c.scope,
@@ -185,6 +193,7 @@ export function buildComponentsManifest(opts: BuildComponentsManifestOptions): C
       props,
       parts: c.parts,
       ...(c.variants ? { variants: c.variants } : {}),
+      ...(examples ? { examples } : {}),
       ...(guidance ? { guidance } : {}),
     };
   });
