@@ -30,11 +30,10 @@ export interface ContractSlot {
   contrastAgainst?: string;
 }
 
-const color = (
-  name: string,
-  group: ContractGroup,
-  contrastAgainst?: string,
-): ContractSlot => (contrastAgainst ? { name, type: "color", group, contrastAgainst } : { name, type: "color", group });
+const color = (name: string, group: ContractGroup, contrastAgainst?: string): ContractSlot =>
+  contrastAgainst
+    ? { name, type: "color", group, contrastAgainst }
+    : { name, type: "color", group };
 
 /** The full contract, in editor display order. */
 export const CONTRACT: readonly ContractSlot[] = [
@@ -96,9 +95,9 @@ export const OTHER_SLOTS: readonly string[] = CONTRACT.filter((s) => s.group ===
 );
 
 /** Base-only slots shipped by `@moderno/tokens`, not required in themes. */
-export const EXTENDED_SLOTS: readonly string[] = CONTRACT.filter(
-  (s) => s.group === "extended",
-).map((s) => s.name);
+export const EXTENDED_SLOTS: readonly string[] = CONTRACT.filter((s) => s.group === "extended").map(
+  (s) => s.name,
+);
 
 /** `[foreground, background]` contract pairs WCAG AA (4.5:1) is checked against. */
 export const CONTRAST_PAIRS: ReadonlyArray<readonly [fg: string, bg: string]> = CONTRACT.filter(

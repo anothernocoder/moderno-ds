@@ -52,8 +52,14 @@ function frameNodes(model: FrameModel): ChartNode[] {
         attrs: { "data-part": "grid-line", x1: plot.x, y1: t.position, x2: right, y2: t.position },
       })),
     },
-    { tag: "line", attrs: { "data-part": "axis-line", x1: plot.x, y1: bottom, x2: right, y2: bottom } },
-    { tag: "line", attrs: { "data-part": "axis-line", x1: plot.x, y1: plot.y, x2: plot.x, y2: bottom } },
+    {
+      tag: "line",
+      attrs: { "data-part": "axis-line", x1: plot.x, y1: bottom, x2: right, y2: bottom },
+    },
+    {
+      tag: "line",
+      attrs: { "data-part": "axis-line", x1: plot.x, y1: plot.y, x2: plot.x, y2: bottom },
+    },
     ...xAxis.map((t) => ({
       tag: "text",
       attrs: {
@@ -160,7 +166,10 @@ export function scatterChartNodes(options: ScatterChartOptions): ChartNode {
 }
 
 function escape(value: string): string {
-  return value.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
+  return value.replace(
+    /[&<>"]/g,
+    (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!,
+  );
 }
 
 /**
@@ -172,8 +181,9 @@ export function chartNodeToSvg(node: ChartNode): string {
   const attrs = Object.entries(node.attrs)
     .map(([name, value]) => ` ${name}="${escape(String(value))}"`)
     .join("");
-  const children = node.text !== undefined
-    ? escape(node.text)
-    : (node.children ?? []).map(chartNodeToSvg).join("");
+  const children =
+    node.text !== undefined
+      ? escape(node.text)
+      : (node.children ?? []).map(chartNodeToSvg).join("");
   return `<${node.tag}${attrs}>${children}</${node.tag}>`;
 }

@@ -71,9 +71,7 @@ describe("themeStore — persistence", () => {
     const state = namedState("acme");
     store.persist(state);
     const encoded = encodeState(state);
-    expect((storage as ReturnType<typeof memoryStorage>).data.get(THEME_STORAGE_KEY)).toBe(
-      encoded,
-    );
+    expect((storage as ReturnType<typeof memoryStorage>).data.get(THEME_STORAGE_KEY)).toBe(encoded);
     expect(new URL(url()).searchParams.get("t")).toBe(encoded);
   });
 
