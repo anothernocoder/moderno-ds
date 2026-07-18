@@ -1,11 +1,12 @@
 <!--
-  BarChart — pure map from `buildBarChart`'s model to <svg>, ported to Svelte 5.
-  One <rect data-part="bar"> per category per series.
+  BarChart — builds the render tree with `barChartNodes` and hands it to the
+  Chart walker. Geometry, label anchors and data-part structure all come from
+  charts-core; this file holds none of it.
 -->
 <script lang="ts">
   import type { SVGAttributes } from "svelte/elements";
-  import { buildBarChart, type BarChartOptions } from "@moderno/charts-core";
-  import ChartFrame from "./ChartFrame.svelte";
+  import { barChartNodes, type BarChartOptions } from "@moderno/charts-core";
+  import Chart from "./Chart.svelte";
 
   type SvgProps = Omit<
     SVGAttributes<SVGSVGElement>,
@@ -25,25 +26,19 @@
     ...rest
   }: BarChartOptions & SvgProps = $props();
 
-  const model = $derived(buildBarChart({
-    width,
-    height,
-    margin,
-    categories,
-    series,
-    yDomain,
-    yTicks,
-    padding,
-    format,
-  }));
+  const node = $derived(
+    barChartNodes({
+      width,
+      height,
+      margin,
+      categories,
+      series,
+      yDomain,
+      yTicks,
+      padding,
+      format,
+    }),
+  );
 </script>
 
-<ChartFrame type="bar" {model} {...rest}>
-  {#each model.series as s (s.index)}
-    <g data-part="series" data-series={s.index}>
-      {#each s.bars as b (b.category)}
-        <rect data-part="bar" x={b.x} y={b.y} width={b.width} height={b.height} />
-      {/each}
-    </g>
-  {/each}
-</ChartFrame>
+<Chart {node} {...rest} />

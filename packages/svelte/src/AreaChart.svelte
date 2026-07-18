@@ -1,11 +1,12 @@
 <!--
-  AreaChart — pure map from `buildAreaChart`'s model to <svg>, ported to Svelte 5.
-  Per series: a filled <path data-part="area"> then its top <path data-part="line">.
+  AreaChart — builds the render tree with `areaChartNodes` and hands it to the
+  Chart walker. Geometry, label anchors and data-part structure all come from
+  charts-core; this file holds none of it.
 -->
 <script lang="ts">
   import type { SVGAttributes } from "svelte/elements";
-  import { buildAreaChart, type AreaChartOptions } from "@moderno/charts-core";
-  import ChartFrame from "./ChartFrame.svelte";
+  import { areaChartNodes, type AreaChartOptions } from "@moderno/charts-core";
+  import Chart from "./Chart.svelte";
 
   type SvgProps = Omit<
     SVGAttributes<SVGSVGElement>,
@@ -26,25 +27,20 @@
     ...rest
   }: AreaChartOptions & SvgProps = $props();
 
-  const model = $derived(buildAreaChart({
-    width,
-    height,
-    margin,
-    series,
-    xDomain,
-    yDomain,
-    xTicks,
-    yTicks,
-    format,
-    curve,
-  }));
+  const node = $derived(
+    areaChartNodes({
+      width,
+      height,
+      margin,
+      series,
+      xDomain,
+      yDomain,
+      xTicks,
+      yTicks,
+      format,
+      curve,
+    }),
+  );
 </script>
 
-<ChartFrame type="area" {model} {...rest}>
-  {#each model.series as s (s.index)}
-    <g data-part="series" data-series={s.index}>
-      <path data-part="area" d={s.area} />
-      <path data-part="line" d={s.line} />
-    </g>
-  {/each}
-</ChartFrame>
+<Chart {node} {...rest} />
