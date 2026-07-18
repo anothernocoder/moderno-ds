@@ -1,9 +1,9 @@
 /**
- * Builds the `@moderno/mcp` stdio server: four read tools over the manifests
- * aggregated from the consumer's `node_modules` (ADR-0003). `createServer` is
- * the single seam `bin.ts` and the integration tests both go through — tests
- * exercise the exact tool registrations a real client sees, not a parallel
- * hand-rolled dispatcher.
+ * Builds the `@moderno/mcp` stdio server: five read/verify tools over the
+ * manifests aggregated from the consumer's `node_modules` (ADR-0003).
+ * `createServer` is the single seam `bin.ts` and the integration tests both
+ * go through — tests exercise the exact tool registrations a real client
+ * sees, not a parallel hand-rolled dispatcher.
  */
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
@@ -14,6 +14,7 @@ import { getContract } from "./tools/get-contract.ts";
 import { getExamples } from "./tools/get-examples.ts";
 import { searchComponents } from "./tools/search-components.ts";
 import { ModernoMcpError } from "./tools/shared.ts";
+import { validateUsage } from "./tools/validate-usage.ts";
 
 const FRAMEWORK = z
   .enum(["react", "vue", "svelte", "solid", "astro"])
@@ -114,6 +115,26 @@ export function createServer(opts: CreateServerOptions = {}): McpServer {
     () => {
       try {
         return ok(getContract(manifests));
+      } catch (error) {
+        return fail(error);
+      }
+    },
+  );
+
+  server.registerTool(
+    "validate_usage",
+    {
+      title: "Validate Moderno usage",
+      description:
+        "Deterministically lints a framework-tagged snippet or file against the installed manifests: hardcoded colors/radii, invalid props/enum values, raw @ark-ui/@zag-js imports, invalid data-part overrides, and reimplemented primitives. Run this before finishing any Moderno-related edit.",
+      inputSchema: {
+        code: z.string().describe("The snippet or file content to check."),
+        framework: FRAMEWORK,
+      },
+    },
+    ({ code, framework }) => {
+      try {
+        return ok(validateUsage(manifests, { code, framework }));
       } catch (error) {
         return fail(error);
       }
