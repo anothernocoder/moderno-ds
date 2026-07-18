@@ -144,6 +144,15 @@ _Avoid_: English-only docs, translating prop names
 Generated at build time by the `tooling/props-doc` script (ts-morph) → JSON per component; `<PropsTable>` in Astro consumes that JSON. Column labels translated via i18n; prop names in English.
 _Avoid_: react-docgen-only, hand-maintained prop tables
 
+**Chart render tree**:
+The serializable SVG node tree `@moderno/charts-core` emits per chart
+(`lineChartNodes`, …): frame, tick-label anchors and the full
+`data-scope`/`data-part` structure, as data. Each framework binding is a thin
+_walker_ that maps nodes onto its own elements; `chartNodeToSvg` is the
+reference serialization the per-framework parity tests compare SSR output
+against.
+_Avoid_: per-framework chart markup, ChartFrame (retired)
+
 **Theme compile**:
 The `pnpm theme:build` script (`tooling/theme-compile`) validates and emits `theme.css` from `tokens.dtcg.json`. Used by CI, maintainers and the Theme Builder export. Includes WCAG AA warnings.
 _Avoid_: themes as npm packages, hand-written CSS without a schema

@@ -1,10 +1,9 @@
 import { splitProps } from "solid-js";
 import { Select as ArkSelect } from "@ark-ui/solid";
 import type { CollectionItem, SelectRootProps } from "@ark-ui/solid";
-import { selectRecipe, type VariantProps } from "@moderno/core";
+import { selectRecipe, type SelectSize } from "@moderno/core";
 
-/** The control density a consumer can choose. Selection state stays Ark's. */
-export type SelectSize = NonNullable<VariantProps<typeof selectRecipe.variants>["size"]>;
+export type { SelectSize } from "@moderno/core";
 
 export type ModernoSelectRootProps<T extends CollectionItem> = SelectRootProps<T> & {
   size?: SelectSize;

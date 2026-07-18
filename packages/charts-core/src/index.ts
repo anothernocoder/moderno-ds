@@ -63,3 +63,13 @@ export type {
   ScatterPoint,
   ScatterSeriesModel,
 } from "./scatter.js";
+
+// ── Render tree: the complete render description, one walker per framework ──
+export {
+  areaChartNodes,
+  barChartNodes,
+  chartNodeToSvg,
+  lineChartNodes,
+  scatterChartNodes,
+} from "./render.js";
+export type { ChartNode } from "./render.js";

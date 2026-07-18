@@ -5,36 +5,12 @@
  * uses, so a theme that exports clean here is a theme that passes CI.
  */
 import { compileTheme, ThemeValidationError } from "@moderno/theme-compile";
+import { COLOR_SLOTS, OTHER_SLOTS, slotType } from "@moderno/tokens/contract";
+import modernoTokens from "../../../../registry/themes/theme-moderno/tokens.dtcg.json";
 
-/** Colour contract slots (CONTRACT.md minimum), mirrored from theme-compile. */
-export const COLOR_SLOTS = [
-  "background",
-  "foreground",
-  "card",
-  "card-foreground",
-  "popover",
-  "popover-foreground",
-  "primary",
-  "primary-foreground",
-  "secondary",
-  "secondary-foreground",
-  "muted",
-  "muted-foreground",
-  "accent",
-  "accent-foreground",
-  "destructive",
-  "destructive-foreground",
-  "border",
-  "input",
-  "ring",
-  "chart-1",
-  "chart-2",
-  "chart-3",
-  "chart-4",
-  "chart-5",
-] as const;
-
-export const OTHER_SLOTS = ["radius", "font-sans", "font-mono"] as const;
+// The slot lists come from the contract data in @moderno/tokens — the same
+// source theme-compile validates against, so editor and compiler can't drift.
+export { COLOR_SLOTS, OTHER_SLOTS };
 
 export type Scope = Record<string, string>;
 
@@ -52,13 +28,6 @@ export interface ThemeDoc {
   $extensions?: { "style.moderno.theme"?: { name?: string; brand?: string | null } };
   light: TokenScope;
   dark: TokenScope;
-}
-
-/** DTCG `$type` for a contract slot (colours, the radius dimension, fonts). */
-function slotType(slot: string): string {
-  if (slot === "radius") return "dimension";
-  if (slot.startsWith("font-")) return "fontFamily";
-  return "color";
 }
 
 function scopeToState(scope: unknown): Scope {
@@ -125,73 +94,13 @@ export interface ThemeBundle {
   error?: string;
 }
 
-const FONT_SANS =
-  '"Hedvig Letters Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif';
-const FONT_MONO = 'ui-monospace, "SFMono-Regular", "Menlo", "Consolas", monospace';
-
-const LIGHT: Scope = {
-  background: "oklch(1 0 0)",
-  foreground: "oklch(0.205 0 0)",
-  card: "oklch(1 0 0)",
-  "card-foreground": "oklch(0.205 0 0)",
-  popover: "oklch(1 0 0)",
-  "popover-foreground": "oklch(0.205 0 0)",
-  primary: "oklch(0.205 0 0)",
-  "primary-foreground": "oklch(0.985 0 0)",
-  secondary: "oklch(0.97 0 0)",
-  "secondary-foreground": "oklch(0.205 0 0)",
-  muted: "oklch(0.97 0 0)",
-  "muted-foreground": "oklch(0.505 0 0)",
-  accent: "oklch(0.97 0 0)",
-  "accent-foreground": "oklch(0.205 0 0)",
-  destructive: "oklch(0.577 0.245 27.325)",
-  "destructive-foreground": "oklch(0.985 0 0)",
-  border: "oklch(0.922 0 0)",
-  input: "oklch(0.922 0 0)",
-  ring: "oklch(0.205 0 0)",
-  "chart-1": "oklch(0.646 0.222 41.116)",
-  "chart-2": "oklch(0.6 0.118 184.704)",
-  "chart-3": "oklch(0.398 0.07 227.392)",
-  "chart-4": "oklch(0.828 0.189 84.429)",
-  "chart-5": "oklch(0.769 0.188 70.08)",
-  radius: "0rem",
-  "font-sans": FONT_SANS,
-  "font-mono": FONT_MONO,
-};
-
-const DARK: Scope = {
-  background: "oklch(0.16 0 0)",
-  foreground: "oklch(0.985 0 0)",
-  card: "oklch(0.205 0 0)",
-  "card-foreground": "oklch(0.985 0 0)",
-  popover: "oklch(0.205 0 0)",
-  "popover-foreground": "oklch(0.985 0 0)",
-  primary: "oklch(0.985 0 0)",
-  "primary-foreground": "oklch(0.205 0 0)",
-  secondary: "oklch(0.269 0 0)",
-  "secondary-foreground": "oklch(0.985 0 0)",
-  muted: "oklch(0.269 0 0)",
-  "muted-foreground": "oklch(0.708 0 0)",
-  accent: "oklch(0.269 0 0)",
-  "accent-foreground": "oklch(0.985 0 0)",
-  destructive: "oklch(0.704 0.191 22.216)",
-  "destructive-foreground": "oklch(0.985 0 0)",
-  border: "oklch(0.27 0 0)",
-  input: "oklch(0.27 0 0)",
-  ring: "oklch(0.985 0 0)",
-  "chart-1": "oklch(0.488 0.243 264.376)",
-  "chart-2": "oklch(0.696 0.17 162.48)",
-  "chart-3": "oklch(0.769 0.188 70.08)",
-  "chart-4": "oklch(0.627 0.265 303.9)",
-  "chart-5": "oklch(0.645 0.246 16.439)",
-  radius: "0rem",
-  "font-sans": FONT_SANS,
-  "font-mono": FONT_MONO,
-};
-
-/** The Moderno default, the Theme Builder's starting point. */
+/**
+ * The Theme Builder's starting point: the registry `theme-moderno` item read
+ * through the same DTCG adapter imports use. The registry file is the single
+ * authority for the default theme's values; only the name resets to `custom`.
+ */
 export function defaultThemeState(): ThemeState {
-  return { name: "custom", brand: null, light: { ...LIGHT }, dark: { ...DARK } };
+  return { ...tokensToState(modernoTokens), name: "custom" };
 }
 
 /** Compact, URL-safe encoding of a state (for shareable `?t=` links). */

@@ -1,3 +1,4 @@
+import { COLOR_SLOTS, CONTRAST_PAIRS, OTHER_SLOTS } from "@moderno/tokens/contract";
 import { contrastRatio, parseOklch } from "./color.ts";
 
 export type CompileResult = {
@@ -8,36 +9,8 @@ export type CompileResult = {
 type Token = { $type?: string; $value: string };
 type Scope = Record<string, Token>;
 
-/** Colour slots every theme must define in both scopes (CONTRACT.md minimum). */
-const REQUIRED_COLOR_SLOTS = [
-  "background",
-  "foreground",
-  "card",
-  "card-foreground",
-  "popover",
-  "popover-foreground",
-  "primary",
-  "primary-foreground",
-  "secondary",
-  "secondary-foreground",
-  "muted",
-  "muted-foreground",
-  "accent",
-  "accent-foreground",
-  "destructive",
-  "destructive-foreground",
-  "border",
-  "input",
-  "ring",
-  "chart-1",
-  "chart-2",
-  "chart-3",
-  "chart-4",
-  "chart-5",
-] as const;
-
-/** Non-colour contract slots required in both scopes. */
-const REQUIRED_OTHER_SLOTS = ["radius", "font-sans", "font-mono"] as const;
+// The slot contract is data in @moderno/tokens: colour slots + non-colour
+// slots required in both scopes, and the WCAG AA foreground/background pairs.
 
 export class ThemeValidationError extends Error {
   constructor(message: string) {
@@ -51,13 +24,13 @@ function validateScope(name: string, scope: unknown): asserts scope is Scope {
     throw new ThemeValidationError(`missing "${name}" scope`);
   }
   const s = scope as Record<string, Token | undefined>;
-  for (const slot of [...REQUIRED_COLOR_SLOTS, ...REQUIRED_OTHER_SLOTS]) {
+  for (const slot of [...COLOR_SLOTS, ...OTHER_SLOTS]) {
     const token = s[slot];
     if (!token || typeof token.$value !== "string") {
       throw new ThemeValidationError(`${name} scope is missing required slot "--${slot}"`);
     }
   }
-  for (const slot of REQUIRED_COLOR_SLOTS) {
+  for (const slot of COLOR_SLOTS) {
     const value = s[slot]!.$value;
     if (parseOklch(value) === null) {
       throw new ThemeValidationError(
@@ -77,18 +50,6 @@ type ThemeDoc = {
   dark: Scope;
   $extensions?: { "style.moderno.theme"?: { name?: string; brand?: string | null } };
 };
-
-/** Foreground/background contract pairs WCAG AA (4.5:1) is checked against. */
-const CONTRAST_PAIRS: ReadonlyArray<readonly [fg: string, bg: string]> = [
-  ["foreground", "background"],
-  ["card-foreground", "card"],
-  ["popover-foreground", "popover"],
-  ["primary-foreground", "primary"],
-  ["secondary-foreground", "secondary"],
-  ["muted-foreground", "muted"],
-  ["accent-foreground", "accent"],
-  ["destructive-foreground", "destructive"],
-];
 
 const AA_NORMAL_TEXT = 4.5;
 

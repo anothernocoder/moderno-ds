@@ -9,16 +9,16 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { Button, LineChart } from "@moderno/svelte";
+  import { COLOR_GROUPS } from "@moderno/tokens/contract";
   import {
     buildTheme,
-    decodeState,
     defaultThemeState,
-    encodeState,
     slugify,
     tokensToState,
     OTHER_SLOTS,
     type ThemeState,
   } from "../lib/theme.ts";
+  import { createThemeStore } from "../lib/themeStore.ts";
 
   interface Strings {
     light: string;
@@ -33,6 +33,8 @@
     contrastFail: string;
     invalid: string;
     copied: string;
+    /** Editor group labels, keyed by the contract group id. */
+    groups: Record<string, string>;
   }
 
   let { strings }: { strings: Strings } = $props();
@@ -56,13 +58,13 @@
     { name: "B", points: [{ x: 0, y: 4 }, { x: 1, y: 12 }, { x: 2, y: 24 }, { x: 3, y: 20 }] },
   ];
 
-  // The contract groups, for a legible editor.
-  const GROUPS: { label: string; slots: string[] }[] = [
-    { label: "Surfaces", slots: ["background", "foreground", "card", "card-foreground", "popover", "popover-foreground"] },
-    { label: "Brand", slots: ["primary", "primary-foreground", "secondary", "secondary-foreground", "accent", "accent-foreground"] },
-    { label: "Support", slots: ["muted", "muted-foreground", "destructive", "destructive-foreground", "border", "input", "ring"] },
-    { label: "Charts", slots: ["chart-1", "chart-2", "chart-3", "chart-4", "chart-5"] },
-  ];
+  // The editor groups derive from the contract data — a slot added to
+  // @moderno/tokens shows up here without touching the island. Labels come
+  // from the docs i18n; an unmapped group falls back to its id.
+  const GROUPS = COLOR_GROUPS.map(({ group, slots }) => ({
+    label: strings.groups[group] ?? group,
+    slots,
+  }));
 
   function loadDoc(doc: unknown) {
     try {
@@ -111,22 +113,21 @@
     URL.revokeObjectURL(url);
   }
 
-  // Persistence: hydrate from ?t= or localStorage, then mirror changes back.
+  // Persistence policy lives in themeStore (tested); the island only wires
+  // the real browser dependencies in. Built lazily — SSR has no localStorage.
+  const store = () =>
+    createThemeStore({
+      storage: localStorage,
+      url: () => location.href,
+      replaceUrl: (url) => history.replaceState(null, "", url),
+    });
+
   onMount(() => {
-    const param = new URLSearchParams(location.search).get("t");
-    const stored = param ?? localStorage.getItem("moderno-theme");
-    if (stored) {
-      const decoded = decodeState(stored);
-      if (decoded) state = decoded;
-    }
+    state = store().hydrate();
   });
 
   $effect(() => {
-    const encoded = encodeState(state);
-    localStorage.setItem("moderno-theme", encoded);
-    const url = new URL(location.href);
-    url.searchParams.set("t", encoded);
-    history.replaceState(null, "", url);
+    store().persist(state);
   });
 </script>
 
@@ -184,7 +185,7 @@
     {/each}
 
     <fieldset class="tb-group">
-      <legend>Other</legend>
+      <legend>{strings.groups["other"] ?? "Other"}</legend>
       {#each OTHER_SLOTS as slot (slot)}
         <label class="tb-slot tb-slot--wide">
           <span class="tb-slot-name">{slot}</span>

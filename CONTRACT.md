@@ -98,6 +98,10 @@ Variants are expressed as data attributes on the root part
 - **`@moderno/tokens`** — the contract.
   - `@moderno/tokens/css` → the variables (`:root` / `.dark` / `[data-brand]`).
   - `@moderno/tokens/preset` → the Tailwind v4 `@theme inline` mapping.
+  - `@moderno/tokens/contract` → the contract as data (slot name, DTCG type,
+    editor group, WCAG contrast pair). Every other slot list — theme-compile's
+    required slots, the Theme Builder's editor groups, the docs model — derives
+    from it; adding a slot is a single edit here.
 - **`@moderno/css`** — the public entrypoint. Consumers import only this:
   - `@import "@moderno/css";` (contract values; Phase 1 also adds components)
   - `@import "@moderno/css/preset";` (Tailwind preset)

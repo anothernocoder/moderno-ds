@@ -12,3 +12,4 @@ export { cx, partAttrs } from "./utils.js";
 export type { ClassValue } from "./utils.js";
 
 export { buttonRecipe, selectRecipe } from "./recipes.js";
+export type { ButtonVariant, ButtonSize, SelectSize } from "./recipes.js";

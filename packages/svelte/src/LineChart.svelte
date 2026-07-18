@@ -1,12 +1,12 @@
 <!--
-  LineChart — pure map from `buildLineChart`'s model to <svg>, ported to Svelte 5.
-  One <path data-part="line"> per series; geometry comes entirely from
-  charts-core. No baked colour/style — see ChartFrame.
+  LineChart — builds the render tree with `lineChartNodes` and hands it to the
+  Chart walker. Geometry, label anchors and data-part structure all come from
+  charts-core; this file holds none of it.
 -->
 <script lang="ts">
   import type { SVGAttributes } from "svelte/elements";
-  import { buildLineChart, type LineChartOptions } from "@moderno/charts-core";
-  import ChartFrame from "./ChartFrame.svelte";
+  import { lineChartNodes, type LineChartOptions } from "@moderno/charts-core";
+  import Chart from "./Chart.svelte";
 
   type SvgProps = Omit<
     SVGAttributes<SVGSVGElement>,
@@ -27,24 +27,20 @@
     ...rest
   }: LineChartOptions & SvgProps = $props();
 
-  const model = $derived(buildLineChart({
-    width,
-    height,
-    margin,
-    series,
-    xDomain,
-    yDomain,
-    xTicks,
-    yTicks,
-    format,
-    curve,
-  }));
+  const node = $derived(
+    lineChartNodes({
+      width,
+      height,
+      margin,
+      series,
+      xDomain,
+      yDomain,
+      xTicks,
+      yTicks,
+      format,
+      curve,
+    }),
+  );
 </script>
 
-<ChartFrame type="line" {model} {...rest}>
-  {#each model.series as s (s.index)}
-    <g data-part="series" data-series={s.index}>
-      <path data-part="line" d={s.path} />
-    </g>
-  {/each}
-</ChartFrame>
+<Chart {node} {...rest} />

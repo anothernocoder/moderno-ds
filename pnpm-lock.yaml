@@ -73,6 +73,9 @@ importers:
       '@moderno/theme-compile':
         specifier: workspace:*
         version: link:../../tooling/theme-compile
+      '@moderno/tokens':
+        specifier: workspace:*
+        version: link:../../packages/tokens
     devDependencies:
       '@astrojs/check':
         specifier: ^0.9.4
@@ -313,6 +316,10 @@ importers:
         version: 8.5.1(postcss@8.5.15)(typescript@5.9.3)(yaml@2.9.0)
 
   tooling/theme-compile:
+    dependencies:
+      '@moderno/tokens':
+        specifier: workspace:*
+        version: link:../../packages/tokens
     devDependencies:
       tsup:
         specifier: ^8.3.5
