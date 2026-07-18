@@ -61,6 +61,11 @@ export const ui = {
     "theme.contrastOk": "WCAG AA",
     "theme.contrastFail": "Below AA",
     "theme.invalid": "Invalid theme",
+    "theme.group.surfaces": "Surfaces",
+    "theme.group.brand": "Brand",
+    "theme.group.support": "Support",
+    "theme.group.charts": "Charts",
+    "theme.group.other": "Other",
   },
   es: {
     "nav.docs": "Documentación",
@@ -98,6 +103,11 @@ export const ui = {
     "theme.contrastOk": "WCAG AA",
     "theme.contrastFail": "Bajo AA",
     "theme.invalid": "Tema inválido",
+    "theme.group.surfaces": "Superficies",
+    "theme.group.brand": "Marca",
+    "theme.group.support": "Soporte",
+    "theme.group.charts": "Gráficas",
+    "theme.group.other": "Otros",
   },
 } as const;
 

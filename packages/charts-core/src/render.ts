@@ -28,6 +28,8 @@ export interface ChartNode {
 const LABEL_GAP = 8;
 /** Baseline offset that vertically settles a label against its anchor. */
 const FONT_OFFSET = 8;
+/** Nudge that vertically centres a y-axis label on its tick line. */
+const Y_LABEL_CENTER = 4;
 
 /** The frame fields every chart model shares. */
 interface FrameModel {
@@ -84,7 +86,7 @@ function frameNodes(model: FrameModel): ChartNode[] {
         ...part("tick-label"),
         "data-orientation": "y",
         x: plot.x - LABEL_GAP,
-        y: t.position + 4,
+        y: t.position + Y_LABEL_CENTER,
       },
       text: t.label,
     })),

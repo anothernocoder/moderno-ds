@@ -104,12 +104,17 @@ export const CONTRAST_PAIRS: ReadonlyArray<readonly [fg: string, bg: string]> = 
   (s) => s.contrastAgainst !== undefined,
 ).map((s) => [s.name, s.contrastAgainst!] as const);
 
-/** Colour slots grouped for the Theme Builder editor, in display order. */
-export const COLOR_GROUPS: ReadonlyArray<{ group: ContractGroup; slots: readonly string[] }> = (
-  ["surfaces", "brand", "support", "charts"] as const
-).map((group) => ({
+/**
+ * Colour slots grouped for the Theme Builder editor, in display order. The
+ * group list derives from the contract too, so a colour slot under a new
+ * group surfaces in the editor without touching this file.
+ */
+const colorSlots = CONTRACT.filter((s) => s.type === "color");
+export const COLOR_GROUPS: ReadonlyArray<{ group: ContractGroup; slots: readonly string[] }> = [
+  ...new Set(colorSlots.map((s) => s.group)),
+].map((group) => ({
   group,
-  slots: CONTRACT.filter((s) => s.group === group).map((s) => s.name),
+  slots: colorSlots.filter((s) => s.group === group).map((s) => s.name),
 }));
 
 const typeByName = new Map(CONTRACT.map((s) => [s.name, s.type]));

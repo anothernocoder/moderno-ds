@@ -33,6 +33,8 @@
     contrastFail: string;
     invalid: string;
     copied: string;
+    /** Editor group labels, keyed by the contract group id. */
+    groups: Record<string, string>;
   }
 
   let { strings }: { strings: Strings } = $props();
@@ -57,9 +59,10 @@
   ];
 
   // The editor groups derive from the contract data — a slot added to
-  // @moderno/tokens shows up here without touching the island.
+  // @moderno/tokens shows up here without touching the island. Labels come
+  // from the docs i18n; an unmapped group falls back to its id.
   const GROUPS = COLOR_GROUPS.map(({ group, slots }) => ({
-    label: group.charAt(0).toUpperCase() + group.slice(1),
+    label: strings.groups[group] ?? group,
     slots,
   }));
 
@@ -182,7 +185,7 @@
     {/each}
 
     <fieldset class="tb-group">
-      <legend>Other</legend>
+      <legend>{strings.groups["other"] ?? "Other"}</legend>
       {#each OTHER_SLOTS as slot (slot)}
         <label class="tb-slot tb-slot--wide">
           <span class="tb-slot-name">{slot}</span>
