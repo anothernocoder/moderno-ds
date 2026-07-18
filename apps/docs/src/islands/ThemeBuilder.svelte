@@ -12,14 +12,13 @@
   import { COLOR_GROUPS } from "@moderno/tokens/contract";
   import {
     buildTheme,
-    decodeState,
     defaultThemeState,
-    encodeState,
     slugify,
     tokensToState,
     OTHER_SLOTS,
     type ThemeState,
   } from "../lib/theme.ts";
+  import { createThemeStore } from "../lib/themeStore.ts";
 
   interface Strings {
     light: string;
@@ -111,22 +110,21 @@
     URL.revokeObjectURL(url);
   }
 
-  // Persistence: hydrate from ?t= or localStorage, then mirror changes back.
+  // Persistence policy lives in themeStore (tested); the island only wires
+  // the real browser dependencies in. Built lazily — SSR has no localStorage.
+  const store = () =>
+    createThemeStore({
+      storage: localStorage,
+      url: () => location.href,
+      replaceUrl: (url) => history.replaceState(null, "", url),
+    });
+
   onMount(() => {
-    const param = new URLSearchParams(location.search).get("t");
-    const stored = param ?? localStorage.getItem("moderno-theme");
-    if (stored) {
-      const decoded = decodeState(stored);
-      if (decoded) state = decoded;
-    }
+    state = store().hydrate();
   });
 
   $effect(() => {
-    const encoded = encodeState(state);
-    localStorage.setItem("moderno-theme", encoded);
-    const url = new URL(location.href);
-    url.searchParams.set("t", encoded);
-    history.replaceState(null, "", url);
+    store().persist(state);
   });
 </script>
 
