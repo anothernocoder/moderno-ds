@@ -13,6 +13,7 @@ Platform decisions already made live in [ADR-0001](../adr/0001-platform-distribu
 | 4     | [phase-4-charts.md](phase-4-charts.md)                   | line/area/bar/scatter (math + SVG per framework)                                | SSR + theming via `--chart-*`            |
 | 5     | [phase-5-distribution.md](phase-5-distribution.md)       | `registry.json`, `@moderno/cli`, blocks, 2 themes, theme-compile                | `add`/`update`/`diff` work               |
 | 6     | [phase-6-docs.md](phase-6-docs.md)                       | Bilingual Astro site + Theme Builder + registry `/r/`                           | en/es docs with parity + builder exports |
+| 7     | [phase-7-agentic.md](phase-7-agentic.md)                 | `@moderno/mcp` (read+verify) + `@moderno/lint` + per-package agent manifests    | Agent builds a screen; validate loop green |
 
 ## Convention
 

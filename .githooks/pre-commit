@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+#
+# Blocks direct commits to protected branches (default: main).
+# Enforces the "always open a PR" policy locally, before a push is ever
+# attempted. GitHub branch protection is the real gate; this hook just
+# fails fast so you don't build up commits on the wrong branch.
+#
+# Wired via `git config core.hooksPath .githooks` (see the repo's
+# `prepare` npm script, which runs automatically on `pnpm install`).
+#
+# Escape hatch: `git commit --no-verify` (or set MODERNO_ALLOW_MAIN_COMMIT=1).
+
+set -euo pipefail
+
+protected_branches="main"
+branch="$(git branch --show-current 2>/dev/null || echo '')"
+
+if [ "${MODERNO_ALLOW_MAIN_COMMIT:-}" = "1" ]; then
+  exit 0
+fi
+
+for protected in $protected_branches; do
+  if [ "$branch" = "$protected" ]; then
+    cat >&2 <<EOF
+
+  ✖ Commit bloqueado: estás en la rama protegida '$branch'.
+
+    La política del repo es: nada de commits directos a '$protected' — siempre PR.
+
+    Haz esto:
+      git switch -c mi-cambio        # crea una rama de trabajo
+      git commit ...                 # vuelve a commitear ahí
+      git push -u origin mi-cambio
+      gh pr create --fill
+
+    Override (no recomendado): git commit --no-verify
+
+EOF
+    exit 1
+  fi
+done
+
+exit 0
