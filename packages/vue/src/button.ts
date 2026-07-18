@@ -1,8 +1,6 @@
 import { defineComponent, h, type PropType } from "vue";
-import { buttonRecipe, partAttrs, type VariantProps } from "@moderno/core";
+import { buttonRecipe, partAttrs, type ButtonSize, type ButtonVariant } from "@moderno/core";
 
-type ButtonVariant = NonNullable<VariantProps<typeof buttonRecipe.variants>["variant"]>;
-type ButtonSize = NonNullable<VariantProps<typeof buttonRecipe.variants>["size"]>;
 type ButtonType = "button" | "submit" | "reset";
 
 /**
@@ -40,4 +38,4 @@ export const Button = defineComponent({
   },
 });
 
-export type { ButtonVariant, ButtonSize };
+export type { ButtonVariant, ButtonSize } from "@moderno/core";

@@ -1,9 +1,8 @@
 import { Select as ArkSelect } from "@ark-ui/react";
 import type { CollectionItem, SelectRootProps } from "@ark-ui/react";
-import { selectRecipe, type VariantProps } from "@moderno/core";
+import { selectRecipe, type SelectSize } from "@moderno/core";
 
-/** The control density a consumer can choose. Selection state stays Ark's. */
-export type SelectSize = NonNullable<VariantProps<typeof selectRecipe.variants>["size"]>;
+export type { SelectSize } from "@moderno/core";
 
 export type ModernoSelectRootProps<T extends CollectionItem> = SelectRootProps<T> & {
   size?: SelectSize;
@@ -24,24 +23,16 @@ function SelectRoot<T extends CollectionItem>({ size, ...props }: ModernoSelectR
  *
  * Ark drives typeahead, arrow-key highlight, selection, and popover positioning;
  * the menu renders in a `Portal` (unmounted while closed, so SSR/hydration stay
- * clean). The only Moderno addition is the `size` recipe on `Root`; every part's
- * appearance — trigger, content, highlighted/checked items — is `components.css`
- * keyed on Ark's `data-part` + `data-highlighted`/`data-state` attributes.
+ * clean). Only `Root` is wrapped to inject the `size` recipe; every other part
+ * is Ark's verbatim — the spread keeps parts Ark adds in future versions. Each
+ * part's appearance — trigger, content, highlighted/checked items — is
+ * `components.css` keyed on Ark's `data-part` + `data-highlighted`/`data-state`
+ * attributes. The object is annotated so the emitted `.d.ts` doesn't inline an
+ * un-nameable `@zag-js` type (TS2742).
  */
-export const Select = {
+export const Select: Omit<typeof ArkSelect, "Root"> & { Root: typeof SelectRoot } = {
+  ...ArkSelect,
   Root: SelectRoot,
-  Label: ArkSelect.Label,
-  Control: ArkSelect.Control,
-  Trigger: ArkSelect.Trigger,
-  ValueText: ArkSelect.ValueText,
-  Indicator: ArkSelect.Indicator,
-  Positioner: ArkSelect.Positioner,
-  Content: ArkSelect.Content,
-  List: ArkSelect.List,
-  Item: ArkSelect.Item,
-  ItemText: ArkSelect.ItemText,
-  ItemIndicator: ArkSelect.ItemIndicator,
-  HiddenSelect: ArkSelect.HiddenSelect,
 };
 
 export { createListCollection } from "@ark-ui/react";

@@ -11,6 +11,21 @@ import {
 
 afterEach(cleanup);
 
+describe("Select surface (React)", () => {
+  it("exposes every Ark part, not a hand-maintained subset", async () => {
+    // The spread keeps parts Ark adds in future versions (ItemGroup,
+    // ClearTrigger, RootProvider, …) from silently dropping out of Moderno.
+    const { Select: ArkSelect } = await import("@ark-ui/react");
+    for (const part of Object.keys(ArkSelect)) {
+      if (part === "Root") continue; // wrapped to inject the size recipe
+      expect(
+        Select[part as keyof typeof Select],
+        `Select.${part} missing vs @ark-ui/react`,
+      ).toBeDefined();
+    }
+  });
+});
+
 const collection = createListCollection({
   items: [
     { label: "React", value: "react" },

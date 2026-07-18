@@ -13,7 +13,7 @@
  * are styled directly. Recipes only carry the choices a consumer makes via props.
  */
 
-import { cva } from "./cva.js";
+import { cva, type VariantProps } from "./cva.js";
 
 /** Button: visual `variant` × `size`. The canonical recipe Phases 3–4 replicate. */
 export const buttonRecipe = cva({
@@ -31,3 +31,18 @@ export const selectRecipe = cva({
   },
   defaultVariants: { size: "md" },
 });
+
+/*
+ * The variant unions, derived once beside the recipes. Bindings import these
+ * names instead of re-deriving them from the recipe tables — a recipe change
+ * ripples to every framework through this seam.
+ */
+
+/** Button's visual style (`primary`, `outline`, …). */
+export type ButtonVariant = NonNullable<VariantProps<typeof buttonRecipe.variants>["variant"]>;
+
+/** Button's control density. */
+export type ButtonSize = NonNullable<VariantProps<typeof buttonRecipe.variants>["size"]>;
+
+/** Select's control density (trigger/menu). Selection state stays Ark's. */
+export type SelectSize = NonNullable<VariantProps<typeof selectRecipe.variants>["size"]>;

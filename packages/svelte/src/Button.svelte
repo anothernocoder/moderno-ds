@@ -10,10 +10,7 @@
 <script lang="ts">
   import type { Snippet } from "svelte";
   import type { HTMLButtonAttributes } from "svelte/elements";
-  import { buttonRecipe, partAttrs, type VariantProps } from "@moderno/core";
-
-  type ButtonVariant = NonNullable<VariantProps<typeof buttonRecipe.variants>["variant"]>;
-  type ButtonSize = NonNullable<VariantProps<typeof buttonRecipe.variants>["size"]>;
+  import { buttonRecipe, partAttrs, type ButtonSize, type ButtonVariant } from "@moderno/core";
 
   interface Props extends HTMLButtonAttributes {
     variant?: ButtonVariant;
