@@ -13,6 +13,7 @@
   "exports": {
     "./css": "./src/tokens.css",
     "./preset": "./src/preset.css",
+    "./contract": "./src/contract.ts",
     "./package.json": "./package.json"
   },
   "peerDependencies": {

@@ -2,6 +2,15 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import postcss, { type Declaration, type Rule } from "postcss";
+import {
+  COLOR_GROUPS,
+  COLOR_SLOTS,
+  CONTRACT,
+  CONTRAST_PAIRS,
+  EXTENDED_SLOTS,
+  OTHER_SLOTS,
+  slotType,
+} from "../src/contract.ts";
 
 const tokensCss = readFileSync(
   fileURLToPath(new URL("../src/tokens.css", import.meta.url)),
@@ -11,52 +20,6 @@ const presetCss = readFileSync(
   fileURLToPath(new URL("../src/preset.css", import.meta.url)),
   "utf8",
 );
-
-/** Semantic color slots every component may reference (shadcn-style contract). */
-const COLOR_SLOTS = [
-  "background",
-  "foreground",
-  "card",
-  "card-foreground",
-  "popover",
-  "popover-foreground",
-  "primary",
-  "primary-foreground",
-  "secondary",
-  "secondary-foreground",
-  "muted",
-  "muted-foreground",
-  "accent",
-  "accent-foreground",
-  "destructive",
-  "destructive-foreground",
-  "border",
-  "input",
-  "ring",
-  "chart-1",
-  "chart-2",
-  "chart-3",
-  "chart-4",
-  "chart-5",
-] as const;
-
-const NON_COLOR_SLOTS = ["radius", "font-sans", "font-mono"] as const;
-
-const EXTENDED_SLOTS = [
-  "spacing-1",
-  "spacing-2",
-  "spacing-3",
-  "spacing-4",
-  "spacing-5",
-  "spacing-6",
-  "spacing-7",
-  "spacing-8",
-  "motion-instant",
-  "motion-fast",
-  "motion-normal",
-  "radius",
-  "radius-full",
-] as const;
 
 /** Parse a stylesheet into selector -> { customProp: value }. */
 function declsBySelector(css: string): Map<string, Map<string, string>> {
@@ -76,30 +39,53 @@ const tokenRules = declsBySelector(tokensCss);
 const root = tokenRules.get(":root") ?? new Map<string, string>();
 const dark = tokenRules.get(".dark") ?? new Map<string, string>();
 
-describe("@moderno/tokens — minimum slot contract", () => {
-  it("defines every color slot in :root with a non-empty value", () => {
-    for (const slot of COLOR_SLOTS) {
-      expect(root.get(slot), `--${slot} missing in :root`).toBeTruthy();
+describe("@moderno/tokens — contract data", () => {
+  it("splits every slot into exactly one derived list", () => {
+    const derived = [...COLOR_SLOTS, ...OTHER_SLOTS, ...EXTENDED_SLOTS];
+    expect(new Set(derived).size).toBe(derived.length);
+    expect(derived.sort()).toEqual(CONTRACT.map((s) => s.name).sort());
+  });
+
+  it("groups every colour slot for the editor, in contract order", () => {
+    const grouped = COLOR_GROUPS.flatMap((g) => g.slots);
+    expect(grouped).toEqual([...COLOR_SLOTS]);
+  });
+
+  it("pairs every *-foreground colour slot with its background", () => {
+    for (const [fg, bg] of CONTRAST_PAIRS) {
+      expect(COLOR_SLOTS, `--${fg} is not a contract colour`).toContain(fg);
+      expect(COLOR_SLOTS, `--${bg} is not a contract colour`).toContain(bg);
+    }
+    const paired = CONTRAST_PAIRS.map(([fg]) => fg);
+    const foregrounds = COLOR_SLOTS.filter((s) => s.endsWith("-foreground"));
+    expect(paired.sort()).toEqual(["foreground", ...foregrounds].sort());
+  });
+
+  it("resolves the DTCG $type per slot", () => {
+    expect(slotType("primary")).toBe("color");
+    expect(slotType("radius")).toBe("dimension");
+    expect(slotType("font-sans")).toBe("fontFamily");
+    expect(slotType("motion-fast")).toBe("duration");
+  });
+});
+
+describe("@moderno/tokens — tokens.css satisfies the contract", () => {
+  it("defines every contract slot in :root with a non-empty value", () => {
+    for (const slot of CONTRACT) {
+      expect(root.get(slot.name), `--${slot.name} missing in :root`).toBeTruthy();
     }
   });
 
-  it("defines the non-color slots (radius, font-sans, font-mono)", () => {
-    for (const slot of NON_COLOR_SLOTS) {
-      expect(root.get(slot), `--${slot} missing in :root`).toBeTruthy();
-    }
-  });
-
-  it("expresses all color slots in OKLCH", () => {
+  it("expresses all colour slots in OKLCH", () => {
     for (const slot of COLOR_SLOTS) {
       expect(root.get(slot), `--${slot}`).toMatch(/^oklch\(/);
     }
   });
-});
 
-describe("@moderno/tokens — extended contract", () => {
-  it("defines spacing, motion and radius slots", () => {
-    for (const slot of EXTENDED_SLOTS) {
-      expect(root.get(slot), `--${slot} missing`).toBeTruthy();
+  it("declares no colour custom property outside the contract", () => {
+    for (const name of root.keys()) {
+      const declared = CONTRACT.some((s) => s.name === name);
+      expect(declared, `--${name} in tokens.css is not in the contract`).toBe(true);
     }
   });
 });
@@ -119,7 +105,7 @@ describe("@moderno/tokens — multi-brand", () => {
     expect(brandSelectors.length).toBeGreaterThan(0);
     const remapsContractSlot = brandSelectors.some((sel) => {
       const decls = tokenRules.get(sel)!;
-      return [...COLOR_SLOTS].some((slot) => decls.has(slot));
+      return COLOR_SLOTS.some((slot) => decls.has(slot));
     });
     expect(remapsContractSlot, "no [data-brand] scope overrides a contract slot").toBe(true);
   });
@@ -143,7 +129,7 @@ describe("@moderno/tokens — multi-brand", () => {
 });
 
 describe("@moderno/tokens — Tailwind v4 preset", () => {
-  it("maps every color slot to a utility variable via @theme inline", () => {
+  it("maps every colour slot to a utility variable via @theme inline", () => {
     expect(presetCss).toMatch(/@theme\s+inline/);
     for (const slot of COLOR_SLOTS) {
       const re = new RegExp(`--color-${slot}:\\s*var\\(--${slot}\\)`);

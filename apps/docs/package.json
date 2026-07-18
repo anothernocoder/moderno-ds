@@ -19,7 +19,8 @@
     "@moderno/core": "workspace:*",
     "@moderno/css": "workspace:*",
     "@moderno/svelte": "workspace:*",
-    "@moderno/theme-compile": "workspace:*"
+    "@moderno/theme-compile": "workspace:*",
+    "@moderno/tokens": "workspace:*"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",

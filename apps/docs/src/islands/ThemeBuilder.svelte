@@ -9,6 +9,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { Button, LineChart } from "@moderno/svelte";
+  import { COLOR_GROUPS } from "@moderno/tokens/contract";
   import {
     buildTheme,
     decodeState,
@@ -56,13 +57,12 @@
     { name: "B", points: [{ x: 0, y: 4 }, { x: 1, y: 12 }, { x: 2, y: 24 }, { x: 3, y: 20 }] },
   ];
 
-  // The contract groups, for a legible editor.
-  const GROUPS: { label: string; slots: string[] }[] = [
-    { label: "Surfaces", slots: ["background", "foreground", "card", "card-foreground", "popover", "popover-foreground"] },
-    { label: "Brand", slots: ["primary", "primary-foreground", "secondary", "secondary-foreground", "accent", "accent-foreground"] },
-    { label: "Support", slots: ["muted", "muted-foreground", "destructive", "destructive-foreground", "border", "input", "ring"] },
-    { label: "Charts", slots: ["chart-1", "chart-2", "chart-3", "chart-4", "chart-5"] },
-  ];
+  // The editor groups derive from the contract data — a slot added to
+  // @moderno/tokens shows up here without touching the island.
+  const GROUPS = COLOR_GROUPS.map(({ group, slots }) => ({
+    label: group.charAt(0).toUpperCase() + group.slice(1),
+    slots,
+  }));
 
   function loadDoc(doc: unknown) {
     try {

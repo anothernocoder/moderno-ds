@@ -5,36 +5,11 @@
  * uses, so a theme that exports clean here is a theme that passes CI.
  */
 import { compileTheme, ThemeValidationError } from "@moderno/theme-compile";
+import { COLOR_SLOTS, OTHER_SLOTS, slotType } from "@moderno/tokens/contract";
 
-/** Colour contract slots (CONTRACT.md minimum), mirrored from theme-compile. */
-export const COLOR_SLOTS = [
-  "background",
-  "foreground",
-  "card",
-  "card-foreground",
-  "popover",
-  "popover-foreground",
-  "primary",
-  "primary-foreground",
-  "secondary",
-  "secondary-foreground",
-  "muted",
-  "muted-foreground",
-  "accent",
-  "accent-foreground",
-  "destructive",
-  "destructive-foreground",
-  "border",
-  "input",
-  "ring",
-  "chart-1",
-  "chart-2",
-  "chart-3",
-  "chart-4",
-  "chart-5",
-] as const;
-
-export const OTHER_SLOTS = ["radius", "font-sans", "font-mono"] as const;
+// The slot lists come from the contract data in @moderno/tokens — the same
+// source theme-compile validates against, so editor and compiler can't drift.
+export { COLOR_SLOTS, OTHER_SLOTS };
 
 export type Scope = Record<string, string>;
 
@@ -52,13 +27,6 @@ export interface ThemeDoc {
   $extensions?: { "style.moderno.theme"?: { name?: string; brand?: string | null } };
   light: TokenScope;
   dark: TokenScope;
-}
-
-/** DTCG `$type` for a contract slot (colours, the radius dimension, fonts). */
-function slotType(slot: string): string {
-  if (slot === "radius") return "dimension";
-  if (slot.startsWith("font-")) return "fontFamily";
-  return "color";
 }
 
 function scopeToState(scope: unknown): Scope {
