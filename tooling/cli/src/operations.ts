@@ -1,5 +1,6 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { basename, dirname, join } from "node:path";
+import { writeAgentsStanza } from "./agents-md.ts";
 import { COMPONENTS_CONFIG, type ComponentsConfig } from "./config.ts";
 import { unifiedDiff } from "./diff.ts";
 import { hashContent } from "./hash.ts";
@@ -19,7 +20,8 @@ export async function initProject(opts: {
   projectDir: string;
   registry?: string;
   stylesEntry?: string;
-}): Promise<void> {
+  claude?: boolean;
+}): Promise<{ agentsFiles: string[] }> {
   const stylesEntry = opts.stylesEntry ?? DEFAULT_STYLES_ENTRY;
   const configFile = join(opts.projectDir, COMPONENTS_CONFIG);
   if (!(await fileExists(configFile))) {
@@ -36,6 +38,12 @@ export async function initProject(opts: {
   if (!(await fileExists(entryFile))) {
     await writeFileEnsuringDir(entryFile, '@import "@moderno/css";\n');
   }
+
+  const { files: agentsFiles } = await writeAgentsStanza({
+    projectDir: opts.projectDir,
+    claude: opts.claude,
+  });
+  return { agentsFiles };
 }
 
 async function fileExists(file: string): Promise<boolean> {

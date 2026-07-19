@@ -25,6 +25,34 @@ describe("initProject", () => {
     expect(config?.stylesEntry).toBe("src/styles/moderno.css");
   });
 
+  it("writes an AGENTS.md stanza with the golden rules and MCP instructions", async () => {
+    const { agentsFiles } = await initProject({ projectDir: project });
+    expect(agentsFiles).toEqual(["AGENTS.md"]);
+
+    const agents = await readFile(join(project, "AGENTS.md"), "utf8");
+    expect(agents).toContain("Components are never edited");
+    expect(agents).toContain("npx @moderno/mcp");
+    expect(agents).toContain("validate_usage");
+  });
+
+  it("preserves existing AGENTS.md content outside the stanza", async () => {
+    await writeFile(join(project, "AGENTS.md"), "# Team conventions\n\nUse pnpm.\n");
+    await initProject({ projectDir: project });
+
+    const agents = await readFile(join(project, "AGENTS.md"), "utf8");
+    expect(agents).toContain("# Team conventions");
+    expect(agents).toContain("Use pnpm.");
+    expect(agents).toContain("Components are never edited");
+  });
+
+  it("also writes a CLAUDE.md twin when claude is true", async () => {
+    const { agentsFiles } = await initProject({ projectDir: project, claude: true });
+    expect(agentsFiles).toEqual(["AGENTS.md", "CLAUDE.md"]);
+
+    const claude = await readFile(join(project, "CLAUDE.md"), "utf8");
+    expect(claude).toContain("Components are never edited");
+  });
+
   it("does not overwrite an existing moderno.css", async () => {
     await initProject({ projectDir: project });
     await writeFile(join(project, "src/styles/moderno.css"), "/* mine */\n");
