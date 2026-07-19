@@ -40,6 +40,12 @@ const docs = defineCollection({
     pkg: z.string().optional(),
     /** Curated agent guidance; only meaningful on the English page (see above). */
     agent: agentGuidance.optional(),
+    /**
+     * Props hash the `agent` block was last reviewed against; the CI drift
+     * gate (#45) compares it to `props-doc`'s current hash. English page only,
+     * same as `agent`.
+     */
+    agentPropsHash: z.string().optional(),
   }),
 });
 

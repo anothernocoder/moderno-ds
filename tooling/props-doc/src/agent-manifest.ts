@@ -155,9 +155,31 @@ export interface ComponentsManifest {
   components: AgentComponent[];
 }
 
-/** sha256 of the generated props, so the CI drift gate (#45) can detect an unreviewed API change. */
-function propsHash(props: PropDoc[]): string {
+/**
+ * sha256 of the generated props, so the CI drift gate (#45) can detect an
+ * unreviewed API change. Exported so that gate can compute it for a component
+ * without building the full manifest.
+ */
+export function computePropsHash(props: PropDoc[]): string {
   return `sha256:${createHash("sha256").update(JSON.stringify(props)).digest("hex")}`;
+}
+
+/**
+ * Resolves each component's props against the canonical `@moderno/react`
+ * source, keyed by component name. Shared by `buildComponentsManifest` and
+ * the CI drift gate (#45) so both compute the same `propsHash` from the same
+ * source of truth.
+ */
+export function resolveComponentProps(
+  components: AgentComponentSpec[],
+  reactTsConfigFilePath: string,
+): Map<string, PropDoc[]> {
+  const propsEntries = components.filter((c) => c.propsEntry).map((c) => c.propsEntry!);
+  const extracted = extractProps({
+    tsConfigFilePath: reactTsConfigFilePath,
+    entries: propsEntries,
+  });
+  return new Map(extracted.map((d) => [d.name, d.props]));
 }
 
 export interface BuildComponentsManifestOptions {
@@ -174,12 +196,7 @@ export interface BuildComponentsManifestOptions {
 
 export function buildComponentsManifest(opts: BuildComponentsManifestOptions): ComponentsManifest {
   const components = opts.components ?? AGENT_COMPONENTS;
-  const propsEntries = components.filter((c) => c.propsEntry).map((c) => c.propsEntry!);
-  const extracted = extractProps({
-    tsConfigFilePath: opts.reactTsConfigFilePath,
-    entries: propsEntries,
-  });
-  const propsByName = new Map(extracted.map((d) => [d.name, d.props]));
+  const propsByName = resolveComponentProps(components, opts.reactTsConfigFilePath);
 
   const built = components.map((c): AgentComponent => {
     const props = propsByName.get(c.name) ?? [];
@@ -189,7 +206,7 @@ export function buildComponentsManifest(opts: BuildComponentsManifestOptions): C
       name: c.name,
       scope: c.scope,
       import: `import { ${c.name} } from "${opts.packageName}"`,
-      propsHash: propsHash(props),
+      propsHash: computePropsHash(props),
       props,
       parts: c.parts,
       ...(c.variants ? { variants: c.variants } : {}),
