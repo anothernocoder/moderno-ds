@@ -1,0 +1,148 @@
+---
+title: Usar Moderno con agentes
+description: Configura @moderno/mcp, recorre el ciclo search → get_component_api → get_examples → escribir → validate_usage, y sigue las reglas de oro que un agente de código nunca debería romper.
+group: Guías
+order: 2
+---
+
+import Install from "../../../components/Install.astro";
+
+Moderno incluye una superficie pensada para agentes de código, no solo para
+personas leyendo documentación: un servidor MCP local que responde con la API
+que realmente está instalada en tu proyecto, más un validador determinista que
+detecta errores antes de que un agente dé la tarea por terminada. Esta página
+cubre la configuración, el ciclo de extremo a extremo y las reglas que un
+agente debería seguir dentro de un proyecto Moderno.
+
+## Configura el servidor MCP
+
+`@moderno/mcp` es un servidor local por stdio — sin cuenta, sin endpoint
+alojado. Ejecútalo con el runner `dlx` de tu gestor de paquetes:
+
+<Install pkg="@moderno/mcp" mode="cli" />
+
+La mayoría de las herramientas de agentes (Claude Code, Cursor y otras que
+hablan MCP) leen las definiciones de servidor desde una configuración JSON.
+Añade una entrada para `moderno`:
+
+```json
+{
+  "mcpServers": {
+    "moderno": {
+      "command": "npx",
+      "args": ["-y", "@moderno/mcp"]
+    }
+  }
+}
+```
+
+El servidor descubre `moderno.agent.json` en `node_modules/@moderno/*` **una
+sola vez, al arrancar** — así que debe ejecutarse desde (o apuntar a) el
+proyecto que tiene Moderno instalado. Como lee lo que realmente está
+instalado, un proyecto fijado a una versión antigua de `@moderno/react`
+recibe la API de esa versión, no la que se publicó más recientemente.
+
+## El ciclo del agente
+
+Las herramientas son de lectura + verificación, no de escritura — el agente
+sigue escribiendo el código él mismo y usa `@moderno/cli` para el scaffolding.
+El trabajo del MCP es fundamentar ese código en la API real y luego revisarlo.
+
+### 1. `search_components` — encuentra el primitivo por intención
+
+No adivines el nombre de un componente; describe la necesidad de UI.
+
+```
+search_components({ query: "modal blocking decision", framework: "react" })
+→ matches: [{ name: "Dialog", score: 0.82, … }, { name: "Button", score: 0.11, … }]
+```
+
+### 2. `get_component_api` — obtén sus props reales
+
+Lee los props, `data-part`s y variantes de la versión **instalada** antes de
+escribir cualquier marcado.
+
+```
+get_component_api({ name: "Dialog", framework: "react" })
+→ { package: "@moderno/react", version: "1.4.0", component: { props: […], parts: […] } }
+```
+
+### 3. `get_examples` — obtén un snippet funcional en tu framework
+
+Nunca traduzcas a mano un ejemplo de React a la sintaxis de Vue o Svelte —
+pide directamente el ejemplo nativo de ese framework.
+
+```
+get_examples({ name: "Dialog", framework: "react" })
+```
+
+### 4. Escribe el código
+
+Compone el snippet dentro de la funcionalidad real — aquí, un diálogo de
+confirmación destructivo:
+
+```tsx
+<Dialog.Root>
+  <Dialog.Trigger asChild>
+    <Button variant="destructive">Delete account</Button>
+  </Dialog.Trigger>
+  <Dialog.Content>
+    <Dialog.Title>Delete account?</Dialog.Title>
+    <Button variant="destructive">Confirm</Button>
+  </Dialog.Content>
+</Dialog.Root>
+```
+
+### 5. `validate_usage` — verifica antes de terminar
+
+Ejecuta el motor de reglas determinista sobre el diff. Detecta colores
+harcodeados, props inválidas, imports directos de `@ark-ui`/`@zag-js`,
+overrides de `data-part` inválidos, y reimplementaciones caseras de un
+primitivo que ya existe:
+
+```
+validate_usage({ code: "…", framework: "react" })
+→ { findings: [] }   // verde — listo para terminar
+```
+
+Un hallazgo se ve así — corrígelo y vuelve a ejecutar, no es un chequeo único:
+
+```json
+{
+  "ruleId": "moderno/no-hardcoded-color",
+  "severity": "error",
+  "message": "Hardcoded color '#ff0000' bypasses the token contract.",
+  "suggestion": "var(--destructive)"
+}
+```
+
+**Antes de terminar cualquier tarea que toque componentes de Moderno, ejecuta
+`validate_usage` y corrige todo lo que reporte.**
+
+## Reglas de oro
+
+- **Los componentes nunca se editan.** Se tematizan con variables CSS y se
+  varían con props — nunca bifurques el markup de un componente ni escribas
+  CSS por componente.
+- Referencia los slots del contrato (`--background`, `--primary`, `--radius`,
+  …) — nunca uses colores hex, espaciados en px o duraciones en ms
+  harcodeados.
+- Pon los valores de marca en un tema, no en `@moderno/tokens`.
+- Mantén `:root` claro / `.dark` oscuro — no inventes un tercer mecanismo de
+  tematización.
+- `@moderno/css` es el único especificador CSS público — nunca importes rutas
+  internas.
+
+Estas son las mismas reglas que [`moderno init`](/es/installation) escribe en
+el `AGENTS.md` de tu proyecto (y, con `--claude`, en un `CLAUDE.md` gemelo),
+así que un agente que lea cualquiera de los dos archivos llega a este mismo
+contrato sin que tengas que repetirlo.
+
+## Para contribuyentes humanos
+
+Agentes y humanos comparten un solo motor de reglas.
+[`@moderno/lint`](https://www.npmjs.com/package/@moderno/lint) ejecuta
+exactamente las mismas verificaciones que hay detrás de `validate_usage` como
+plugin de ESLint y como CLI (`moderno-lint`), de modo que un PR de una persona
+y un PR de un agente se miden con el mismo estándar — y CI detecta lo que a
+cualquiera de los dos se le escape.
