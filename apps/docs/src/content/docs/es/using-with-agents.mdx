@@ -1,6 +1,6 @@
 ---
 title: Usar Moderno con agentes
-description: Configura @moderno/mcp, recorre el ciclo search → get_component_api → get_examples → escribir → validate_usage, y sigue las reglas de oro que un agente de código nunca debería romper.
+description: Configura @moderno/mcp, recorre el ciclo search → get_component_api → get_contract → get_examples → escribir → validate_usage, y sigue las reglas de oro que un agente de código nunca debería romper.
 group: Guías
 order: 2
 ---
@@ -67,7 +67,18 @@ get_component_api({ name: "Dialog", framework: "react" })
 → { package: "@moderno/react", version: "1.4.0", component: { props: […], parts: […] } }
 ```
 
-### 3. `get_examples` — obtén un snippet funcional en tu framework
+### 3. `get_contract` — confirma las reglas de tematización
+
+Independiente del framework: slots de tokens, el modelo de modo oscuro y la
+convención `data-part`. Consúltalo antes de escribir cualquier color, radio o
+valor de espaciado.
+
+```
+get_contract()
+→ { package: "@moderno/tokens", slots: { color: ["--primary", "--destructive", …] }, rules: […] }
+```
+
+### 4. `get_examples` — obtén un snippet funcional en tu framework
 
 Nunca traduzcas a mano un ejemplo de React a la sintaxis de Vue o Svelte —
 pide directamente el ejemplo nativo de ese framework.
@@ -76,7 +87,7 @@ pide directamente el ejemplo nativo de ese framework.
 get_examples({ name: "Dialog", framework: "react" })
 ```
 
-### 4. Escribe el código
+### 5. Escribe el código
 
 Compone el snippet dentro de la funcionalidad real — aquí, un diálogo de
 confirmación destructivo:
@@ -84,16 +95,16 @@ confirmación destructivo:
 ```tsx
 <Dialog.Root>
   <Dialog.Trigger asChild>
-    <Button variant="destructive">Delete account</Button>
+    <Button variant="destructive">Eliminar cuenta</Button>
   </Dialog.Trigger>
   <Dialog.Content>
-    <Dialog.Title>Delete account?</Dialog.Title>
-    <Button variant="destructive">Confirm</Button>
+    <Dialog.Title>¿Eliminar cuenta?</Dialog.Title>
+    <Button variant="destructive">Confirmar</Button>
   </Dialog.Content>
 </Dialog.Root>
 ```
 
-### 5. `validate_usage` — verifica antes de terminar
+### 6. `validate_usage` — verifica antes de terminar
 
 Ejecuta el motor de reglas determinista sobre el diff. Detecta colores
 harcodeados, props inválidas, imports directos de `@ark-ui`/`@zag-js`,

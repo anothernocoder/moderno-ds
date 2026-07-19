@@ -1,6 +1,6 @@
 ---
 title: Using Moderno with agents
-description: Configure @moderno/mcp, walk the search → get_component_api → get_examples → write → validate_usage loop, and follow the golden rules a coding agent should never break.
+description: Configure @moderno/mcp, walk the search → get_component_api → get_contract → get_examples → write → validate_usage loop, and follow the golden rules a coding agent should never break.
 group: Guides
 order: 2
 ---
@@ -65,7 +65,17 @@ get_component_api({ name: "Dialog", framework: "react" })
 → { package: "@moderno/react", version: "1.4.0", component: { props: […], parts: […] } }
 ```
 
-### 3. `get_examples` — get a working snippet in your framework
+### 3. `get_contract` — confirm the theming rules
+
+Framework-agnostic: token slots, dark-mode model, and the `data-part`
+convention. Consult it before writing any color, radius, or spacing value.
+
+```
+get_contract()
+→ { package: "@moderno/tokens", slots: { color: ["--primary", "--destructive", …] }, rules: […] }
+```
+
+### 4. `get_examples` — get a working snippet in your framework
 
 Never hand-translate a React example into Vue or Svelte syntax — ask for the
 framework-native one.
@@ -74,7 +84,7 @@ framework-native one.
 get_examples({ name: "Dialog", framework: "react" })
 ```
 
-### 4. Write the code
+### 5. Write the code
 
 Compose the snippet into the real feature — here, a destructive confirm
 dialog:
@@ -91,7 +101,7 @@ dialog:
 </Dialog.Root>
 ```
 
-### 5. `validate_usage` — verify before finishing
+### 6. `validate_usage` — verify before finishing
 
 Run the deterministic rule engine over the diff. It catches hardcoded colors,
 invalid props, raw `@ark-ui`/`@zag-js` imports, bad `data-part` overrides, and

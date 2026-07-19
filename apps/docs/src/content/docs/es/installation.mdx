@@ -29,3 +29,18 @@ También puedes extraer el código fuente con la CLI, que lee el registro servid
 en `/r/registry.json`.
 
 <Install pkg="@moderno/cli" mode="cli" />
+
+## Sembrar AGENTS.md para agentes de código (opcional)
+
+`moderno init` también escribe un stanza en `AGENTS.md` — las reglas de oro,
+más instrucciones para usar el servidor MCP `moderno` y ejecutar
+`validate_usage` antes de terminar. Pasa `--claude` para además escribir un
+`CLAUDE.md` gemelo; cualquiera de los dos archivos se fusiona en el lugar en
+ejecuciones repetidas, sin sobrescribir el resto de tu contenido.
+
+```sh
+npx @moderno/cli init --claude
+```
+
+Consulta [Usar Moderno con agentes](/es/using-with-agents) para ver qué dice
+el stanza y cómo funciona realmente el ciclo del MCP al que apunta.

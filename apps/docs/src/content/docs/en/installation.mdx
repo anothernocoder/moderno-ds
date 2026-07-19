@@ -29,3 +29,17 @@ You can also eject source with the CLI, which reads the registry served at
 `/r/registry.json`.
 
 <Install pkg="@moderno/cli" mode="cli" />
+
+## Seed AGENTS.md for coding agents (optional)
+
+`moderno init` also writes an `AGENTS.md` stanza — the golden rules, plus
+instructions to use the `moderno` MCP server and run `validate_usage` before
+finishing. Pass `--claude` to also write a `CLAUDE.md` twin; either file is
+merged in place on repeat runs, never clobbering your other content.
+
+```sh
+npx @moderno/cli init --claude
+```
+
+See [Using Moderno with agents](/en/using-with-agents) for what the stanza
+says and how the MCP loop it points to actually works.
