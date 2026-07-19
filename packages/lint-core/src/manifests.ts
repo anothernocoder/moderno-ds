@@ -1,10 +1,12 @@
 /**
  * Discovers and aggregates `moderno.agent.json` from the consumer's
- * `node_modules` at startup (ADR-0003: a local server pinned to the
- * *installed* package version, not a bundled snapshot). Walks up from `cwd`
- * looking for a `node_modules/@moderno` directory — the same directory Node's
- * own resolution would land on for a bare `@moderno/*` import from `cwd` — and
- * reads every package's `dist/moderno.agent.json` it finds there.
+ * `node_modules` (ADR-0003: pinned to the *installed* package version, not a
+ * bundled snapshot). Walks up from `cwd` looking for a `node_modules/@moderno`
+ * directory — the same directory Node's own resolution would land on for a
+ * bare `@moderno/*` import from `cwd` — and reads every package's
+ * `dist/moderno.agent.json` it finds there. Shared by `@moderno/mcp` (at
+ * server startup) and `@moderno/lint` (at ESLint/CLI run time) — one
+ * discovery routine, so both surfaces see the same installed versions.
  *
  * The manifest shape is imported (type-only — erased at build, no runtime
  * dependency on `@moderno/props-doc`'s ts-morph toolchain) from the package
@@ -13,8 +15,8 @@
  *
  * No schema validation here: the manifest shape is a contract with the
  * `@moderno/*` build pipeline (`docs/prd/phase-7/moderno.agent.schema.json`),
- * not something this server needs to defend against — a malformed manifest is
- * a Moderno release bug, not untrusted input.
+ * not something callers need to defend against — a malformed manifest is a
+ * Moderno release bug, not untrusted input.
  */
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";

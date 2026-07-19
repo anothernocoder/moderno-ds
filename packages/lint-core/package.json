@@ -1,0 +1,30 @@
+{
+  "name": "@moderno/lint-core",
+  "version": "0.0.0",
+  "description": "Shared deterministic rule engine behind @moderno/mcp's validate_usage tool and @moderno/lint: moderno.agent.json discovery + the Rule/Finding contract and starter rule set (hardcoded colors/radii, prop validity, raw Ark imports, data-part overrides, reimplemented primitives).",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsup"
+  },
+  "devDependencies": {
+    "@moderno/props-doc": "workspace:*",
+    "tsup": "^8.3.5"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

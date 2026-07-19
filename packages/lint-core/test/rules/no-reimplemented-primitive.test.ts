@@ -17,11 +17,11 @@ describe("moderno/no-reimplemented-primitive", () => {
     expect(findings[0]!.suggestion).toBe('import { Dialog } from "@moderno/react"');
   });
 
-  it("warns on role=\"dialog\" on a non-<dialog> element", () => {
+  it('warns on role="dialog" on a non-<dialog> element', () => {
     expect(check('<div role="dialog">...</div>')).toHaveLength(1);
   });
 
-  it("does not double-count a <dialog> that also carries role=\"dialog\"", () => {
+  it('does not double-count a <dialog> that also carries role="dialog"', () => {
     expect(check('<dialog role="dialog">...</dialog>')).toHaveLength(1);
   });
 
@@ -36,7 +36,7 @@ describe("moderno/no-reimplemented-primitive", () => {
   });
 
   it("does not warn on a plain native <button> with no variant-class signal", () => {
-    expect(check('<button onClick={submit}>Save</button>')).toHaveLength(0);
+    expect(check("<button onClick={submit}>Save</button>")).toHaveLength(0);
   });
 
   it("does not warn on the Moderno <Dialog>/<Button> components themselves", () => {

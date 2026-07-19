@@ -22,7 +22,10 @@ export interface ComponentUsage {
 }
 
 /** Scans forward from `from` (just past the tag name) for the `>` that closes the opening tag. */
-function findOpenTagClose(code: string, from: number): { end: number; selfClosing: boolean } | null {
+function findOpenTagClose(
+  code: string,
+  from: number,
+): { end: number; selfClosing: boolean } | null {
   let i = from;
   let depth = 0;
   let quote: string | null = null;

@@ -8,7 +8,10 @@ import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { createServer } from "../src/server.ts";
-import { createConsumerFixture, type ConsumerFixture } from "./helpers/consumer-fixture.ts";
+import {
+  createConsumerFixture,
+  type ConsumerFixture,
+} from "../../lint-core/test/helpers/consumer-fixture.ts";
 
 let fixture: ConsumerFixture;
 let client: Client;

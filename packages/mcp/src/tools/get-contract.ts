@@ -5,7 +5,7 @@
  * agent is writing against, so — unlike the other three tools — this one
  * doesn't need a `framework` argument to answer.
  */
-import type { AggregatedManifests, ContractManifest } from "../manifests.ts";
+import type { AggregatedManifests, ContractManifest } from "@moderno/lint-core";
 import { ModernoMcpError } from "./shared.ts";
 
 export type GetContractResult = ContractManifest;

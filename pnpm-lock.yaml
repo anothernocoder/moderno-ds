@@ -154,18 +154,40 @@ importers:
         specifier: workspace:*
         version: link:../tokens
 
+  packages/lint:
+    dependencies:
+      '@moderno/lint-core':
+        specifier: workspace:*
+        version: link:../lint-core
+    devDependencies:
+      eslint:
+        specifier: ^9.17.0
+        version: 9.39.4
+      tsup:
+        specifier: ^8.3.5
+        version: 8.5.1(postcss@8.5.15)(typescript@5.9.3)(yaml@2.9.0)
+
+  packages/lint-core:
+    devDependencies:
+      '@moderno/props-doc':
+        specifier: workspace:*
+        version: link:../../tooling/props-doc
+      tsup:
+        specifier: ^8.3.5
+        version: 8.5.1(postcss@8.5.15)(typescript@5.9.3)(yaml@2.9.0)
+
   packages/mcp:
     dependencies:
       '@modelcontextprotocol/sdk':
         specifier: ^1.29.0
         version: 1.29.0(zod@3.25.76)
+      '@moderno/lint-core':
+        specifier: workspace:*
+        version: link:../lint-core
       zod:
         specifier: ^3.25.0
         version: 3.25.76
     devDependencies:
-      '@moderno/props-doc':
-        specifier: workspace:*
-        version: link:../../tooling/props-doc
       tsup:
         specifier: ^8.3.5
         version: 8.5.1(postcss@8.5.15)(typescript@5.9.3)(yaml@2.9.0)

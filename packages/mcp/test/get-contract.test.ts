@@ -2,10 +2,13 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
-import { discoverManifests } from "../src/manifests.ts";
+import { discoverManifests } from "@moderno/lint-core";
 import { getContract } from "../src/tools/get-contract.ts";
 import { ModernoMcpError } from "../src/tools/shared.ts";
-import { createConsumerFixture, type ConsumerFixture } from "./helpers/consumer-fixture.ts";
+import {
+  createConsumerFixture,
+  type ConsumerFixture,
+} from "../../lint-core/test/helpers/consumer-fixture.ts";
 
 let fixture: ConsumerFixture;
 

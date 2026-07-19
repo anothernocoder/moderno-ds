@@ -19,7 +19,8 @@ import type { Finding, Rule } from "./types.ts";
 import { findComponentUsages } from "./component-usages.ts";
 import { offsetToLoc } from "./text.ts";
 
-const VARIANT_CLASS_SIGNAL = /\b(variant|btn-|button-|primary|secondary|outline|ghost|destructive)\b/i;
+const VARIANT_CLASS_SIGNAL =
+  /\b(variant|btn-|button-|primary|secondary|outline|ghost|destructive)\b/i;
 const NATIVE_TAG_SCOPES = new Set(["button", "dialog", "select"]);
 
 /** The offset of the `<` that opens the tag containing `index` (an attribute match), or null if `index` isn't inside a tag. */

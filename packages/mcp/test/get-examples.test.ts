@@ -1,7 +1,10 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { discoverManifests, type AggregatedManifests } from "../src/manifests.ts";
+import { discoverManifests, type AggregatedManifests } from "@moderno/lint-core";
 import { getExamples } from "../src/tools/get-examples.ts";
-import { createConsumerFixture, type ConsumerFixture } from "./helpers/consumer-fixture.ts";
+import {
+  createConsumerFixture,
+  type ConsumerFixture,
+} from "../../lint-core/test/helpers/consumer-fixture.ts";
 
 let fixture: ConsumerFixture;
 let manifests: AggregatedManifests;

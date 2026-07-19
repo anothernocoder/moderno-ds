@@ -8,7 +8,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
-import { discoverManifests, type AggregatedManifests } from "./manifests.ts";
+import { discoverManifests, type AggregatedManifests } from "@moderno/lint-core";
 import { getComponentApi } from "./tools/get-component-api.ts";
 import { getContract } from "./tools/get-contract.ts";
 import { getExamples } from "./tools/get-examples.ts";
