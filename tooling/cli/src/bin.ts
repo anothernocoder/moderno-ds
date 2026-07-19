@@ -12,7 +12,7 @@ import { addItem, diffItem, initProject, updateItem } from "./operations.ts";
 const HELP = `moderno — Moderno design system CLI
 
 Usage:
-  moderno init [--registry <url|path>]
+  moderno init [--registry <url|path>] [--claude]
   moderno add <item...> [--registry <url|path>]
   moderno update [item...] [--registry <url|path>]
   moderno diff <item> [--registry <url|path>]
@@ -20,6 +20,9 @@ Usage:
 
 Registry resolution (highest precedence first):
   --registry flag · components.json "registry" · MODERNO_REGISTRY_URL · default
+
+init:
+  --claude   also write the AGENTS.md stanza as a CLAUDE.md twin
 `;
 
 async function loadRegistry(
@@ -47,7 +50,11 @@ async function main(argv: string[]): Promise<number> {
   const { values, positionals } = parseArgs({
     args: argv,
     allowPositionals: true,
-    options: { registry: { type: "string" }, help: { type: "boolean", short: "h" } },
+    options: {
+      registry: { type: "string" },
+      help: { type: "boolean", short: "h" },
+      claude: { type: "boolean" },
+    },
   });
 
   const command = positionals[0];
@@ -63,9 +70,14 @@ async function main(argv: string[]): Promise<number> {
   switch (command) {
     case "init": {
       const source = await resolveRegistrySource({ projectDir, override: registryOverride });
-      await initProject({ projectDir, registry: source });
+      const { agentsFiles } = await initProject({
+        projectDir,
+        registry: source,
+        claude: values.claude as boolean | undefined,
+      });
       console.log("✓ initialized: components.json + src/styles/moderno.css");
       console.log('  import it once in your app: import "@/styles/moderno.css"');
+      console.log(`✓ wrote agent instructions: ${agentsFiles.join(", ")}`);
       return 0;
     }
     case "add": {

@@ -5,6 +5,7 @@ export { hashContent } from "./hash.ts";
 export { unifiedDiff } from "./diff.ts";
 export { addItem, updateItem, diffItem, initProject, DEFAULT_STYLES_ENTRY } from "./operations.ts";
 export type { UpdateResult, DiffResult, FileUpdateStatus } from "./operations.ts";
+export { writeAgentsStanza, AGENTS_MD, CLAUDE_MD } from "./agents-md.ts";
 export {
   readComponentsConfig,
   resolveRegistrySource,
