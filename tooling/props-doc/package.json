@@ -7,7 +7,8 @@
   "private": true,
   "bin": {
     "moderno-props-doc": "./dist/bin.js",
-    "moderno-agent-manifest": "./dist/bin-agent-manifest.js"
+    "moderno-agent-manifest": "./dist/bin-agent-manifest.js",
+    "moderno-check-agent-drift": "./dist/bin-check-agent-drift.js"
   },
   "files": [
     "dist"

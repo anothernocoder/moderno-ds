@@ -7,6 +7,7 @@ export default defineConfig({
     "src/agent-manifest.ts",
     "src/contract-manifest.ts",
     "src/bin-agent-manifest.ts",
+    "src/bin-check-agent-drift.ts",
   ],
   format: ["esm"],
   dts: {

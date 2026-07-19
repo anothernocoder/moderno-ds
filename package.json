@@ -14,6 +14,7 @@
     "format:write": "prettier --write .",
     "typecheck": "tsc --noEmit -p tsconfig.json && pnpm --filter @moderno/react typecheck && pnpm --filter @moderno/vue typecheck && pnpm --filter @moderno/solid typecheck && pnpm --filter @moderno/svelte typecheck && pnpm --filter @moderno/docs typecheck",
     "docs:parity": "pnpm --filter @moderno/docs check:parity",
+    "agent:check-drift": "node --experimental-strip-types tooling/props-doc/src/bin-check-agent-drift.ts",
     "test": "vitest run",
     "theme:build": "node --experimental-strip-types tooling/theme-compile/src/bin.ts",
     "changeset": "changeset",

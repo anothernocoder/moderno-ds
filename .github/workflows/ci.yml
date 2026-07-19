@@ -19,5 +19,6 @@ jobs:
       - run: pnpm -r build
       - run: pnpm theme:build
       - run: pnpm docs:parity
+      - run: pnpm agent:check-drift
       - run: pnpm typecheck
       - run: pnpm test
