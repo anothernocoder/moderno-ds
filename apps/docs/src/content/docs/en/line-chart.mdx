@@ -5,6 +5,23 @@ group: Components
 order: 50
 component: LineChart
 pkg: "@moderno/react"
+agentPropsHash: "sha256:31de76454fa982162b535c497a2d8089b8799c370cb872856bdc8dfe713c945a"
+agent:
+  intent: Trend of one or more series over a continuous axis.
+  whenToUse: Time series or any continuous x-domain where the shape of change matters.
+  whenNotToUse:
+    - case: Discrete categories compared side by side
+      use: BarChart
+    - case: Magnitude of a filled trend, not just its line
+      use: AreaChart
+    - case: Correlation between two variables with no line connecting points
+      use: ScatterChart
+  gotchas:
+    - "Zero colour is baked in on purpose — series paint from --chart-1…5 by index; don't pass a stroke/fill prop."
+    - "The render tree comes from @moderno/charts-core; don't hand-build <path> geometry."
+  theming:
+    - "Series colour: --chart-1 through --chart-5, cycled by data-series index."
+    - "Grid/axis lines and tick labels use the neutral --border/--muted-foreground slots, not chart colours."
 ---
 
 import Preview from "../../../components/Preview.astro";

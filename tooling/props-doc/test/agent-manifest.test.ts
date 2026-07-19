@@ -8,10 +8,27 @@ const reactTsConfig = fileURLToPath(
 );
 
 describe("AGENT_COMPONENTS", () => {
-  it("covers the vertical slice once each", () => {
+  it("covers every shipped primitive once each", () => {
     const names = AGENT_COMPONENTS.map((c) => c.name);
-    expect(names).toEqual(["Button", "Field", "Dialog", "Select"]);
+    expect(names).toEqual([
+      "Button",
+      "Field",
+      "Dialog",
+      "Select",
+      "LineChart",
+      "AreaChart",
+      "BarChart",
+      "ScatterChart",
+    ]);
     expect(new Set(names).size).toBe(names.length);
+  });
+
+  it("gives every chart the shared chart scope and no CVA variants", () => {
+    for (const name of ["LineChart", "AreaChart", "BarChart", "ScatterChart"]) {
+      const spec = AGENT_COMPONENTS.find((c) => c.name === name)!;
+      expect(spec.scope).toBe("chart");
+      expect(spec.variants).toBeUndefined();
+    }
   });
 });
 

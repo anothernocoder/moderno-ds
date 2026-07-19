@@ -408,4 +408,270 @@ export const AGENT_EXAMPLES: Record<string, Partial<Record<Framework, AgentExamp
       },
     ],
   },
+
+  LineChart: {
+    react: [
+      {
+        title: "Two-series line chart",
+        code: [
+          'import { LineChart } from "@moderno/react";',
+          "",
+          "const series = [",
+          '  { name: "Sessions", points: [{ x: 0, y: 12 }, { x: 1, y: 28 }, { x: 2, y: 22 }] },',
+          "];",
+          "",
+          "<LineChart width={520} height={260} series={series} xTicks={3} yTicks={5} />",
+        ].join("\n"),
+      },
+    ],
+    vue: [
+      {
+        title: "Two-series line chart",
+        code: [
+          '<script setup lang="ts">',
+          'import { LineChart } from "@moderno/vue";',
+          "",
+          "const series = [",
+          '  { name: "Sessions", points: [{ x: 0, y: 12 }, { x: 1, y: 28 }, { x: 2, y: 22 }] },',
+          "];",
+          "</script>",
+          "",
+          "<template>",
+          '  <LineChart :width="520" :height="260" :series="series" :x-ticks="3" :y-ticks="5" />',
+          "</template>",
+        ].join("\n"),
+      },
+    ],
+    svelte: [
+      {
+        title: "Two-series line chart",
+        code: [
+          '<script lang="ts">',
+          '  import { LineChart } from "@moderno/svelte";',
+          "",
+          "  const series = [",
+          '    { name: "Sessions", points: [{ x: 0, y: 12 }, { x: 1, y: 28 }, { x: 2, y: 22 }] },',
+          "  ];",
+          "</script>",
+          "",
+          '<LineChart width={520} height={260} {series} xTicks={3} yTicks={5} />',
+        ].join("\n"),
+      },
+    ],
+    solid: [
+      {
+        title: "Two-series line chart",
+        code: [
+          'import { LineChart } from "@moderno/solid";',
+          "",
+          "const series = [",
+          '  { name: "Sessions", points: [{ x: 0, y: 12 }, { x: 1, y: 28 }, { x: 2, y: 22 }] },',
+          "];",
+          "",
+          "function SessionsChart() {",
+          "  return <LineChart width={520} height={260} series={series} xTicks={3} yTicks={5} />;",
+          "}",
+        ].join("\n"),
+      },
+    ],
+  },
+
+  AreaChart: {
+    react: [
+      {
+        title: "Single-series area chart",
+        code: [
+          'import { AreaChart } from "@moderno/react";',
+          "",
+          "const series = [",
+          '  { name: "Revenue", points: [{ x: 0, y: 8 }, { x: 1, y: 14 }, { x: 2, y: 11 }] },',
+          "];",
+          "",
+          "<AreaChart width={520} height={260} series={series} xTicks={3} yTicks={5} />",
+        ].join("\n"),
+      },
+    ],
+    vue: [
+      {
+        title: "Single-series area chart",
+        code: [
+          '<script setup lang="ts">',
+          'import { AreaChart } from "@moderno/vue";',
+          "",
+          "const series = [",
+          '  { name: "Revenue", points: [{ x: 0, y: 8 }, { x: 1, y: 14 }, { x: 2, y: 11 }] },',
+          "];",
+          "</script>",
+          "",
+          "<template>",
+          '  <AreaChart :width="520" :height="260" :series="series" :x-ticks="3" :y-ticks="5" />',
+          "</template>",
+        ].join("\n"),
+      },
+    ],
+    svelte: [
+      {
+        title: "Single-series area chart",
+        code: [
+          '<script lang="ts">',
+          '  import { AreaChart } from "@moderno/svelte";',
+          "",
+          "  const series = [",
+          '    { name: "Revenue", points: [{ x: 0, y: 8 }, { x: 1, y: 14 }, { x: 2, y: 11 }] },',
+          "  ];",
+          "</script>",
+          "",
+          '<AreaChart width={520} height={260} {series} xTicks={3} yTicks={5} />',
+        ].join("\n"),
+      },
+    ],
+    solid: [
+      {
+        title: "Single-series area chart",
+        code: [
+          'import { AreaChart } from "@moderno/solid";',
+          "",
+          "const series = [",
+          '  { name: "Revenue", points: [{ x: 0, y: 8 }, { x: 1, y: 14 }, { x: 2, y: 11 }] },',
+          "];",
+          "",
+          "function RevenueChart() {",
+          "  return <AreaChart width={520} height={260} series={series} xTicks={3} yTicks={5} />;",
+          "}",
+        ].join("\n"),
+      },
+    ],
+  },
+
+  BarChart: {
+    react: [
+      {
+        title: "Categorical bar chart",
+        code: [
+          'import { BarChart } from "@moderno/react";',
+          "",
+          'const categories = ["Q1", "Q2", "Q3"];',
+          'const series = [{ name: "Revenue", values: [8, 14, 11] }];',
+          "",
+          "<BarChart width={520} height={260} categories={categories} series={series} yTicks={5} />",
+        ].join("\n"),
+      },
+    ],
+    vue: [
+      {
+        title: "Categorical bar chart",
+        code: [
+          '<script setup lang="ts">',
+          'import { BarChart } from "@moderno/vue";',
+          "",
+          'const categories = ["Q1", "Q2", "Q3"];',
+          'const series = [{ name: "Revenue", values: [8, 14, 11] }];',
+          "</script>",
+          "",
+          "<template>",
+          '  <BarChart :width="520" :height="260" :categories="categories" :series="series" :y-ticks="5" />',
+          "</template>",
+        ].join("\n"),
+      },
+    ],
+    svelte: [
+      {
+        title: "Categorical bar chart",
+        code: [
+          '<script lang="ts">',
+          '  import { BarChart } from "@moderno/svelte";',
+          "",
+          '  const categories = ["Q1", "Q2", "Q3"];',
+          '  const series = [{ name: "Revenue", values: [8, 14, 11] }];',
+          "</script>",
+          "",
+          '<BarChart width={520} height={260} {categories} {series} yTicks={5} />',
+        ].join("\n"),
+      },
+    ],
+    solid: [
+      {
+        title: "Categorical bar chart",
+        code: [
+          'import { BarChart } from "@moderno/solid";',
+          "",
+          'const categories = ["Q1", "Q2", "Q3"];',
+          'const series = [{ name: "Revenue", values: [8, 14, 11] }];',
+          "",
+          "function RevenueByQuarter() {",
+          "  return (",
+          "    <BarChart width={520} height={260} categories={categories} series={series} yTicks={5} />",
+          "  );",
+          "}",
+        ].join("\n"),
+      },
+    ],
+  },
+
+  ScatterChart: {
+    react: [
+      {
+        title: "Scatter plot",
+        code: [
+          'import { ScatterChart } from "@moderno/react";',
+          "",
+          "const series = [",
+          '  { name: "Samples", points: [{ x: 0, y: 12 }, { x: 1, y: 28 }, { x: 2, y: 22 }] },',
+          "];",
+          "",
+          "<ScatterChart width={520} height={260} series={series} radius={4} />",
+        ].join("\n"),
+      },
+    ],
+    vue: [
+      {
+        title: "Scatter plot",
+        code: [
+          '<script setup lang="ts">',
+          'import { ScatterChart } from "@moderno/vue";',
+          "",
+          "const series = [",
+          '  { name: "Samples", points: [{ x: 0, y: 12 }, { x: 1, y: 28 }, { x: 2, y: 22 }] },',
+          "];",
+          "</script>",
+          "",
+          "<template>",
+          '  <ScatterChart :width="520" :height="260" :series="series" :radius="4" />',
+          "</template>",
+        ].join("\n"),
+      },
+    ],
+    svelte: [
+      {
+        title: "Scatter plot",
+        code: [
+          '<script lang="ts">',
+          '  import { ScatterChart } from "@moderno/svelte";',
+          "",
+          "  const series = [",
+          '    { name: "Samples", points: [{ x: 0, y: 12 }, { x: 1, y: 28 }, { x: 2, y: 22 }] },',
+          "  ];",
+          "</script>",
+          "",
+          '<ScatterChart width={520} height={260} {series} radius={4} />',
+        ].join("\n"),
+      },
+    ],
+    solid: [
+      {
+        title: "Scatter plot",
+        code: [
+          'import { ScatterChart } from "@moderno/solid";',
+          "",
+          "const series = [",
+          '  { name: "Samples", points: [{ x: 0, y: 12 }, { x: 1, y: 28 }, { x: 2, y: 22 }] },',
+          "];",
+          "",
+          "function SamplesChart() {",
+          "  return <ScatterChart width={520} height={260} series={series} radius={4} />;",
+          "}",
+        ].join("\n"),
+      },
+    ],
+  },
 };

@@ -1,0 +1,45 @@
+---
+title: Area Chart
+description: A pure-SVG area chart mapped from charts-core; each series fills from the value-0 baseline, colour comes from the --chart-* token slots by index.
+group: Components
+order: 60
+component: AreaChart
+pkg: "@moderno/react"
+agentPropsHash: "sha256:31de76454fa982162b535c497a2d8089b8799c370cb872856bdc8dfe713c945a"
+agent:
+  intent: Magnitude of a trend over a continuous axis, emphasized by a filled region.
+  whenToUse: A single dominant series (or a small stacked-adjacent set) where the filled area under the line communicates volume, not just direction.
+  whenNotToUse:
+    - case: Several overlapping series where fill would obscure comparison
+      use: LineChart
+    - case: Discrete categories compared side by side
+      use: BarChart
+  gotchas:
+    - "Zero colour is baked in on purpose — the fill and its top line paint from --chart-1…5 by index; don't pass a stroke/fill prop."
+    - "The render tree comes from @moderno/charts-core; don't hand-build <path> geometry."
+  theming:
+    - "Fill colour: --chart-1 through --chart-5, cycled by data-series index, at a fixed low opacity so overlapping series stay legible."
+    - "Grid/axis lines and tick labels use the neutral --border/--muted-foreground slots, not chart colours."
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import AreaChartDemo from "../../../islands/AreaChartDemo.svelte";
+
+AreaChart is a deterministic map from a model built by `@moderno/charts-core` to
+`<path>` elements — a filled area plus a stroked top line per series. It bakes
+in no colour — each series paints from `--chart-1…5` keyed on its index, so it
+re-themes with the rest of the system.
+
+<Preview code={`<AreaChart width={520} height={260} series={series} />`}>
+  <AreaChartDemo client:visible />
+</Preview>
+
+## Installation
+
+<Install pkg="@moderno/react" />
+
+## Props
+
+<PropsTable component="AreaChart" />
