@@ -43,8 +43,8 @@ describe("moderno/valid-props", () => {
   });
 
   it("returns nothing for a framework with no manifest", () => {
-    expect(validProps.check({ code: "<Button loud />", framework: "solid", manifests })).toHaveLength(
-      0,
-    );
+    expect(
+      validProps.check({ code: "<Button loud />", framework: "solid", manifests }),
+    ).toHaveLength(0);
   });
 });

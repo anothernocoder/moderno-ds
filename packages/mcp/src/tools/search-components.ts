@@ -4,7 +4,7 @@
  * against the query's tokens (name, scope, and the curated `guidance` fields —
  * the judgment layer, not just the generated facts) and returns them ranked.
  */
-import type { AgentComponent, AggregatedManifests, Framework } from "../manifests.ts";
+import type { AgentComponent, AggregatedManifests, Framework } from "@moderno/lint-core";
 import { findFrameworkManifest, frameworkNotFoundError } from "./shared.ts";
 
 export interface SearchComponentsInput {

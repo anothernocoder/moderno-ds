@@ -5,7 +5,7 @@
  * framework), verified against each binding's own test fixtures). No separate
  * example store here: read the aggregated manifest, return what's there.
  */
-import type { AgentExample, AggregatedManifests, Framework } from "../manifests.ts";
+import type { AgentExample, AggregatedManifests, Framework } from "@moderno/lint-core";
 import { componentNotFoundError, findFrameworkManifest, frameworkNotFoundError } from "./shared.ts";
 
 export interface GetExamplesInput {

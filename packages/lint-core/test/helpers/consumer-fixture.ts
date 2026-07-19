@@ -4,6 +4,12 @@
  * temp dir, not a `test/fixtures/**\/node_modules/**` path), because
  * `node_modules/` is gitignored repo-wide and a fixture tree literally named
  * that way would silently never be tracked by git.
+ *
+ * The one copy of this fixture (CONTEXT.md: a single maintainer "prioritizes
+ * DRY and automation over ad-hoc flexibility") — `packages/mcp` and
+ * `packages/lint` both import it by relative path rather than each keeping
+ * their own, since all three exercise the same `discoverManifests` this
+ * package owns.
  */
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -28,7 +34,7 @@ export interface ConsumerFixture {
  * "skip what isn't there" path has something real to skip.
  */
 export function createConsumerFixture(): ConsumerFixture {
-  const dir = mkdtempSync(join(tmpdir(), "moderno-mcp-fixture-"));
+  const dir = mkdtempSync(join(tmpdir(), "moderno-fixture-"));
 
   for (const pkg of INSTALLED_WITH_MANIFEST) {
     const distDir = join(dir, "node_modules", "@moderno", pkg, "dist");

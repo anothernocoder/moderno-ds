@@ -1,10 +1,9 @@
 /**
  * The starter rule set (`docs/prd/phase-7/validate-rules.md`), authored once
- * so it can be exposed twice per ADR-0003: `validate_usage` here, and a
- * future `@moderno/lint` (#44). These rules live in `@moderno/mcp` for now —
- * this issue's (#43) scope — with no dependency on the MCP SDK anywhere in
- * `./types.ts` or the rule modules, so #44 extracting them into a shared,
- * framework-agnostic package is a move, not a rewrite.
+ * so it can be exposed twice per ADR-0003: `@moderno/mcp`'s `validate_usage`
+ * tool and `@moderno/lint` (ESLint plugin + CLI) both run these same `Rule`
+ * implementations against the same manifests, so a snippet gets identical
+ * findings from either surface.
  */
 import { noHardcodedColor } from "./no-hardcoded-color.ts";
 import { noHardcodedDimension } from "./no-hardcoded-dimension.ts";

@@ -8,9 +8,14 @@ function check(code: string) {
 
 describe("moderno/valid-data-part-override", () => {
   it("flags a data-part that doesn't exist on the target primitive", () => {
-    const findings = check('[data-scope="dialog"][data-part="header"] { color: var(--foreground); }');
+    const findings = check(
+      '[data-scope="dialog"][data-part="header"] { color: var(--foreground); }',
+    );
     expect(findings).toHaveLength(1);
-    expect(findings[0]).toMatchObject({ ruleId: "moderno/valid-data-part-override", severity: "error" });
+    expect(findings[0]).toMatchObject({
+      ruleId: "moderno/valid-data-part-override",
+      severity: "error",
+    });
     expect(findings[0]!.message).toContain('"header" is not a real part of Dialog');
   });
 

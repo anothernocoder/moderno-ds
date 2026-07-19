@@ -1,4 +1,4 @@
-import type { AggregatedManifests, ComponentsManifest, Framework } from "../manifests.ts";
+import type { AggregatedManifests, ComponentsManifest, Framework } from "@moderno/lint-core";
 
 export function findFrameworkManifest(
   manifests: AggregatedManifests,

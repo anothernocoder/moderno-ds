@@ -1,8 +1,8 @@
 /**
  * The `Rule`/`Finding` contract from `docs/prd/phase-7/validate-rules.md` —
- * frozen here so `validate_usage` and a future `@moderno/lint` (#44) can share
- * rule implementations without redesign. A rule is a pure function of parsed
- * source + the aggregated manifests; nothing here is MCP-specific.
+ * shared by `@moderno/mcp`'s `validate_usage` and `@moderno/lint`. A rule is a
+ * pure function of parsed source + the aggregated manifests; nothing here is
+ * MCP- or ESLint-specific.
  */
 import type { AggregatedManifests, Framework } from "../manifests.ts";
 

@@ -10,7 +10,10 @@ describe("moderno/no-hardcoded-dimension", () => {
   it("flags a hardcoded border-radius in px", () => {
     const findings = check("a { border-radius: 6px; }");
     expect(findings).toHaveLength(1);
-    expect(findings[0]).toMatchObject({ ruleId: "moderno/no-hardcoded-dimension", severity: "error" });
+    expect(findings[0]).toMatchObject({
+      ruleId: "moderno/no-hardcoded-dimension",
+      severity: "error",
+    });
     expect(findings[0]!.message).toContain('"6px"');
     expect(findings[0]!.suggestion).toContain("--radius");
   });

@@ -6,8 +6,7 @@
 import type { Finding, Rule } from "./types.ts";
 import { offsetToLoc } from "./text.ts";
 
-const ARK_IMPORT =
-  /import\s+([^;]*?)\s+from\s+["'](@ark-ui\/[\w./-]*|@zag-js\/[\w./-]*)["']/g;
+const ARK_IMPORT = /import\s+([^;]*?)\s+from\s+["'](@ark-ui\/[\w./-]*|@zag-js\/[\w./-]*)["']/g;
 
 /** Named/default identifiers bound by an `import <clause> from "..."` clause. */
 function importedIdentifiers(clause: string): string[] {
@@ -15,7 +14,12 @@ function importedIdentifiers(clause: string): string[] {
   if (named) {
     return named
       .split(",")
-      .map((s) => s.trim().split(/\s+as\s+/)[0]!.trim())
+      .map((s) =>
+        s
+          .trim()
+          .split(/\s+as\s+/)[0]!
+          .trim(),
+      )
       .filter(Boolean);
   }
   if (/^\*\s+as\s+/.test(clause)) return [];
@@ -35,7 +39,9 @@ export const noRawArk: Rule = {
       const [, clause, specifier] = match;
       const identifiers = importedIdentifiers(clause!);
       const matchedComponent = manifest?.components.find((c) =>
-        identifiers.some((id) => id.toLowerCase() === c.name.toLowerCase() || id.toLowerCase() === c.scope),
+        identifiers.some(
+          (id) => id.toLowerCase() === c.name.toLowerCase() || id.toLowerCase() === c.scope,
+        ),
       );
       findings.push({
         ruleId: "moderno/no-raw-ark",

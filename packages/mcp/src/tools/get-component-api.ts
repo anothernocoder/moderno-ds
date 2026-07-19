@@ -5,7 +5,7 @@
  * pinned to an older `@moderno/react` gets that version's API, not latest,
  * because the manifest was read from that package's own `dist`.
  */
-import type { AgentComponent, AggregatedManifests, Framework } from "../manifests.ts";
+import type { AgentComponent, AggregatedManifests, Framework } from "@moderno/lint-core";
 import { componentNotFoundError, findFrameworkManifest, frameworkNotFoundError } from "./shared.ts";
 
 export interface GetComponentApiInput {

@@ -25,10 +25,10 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
+    "@moderno/lint-core": "workspace:*",
     "zod": "^3.25.0"
   },
   "devDependencies": {
-    "@moderno/props-doc": "workspace:*",
     "tsup": "^8.3.5"
   },
   "publishConfig": {
