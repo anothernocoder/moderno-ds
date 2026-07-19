@@ -1,0 +1,45 @@
+---
+title: Bar Chart
+description: A pure-SVG bar chart mapped from charts-core; one rect per category per series, colour comes from the --chart-* token slots by index.
+group: Components
+order: 70
+component: BarChart
+pkg: "@moderno/react"
+agentPropsHash: "sha256:61c671e7050ed38172a7db8ebb687e56bf4ecf11318bdd5e2fb305b74c682b43"
+agent:
+  intent: Magnitude compared across discrete categories.
+  whenToUse: Comparing values across a small-to-medium set of named categories (quarters, regions, options).
+  whenNotToUse:
+    - case: Continuous x-domain where the shape of change matters
+      use: LineChart
+    - case: Continuous trend where the filled volume matters
+      use: AreaChart
+  gotchas:
+    - "categories and each series' values must be the same length and aligned by index — there's no category key on the series."
+    - "Zero colour is baked in on purpose — bars paint from --chart-1…5 by index; don't pass a fill prop."
+  theming:
+    - "Bar colour: --chart-1 through --chart-5, cycled by data-series index."
+    - "Grid/axis lines and tick labels use the neutral --border/--muted-foreground slots, not chart colours."
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import BarChartDemo from "../../../islands/BarChartDemo.svelte";
+
+BarChart is a deterministic map from a model built by `@moderno/charts-core` to
+`<rect>` elements — one bar per category per series, positioned on a band
+scale. It bakes in no colour — each series paints from `--chart-1…5` keyed on
+its index, so it re-themes with the rest of the system.
+
+<Preview code={`<BarChart width={520} height={260} categories={categories} series={series} />`}>
+  <BarChartDemo client:visible />
+</Preview>
+
+## Installation
+
+<Install pkg="@moderno/react" />
+
+## Props
+
+<PropsTable component="BarChart" />

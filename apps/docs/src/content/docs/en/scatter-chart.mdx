@@ -1,0 +1,45 @@
+---
+title: Scatter Chart
+description: A pure-SVG scatter chart mapped from charts-core; one circle per point, colour comes from the --chart-* token slots by index.
+group: Components
+order: 80
+component: ScatterChart
+pkg: "@moderno/react"
+agentPropsHash: "sha256:991f118e4a5009d49e4aa404ff520d8ef20550e2164b7523d6da6a66428db990"
+agent:
+  intent: Correlation or distribution of individual (x, y) samples.
+  whenToUse: Plotting raw data points where position, not a connecting line, is the point.
+  whenNotToUse:
+    - case: The connecting trend between ordered points matters
+      use: LineChart
+    - case: Discrete categories compared side by side
+      use: BarChart
+  gotchas:
+    - "Zero colour is baked in on purpose — points paint from --chart-1…5 by index; don't pass a fill prop."
+    - "radius sets marker size in pixels for every point in the chart, not per point."
+  theming:
+    - "Point colour: --chart-1 through --chart-5, cycled by data-series index."
+    - "Grid/axis lines and tick labels use the neutral --border/--muted-foreground slots, not chart colours."
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import ScatterChartDemo from "../../../islands/ScatterChartDemo.svelte";
+
+ScatterChart is a deterministic map from a model built by `@moderno/charts-core`
+to `<circle>` elements — one marker per point, no path. It bakes in no colour —
+each series paints from `--chart-1…5` keyed on its index, so it re-themes with
+the rest of the system.
+
+<Preview code={`<ScatterChart width={520} height={260} series={series} radius={4} />`}>
+  <ScatterChartDemo client:visible />
+</Preview>
+
+## Installation
+
+<Install pkg="@moderno/react" />
+
+## Props
+
+<PropsTable component="ScatterChart" />

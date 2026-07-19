@@ -1,0 +1,30 @@
+---
+title: Gráfico de área
+description: Un gráfico de área en SVG puro mapeado desde charts-core; cada serie se rellena desde la línea base de valor 0, el color viene de los slots --chart-* por índice.
+group: Componentes
+order: 60
+component: AreaChart
+pkg: "@moderno/react"
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import AreaChartDemo from "../../../islands/AreaChartDemo.svelte";
+
+AreaChart es un mapeo determinista desde un modelo construido por
+`@moderno/charts-core` hacia elementos `<path>` — un área rellena más una línea
+superior trazada por serie. No incluye color propio — cada serie se pinta con
+`--chart-1…5` según su índice, así se re-tematiza con el resto del sistema.
+
+<Preview code={`<AreaChart width={520} height={260} series={series} />`}>
+  <AreaChartDemo client:visible />
+</Preview>
+
+## Instalación
+
+<Install pkg="@moderno/react" />
+
+## Propiedades
+
+<PropsTable component="AreaChart" />

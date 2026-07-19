@@ -1,0 +1,30 @@
+---
+title: Gráfico de dispersión
+description: Un gráfico de dispersión en SVG puro mapeado desde charts-core; un círculo por punto, el color viene de los slots --chart-* por índice.
+group: Componentes
+order: 80
+component: ScatterChart
+pkg: "@moderno/react"
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import ScatterChartDemo from "../../../islands/ScatterChartDemo.svelte";
+
+ScatterChart es un mapeo determinista desde un modelo construido por
+`@moderno/charts-core` hacia elementos `<circle>` — un marcador por punto, sin
+trazo. No incluye color propio — cada serie se pinta con `--chart-1…5` según su
+índice, así se re-tematiza con el resto del sistema.
+
+<Preview code={`<ScatterChart width={520} height={260} series={series} radius={4} />`}>
+  <ScatterChartDemo client:visible />
+</Preview>
+
+## Instalación
+
+<Install pkg="@moderno/react" />
+
+## Propiedades
+
+<PropsTable component="ScatterChart" />

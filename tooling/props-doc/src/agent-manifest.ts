@@ -67,8 +67,23 @@ export interface AgentComponentSpec {
 }
 
 /**
- * The vertical slice (issue #41). Adding a primitive later means one entry
- * here plus a docs `agent:` block — the schema and build wiring don't change.
+ * Every chart type shares this frame — `frameNodes`/`chartRoot`/`seriesGroup`
+ * in `@moderno/charts-core`'s `render.ts` — and adds only its own mark part
+ * (`line`, `area`, `bar`, `point`) on top.
+ */
+const CHART_FRAME_PARTS: AgentPart[] = [
+  { name: "root" },
+  { name: "grid" },
+  { name: "grid-line" },
+  { name: "axis-line" },
+  { name: "tick-label" },
+  { name: "series" },
+];
+
+/**
+ * Adding a primitive later means one entry here plus a docs `agent:` block —
+ * the schema and build wiring don't change (issue #41 proved this on the
+ * vertical slice; issue #46 fanned it out to the rest).
  */
 export const AGENT_COMPONENTS: AgentComponentSpec[] = [
   {
@@ -118,6 +133,34 @@ export const AGENT_COMPONENTS: AgentComponentSpec[] = [
       { name: "item" },
     ],
     variants: selectRecipe.variants,
+  },
+  {
+    name: "LineChart",
+    slug: "line-chart",
+    scope: "chart",
+    propsEntry: findEntry("LineChart"),
+    parts: CHART_FRAME_PARTS.concat({ name: "line" }),
+  },
+  {
+    name: "AreaChart",
+    slug: "area-chart",
+    scope: "chart",
+    propsEntry: findEntry("AreaChart"),
+    parts: CHART_FRAME_PARTS.concat({ name: "area" }, { name: "line" }),
+  },
+  {
+    name: "BarChart",
+    slug: "bar-chart",
+    scope: "chart",
+    propsEntry: findEntry("BarChart"),
+    parts: CHART_FRAME_PARTS.concat({ name: "bar" }),
+  },
+  {
+    name: "ScatterChart",
+    slug: "scatter-chart",
+    scope: "chart",
+    propsEntry: findEntry("ScatterChart"),
+    parts: CHART_FRAME_PARTS.concat({ name: "point" }),
   },
 ];
 

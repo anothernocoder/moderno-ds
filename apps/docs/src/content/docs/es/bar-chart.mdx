@@ -1,0 +1,31 @@
+---
+title: Gráfico de barras
+description: Un gráfico de barras en SVG puro mapeado desde charts-core; un rect por categoría por serie, el color viene de los slots --chart-* por índice.
+group: Componentes
+order: 70
+component: BarChart
+pkg: "@moderno/react"
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import BarChartDemo from "../../../islands/BarChartDemo.svelte";
+
+BarChart es un mapeo determinista desde un modelo construido por
+`@moderno/charts-core` hacia elementos `<rect>` — una barra por categoría por
+serie, posicionada sobre una escala de bandas. No incluye color propio — cada
+serie se pinta con `--chart-1…5` según su índice, así se re-tematiza con el
+resto del sistema.
+
+<Preview code={`<BarChart width={520} height={260} categories={categories} series={series} />`}>
+  <BarChartDemo client:visible />
+</Preview>
+
+## Instalación
+
+<Install pkg="@moderno/react" />
+
+## Propiedades
+
+<PropsTable component="BarChart" />
