@@ -1,0 +1,23 @@
+# Tasks
+- [ ] Implementar playground
+- [ ] Revisar badges readme repo y video demo
+- [ ] Crear soporte de variante
+- [ ] Refinamiento de componentes y variantes
+- [ ] Crear Skill para describir imagenes en formato MD con primitivas de moderno
+- [ ] Create Moderno Skill to generate Design.md y Design System Theme for moderno a partir de una imagen.
+- [ ] Crear mi propia tool o playground para iterar componentes de moderno y poder exportarlos a claude o html o cualquier framework
+- [ ] Probar el Moderno repo en 
+    - [ ] V0 design system 2
+- [ ] Unir Design Tools como un Playground
+  - [ ] Agregar nuevas tools de pixel point
+  - [ ] Replicar tool de la carpeta inspo
+  - [ ] Minitool para crear Ads, OG Images, Posts, Covers, Carousels
+  - [ ] Minitool para mockups
+  - [ ] Scenes para motion graphics
+- [ ] Convert inspo en new blocks
+- [ ] Add new flows
+- [ ] Add slides for decks
+- [ ] Minitool generte graphics brands based on references
+- [ ] Minitool para construir logos
+- [ ] Minitool para construis Brand Guide HTML
+- [ ] Skill para motion graphics + remotion + hyperframes

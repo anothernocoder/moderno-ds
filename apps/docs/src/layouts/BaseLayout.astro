@@ -3,9 +3,15 @@ import { getCollection } from "astro:content";
 import { defaultLocale, locales, splitId, useTranslations, type Locale } from "../i18n/ui.ts";
 import LanguageSwitcher from "../components/LanguageSwitcher.astro";
 import Search from "../components/Search.astro";
+import TableOfContents from "../components/TableOfContents.astro";
 import ThemeToggle from "../components/ThemeToggle.astro";
 import "../styles/docs.css";
 import "@moderno/css";
+// Docs-site chrome only — the design system's own --font-sans/--font-mono
+// contract stays untouched so live component previews keep showing the real,
+// intentionally-neutral defaults. See docs.css for the --docs-font-* vars.
+import "@fontsource-variable/geist";
+import "@fontsource-variable/geist-mono";
 
 interface Props {
   locale: Locale;
@@ -13,9 +19,12 @@ interface Props {
   description: string;
   /** Slug of the current page, used to build hreflang/canonical links. */
   slug: string;
+  /** From `render(entry)` — when present, renders a right-rail TOC. */
+  headings?: { depth: number; slug: string; text: string }[];
 }
 
-const { locale, title, description, slug } = Astro.props;
+const { locale, title, description, slug, headings = [] } = Astro.props;
+const tocHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
 const t = useTranslations(locale);
 const site = Astro.site ?? new URL("https://moderno.style");
 
@@ -83,7 +92,7 @@ const pageTitle = slug === "index" ? title : `${title} — Moderno`;
       </div>
     </header>
 
-    <div class="layout">
+    <div class:list={["layout", tocHeadings.length > 0 && "layout--with-toc"]}>
       <aside class="sidebar" aria-label={t("nav.docs")}>
         {
           [...groups].map(([group, items]) => (
@@ -109,6 +118,7 @@ const pageTitle = slug === "index" ? title : `${title} — Moderno`;
       <main id="main" data-pagefind-body>
         <slot />
       </main>
+      {tocHeadings.length > 0 && <TableOfContents headings={tocHeadings} locale={locale} />}
     </div>
 
     <script src="../scripts/clipboard.ts"></script>

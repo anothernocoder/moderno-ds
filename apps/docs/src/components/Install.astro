@@ -1,6 +1,6 @@
 ---
+import { Code } from "astro-expressive-code/components";
 import { uid } from "../lib/uid.ts";
-import { currentLocale, useTranslations } from "../i18n/ui.ts";
 
 interface Props {
   /** Package to install, e.g. `@moderno/react`. */
@@ -10,7 +10,6 @@ interface Props {
 }
 
 const { pkg, mode = "dependency" } = Astro.props;
-const t = useTranslations(currentLocale(Astro.currentLocale));
 
 const managers =
   mode === "cli"
@@ -50,16 +49,7 @@ const name = uid("install");
   {
     managers.map((m) => (
       <div class={`install-panel install-panel--${m.id}`} role="tabpanel">
-        <code class="install-cmd">{m.cmd}</code>
-        <button
-          type="button"
-          class="copy-btn"
-          data-copy={m.cmd}
-          data-copied={t("copy.copied")}
-          aria-label={t("copy.code")}
-        >
-          <span aria-hidden="true">⧉</span>
-        </button>
+        <Code code={m.cmd} lang="sh" />
       </div>
     ))
   }

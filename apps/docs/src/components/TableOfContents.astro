@@ -1,0 +1,39 @@
+---
+import { useTranslations, type Locale } from "../i18n/ui.ts";
+
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface Props {
+  /** From Astro's `render(entry)` — the page's own h1 is not included. */
+  headings: Heading[];
+  locale: Locale;
+}
+
+const { headings, locale } = Astro.props;
+const t = useTranslations(locale);
+// Only h2/h3 — h4+ gets noisy in a rail this narrow.
+const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
+---
+
+{
+  items.length > 0 && (
+    <nav class="toc" aria-label={t("toc.title")}>
+      <p class="toc-title">{t("toc.title")}</p>
+      <ul class="toc-list">
+        {items.map((h) => (
+          <li class={`toc-item toc-item--${h.depth}`}>
+            <a href={`#${h.slug}`} data-toc-link={h.slug}>
+              {h.text}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
+}
+
+<script src="../scripts/toc.ts"></script>
