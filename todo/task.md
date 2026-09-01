@@ -8,3 +8,16 @@
 - [ ] Crear mi propia tool o playground para iterar componentes de moderno y poder exportarlos a claude o html o cualquier framework
 - [ ] Probar el Moderno repo en 
     - [ ] V0 design system 2
+- [ ] Unir Design Tools como un Playground
+  - [ ] Agregar nuevas tools de pixel point
+  - [ ] Replicar tool de la carpeta inspo
+  - [ ] Minitool para crear Ads, OG Images, Posts, Covers, Carousels
+  - [ ] Minitool para mockups
+  - [ ] Scenes para motion graphics
+- [ ] Convert inspo en new blocks
+- [ ] Add new flows
+- [ ] Add slides for decks
+- [ ] Minitool generte graphics brands based on references
+- [ ] Minitool para construir logos
+- [ ] Minitool para construis Brand Guide HTML
+- [ ] Skill para motion graphics + remotion + hyperframes
