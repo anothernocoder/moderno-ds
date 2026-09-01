@@ -2,6 +2,7 @@ import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import svelte from "@astrojs/svelte";
 import vercel from "@astrojs/vercel";
+import expressiveCode from "astro-expressive-code";
 import { defineConfig, passthroughImageService } from "astro/config";
 
 const SITE = process.env.SITE_URL ?? "https://moderno.style";
@@ -16,7 +17,14 @@ export default defineConfig({
     defaultLocale: "en",
     routing: { prefixDefaultLocale: true, redirectToDefaultLocale: false },
   },
-  integrations: [svelte(), mdx(), sitemap()],
+  integrations: [
+    // Must run before mdx() so its rehype plugin sees fenced code blocks
+    // first. Options live in ec.config.mjs — see that file for why.
+    expressiveCode(),
+    svelte(),
+    mdx(),
+    sitemap(),
+  ],
   server: { port: Number(process.env.PORT) || 4321 },
   // No image optimization in the docs (sharp is not built); pass images through.
   image: { service: passthroughImageService() },

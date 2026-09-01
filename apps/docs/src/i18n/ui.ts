@@ -34,7 +34,6 @@ export const ui = {
     "search.placeholder": "Search the docs…",
     "tabs.preview": "Preview",
     "tabs.code": "Code",
-    "copy.code": "Copy code",
     "copy.copied": "Copied",
     "copy.markdown": "Copy as Markdown",
     "props.name": "Prop",
@@ -46,6 +45,7 @@ export const ui = {
     "props.no": "No",
     "props.empty": "This component forwards the native element's attributes only.",
     "install.title": "Installation",
+    "toc.title": "On this page",
     "lang.switch": "Español",
     "theme.title": "Theme Builder",
     "theme.lead":
@@ -76,7 +76,6 @@ export const ui = {
     "search.placeholder": "Buscar en la documentación…",
     "tabs.preview": "Vista previa",
     "tabs.code": "Código",
-    "copy.code": "Copiar código",
     "copy.copied": "Copiado",
     "copy.markdown": "Copiar como Markdown",
     "props.name": "Propiedad",
@@ -88,6 +87,7 @@ export const ui = {
     "props.no": "No",
     "props.empty": "Este componente solo reenvía los atributos del elemento nativo.",
     "install.title": "Instalación",
+    "toc.title": "En esta página",
     "lang.switch": "English",
     "theme.title": "Editor de temas",
     "theme.lead":
