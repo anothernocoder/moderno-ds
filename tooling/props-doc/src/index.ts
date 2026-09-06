@@ -1,5 +1,5 @@
 /**
- * @moderno/props-doc — build-time prop extractor.
+ * @moderno-ui/props-doc — build-time prop extractor.
  *
  * Resolves a framework binding's exported props interface with ts-morph and
  * emits the props the consumer actually sets. The signal/noise rule: keep props

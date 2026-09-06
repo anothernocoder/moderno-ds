@@ -27,13 +27,13 @@ design system. Follow these rules when writing UI code.
   via props — never fork component markup or write per-component CSS.
 - Reference contract slots (\`--background\`, \`--primary\`, \`--radius\`, …) —
   never hardcode hex colors, px spacing, or ms durations.
-- Put brand values in a theme, not in \`@moderno/tokens\`.
+- Put brand values in a theme, not in \`@moderno-ui/tokens\`.
 - Keep \`:root\` light / \`.dark\` dark — don't invent a third theming mechanism.
-- \`@moderno/css\` is the only public CSS specifier — never import internal paths.
+- \`@moderno-ui/css\` is the only public CSS specifier — never import internal paths.
 
 ### Use the MCP server for component knowledge
 
-Configure the \`moderno\` MCP server (\`npx @moderno/mcp\`, stdio) in your agent's
+Configure the \`moderno\` MCP server (\`npx @moderno-ui/mcp\`, stdio) in your agent's
 MCP settings, then use its tools instead of guessing APIs:
 
 - \`search_components\` — find the right primitive by intent.

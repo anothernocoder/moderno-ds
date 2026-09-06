@@ -1,5 +1,5 @@
 /**
- * Builds the `@moderno/mcp` stdio server: five read/verify tools over the
+ * Builds the `@moderno-ui/mcp` stdio server: five read/verify tools over the
  * manifests aggregated from the consumer's `node_modules` (ADR-0003).
  * `createServer` is the single seam `bin.ts` and the integration tests both
  * go through — tests exercise the exact tool registrations a real client
@@ -8,7 +8,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
-import { discoverManifests, type AggregatedManifests } from "@moderno/lint-core";
+import { discoverManifests, type AggregatedManifests } from "@moderno-ui/lint-core";
 import { getComponentApi } from "./tools/get-component-api.ts";
 import { getContract } from "./tools/get-contract.ts";
 import { getExamples } from "./tools/get-examples.ts";
@@ -18,7 +18,7 @@ import { validateUsage } from "./tools/validate-usage.ts";
 
 const FRAMEWORK = z
   .enum(["react", "vue", "svelte", "solid", "astro"])
-  .describe("The @moderno/* binding this answer must be accurate for.");
+  .describe("The @moderno-ui/* binding this answer must be accurate for.");
 
 function ok(structuredContent: unknown): CallToolResult {
   return {
@@ -38,7 +38,7 @@ export interface CreateServerOptions {
 }
 
 export function createServer(opts: CreateServerOptions = {}): McpServer {
-  const server = new McpServer({ name: "@moderno/mcp", version: "0.0.0" });
+  const server = new McpServer({ name: "@moderno-ui/mcp", version: "0.0.0" });
 
   // Discovered once at startup, not per-call — a long-running agent session
   // gets one consistent, version-pinned view of the consumer's node_modules.
@@ -69,7 +69,7 @@ export function createServer(opts: CreateServerOptions = {}): McpServer {
     {
       title: "Get a Moderno component's API",
       description:
-        "Props, data-parts, and variants for one component, read from the INSTALLED @moderno/<framework> package's manifest — not the latest docs. Use this before writing any Moderno component usage.",
+        "Props, data-parts, and variants for one component, read from the INSTALLED @moderno-ui/<framework> package's manifest — not the latest docs. Use this before writing any Moderno component usage.",
       inputSchema: {
         name: z.string().describe("Component name, e.g. 'Button'."),
         framework: FRAMEWORK,

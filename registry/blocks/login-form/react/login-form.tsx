@@ -1,7 +1,7 @@
-import { Button, Field } from "@moderno/react";
+import { Button, Field } from "@moderno-ui/react";
 
 /**
- * LoginForm — an ejected block that composes @moderno/react primitives
+ * LoginForm — an ejected block that composes @moderno-ui/react primitives
  * (Field, Button) into a sign-in card. Copy it into your project and edit
  * freely. All visuals are themed via CSS variables from the design system,
  * so this block holds no hardcoded colors, radii, or fonts.

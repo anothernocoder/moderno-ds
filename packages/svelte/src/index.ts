@@ -1,11 +1,11 @@
 /**
- * @moderno/svelte — Svelte 5 bindings (and the docs island runtime).
+ * @moderno-ui/svelte — Svelte 5 bindings (and the docs island runtime).
  *
- * Ark UI provides headless behaviour; `@moderno/core` recipes map props to
- * `data-*`; `@moderno/css` (the shared `components.css`) paints everything from
+ * Ark UI provides headless behaviour; `@moderno-ui/core` recipes map props to
+ * `data-*`; `@moderno-ui/css` (the shared `components.css`) paints everything from
  * token slots. Components ship no styling of their own — import the CSS once:
  *
- *   import "@moderno/css";
+ *   import "@moderno-ui/css";
  */
 import { Select as ArkSelect } from "@ark-ui/svelte";
 import SelectRoot from "./SelectRoot.svelte";
@@ -13,7 +13,7 @@ import SelectRoot from "./SelectRoot.svelte";
 export { default as Button } from "./Button.svelte";
 
 /**
- * Charts (Phase 4) — pure SVG maps over `@moderno/charts-core` models. Each
+ * Charts (Phase 4) — pure SVG maps over `@moderno-ui/charts-core` models. Each
  * renders the identical scaffold across frameworks; they carry zero colour and
  * paint from `--chart-*` via the data-series index in components.css.
  */

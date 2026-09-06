@@ -1,7 +1,7 @@
 /**
  * The starter rule set (`docs/prd/phase-7/validate-rules.md`), authored once
- * so it can be exposed twice per ADR-0003: `@moderno/mcp`'s `validate_usage`
- * tool and `@moderno/lint` (ESLint plugin + CLI) both run these same `Rule`
+ * so it can be exposed twice per ADR-0003: `@moderno-ui/mcp`'s `validate_usage`
+ * tool and `@moderno-ui/lint` (ESLint plugin + CLI) both run these same `Rule`
  * implementations against the same manifests, so a snippet gets identical
  * findings from either surface.
  */

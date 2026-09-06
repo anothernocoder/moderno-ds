@@ -1,5 +1,5 @@
 import type { ComponentPropsWithRef } from "react";
-import { buttonRecipe, partAttrs, type VariantProps } from "@moderno/core";
+import { buttonRecipe, partAttrs, type VariantProps } from "@moderno-ui/core";
 
 export interface ButtonProps
   extends ComponentPropsWithRef<"button">, VariantProps<typeof buttonRecipe.variants> {}

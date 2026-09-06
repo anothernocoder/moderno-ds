@@ -6,5 +6,5 @@ export default defineConfig({
   dts: true,
   clean: true,
   treeshake: true,
-  external: ["vue", "@ark-ui/vue", "@moderno/core"],
+  external: ["vue", "@ark-ui/vue", "@moderno-ui/core"],
 });

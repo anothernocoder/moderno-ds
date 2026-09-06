@@ -1,14 +1,14 @@
 /**
- * `@moderno/lint` — the ESLint face of `@moderno/lint-core`'s rule engine
+ * `@moderno-ui/lint` — the ESLint face of `@moderno-ui/lint-core`'s rule engine
  * (ADR-0003). Register under the `moderno` namespace so rule ids match the
  * shared `Rule.id` convention (`moderno/<name>`):
  *
  * ```js
- * import moderno from "@moderno/lint";
+ * import moderno from "@moderno-ui/lint";
  * export default [...moderno.configs.recommended];
  * ```
  */
-import { ALL_RULES } from "@moderno/lint-core";
+import { ALL_RULES } from "@moderno-ui/lint-core";
 import type { ESLint, Linter } from "eslint";
 import { toESLintRule } from "./eslint-rule.ts";
 
@@ -26,7 +26,7 @@ for (const rule of ALL_RULES) {
 }
 
 const plugin: ESLint.Plugin = {
-  meta: { name: "@moderno/lint" },
+  meta: { name: "@moderno-ui/lint" },
   rules,
 };
 

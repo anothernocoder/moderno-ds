@@ -5,7 +5,7 @@
  * in `.tsx`, so a Solid consumer must override explicitly; there's no
  * extension-only way to tell the two apart.
  */
-import type { Framework } from "@moderno/lint-core";
+import type { Framework } from "@moderno-ui/lint-core";
 
 export const FRAMEWORKS: Framework[] = ["react", "vue", "svelte", "solid", "astro"];
 

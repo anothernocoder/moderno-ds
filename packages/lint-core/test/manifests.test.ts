@@ -26,7 +26,7 @@ describe("discoverManifests", () => {
     const result = discoverManifests(fixture.dir);
     const react = result.components.find((m) => m.framework === "react")!;
     expect(react.version).toBe("0.5.0");
-    expect(react.package).toBe("@moderno/react");
+    expect(react.package).toBe("@moderno-ui/react");
   });
 
   it("walks up from a nested cwd to find node_modules/@moderno", () => {
@@ -37,7 +37,7 @@ describe("discoverManifests", () => {
 
   it("splits the tokens package into the shared contract manifest", () => {
     const result = discoverManifests(fixture.dir);
-    expect(result.contract?.package).toBe("@moderno/tokens");
+    expect(result.contract?.package).toBe("@moderno-ui/tokens");
     expect(result.contract?.kind).toBe("contract");
   });
 

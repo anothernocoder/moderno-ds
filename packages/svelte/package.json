@@ -1,7 +1,12 @@
 {
-  "name": "@moderno/svelte",
-  "version": "0.0.0",
-  "description": "Svelte 5 bindings for Moderno (and the docs island runtime): Ark UI headless behaviour + @moderno/core CVA (props → data-attributes), styled entirely by the shared components.css.",
+  "name": "@moderno-ui/svelte",
+  "version": "0.3.0",
+  "description": "Svelte 5 bindings for Moderno (and the docs island runtime): Ark UI headless behaviour + @moderno-ui/core CVA (props → data-attributes), styled entirely by the shared components.css.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anothernocoder/moderno-ds.git",
+    "directory": "packages/svelte"
+  },
   "license": "MIT",
   "type": "module",
   "sideEffects": false,
@@ -25,15 +30,15 @@
   },
   "dependencies": {
     "@ark-ui/svelte": "^5.22.1",
-    "@moderno/charts-core": "workspace:*",
-    "@moderno/core": "workspace:*"
+    "@moderno-ui/charts-core": "workspace:*",
+    "@moderno-ui/core": "workspace:*"
   },
   "peerDependencies": {
-    "@moderno/css": "workspace:*",
+    "@moderno-ui/css": "workspace:*",
     "svelte": "^5.0.0"
   },
   "devDependencies": {
-    "@moderno/props-doc": "workspace:*",
+    "@moderno-ui/props-doc": "workspace:*",
     "@sveltejs/package": "^2.5.8",
     "@sveltejs/vite-plugin-svelte": "^4.0.4",
     "@testing-library/svelte": "^5.3.1",

@@ -1,7 +1,7 @@
-import { Button } from "@moderno/react";
+import { Button } from "@moderno-ui/react";
 
 /**
- * Pricing — an ejected block that composes @moderno/react primitives
+ * Pricing — an ejected block that composes @moderno-ui/react primitives
  * (Button) into a three-plan pricing section. Copy it into your project and
  * edit the plans array freely. Themed via CSS variables from the design
  * system; no hardcoded colors, radii, or fonts live here.

@@ -1,5 +1,5 @@
 import { splitProps, type JSX } from "solid-js";
-import { buttonRecipe, partAttrs, type ButtonSize, type ButtonVariant } from "@moderno/core";
+import { buttonRecipe, partAttrs, type ButtonSize, type ButtonVariant } from "@moderno-ui/core";
 
 export interface ButtonProps extends JSX.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
@@ -9,7 +9,7 @@ export interface ButtonProps extends JSX.ButtonHTMLAttributes<HTMLButtonElement>
 /**
  * Button — the reference primitive, ported to Solid.
  *
- * Identical contract to `@moderno/react`: a plain `<button>` carrying
+ * Identical contract to `@moderno-ui/react`: a plain `<button>` carrying
  * `data-scope`/`data-part` plus the shared `buttonRecipe`'s `data-variant`/
  * `data-size`. Zero styling lives here — `components.css` paints it from token
  * slots. `splitProps` peels the recipe props off; everything else (onClick,
@@ -30,4 +30,4 @@ export function Button(props: ButtonProps) {
   );
 }
 
-export type { ButtonVariant, ButtonSize } from "@moderno/core";
+export type { ButtonVariant, ButtonSize } from "@moderno-ui/core";

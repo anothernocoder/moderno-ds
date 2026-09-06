@@ -1,11 +1,11 @@
 /**
  * `get_examples` — framework-specific snippets straight off the manifest's
  * `components[].examples` (curated at build time in
- * `@moderno/props-doc`'s `agent-examples.ts`, one entry per (component,
+ * `@moderno-ui/props-doc`'s `agent-examples.ts`, one entry per (component,
  * framework), verified against each binding's own test fixtures). No separate
  * example store here: read the aggregated manifest, return what's there.
  */
-import type { AgentExample, AggregatedManifests, Framework } from "@moderno/lint-core";
+import type { AgentExample, AggregatedManifests, Framework } from "@moderno-ui/lint-core";
 import { componentNotFoundError, findFrameworkManifest, frameworkNotFoundError } from "./shared.ts";
 
 export interface GetExamplesInput {

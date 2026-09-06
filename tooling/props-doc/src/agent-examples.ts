@@ -8,7 +8,7 @@
  * JSX snippet with the tags renamed. So this is a hand-authored table, one
  * entry per (component, framework), verified against each binding's own test
  * fixtures so the snippets stay real, working usage rather than aspirational
- * markup. `@moderno/mcp`'s `get_examples` tool reads these straight off the
+ * markup. `@moderno-ui/mcp`'s `get_examples` tool reads these straight off the
  * built manifest — no separate example store to keep in sync.
  */
 import type { AgentExample, Framework } from "./agent-manifest.ts";
@@ -19,7 +19,7 @@ export const AGENT_EXAMPLES: Record<string, Partial<Record<Framework, AgentExamp
       {
         title: "Primary and outline",
         code: [
-          'import { Button } from "@moderno/react";',
+          'import { Button } from "@moderno-ui/react";',
           "",
           '<Button variant="primary">Save</Button>',
           '<Button variant="outline">Cancel</Button>',
@@ -31,7 +31,7 @@ export const AGENT_EXAMPLES: Record<string, Partial<Record<Framework, AgentExamp
         title: "Primary and outline",
         code: [
           '<script setup lang="ts">',
-          'import { Button } from "@moderno/vue";',
+          'import { Button } from "@moderno-ui/vue";',
           "</script>",
           "",
           "<template>",
@@ -46,7 +46,7 @@ export const AGENT_EXAMPLES: Record<string, Partial<Record<Framework, AgentExamp
         title: "Primary and outline",
         code: [
           '<script lang="ts">',
-          '  import { Button } from "@moderno/svelte";',
+          '  import { Button } from "@moderno-ui/svelte";',
           "</script>",
           "",
           '<Button variant="primary">Save</Button>',
@@ -58,7 +58,7 @@ export const AGENT_EXAMPLES: Record<string, Partial<Record<Framework, AgentExamp
       {
         title: "Primary and outline",
         code: [
-          'import { Button } from "@moderno/solid";',
+          'import { Button } from "@moderno-ui/solid";',
           "",
           '<Button variant="primary">Save</Button>',
           '<Button variant="outline">Cancel</Button>',
@@ -72,7 +72,7 @@ export const AGENT_EXAMPLES: Record<string, Partial<Record<Framework, AgentExamp
       {
         title: "Email field with helper and error text",
         code: [
-          'import { Field } from "@moderno/react";',
+          'import { Field } from "@moderno-ui/react";',
           "",
           "<Field.Root invalid={hasError}>",
           "  <Field.Label>Email</Field.Label>",
@@ -88,7 +88,7 @@ export const AGENT_EXAMPLES: Record<string, Partial<Record<Framework, AgentExamp
         title: "Email field with helper and error text",
         code: [
           '<script setup lang="ts">',
-          'import { Field } from "@moderno/vue";',
+          'import { Field } from "@moderno-ui/vue";',
           "defineProps<{ invalid?: boolean }>();",
           "</script>",
           "",
@@ -108,7 +108,7 @@ export const AGENT_EXAMPLES: Record<string, Partial<Record<Framework, AgentExamp
         title: "Email field with helper and error text",
         code: [
           '<script lang="ts">',
-          '  import { Field } from "@moderno/svelte";',
+          '  import { Field } from "@moderno-ui/svelte";',
           "  let { invalid = false }: { invalid?: boolean } = $props();",
           "</script>",
           "",
@@ -125,7 +125,7 @@ export const AGENT_EXAMPLES: Record<string, Partial<Record<Framework, AgentExamp
       {
         title: "Email field with helper and error text",
         code: [
-          'import { Field } from "@moderno/solid";',
+          'import { Field } from "@moderno-ui/solid";',
           "",
           "function EmailField(props: { invalid?: boolean }) {",
           "  return (",
@@ -147,7 +147,7 @@ export const AGENT_EXAMPLES: Record<string, Partial<Record<Framework, AgentExamp
       {
         title: "Confirmation dialog",
         code: [
-          'import { Dialog, Portal } from "@moderno/react";',
+          'import { Dialog, Portal } from "@moderno-ui/react";',
           "",
           "<Dialog.Root>",
           "  <Dialog.Trigger>Open dialog</Dialog.Trigger>",
@@ -170,7 +170,7 @@ export const AGENT_EXAMPLES: Record<string, Partial<Record<Framework, AgentExamp
         title: "Confirmation dialog",
         code: [
           '<script setup lang="ts">',
-          'import { Dialog, Portal } from "@moderno/vue";',
+          'import { Dialog, Portal } from "@moderno-ui/vue";',
           "</script>",
           "",
           "<template>",
@@ -196,7 +196,7 @@ export const AGENT_EXAMPLES: Record<string, Partial<Record<Framework, AgentExamp
         title: "Confirmation dialog",
         code: [
           '<script lang="ts">',
-          '  import { Dialog, Portal } from "@moderno/svelte";',
+          '  import { Dialog, Portal } from "@moderno-ui/svelte";',
           "</script>",
           "",
           "<Dialog.Root>",
@@ -219,7 +219,7 @@ export const AGENT_EXAMPLES: Record<string, Partial<Record<Framework, AgentExamp
       {
         title: "Confirmation dialog",
         code: [
-          'import { Dialog, Portal } from "@moderno/solid";',
+          'import { Dialog, Portal } from "@moderno-ui/solid";',
           "",
           "function ConfirmDialog() {",
           "  return (",
@@ -248,7 +248,7 @@ export const AGENT_EXAMPLES: Record<string, Partial<Record<Framework, AgentExamp
       {
         title: "Framework picker",
         code: [
-          'import { Select, Portal, createListCollection } from "@moderno/react";',
+          'import { Select, Portal, createListCollection } from "@moderno-ui/react";',
           "",
           "const collection = createListCollection({",
           "  items: [",
@@ -287,7 +287,7 @@ export const AGENT_EXAMPLES: Record<string, Partial<Record<Framework, AgentExamp
         title: "Framework picker",
         code: [
           '<script setup lang="ts">',
-          'import { Select, Portal, createListCollection } from "@moderno/vue";',
+          'import { Select, Portal, createListCollection } from "@moderno-ui/vue";',
           "",
           "const collection = createListCollection({",
           "  items: [",
@@ -327,7 +327,7 @@ export const AGENT_EXAMPLES: Record<string, Partial<Record<Framework, AgentExamp
         title: "Framework picker",
         code: [
           '<script lang="ts">',
-          '  import { Select, Portal, createListCollection } from "@moderno/svelte";',
+          '  import { Select, Portal, createListCollection } from "@moderno-ui/svelte";',
           "",
           "  const collection = createListCollection({",
           "    items: [",
@@ -367,7 +367,7 @@ export const AGENT_EXAMPLES: Record<string, Partial<Record<Framework, AgentExamp
         title: "Framework picker",
         code: [
           'import { For } from "solid-js";',
-          'import { Select, Portal, createListCollection } from "@moderno/solid";',
+          'import { Select, Portal, createListCollection } from "@moderno-ui/solid";',
           "",
           "const collection = createListCollection({",
           "  items: [",
@@ -414,7 +414,7 @@ export const AGENT_EXAMPLES: Record<string, Partial<Record<Framework, AgentExamp
       {
         title: "Two-series line chart",
         code: [
-          'import { LineChart } from "@moderno/react";',
+          'import { LineChart } from "@moderno-ui/react";',
           "",
           "const series = [",
           '  { name: "Sessions", points: [{ x: 0, y: 12 }, { x: 1, y: 28 }, { x: 2, y: 22 }] },',
@@ -429,7 +429,7 @@ export const AGENT_EXAMPLES: Record<string, Partial<Record<Framework, AgentExamp
         title: "Two-series line chart",
         code: [
           '<script setup lang="ts">',
-          'import { LineChart } from "@moderno/vue";',
+          'import { LineChart } from "@moderno-ui/vue";',
           "",
           "const series = [",
           '  { name: "Sessions", points: [{ x: 0, y: 12 }, { x: 1, y: 28 }, { x: 2, y: 22 }] },',
@@ -447,14 +447,14 @@ export const AGENT_EXAMPLES: Record<string, Partial<Record<Framework, AgentExamp
         title: "Two-series line chart",
         code: [
           '<script lang="ts">',
-          '  import { LineChart } from "@moderno/svelte";',
+          '  import { LineChart } from "@moderno-ui/svelte";',
           "",
           "  const series = [",
           '    { name: "Sessions", points: [{ x: 0, y: 12 }, { x: 1, y: 28 }, { x: 2, y: 22 }] },',
           "  ];",
           "</script>",
           "",
-          '<LineChart width={520} height={260} {series} xTicks={3} yTicks={5} />',
+          "<LineChart width={520} height={260} {series} xTicks={3} yTicks={5} />",
         ].join("\n"),
       },
     ],
@@ -462,7 +462,7 @@ export const AGENT_EXAMPLES: Record<string, Partial<Record<Framework, AgentExamp
       {
         title: "Two-series line chart",
         code: [
-          'import { LineChart } from "@moderno/solid";',
+          'import { LineChart } from "@moderno-ui/solid";',
           "",
           "const series = [",
           '  { name: "Sessions", points: [{ x: 0, y: 12 }, { x: 1, y: 28 }, { x: 2, y: 22 }] },',
@@ -481,7 +481,7 @@ export const AGENT_EXAMPLES: Record<string, Partial<Record<Framework, AgentExamp
       {
         title: "Single-series area chart",
         code: [
-          'import { AreaChart } from "@moderno/react";',
+          'import { AreaChart } from "@moderno-ui/react";',
           "",
           "const series = [",
           '  { name: "Revenue", points: [{ x: 0, y: 8 }, { x: 1, y: 14 }, { x: 2, y: 11 }] },',
@@ -496,7 +496,7 @@ export const AGENT_EXAMPLES: Record<string, Partial<Record<Framework, AgentExamp
         title: "Single-series area chart",
         code: [
           '<script setup lang="ts">',
-          'import { AreaChart } from "@moderno/vue";',
+          'import { AreaChart } from "@moderno-ui/vue";',
           "",
           "const series = [",
           '  { name: "Revenue", points: [{ x: 0, y: 8 }, { x: 1, y: 14 }, { x: 2, y: 11 }] },',
@@ -514,14 +514,14 @@ export const AGENT_EXAMPLES: Record<string, Partial<Record<Framework, AgentExamp
         title: "Single-series area chart",
         code: [
           '<script lang="ts">',
-          '  import { AreaChart } from "@moderno/svelte";',
+          '  import { AreaChart } from "@moderno-ui/svelte";',
           "",
           "  const series = [",
           '    { name: "Revenue", points: [{ x: 0, y: 8 }, { x: 1, y: 14 }, { x: 2, y: 11 }] },',
           "  ];",
           "</script>",
           "",
-          '<AreaChart width={520} height={260} {series} xTicks={3} yTicks={5} />',
+          "<AreaChart width={520} height={260} {series} xTicks={3} yTicks={5} />",
         ].join("\n"),
       },
     ],
@@ -529,7 +529,7 @@ export const AGENT_EXAMPLES: Record<string, Partial<Record<Framework, AgentExamp
       {
         title: "Single-series area chart",
         code: [
-          'import { AreaChart } from "@moderno/solid";',
+          'import { AreaChart } from "@moderno-ui/solid";',
           "",
           "const series = [",
           '  { name: "Revenue", points: [{ x: 0, y: 8 }, { x: 1, y: 14 }, { x: 2, y: 11 }] },',
@@ -548,7 +548,7 @@ export const AGENT_EXAMPLES: Record<string, Partial<Record<Framework, AgentExamp
       {
         title: "Categorical bar chart",
         code: [
-          'import { BarChart } from "@moderno/react";',
+          'import { BarChart } from "@moderno-ui/react";',
           "",
           'const categories = ["Q1", "Q2", "Q3"];',
           'const series = [{ name: "Revenue", values: [8, 14, 11] }];',
@@ -562,7 +562,7 @@ export const AGENT_EXAMPLES: Record<string, Partial<Record<Framework, AgentExamp
         title: "Categorical bar chart",
         code: [
           '<script setup lang="ts">',
-          'import { BarChart } from "@moderno/vue";',
+          'import { BarChart } from "@moderno-ui/vue";',
           "",
           'const categories = ["Q1", "Q2", "Q3"];',
           'const series = [{ name: "Revenue", values: [8, 14, 11] }];',
@@ -579,13 +579,13 @@ export const AGENT_EXAMPLES: Record<string, Partial<Record<Framework, AgentExamp
         title: "Categorical bar chart",
         code: [
           '<script lang="ts">',
-          '  import { BarChart } from "@moderno/svelte";',
+          '  import { BarChart } from "@moderno-ui/svelte";',
           "",
           '  const categories = ["Q1", "Q2", "Q3"];',
           '  const series = [{ name: "Revenue", values: [8, 14, 11] }];',
           "</script>",
           "",
-          '<BarChart width={520} height={260} {categories} {series} yTicks={5} />',
+          "<BarChart width={520} height={260} {categories} {series} yTicks={5} />",
         ].join("\n"),
       },
     ],
@@ -593,7 +593,7 @@ export const AGENT_EXAMPLES: Record<string, Partial<Record<Framework, AgentExamp
       {
         title: "Categorical bar chart",
         code: [
-          'import { BarChart } from "@moderno/solid";',
+          'import { BarChart } from "@moderno-ui/solid";',
           "",
           'const categories = ["Q1", "Q2", "Q3"];',
           'const series = [{ name: "Revenue", values: [8, 14, 11] }];',
@@ -613,7 +613,7 @@ export const AGENT_EXAMPLES: Record<string, Partial<Record<Framework, AgentExamp
       {
         title: "Scatter plot",
         code: [
-          'import { ScatterChart } from "@moderno/react";',
+          'import { ScatterChart } from "@moderno-ui/react";',
           "",
           "const series = [",
           '  { name: "Samples", points: [{ x: 0, y: 12 }, { x: 1, y: 28 }, { x: 2, y: 22 }] },',
@@ -628,7 +628,7 @@ export const AGENT_EXAMPLES: Record<string, Partial<Record<Framework, AgentExamp
         title: "Scatter plot",
         code: [
           '<script setup lang="ts">',
-          'import { ScatterChart } from "@moderno/vue";',
+          'import { ScatterChart } from "@moderno-ui/vue";',
           "",
           "const series = [",
           '  { name: "Samples", points: [{ x: 0, y: 12 }, { x: 1, y: 28 }, { x: 2, y: 22 }] },',
@@ -646,14 +646,14 @@ export const AGENT_EXAMPLES: Record<string, Partial<Record<Framework, AgentExamp
         title: "Scatter plot",
         code: [
           '<script lang="ts">',
-          '  import { ScatterChart } from "@moderno/svelte";',
+          '  import { ScatterChart } from "@moderno-ui/svelte";',
           "",
           "  const series = [",
           '    { name: "Samples", points: [{ x: 0, y: 12 }, { x: 1, y: 28 }, { x: 2, y: 22 }] },',
           "  ];",
           "</script>",
           "",
-          '<ScatterChart width={520} height={260} {series} radius={4} />',
+          "<ScatterChart width={520} height={260} {series} radius={4} />",
         ].join("\n"),
       },
     ],
@@ -661,7 +661,7 @@ export const AGENT_EXAMPLES: Record<string, Partial<Record<Framework, AgentExamp
       {
         title: "Scatter plot",
         code: [
-          'import { ScatterChart } from "@moderno/solid";',
+          'import { ScatterChart } from "@moderno-ui/solid";',
           "",
           "const series = [",
           '  { name: "Samples", points: [{ x: 0, y: 12 }, { x: 1, y: 28 }, { x: 2, y: 22 }] },',

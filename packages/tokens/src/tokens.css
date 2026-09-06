@@ -1,5 +1,5 @@
 /*
- * @moderno/tokens — semantic token contract (neutral defaults)
+ * @moderno-ui/tokens — semantic token contract (neutral defaults)
  *
  * The single source of truth for the slot CONTRACT. Values here are
  * intentionally NEUTRAL (OKLCH grays + system font stack) so components can be

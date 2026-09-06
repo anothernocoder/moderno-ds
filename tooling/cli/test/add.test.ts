@@ -35,7 +35,7 @@ describe("addItem — copies files and records the version", () => {
 
   it("appends a theme @import to moderno.css when adding a theme", async () => {
     await mkdir(join(project, "src/styles"), { recursive: true });
-    await writeFile(join(project, "src/styles/moderno.css"), '@import "@moderno/css";\n');
+    await writeFile(join(project, "src/styles/moderno.css"), '@import "@moderno-ui/css";\n');
 
     const reg = await createRegistry(registryDir).load();
     const manifest = await readManifest(project);

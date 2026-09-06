@@ -7,20 +7,20 @@ order: 1
 
 import Install from "../../../components/Install.astro";
 
-Pick the binding for your framework. Every binding depends on `@moderno/core`
-(the recipes) and is painted by `@moderno/css` (the shared stylesheet).
+Pick the binding for your framework. Every binding depends on `@moderno-ui/core`
+(the recipes) and is painted by `@moderno-ui/css` (the shared stylesheet).
 
 ## React
 
-<Install pkg="@moderno/react" />
+<Install pkg="@moderno-ui/react" />
 
 ## Import the stylesheet once
 
-Import `@moderno/css` a single time at your app root — it carries the component
+Import `@moderno-ui/css` a single time at your app root — it carries the component
 styles and the default theme's contract slots.
 
 ```ts
-import "@moderno/css";
+import "@moderno-ui/css";
 ```
 
 ## Scaffold from the registry (optional)
@@ -28,7 +28,7 @@ import "@moderno/css";
 You can also eject source with the CLI, which reads the registry served at
 `/r/registry.json`.
 
-<Install pkg="@moderno/cli" mode="cli" />
+<Install pkg="@moderno-ui/cli" mode="cli" />
 
 ## Seed AGENTS.md for coding agents (optional)
 
@@ -38,7 +38,7 @@ finishing. Pass `--claude` to also write a `CLAUDE.md` twin; either file is
 merged in place on repeat runs, never clobbering your other content.
 
 ```sh
-npx @moderno/cli init --claude
+npx @moderno-ui/cli init --claude
 ```
 
 See [Using Moderno with agents](/en/using-with-agents) for what the stanza

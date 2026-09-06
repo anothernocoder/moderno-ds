@@ -2,7 +2,7 @@
  * Component recipes — the variant tables shared by every framework binding.
  *
  * A recipe is just a `cva` instance: it maps public props to deterministic
- * `data-*` attributes on a component's root part. Recipes live in `@moderno/core`
+ * `data-*` attributes on a component's root part. Recipes live in `@moderno-ui/core`
  * (not in the React/Vue/Svelte/Solid packages) so all bindings resolve variants
  * identically — the framework only differs in how it spreads the attributes onto
  * markup. `components.css` styles those attributes; the recipe and the stylesheet

@@ -12,8 +12,8 @@
  *
  * The `tokens` target dynamically imports `contract-manifest.ts` instead of
  * `agent-manifest.ts` — a static top-level import would pull in
- * `agent-manifest.ts`'s `@moderno/core` dependency even on this branch, and
- * `@moderno/tokens`'s build has no reason to require `@moderno/core`'s `dist`
+ * `agent-manifest.ts`'s `@moderno-ui/core` dependency even on this branch, and
+ * `@moderno-ui/tokens`'s build has no reason to require `@moderno-ui/core`'s `dist`
  * to exist first (nor a package.json edge telling `pnpm -r build` to build it
  * first).
  */
@@ -29,10 +29,10 @@ const REACT_TSCONFIG = join(repoRoot, "packages/react/tsconfig.json");
 const DOCS_EN_DIR = join(repoRoot, "apps/docs/src/content/docs/en");
 
 const FRAMEWORK_PACKAGES: Record<string, { packageName: string; framework: Framework }> = {
-  react: { packageName: "@moderno/react", framework: "react" },
-  vue: { packageName: "@moderno/vue", framework: "vue" },
-  svelte: { packageName: "@moderno/svelte", framework: "svelte" },
-  solid: { packageName: "@moderno/solid", framework: "solid" },
+  react: { packageName: "@moderno-ui/react", framework: "react" },
+  vue: { packageName: "@moderno-ui/vue", framework: "vue" },
+  svelte: { packageName: "@moderno-ui/svelte", framework: "svelte" },
+  solid: { packageName: "@moderno-ui/solid", framework: "solid" },
 };
 
 function readVersion(packageDir: string): string {

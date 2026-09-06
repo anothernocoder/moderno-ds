@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
  * `moderno-props-doc [outDir]` — emit `<outDir>/<component>.json` for every
- * documented component, resolved from the canonical `@moderno/react` types.
+ * documented component, resolved from the canonical `@moderno-ui/react` types.
  *
  * Props are identical across the framework bindings by contract (they share the
- * `@moderno/core` recipes), so React is the single source of truth. The docs
+ * `@moderno-ui/core` recipes), so React is the single source of truth. The docs
  * `<PropsTable>` imports the emitted JSON; the build runs this before Astro.
  */
 import { mkdirSync, writeFileSync } from "node:fs";

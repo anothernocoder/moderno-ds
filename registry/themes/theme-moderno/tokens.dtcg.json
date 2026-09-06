@@ -1,6 +1,6 @@
 {
   "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
-  "$description": "Moderno default theme — near-black monochrome workspace. Brand lives in CSS variables; components reference the contract slots only. Authored from DESIGN.md; compiled by @moderno/theme-compile.",
+  "$description": "Moderno default theme — near-black monochrome workspace. Brand lives in CSS variables; components reference the contract slots only. Authored from DESIGN.md; compiled by @moderno-ui/theme-compile.",
   "$extensions": {
     "style.moderno.theme": {
       "name": "theme-moderno",

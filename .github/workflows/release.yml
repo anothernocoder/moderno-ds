@@ -4,7 +4,34 @@ on:
   push:
     branches: [main]
 
-concurrency: ${{ github.workflow }}-${{ github.ref }}
+# Standard Changesets flow: on every push to main this either opens/updates a
+# "Version Packages" PR (when changesets are pending in .changeset/) or, once
+# that PR is merged, runs the publish step.
+#
+# Auth: `id-token: write` is what lets `pnpm publish` authenticate via npm
+# Trusted Publishing (OIDC), with no long-lived secret. Each package must be
+# linked to this repo + this workflow file in the npmjs.com UI first, and npm
+# only allows that on packages that already exist. NPM_TOKEN below is the
+# bootstrap for packages publishing under a brand-new name for the first time;
+# npm prefers OIDC whenever a trusted publisher is configured, so the two
+# coexist. Once every package is linked, delete the NODE_AUTH_TOKEN line and
+# the repo secret — OIDC alone is what produces provenance attestations.
+#
+# PR creation requires the repo's "Allow GitHub Actions to create and approve
+# pull requests" setting (Settings > Actions > General) to be enabled.
+#
+# The `release` script (root package.json) intentionally uses `pnpm -r publish`
+# rather than `changeset publish`: the latter shells out to plain `npm publish`
+# per package, which does not rewrite internal `workspace:*` dependency ranges
+# first — react/vue/svelte/solid depend on core/charts-core/css via
+# `workspace:*`, so they would publish broken. `pnpm publish` rewrites those to
+# real versions at pack time. `changeset version` still owns computing versions
+# and changelogs; only the publish mechanism differs. See
+# https://pnpm.io/using-changesets.
+
+concurrency:
+  group: release
+  cancel-in-progress: false
 
 permissions:
   contents: write
@@ -16,15 +43,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: pnpm
           registry-url: https://registry.npmjs.org
+
       - run: pnpm install --frozen-lockfile
+
+      # Trusted Publishing needs npm >= 11.5.1; the npm bundled with
+      # actions/setup-node's Node 22 build can lag behind that.
+      - run: npm install -g npm@latest
+
       - run: pnpm -r build
       - run: pnpm theme:build
+
       - name: Create Release PR or publish to npm
         uses: changesets/action@v1
         with:

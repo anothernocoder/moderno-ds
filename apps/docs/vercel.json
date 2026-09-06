@@ -1,7 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "astro",
-  "buildCommand": "cd ../.. && pnpm install --frozen-lockfile && pnpm --filter @moderno/docs build",
+  "buildCommand": "cd ../.. && pnpm install --frozen-lockfile && pnpm --filter @moderno-ui/docs build",
   "outputDirectory": ".vercel/output",
   "cleanUrls": true,
   "trailingSlash": false

@@ -6,5 +6,5 @@ export default defineConfig({
   dts: true,
   clean: true,
   treeshake: true,
-  external: ["react", "react-dom", "@ark-ui/react", "@moderno/core"],
+  external: ["react", "react-dom", "@ark-ui/react", "@moderno-ui/core"],
 });

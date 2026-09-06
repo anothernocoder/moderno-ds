@@ -1,7 +1,7 @@
-import { Button, Field } from "@moderno/solid";
+import { Button, Field } from "@moderno-ui/solid";
 
 /**
- * LoginForm — an ejected block that composes @moderno/solid primitives
+ * LoginForm — an ejected block that composes @moderno-ui/solid primitives
  * (Field, Button) into a sign-in card. Copy it into your project and edit
  * freely. All visuals are themed via CSS variables from the design system,
  * so this block holds no hardcoded colors, radii, or fonts.

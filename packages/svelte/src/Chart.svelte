@@ -1,7 +1,7 @@
 <!--
   Chart — the Svelte walker over charts-core's render tree. The complete render
   description (geometry, label anchors, data-part structure) is computed in
-  @moderno/charts-core; this component only maps nodes onto elements. The tag
+  @moderno-ui/charts-core; this component only maps nodes onto elements. The tag
   set is closed, so each branch renders statically inside the <svg> namespace
   (no <svelte:element> namespace guessing). No baked colour/style — series
   paint from `--chart-*` via the data-series index in components.css. Parity
@@ -9,7 +9,7 @@
 -->
 <script lang="ts">
   import type { SVGAttributes } from "svelte/elements";
-  import type { ChartNode } from "@moderno/charts-core";
+  import type { ChartNode } from "@moderno-ui/charts-core";
 
   // `width`/`height` are numeric chart dimensions and `format` is the chart's
   // tick formatter — all collide with native SVG attributes, so drop them.

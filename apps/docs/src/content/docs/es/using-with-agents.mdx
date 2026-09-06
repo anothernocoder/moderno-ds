@@ -1,6 +1,6 @@
 ---
 title: Usar Moderno con agentes
-description: Configura @moderno/mcp, recorre el ciclo search → get_component_api → get_contract → get_examples → escribir → validate_usage, y sigue las reglas de oro que un agente de código nunca debería romper.
+description: Configura @moderno-ui/mcp, recorre el ciclo search → get_component_api → get_contract → get_examples → escribir → validate_usage, y sigue las reglas de oro que un agente de código nunca debería romper.
 group: Guías
 order: 2
 ---
@@ -16,10 +16,10 @@ agente debería seguir dentro de un proyecto Moderno.
 
 ## Configura el servidor MCP
 
-`@moderno/mcp` es un servidor local por stdio — sin cuenta, sin endpoint
+`@moderno-ui/mcp` es un servidor local por stdio — sin cuenta, sin endpoint
 alojado. Ejecútalo con el runner `dlx` de tu gestor de paquetes:
 
-<Install pkg="@moderno/mcp" mode="cli" />
+<Install pkg="@moderno-ui/mcp" mode="cli" />
 
 La mayoría de las herramientas de agentes (Claude Code, Cursor y otras que
 hablan MCP) leen las definiciones de servidor desde una configuración JSON.
@@ -30,22 +30,22 @@ Añade una entrada para `moderno`:
   "mcpServers": {
     "moderno": {
       "command": "npx",
-      "args": ["-y", "@moderno/mcp"]
+      "args": ["-y", "@moderno-ui/mcp"]
     }
   }
 }
 ```
 
-El servidor descubre `moderno.agent.json` en `node_modules/@moderno/*` **una
+El servidor descubre `moderno.agent.json` en `node_modules/@moderno-ui/*` **una
 sola vez, al arrancar** — así que debe ejecutarse desde (o apuntar a) el
 proyecto que tiene Moderno instalado. Como lee lo que realmente está
-instalado, un proyecto fijado a una versión antigua de `@moderno/react`
+instalado, un proyecto fijado a una versión antigua de `@moderno-ui/react`
 recibe la API de esa versión, no la que se publicó más recientemente.
 
 ## El ciclo del agente
 
 Las herramientas son de lectura + verificación, no de escritura — el agente
-sigue escribiendo el código él mismo y usa `@moderno/cli` para el scaffolding.
+sigue escribiendo el código él mismo y usa `@moderno-ui/cli` para el scaffolding.
 El trabajo del MCP es fundamentar ese código en la API real y luego revisarlo.
 
 ### 1. `search_components` — encuentra el primitivo por intención
@@ -64,7 +64,7 @@ escribir cualquier marcado.
 
 ```
 get_component_api({ name: "Dialog", framework: "react" })
-→ { package: "@moderno/react", version: "1.4.0", component: { props: […], parts: […] } }
+→ { package: "@moderno-ui/react", version: "1.4.0", component: { props: […], parts: […] } }
 ```
 
 ### 3. `get_contract` — confirma las reglas de tematización
@@ -75,7 +75,7 @@ valor de espaciado.
 
 ```
 get_contract()
-→ { package: "@moderno/tokens", slots: { color: ["--primary", "--destructive", …] }, rules: […] }
+→ { package: "@moderno-ui/tokens", slots: { color: ["--primary", "--destructive", …] }, rules: […] }
 ```
 
 ### 4. `get_examples` — obtén un snippet funcional en tu framework
@@ -138,10 +138,10 @@ Un hallazgo se ve así — corrígelo y vuelve a ejecutar, no es un chequeo úni
 - Referencia los slots del contrato (`--background`, `--primary`, `--radius`,
   …) — nunca uses colores hex, espaciados en px o duraciones en ms
   harcodeados.
-- Pon los valores de marca en un tema, no en `@moderno/tokens`.
+- Pon los valores de marca en un tema, no en `@moderno-ui/tokens`.
 - Mantén `:root` claro / `.dark` oscuro — no inventes un tercer mecanismo de
   tematización.
-- `@moderno/css` es el único especificador CSS público — nunca importes rutas
+- `@moderno-ui/css` es el único especificador CSS público — nunca importes rutas
   internas.
 
 Estas son las mismas reglas que [`moderno init`](/es/installation) escribe en
@@ -152,7 +152,7 @@ contrato sin que tengas que repetirlo.
 ## Para contribuyentes humanos
 
 Agentes y humanos comparten un solo motor de reglas.
-[`@moderno/lint`](https://www.npmjs.com/package/@moderno/lint) ejecuta
+[`@moderno-ui/lint`](https://www.npmjs.com/package/@moderno-ui/lint) ejecuta
 exactamente las mismas verificaciones que hay detrás de `validate_usage` como
 plugin de ESLint y como CLI (`moderno-lint`), de modo que un PR de una persona
 y un PR de un agente se miden con el mismo estándar — y CI detecta lo que a

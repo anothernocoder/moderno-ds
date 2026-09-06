@@ -19,7 +19,7 @@ describe("writeAgentsStanza", () => {
 
     const content = await readFile(join(project, AGENTS_MD), "utf8");
     expect(content).toContain("Components are never edited");
-    expect(content).toContain("npx @moderno/mcp");
+    expect(content).toContain("npx @moderno-ui/mcp");
     expect(content).toContain("validate_usage");
     expect(content).toContain("<!-- moderno:agents:start -->");
     expect(content).toContain("<!-- moderno:agents:end -->");
@@ -69,7 +69,7 @@ describe("writeAgentsStanza", () => {
 
     const content = await readFile(join(project, CLAUDE_MD), "utf8");
     expect(content).toContain("Components are never edited");
-    expect(content).toContain("npx @moderno/mcp");
+    expect(content).toContain("npx @moderno-ui/mcp");
   });
 
   it("does not clobber surrounding content when the start marker is orphaned (no matching end)", async () => {

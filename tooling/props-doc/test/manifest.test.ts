@@ -13,7 +13,7 @@ const reactTsConfig = fileURLToPath(
  * at docs build time.
  */
 describe("props-doc manifest", () => {
-  it("resolves every entry against the real @moderno/react types", () => {
+  it("resolves every entry against the real @moderno-ui/react types", () => {
     const docs = extractProps({ tsConfigFilePath: reactTsConfig, entries: ENTRIES });
     expect(docs.map((d) => d.name)).toEqual(ENTRIES.map((e) => e.name));
     for (const doc of docs) {

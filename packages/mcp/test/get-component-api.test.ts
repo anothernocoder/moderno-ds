@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { discoverManifests, type AggregatedManifests } from "@moderno/lint-core";
+import { discoverManifests, type AggregatedManifests } from "@moderno-ui/lint-core";
 import { getComponentApi } from "../src/tools/get-component-api.ts";
 import { ModernoMcpError } from "../src/tools/shared.ts";
 import {
@@ -22,7 +22,7 @@ afterAll(() => {
 describe("getComponentApi", () => {
   it("returns the installed package's pinned version alongside the component API (F7.3)", () => {
     const result = getComponentApi(manifests, { name: "Button", framework: "react" });
-    expect(result.package).toBe("@moderno/react");
+    expect(result.package).toBe("@moderno-ui/react");
     expect(result.version).toBe("0.5.0");
     expect(result.component.props.map((p) => p.name)).toEqual(["variant"]);
   });
@@ -34,10 +34,10 @@ describe("getComponentApi", () => {
 
   it("returns the framework-appropriate import string", () => {
     const react = getComponentApi(manifests, { name: "Button", framework: "react" });
-    expect(react.component.import).toBe('import { Button } from "@moderno/react"');
+    expect(react.component.import).toBe('import { Button } from "@moderno-ui/react"');
 
     const vue = getComponentApi(manifests, { name: "Button", framework: "vue" });
-    expect(vue.component.import).toBe('import { Button } from "@moderno/vue"');
+    expect(vue.component.import).toBe('import { Button } from "@moderno-ui/vue"');
   });
 
   it("throws with the available component names when asked for one that doesn't exist", () => {

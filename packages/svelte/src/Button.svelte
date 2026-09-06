@@ -1,7 +1,7 @@
 <!--
   Button — the reference primitive, ported to Svelte 5.
 
-  Identical contract to @moderno/react: a plain <button> carrying
+  Identical contract to @moderno-ui/react: a plain <button> carrying
   data-scope/data-part plus the shared buttonRecipe's data-variant/data-size.
   Zero styling lives here — components.css paints it from token slots. Consumer
   attributes (onclick, aria-*, class) spread first; the scope/part/variant attrs
@@ -10,7 +10,7 @@
 <script lang="ts">
   import type { Snippet } from "svelte";
   import type { HTMLButtonAttributes } from "svelte/elements";
-  import { buttonRecipe, partAttrs, type ButtonSize, type ButtonVariant } from "@moderno/core";
+  import { buttonRecipe, partAttrs, type ButtonSize, type ButtonVariant } from "@moderno-ui/core";
 
   interface Props extends HTMLButtonAttributes {
     variant?: ButtonVariant;

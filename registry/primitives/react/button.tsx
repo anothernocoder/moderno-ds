@@ -1,14 +1,14 @@
 import type { ComponentPropsWithRef } from "react";
-import { buttonRecipe, partAttrs, type VariantProps } from "@moderno/core";
+import { buttonRecipe, partAttrs, type VariantProps } from "@moderno-ui/core";
 
 export interface ButtonProps
   extends ComponentPropsWithRef<"button">, VariantProps<typeof buttonRecipe.variants> {}
 
 /**
- * Button — ejected copy of the @moderno/react reference primitive.
+ * Button — ejected copy of the @moderno-ui/react reference primitive.
  *
  * Ejecting is the escape hatch: you now own this markup. Styling still comes
- * entirely from the shared components.css (via @moderno/css) keyed on the
+ * entirely from the shared components.css (via @moderno-ui/css) keyed on the
  * data-scope/data-part/data-variant attributes, so re-theming via CSS variables
  * keeps working. Behaviour-only props (onClick, aria-*) win; the scope/part
  * attributes are applied last so they can't be clobbered.

@@ -4,7 +4,7 @@
     {
       "name": "docs",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@moderno/docs", "dev"],
+      "runtimeArgs": ["--filter", "@moderno-ui/docs", "dev"],
       "port": 4321,
       "autoPort": true
     }

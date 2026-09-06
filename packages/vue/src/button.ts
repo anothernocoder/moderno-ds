@@ -1,12 +1,12 @@
 import { defineComponent, h, type PropType } from "vue";
-import { buttonRecipe, partAttrs, type ButtonSize, type ButtonVariant } from "@moderno/core";
+import { buttonRecipe, partAttrs, type ButtonSize, type ButtonVariant } from "@moderno-ui/core";
 
 type ButtonType = "button" | "submit" | "reset";
 
 /**
  * Button — the reference primitive, ported to Vue.
  *
- * Identical contract to `@moderno/react`: a plain `<button>` carrying
+ * Identical contract to `@moderno-ui/react`: a plain `<button>` carrying
  * `data-scope`/`data-part` plus the shared `buttonRecipe`'s `data-variant`/
  * `data-size`. Zero styling lives here — `components.css` paints it from token
  * slots, so the same brand re-themes Vue and React alike.
@@ -38,4 +38,4 @@ export const Button = defineComponent({
   },
 });
 
-export type { ButtonVariant, ButtonSize } from "@moderno/core";
+export type { ButtonVariant, ButtonSize } from "@moderno-ui/core";

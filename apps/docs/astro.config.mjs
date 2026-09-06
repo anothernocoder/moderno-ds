@@ -9,7 +9,8 @@ import { defineConfig, passthroughImageService } from "astro/config";
 // its own base path and can't use the Vercel adapter (which targets the
 // Build Output API, not a plain static dist/).
 const GH_PAGES = process.env.GH_PAGES === "true";
-const SITE = process.env.SITE_URL ?? (GH_PAGES ? "https://anothernocoder.github.io" : "https://moderno.style");
+const SITE =
+  process.env.SITE_URL ?? (GH_PAGES ? "https://anothernocoder.github.io" : "https://moderno.style");
 
 // https://astro.build/config
 export default defineConfig({
@@ -37,6 +38,6 @@ export default defineConfig({
   output: "static",
   vite: {
     // The Svelte islands import the published CSS contract once, globally.
-    ssr: { noExternal: ["@moderno/css"] },
+    ssr: { noExternal: ["@moderno-ui/css"] },
   },
 });

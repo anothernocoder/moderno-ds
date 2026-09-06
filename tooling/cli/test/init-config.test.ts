@@ -18,7 +18,7 @@ describe("initProject", () => {
   it("scaffolds components.json and a single-import moderno.css", async () => {
     await initProject({ projectDir: project });
     const css = await readFile(join(project, "src/styles/moderno.css"), "utf8");
-    expect(css).toContain('@import "@moderno/css";');
+    expect(css).toContain('@import "@moderno-ui/css";');
 
     const config = await readComponentsConfig(project);
     expect(config?.registry).toBe(DEFAULT_REGISTRY_URL);
@@ -31,7 +31,7 @@ describe("initProject", () => {
 
     const agents = await readFile(join(project, "AGENTS.md"), "utf8");
     expect(agents).toContain("Components are never edited");
-    expect(agents).toContain("npx @moderno/mcp");
+    expect(agents).toContain("npx @moderno-ui/mcp");
     expect(agents).toContain("validate_usage");
   });
 

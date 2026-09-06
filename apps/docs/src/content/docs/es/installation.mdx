@@ -7,20 +7,20 @@ order: 1
 
 import Install from "../../../components/Install.astro";
 
-Elige el enlace para tu framework. Cada enlace depende de `@moderno/core` (las
-recetas) y lo pinta `@moderno/css` (la hoja de estilos compartida).
+Elige el enlace para tu framework. Cada enlace depende de `@moderno-ui/core` (las
+recetas) y lo pinta `@moderno-ui/css` (la hoja de estilos compartida).
 
 ## React
 
-<Install pkg="@moderno/react" />
+<Install pkg="@moderno-ui/react" />
 
 ## Importa la hoja de estilos una vez
 
-Importa `@moderno/css` una sola vez en la raíz de tu app — incluye los estilos
+Importa `@moderno-ui/css` una sola vez en la raíz de tu app — incluye los estilos
 de los componentes y los slots del contrato del tema por defecto.
 
 ```ts
-import "@moderno/css";
+import "@moderno-ui/css";
 ```
 
 ## Generar desde el registro (opcional)
@@ -28,7 +28,7 @@ import "@moderno/css";
 También puedes extraer el código fuente con la CLI, que lee el registro servido
 en `/r/registry.json`.
 
-<Install pkg="@moderno/cli" mode="cli" />
+<Install pkg="@moderno-ui/cli" mode="cli" />
 
 ## Sembrar AGENTS.md para agentes de código (opcional)
 
@@ -39,7 +39,7 @@ más instrucciones para usar el servidor MCP `moderno` y ejecutar
 ejecuciones repetidas, sin sobrescribir el resto de tu contenido.
 
 ```sh
-npx @moderno/cli init --claude
+npx @moderno-ui/cli init --claude
 ```
 
 Consulta [Usar Moderno con agentes](/es/using-with-agents) para ver qué dice

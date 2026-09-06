@@ -14,4 +14,4 @@ export {
   type Framework,
   type Rule,
   type RuleContext,
-} from "@moderno/lint-core";
+} from "@moderno-ui/lint-core";

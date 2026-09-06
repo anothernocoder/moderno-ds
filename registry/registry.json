@@ -40,8 +40,8 @@
       "type": "registry:component",
       "version": "0.1.0",
       "title": "Button (eject)",
-      "description": "Ejected copy of the @moderno/react Button primitive. Use only when you must own the markup; styling still comes from @moderno/css.",
-      "dependencies": ["@moderno/core", "@moderno/css"],
+      "description": "Ejected copy of the @moderno-ui/react Button primitive. Use only when you must own the markup; styling still comes from @moderno-ui/css.",
+      "dependencies": ["@moderno-ui/core", "@moderno-ui/css"],
       "registryDependencies": [],
       "files": [
         {
@@ -56,8 +56,8 @@
       "type": "registry:block",
       "version": "0.1.0",
       "title": "Login Form (React)",
-      "description": "Sign-in card composing the @moderno/react Field and Button primitives.",
-      "dependencies": ["@moderno/react"],
+      "description": "Sign-in card composing the @moderno-ui/react Field and Button primitives.",
+      "dependencies": ["@moderno-ui/react"],
       "registryDependencies": [],
       "files": [
         {
@@ -72,8 +72,8 @@
       "type": "registry:block",
       "version": "0.1.0",
       "title": "Login Form (Vue)",
-      "description": "Sign-in card composing the @moderno/vue Field and Button primitives.",
-      "dependencies": ["@moderno/vue"],
+      "description": "Sign-in card composing the @moderno-ui/vue Field and Button primitives.",
+      "dependencies": ["@moderno-ui/vue"],
       "registryDependencies": [],
       "files": [
         {
@@ -88,8 +88,8 @@
       "type": "registry:block",
       "version": "0.1.0",
       "title": "Login Form (Svelte)",
-      "description": "Sign-in card composing the @moderno/svelte Field and Button primitives.",
-      "dependencies": ["@moderno/svelte"],
+      "description": "Sign-in card composing the @moderno-ui/svelte Field and Button primitives.",
+      "dependencies": ["@moderno-ui/svelte"],
       "registryDependencies": [],
       "files": [
         {
@@ -104,8 +104,8 @@
       "type": "registry:block",
       "version": "0.1.0",
       "title": "Login Form (Solid)",
-      "description": "Sign-in card composing the @moderno/solid Field and Button primitives.",
-      "dependencies": ["@moderno/solid"],
+      "description": "Sign-in card composing the @moderno-ui/solid Field and Button primitives.",
+      "dependencies": ["@moderno-ui/solid"],
       "registryDependencies": [],
       "files": [
         {
@@ -120,8 +120,8 @@
       "type": "registry:block",
       "version": "0.1.0",
       "title": "Pricing (React)",
-      "description": "Three-plan pricing section composing the @moderno/react Button primitive.",
-      "dependencies": ["@moderno/react"],
+      "description": "Three-plan pricing section composing the @moderno-ui/react Button primitive.",
+      "dependencies": ["@moderno-ui/react"],
       "registryDependencies": [],
       "files": [
         {
@@ -136,8 +136,8 @@
       "type": "registry:block",
       "version": "0.1.0",
       "title": "Pricing (Vue)",
-      "description": "Three-plan pricing section composing the @moderno/vue Button primitive.",
-      "dependencies": ["@moderno/vue"],
+      "description": "Three-plan pricing section composing the @moderno-ui/vue Button primitive.",
+      "dependencies": ["@moderno-ui/vue"],
       "registryDependencies": [],
       "files": [
         {
@@ -152,8 +152,8 @@
       "type": "registry:block",
       "version": "0.1.0",
       "title": "Pricing (Svelte)",
-      "description": "Three-plan pricing section composing the @moderno/svelte Button primitive.",
-      "dependencies": ["@moderno/svelte"],
+      "description": "Three-plan pricing section composing the @moderno-ui/svelte Button primitive.",
+      "dependencies": ["@moderno-ui/svelte"],
       "registryDependencies": [],
       "files": [
         {
@@ -168,8 +168,8 @@
       "type": "registry:block",
       "version": "0.1.0",
       "title": "Pricing (Solid)",
-      "description": "Three-plan pricing section composing the @moderno/solid Button primitive.",
-      "dependencies": ["@moderno/solid"],
+      "description": "Three-plan pricing section composing the @moderno-ui/solid Button primitive.",
+      "dependencies": ["@moderno-ui/solid"],
       "registryDependencies": [],
       "files": [
         {
@@ -184,8 +184,8 @@
       "type": "registry:block",
       "version": "0.1.0",
       "title": "Empty State (React)",
-      "description": "Centered no-data placeholder with a primary action, composing the @moderno/react Button primitive.",
-      "dependencies": ["@moderno/react"],
+      "description": "Centered no-data placeholder with a primary action, composing the @moderno-ui/react Button primitive.",
+      "dependencies": ["@moderno-ui/react"],
       "registryDependencies": [],
       "files": [
         {
@@ -200,8 +200,8 @@
       "type": "registry:block",
       "version": "0.1.0",
       "title": "Empty State (Vue)",
-      "description": "Centered no-data placeholder with a primary action, composing the @moderno/vue Button primitive.",
-      "dependencies": ["@moderno/vue"],
+      "description": "Centered no-data placeholder with a primary action, composing the @moderno-ui/vue Button primitive.",
+      "dependencies": ["@moderno-ui/vue"],
       "registryDependencies": [],
       "files": [
         {
@@ -216,8 +216,8 @@
       "type": "registry:block",
       "version": "0.1.0",
       "title": "Empty State (Svelte)",
-      "description": "Centered no-data placeholder with a primary action, composing the @moderno/svelte Button primitive.",
-      "dependencies": ["@moderno/svelte"],
+      "description": "Centered no-data placeholder with a primary action, composing the @moderno-ui/svelte Button primitive.",
+      "dependencies": ["@moderno-ui/svelte"],
       "registryDependencies": [],
       "files": [
         {
@@ -232,8 +232,8 @@
       "type": "registry:block",
       "version": "0.1.0",
       "title": "Empty State (Solid)",
-      "description": "Centered no-data placeholder with a primary action, composing the @moderno/solid Button primitive.",
-      "dependencies": ["@moderno/solid"],
+      "description": "Centered no-data placeholder with a primary action, composing the @moderno-ui/solid Button primitive.",
+      "dependencies": ["@moderno-ui/solid"],
       "registryDependencies": [],
       "files": [
         {

@@ -1,5 +1,5 @@
 {
-  "name": "@moderno/props-doc",
+  "name": "@moderno-ui/props-doc",
   "version": "0.0.0",
   "description": "Build-time prop extractor. Resolves each framework binding's exported props interface with ts-morph and emits props/<component>.json for the docs <PropsTable>. Keeps the props the consumer actually sets (recipe variants + component-declared) and drops inherited DOM attributes.",
   "license": "MIT",
@@ -32,8 +32,8 @@
     "build": "tsup"
   },
   "dependencies": {
-    "@moderno/core": "workspace:*",
-    "@moderno/tokens": "workspace:*",
+    "@moderno-ui/core": "workspace:*",
+    "@moderno-ui/tokens": "workspace:*",
     "ts-morph": "^24.0.0",
     "yaml": "^2.9.0"
   },

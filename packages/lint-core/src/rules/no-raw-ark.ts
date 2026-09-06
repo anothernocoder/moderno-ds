@@ -1,6 +1,6 @@
 /**
  * `moderno/no-raw-ark` (validate-rules.md #4) — importing straight from
- * `@ark-ui/*`/`@zag-js/*` skips the shared stylesheet + recipe a `@moderno/*`
+ * `@ark-ui/*`/`@zag-js/*` skips the shared stylesheet + recipe a `@moderno-ui/*`
  * wrapper provides, producing off-contract, un-themed UI.
  */
 import type { Finding, Rule } from "./types.ts";

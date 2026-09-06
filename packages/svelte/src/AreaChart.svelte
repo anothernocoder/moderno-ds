@@ -5,7 +5,7 @@
 -->
 <script lang="ts">
   import type { SVGAttributes } from "svelte/elements";
-  import { areaChartNodes, type AreaChartOptions } from "@moderno/charts-core";
+  import { areaChartNodes, type AreaChartOptions } from "@moderno-ui/charts-core";
   import Chart from "./Chart.svelte";
 
   type SvgProps = Omit<

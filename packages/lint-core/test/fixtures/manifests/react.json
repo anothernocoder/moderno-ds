@@ -1,5 +1,5 @@
 {
-  "package": "@moderno/react",
+  "package": "@moderno-ui/react",
   "version": "0.5.0",
   "kind": "components",
   "framework": "react",
@@ -8,7 +8,7 @@
     {
       "name": "Button",
       "scope": "button",
-      "import": "import { Button } from \"@moderno/react\"",
+      "import": "import { Button } from \"@moderno-ui/react\"",
       "propsHash": "sha256:fixture-button",
       "props": [{ "name": "variant", "type": "\"primary\" | \"outline\"", "required": false }],
       "parts": [{ "name": "root" }],
@@ -16,7 +16,7 @@
       "examples": [
         {
           "title": "Primary",
-          "code": "import { Button } from \"@moderno/react\";\n\n<Button variant=\"primary\">Save</Button>"
+          "code": "import { Button } from \"@moderno-ui/react\";\n\n<Button variant=\"primary\">Save</Button>"
         }
       ],
       "guidance": {
@@ -27,7 +27,7 @@
     {
       "name": "Dialog",
       "scope": "dialog",
-      "import": "import { Dialog } from \"@moderno/react\"",
+      "import": "import { Dialog } from \"@moderno-ui/react\"",
       "propsHash": "sha256:fixture-dialog",
       "props": [],
       "parts": [{ "name": "content" }, { "name": "title" }],

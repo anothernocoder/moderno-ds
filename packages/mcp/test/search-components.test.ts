@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { discoverManifests, type AggregatedManifests } from "@moderno/lint-core";
+import { discoverManifests, type AggregatedManifests } from "@moderno-ui/lint-core";
 import { searchComponents } from "../src/tools/search-components.ts";
 import { ModernoMcpError } from "../src/tools/shared.ts";
 import {

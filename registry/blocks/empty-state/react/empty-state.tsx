@@ -1,4 +1,4 @@
-import { Button } from "@moderno/react";
+import { Button } from "@moderno-ui/react";
 
 /**
  * EmptyState — an ejected block: a centered placeholder shown when a list or

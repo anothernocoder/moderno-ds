@@ -1,6 +1,6 @@
 # Moderno Design System
 
-Framework-agnostic design system monorepo (`@moderno/*`). See `CONTEXT.md` and `docs/brief.md` for architecture and the phased plan.
+Framework-agnostic design system monorepo (`@moderno-ui/*`). See `CONTEXT.md` and `docs/brief.md` for architecture and the phased plan.
 
 ## Agent skills
 

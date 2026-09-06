@@ -1,10 +1,10 @@
 <!--
-  Live Button preview — the real @moderno/svelte primitive across its variants
-  and sizes. Hydrated as an island; painted by @moderno/css from the active
+  Live Button preview — the real @moderno-ui/svelte primitive across its variants
+  and sizes. Hydrated as an island; painted by @moderno-ui/css from the active
   theme, so it re-skins live with the Theme Builder and the color-scheme toggle.
 -->
 <script lang="ts">
-  import { Button } from "@moderno/svelte";
+  import { Button } from "@moderno-ui/svelte";
 </script>
 
 <div class="demo-row">

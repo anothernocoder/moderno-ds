@@ -1,9 +1,9 @@
 <script setup lang="ts">
-// LoginForm — an ejected block that composes @moderno/vue primitives
+// LoginForm — an ejected block that composes @moderno-ui/vue primitives
 // (Field, Button) into a sign-in card. Copy it into your project and edit
 // freely. Themed via CSS variables from the design system; no hardcoded
 // colors, radii, or fonts live here.
-import { Button, Field } from "@moderno/vue";
+import { Button, Field } from "@moderno-ui/vue";
 </script>
 
 <template>

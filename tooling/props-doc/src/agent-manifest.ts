@@ -1,17 +1,17 @@
 /**
- * @moderno/props-doc — the `components` flavor of moderno.agent.json.
+ * @moderno-ui/props-doc — the `components` flavor of moderno.agent.json.
  *
- * (`@moderno/tokens`'s `contract` flavor lives in `contract-manifest.ts`,
+ * (`@moderno-ui/tokens`'s `contract` flavor lives in `contract-manifest.ts`,
  * deliberately separate — see that file's header.)
  *
  * Assembles the per-package agent manifest (schema:
  * `docs/prd/phase-7/moderno.agent.schema.json`) from generated facts only, so
  * the manifest can never drift from the code:
  *
- * - `props` — resolved by `extractProps` against the canonical `@moderno/react`
+ * - `props` — resolved by `extractProps` against the canonical `@moderno-ui/react`
  *   source, the same "React is the single source of truth" rule `manifest.ts`
  *   already uses (props are identical across bindings by contract).
- * - `variants` — read straight off the shared `@moderno/core` recipe, when the
+ * - `variants` — read straight off the shared `@moderno-ui/core` recipe, when the
  *   component has one (Field/Dialog have none: their visual states are Ark's
  *   own data-attributes, not CVA variants).
  * - `guidance` — the curated `agent:` MDX front-matter block, parsed by
@@ -24,7 +24,7 @@
  * job when a part gains or loses styling.
  */
 import { createHash } from "node:crypto";
-import { buttonRecipe, selectRecipe } from "@moderno/core";
+import { buttonRecipe, selectRecipe } from "@moderno-ui/core";
 import { extractProps, type ComponentEntry, type PropDoc } from "./index.ts";
 import { ENTRIES } from "./manifest.ts";
 import { AGENT_EXAMPLES } from "./agent-examples.ts";
@@ -62,13 +62,13 @@ export interface AgentComponentSpec {
   propsEntry?: ComponentEntry;
   /** `data-part` vocabulary this scope's `components.css` rules actually target. */
   parts: AgentPart[];
-  /** The shared `@moderno/core` recipe's variant table, when one exists. */
+  /** The shared `@moderno-ui/core` recipe's variant table, when one exists. */
   variants?: Record<string, readonly string[]>;
 }
 
 /**
  * Every chart type shares this frame — `frameNodes`/`chartRoot`/`seriesGroup`
- * in `@moderno/charts-core`'s `render.ts` — and adds only its own mark part
+ * in `@moderno-ui/charts-core`'s `render.ts` — and adds only its own mark part
  * (`line`, `area`, `bar`, `point`) on top.
  */
 const CHART_FRAME_PARTS: AgentPart[] = [
@@ -208,7 +208,7 @@ export function computePropsHash(props: PropDoc[]): string {
 }
 
 /**
- * Resolves each component's props against the canonical `@moderno/react`
+ * Resolves each component's props against the canonical `@moderno-ui/react`
  * source, keyed by component name. Shared by `buildComponentsManifest` and
  * the CI drift gate (#45) so both compute the same `propsHash` from the same
  * source of truth.
@@ -226,7 +226,7 @@ export function resolveComponentProps(
 }
 
 export interface BuildComponentsManifestOptions {
-  /** e.g. `@moderno/react`. */
+  /** e.g. `@moderno-ui/react`. */
   packageName: string;
   version: string;
   framework: Framework;

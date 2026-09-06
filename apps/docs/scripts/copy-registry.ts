@@ -2,7 +2,7 @@
 /**
  * Copy the repo `registry/` into `public/r/` so the same deploy that serves the
  * MDX docs also serves `/r/registry.json` and `/r/{type}/{name}.json`. The CLI
- * (`@moderno/cli`) can then point at the production URL — or a per-PR preview
+ * (`@moderno-ui/cli`) can then point at the production URL — or a per-PR preview
  * URL — as its registry source. Static copy keeps the registry a plain file
  * tree with no server.
  */

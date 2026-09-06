@@ -1,14 +1,14 @@
 # PRD — Phase 4: Custom charts
 
-> Charts controlled 100%: pure math from `@moderno/charts-core` + `<svg>` rendered with each framework's native templating, themed via `--chart-*`.
+> Charts controlled 100%: pure math from `@moderno-ui/charts-core` + `<svg>` rendered with each framework's native templating, themed via `--chart-*`.
 
 ## Objective
 
-Deliver 4 custom charts — **line, area, bar, scatter** — without a batteries-included chart library. The math layer lives in `@moderno/charts-core` (Phase 1); each framework renders its own SVG that reads the theme's CSS variables.
+Deliver 4 custom charts — **line, area, bar, scatter** — without a batteries-included chart library. The math layer lives in `@moderno-ui/charts-core` (Phase 1); each framework renders its own SVG that reads the theme's CSS variables.
 
 ## Scope
 
-- For each chart: math helpers in `@moderno/charts-core` (scales, paths, ticks, domains) + SVG render in `@moderno/react`, `@moderno/vue`, `@moderno/svelte`, `@moderno/solid`.
+- For each chart: math helpers in `@moderno-ui/charts-core` (scales, paths, ticks, domains) + SVG render in `@moderno-ui/react`, `@moderno-ui/vue`, `@moderno-ui/svelte`, `@moderno-ui/solid`.
 - Themed via `--chart-1…5` (and semantic tokens for axes/grid/text). No baked-in colors.
 - SSR: the SVG is serialized server-side (math is pure) without hydration errors.
 
@@ -39,7 +39,7 @@ Deliver 4 custom charts — **line, area, bar, scatter** — without a batteries
 
 ## Dependencies
 
-- Phase 1 (`@moderno/charts-core`).
+- Phase 1 (`@moderno-ui/charts-core`).
 - Phase 3 (multi-framework render pattern established).
 
 ## Out of scope

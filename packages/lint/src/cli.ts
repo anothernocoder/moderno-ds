@@ -1,12 +1,12 @@
 /**
- * `moderno-lint` — the CLI face of `@moderno/lint-core`'s rule engine
+ * `moderno-lint` — the CLI face of `@moderno-ui/lint-core`'s rule engine
  * (ADR-0003), for scripts and CI that don't run through ESLint. `runCli` is
  * the testable seam; `bin.ts` is the thin shebang entry that calls it and
  * maps the exit code to `process.exit`.
  */
 import { existsSync, readFileSync } from "node:fs";
 import { parseArgs } from "node:util";
-import { discoverManifests, runRules, type Finding, type Framework } from "@moderno/lint-core";
+import { discoverManifests, runRules, type Finding, type Framework } from "@moderno-ui/lint-core";
 import { FRAMEWORKS, frameworkFromFilename } from "./framework.ts";
 
 const HELP = `moderno-lint — lint files against the Moderno usage rules

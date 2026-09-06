@@ -1,4 +1,4 @@
-import type { AggregatedManifests, ComponentsManifest, Framework } from "@moderno/lint-core";
+import type { AggregatedManifests, ComponentsManifest, Framework } from "@moderno-ui/lint-core";
 
 export function findFrameworkManifest(
   manifests: AggregatedManifests,
@@ -19,8 +19,8 @@ export function frameworkNotFoundError(
     installed.length > 0
       ? `Installed frameworks: ${installed.join(", ")}.`
       : manifests.scopeDir
-        ? `No @moderno/* framework package found under ${manifests.scopeDir}.`
-        : "No node_modules/@moderno directory found from this working directory — is a @moderno/* package installed?";
+        ? `No @moderno-ui/* framework package found under ${manifests.scopeDir}.`
+        : "No node_modules/@moderno directory found from this working directory — is a @moderno-ui/* package installed?";
   return new ModernoMcpError(`No manifest for framework "${framework}". ${hint}`);
 }
 

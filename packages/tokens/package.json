@@ -1,7 +1,12 @@
 {
-  "name": "@moderno/tokens",
-  "version": "0.0.0",
+  "name": "@moderno-ui/tokens",
+  "version": "0.3.0",
   "description": "Shadcn-style semantic token contract with neutral OKLCH defaults and a Tailwind v4 preset. Contains no brand identity.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anothernocoder/moderno-ds.git",
+    "directory": "packages/tokens"
+  },
   "license": "MIT",
   "type": "module",
   "sideEffects": [

@@ -38,12 +38,12 @@ one masquerade as the other.
   front-matter token values + human-readable rationale. Paired with **`tokens.json`**
   (DTCG twin) at the root. It supplies _values_; `CONTRACT.md` supplies _names
   and rules_.
-- **`@moderno/tokens` still ships neutral values** — OKLCH grays + a system font
+- **`@moderno-ui/tokens` still ships neutral values** — OKLCH grays + a system font
   stack. Components stay developable and previewable without a brand, and
   multi-brand swapping is preserved. The Moderno default theme layers on top as
   a theme, exactly like any other brand.
 - **Multi-brand from day 0**: contract values may be re-mapped under
-  `[data-brand="…"]`, composable with `.dark`. `@moderno/tokens` ships a
+  `[data-brand="…"]`, composable with `.dark`. `@moderno-ui/tokens` ships a
   `contrast` demo scope to exercise the mechanism.
 - **CSS-first authoring in Phase 0**: tokens are written directly as `.css` (no
   JS bundler). The DTCG + `theme-compile` pipeline is deferred to themes in
@@ -61,7 +61,7 @@ one masquerade as the other.
   outside the root design file.
 - Phase 5's `theme-moderno` has a concrete, spec-shaped starting point
   (`DESIGN.md` + `tokens.json`) rather than a relocated reference.
-- Tradeoff: bare `@moderno/tokens` previews neutral (gray), not branded, until
+- Tradeoff: bare `@moderno-ui/tokens` previews neutral (gray), not branded, until
   `theme-moderno` loads — accepted as the price of clean multi-brand separation.
   Naming `DESIGN.md` as the _default theme_ (not the contract) keeps that
   separation explicit.

@@ -1,5 +1,5 @@
 {
-  "package": "@moderno/react",
+  "package": "@moderno-ui/react",
   "version": "0.1.0",
   "kind": "components",
   "framework": "react",
@@ -8,11 +8,16 @@
     {
       "name": "Button",
       "scope": "button",
-      "import": "import { Button } from \"@moderno/react\"",
+      "import": "import { Button } from \"@moderno-ui/react\"",
       "propsHash": "sha256:REPLACED_AT_BUILD",
       "props": [
         { "name": "size", "type": "\"sm\" | \"md\" | \"lg\"", "required": false, "default": "md" },
-        { "name": "variant", "type": "\"primary\" | \"secondary\" | \"outline\" | \"ghost\" | \"destructive\"", "required": false, "default": "primary" }
+        {
+          "name": "variant",
+          "type": "\"primary\" | \"secondary\" | \"outline\" | \"ghost\" | \"destructive\"",
+          "required": false,
+          "default": "primary"
+        }
       ],
       "parts": [{ "name": "root" }],
       "variants": {
@@ -21,13 +26,19 @@
       },
       "examples": [
         { "title": "Primary", "code": "<Button>Save</Button>" },
-        { "title": "Destructive, small", "code": "<Button variant=\"destructive\" size=\"sm\">Delete</Button>" }
+        {
+          "title": "Destructive, small",
+          "code": "<Button variant=\"destructive\" size=\"sm\">Delete</Button>"
+        }
       ],
       "guidance": {
         "intent": "A single click action.",
         "whenToUse": "Any imperative action: submit, open, delete.",
         "whenNotToUse": [
-          { "case": "Navigation to a URL", "use": "an anchor / your router's Link, styled with the button recipe if needed" },
+          {
+            "case": "Navigation to a URL",
+            "use": "an anchor / your router's Link, styled with the button recipe if needed"
+          },
           { "case": "On/off state", "use": "Toggle" }
         ],
         "gotchas": [
@@ -43,7 +54,7 @@
     {
       "name": "Select",
       "scope": "select",
-      "import": "import { Select } from \"@moderno/react\"",
+      "import": "import { Select } from \"@moderno-ui/react\"",
       "propsHash": "sha256:REPLACED_AT_BUILD",
       "props": [],
       "parts": [
@@ -69,7 +80,7 @@
     {
       "name": "Dialog",
       "scope": "dialog",
-      "import": "import { Dialog } from \"@moderno/react\"",
+      "import": "import { Dialog } from \"@moderno-ui/react\"",
       "propsHash": "sha256:REPLACED_AT_BUILD",
       "props": [],
       "parts": [
@@ -96,7 +107,7 @@
     {
       "name": "Field",
       "scope": "field",
-      "import": "import { Field } from \"@moderno/react\"",
+      "import": "import { Field } from \"@moderno-ui/react\"",
       "propsHash": "sha256:REPLACED_AT_BUILD",
       "props": [],
       "parts": [
@@ -111,9 +122,7 @@
       "guidance": {
         "intent": "A labelled form control with helper/error wiring.",
         "whenToUse": "Any text/textarea input that needs a label and validation messaging.",
-        "whenNotToUse": [
-          { "case": "Boolean input", "use": "Checkbox or Switch" }
-        ],
+        "whenNotToUse": [{ "case": "Boolean input", "use": "Checkbox or Switch" }],
         "gotchas": [
           "label/input association is automatic via the parts; do not add htmlFor by hand.",
           "error-text is announced; put validation copy there, not in a sibling div."

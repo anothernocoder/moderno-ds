@@ -1,9 +1,9 @@
 <!--
-  Live AreaChart preview — pure SVG over @moderno/charts-core; colour comes from
+  Live AreaChart preview — pure SVG over @moderno-ui/charts-core; colour comes from
   the `--chart-*` token slots via the series index, nothing baked in here.
 -->
 <script lang="ts">
-  import { AreaChart } from "@moderno/svelte";
+  import { AreaChart } from "@moderno-ui/svelte";
 
   const series = [
     {

@@ -9,7 +9,7 @@ import type { AggregatedManifests } from "../../src/manifests.ts";
 export const manifests: AggregatedManifests = {
   scopeDir: "/fake/node_modules/@moderno",
   contract: {
-    package: "@moderno/tokens",
+    package: "@moderno-ui/tokens",
     version: "0.5.0",
     kind: "contract",
     goldenRule: "Components are never edited. They are themed via variables and varied via props.",
@@ -29,7 +29,7 @@ export const manifests: AggregatedManifests = {
   },
   components: [
     {
-      package: "@moderno/react",
+      package: "@moderno-ui/react",
       version: "0.5.0",
       kind: "components",
       framework: "react",
@@ -38,7 +38,7 @@ export const manifests: AggregatedManifests = {
         {
           name: "Button",
           scope: "button",
-          import: 'import { Button } from "@moderno/react"',
+          import: 'import { Button } from "@moderno-ui/react"',
           propsHash: "sha256:fixture-button",
           props: [{ name: "variant", type: '"primary" | "outline"', required: false }],
           parts: [{ name: "root" }],
@@ -48,7 +48,7 @@ export const manifests: AggregatedManifests = {
         {
           name: "Dialog",
           scope: "dialog",
-          import: 'import { Dialog } from "@moderno/react"',
+          import: 'import { Dialog } from "@moderno-ui/react"',
           propsHash: "sha256:fixture-dialog",
           props: [],
           parts: [{ name: "content" }, { name: "title" }],
@@ -59,7 +59,7 @@ export const manifests: AggregatedManifests = {
         {
           name: "Select",
           scope: "select",
-          import: 'import { Select } from "@moderno/react"',
+          import: 'import { Select } from "@moderno-ui/react"',
           propsHash: "sha256:fixture-select",
           props: [],
           parts: [{ name: "trigger" }, { name: "content" }, { name: "item" }],
