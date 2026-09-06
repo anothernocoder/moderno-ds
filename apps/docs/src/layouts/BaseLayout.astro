@@ -41,7 +41,10 @@ for (const p of pages) {
   groups.get(g)!.push(p);
 }
 
-const canonical = new URL(`/${locale}/${slug === "index" ? "" : slug}`, site);
+// BASE_URL has no trailing slash ("" on Vercel, "/moderno-ds" on GitHub
+// Pages); normalize to always end in exactly one "/".
+const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
+const canonical = new URL(`${base}${locale}/${slug === "index" ? "" : slug}`, site);
 const pageTitle = slug === "index" ? title : `${title} — Moderno`;
 ---
 
@@ -58,14 +61,14 @@ const pageTitle = slug === "index" ? title : `${title} — Moderno`;
         <link
           rel="alternate"
           hreflang={l}
-          href={new URL(`/${l}/${slug === "index" ? "" : slug}`, site).href}
+          href={new URL(`${base}${l}/${slug === "index" ? "" : slug}`, site).href}
         />
       ))
     }
     <link
       rel="alternate"
       hreflang="x-default"
-      href={new URL(`/${defaultLocale}/${slug === "index" ? "" : slug}`, site).href}
+      href={new URL(`${base}${defaultLocale}/${slug === "index" ? "" : slug}`, site).href}
     />
     <script is:inline>
       // Apply the persisted color scheme before paint to avoid a flash.
@@ -79,11 +82,11 @@ const pageTitle = slug === "index" ? title : `${title} — Moderno`;
     <a class="skip-link" href="#main">{t("nav.skipToContent")}</a>
     <header class="site-header">
       <div class="brand">
-        <a href={`/${locale}/`}>Moderno</a>
+        <a href={`${base}${locale}/`}>Moderno</a>
       </div>
       <nav class="site-nav" aria-label={t("nav.docs")}>
-        <a href={`/${locale}/`}>{t("nav.components")}</a>
-        <a href={`/${locale}/theme-builder`}>{t("nav.themeBuilder")}</a>
+        <a href={`${base}${locale}/`}>{t("nav.components")}</a>
+        <a href={`${base}${locale}/theme-builder`}>{t("nav.themeBuilder")}</a>
       </nav>
       <div class="header-tools">
         <Search locale={locale} />
@@ -102,7 +105,7 @@ const pageTitle = slug === "index" ? title : `${title} — Moderno`;
                 {items.map((p) => (
                   <li>
                     <a
-                      href={`/${locale}/${p.slug}`}
+                      href={`${base}${locale}/${p.slug}`}
                       aria-current={p.slug === slug ? "page" : undefined}
                     >
                       {p.entry.data.title}

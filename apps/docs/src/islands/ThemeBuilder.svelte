@@ -77,7 +77,8 @@
   }
 
   async function importBase(name: string) {
-    const res = await fetch(`/r/themes/${name}/tokens.dtcg.json`);
+    const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+    const res = await fetch(`${base}/r/themes/${name}/tokens.dtcg.json`);
     if (res.ok) loadDoc(await res.json());
   }
 

@@ -20,6 +20,7 @@ const pages = all
 const title = home?.data.title ?? "Moderno";
 const description = home?.data.description ?? "Framework-agnostic design system.";
 const Body = home ? (await render(home)).Content : null;
+const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 ---
 
 <BaseLayout locale={lang} title={title} description={description} slug="index">
@@ -31,7 +32,7 @@ const Body = home ? (await render(home)).Content : null;
   <div class="card-grid">
     {
       pages.map((p) => (
-        <a class="card" href={`/${lang}/${p.slug}`}>
+        <a class="card" href={`${base}${lang}/${p.slug}`}>
           <h3>{p.entry.data.title}</h3>
           <p>{p.entry.data.description}</p>
         </a>
