@@ -5,11 +5,16 @@ import vercel from "@astrojs/vercel";
 import expressiveCode from "astro-expressive-code";
 import { defineConfig, passthroughImageService } from "astro/config";
 
-const SITE = process.env.SITE_URL ?? "https://moderno.style";
+// GitHub Pages serves this as a project site under /moderno-ds/, so it needs
+// its own base path and can't use the Vercel adapter (which targets the
+// Build Output API, not a plain static dist/).
+const GH_PAGES = process.env.GH_PAGES === "true";
+const SITE = process.env.SITE_URL ?? (GH_PAGES ? "https://anothernocoder.github.io" : "https://moderno.style");
 
 // https://astro.build/config
 export default defineConfig({
   site: SITE,
+  base: GH_PAGES ? "/moderno-ds" : undefined,
   // Both locales are prefixed (/en, /es) so every slug exists symmetrically —
   // the parity guard and the language switcher rely on that symmetry.
   i18n: {
@@ -28,7 +33,7 @@ export default defineConfig({
   server: { port: Number(process.env.PORT) || 4321 },
   // No image optimization in the docs (sharp is not built); pass images through.
   image: { service: passthroughImageService() },
-  adapter: vercel(),
+  adapter: GH_PAGES ? undefined : vercel(),
   output: "static",
   vite: {
     // The Svelte islands import the published CSS contract once, globally.
