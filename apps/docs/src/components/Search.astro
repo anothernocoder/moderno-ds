@@ -9,7 +9,8 @@ const { locale } = Astro.props;
 const t = useTranslations(locale);
 // Each locale is indexed into its own bundle (dist/<locale>/pagefind) by the
 // postbuild `pnpm index` step, so search never mixes languages.
-const bundlePath = `/${locale}/pagefind/`;
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+const bundlePath = `${base}/${locale}/pagefind/`;
 ---
 
 <div class="search" data-pagefind-ignore>

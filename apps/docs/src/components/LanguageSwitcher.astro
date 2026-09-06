@@ -10,8 +10,9 @@ const { locale, slug } = Astro.props;
 const t = useTranslations(locale);
 const other = locales.find((l) => l !== locale)!;
 const path = slug === "index" ? "" : slug;
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 ---
 
-<a class="lang-switch" href={`/${other}/${path}`} hreflang={other} lang={other}>
+<a class="lang-switch" href={`${base}/${other}/${path}`} hreflang={other} lang={other}>
   {t("lang.switch")}
 </a>

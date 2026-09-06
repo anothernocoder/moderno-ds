@@ -1,6 +1,9 @@
 ---
 import { defaultLocale } from "../i18n/ui.ts";
-const target = `/${defaultLocale}/`;
+// BASE_URL has no trailing slash ("" on Vercel, "/moderno-ds" on GitHub
+// Pages), so strip any that's there and add our own separator explicitly.
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+const target = `${base}/${defaultLocale}/`;
 ---
 
 <!doctype html>
