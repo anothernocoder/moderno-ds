@@ -10,6 +10,6 @@ export default defineConfig({
   dts: true,
   clean: true,
   treeshake: true,
-  external: ["solid-js", "@ark-ui/solid", "@moderno/core"],
+  external: ["solid-js", "@ark-ui/solid", "@moderno-ui/core"],
   esbuildPlugins: [solidPlugin()],
 });

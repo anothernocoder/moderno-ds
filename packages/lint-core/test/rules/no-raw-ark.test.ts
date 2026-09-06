@@ -11,7 +11,7 @@ describe("moderno/no-raw-ark", () => {
     const findings = check('import { Dialog } from "@ark-ui/react";');
     expect(findings).toHaveLength(1);
     expect(findings[0]).toMatchObject({ ruleId: "moderno/no-raw-ark", severity: "error" });
-    expect(findings[0]!.suggestion).toContain('import { Dialog } from "@moderno/react"');
+    expect(findings[0]!.suggestion).toContain('import { Dialog } from "@moderno-ui/react"');
   });
 
   it("flags a @zag-js/* import, falling back to a generic suggestion with no name match", () => {
@@ -21,6 +21,6 @@ describe("moderno/no-raw-ark", () => {
   });
 
   it("does not flag a @moderno import", () => {
-    expect(check('import { Dialog } from "@moderno/react";')).toHaveLength(0);
+    expect(check('import { Dialog } from "@moderno-ui/react";')).toHaveLength(0);
   });
 });

@@ -1,5 +1,5 @@
 {
-  "name": "@moderno/theme-compile",
+  "name": "@moderno-ui/theme-compile",
   "version": "0.0.0",
   "description": "Validates a theme's tokens.dtcg.json and emits theme.css (semantic contract slots, OKLCH ramps) with WCAG AA contrast warnings. Shared by the Theme Builder and CI.",
   "license": "MIT",
@@ -22,7 +22,7 @@
     "build": "tsup"
   },
   "dependencies": {
-    "@moderno/tokens": "workspace:*"
+    "@moderno-ui/tokens": "workspace:*"
   },
   "devDependencies": {
     "tsup": "^8.3.5"

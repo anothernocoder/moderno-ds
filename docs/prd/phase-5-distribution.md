@@ -4,12 +4,12 @@
 
 ## Objective
 
-Make the DS installable and updatable: versioned `registry.json`, `@moderno/cli` (init/add/update/diff + manifest), example blocks, two themes (`theme-moderno` + `theme-contrast`) and the `tooling/theme-compile` pipeline (`pnpm theme:build`).
+Make the DS installable and updatable: versioned `registry.json`, `@moderno-ui/cli` (init/add/update/diff + manifest), example blocks, two themes (`theme-moderno` + `theme-contrast`) and the `tooling/theme-compile` pipeline (`pnpm theme:build`).
 
 ## Scope
 
 - `registry/registry.json`: versioned items (semver per item) + `registryDependencies`. Source in the repo; public URL served from docs at `/r/` (Phase 6).
-- `@moderno/cli` (`@moderno/cli`), a wrapper over shadcn's registry model — not a CLI from scratch:
+- `@moderno-ui/cli` (`@moderno-ui/cli`), a wrapper over shadcn's registry model — not a CLI from scratch:
   - `init` — scaffolds `src/styles/moderno.css` with the correct imports.
   - `add` — installs blocks/themes; allows **eject** of primitives.
   - `update` / `diff` — updates copied items using registry versions + `.moderno/manifest.json`.
@@ -21,20 +21,20 @@ Make the DS installable and updatable: versioned `registry.json`, `@moderno/cli`
 
 ## Functional requirements
 
-| #    | Requirement                                                                                                                                 |
-| ---- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| F5.1 | `moderno init` creates `src/styles/moderno.css` with `@import "@moderno/css"` (+ a theme line after `add`). The user imports a single file. |
-| F5.2 | `moderno add <block\|theme>` copies the item and records the version in `.moderno/manifest.json`.                                           |
-| F5.3 | `moderno add` can eject a primitive (escape hatch) into the consumer project.                                                               |
-| F5.4 | `moderno update` overwrites an **unedited** primitive/item without conflict; `diff` shows changes vs. the installed version.                |
-| F5.5 | The CLI works with bun, pnpm and npm as runners; default registry URL overridable (`components.json` / `MODERNO_REGISTRY_URL`).             |
-| F5.6 | `pnpm theme:build` validates `tokens.dtcg.json` → emits `theme.css` with WCAG AA warnings; fails in CI on an invalid schema.                |
-| F5.7 | `theme-moderno` and `theme-contrast` coexist via `[data-brand]` composed with `.dark`.                                                      |
+| #    | Requirement                                                                                                                                    |
+| ---- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| F5.1 | `moderno init` creates `src/styles/moderno.css` with `@import "@moderno-ui/css"` (+ a theme line after `add`). The user imports a single file. |
+| F5.2 | `moderno add <block\|theme>` copies the item and records the version in `.moderno/manifest.json`.                                              |
+| F5.3 | `moderno add` can eject a primitive (escape hatch) into the consumer project.                                                                  |
+| F5.4 | `moderno update` overwrites an **unedited** primitive/item without conflict; `diff` shows changes vs. the installed version.                   |
+| F5.5 | The CLI works with bun, pnpm and npm as runners; default registry URL overridable (`components.json` / `MODERNO_REGISTRY_URL`).                |
+| F5.6 | `pnpm theme:build` validates `tokens.dtcg.json` → emits `theme.css` with WCAG AA warnings; fails in CI on an invalid schema.                   |
+| F5.7 | `theme-moderno` and `theme-contrast` coexist via `[data-brand]` composed with `.dark`.                                                         |
 
 ## Deliverables
 
 - `registry/registry.json` + items in `registry/blocks/`, `registry/themes/`.
-- `tooling/cli/` (`@moderno/cli`).
+- `tooling/cli/` (`@moderno-ui/cli`).
 - `tooling/theme-compile/`.
 - Changesets + GitHub Actions release pipeline.
 - `.moderno/manifest.json` schema documented.
@@ -47,7 +47,7 @@ Make the DS installable and updatable: versioned `registry.json`, `@moderno/cli`
 - [ ] Installation verified with all 3 runners (bun/pnpm/npm).
 - [ ] `pnpm theme:build` produces valid `theme.css` + DTCG and emits contrast warnings.
 - [ ] Switching `theme-moderno` ↔ `theme-contrast` via `[data-brand]` works in a demo.
-- [ ] Changesets release dry-run publishes the `@moderno/*` set.
+- [ ] Changesets release dry-run publishes the `@moderno-ui/*` set.
 
 ## Dependencies
 

@@ -1,8 +1,8 @@
 import { Select as ArkSelect } from "@ark-ui/react";
 import type { CollectionItem, SelectRootProps } from "@ark-ui/react";
-import { selectRecipe, type SelectSize } from "@moderno/core";
+import { selectRecipe, type SelectSize } from "@moderno-ui/core";
 
-export type { SelectSize } from "@moderno/core";
+export type { SelectSize } from "@moderno-ui/core";
 
 export type ModernoSelectRootProps<T extends CollectionItem> = SelectRootProps<T> & {
   size?: SelectSize;

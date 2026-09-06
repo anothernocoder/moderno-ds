@@ -52,7 +52,7 @@ Publish `apps/docs`: an Astro + MDX + Content Collections site, minimalist (shad
 - [ ] PropsTable reflects the real types of the packages.
 - [ ] The Theme Builder exports valid CSS + DTCG and the preview is consistent with real components.
 - [ ] Pagefind search works per locale.
-- [ ] `/r/registry.json` accessible from the deploy and consumable by `@moderno/cli`.
+- [ ] `/r/registry.json` accessible from the deploy and consumable by `@moderno-ui/cli`.
 - [ ] Production deploy on `moderno.style` (or fallback Vercel URL until the domain is registered).
 
 ## Dependencies

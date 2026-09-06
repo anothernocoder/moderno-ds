@@ -1,8 +1,8 @@
 import { defineComponent, h, type Component, type PropType } from "vue";
 import { Select as ArkSelect, type SelectRootComponent } from "@ark-ui/vue";
-import { selectRecipe, type SelectSize } from "@moderno/core";
+import { selectRecipe, type SelectSize } from "@moderno-ui/core";
 
-export type { SelectSize } from "@moderno/core";
+export type { SelectSize } from "@moderno-ui/core";
 
 /**
  * Select.Root with the Moderno `size` recipe folded in. Ark's Root spreads

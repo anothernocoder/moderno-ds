@@ -4,7 +4,7 @@ description: A pure-SVG scatter chart mapped from charts-core; one circle per po
 group: Components
 order: 80
 component: ScatterChart
-pkg: "@moderno/react"
+pkg: "@moderno-ui/react"
 agentPropsHash: "sha256:991f118e4a5009d49e4aa404ff520d8ef20550e2164b7523d6da6a66428db990"
 agent:
   intent: Correlation or distribution of individual (x, y) samples.
@@ -27,7 +27,7 @@ import PropsTable from "../../../components/PropsTable.astro";
 import Install from "../../../components/Install.astro";
 import ScatterChartDemo from "../../../islands/ScatterChartDemo.svelte";
 
-ScatterChart is a deterministic map from a model built by `@moderno/charts-core`
+ScatterChart is a deterministic map from a model built by `@moderno-ui/charts-core`
 to `<circle>` elements — one marker per point, no path. It bakes in no colour —
 each series paints from `--chart-1…5` keyed on its index, so it re-themes with
 the rest of the system.
@@ -38,7 +38,7 @@ the rest of the system.
 
 ## Installation
 
-<Install pkg="@moderno/react" />
+<Install pkg="@moderno-ui/react" />
 
 ## Props
 

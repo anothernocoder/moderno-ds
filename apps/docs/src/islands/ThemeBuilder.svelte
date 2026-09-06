@@ -2,14 +2,14 @@
   Theme Builder — edits the contract slots in both scopes (`:root` + `.dark`)
   with a live preview over the *real* @moderno components, then exports a
   theme.css + tokens.dtcg.json + CLI snippet. Export runs through the same
-  `@moderno/theme-compile` CI uses (via `buildTheme`), so a clean export here is
+  `@moderno-ui/theme-compile` CI uses (via `buildTheme`), so a clean export here is
   a theme that passes CI; the inline WCAG AA checker surfaces its warnings.
   State persists to the URL (`?t=`) and localStorage.
 -->
 <script lang="ts">
   import { onMount } from "svelte";
-  import { Button, LineChart } from "@moderno/svelte";
-  import { COLOR_GROUPS } from "@moderno/tokens/contract";
+  import { Button, LineChart } from "@moderno-ui/svelte";
+  import { COLOR_GROUPS } from "@moderno-ui/tokens/contract";
   import {
     buildTheme,
     defaultThemeState,
@@ -59,7 +59,7 @@
   ];
 
   // The editor groups derive from the contract data — a slot added to
-  // @moderno/tokens shows up here without touching the island. Labels come
+  // @moderno-ui/tokens shows up here without touching the island. Labels come
   // from the docs i18n; an unmapped group falls back to its id.
   const GROUPS = COLOR_GROUPS.map(({ group, slots }) => ({
     label: strings.groups[group] ?? group,

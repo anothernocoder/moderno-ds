@@ -29,7 +29,7 @@ const COLOR_PROPS = new Set([
   "stroke",
 ]);
 
-describe("@moderno/core components.css — Ark scope/part convention (F1.2)", () => {
+describe("@moderno-ui/core components.css — Ark scope/part convention (F1.2)", () => {
   it("targets [data-scope]/[data-part], never component-owned class names", () => {
     expect(selectors.length).toBeGreaterThan(0);
     expect(selectors.some((s) => s.includes("[data-scope") || s.includes("[data-part"))).toBe(true);
@@ -42,7 +42,7 @@ describe("@moderno/core components.css — Ark scope/part convention (F1.2)", ()
   });
 });
 
-describe("@moderno/core components.css — zero baked brand values (F1.2)", () => {
+describe("@moderno-ui/core components.css — zero baked brand values (F1.2)", () => {
   it("contains no literal colour values (hex / rgb / hsl / oklch)", () => {
     expect(css).not.toMatch(/#[0-9a-f]{3,8}\b/i);
     expect(css).not.toMatch(/\b(rgb|rgba|hsl|hsla|oklch|oklab)\(/i);

@@ -4,13 +4,13 @@
 
 ## Objective
 
-Implement 4 primitives in `@moderno/react` with Ark UI + the single `data-part`-based stylesheet, validating the DS's two central guarantees against a real target: **same look via variables** and **SSR with no hydration errors**. This phase locks down the pattern that Phases 3 and 4 replicate.
+Implement 4 primitives in `@moderno-ui/react` with Ark UI + the single `data-part`-based stylesheet, validating the DS's two central guarantees against a real target: **same look via variables** and **SSR with no hydration errors**. This phase locks down the pattern that Phases 3 and 4 replicate.
 
 ## Scope
 
-- `@moderno/react` (React 19, Ark `@ark-ui/react`): **Button, Field/Label, Dialog, Select**.
-- Each component: Ark headless markup + CVA from `@moderno/core` for props → data-attributes; zero inline styling.
-- Styling 100% from `@moderno/core/styles/components.css` via `[data-scope][data-part]` — the same CSS the other frameworks will use.
+- `@moderno-ui/react` (React 19, Ark `@ark-ui/react`): **Button, Field/Label, Dialog, Select**.
+- Each component: Ark headless markup + CVA from `@moderno-ui/core` for props → data-attributes; zero inline styling.
+- Styling 100% from `@moderno-ui/core/styles/components.css` via `[data-scope][data-part]` — the same CSS the other frameworks will use.
 - Deliberate selection of the 4: covers static (Button), form + a11y (Field), portal + focus-trap + SSR (Dialog), and collection + popover + keyboard (Select) — the spectrum of Ark complexity.
 
 ## Functional requirements
@@ -40,7 +40,7 @@ Implement 4 primitives in `@moderno/react` with Ark UI + the single `data-part`-
 
 ## Dependencies
 
-- Phase 1 (`@moderno/core` CVA + `components.css`).
+- Phase 1 (`@moderno-ui/core` CVA + `components.css`).
 - Phase 0 (tokens).
 
 ## Out of scope

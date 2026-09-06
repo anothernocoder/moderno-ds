@@ -8,7 +8,7 @@
 <script lang="ts" generics="T extends CollectionItem">
   import { Select as ArkSelect } from "@ark-ui/svelte";
   import type { CollectionItem, SelectRootProps } from "@ark-ui/svelte";
-  import { selectRecipe, type SelectSize } from "@moderno/core";
+  import { selectRecipe, type SelectSize } from "@moderno-ui/core";
 
   let { size, ...rest }: SelectRootProps<T> & { size?: SelectSize } = $props();
 </script>

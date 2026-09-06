@@ -1,4 +1,4 @@
-import { Button } from "@moderno/solid";
+import { Button } from "@moderno-ui/solid";
 
 /**
  * EmptyState — an ejected block: a centered placeholder shown when a list or

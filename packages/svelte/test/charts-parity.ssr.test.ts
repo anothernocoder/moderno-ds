@@ -6,7 +6,7 @@ import {
   chartNodeToSvg,
   lineChartNodes,
   scatterChartNodes,
-} from "@moderno/charts-core";
+} from "@moderno-ui/charts-core";
 import { normalizeSvg } from "../../charts-core/test/svg-parity.ts";
 import AreaChart from "../src/AreaChart.svelte";
 import BarChart from "../src/BarChart.svelte";

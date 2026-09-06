@@ -14,7 +14,7 @@ describe("moderno/no-reimplemented-primitive", () => {
       ruleId: "moderno/no-reimplemented-primitive",
       severity: "warn",
     });
-    expect(findings[0]!.suggestion).toBe('import { Dialog } from "@moderno/react"');
+    expect(findings[0]!.suggestion).toBe('import { Dialog } from "@moderno-ui/react"');
   });
 
   it('warns on role="dialog" on a non-<dialog> element', () => {
@@ -32,7 +32,7 @@ describe("moderno/no-reimplemented-primitive", () => {
   it("warns on a native <button> with manual variant-switching classes", () => {
     const findings = check('<button className="btn-primary">Save</button>');
     expect(findings).toHaveLength(1);
-    expect(findings[0]!.suggestion).toBe('import { Button } from "@moderno/react"');
+    expect(findings[0]!.suggestion).toBe('import { Button } from "@moderno-ui/react"');
   });
 
   it("does not warn on a plain native <button> with no variant-class signal", () => {

@@ -1,9 +1,9 @@
 <!--
-  Live BarChart preview — pure SVG over @moderno/charts-core; colour comes from
+  Live BarChart preview — pure SVG over @moderno-ui/charts-core; colour comes from
   the `--chart-*` token slots via the series index, nothing baked in here.
 -->
 <script lang="ts">
-  import { BarChart } from "@moderno/svelte";
+  import { BarChart } from "@moderno-ui/svelte";
 
   const categories = ["Q1", "Q2", "Q3", "Q4"];
   const series = [

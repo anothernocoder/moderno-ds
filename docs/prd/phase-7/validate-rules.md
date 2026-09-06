@@ -1,35 +1,35 @@
 # Moderno validate rules — starter set
 
 The deterministic AST rule engine authored once and exposed twice: as the
-`validate_usage` MCP tool and as `@moderno/lint` (ESLint plugin + CLI). Same
+`validate_usage` MCP tool and as `@moderno-ui/lint` (ESLint plugin + CLI). Same
 rules, same verdicts, for agents, humans, and CI. No LLM-judge — every rule is a
 static check so it can gate a build. Rules consult the aggregated
 `moderno.agent.json` (component APIs + parts + variants) and the `contract`
-manifest from `@moderno/tokens` (slots + golden rules).
+manifest from `@moderno-ui/tokens` (slots + golden rules).
 
 ## Rule shape
 
 ```ts
 interface Rule {
-  id: string;                       // moderno/<name>
+  id: string; // moderno/<name>
   severity: "error" | "warn";
-  frameworks: Framework[] | "all";  // some checks are markup-specific
+  frameworks: Framework[] | "all"; // some checks are markup-specific
   /** Pure: given a parsed source + the manifests, return findings. */
   check(ctx: RuleContext): Finding[];
-  fixable?: boolean;                // ESLint autofix / MCP suggested patch
+  fixable?: boolean; // ESLint autofix / MCP suggested patch
 }
 
 interface Finding {
   ruleId: string;
   severity: "error" | "warn";
   loc: { line: number; col: number };
-  message: string;                  // what + why, one line
-  suggestion?: string;              // the correct Moderno move
+  message: string; // what + why, one line
+  suggestion?: string; // the correct Moderno move
 }
 ```
 
-`validate_usage` returns `Finding[]` (empty = green). `@moderno/lint` maps the
-same findings to ESLint messages. A shared `@moderno/lint-core` holds the rules;
+`validate_usage` returns `Finding[]` (empty = green). `@moderno-ui/lint` maps the
+same findings to ESLint messages. A shared `@moderno-ui/lint-core` holds the rules;
 the two faces are thin adapters.
 
 ## The rules
@@ -66,7 +66,7 @@ be one of the manifest `variants` values.
 
 ### 4. `moderno/no-raw-ark` — error, fixable
 
-Flags direct imports from `@ark-ui/*` (or `@zag-js/*`) when a `@moderno/*`
+Flags direct imports from `@ark-ui/*` (or `@zag-js/*`) when a `@moderno-ui/*`
 primitive wraps the same component.
 
 - Suggestion: the `import` string from the component manifest.

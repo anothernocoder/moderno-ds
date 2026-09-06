@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { discoverManifests, type AggregatedManifests } from "@moderno/lint-core";
+import { discoverManifests, type AggregatedManifests } from "@moderno-ui/lint-core";
 import { getExamples } from "../src/tools/get-examples.ts";
 import {
   createConsumerFixture,
@@ -21,10 +21,10 @@ afterAll(() => {
 describe("getExamples", () => {
   it("returns examples in the requested framework's own syntax", () => {
     const react = getExamples(manifests, { name: "Button", framework: "react" });
-    expect(react.examples[0]!.code).toContain('import { Button } from "@moderno/react"');
+    expect(react.examples[0]!.code).toContain('import { Button } from "@moderno-ui/react"');
 
     const vue = getExamples(manifests, { name: "Button", framework: "vue" });
-    expect(vue.examples[0]!.code).toContain('import { Button } from "@moderno/vue"');
+    expect(vue.examples[0]!.code).toContain('import { Button } from "@moderno-ui/vue"');
     expect(react.examples[0]!.code).not.toEqual(vue.examples[0]!.code);
   });
 

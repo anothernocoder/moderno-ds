@@ -34,7 +34,7 @@ describe("AGENT_COMPONENTS", () => {
 
 describe("buildComponentsManifest", () => {
   const manifest = buildComponentsManifest({
-    packageName: "@moderno/vue",
+    packageName: "@moderno-ui/vue",
     version: "1.2.3",
     framework: "vue",
     reactTsConfigFilePath: reactTsConfig,
@@ -42,7 +42,7 @@ describe("buildComponentsManifest", () => {
   });
 
   it("stamps the requested package/version/framework", () => {
-    expect(manifest.package).toBe("@moderno/vue");
+    expect(manifest.package).toBe("@moderno-ui/vue");
     expect(manifest.version).toBe("1.2.3");
     expect(manifest.framework).toBe("vue");
     expect(manifest.kind).toBe("components");
@@ -50,7 +50,7 @@ describe("buildComponentsManifest", () => {
 
   it("builds the import string for the requested framework, not react", () => {
     const button = manifest.components.find((c) => c.name === "Button")!;
-    expect(button.import).toBe('import { Button } from "@moderno/vue"');
+    expect(button.import).toBe('import { Button } from "@moderno-ui/vue"');
   });
 
   it("resolves Button/Select props from the canonical react source", () => {
@@ -69,7 +69,7 @@ describe("buildComponentsManifest", () => {
     }
   });
 
-  it("reads variants straight off the shared @moderno/core recipes", () => {
+  it("reads variants straight off the shared @moderno-ui/core recipes", () => {
     const button = manifest.components.find((c) => c.name === "Button")!;
     expect(button.variants).toEqual({
       variant: ["primary", "secondary", "outline", "ghost", "destructive"],
@@ -84,25 +84,25 @@ describe("buildComponentsManifest", () => {
     const button = manifest.components.find((c) => c.name === "Button")!;
     expect(button.examples).toBeDefined();
     expect(button.examples!.length).toBeGreaterThan(0);
-    expect(button.examples![0]!.code).toContain('from "@moderno/vue"');
+    expect(button.examples![0]!.code).toContain('from "@moderno-ui/vue"');
     expect(button.examples![0]!.code).toContain("<script setup");
 
     const reactManifest = buildComponentsManifest({
-      packageName: "@moderno/react",
+      packageName: "@moderno-ui/react",
       version: "1.2.3",
       framework: "react",
       reactTsConfigFilePath: reactTsConfig,
       guidance: {},
     });
     const reactButton = reactManifest.components.find((c) => c.name === "Button")!;
-    expect(reactButton.examples![0]!.code).toContain('from "@moderno/react"');
+    expect(reactButton.examples![0]!.code).toContain('from "@moderno-ui/react"');
     expect(reactButton.examples![0]!.code).not.toContain("<script setup");
   });
 
   it("covers every vertical-slice component with examples for every shipped framework", () => {
     for (const framework of ["react", "vue", "svelte", "solid"] as const) {
       const fwManifest = buildComponentsManifest({
-        packageName: `@moderno/${framework}`,
+        packageName: `@moderno-ui/${framework}`,
         version: "0.1.0",
         framework,
         reactTsConfigFilePath: reactTsConfig,
@@ -129,7 +129,7 @@ describe("buildComponentsManifest", () => {
 
   it("is deterministic: same props in, same propsHash out", () => {
     const again = buildComponentsManifest({
-      packageName: "@moderno/vue",
+      packageName: "@moderno-ui/vue",
       version: "1.2.3",
       framework: "vue",
       reactTsConfigFilePath: reactTsConfig,
@@ -144,8 +144,8 @@ describe("buildComponentsManifest", () => {
 describe("buildContractManifest", () => {
   const manifest = buildContractManifest("0.1.0");
 
-  it("carries the @moderno/tokens golden rule and version", () => {
-    expect(manifest.package).toBe("@moderno/tokens");
+  it("carries the @moderno-ui/tokens golden rule and version", () => {
+    expect(manifest.package).toBe("@moderno-ui/tokens");
     expect(manifest.kind).toBe("contract");
     expect(manifest.version).toBe("0.1.0");
     expect(manifest.goldenRule).toMatch(/never edited/);

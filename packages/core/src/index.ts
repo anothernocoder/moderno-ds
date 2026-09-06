@@ -1,5 +1,5 @@
 /**
- * @moderno/core — framework-agnostic core.
+ * @moderno-ui/core — framework-agnostic core.
  *
  * CVA (props → deterministic data-attributes), class utilities, and the shared
  * `styles/components.css` skeleton. No DOM, no framework imports.

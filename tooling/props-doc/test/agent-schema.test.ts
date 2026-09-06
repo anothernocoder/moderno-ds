@@ -39,7 +39,7 @@ describe("moderno.agent.schema.json", () => {
 
   it("validates a real components manifest built from the vertical slice", () => {
     const manifest = buildComponentsManifest({
-      packageName: "@moderno/react",
+      packageName: "@moderno-ui/react",
       version: "0.1.0",
       framework: "react",
       reactTsConfigFilePath: reactTsConfig,
@@ -50,7 +50,7 @@ describe("moderno.agent.schema.json", () => {
     expect(valid).toBe(true);
   });
 
-  it("validates a real contract manifest built from @moderno/tokens", () => {
+  it("validates a real contract manifest built from @moderno-ui/tokens", () => {
     const manifest = buildContractManifest("0.1.0");
     const valid = validate(manifest);
     expect(validate.errors, JSON.stringify(validate.errors)).toBeNull();

@@ -2,7 +2,7 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
-import { discoverManifests } from "@moderno/lint-core";
+import { discoverManifests } from "@moderno-ui/lint-core";
 import { getContract } from "../src/tools/get-contract.ts";
 import { ModernoMcpError } from "../src/tools/shared.ts";
 import {
@@ -24,12 +24,12 @@ describe("getContract", () => {
   it("returns the shared contract, identical regardless of which framework is being written", () => {
     const manifests = discoverManifests(fixture.dir);
     const contract = getContract(manifests);
-    expect(contract.package).toBe("@moderno/tokens");
+    expect(contract.package).toBe("@moderno-ui/tokens");
     expect(contract.slots.color).toContain("--primary");
     expect(contract.rules.length).toBeGreaterThan(0);
   });
 
-  describe("when @moderno/tokens isn't installed", () => {
+  describe("when @moderno-ui/tokens isn't installed", () => {
     let emptyDir: string;
 
     afterEach(() => {

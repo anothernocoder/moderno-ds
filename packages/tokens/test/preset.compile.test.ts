@@ -44,7 +44,7 @@ beforeAll(async () => {
   ]);
 });
 
-describe("@moderno/tokens preset — generated utilities resolve to contract vars", () => {
+describe("@moderno-ui/tokens preset — generated utilities resolve to contract vars", () => {
   it("emits color utilities that reference var(--slot), enabling runtime override", () => {
     expect(utilities).toContain("var(--primary)");
     expect(utilities).toContain("var(--foreground)");

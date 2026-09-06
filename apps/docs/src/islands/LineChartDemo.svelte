@@ -1,9 +1,9 @@
 <!--
-  Live LineChart preview — pure SVG over @moderno/charts-core; colour comes from
+  Live LineChart preview — pure SVG over @moderno-ui/charts-core; colour comes from
   the `--chart-*` token slots via the series index, nothing baked in here.
 -->
 <script lang="ts">
-  import { LineChart } from "@moderno/svelte";
+  import { LineChart } from "@moderno-ui/svelte";
 
   const series = [
     {

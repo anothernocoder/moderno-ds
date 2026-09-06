@@ -1,7 +1,12 @@
 {
-  "name": "@moderno/lint",
-  "version": "0.0.0",
-  "description": "ESLint plugin + CLI over @moderno/lint-core's shared rule engine — the same hardcoded-color/prop-validity/raw-Ark/data-part/reimplemented-primitive checks validate_usage runs, for human contributors and CI.",
+  "name": "@moderno-ui/lint",
+  "version": "0.3.0",
+  "description": "ESLint plugin + CLI over @moderno-ui/lint-core's shared rule engine — the same hardcoded-color/prop-validity/raw-Ark/data-part/reimplemented-primitive checks validate_usage runs, for human contributors and CI.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anothernocoder/moderno-ds.git",
+    "directory": "packages/lint"
+  },
   "license": "MIT",
   "type": "module",
   "engines": {
@@ -24,7 +29,7 @@
     "build": "tsup"
   },
   "dependencies": {
-    "@moderno/lint-core": "workspace:*"
+    "@moderno-ui/lint-core": "workspace:*"
   },
   "peerDependencies": {
     "eslint": "^9.0.0"

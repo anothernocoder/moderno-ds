@@ -9,7 +9,7 @@ The complete product: tokens, primitives, charts, blocks, themes, CLI and docs.
 _Avoid_: UI kit, component library (when referring to the entire product)
 
 **Primitive**:
-Headless component + shared styles, distributed as a versioned npm package (`@moderno/react`, etc.). Not copied into the consumer project unless explicitly ejected.
+Headless component + shared styles, distributed as a versioned npm package (`@moderno-ui/react`, etc.). Not copied into the consumer project unless explicitly ejected.
 _Avoid_: Component, widget
 
 **Block**:
@@ -52,20 +52,20 @@ _Avoid_: Raw token, primitive (unqualified — collides with Primitive)
 A mapping in the theme from a contract slot to a brand token (`--background: var(--mod-surface-base)`). The bridge between the shadcn contract and the brand aesthetic.
 _Avoid_: Semantic token (use only in technical docs; in CONTEXT prefer "semantic alias")
 
-**@moderno/tokens**:
+**@moderno-ui/tokens**:
 The npm package that generates the shadcn slot contract, neutral OKLCH defaults, the Tailwind v4 preset and CSS vars. Contains no brand identity.
 _Avoid_: Theme package, tokens.json (as a product name)
 
-**@moderno/css**:
+**@moderno-ui/css**:
 A single CSS entrypoint that re-exports tokens + the component stylesheet. The consumer's public API; hides internal paths to `dist/`.
 _Avoid_: globals bundle, styles entry (unqualified)
 
 **Init**:
-The CLI command (`@moderno/cli init`) that scaffolds `src/styles/moderno.css` in the consumer project with the correct imports. The user does not configure CSS manually.
+The CLI command (`@moderno-ui/cli init`) that scaffolds `src/styles/moderno.css` in the consumer project with the correct imports. The user does not configure CSS manually.
 _Avoid_: Setup, bootstrap (as a domain term)
 
 **Neutral default**:
-Placeholder values in `@moderno/tokens` (OKLCH grays, system font stack) that allow developing and previewing components without installing a brand theme.
+Placeholder values in `@moderno-ui/tokens` (OKLCH grays, system font stack) that allow developing and previewing components without installing a brand theme.
 _Avoid_: Base theme, fallback theme
 
 **Island runtime**:
@@ -77,7 +77,7 @@ shadcn convention: `:root` = light, `.dark` = dark. Moderno apps mount `<html cl
 _Avoid_: Dark-first inversion, data-theme attribute
 
 **Component stylesheet**:
-A single shared CSS based on Ark's `[data-scope]` / `[data-part]`. Lives in `@moderno/core/styles/components.css`. Imported by all framework packages and the docs.
+A single shared CSS based on Ark's `[data-scope]` / `[data-part]`. Lives in `@moderno-ui/core/styles/components.css`. Imported by all framework packages and the docs.
 _Avoid_: Per-framework CSS, styled-components layer
 
 **Theme item**:
@@ -93,11 +93,11 @@ The ability to scope themes by `[data-brand="…"]` composed with `.dark`. Archi
 _Avoid_: Multi-tenant theming, white-label mode
 
 **npm namespace**:
-The prefix of published packages: `@moderno/*` (`@moderno/tokens`, `@moderno/react`, `@moderno/core`, …). CLI: `@moderno/cli`. All public on npmjs.com; semver via Changesets + GitHub Actions.
+The prefix of published packages: `@moderno-ui/*` (`@moderno-ui/tokens`, `@moderno-ui/react`, `@moderno-ui/core`, …). CLI: `@moderno-ui/cli`. All public on npmjs.com; semver via Changesets + GitHub Actions.
 _Avoid_: @ds/_, moderno-ds/_ (as an npm scope), private registry (v1)
 
 **Extended contract**:
-Beyond shadcn color slots, the contract includes spacing (`--spacing-1…8`), motion (`--motion-instant|fast|normal`), and radius (`--radius`, `--radius-full`). Defined in CONTRACT.md, defaults in `@moderno/tokens`, overrides in themes.
+Beyond shadcn color slots, the contract includes spacing (`--spacing-1…8`), motion (`--motion-instant|fast|normal`), and radius (`--radius`, `--radius-full`). Defined in CONTRACT.md, defaults in `@moderno-ui/tokens`, overrides in themes.
 _Avoid_: Hardcoded spacing, magic numbers in CSS
 
 **Theme Moderno v1**:
@@ -105,11 +105,11 @@ Includes complete OKLCH ramps for light (`:root`) and dark (`.dark`), with seman
 _Avoid_: Dark-only theme, WIP light mode
 
 **Type scale**:
-Sizes and line-heights as CSS vars in `@moderno/tokens`; exposed as Tailwind v4 utilities via `@theme inline` (`text-display`, `text-body-md`, …). No parallel custom CSS classes.
+Sizes and line-heights as CSS vars in `@moderno-ui/tokens`; exposed as Tailwind v4 utilities via `@theme inline` (`text-display`, `text-body-md`, …). No parallel custom CSS classes.
 _Avoid_: Typography component, custom .text-\* classes in core
 
 **Component variant**:
-An alternative visual style (outline, sm, destructive…) expressed as `data-variant`, `data-size`, etc. on the `[data-part=root]`. CVA in `@moderno/core` resolves props → data attributes; CSS in `components.css`.
+An alternative visual style (outline, sm, destructive…) expressed as `data-variant`, `data-size`, etc. on the `[data-part=root]`. CVA in `@moderno-ui/core` resolves props → data attributes; CSS in `components.css`.
 _Avoid_: Variant class, CVA Tailwind string
 
 **Maintainer**:
@@ -121,7 +121,7 @@ Node 22 LTS, pnpm 9+ workspaces, TypeScript 5 strict, **ESM-only** packages with
 _Avoid_: Dual CJS/ESM, webpack for libraries
 
 **npm publication**:
-`@moderno/*` packages public on npmjs.com. Semver versioning with **Changesets**; automatic publish from GitHub Actions when the Changesets PR is merged into `main`.
+`@moderno-ui/*` packages public on npmjs.com. Semver versioning with **Changesets**; automatic publish from GitHub Actions when the Changesets PR is merged into `main`.
 _Avoid_: GitHub Packages (v1), manual version bumps
 
 **Registry URL**:
@@ -145,7 +145,7 @@ Generated at build time by the `tooling/props-doc` script (ts-morph) → JSON pe
 _Avoid_: react-docgen-only, hand-maintained prop tables
 
 **Chart render tree**:
-The serializable SVG node tree `@moderno/charts-core` emits per chart
+The serializable SVG node tree `@moderno-ui/charts-core` emits per chart
 (`lineChartNodes`, …): frame, tick-label anchors and the full
 `data-scope`/`data-part` structure, as data. Each framework binding is a thin
 _walker_ that maps nodes onto its own elements; `chartNodeToSvg` is the

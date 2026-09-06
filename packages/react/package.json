@@ -1,7 +1,12 @@
 {
-  "name": "@moderno/react",
-  "version": "0.0.0",
-  "description": "Reference React 19 bindings for Moderno: Ark UI headless behaviour + @moderno/core CVA (props → data-attributes), styled entirely by the shared components.css.",
+  "name": "@moderno-ui/react",
+  "version": "0.3.0",
+  "description": "Reference React 19 bindings for Moderno: Ark UI headless behaviour + @moderno-ui/core CVA (props → data-attributes), styled entirely by the shared components.css.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anothernocoder/moderno-ds.git",
+    "directory": "packages/react"
+  },
   "license": "MIT",
   "type": "module",
   "sideEffects": false,
@@ -22,16 +27,16 @@
   },
   "dependencies": {
     "@ark-ui/react": "^5.30.0",
-    "@moderno/charts-core": "workspace:*",
-    "@moderno/core": "workspace:*"
+    "@moderno-ui/charts-core": "workspace:*",
+    "@moderno-ui/core": "workspace:*"
   },
   "peerDependencies": {
-    "@moderno/css": "workspace:*",
+    "@moderno-ui/css": "workspace:*",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@moderno/props-doc": "workspace:*",
+    "@moderno-ui/props-doc": "workspace:*",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
     "@types/react": "^19.0.0",

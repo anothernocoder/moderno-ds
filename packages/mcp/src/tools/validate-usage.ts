@@ -1,10 +1,10 @@
 /**
  * `validate_usage` — the deterministic verification half of the agentic loop
- * (ADR-0003): runs `@moderno/lint-core`'s shared rule engine over a framework-
+ * (ADR-0003): runs `@moderno-ui/lint-core`'s shared rule engine over a framework-
  * tagged snippet against the same manifests the other four tools read,
  * catching hallucinated props, off-contract colors/radii, raw Ark usage, bad
  * `data-part` overrides, and reimplemented primitives before the agent
- * finishes. `@moderno/lint` runs the identical rules over the same manifests,
+ * finishes. `@moderno-ui/lint` runs the identical rules over the same manifests,
  * so a human/CI lint and this tool never disagree. Requires the target
  * framework to be installed, like every other tool here — there is nothing to
  * validate against otherwise.
@@ -15,7 +15,7 @@ import {
   type AggregatedManifests,
   type Finding,
   type Framework,
-} from "@moderno/lint-core";
+} from "@moderno-ui/lint-core";
 import { findFrameworkManifest, frameworkNotFoundError } from "./shared.ts";
 
 export interface ValidateUsageInput {

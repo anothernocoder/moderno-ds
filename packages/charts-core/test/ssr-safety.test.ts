@@ -20,7 +20,7 @@ function readSrc(dir: string): string {
     .join("\n");
 }
 
-describe("@moderno/charts-core — SSR safety (F1.3)", () => {
+describe("@moderno-ui/charts-core — SSR safety (F1.3)", () => {
   it("runs without any DOM global present", () => {
     expect("document" in globalThis).toBe(false);
     expect("window" in globalThis).toBe(false);
@@ -33,7 +33,7 @@ describe("@moderno/charts-core — SSR safety (F1.3)", () => {
   });
 });
 
-describe("@moderno/charts-core — forbidden d3 modules (F1.4)", () => {
+describe("@moderno-ui/charts-core — forbidden d3 modules (F1.4)", () => {
   const allDeps = { ...pkg.dependencies, ...pkg.devDependencies };
 
   it("does not declare d3-selection or d3-transition as dependencies", () => {

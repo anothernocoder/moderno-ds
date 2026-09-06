@@ -1,5 +1,5 @@
 /**
- * @moderno/charts-core — framework-agnostic chart math.
+ * @moderno-ui/charts-core — framework-agnostic chart math.
  *
  * Pure functions over d3-scale/d3-shape/d3-array/d3-path. No DOM access, so
  * everything is SSR-safe. d3-selection / d3-transition are forbidden.

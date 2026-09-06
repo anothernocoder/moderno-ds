@@ -21,7 +21,7 @@ function lint(code: string, filename: string) {
   return linter.verify(code, moderno.configs.recommended, filename);
 }
 
-describe("@moderno/lint recommended config", () => {
+describe("@moderno-ui/lint recommended config", () => {
   it("catches a hardcoded color, an invalid prop, and a raw-Ark import in one snippet (issue #44 AC)", () => {
     const code = [
       'import { Dialog } from "@ark-ui/react";',

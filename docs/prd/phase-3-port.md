@@ -4,11 +4,11 @@
 
 ## Objective
 
-Port Button, Field, Dialog and Select to `@moderno/vue`, `@moderno/svelte` and `@moderno/solid`, reusing **the same** `components.css` and the same CVA from `@moderno/core`. Prove look and behavior parity against the Phase 2 React reference.
+Port Button, Field, Dialog and Select to `@moderno-ui/vue`, `@moderno-ui/svelte` and `@moderno-ui/solid`, reusing **the same** `components.css` and the same CVA from `@moderno-ui/core`. Prove look and behavior parity against the Phase 2 React reference.
 
 ## Scope
 
-- `@moderno/vue` (`@ark-ui/vue`), `@moderno/svelte` (`@ark-ui/svelte`), `@moderno/solid` (`@ark-ui/solid`): the same 4 components.
+- `@moderno-ui/vue` (`@ark-ui/vue`), `@moderno-ui/svelte` (`@ark-ui/svelte`), `@moderno-ui/solid` (`@ark-ui/solid`): the same 4 components.
 - Reuse of the single stylesheet — **zero** per-framework CSS. If a component needs new CSS, it is added to the shared `components.css` and benefits all of them.
 - Svelte is additionally the docs **islands runtime** (relevant for Phase 6); its port must work as a server-only island.
 

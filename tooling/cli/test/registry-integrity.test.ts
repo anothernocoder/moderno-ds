@@ -39,7 +39,7 @@ describe("registry.json integrity", () => {
     }
   });
 
-  it("keeps the ejected button in sync with the @moderno/react source", () => {
+  it("keeps the ejected button in sync with the @moderno-ui/react source", () => {
     const ejected = readFileSync(join(registryDir, "primitives/react/button.tsx"), "utf8");
     const source = readFileSync(join(repoRoot, "packages/react/src/button.tsx"), "utf8");
     // identical logic — only the doc comment differs, so compare the code body

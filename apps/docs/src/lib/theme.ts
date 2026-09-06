@@ -1,14 +1,14 @@
 /**
  * Theme Builder model — the bridge between the editor's flat, editable scopes
- * and the DTCG document `@moderno/theme-compile` validates and compiles. The
+ * and the DTCG document `@moderno-ui/theme-compile` validates and compiles. The
  * island edits `ThemeState`; export runs it back through the *same* compiler CI
  * uses, so a theme that exports clean here is a theme that passes CI.
  */
-import { compileTheme, ThemeValidationError } from "@moderno/theme-compile";
-import { COLOR_SLOTS, OTHER_SLOTS, slotType } from "@moderno/tokens/contract";
+import { compileTheme, ThemeValidationError } from "@moderno-ui/theme-compile";
+import { COLOR_SLOTS, OTHER_SLOTS, slotType } from "@moderno-ui/tokens/contract";
 import modernoTokens from "../../../../registry/themes/theme-moderno/tokens.dtcg.json";
 
-// The slot lists come from the contract data in @moderno/tokens — the same
+// The slot lists come from the contract data in @moderno-ui/tokens — the same
 // source theme-compile validates against, so editor and compiler can't drift.
 export { COLOR_SLOTS, OTHER_SLOTS };
 
@@ -80,9 +80,9 @@ export function slugify(name: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
-/** CLI one-liner that applies the theme via the registry-aware `@moderno/cli`. */
+/** CLI one-liner that applies the theme via the registry-aware `@moderno-ui/cli`. */
 export function cliSnippet(name: string): string {
-  return `npx @moderno/cli@latest add theme-${slugify(name) || "custom"}`;
+  return `npx @moderno-ui/cli@latest add theme-${slugify(name) || "custom"}`;
 }
 
 export interface ThemeBundle {

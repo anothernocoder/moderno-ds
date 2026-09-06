@@ -1,10 +1,10 @@
 /**
- * Wraps one `@moderno/lint-core` `Rule` as an ESLint flat-config rule module.
+ * Wraps one `@moderno-ui/lint-core` `Rule` as an ESLint flat-config rule module.
  * The shared rule is a pure text-in/findings-out function — no AST needed —
  * so the adapter just needs the full source text (`Program:exit`, once per
  * file, regardless of what parser produced the tree) and a `framework` to
  * check it against. Manifests are discovered once per `cwd` and cached, the
- * same "read node_modules once" contract `@moderno/mcp` follows.
+ * same "read node_modules once" contract `@moderno-ui/mcp` follows.
  */
 import type { Rule as ESLintRule } from "eslint";
 import {
@@ -12,7 +12,7 @@ import {
   type AggregatedManifests,
   type Framework,
   type Rule as SharedRule,
-} from "@moderno/lint-core";
+} from "@moderno-ui/lint-core";
 import { FRAMEWORKS, frameworkFromFilename } from "./framework.ts";
 
 const manifestsByCwd = new Map<string, AggregatedManifests>();
@@ -41,7 +41,7 @@ export function toESLintRule(rule: SharedRule): ESLintRule.RuleModule {
       // No `fixable` here even for rules with `rule.fixable === true`: that
       // flag names a category of violation as fix-eligible, but `Finding`
       // carries only a prose `suggestion`, never a fix range/replacement —
-      // nothing in `@moderno/lint-core` produces one yet. Declaring
+      // nothing in `@moderno-ui/lint-core` produces one yet. Declaring
       // `meta.fixable` without ever calling `context.report({ fix })` would
       // advertise a `--fix` capability this rule can't deliver.
       schema: [

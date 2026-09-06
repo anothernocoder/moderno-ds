@@ -1,8 +1,8 @@
 import { For } from "solid-js";
-import { Button } from "@moderno/solid";
+import { Button } from "@moderno-ui/solid";
 
 /**
- * Pricing — an ejected block that composes @moderno/solid primitives
+ * Pricing — an ejected block that composes @moderno-ui/solid primitives
  * (Button) into a three-plan pricing section. Copy it into your project and
  * edit the plans array freely. Themed via CSS variables from the design
  * system; no hardcoded colors, radii, or fonts live here.

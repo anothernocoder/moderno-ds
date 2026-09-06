@@ -1,7 +1,12 @@
 {
-  "name": "@moderno/cli",
-  "version": "0.1.0",
+  "name": "@moderno-ui/cli",
+  "version": "0.3.0",
   "description": "Moderno CLI — init/add/update/diff over the shadcn-style versioned registry, with a .moderno/manifest.json that tracks installed versions. Wraps the registry model; no runtime dependencies.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anothernocoder/moderno-ds.git",
+    "directory": "tooling/cli"
+  },
   "license": "MIT",
   "type": "module",
   "engines": {

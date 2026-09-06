@@ -4,7 +4,7 @@ description: A pure-SVG bar chart mapped from charts-core; one rect per category
 group: Components
 order: 70
 component: BarChart
-pkg: "@moderno/react"
+pkg: "@moderno-ui/react"
 agentPropsHash: "sha256:61c671e7050ed38172a7db8ebb687e56bf4ecf11318bdd5e2fb305b74c682b43"
 agent:
   intent: Magnitude compared across discrete categories.
@@ -27,7 +27,7 @@ import PropsTable from "../../../components/PropsTable.astro";
 import Install from "../../../components/Install.astro";
 import BarChartDemo from "../../../islands/BarChartDemo.svelte";
 
-BarChart is a deterministic map from a model built by `@moderno/charts-core` to
+BarChart is a deterministic map from a model built by `@moderno-ui/charts-core` to
 `<rect>` elements — one bar per category per series, positioned on a band
 scale. It bakes in no colour — each series paints from `--chart-1…5` keyed on
 its index, so it re-themes with the rest of the system.
@@ -38,7 +38,7 @@ its index, so it re-themes with the rest of the system.
 
 ## Installation
 
-<Install pkg="@moderno/react" />
+<Install pkg="@moderno-ui/react" />
 
 ## Props
 

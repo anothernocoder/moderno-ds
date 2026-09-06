@@ -50,7 +50,7 @@ describe("components.css references only contract token slots", () => {
     expect(referenced.length).toBeGreaterThan(10);
   });
 
-  it("every referenced slot is defined by @moderno/tokens", () => {
+  it("every referenced slot is defined by @moderno-ui/tokens", () => {
     const undefinedRefs = referenced.filter((v) => !defined.has(v));
     expect(undefinedRefs, `undefined token references: ${undefinedRefs.join(", ")}`).toEqual([]);
   });

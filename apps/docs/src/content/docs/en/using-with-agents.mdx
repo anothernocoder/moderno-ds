@@ -1,6 +1,6 @@
 ---
 title: Using Moderno with agents
-description: Configure @moderno/mcp, walk the search → get_component_api → get_contract → get_examples → write → validate_usage loop, and follow the golden rules a coding agent should never break.
+description: Configure @moderno-ui/mcp, walk the search → get_component_api → get_contract → get_examples → write → validate_usage loop, and follow the golden rules a coding agent should never break.
 group: Guides
 order: 2
 ---
@@ -15,10 +15,10 @@ an agent should follow while it's in a Moderno codebase.
 
 ## Configure the MCP server
 
-`@moderno/mcp` is a local stdio server — no account, no hosted endpoint. Run it
+`@moderno-ui/mcp` is a local stdio server — no account, no hosted endpoint. Run it
 with your package manager's dlx runner:
 
-<Install pkg="@moderno/mcp" mode="cli" />
+<Install pkg="@moderno-ui/mcp" mode="cli" />
 
 Most agent tools (Claude Code, Cursor, and others that speak MCP) read server
 definitions from a JSON config. Add an entry for `moderno`:
@@ -28,22 +28,22 @@ definitions from a JSON config. Add an entry for `moderno`:
   "mcpServers": {
     "moderno": {
       "command": "npx",
-      "args": ["-y", "@moderno/mcp"]
+      "args": ["-y", "@moderno-ui/mcp"]
     }
   }
 }
 ```
 
-The server discovers `moderno.agent.json` from `node_modules/@moderno/*` **once,
+The server discovers `moderno.agent.json` from `node_modules/@moderno-ui/*` **once,
 at startup** — so it must run from (or be pointed at) the project that has
 Moderno installed. Because it reads what's actually installed, a project pinned
-to an older `@moderno/react` gets that version's API back, not whatever shipped
+to an older `@moderno-ui/react` gets that version's API back, not whatever shipped
 most recently.
 
 ## The agent loop
 
 The tools are read + verify, not write — an agent still writes the code itself
-and shells out to `@moderno/cli` for scaffolding. The MCP's job is to ground
+and shells out to `@moderno-ui/cli` for scaffolding. The MCP's job is to ground
 that code in the real API and then check it.
 
 ### 1. `search_components` — find the primitive by intent
@@ -62,7 +62,7 @@ before writing any markup.
 
 ```
 get_component_api({ name: "Dialog", framework: "react" })
-→ { package: "@moderno/react", version: "1.4.0", component: { props: […], parts: […] } }
+→ { package: "@moderno-ui/react", version: "1.4.0", component: { props: […], parts: […] } }
 ```
 
 ### 3. `get_contract` — confirm the theming rules
@@ -72,7 +72,7 @@ convention. Consult it before writing any color, radius, or spacing value.
 
 ```
 get_contract()
-→ { package: "@moderno/tokens", slots: { color: ["--primary", "--destructive", …] }, rules: […] }
+→ { package: "@moderno-ui/tokens", slots: { color: ["--primary", "--destructive", …] }, rules: […] }
 ```
 
 ### 4. `get_examples` — get a working snippet in your framework
@@ -132,9 +132,9 @@ A finding looks like this — fix it and re-run, not once-and-done:
   via props — never fork component markup or write per-component CSS.
 - Reference contract slots (`--background`, `--primary`, `--radius`, …) — never
   hardcode hex colors, px spacing, or ms durations.
-- Put brand values in a theme, not in `@moderno/tokens`.
+- Put brand values in a theme, not in `@moderno-ui/tokens`.
 - Keep `:root` light / `.dark` dark — don't invent a third theming mechanism.
-- `@moderno/css` is the only public CSS specifier — never import internal
+- `@moderno-ui/css` is the only public CSS specifier — never import internal
   paths.
 
 These are the same rules [`moderno init`](/en/installation) writes into your
@@ -144,7 +144,7 @@ yourself.
 
 ## For human contributors
 
-Agents and humans share one rule engine. [`@moderno/lint`](https://www.npmjs.com/package/@moderno/lint)
+Agents and humans share one rule engine. [`@moderno-ui/lint`](https://www.npmjs.com/package/@moderno-ui/lint)
 runs the exact checks behind `validate_usage` as an ESLint plugin and a CLI
 (`moderno-lint`), so a PR from a person and a PR from an agent are held to the
 same standard — and CI catches what either one misses.

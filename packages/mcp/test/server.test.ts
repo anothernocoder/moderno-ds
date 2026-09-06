@@ -34,7 +34,7 @@ function structured(result: Awaited<ReturnType<Client["callTool"]>>): Record<str
   return result.structuredContent as Record<string, unknown>;
 }
 
-describe("@moderno/mcp server", () => {
+describe("@moderno-ui/mcp server", () => {
   it("exposes exactly the five read/verify tools with valid schemas", async () => {
     const { tools } = await client.listTools();
     const names = tools.map((t) => t.name).sort();
@@ -86,7 +86,7 @@ describe("@moderno/mcp server", () => {
       }),
     ) as { examples: { code: string }[] };
 
-    expect(react.examples[0]!.code).toContain('@moderno/react"');
+    expect(react.examples[0]!.code).toContain('@moderno-ui/react"');
     expect(vue.examples[0]!.code).toContain("<script setup");
   });
 

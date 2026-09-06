@@ -3,7 +3,7 @@
   // view has no data, with a primary call to action. Copy it into your project
   // and edit freely. Themed via CSS variables from the design system; no
   // hardcoded colors, radii, or fonts live here.
-  import { Button } from "@moderno/svelte";
+  import { Button } from "@moderno-ui/svelte";
 </script>
 
 <div class="moderno-block-empty">

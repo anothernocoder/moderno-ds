@@ -67,22 +67,22 @@ importers:
       '@lucide/astro':
         specifier: ^1.25.0
         version: 1.25.0(astro@5.18.2(@types/node@22.19.21)(@vercel/functions@2.2.13)(rollup@4.62.0)(typescript@5.9.3)(yaml@2.9.0))
-      '@moderno/charts-core':
+      '@moderno-ui/charts-core':
         specifier: workspace:*
         version: link:../../packages/charts-core
-      '@moderno/core':
+      '@moderno-ui/core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@moderno/css':
+      '@moderno-ui/css':
         specifier: workspace:*
         version: link:../../packages/css
-      '@moderno/svelte':
+      '@moderno-ui/svelte':
         specifier: workspace:*
         version: link:../../packages/svelte
-      '@moderno/theme-compile':
+      '@moderno-ui/theme-compile':
         specifier: workspace:*
         version: link:../../tooling/theme-compile
-      '@moderno/tokens':
+      '@moderno-ui/tokens':
         specifier: workspace:*
         version: link:../../packages/tokens
       astro-expressive-code:
@@ -104,7 +104,7 @@ importers:
       '@astrojs/vercel':
         specifier: ^8.1.0
         version: 8.2.11(astro@5.18.2(@types/node@22.19.21)(@vercel/functions@2.2.13)(rollup@4.62.0)(typescript@5.9.3)(yaml@2.9.0))(react@19.2.7)(rollup@4.62.0)(svelte@5.56.3(@typescript-eslint/types@8.61.1))(vue@3.5.38(typescript@5.9.3))
-      '@moderno/props-doc':
+      '@moderno-ui/props-doc':
         specifier: workspace:*
         version: link:../../tooling/props-doc
       astro:
@@ -159,16 +159,16 @@ importers:
 
   packages/css:
     dependencies:
-      '@moderno/core':
+      '@moderno-ui/core':
         specifier: workspace:*
         version: link:../core
-      '@moderno/tokens':
+      '@moderno-ui/tokens':
         specifier: workspace:*
         version: link:../tokens
 
   packages/lint:
     dependencies:
-      '@moderno/lint-core':
+      '@moderno-ui/lint-core':
         specifier: workspace:*
         version: link:../lint-core
     devDependencies:
@@ -181,7 +181,7 @@ importers:
 
   packages/lint-core:
     devDependencies:
-      '@moderno/props-doc':
+      '@moderno-ui/props-doc':
         specifier: workspace:*
         version: link:../../tooling/props-doc
       tsup:
@@ -193,7 +193,7 @@ importers:
       '@modelcontextprotocol/sdk':
         specifier: ^1.29.0
         version: 1.29.0(zod@3.25.76)
-      '@moderno/lint-core':
+      '@moderno-ui/lint-core':
         specifier: workspace:*
         version: link:../lint-core
       zod:
@@ -209,17 +209,17 @@ importers:
       '@ark-ui/react':
         specifier: ^5.30.0
         version: 5.37.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@moderno/charts-core':
+      '@moderno-ui/charts-core':
         specifier: workspace:*
         version: link:../charts-core
-      '@moderno/core':
+      '@moderno-ui/core':
         specifier: workspace:*
         version: link:../core
-      '@moderno/css':
+      '@moderno-ui/css':
         specifier: workspace:*
         version: link:../css
     devDependencies:
-      '@moderno/props-doc':
+      '@moderno-ui/props-doc':
         specifier: workspace:*
         version: link:../../tooling/props-doc
       '@testing-library/react':
@@ -249,17 +249,17 @@ importers:
       '@ark-ui/solid':
         specifier: ^5.37.1
         version: 5.37.1(solid-js@1.9.13)
-      '@moderno/charts-core':
+      '@moderno-ui/charts-core':
         specifier: workspace:*
         version: link:../charts-core
-      '@moderno/core':
+      '@moderno-ui/core':
         specifier: workspace:*
         version: link:../core
-      '@moderno/css':
+      '@moderno-ui/css':
         specifier: workspace:*
         version: link:../css
     devDependencies:
-      '@moderno/props-doc':
+      '@moderno-ui/props-doc':
         specifier: workspace:*
         version: link:../../tooling/props-doc
       '@solidjs/testing-library':
@@ -286,17 +286,17 @@ importers:
       '@ark-ui/svelte':
         specifier: ^5.22.1
         version: 5.22.1(svelte@5.56.3(@typescript-eslint/types@8.61.1))
-      '@moderno/charts-core':
+      '@moderno-ui/charts-core':
         specifier: workspace:*
         version: link:../charts-core
-      '@moderno/core':
+      '@moderno-ui/core':
         specifier: workspace:*
         version: link:../core
-      '@moderno/css':
+      '@moderno-ui/css':
         specifier: workspace:*
         version: link:../css
     devDependencies:
-      '@moderno/props-doc':
+      '@moderno-ui/props-doc':
         specifier: workspace:*
         version: link:../../tooling/props-doc
       '@sveltejs/package':
@@ -329,17 +329,17 @@ importers:
       '@ark-ui/vue':
         specifier: ^5.37.2
         version: 5.37.2(vue@3.5.38(typescript@5.9.3))
-      '@moderno/charts-core':
+      '@moderno-ui/charts-core':
         specifier: workspace:*
         version: link:../charts-core
-      '@moderno/core':
+      '@moderno-ui/core':
         specifier: workspace:*
         version: link:../core
-      '@moderno/css':
+      '@moderno-ui/css':
         specifier: workspace:*
         version: link:../css
     devDependencies:
-      '@moderno/props-doc':
+      '@moderno-ui/props-doc':
         specifier: workspace:*
         version: link:../../tooling/props-doc
       '@testing-library/user-event':
@@ -369,10 +369,10 @@ importers:
 
   tooling/props-doc:
     dependencies:
-      '@moderno/core':
+      '@moderno-ui/core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@moderno/tokens':
+      '@moderno-ui/tokens':
         specifier: workspace:*
         version: link:../../packages/tokens
       ts-morph:
@@ -391,7 +391,7 @@ importers:
 
   tooling/theme-compile:
     dependencies:
-      '@moderno/tokens':
+      '@moderno-ui/tokens':
         specifier: workspace:*
         version: link:../../packages/tokens
     devDependencies:
@@ -3176,6 +3176,7 @@ packages:
   eslint@9.39.4:
     resolution: {integrity: sha512-XoMjdBOwe/esVgEvLmNsD3IRHkm7fbKIUGvrleloJXUZgDHig2IPWNniv+GwjyJXzuNqVjlr5+4yVUZjycJwfQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
     hasBin: true
     peerDependencies:
       jiti: '*'

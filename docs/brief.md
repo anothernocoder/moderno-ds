@@ -44,10 +44,10 @@ Do not improvise architecture: the technical decisions are already made (below) 
 
 **Hybrid:**
 
-- **Primitives → versioned npm packages.** One per framework: `@moderno/react`, `@moderno/vue`, `@moderno/svelte`, `@moderno/solid`. Single source of truth, updates via `npm/pnpm/bun update`. Semver + changelog.
+- **Primitives → versioned npm packages.** One per framework: `@moderno-ui/react`, `@moderno-ui/vue`, `@moderno-ui/svelte`, `@moderno-ui/solid`. Single source of truth, updates via `npm/pnpm/bun update`. Semver + changelog.
 - **Blocks (compositions) → registry/copy.** Items the consumer copies with the CLI and modifies freely.
 - **Themes → CSS files, distributed as registry items** (e.g.: `theme-moderno`, `theme-contrast`).
-- **Single CSS entrypoint → `@moderno/css`.** Re-exports tokens + component stylesheet. The consumer does not import internal paths (`dist/`, core subpaths).
+- **Single CSS entrypoint → `@moderno-ui/css`.** Re-exports tokens + component stylesheet. The consumer does not import internal paths (`dist/`, core subpaths).
 - **Escape hatch:** also expose the primitives in the registry as "eject" for when a project needs to own the markup of a specific component.
 
 ---
@@ -75,14 +75,14 @@ Do not improvise architecture: the technical decisions are already made (below) 
 ```
 moderno-ds/
 ├── packages/
-│   ├── tokens/            # @moderno/tokens — tokens DTCG → CSS vars + preset Tailwind v4
-│   ├── core/              # @moderno/core — CVA, utils, styles/components.css
-│   ├── css/               # @moderno/css — entrypoint único (re-export tokens + components)
-│   ├── charts-core/       # @moderno/charts-core — d3-math puro
-│   ├── react/             # @moderno/react — primitivas React 19 (Ark) + charts SVG
-│   ├── vue/               # @moderno/vue
-│   ├── svelte/            # @moderno/svelte — runtime de islas en docs/Astro
-│   └── solid/             # @moderno/solid
+│   ├── tokens/            # @moderno-ui/tokens — tokens DTCG → CSS vars + preset Tailwind v4
+│   ├── core/              # @moderno-ui/core — CVA, utils, styles/components.css
+│   ├── css/               # @moderno-ui/css — entrypoint único (re-export tokens + components)
+│   ├── charts-core/       # @moderno-ui/charts-core — d3-math puro
+│   ├── react/             # @moderno-ui/react — primitivas React 19 (Ark) + charts SVG
+│   ├── vue/               # @moderno-ui/vue
+│   ├── svelte/            # @moderno-ui/svelte — runtime de islas en docs/Astro
+│   └── solid/             # @moderno-ui/solid
 ├── registry/
 │   ├── blocks/            # composiciones (copy items), una variante por framework
 │   ├── themes/            # theme-*.css (registry items)
@@ -90,7 +90,7 @@ moderno-ds/
 ├── apps/
 │   └── docs/              # Astro plano + MDX (component library)
 ├── tooling/
-│   └── cli/               # @moderno/cli — init / add / update / diff + manifest
+│   └── cli/               # @moderno-ui/cli — init / add / update / diff + manifest
 ├── CONTEXT.md             # glosario del dominio
 ├── CONTRACT.md            # contrato técnico: slots + reglas + data-part (neutro, no marca)
 ├── DESIGN.md              # fuente de verdad del theme default (formato google-labs DESIGN.md)
@@ -107,7 +107,7 @@ moderno-ds/
 
 **Pure primitives (CSS class only, no component)** — Typography, surfaces, utility layout. Usable in any framework and in `.astro` without duplication.
 
-**Charts (custom, d3-math + SVG)** — start with: line, area, bar, scatter. Each one: math layer in `@moderno/charts-core` (pure) + SVG render per framework. Themed via `--chart-*`.
+**Charts (custom, d3-math + SVG)** — start with: line, area, bar, scatter. Each one: math layer in `@moderno-ui/charts-core` (pure) + SVG render per framework. Themed via `--chart-*`.
 
 **Blocks (registry/copy)** — examples: auth (login/signup), pricing, dashboard shell, data table, checkout, settings, empty states.
 
@@ -132,11 +132,11 @@ Plain Astro + MDX + Content Collections. Build these custom components:
 
 ## CLI
 
-Based on the **shadcn registry + CLI** (do not build a CLI from scratch beyond the wrapper). Package: `@moderno/cli`.
+Based on the **shadcn registry + CLI** (do not build a CLI from scratch beyond the wrapper). Package: `@moderno-ui/cli`.
 
 - `init` — scaffolds CSS and config into the consuming project. Creates `src/styles/moderno.css`:
   ```css
-  @import "@moderno/css";
+  @import "@moderno-ui/css";
   @import "./theme-moderno.css"; /* tras add theme */
   ```
   The user imports a single file in their layout: `import "@/styles/moderno.css"`.
@@ -146,15 +146,15 @@ Based on the **shadcn registry + CLI** (do not build a CLI from scratch beyond t
 
 ## Consumer DX (CSS)
 
-The consumer **never** imports internal paths (`@moderno/tokens/dist/...`, `@moderno/core/styles/...`).
+The consumer **never** imports internal paths (`@moderno-ui/tokens/dist/...`, `@moderno-ui/core/styles/...`).
 
 | Layer                               | Import                 | Who manages it                 |
 | ----------------------------------- | ---------------------- | ------------------------------ |
-| DS base (tokens + component styles) | `@moderno/css`         | npm package                    |
+| DS base (tokens + component styles) | `@moderno-ui/css`      | npm package                    |
 | Brand                               | `./theme-moderno.css`  | CLI `add theme-moderno` (copy) |
 | App                                 | `@/styles/moderno.css` | CLI `init` (scaffold)          |
 
-`@moderno/css` is a thin package whose `index.css` re-exports `@moderno/tokens/css` + `@moderno/core/css` via `package.json` exports.
+`@moderno-ui/css` is a thin package whose `index.css` re-exports `@moderno-ui/tokens/css` + `@moderno-ui/core/css` via `package.json` exports.
 
 ---
 
@@ -174,12 +174,12 @@ The consumer **never** imports internal paths (`@moderno/tokens/dist/...`, `@mod
 
 ## Phased plan (proceed in order, confirm at the end of each one)
 
-- **Phase 0 — Foundation:** monorepo (pnpm workspaces), `@moderno/tokens` + `@moderno/css` (entrypoint), DTCG tokens in OKLCH → CSS vars + preset Tailwind v4, and **CONTRACT.md** with the token contract and the rules (the Moderno default theme is authored in `DESIGN.md`). _Confirm the token contract with me before continuing._
-- **Phase 1 — Core:** `@moderno/core` (utils, CVA, helpers, components.css) and `@moderno/charts-core` (pure d3-math).
+- **Phase 0 — Foundation:** monorepo (pnpm workspaces), `@moderno-ui/tokens` + `@moderno-ui/css` (entrypoint), DTCG tokens in OKLCH → CSS vars + preset Tailwind v4, and **CONTRACT.md** with the token contract and the rules (the Moderno default theme is authored in `DESIGN.md`). _Confirm the token contract with me before continuing._
+- **Phase 1 — Core:** `@moderno-ui/core` (utils, CVA, helpers, components.css) and `@moderno-ui/charts-core` (pure d3-math).
 - **Phase 2 — Reference implementation (React 19):** Button, Field, Dialog and Select end-to-end, with the single `data-part`-based stylesheet. Validate SSR and theming via variables.
 - **Phase 3 — Port:** Vue, Svelte, Solid of those same components, reusing the stylesheet. Demonstrate look and behavior parity.
 - **Phase 4 — Charts:** line/area/bar/scatter (math in core + SVG per framework), themed via `--chart-*`, with SSR.
-- **Phase 5 — Distribution:** versioned registry.json, `@moderno/cli` (init/add/update/diff + manifest), example blocks, 2 themes (`theme-moderno` + `theme-contrast`), `tooling/theme-compile` (`pnpm theme:build`).
+- **Phase 5 — Distribution:** versioned registry.json, `@moderno-ui/cli` (init/add/update/diff + manifest), example blocks, 2 themes (`theme-moderno` + `theme-contrast`), `tooling/theme-compile` (`pnpm theme:build`).
 - **Phase 6 — Docs:** bilingual Astro site (en/es) with Preview/Code, copy, copy-as-markdown, PropsTable, bun/pnpm/npm installation, **Theme Builder**, and static registry at `/r/`.
 
 ---

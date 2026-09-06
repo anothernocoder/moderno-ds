@@ -28,7 +28,7 @@ the code.
 
 ## Decision
 
-- **Primary interface: a local MCP server, `@moderno/mcp` (stdio).** The agent
+- **Primary interface: a local MCP server, `@moderno-ui/mcp` (stdio).** The agent
   runs it via `npx`/`bunx` in its MCP config. Local-stdio (not hosted) because a
   single maintainer wants no ops/uptime/cost, `validate_usage` must process user
   code locally (privacy), and — decisively — a local server pinned to the
@@ -38,7 +38,7 @@ the code.
 
 - **Scope: read + verify, not write.** Tools:
   `search_components`, `get_component_api`, `get_examples`, `get_contract`,
-  `validate_usage`. File mutations stay with the existing, tested `@moderno/cli`
+  `validate_usage`. File mutations stay with the existing, tested `@moderno-ui/cli`
   (the agent shells out to `add`/`init`). The server is the _knowledge +
   verification plane_; the CLI is the _action plane_. This halves maintenance and
   keeps the server safe to host remotely later.
@@ -60,16 +60,16 @@ the code.
   changed without the block being touched (drift becomes a red build).
 
 - **Manifest wiring: per-package, aggregated from `node_modules`.** Each
-  `@moderno/*` package emits `moderno.agent.json` in its `dist` at build (fed by
-  `props-doc` + the MDX `agent:` block). `@moderno/mcp` discovers and merges these
+  `@moderno-ui/*` package emits `moderno.agent.json` in its `dist` at build (fed by
+  `props-doc` + the MDX `agent:` block). `@moderno-ui/mcp` discovers and merges these
   from the consumer's installed packages at startup, so a repo on
-  `@moderno/react@1.2` gets 1.2's manifest exactly. Shared cross-cutting data
-  (contract slots, theming rules) ships in `@moderno/tokens`'s manifest. No central
+  `@moderno-ui/react@1.2` gets 1.2's manifest exactly. Shared cross-cutting data
+  (contract slots, theming rules) ships in `@moderno-ui/tokens`'s manifest. No central
   bundle to fall out of sync.
 
 - **Validation: a deterministic AST rule engine, authored once, exposed twice.**
   The rules power both the `validate_usage` MCP tool **and** a shippable
-  `@moderno/lint` (ESLint plugin + CLI). Human contributors get the same
+  `@moderno-ui/lint` (ESLint plugin + CLI). Human contributors get the same
   guardrails as agents. Starter rules, all from CONTRACT.md: no hardcoded
   colors/radii (use tokens), prop validity vs manifest, no re-implemented
   primitive, `data-part` overrides target real parts, use `@moderno` not raw Ark.
@@ -93,7 +93,7 @@ the code.
   violations → fixes before finishing. Grounding in, verification out.
 - The curated guidance folds into Phase 6 docs authoring — one MDX surface, not a
   parallel one. The CI staleness gate makes drift structurally hard.
-- `@moderno/lint` is a byproduct of the validation engine, giving human-authored
+- `@moderno-ui/lint` is a byproduct of the validation engine, giving human-authored
   code (and CI) the same guardrails as agents — the "lint-first" option
   deprioritized as the primary interface returns for free.
 - Tradeoff (accepted): local-stdio means each consumer configures the MCP once and
@@ -102,7 +102,7 @@ the code.
 - Tradeoff (accepted, mitigated): "everything at once" stamps the novel pieces
   (rule shapes, manifest format) across 28 primitives × 5 frameworks. Mitigation:
   the vertical-slice-first build order proves the schema before fan-out.
-- New surface for a single maintainer: `@moderno/mcp`, `@moderno/lint`, the
+- New surface for a single maintainer: `@moderno-ui/mcp`, `@moderno-ui/lint`, the
   per-package `moderno.agent.json` build step, the MDX `agent:` gate, and the
   `init` stanza. Justified by making Moderno usable — and self-correcting — by the
   agents that will increasingly be its consumers.

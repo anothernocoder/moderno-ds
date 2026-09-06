@@ -1,5 +1,5 @@
 /*
- * @moderno/tokens/preset — Tailwind v4 preset
+ * @moderno-ui/tokens/preset — Tailwind v4 preset
  *
  * Maps the semantic contract slots to Tailwind's theme namespaces via
  * `@theme inline`. `inline` makes generated utilities reference the variables
@@ -9,8 +9,8 @@
  *
  * Usage (consumer CSS):
  *   @import "tailwindcss";
- *   @import "@moderno/css";          // contract values (:root/.dark)
- *   @import "@moderno/css/preset";   // this mapping
+ *   @import "@moderno-ui/css";          // contract values (:root/.dark)
+ *   @import "@moderno-ui/css/preset";   // this mapping
  */
 
 @theme inline {

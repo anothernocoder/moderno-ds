@@ -1,5 +1,5 @@
 /**
- * Materializes a throwaway `node_modules/@moderno/*` tree from the committed
+ * Materializes a throwaway `node_modules/@moderno-ui/*` tree from the committed
  * JSON fixtures in `test/fixtures/manifests/` — outside the repo tree (a real
  * temp dir, not a `test/fixtures/**\/node_modules/**` path), because
  * `node_modules/` is gitignored repo-wide and a fixture tree literally named
@@ -28,9 +28,9 @@ export interface ConsumerFixture {
 }
 
 /**
- * Builds `<tmp>/node_modules/@moderno/{react,vue,tokens}/dist/moderno.agent.json`
+ * Builds `<tmp>/node_modules/@moderno-ui/{react,vue,tokens}/dist/moderno.agent.json`
  * from the fixture JSON, plus a `solid` package directory with no `dist` yet
- * (an installed `@moderno/*` package that hasn't been built) so discovery's
+ * (an installed `@moderno-ui/*` package that hasn't been built) so discovery's
  * "skip what isn't there" path has something real to skip.
  */
 export function createConsumerFixture(): ConsumerFixture {

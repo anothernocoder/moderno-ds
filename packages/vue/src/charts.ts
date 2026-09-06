@@ -13,12 +13,12 @@ import {
   type CurveFactory,
   type LineChartOptions,
   type ScatterChartOptions,
-} from "@moderno/charts-core";
+} from "@moderno-ui/charts-core";
 
 /**
  * Reference SVG charts, ported to Vue. The complete render description —
  * geometry, label anchors, and the `data-part` structure — is computed in
- * `@moderno/charts-core`; these components only walk the node tree (F4.2),
+ * `@moderno-ui/charts-core`; these components only walk the node tree (F4.2),
  * authored with `h()` to match `button.ts`/`select.ts` (no SFCs). They hold
  * zero colour — series paint from `--chart-*` via the data-series index in
  * `components.css`, axes/grid from semantic slots. Because the tree is

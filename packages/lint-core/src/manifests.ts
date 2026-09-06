@@ -3,25 +3,25 @@
  * `node_modules` (ADR-0003: pinned to the *installed* package version, not a
  * bundled snapshot). Walks up from `cwd` looking for a `node_modules/@moderno`
  * directory — the same directory Node's own resolution would land on for a
- * bare `@moderno/*` import from `cwd` — and reads every package's
- * `dist/moderno.agent.json` it finds there. Shared by `@moderno/mcp` (at
- * server startup) and `@moderno/lint` (at ESLint/CLI run time) — one
+ * bare `@moderno-ui/*` import from `cwd` — and reads every package's
+ * `dist/moderno.agent.json` it finds there. Shared by `@moderno-ui/mcp` (at
+ * server startup) and `@moderno-ui/lint` (at ESLint/CLI run time) — one
  * discovery routine, so both surfaces see the same installed versions.
  *
  * The manifest shape is imported (type-only — erased at build, no runtime
- * dependency on `@moderno/props-doc`'s ts-morph toolchain) from the package
+ * dependency on `@moderno-ui/props-doc`'s ts-morph toolchain) from the package
  * that actually generates `moderno.agent.json`, so this can't silently drift
  * from what's really on disk the way a hand-copied duplicate would.
  *
  * No schema validation here: the manifest shape is a contract with the
- * `@moderno/*` build pipeline (`docs/prd/phase-7/moderno.agent.schema.json`),
+ * `@moderno-ui/*` build pipeline (`docs/prd/phase-7/moderno.agent.schema.json`),
  * not something callers need to defend against — a malformed manifest is a
  * Moderno release bug, not untrusted input.
  */
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
-import type { ComponentsManifest, Framework } from "@moderno/props-doc/agent-manifest";
-import type { ContractManifest } from "@moderno/props-doc/contract-manifest";
+import type { ComponentsManifest, Framework } from "@moderno-ui/props-doc/agent-manifest";
+import type { ContractManifest } from "@moderno-ui/props-doc/contract-manifest";
 
 export type {
   AgentComponent,
@@ -29,15 +29,15 @@ export type {
   AgentGuidance,
   AgentPart,
   AgentProp,
-} from "@moderno/props-doc/agent-manifest";
+} from "@moderno-ui/props-doc/agent-manifest";
 export type { ComponentsManifest, ContractManifest, Framework };
 
 export type AgentManifest = ComponentsManifest | ContractManifest;
 
 export interface AggregatedManifests {
-  /** One components manifest per `@moderno/*` framework package found. */
+  /** One components manifest per `@moderno-ui/*` framework package found. */
   components: ComponentsManifest[];
-  /** `@moderno/tokens`'s shared contract manifest, if that package is installed. */
+  /** `@moderno-ui/tokens`'s shared contract manifest, if that package is installed. */
   contract: ContractManifest | null;
   /** The `node_modules/@moderno` directory these were read from, for diagnostics. */
   scopeDir: string | null;
@@ -46,7 +46,7 @@ export interface AggregatedManifests {
 /**
  * Walks from `startDir` up to the filesystem root looking for the nearest
  * `node_modules/@moderno` directory — mirroring Node's own module resolution
- * so the server sees exactly what a bare `import "@moderno/react"` from that
+ * so the server sees exactly what a bare `import "@moderno-ui/react"` from that
  * directory would resolve against.
  */
 function findModernoScopeDir(startDir: string): string | null {
@@ -71,7 +71,7 @@ function readManifest(packageDir: string): AgentManifest | null {
 }
 
 /**
- * Discovers every installed `@moderno/*` package's manifest from `cwd`
+ * Discovers every installed `@moderno-ui/*` package's manifest from `cwd`
  * (defaults to `process.cwd()`) and splits it into the framework-specific
  * `components` manifests and the single shared `contract` manifest.
  */

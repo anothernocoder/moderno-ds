@@ -1,9 +1,9 @@
 <script lang="ts">
-  // Pricing — an ejected block that composes @moderno/svelte primitives
+  // Pricing — an ejected block that composes @moderno-ui/svelte primitives
   // (Button) into a three-plan pricing section. Copy it into your project and
   // edit the plans array freely. Themed via CSS variables from the design
   // system; no hardcoded colors, radii, or fonts live here.
-  import { Button } from "@moderno/svelte";
+  import { Button } from "@moderno-ui/svelte";
 
   const plans = [
     { name: "Starter", price: "$0/mo", features: ["1 project", "Community support", "1 GB storage"] },

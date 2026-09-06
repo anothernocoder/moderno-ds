@@ -1,6 +1,6 @@
 /**
  * The `Rule`/`Finding` contract from `docs/prd/phase-7/validate-rules.md` —
- * shared by `@moderno/mcp`'s `validate_usage` and `@moderno/lint`. A rule is a
+ * shared by `@moderno-ui/mcp`'s `validate_usage` and `@moderno-ui/lint`. A rule is a
  * pure function of parsed source + the aggregated manifests; nothing here is
  * MCP- or ESLint-specific.
  */

@@ -1,7 +1,7 @@
 # Moderno registry
 
-Versioned, shadcn-style **copy items** installed with `@moderno/cli`. Unlike the
-`@moderno/*` npm packages (primitives, tokens, css), registry items are copied
+Versioned, shadcn-style **copy items** installed with `@moderno-ui/cli`. Unlike the
+`@moderno-ui/*` npm packages (primitives, tokens, css), registry items are copied
 into the consumer project and owned by them: **themes**, **blocks**, and
 **ejected primitives**.
 
@@ -70,7 +70,7 @@ as conflicts — this is what makes `update` safe and is why primitives are
 ## Themes & the multi-brand switch
 
 Themes are authored as `tokens.dtcg.json` and compiled to `theme.css` by
-`@moderno/theme-compile` (`pnpm theme:build`, with WCAG AA contrast warnings).
+`@moderno-ui/theme-compile` (`pnpm theme:build`, with WCAG AA contrast warnings).
 
 - `theme-moderno` → `:root` (light) + `.dark` (dark): the **default brand**.
 - `theme-contrast` → `[data-brand="contrast"]` + `.dark [data-brand="contrast"], [data-brand="contrast"].dark`: an alternate brand.
@@ -79,8 +79,8 @@ Install both and switch brand by toggling `data-brand`, composed with `.dark`:
 
 ```html
 <!-- src/styles/moderno.css -->
-@import "@moderno/css"; @import "./theme-moderno.css"; /* default brand at :root / .dark */ @import
-"./theme-contrast.css"; /* alternate brand at [data-brand="contrast"] */
+@import "@moderno-ui/css"; @import "./theme-moderno.css"; /* default brand at :root / .dark */
+@import "./theme-contrast.css"; /* alternate brand at [data-brand="contrast"] */
 ```
 
 ```html

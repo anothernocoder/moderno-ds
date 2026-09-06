@@ -36,7 +36,7 @@ export async function initProject(opts: {
 
   const entryFile = join(opts.projectDir, stylesEntry);
   if (!(await fileExists(entryFile))) {
-    await writeFileEnsuringDir(entryFile, '@import "@moderno/css";\n');
+    await writeFileEnsuringDir(entryFile, '@import "@moderno-ui/css";\n');
   }
 
   const { files: agentsFiles } = await writeAgentsStanza({
@@ -95,7 +95,7 @@ async function appendThemeImport(
   try {
     css = await readFile(entryFile, "utf8");
   } catch {
-    css = '@import "@moderno/css";\n';
+    css = '@import "@moderno-ui/css";\n';
   }
   const specifier = `./${basename(themeTarget)}`;
   const line = `@import "${specifier}";`;

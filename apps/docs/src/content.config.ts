@@ -10,7 +10,7 @@ import { defineCollection, z } from "astro:content";
 /**
  * The curated layer of `moderno.agent.json`'s `guidance` (schema:
  * `docs/prd/phase-7/moderno.agent.schema.json`, `definitions.guidance`). Read
- * once from the English page by `@moderno/props-doc`'s manifest builder and
+ * once from the English page by `@moderno-ui/props-doc`'s manifest builder and
  * folded into every framework's manifest verbatim — this block is not
  * translated, so the Spanish twin of a page doesn't need one.
  */
@@ -36,7 +36,7 @@ const docs = defineCollection({
     order: z.number().default(100),
     /** Component name whose generated PropsTable this page documents. */
     component: z.string().optional(),
-    /** npm package the install block targets (e.g. `@moderno/react`). */
+    /** npm package the install block targets (e.g. `@moderno-ui/react`). */
     pkg: z.string().optional(),
     /** Curated agent guidance; only meaningful on the English page (see above). */
     agent: agentGuidance.optional(),

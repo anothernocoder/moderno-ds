@@ -1,17 +1,17 @@
 # Parity Matrix — Phase 3 (Port)
 
 > The DS thesis in one table: the **same** Ark/Zag state machine + the **same**
-> `@moderno/core` recipe + the **same** `components.css` = identical look and
+> `@moderno-ui/core` recipe + the **same** `components.css` = identical look and
 > behaviour across five framework targets. Zero per-framework CSS.
 
 ## How parity is achieved
 
-| Layer            | Source                                      | Shared by             |
-| ---------------- | ------------------------------------------- | --------------------- |
-| Behaviour        | Ark UI (`@ark-ui/{react,vue,svelte,solid}`) | one Zag machine each  |
-| Props → `data-*` | `@moderno/core` recipes (`buttonRecipe`, …) | identical resolver    |
-| Styling          | `@moderno/core/styles/components.css`       | one stylesheet, all 5 |
-| Tokens / brand   | `@moderno/tokens` → contract slots          | one theme re-themes 5 |
+| Layer            | Source                                         | Shared by             |
+| ---------------- | ---------------------------------------------- | --------------------- |
+| Behaviour        | Ark UI (`@ark-ui/{react,vue,svelte,solid}`)    | one Zag machine each  |
+| Props → `data-*` | `@moderno-ui/core` recipes (`buttonRecipe`, …) | identical resolver    |
+| Styling          | `@moderno-ui/core/styles/components.css`       | one stylesheet, all 5 |
+| Tokens / brand   | `@moderno-ui/tokens` → contract slots          | one theme re-themes 5 |
 
 Each binding's only job is to spread `data-scope`/`data-part` + the recipe's
 `data-*` onto markup. Button is the sole authored element; Field and Dialog are
@@ -82,7 +82,7 @@ Astro-island guarantee (F3.5).
 
 - **Portal**: React/Solid use a framework-native portal (`@ark-ui/react`,
   `solid-js/web`); Svelte uses Ark's `Portal`; Vue has no Ark portal, so
-  `@moderno/vue` ships a thin `<Teleport to="body">` wrapper for API parity.
+  `@moderno-ui/vue` ships a thin `<Teleport to="body">` wrapper for API parity.
 - **Authoring style** mirrors each ecosystem: React/Solid JSX, Vue `h()` render
   functions (no SFC → tsup builds it), Svelte 5 `.svelte` runes (built with
   `svelte-package`).
