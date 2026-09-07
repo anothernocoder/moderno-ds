@@ -234,11 +234,6 @@
     line-height: 1;
     color: currentColor;
   }
-  /* Ark hides the inactive indicator with the `hidden` attribute; the rule
-     above would otherwise re-show it (author display beats the UA sheet). */
-  [data-scope="checkbox"][data-part="indicator"][hidden] {
-    display: none;
-  }
   [data-scope="checkbox"][data-part="label"] {
     font-size: 0.875rem;
     line-height: var(--spacing-5);
@@ -452,5 +447,19 @@
   }
   [data-scope="chart"][data-part="tick-label"][data-orientation="y"] {
     text-anchor: end;
+  }
+
+  /* ──────────────────────── Hidden parts ──────────────────────── *
+   * Ark takes a part out of the layout with the `hidden` attribute — a closed
+   * Dialog's content, a Select's menu, a Checkbox's inactive indicator. The UA
+   * stylesheet's `[hidden] { display: none }` is the weakest rule in the
+   * cascade, so any part rule above that sets `display` silently re-shows it:
+   * a closed dialog then paints its surface over the page.
+   *
+   * Restated here, last in the layer and at a higher specificity than the part
+   * rules, so the invariant holds for every component instead of being patched
+   * one part at a time. */
+  [data-scope][data-part][hidden] {
+    display: none;
   }
 }
