@@ -121,8 +121,12 @@
   }
 
   /* ─────────────────────────── Field ──────────────────────────── *
-   * Ark wires label↔control + `data-invalid`/`data-disabled`; we only
-   * style. Scope "field", parts root/label/input/helper-text/error-text. */
+   * Ark wires label↔control + `data-invalid`/`data-disabled`; we style. The
+   * only prop-driven knob is `fieldRecipe`'s `data-size` on the root, which
+   * sizes every part at once (label, control, helper/error) — the base rules
+   * below ARE the `md` step, so an un-sized root still renders correctly, and
+   * `sm`/`lg` override only the density declarations (same shape as Select).
+   * Scope "field", parts root/label/input/textarea/helper-text/error-text. */
   [data-scope="field"][data-part="root"] {
     display: flex;
     flex-direction: column;
@@ -131,6 +135,7 @@
   [data-scope="field"][data-part="label"] {
     font-size: 0.875rem;
     font-weight: 500;
+    line-height: 1.4;
     color: var(--foreground);
   }
   [data-scope="field"][data-part="input"],
@@ -143,13 +148,44 @@
     color: var(--foreground);
     font-family: var(--font-sans);
     font-size: 0.875rem;
+    /* A control announces focus and validity by moving colour, not geometry;
+       transitioning both keeps the change legible instead of instant. */
+    transition:
+      border-color var(--motion-fast),
+      background-color var(--motion-fast);
   }
+  /* An input is one line: fix the height so the box never depends on its
+     content. A textarea grows, so it gets a floor and vertical resize only —
+     horizontal resize would break out of the field's column. */
   [data-scope="field"][data-part="input"] {
     height: var(--spacing-8);
+    padding-block: 0;
+  }
+  [data-scope="field"][data-part="textarea"] {
+    min-height: calc(var(--spacing-8) * 2.5);
+    line-height: 1.5;
+    resize: vertical;
   }
   [data-scope="field"][data-part="input"]::placeholder,
   [data-scope="field"][data-part="textarea"]::placeholder {
     color: var(--muted-foreground);
+  }
+  /* Hover raises the border to the focus colour — the affordance that says
+     "this is editable" before the caret lands. Keyed on the native `:disabled`
+     of the control itself (Ark forwards the Field's `disabled` down to it), so
+     a dead control never offers it.
+     `:not([data-invalid])` is what keeps an invalid control red under the
+     pointer: `:not()` takes its argument's specificity, so without it this rule
+     outranks the `[data-invalid]` rule below and the border would go neutral
+     while the tint and the error text stayed red — the same "reads as fixed
+     before it is" failure the invalid focus rule avoids. Excluding the state
+     here (rather than repainting it in a later rule) leaves `[data-invalid]`
+     the single owner of the destructive border.
+     `test/components-css.cascade.test.ts` resolves this cascade and fails if
+     the exclusion goes. */
+  [data-scope="field"][data-part="input"]:hover:not(:disabled):not([data-invalid]),
+  [data-scope="field"][data-part="textarea"]:hover:not(:disabled):not([data-invalid]) {
+    border-color: var(--ring);
   }
   /* The shared focus ring keys off [data-part="root"]; Field's control is a
      separate part, so it gets its own ring here. */
@@ -161,17 +197,79 @@
   [data-scope="field"][data-part="input"][data-invalid],
   [data-scope="field"][data-part="textarea"][data-invalid] {
     border-color: var(--destructive);
+    background-color: color-mix(in oklab, var(--destructive) 4%, var(--background));
+  }
+  /* An invalid control keeps its error colour while focused; a neutral ring
+     over a red border reads as "fixed" before it is. */
+  [data-scope="field"][data-part="input"][data-invalid]:focus-visible,
+  [data-scope="field"][data-part="textarea"][data-invalid]:focus-visible {
+    outline-color: var(--destructive);
+  }
+  /* The base layer already dims disabled parts; a muted fill is what tells a
+     reader the box is inert rather than merely low-contrast. */
+  [data-scope="field"][data-part="input"]:disabled,
+  [data-scope="field"][data-part="textarea"]:disabled {
+    background-color: var(--muted);
+  }
+  [data-scope="field"][data-part="helper-text"],
+  [data-scope="field"][data-part="error-text"] {
+    font-size: 0.8125rem;
+    line-height: 1.4;
   }
   [data-scope="field"][data-part="helper-text"] {
-    font-size: 0.8125rem;
     color: var(--muted-foreground);
   }
   [data-scope="field"][data-part="error-text"] {
-    font-size: 0.8125rem;
     color: var(--destructive);
   }
   [data-scope="field"][data-part="required-indicator"] {
     color: var(--destructive);
+  }
+
+  /* Density driven by the recipe's data-size on the root part. Heights compose
+     from the in-contract spacing slots exactly as Button's do; `lg` exceeds the
+     top slot, so it sums two rather than inventing an off-contract value. */
+  [data-scope="field"][data-part="root"][data-size="sm"] {
+    gap: var(--spacing-1);
+  }
+  [data-scope="field"][data-size="sm"] [data-part="label"] {
+    font-size: 0.8125rem;
+  }
+  [data-scope="field"][data-size="sm"] [data-part="input"],
+  [data-scope="field"][data-size="sm"] [data-part="textarea"] {
+    padding-inline: var(--spacing-2);
+    font-size: 0.8125rem;
+  }
+  [data-scope="field"][data-size="sm"] [data-part="input"] {
+    height: var(--spacing-7);
+  }
+  [data-scope="field"][data-size="sm"] [data-part="textarea"] {
+    min-height: calc(var(--spacing-8) * 2);
+    padding-block: var(--spacing-1);
+  }
+  [data-scope="field"][data-size="sm"] [data-part="helper-text"],
+  [data-scope="field"][data-size="sm"] [data-part="error-text"] {
+    font-size: 0.75rem;
+  }
+
+  [data-scope="field"][data-size="lg"] [data-part="label"] {
+    font-size: 0.9375rem;
+  }
+  [data-scope="field"][data-size="lg"] [data-part="input"],
+  [data-scope="field"][data-size="lg"] [data-part="textarea"] {
+    padding-inline: var(--spacing-4);
+    font-size: 0.9375rem;
+  }
+  [data-scope="field"][data-size="lg"] [data-part="input"] {
+    height: calc(var(--spacing-8) + var(--spacing-2));
+  }
+  [data-scope="field"][data-size="lg"] [data-part="textarea"] {
+    min-height: calc(var(--spacing-8) * 3);
+    padding-block: var(--spacing-3);
+  }
+  [data-scope="field"][data-size="lg"] [data-part="helper-text"],
+  [data-scope="field"][data-size="lg"] [data-part="error-text"] {
+    font-size: 0.875rem;
   }
 
   /* ────────────────────────── Checkbox ────────────────────────── *

@@ -13,6 +13,8 @@ export type { ButtonProps } from "./button.js";
 
 export { Field } from "./field.js";
 export type {
+  FieldSize,
+  ModernoFieldRootProps,
   FieldRootProps,
   FieldLabelProps,
   FieldInputProps,

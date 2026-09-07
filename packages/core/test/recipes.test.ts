@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buttonRecipe, checkboxRecipe, selectRecipe } from "../src/recipes.js";
+import { buttonRecipe, checkboxRecipe, fieldRecipe, selectRecipe } from "../src/recipes.js";
 
 describe("buttonRecipe", () => {
   it("applies defaults when no props are given", () => {
@@ -50,5 +50,20 @@ describe("selectRecipe", () => {
 
   it("maps size to a data-attribute", () => {
     expect(selectRecipe({ size: "sm" })).toEqual({ "data-size": "sm" });
+  });
+});
+
+describe("fieldRecipe", () => {
+  it("defaults to size md", () => {
+    expect(fieldRecipe()).toEqual({ "data-size": "md" });
+  });
+
+  it("maps size to a data-attribute", () => {
+    expect(fieldRecipe({ size: "lg" })).toEqual({ "data-size": "lg" });
+  });
+
+  it("carries no variant for the states Ark already tracks", () => {
+    // invalid/disabled/required are Ark data-attributes, not recipe variants.
+    expect(Object.keys(fieldRecipe.variants)).toEqual(["size"]);
   });
 });

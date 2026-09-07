@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { render } from "svelte/server";
 import App from "../playground/App.svelte";
+import { partAttrs, partTags } from "../../core/test/ssr-parts.ts";
 
 /**
  * SSR — the F3.5 guarantee. `svelte/server`'s `render()` compiles and renders
@@ -20,6 +21,12 @@ describe("SSR (Svelte, server-only island)", () => {
     expect(html).toContain('data-size="md"');
     expect(html).toMatch(/data-part="control"[^>]*data-state="checked"/);
     expect(html).toMatch(/data-part="control"[^>]*data-state="indeterminate"/);
+    // Field's own recipe, read off the field roots themselves — a whole-document
+    // match would be satisfied by the Buttons' `data-size` and would survive a
+    // Root that stopped applying the recipe.
+    expect(partAttrs(html, "field", "root", "data-size")).toEqual(["sm", "lg"]);
+    // The second field's control is Field's own Textarea part.
+    expect(partTags(html, "field", "textarea")).toHaveLength(1);
   });
 
   it("emits static markup with no client runtime (zero <script>)", () => {

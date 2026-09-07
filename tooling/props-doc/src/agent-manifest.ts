@@ -12,8 +12,8 @@
  *   source, the same "React is the single source of truth" rule `manifest.ts`
  *   already uses (props are identical across bindings by contract).
  * - `variants` — read straight off the shared `@moderno-ui/core` recipe, when the
- *   component has one (Field/Dialog have none: their visual states are Ark's
- *   own data-attributes, not CVA variants).
+ *   component has one (Dialog has none: its visual states are Ark's own
+ *   data-attributes, not CVA variants).
  * - `guidance` — the curated `agent:` MDX front-matter block, parsed by
  *   `mdx-frontmatter.ts` and passed in by the caller.
  *
@@ -24,7 +24,7 @@
  * job when a part gains or loses styling.
  */
 import { createHash } from "node:crypto";
-import { buttonRecipe, checkboxRecipe, selectRecipe } from "@moderno-ui/core";
+import { buttonRecipe, checkboxRecipe, fieldRecipe, selectRecipe } from "@moderno-ui/core";
 import { extractProps, type ComponentEntry, type PropDoc } from "./index.ts";
 import { ENTRIES } from "./manifest.ts";
 import { AGENT_EXAMPLES } from "./agent-examples.ts";
@@ -98,6 +98,7 @@ export const AGENT_COMPONENTS: AgentComponentSpec[] = [
     name: "Field",
     slug: "field",
     scope: "field",
+    propsEntry: findEntry("Field"),
     parts: [
       { name: "root" },
       { name: "label" },
@@ -107,6 +108,7 @@ export const AGENT_COMPONENTS: AgentComponentSpec[] = [
       { name: "error-text" },
       { name: "required-indicator" },
     ],
+    variants: fieldRecipe.variants,
   },
   {
     name: "Checkbox",

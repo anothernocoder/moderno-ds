@@ -63,11 +63,19 @@ export const App = defineComponent({
           h(Button, { variant: "destructive", size: "lg" }, () => "Destructive"),
         ]),
 
-        h(Field.Root, {}, () => [
-          h(Field.Label, {}, () => "Email"),
-          h(Field.Input, { placeholder: "you@example.com" }),
-          h(Field.HelperText, {}, () => "We never share it."),
-          h(Field.ErrorText, {}, () => "Email is required."),
+        h("section", { "aria-label": "fields" }, [
+          h(Field.Root as unknown as Component, { size: "sm" }, () => [
+            h(Field.Label, {}, () => "Email"),
+            h(Field.Input, { placeholder: "you@example.com" }),
+            h(Field.HelperText, {}, () => "We never share it."),
+            h(Field.ErrorText, {}, () => "Email is required."),
+          ]),
+          h(Field.Root as unknown as Component, { size: "lg", invalid: true }, () => [
+            h(Field.Label, {}, () => "Bio"),
+            h(Field.Textarea, { placeholder: "Tell us about yourself" }),
+            h(Field.HelperText, {}, () => "A short introduction."),
+            h(Field.ErrorText, {}, () => "Bio is required."),
+          ]),
         ]),
 
         h("section", { "aria-label": "checkboxes" }, [

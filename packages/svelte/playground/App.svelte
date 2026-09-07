@@ -45,12 +45,21 @@
     <Button variant="destructive" size="lg">Destructive</Button>
   </section>
 
-  <Field.Root>
-    <Field.Label>Email</Field.Label>
-    <Field.Input placeholder="you@example.com" />
-    <Field.HelperText>We never share it.</Field.HelperText>
-    <Field.ErrorText>Email is required.</Field.ErrorText>
-  </Field.Root>
+  <section aria-label="fields">
+    <Field.Root size="sm">
+      <Field.Label>Email</Field.Label>
+      <Field.Input placeholder="you@example.com" />
+      <Field.HelperText>We never share it.</Field.HelperText>
+      <Field.ErrorText>Email is required.</Field.ErrorText>
+    </Field.Root>
+
+    <Field.Root size="lg" invalid>
+      <Field.Label>Bio</Field.Label>
+      <Field.Textarea placeholder="Tell us about yourself" />
+      <Field.HelperText>A short introduction.</Field.HelperText>
+      <Field.ErrorText>Bio is required.</Field.ErrorText>
+    </Field.Root>
+  </section>
 
   <section aria-label="checkboxes">
     <Checkbox.Root defaultChecked>

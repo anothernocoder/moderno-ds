@@ -13,6 +13,7 @@ export type { ButtonVariant, ButtonSize } from "./button.js";
 
 export { Field } from "./field.js";
 export type {
+  FieldSize,
   FieldRootProps,
   FieldLabelProps,
   FieldInputProps,

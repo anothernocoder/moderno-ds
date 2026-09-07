@@ -43,6 +43,18 @@ export const selectRecipe = cva({
   defaultVariants: { size: "md" },
 });
 
+/**
+ * Field: control `size` — the density of the whole field (label, control,
+ * helper/error text), carried on the root so one attribute sizes every part.
+ * Invalid/disabled/required stay Ark's own data-attributes, not variants.
+ */
+export const fieldRecipe = cva({
+  variants: {
+    size: ["sm", "md", "lg"],
+  },
+  defaultVariants: { size: "md" },
+});
+
 /*
  * The variant unions, derived once beside the recipes. Bindings import these
  * names instead of re-deriving them from the recipe tables — a recipe change
@@ -60,3 +72,6 @@ export type SelectSize = NonNullable<VariantProps<typeof selectRecipe.variants>[
 
 /** Checkbox's control density (box + label). Checked state stays Ark's. */
 export type CheckboxSize = NonNullable<VariantProps<typeof checkboxRecipe.variants>["size"]>;
+
+/** Field's control density (label, input/textarea, helper and error text). */
+export type FieldSize = NonNullable<VariantProps<typeof fieldRecipe.variants>["size"]>;

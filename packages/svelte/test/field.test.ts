@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { cleanup, render, screen } from "@testing-library/svelte";
 import EmailField from "./fixtures/EmailField.svelte";
+import BioField from "./fixtures/BioField.svelte";
 
 afterEach(cleanup);
 
@@ -35,5 +36,29 @@ describe("Field (Svelte)", () => {
   it("propagates the disabled state to the control", () => {
     render(EmailField, { props: { disabled: true } });
     expect((screen.getByLabelText("Email") as HTMLInputElement).disabled).toBe(true);
+  });
+
+  it("carries the recipe's default size on the root", () => {
+    const { container } = render(EmailField);
+    const root = container.querySelector('[data-scope="field"][data-part="root"]');
+    expect(root?.getAttribute("data-size")).toBe("md");
+  });
+
+  it("maps the size prop onto the root's data-size, not the control", () => {
+    const { container } = render(EmailField, { props: { size: "lg" } });
+    const root = container.querySelector('[data-scope="field"][data-part="root"]');
+    expect(root?.getAttribute("data-size")).toBe("lg");
+    // One attribute sizes every part; the control stays a plain Ark part.
+    expect(screen.getByLabelText("Email").hasAttribute("data-size")).toBe(false);
+  });
+
+  it("renders a textarea control as its own part, under the same size recipe", () => {
+    const { container } = render(BioField, { props: { size: "sm" } });
+    const textarea = screen.getByLabelText("Bio");
+    expect(textarea.tagName).toBe("TEXTAREA");
+    expect(textarea.getAttribute("data-part")).toBe("textarea");
+    expect(
+      container.querySelector('[data-scope="field"][data-part="root"]')?.getAttribute("data-size"),
+    ).toBe("sm");
   });
 });
