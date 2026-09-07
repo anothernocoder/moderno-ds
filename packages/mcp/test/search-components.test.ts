@@ -41,8 +41,11 @@ describe("searchComponents", () => {
   });
 
   it("returns every component (ranked, not filtered out) when nothing scores", () => {
+    // Counted off the fixture manifest rather than hard-coded, so adding a
+    // primitive to the fixture does not turn this into a false failure.
+    const installed = manifests.components.find((m) => m.framework === "react")!;
     const result = searchComponents(manifests, { query: "xyzzy", framework: "react" });
-    expect(result.matches).toHaveLength(3);
+    expect(result.matches).toHaveLength(installed.components.length);
     expect(result.matches.every((m) => m.score === 0)).toBe(true);
   });
 });
