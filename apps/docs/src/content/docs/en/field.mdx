@@ -19,9 +19,10 @@ agent:
     - input border uses --input; focus ring uses --ring.
 ---
 
-import CodeBlock from "../../../components/CodeBlock.astro";
+import Preview from "../../../components/Preview.astro";
 import PropsTable from "../../../components/PropsTable.astro";
 import Install from "../../../components/Install.astro";
+import FieldDemo from "../../../islands/FieldDemo.svelte";
 
 Field wires accessibility, not appearance: Ark's Field machine associates
 `label[for]` with the control's `id` and mirrors `aria-invalid`/
@@ -29,13 +30,15 @@ Field wires accessibility, not appearance: Ark's Field machine associates
 `data-required` — those attributes, not CVA variants, are what
 `components.css` keys the error/disabled look off.
 
-<CodeBlock
+<Preview
   code={`<Field.Root invalid={hasError}>
   <Field.Label>Email</Field.Label>
   <Field.Input type="email" />
   <Field.ErrorText>Enter a valid email.</Field.ErrorText>
 </Field.Root>`}
-/>
+>
+  <FieldDemo client:visible />
+</Preview>
 
 ## Installation
 

@@ -7,9 +7,10 @@ component: Field
 pkg: "@moderno-ui/react"
 ---
 
-import CodeBlock from "../../../components/CodeBlock.astro";
+import Preview from "../../../components/Preview.astro";
 import PropsTable from "../../../components/PropsTable.astro";
 import Install from "../../../components/Install.astro";
+import FieldDemo from "../../../islands/FieldDemo.svelte";
 
 Field resuelve accesibilidad, no apariencia: la máquina Field de Ark asocia
 `label[for]` con el `id` del control y refleja `aria-invalid`/
@@ -17,13 +18,15 @@ Field resuelve accesibilidad, no apariencia: la máquina Field de Ark asocia
 `data-required` — esos atributos, no variantes de CVA, son los que
 `components.css` usa para el estilo de error/deshabilitado.
 
-<CodeBlock
+<Preview
   code={`<Field.Root invalid={hasError}>
   <Field.Label>Email</Field.Label>
   <Field.Input type="email" />
   <Field.ErrorText>Ingresa un email válido.</Field.ErrorText>
 </Field.Root>`}
-/>
+>
+  <FieldDemo client:visible />
+</Preview>
 
 ## Instalación
 

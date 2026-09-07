@@ -21,17 +21,20 @@ agent:
     - content uses --popover surface; backdrop opacity is part-styled, not inline.
 ---
 
-import CodeBlock from "../../../components/CodeBlock.astro";
+import Preview from "../../../components/Preview.astro";
 import PropsTable from "../../../components/PropsTable.astro";
 import Install from "../../../components/Install.astro";
+import DialogDemo from "../../../islands/DialogDemo.svelte";
 
 Dialog composes as `Root > Trigger + Portal(> Backdrop + Positioner > Content)`.
 Ark drives focus trap, focus restore, scroll lock, and the `aria-labelledby`/
-`aria-describedby` wiring; content is unmounted while closed, so an SSR render
-emits only the trigger. No CVA variants — the surface comes straight from the
-`--popover` / `--popover-foreground` token slots via `components.css`.
+`aria-describedby` wiring. An SSR render emits only the trigger; after
+hydration the content stays in the DOM between openings and Ark takes it out of
+the layout with the `hidden` attribute, which `components.css` honours for every
+part. No CVA variants — the surface comes straight from the `--popover` /
+`--popover-foreground` token slots via `components.css`.
 
-<CodeBlock
+<Preview
   code={`<Dialog.Root>
   <Dialog.Trigger>Open</Dialog.Trigger>
   <Portal>
@@ -44,7 +47,9 @@ emits only the trigger. No CVA variants — the surface comes straight from the
     </Dialog.Positioner>
   </Portal>
 </Dialog.Root>`}
-/>
+>
+  <DialogDemo client:visible />
+</Preview>
 
 ## Installation
 

@@ -20,16 +20,17 @@ agent:
     - Floating surface uses --popover / --popover-foreground.
 ---
 
-import CodeBlock from "../../../components/CodeBlock.astro";
+import Preview from "../../../components/Preview.astro";
 import PropsTable from "../../../components/PropsTable.astro";
 import Install from "../../../components/Install.astro";
+import SelectDemo from "../../../islands/SelectDemo.svelte";
 
 Only `Select.Root` is wrapped, to inject the `size` recipe's `data-size`; every
 other part is Ark's verbatim, styled by `components.css` keyed on Ark's
 `data-part` plus `data-highlighted`/`data-state`. The menu renders in a
 `Portal`, unmounted while closed, so SSR/hydration stay clean.
 
-<CodeBlock
+<Preview
   code={`<Select.Root collection={frameworks} size="md">
   <Select.Label>Framework</Select.Label>
   <Select.Trigger>
@@ -47,7 +48,9 @@ other part is Ark's verbatim, styled by `components.css` keyed on Ark's
     </Select.Positioner>
   </Portal>
 </Select.Root>`}
-/>
+>
+  <SelectDemo client:visible />
+</Preview>
 
 ## Installation
 
