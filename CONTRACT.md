@@ -52,7 +52,8 @@ in `:root` (light) with a `.dark` override.
 | `--ring`                                     | focus ring                   |
 | `--chart-1` … `--chart-5`                    | data-viz series              |
 
-Non-color contract slots: `--radius`, `--font-sans`, `--font-mono`.
+Non-color contract slots: `--radius`, `--font-sans`, `--font-mono`. Every theme
+must define these and all the color slots above, in both scopes.
 
 ## Extended contract
 
@@ -62,8 +63,27 @@ Beyond color, the contract also standardizes:
 - **Motion** — `--motion-instant` (150ms), `--motion-fast` (200ms),
   `--motion-normal` (300ms).
 - **Radius** — `--radius` (base) and `--radius-full` (pills/dots).
+- **Display face** — `--font-serif`, the face headings and pull quotes use when
+  the brand has one (`theme-moderno`: Hedvig Letters Serif). Body copy stays on
+  `--font-sans`.
+- **Elevation** — `--shadow-sm` / `--shadow-md` / `--shadow-lg`, three steps for
+  overlays (popover, menu, drawer, toast). A theme may compose a hairline ring
+  with the shadow so an overlay still separates from a near-black canvas;
+  `theme-moderno` does. The `.dark` scope carries its own three values — a
+  light-mode shadow disappears on a dark surface.
+- **Container breakpoints** — `--container-sm` (24rem), `--container-md` (36rem),
+  `--container-lg` (48rem). Blocks and screens respond to the width of their
+  _container_, never the viewport (ADR-0005). These three are the whole scale a
+  block may use: in Tailwind they replace the container namespace rather than
+  extend it (see below).
 
-No hardcoded spacing, durations, or radii in components — reference the slot.
+No hardcoded spacing, durations, radii, shadows, or widths in components —
+reference the slot.
+
+Extended slots are **optional in a theme**: `@moderno-ui/tokens` ships a neutral
+default for each, and a theme overrides only what its brand actually changes.
+The color and non-color slots above are mandatory; `theme-compile` fails a
+theme that omits one.
 
 ## Theming rules
 
@@ -77,7 +97,23 @@ No hardcoded spacing, durations, or radii in components — reference the slot.
   tokens. (`@moderno-ui/tokens` ships a `contrast` demo scope.)
 - **Tailwind v4**: import `@moderno-ui/css/preset`. It maps each slot to a theme
   namespace with `@theme inline`, so utilities reference `var(--slot)` directly
-  and runtime overrides re-theme without a rebuild.
+  and runtime overrides re-theme without a rebuild — `bg-primary`, `font-serif`,
+  `shadow-md`, `rounded-lg`. The one exception is `--container-*`, in two ways:
+  - It is not `inline`. A CSS container query condition cannot contain `var()`,
+    so the three lengths are registered literally; `@sm:`/`@md:`/`@lg:` fire at
+    fixed widths, while `max-w-sm` and friends still read `var(--container-sm)`
+    and follow a theme override at runtime.
+  - **It replaces Tailwind's container scale, it does not extend it.**
+    `--container-*` is Tailwind's own namespace — its `md` is 28rem, its `lg`
+    32rem, its `xl` 36rem — and the contract's three steps are not those values,
+    so the preset resets the namespace (`--container-*: initial`) before
+    declaring them. Installing Moderno therefore leaves `max-w-sm|md|lg`,
+    `w-sm|md|lg` and `@sm:`/`@md:`/`@lg:` and **removes** `max-w-xl`, `@2xl:` and
+    the rest of Tailwind's container sizes; blocks use the three contract steps
+    only. Without the reset the scale would be out of order — `max-w-lg` (48rem)
+    wider than `max-w-xl` (36rem). Note that `@moderno-ui/css` on its own already
+    retunes `md`/`lg` (its `:root` is unlayered and beats `@layer theme`), so
+    import the preset alongside it to get the ordered three-step scale.
 
 ## Styling convention: `data-scope` / `data-part`
 

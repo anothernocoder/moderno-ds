@@ -19,6 +19,8 @@ export const manifests: AggregatedManifests = {
       font: ["--font-sans", "--font-mono"],
       spacing: ["--spacing-1", "--spacing-2"],
       motion: ["--motion-instant", "--motion-fast"],
+      shadow: ["--shadow-sm", "--shadow-md", "--shadow-lg"],
+      container: ["--container-sm", "--container-md", "--container-lg"],
     },
     theming: {
       darkMode: ":root is the light scope, .dark overrides it.",

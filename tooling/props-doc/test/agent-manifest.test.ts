@@ -157,8 +157,17 @@ describe("buildContractManifest", () => {
     expect(manifest.slots.color).toContain("--background");
     expect(manifest.slots.color).toContain("--primary");
     expect(manifest.slots.radius).toEqual(["--radius", "--radius-full"]);
-    expect(manifest.slots.font).toEqual(["--font-sans", "--font-mono"]);
+    expect(manifest.slots.font).toEqual(["--font-sans", "--font-mono", "--font-serif"]);
     expect(manifest.slots.spacing).toHaveLength(8);
     expect(manifest.slots.motion).toHaveLength(3);
+  });
+
+  it("carries the elevation and container families the extended contract added", () => {
+    expect(manifest.slots.shadow).toEqual(["--shadow-sm", "--shadow-md", "--shadow-lg"]);
+    expect(manifest.slots.container).toEqual([
+      "--container-sm",
+      "--container-md",
+      "--container-lg",
+    ]);
   });
 });

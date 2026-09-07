@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import postcss, { type Declaration, type Rule } from "postcss";
+import postcss, { type AtRule, type Declaration, type Rule } from "postcss";
 import {
   COLOR_GROUPS,
   COLOR_SLOTS,
@@ -31,6 +31,18 @@ function declsBySelector(css: string): Map<string, Map<string, string>> {
       if (decl.prop.startsWith("--")) map.set(decl.prop.slice(2), decl.value);
     });
     out.set(rule.selector, map);
+  });
+  return out;
+}
+
+/** Custom properties declared in `@theme <params>` blocks of a stylesheet. */
+function themeBlockDecls(css: string, params: string): Map<string, string> {
+  const out = new Map<string, string>();
+  postcss.parse(css).walkAtRules("theme", (rule: AtRule) => {
+    if (rule.params.trim() !== params) return;
+    rule.walkDecls((decl: Declaration) => {
+      if (decl.prop.startsWith("--")) out.set(decl.prop.slice(2), decl.value);
+    });
   });
   return out;
 }
@@ -66,6 +78,23 @@ describe("@moderno-ui/tokens — contract data", () => {
     expect(slotType("radius")).toBe("dimension");
     expect(slotType("font-sans")).toBe("fontFamily");
     expect(slotType("motion-fast")).toBe("duration");
+    expect(slotType("font-serif")).toBe("fontFamily");
+    expect(slotType("shadow-md")).toBe("shadow");
+    expect(slotType("container-lg")).toBe("dimension");
+  });
+
+  it("carries the display face, elevation and container slots as extended", () => {
+    for (const slot of [
+      "font-serif",
+      "shadow-sm",
+      "shadow-md",
+      "shadow-lg",
+      "container-sm",
+      "container-md",
+      "container-lg",
+    ]) {
+      expect(EXTENDED_SLOTS, `--${slot} is not an extended slot`).toContain(slot);
+    }
   });
 });
 
@@ -95,6 +124,13 @@ describe("@moderno-ui/tokens — dark variant", () => {
     expect(tokenRules.has(".dark")).toBe(true);
     for (const slot of ["background", "foreground", "primary"]) {
       expect(dark.get(slot), `--${slot} not overridden in .dark`).toMatch(/^oklch\(/);
+    }
+  });
+
+  it("gives the elevation scale its own dark values (a light shadow vanishes there)", () => {
+    for (const slot of ["shadow-sm", "shadow-md", "shadow-lg"]) {
+      expect(dark.get(slot), `--${slot} not overridden in .dark`).toBeTruthy();
+      expect(dark.get(slot)).not.toBe(root.get(slot));
     }
   });
 });
@@ -140,5 +176,46 @@ describe("@moderno-ui/tokens — Tailwind v4 preset", () => {
   it("maps the font slots to Tailwind font variables", () => {
     expect(presetCss).toMatch(/--font-sans:\s*var\(--font-sans\)/);
     expect(presetCss).toMatch(/--font-mono:\s*var\(--font-mono\)/);
+    expect(presetCss).toMatch(/--font-serif:\s*var\(--font-serif\)/);
+  });
+
+  it("maps the elevation scale to Tailwind shadow variables", () => {
+    for (const step of ["sm", "md", "lg"]) {
+      const re = new RegExp(`--shadow-${step}:\\s*var\\(--shadow-${step}\\)`);
+      expect(presetCss, `--shadow-${step} not mapped`).toMatch(re);
+    }
+  });
+
+  /**
+   * The container breakpoints are the one mapping that cannot be `inline`: a
+   * container query condition may not contain var(), so Tailwind needs the
+   * literal length to emit `@container (width >= 24rem)`. That literal is a
+   * copy of the tokens.css default, so guard the two against drifting apart.
+   */
+  it("registers the container breakpoints as literals matching tokens.css", () => {
+    const inlineTheme = themeBlockDecls(presetCss, "inline");
+    const plainTheme = themeBlockDecls(presetCss, "");
+    for (const step of ["sm", "md", "lg"]) {
+      const slot = `container-${step}`;
+      expect(inlineTheme.has(slot), `--${slot} must not be mapped inline`).toBe(false);
+      expect(plainTheme.get(slot), `--${slot} missing from the plain @theme block`).toBe(
+        root.get(slot),
+      );
+    }
+  });
+
+  /**
+   * `--container-*` is Tailwind's own namespace and the contract's three steps
+   * are not its values, so the preset resets it before declaring them: keeping
+   * Tailwind's `xl`/`2xl`/`3xl` alongside would leave `max-w-lg` (48rem) wider
+   * than `max-w-xl` (36rem). The contract owns the namespace whole.
+   */
+  it("resets the Tailwind container namespace, leaving only the contract's steps", () => {
+    const plainTheme = themeBlockDecls(presetCss, "");
+    expect(plainTheme.get("container-*")).toBe("initial");
+    const containerKeys = [...plainTheme.keys()].filter((k) => k.startsWith("container-"));
+    expect(containerKeys.sort()).toEqual(
+      ["container-*", "container-lg", "container-md", "container-sm"].sort(),
+    );
   });
 });

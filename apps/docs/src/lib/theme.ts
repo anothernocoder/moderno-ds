@@ -5,12 +5,15 @@
  * uses, so a theme that exports clean here is a theme that passes CI.
  */
 import { compileTheme, ThemeValidationError } from "@moderno-ui/theme-compile";
-import { COLOR_SLOTS, OTHER_SLOTS, slotType } from "@moderno-ui/tokens/contract";
+import { COLOR_SLOTS, EXTENDED_SLOTS, OTHER_SLOTS, slotType } from "@moderno-ui/tokens/contract";
 import modernoTokens from "../../../../registry/themes/theme-moderno/tokens.dtcg.json";
 
 // The slot lists come from the contract data in @moderno-ui/tokens — the same
 // source theme-compile validates against, so editor and compiler can't drift.
-export { COLOR_SLOTS, OTHER_SLOTS };
+export { COLOR_SLOTS, EXTENDED_SLOTS, OTHER_SLOTS };
+
+/** Every slot the editor puts a field on, in contract order. */
+const EDITABLE_SLOTS = [...COLOR_SLOTS, ...OTHER_SLOTS, ...EXTENDED_SLOTS];
 
 export type Scope = Record<string, string>;
 
@@ -33,7 +36,7 @@ export interface ThemeDoc {
 function scopeToState(scope: unknown): Scope {
   const out: Scope = {};
   const s = (scope ?? {}) as Record<string, Token | undefined>;
-  for (const slot of [...COLOR_SLOTS, ...OTHER_SLOTS]) {
+  for (const slot of EDITABLE_SLOTS) {
     const value = s[slot]?.$value;
     if (typeof value === "string") out[slot] = value;
   }
@@ -52,12 +55,37 @@ export function tokensToState(doc: unknown): ThemeState {
   };
 }
 
+/**
+ * Is this field a value the theme expresses? An editor field left blank is an
+ * *unexpressed* extended slot: the theme inherits the neutral default from
+ * `@moderno-ui/tokens`. Emitting it anyway would blank the slot instead of
+ * overriding it — theme-compile rejects that in the export, and in the preview
+ * `--slot: ` is a valid *empty* custom property whose `var(--slot)` substitutes
+ * to nothing. Export and preview must therefore agree on this one predicate.
+ */
+function expressed(value: unknown): value is string {
+  return typeof value === "string" && value.trim() !== "";
+}
+
 function stateToScope(scope: Scope): TokenScope {
   const out: TokenScope = {};
   for (const [slot, value] of Object.entries(scope)) {
+    if (!expressed(value)) continue;
     out[slot] = { $type: slotType(slot), $value: value };
   }
   return out;
+}
+
+/**
+ * Inline `style` for the live preview stage — the same scope the export emits,
+ * so clearing a field previews what the exported theme.css actually renders:
+ * the inherited default, not a blanked slot.
+ */
+export function previewStyle(scope: Scope): string {
+  return Object.entries(scope)
+    .filter(([, value]) => expressed(value))
+    .map(([slot, value]) => `--${slot}: ${value}`)
+    .join("; ");
 }
 
 /** Emit a DTCG document from the editor state (the downloadable tokens file). */

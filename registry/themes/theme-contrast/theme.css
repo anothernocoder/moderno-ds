@@ -27,6 +27,9 @@
   --radius: 0rem;
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: ui-monospace, "SFMono-Regular", "Menlo", "Consolas", monospace;
+  --shadow-sm: 0 0 0 1px oklch(0 0 0);
+  --shadow-md: 0 0 0 2px oklch(0 0 0);
+  --shadow-lg: 0 0 0 3px oklch(0 0 0);
 }
 
 .dark [data-brand="contrast"], [data-brand="contrast"].dark {
@@ -57,4 +60,7 @@
   --radius: 0rem;
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: ui-monospace, "SFMono-Regular", "Menlo", "Consolas", monospace;
+  --shadow-sm: 0 0 0 1px oklch(1 0 0);
+  --shadow-md: 0 0 0 2px oklch(1 0 0);
+  --shadow-lg: 0 0 0 3px oklch(1 0 0);
 }

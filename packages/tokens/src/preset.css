@@ -41,12 +41,13 @@
   --color-chart-5: var(--chart-5);
 
   /*
-   * Typography → font-sans / font-mono utilities.
+   * Typography → font-sans / font-serif / font-mono utilities.
    * Required, not a no-op: a plain `--font-sans` in :root is just a custom
    * property; registering it here under @theme makes it a Tailwind theme key,
    * and `inline` points the generated utility at the runtime var.
    */
   --font-sans: var(--font-sans);
+  --font-serif: var(--font-serif);
   --font-mono: var(--font-mono);
 
   /* Radius → rounded-* utilities */
@@ -55,4 +56,45 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
   --radius-full: var(--radius-full);
+
+  /* Elevation → shadow-sm / shadow-md / shadow-lg utilities */
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+}
+
+/*
+ * Container breakpoints → the `@sm:`/`@md:`/`@lg:` container-query variants and
+ * the `max-w-*` / `w-*` sizes blocks are laid out with (ADR-0005).
+ *
+ * Two deliberate deviations from every mapping above.
+ *
+ * 1. Not `inline`. A CSS container query condition cannot contain `var()` —
+ *    `@container (width >= var(--container-sm))` never matches — so Tailwind has
+ *    to read a literal length here to emit `@container (width >= 24rem)`.
+ *    Because the block is not inline, the *size* utilities still come out as
+ *    `max-width: var(--container-sm)`: a theme that overrides `--container-sm`
+ *    (outside `@layer theme`, as tokens.css and every theme.css do) re-themes
+ *    the widths at runtime; only the query thresholds are fixed at build time.
+ *
+ * 2. `--container-*: initial` first, so the contract takes the namespace whole.
+ *    `--container-*` is Tailwind's own scale (`sm 24rem, md 28rem, lg 32rem,
+ *    xl 36rem, 2xl 42rem, 3xl 48rem, …`) and the contract's three steps are not
+ *    those values. Redefining only `sm|md|lg` on top of it would leave a scale
+ *    that is no longer ordered — `max-w-lg` (48rem) wider than `max-w-xl`
+ *    (36rem), `@lg:` firing later than `@xl:` — and a block written with `@md:`
+ *    and `@xl:` would collapse two layout steps into one width. Resetting the
+ *    namespace leaves exactly three ordered steps, one per contract slot: the
+ *    wider Tailwind container sizes (`max-w-xl` and up, `@xl:` and up) are not
+ *    part of this design system. Consumers who want them can add their own keys.
+ *
+ * The three values mirror the `--container-*` defaults in tokens.css, and a test
+ * fails if the two drift apart.
+ */
+@theme {
+  --container-*: initial;
+
+  --container-sm: 24rem;
+  --container-md: 36rem;
+  --container-lg: 48rem;
 }

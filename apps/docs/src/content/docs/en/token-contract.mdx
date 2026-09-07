@@ -1,0 +1,130 @@
+---
+title: Token contract
+description: Every semantic slot a Moderno component may reference — colour, radius, fonts, spacing, motion, the display face, the elevation scale and the container breakpoints — and which of them a theme must define.
+group: Start
+order: 2
+---
+
+A Moderno component references **slots**, never values. Overriding a slot is how
+you re-theme; there is no other mechanism. `@moderno-ui/tokens` ships a neutral
+default for every slot on this page, so components render before any brand is
+installed, and a theme re-maps the same names to brand values.
+
+`:root` is the light scope and `.dark` overrides it. A multi-brand theme scopes
+its overrides under `[data-brand="…"]`, which composes with `.dark`.
+
+## Colour
+
+All colour slots are OKLCH and are defined in both scopes. Every theme must
+define all of them.
+
+| Slot                                         | Role                         |
+| -------------------------------------------- | ---------------------------- |
+| `--background` / `--foreground`              | page surface + text          |
+| `--card` / `--card-foreground`               | raised surface               |
+| `--popover` / `--popover-foreground`         | floating surface             |
+| `--primary` / `--primary-foreground`         | primary action               |
+| `--secondary` / `--secondary-foreground`     | secondary action             |
+| `--muted` / `--muted-foreground`             | muted surface + subdued text |
+| `--accent` / `--accent-foreground`           | accent surface               |
+| `--destructive` / `--destructive-foreground` | destructive action           |
+| `--border`                                   | borders / separators         |
+| `--input`                                    | form control borders         |
+| `--ring`                                     | focus ring                   |
+| `--chart-1` … `--chart-5`                    | data-viz series              |
+
+Each `*-foreground` slot is checked against its surface at WCAG AA (4.5:1) when
+a theme is compiled; the Theme Builder shows the same warnings live.
+
+## Required non-colour slots
+
+| Slot          | Role                  |
+| ------------- | --------------------- |
+| `--radius`    | base corner radius    |
+| `--font-sans` | UI and body face      |
+| `--font-mono` | code, tabular figures |
+
+## Extended slots
+
+Optional in a theme: `@moderno-ui/tokens` already carries a neutral default, so
+a theme overrides only what its brand actually changes. In the Theme Builder
+they sit under **Extended (optional)** — leave a field blank to inherit.
+
+| Slot                                                     | Default                     | Role                                   |
+| -------------------------------------------------------- | --------------------------- | -------------------------------------- |
+| `--radius-full`                                          | `9999px`                    | pills, dots, avatars                   |
+| `--spacing-1` … `--spacing-8`                            | `0.25rem` … `2rem`          | the spacing scale                      |
+| `--motion-instant` / `--motion-fast` / `--motion-normal` | `150ms` / `200ms` / `300ms` | transition durations                   |
+| `--font-serif`                                           | `ui-serif, Georgia, …`      | display face for headings, pull quotes |
+| `--shadow-sm` / `--shadow-md` / `--shadow-lg`            | three neutral steps         | elevation for popovers, menus, drawers |
+| `--container-sm` / `--container-md` / `--container-lg`   | `24rem` / `36rem` / `48rem` | container breakpoints                  |
+
+**Elevation** carries its own values in `.dark`: a light-mode shadow disappears
+on a near-black canvas. A theme may compose a hairline ring with the shadow so
+an overlay still separates from the surface behind it — `theme-moderno` does:
+
+```css
+--shadow-md: 0 0 0 1px oklch(0.922 0 0), 0 4px 12px -2px oklch(0 0 0 / 0.08);
+```
+
+**Container breakpoints** are what blocks and screens respond to. A block reads
+the width of its _container_, never the viewport, so the same block is correct
+in a sidebar, a modal and a full page. Three steps is the whole scale: a block
+lays out with `@sm:` / `@md:` / `@lg:` and nothing wider.
+
+## Tailwind v4
+
+`@import "@moderno-ui/css/preset";` registers the slots as Tailwind theme keys
+with `@theme inline`, so the generated utilities reference `var(--slot)` and a
+runtime override re-themes them without a rebuild.
+
+| Slot            | Utilities                                                                 |
+| --------------- | ------------------------------------------------------------------------- |
+| colour slots    | `bg-primary`, `text-muted-foreground`, …                                  |
+| `--radius`      | `rounded-sm` … `rounded-xl`                                               |
+| `--font-serif`  | `font-serif`                                                              |
+| `--shadow-*`    | `shadow-sm`, `shadow-md`, `shadow-lg`                                     |
+| `--container-*` | `max-w-sm`, `w-md`, and `@sm:` / `@md:` / `@lg:` container-query variants |
+
+The container breakpoints are the one mapping that is _not_ inline. A CSS
+container query condition cannot contain `var()` — `@container (width >=
+var(--container-sm))` never matches — so the preset registers the three lengths
+literally, and `@sm:` fires at a fixed 24rem. The width utilities are unaffected:
+`max-w-sm` still resolves to `var(--container-sm)` and follows a theme override
+at runtime.
+
+### The container scale is replaced, not extended
+
+`--container-*` is Tailwind's own namespace — `sm 24rem, md 28rem, lg 32rem,
+xl 36rem, 2xl 42rem, 3xl 48rem, …` — and the contract's three steps are not
+those values. Rather than redefine three keys inside a scale that would then be
+out of order (`max-w-lg` at 48rem would be _wider_ than `max-w-xl` at 36rem, and
+`@lg:` would fire later than `@xl:`), the preset resets the namespace and
+declares the contract's steps alone:
+
+```css
+@theme {
+  --container-*: initial;
+
+  --container-sm: 24rem;
+  --container-md: 36rem;
+  --container-lg: 48rem;
+}
+```
+
+So after installing the preset you have `max-w-sm|md|lg`, `w-sm|md|lg` and
+`@sm:` / `@md:` / `@lg:` — and Tailwind's wider container sizes (`max-w-xl` and
+up, `@xl:` and up) are gone. Add your own keys in an app-level `@theme` block if
+you need them.
+
+One caveat if you skip the preset: `@moderno-ui/css` declares these three names
+in an unlayered `:root`, which beats Tailwind's `@layer theme`, so importing it
+by itself already gives `max-w-md` 36rem and `max-w-lg` 48rem while `max-w-xl`
+stays at Tailwind's 36rem. Import the preset alongside it for the ordered scale.
+
+## Reading it as data
+
+The contract is also machine-readable. `@moderno-ui/tokens/contract` exports
+every slot with its DTCG type and editor group; `@moderno-ui/mcp`'s
+`get_contract` serves the same list to coding agents. Nothing in the repo keeps
+a second copy of these names.

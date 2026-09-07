@@ -13,8 +13,10 @@
   import {
     buildTheme,
     defaultThemeState,
+    previewStyle,
     slugify,
     tokensToState,
+    EXTENDED_SLOTS,
     OTHER_SLOTS,
     type ThemeState,
   } from "../lib/theme.ts";
@@ -33,6 +35,8 @@
     contrastFail: string;
     invalid: string;
     copied: string;
+    /** Placeholder on an optional (extended) slot left blank. */
+    inherited: string;
     /** Editor group labels, keyed by the contract group id. */
     groups: Record<string, string>;
   }
@@ -47,11 +51,10 @@
 
   const bundle = $derived(buildTheme(state));
   const activeScope = $derived(state[scope]);
-  const previewVars = $derived(
-    Object.entries(state[scope])
-      .map(([slot, value]) => `--${slot}: ${value}`)
-      .join("; "),
-  );
+  // Built by the same helper the export uses, so a cleared optional field
+  // previews the inherited default instead of a blanked slot (`--slot: ` makes
+  // var(--slot) substitute to nothing, and the stage loses that padding/radius).
+  const previewVars = $derived(previewStyle(state[scope]));
 
   const chartSeries = [
     { name: "A", points: [{ x: 0, y: 8 }, { x: 1, y: 22 }, { x: 2, y: 16 }, { x: 3, y: 34 }] },
@@ -191,6 +194,26 @@
         <label class="tb-slot tb-slot--wide">
           <span class="tb-slot-name">{slot}</span>
           <input type="text" spellcheck="false" bind:value={state[scope][slot]} />
+        </label>
+      {/each}
+    </fieldset>
+
+    <!--
+      Extended slots (display face, elevation, container breakpoints, spacing,
+      motion) are optional: @moderno-ui/tokens ships a neutral default for each,
+      so a blank field means "inherit it" and exports nothing for that slot.
+    -->
+    <fieldset class="tb-group">
+      <legend>{strings.groups["extended"] ?? "Extended"}</legend>
+      {#each EXTENDED_SLOTS as slot (slot)}
+        <label class="tb-slot tb-slot--wide">
+          <span class="tb-slot-name">{slot}</span>
+          <input
+            type="text"
+            spellcheck="false"
+            placeholder={strings.inherited}
+            bind:value={state[scope][slot]}
+          />
         </label>
       {/each}
     </fieldset>

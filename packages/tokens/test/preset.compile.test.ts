@@ -41,6 +41,22 @@ beforeAll(async () => {
     "rounded-lg",
     "font-sans",
     "font-mono",
+    "font-serif",
+    "shadow-sm",
+    "shadow-md",
+    "shadow-lg",
+    "max-w-sm",
+    "max-w-md",
+    "w-lg",
+    "@sm:flex",
+    "@md:grid",
+    "@lg:block",
+    // Keys the contract does not define: Tailwind ships them, the reset drops
+    // them. Asked for here so their absence from the output is a real assertion.
+    "max-w-xl",
+    "max-w-2xl",
+    "max-w-xs",
+    "@xl:flex",
   ]);
 });
 
@@ -60,9 +76,62 @@ describe("@moderno-ui/tokens preset — generated utilities resolve to contract 
   it("registers font utilities (the inline @theme font mapping is required, not a no-op)", () => {
     expect(utilities).toMatch(/\.font-sans\s*\{[^}]*var\(--font-sans\)/s);
     expect(utilities).toMatch(/\.font-mono\s*\{[^}]*var\(--font-mono\)/s);
+    expect(utilities).toMatch(/\.font-serif\s*\{[^}]*var\(--font-serif\)/s);
   });
 
   it("derives radius utilities from the contract --radius", () => {
     expect(utilities).toMatch(/\.rounded-lg\s*\{[^}]*var\(--radius\)/s);
+  });
+
+  it("emits shadow utilities backed by the elevation slots, not copied values", () => {
+    for (const step of ["sm", "md", "lg"]) {
+      expect(utilities, `.shadow-${step}`).toMatch(
+        new RegExp(`\\.shadow-${step}\\s*\\{[^}]*var\\(--shadow-${step}\\)`, "s"),
+      );
+    }
+  });
+
+  /**
+   * The two halves of the container mapping, which is why it is not `inline`:
+   * the width utilities must stay runtime-themeable, while the container-query
+   * variants must carry a literal length — `@container (width >= var(…))` never
+   * matches, so an inline mapping would silently drop every `@sm:` utility.
+   */
+  it("keeps container width utilities pointed at var(--container-*)", () => {
+    expect(utilities).toMatch(/\.max-w-sm\s*\{[^}]*var\(--container-sm\)/s);
+    expect(utilities).toMatch(/\.max-w-md\s*\{[^}]*var\(--container-md\)/s);
+    expect(utilities).toMatch(/\.w-lg\s*\{[^}]*var\(--container-lg\)/s);
+  });
+
+  it("emits @sm/@md/@lg container-query variants at the contract widths", () => {
+    expect(utilities).toContain("@container (width >= 24rem)");
+    expect(utilities).toContain("@container (width >= 36rem)");
+    expect(utilities).toContain("@container (width >= 48rem)");
+  });
+
+  /**
+   * `--container-*` is Tailwind's own namespace, and the contract's three steps
+   * are not its values (`md` 28rem, `lg` 32rem, `xl` 36rem…). The preset resets
+   * the namespace instead of overriding three keys inside it, so the scale it
+   * leaves behind is ordered: without the reset `max-w-lg` (48rem) would be
+   * wider than `max-w-xl` (36rem) and `@lg:` would fire after `@xl:`.
+   */
+  it("owns the container namespace: exactly the three contract steps, nothing else", () => {
+    // Tailwind's own container keys are in the build list above; after the reset
+    // no utility comes back for them, so `max-w-lg` can never end up wider than
+    // `max-w-xl` and `@lg:` can never fire later than `@xl:`.
+    expect(utilities).not.toMatch(/\.max-w-xl\s*\{/);
+    expect(utilities).not.toMatch(/\.max-w-2xl\s*\{/);
+    expect(utilities).not.toMatch(/\.max-w-xs\s*\{/);
+    expect(utilities, "the @xl: variant must not exist either").not.toContain("@xl");
+    expect(utilities).not.toContain("--container-xl");
+  });
+
+  it("leaves an ordered scale: the only container thresholds are the contract's", () => {
+    const thresholds = [...utilities.matchAll(/@container \(width >= ([\d.]+)rem\)/g)].map((m) =>
+      Number(m[1]),
+    );
+    expect(thresholds.length).toBeGreaterThan(0);
+    expect([...new Set(thresholds)].sort((a, b) => a - b)).toEqual([24, 36, 48]);
   });
 });

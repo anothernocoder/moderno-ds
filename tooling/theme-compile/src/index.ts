@@ -1,4 +1,9 @@
-import { COLOR_SLOTS, CONTRAST_PAIRS, OTHER_SLOTS } from "@moderno-ui/tokens/contract";
+import {
+  COLOR_SLOTS,
+  CONTRAST_PAIRS,
+  EXTENDED_SLOTS,
+  OTHER_SLOTS,
+} from "@moderno-ui/tokens/contract";
 import { contrastRatio, parseOklch } from "./color.ts";
 
 export type CompileResult = {
@@ -35,6 +40,19 @@ function validateScope(name: string, scope: unknown): asserts scope is Scope {
     if (parseOklch(value) === null) {
       throw new ThemeValidationError(
         `${name} scope slot "--${slot}" must be an oklch() value, got "${value}"`,
+      );
+    }
+  }
+  // Extended slots (display face, elevation, container breakpoints, spacing,
+  // motion) are optional — `@moderno-ui/tokens` already ships a neutral default
+  // for each. A theme that *does* express one must give it a real value, or the
+  // emitted `--slot: ;` would silently blank the default instead of overriding it.
+  for (const slot of EXTENDED_SLOTS) {
+    const token = s[slot];
+    if (token === undefined) continue;
+    if (typeof token.$value !== "string" || token.$value.trim() === "") {
+      throw new ThemeValidationError(
+        `${name} scope slot "--${slot}" is present but empty — drop it to inherit the default`,
       );
     }
   }

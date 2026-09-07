@@ -111,6 +111,40 @@ describe("compileTheme — validation rejects an incomplete contract", () => {
   });
 });
 
+/**
+ * The display face, elevation steps and container breakpoints are extended
+ * slots: `@moderno-ui/tokens` already ships a neutral default for each, so a
+ * theme expresses only what its brand actually changes.
+ */
+describe("compileTheme — extended slots are optional overrides", () => {
+  it("compiles a theme that expresses none of them", () => {
+    const { css } = compileTheme(defaultTheme());
+    expect(css).not.toContain("--font-serif");
+    expect(css).not.toContain("--shadow-md");
+    expect(css).not.toContain("--container-lg");
+  });
+
+  it("emits the ones a theme does express, in the scope that declares them", () => {
+    const doc = defaultTheme();
+    doc.light["font-serif"] = { $type: "fontFamily", $value: "ui-serif, Georgia, serif" };
+    doc.light["shadow-md"] = { $type: "shadow", $value: "0 0 0 1px oklch(0 0 0 / 0.1)" };
+    doc.light["container-lg"] = { $type: "dimension", $value: "48rem" };
+    const { css } = compileTheme(doc);
+    expect(css).toContain("--font-serif: ui-serif, Georgia, serif;");
+    expect(css).toContain("--shadow-md: 0 0 0 1px oklch(0 0 0 / 0.1);");
+    expect(css).toContain("--container-lg: 48rem;");
+    // The dark scope declared none, so it inherits the neutral defaults.
+    expect(css.slice(css.indexOf(".dark"))).not.toContain("--font-serif");
+  });
+
+  it("throws on a slot that is present but blank — that blanks the default", () => {
+    const doc = defaultTheme();
+    doc.light["shadow-lg"] = { $type: "shadow", $value: "  " };
+    expect(() => compileTheme(doc)).toThrow(/shadow-lg/);
+    expect(() => compileTheme(doc)).toThrow(/light/);
+  });
+});
+
 describe("compileTheme — branded theme scopes under [data-brand]", () => {
   it("emits [data-brand] and a dark companion that composes with .dark, not :root", () => {
     const branded = {
