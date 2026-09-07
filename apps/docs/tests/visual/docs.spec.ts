@@ -40,7 +40,9 @@ test.describe("docs preview pages", () => {
       // `networkidle` covers the Pagefind UI bundle, which is imported lazily
       // and injects the search input — a late layout shift otherwise.
       await page.goto(doc.path, { waitUntil: "networkidle" });
-      await page.evaluate(() => document.fonts.ready);
+      // Self-hosted Geist: a screenshot taken mid-swap is the one flaky thing
+      // left. Resolve to a plain value — a FontFaceSet isn't serializable.
+      await page.evaluate(() => document.fonts.ready.then(() => true));
       await expect(page).toHaveScreenshot(`${doc.name}.png`, { fullPage: true });
     });
   }
