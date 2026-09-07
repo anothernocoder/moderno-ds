@@ -187,28 +187,48 @@ main {
   min-width: 0;
   max-width: 44rem;
 }
-main h1 {
-  font-size: 2.5rem;
-  font-weight: 600;
-  letter-spacing: -0.03em;
-  margin: 0 0 0.6rem;
-}
-main h2 {
-  margin: 3rem 0 0.9rem;
-  font-size: 1.375rem;
-  font-weight: 600;
-  letter-spacing: -0.015em;
-}
-main h3 {
-  margin: 2rem 0 0.6rem;
-  font-size: 1.1rem;
-  font-weight: 600;
-}
-main p {
-  margin: 0.9rem 0;
-}
-main :where(h1, h2, h3) {
-  scroll-margin-top: 5rem;
+
+/*
+  Prose typography, in a cascade layer — and that layer, not the specificity,
+  is the point.
+
+  These are element selectors under `main`, so they also reach the markup a
+  live `<Preview>` mounts: a block's `<h2 class="text-lg">` is a `main h2`.
+  Unlayered, they would beat every layered rule regardless of specificity —
+  both the preview panel's scoped preflight (`@layer moderno.base`, from
+  `scripts/tailwind.ts`) and the block's own utilities (`@layer utilities`) —
+  so a previewed block would render at the docs prose scale with prose margins,
+  which is exactly the layout no consumer will ever see.
+
+  `docs.prose` is declared *before* `moderno.base` in the order statement that
+  `generated/tailwind.css` puts at the top of the cascade, so both of those win
+  inside the panel while the prose still styles every ordinary docs page (no
+  layered rule competes for a heading out there).
+*/
+@layer docs.prose {
+  main h1 {
+    font-size: 2.5rem;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    margin: 0 0 0.6rem;
+  }
+  main h2 {
+    margin: 3rem 0 0.9rem;
+    font-size: 1.375rem;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+  }
+  main h3 {
+    margin: 2rem 0 0.6rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+  main p {
+    margin: 0.9rem 0;
+  }
+  main :where(h1, h2, h3) {
+    scroll-margin-top: 5rem;
+  }
 }
 .page-lead {
   color: var(--muted-foreground);

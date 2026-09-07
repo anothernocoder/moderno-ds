@@ -63,6 +63,27 @@ describe("moderno/no-hardcoded-dimension — Tailwind arbitrary lengths", () => 
     expect(check('<div class="m-[0_auto_12px]">')).toHaveLength(1);
   });
 
+  it("flags a raw length wrapped in a function, not only a bare one", () => {
+    // `calc(100% - 2rem)` is the idiomatic spelling of a width, so it is also
+    // the likely spelling of the next hardcoded one. Tailwind writes the spaces
+    // around the operator as underscores, or omits them; both forms are one
+    // literal length.
+    expect(check('<div class="w-[calc(24rem+2px)]">')).toHaveLength(1);
+    expect(check('<div class="w-[calc(24rem_+_2px)]">')).toHaveLength(1);
+    expect(check('<div class="w-[calc(100%-2rem)]">')).toHaveLength(1);
+    expect(check('<div class="max-w-[min(100%,42rem)]">')).toHaveLength(1);
+    expect(check('<div class="min-h-[calc(100dvh-4rem)]">')).toHaveLength(1);
+  });
+
+  it("still ignores a function whose operands are all contract references", () => {
+    // The point is the literal, not the `calc()`: a width computed from slots
+    // re-skins with the theme exactly as a preset utility does.
+    expect(check('<div class="w-[calc(100%-var(--gutter))]">')).toHaveLength(0);
+    expect(check('<div class="max-w-[min(100%,var(--container-md))]">')).toHaveLength(0);
+    // Unitless values are not lengths — a line-height ratio is not a dimension.
+    expect(check('<div class="leading-[1.5]">')).toHaveLength(0);
+  });
+
   it("does not flag arbitrary values that are not lengths", () => {
     const code =
       '<div class="grid-cols-[repeat(auto-fit,minmax(0,1fr))] bg-[url(/hero.png)] w-[--w]">';
@@ -71,6 +92,17 @@ describe("moderno/no-hardcoded-dimension — Tailwind arbitrary lengths", () => 
 
   it("does not flag a longer identifier that merely ends in a utility name", () => {
     expect(check('<div class="demo-w-[320px]">')).toHaveLength(0);
+  });
+
+  /**
+   * The closed list of *utilities* is the rule's whole design: an arbitrary
+   * value is the documented escape hatch for what the contract does not name,
+   * and only the dimension families have a slot to point back at. Scanning
+   * inside a function must not quietly widen it.
+   */
+  it("leaves a length inside a utility outside the dimension families alone", () => {
+    expect(check('<div class="grid-cols-[minmax(200px,1fr)]">')).toHaveLength(0);
+    expect(check('<div class="bg-[url(/hero-320px.png)]">')).toHaveLength(0);
   });
 
   it("reports the utility and the CSS declaration under one rule id, in source order", () => {

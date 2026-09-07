@@ -59,12 +59,26 @@ const PREVIEW_PREFLIGHT = `@layer moderno.base {
 }`;
 
 /**
- * The docs stylesheet Tailwind compiles. Layer order is declared up front so
- * utilities win over `components.css` (which declares `moderno.base` /
- * `moderno.components`) — a block's `p-6` must beat a primitive default, the
- * way it would in a consumer's project.
+ * The docs stylesheet Tailwind compiles. This file is imported first, so its
+ * layer statement is what fixes the cascade order for everything the docs load.
+ *
+ * The order is the whole mechanism, read left to right — each layer beats every
+ * layer to its left, whatever the specificity:
+ *
+ * - `docs.prose` — `docs.css`'s `main h1/h2/h3/p`. Element selectors under
+ *   `main` also match the markup a `<Preview>` mounts, so they must lose inside
+ *   the panel; unlayered (as they were) they beat everything below and a
+ *   previewed block rendered at the docs prose scale, with prose margins.
+ * - `moderno.base` — `PREVIEW_PREFLIGHT` above, plus `components.css`'s own
+ *   base. Above the prose so the panel's reset actually resets.
+ * - `moderno.components` — the primitive rules in `components.css`.
+ * - `utilities` — Tailwind. Last, so a block's `p-6` or `text-lg` beats both a
+ *   primitive default and the prose, exactly as it would in a consumer project.
+ *
+ * `docs.css` names `docs.prose`; every other layer here is declared by the
+ * stylesheet that fills it.
  */
-export const DOCS_TAILWIND_ENTRY = `@layer theme, moderno.base, moderno.components, utilities;
+export const DOCS_TAILWIND_ENTRY = `@layer theme, docs.prose, moderno.base, moderno.components, utilities;
 @import "tailwindcss/theme.css" layer(theme);
 @import "@moderno-ui/tokens/preset";
 @import "tailwindcss/utilities.css" layer(utilities);

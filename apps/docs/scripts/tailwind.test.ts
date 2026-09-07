@@ -27,6 +27,11 @@ const tokensCss = readFileSync(
   "utf8",
 );
 
+const docsCss = readFileSync(
+  fileURLToPath(new URL("../src/styles/docs.css", import.meta.url)),
+  "utf8",
+);
+
 let css: string;
 
 beforeAll(async () => {
@@ -82,6 +87,13 @@ describe("the docs Tailwind build compiles what blocks are written with", () => 
     expect(css).toMatch(/\.shadow-sm\s*\{[^}]*var\(--shadow-sm\)/s);
   });
 
+  /**
+   * Emitting a rule is not the same as that rule winning: this suite reads the
+   * stylesheet, so it cannot see the preflight below being overridden wholesale
+   * by an unlayered `main h2`. `tests/visual/preview-cascade.spec.ts` asks a
+   * browser for the computed styles inside a real preview panel — that is the
+   * assertion that fails when the cascade moves. Keep the two together.
+   */
   it("skips preflight globally and scopes its block-facing subset to the preview panel", () => {
     // Tailwind's own reset would strip the docs prose; the subset a block is
     // written against is confined to the panel it is previewed in.
@@ -115,8 +127,28 @@ describe("the docs Tailwind build compiles what blocks are written with", () => 
   });
 
   it("declares the layer order that puts a block's utilities above components.css", () => {
-    const order = /@layer theme, moderno\.base, moderno\.components, utilities;/;
+    const order = /@layer theme, docs\.prose, moderno\.base, moderno\.components, utilities;/;
     expect(DOCS_TAILWIND_ENTRY).toMatch(order);
     expect(css).toMatch(order);
+  });
+
+  /**
+   * The docs prose is the one thing in the site that selects the same elements
+   * a block does (`main h2` matches a block's `<h2 class="text-lg">`). Unlayered
+   * it beats every rule above regardless of specificity, so the scoped preflight
+   * and the block's own utilities are both inert inside the panel. Both halves
+   * of that fix have to hold: the rules live in a layer, and the layer is named
+   * below `moderno.base` and `utilities` in the order statement above.
+   */
+  it("keeps docs.css's prose rules in a layer the preview panel outranks", () => {
+    const prose = docsCss.slice(docsCss.indexOf("@layer docs.prose"));
+    expect(prose, "docs.css must declare @layer docs.prose").not.toBe(docsCss);
+    const body = prose.slice(0, prose.indexOf("\n}\n") + 3);
+    for (const rule of ["main h1", "main h2", "main h3", "main p"]) {
+      expect(body, `${rule} must sit inside @layer docs.prose`).toContain(`${rule} {`);
+    }
+    // Nothing outside the layer may select a bare heading or paragraph again.
+    const outside = docsCss.replace(body, "");
+    expect(outside).not.toMatch(/^\s*main (?:h[1-6]|p)[\s,{]/m);
   });
 });

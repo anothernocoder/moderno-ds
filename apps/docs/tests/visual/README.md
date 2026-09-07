@@ -108,6 +108,16 @@ locale, with the current page's own row marked — and that every island in
 out of the matrix silently. Text assertions, no committed artifact, so they can
 never conflict between branches.
 
+## Why a cascade test, not a baseline
+
+`preview-cascade.spec.ts` sits alongside the pixel baselines and asserts
+**computed styles** instead: inside a live `<Preview>` panel, a block's own
+utilities and the panel's scoped preflight have to beat `docs.css`'s prose
+typography, which selects the same elements (`main h2` matches a block's
+`<h2 class="text-lg">`). That is a cascade fact — a baseline can only say
+_something moved_, and a test that greps the emitted CSS passes just as happily
+while every rule it found is being overridden.
+
 ## Running it
 
 ```sh
@@ -167,6 +177,7 @@ itself is not on the default branch yet, since GitHub only offers
 | `docs.spec.ts`                                           | One capture per preview page, sidebar collapsed; the scoping guard.  |
 | `chrome.spec.ts`                                         | One frozen chrome capture per locale, plus the scroll-box guard.     |
 | `guards.spec.ts`                                         | Non-pixel guards: sidebar inventory, island coverage.                |
+| `preview-cascade.spec.ts`                                | Computed styles inside a `<Preview>` panel — no screenshots.         |
 | `__screenshots__/{platform}/{width}-{scheme}/{page}.png` | The baselines.                                                       |
 | `../../playwright.config.ts`                             | The width × scheme matrix, the static server, the tolerance.         |
 

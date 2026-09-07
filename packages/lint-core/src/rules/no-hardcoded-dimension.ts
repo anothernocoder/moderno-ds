@@ -87,25 +87,37 @@ const DIMENSION_UTILITIES = [
 const LENGTH_UNITS =
   "px|rem|em|ch|ex|pt|pc|in|cm|mm|q|lh|rlh|vh|vw|vb|vi|vmin|vmax|svh|svw|svmin|svmax|lvh|lvw|lvmin|lvmax|dvh|dvw|dvmin|dvmax|cqw|cqh|cqi|cqb|cqmin|cqmax";
 
-const RAW_LENGTH = new RegExp(String.raw`^-?[\d.]+(?:${LENGTH_UNITS})$`, "i");
+/**
+ * A literal length *anywhere* inside an arbitrary value, not only as the whole
+ * of it. `w-[calc(100%-2rem)]` is idiomatic Tailwind and is the likely spelling
+ * of the next hardcoded width, so an anchored match would only catch the naive
+ * form. The boundaries exclude letters and digits (so `x2px` inside an
+ * identifier is not a length) while allowing `_`, `-`, `(`, `,` and the calc
+ * operators — `_` because Tailwind spells a shorthand's spaces with it
+ * (`p-[8px_16px]`), `-` because that is what subtraction looks like.
+ */
+const RAW_LENGTH = new RegExp(
+  String.raw`(?<![A-Za-z0-9.])[\d.]+(?:${LENGTH_UNITS})(?![A-Za-z0-9.])`,
+  "i",
+);
 
 /**
- * `max-w-[42rem]`, `-mt-[3px]`, `@md:gap-[13px]`, `p-[8px_16px]` — the utility
- * may carry a variant prefix and a negative sign, and must be preceded by a
- * class-list boundary (start of string, whitespace, quote or backtick) so a
- * longer identifier that merely ends in one of the names cannot match. The
- * arbitrary value is captured whole and split below: Tailwind writes a
- * multi-value shorthand with underscores, and one raw length among them is one
- * raw length too many.
+ * `max-w-[42rem]`, `-mt-[3px]`, `@md:gap-[13px]`, `p-[8px_16px]`,
+ * `w-[calc(24rem+2px)]` — the utility may carry a variant prefix and a negative
+ * sign, and must be preceded by a class-list boundary (start of string,
+ * whitespace, quote or backtick) so a longer identifier that merely ends in one
+ * of the names cannot match. The arbitrary value is captured whole and scanned
+ * below: one raw length anywhere inside it — a shorthand component, a `calc()`
+ * operand — is one raw length too many.
  */
 const DIMENSION_UTILITY_VALUE = new RegExp(
   String.raw`(?<=^|[\s"'\`])(?:[\w@:.[\]/-]*:)?-?(?:${DIMENSION_UTILITIES.join("|")})-\[([^\]\s"'\`]*)\]`,
   "g",
 );
 
-/** Whether an arbitrary value hardcodes a length in any of its components. */
+/** Whether an arbitrary value hardcodes a length anywhere inside it. */
 function hasRawLength(value: string): boolean {
-  return value.split("_").some((component) => RAW_LENGTH.test(component));
+  return RAW_LENGTH.test(value);
 }
 
 export const noHardcodedDimension: Rule = {
