@@ -8,10 +8,37 @@
  * (one project per combination); this file only decides *what* is on screen and
  * *when* it has settled.
  */
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 import { previewPages } from "./pages.ts";
 
 const pages = previewPages();
+
+/**
+ * Block until the full-page height stops moving.
+ *
+ * A hydrating island can reflow after both `networkidle` and `document.fonts
+ * .ready` have resolved, and `toHaveScreenshot` fails on a size mismatch before
+ * any pixel tolerance applies — so the height is the thing to stabilise. Two
+ * consecutive frames at the same height is enough to clear a reflow driven by
+ * `onMount` or an effect; the polling stops as soon as that holds, so a static
+ * prose page pays two frames, not the timeout.
+ */
+async function settled(page: Page, stableFrames = 2, timeoutMs = 5000): Promise<void> {
+  await page.waitForFunction(
+    ([needed, deadlineAt]) => {
+      const w = window as unknown as { __h?: number; __n?: number };
+      const height = document.documentElement.scrollHeight;
+      w.__n = height === w.__h ? (w.__n ?? 0) + 1 : 0;
+      w.__h = height;
+      // Give up quietly rather than failing the run: a page that genuinely
+      // never settles should be caught by the pixel diff, not by a timeout
+      // whose message says nothing about what moved.
+      return w.__n >= needed || Date.now() > deadlineAt;
+    },
+    [stableFrames, Date.now() + timeoutMs] as const,
+    { polling: "raf", timeout: timeoutMs + 1000 },
+  );
+}
 
 test.describe("docs preview pages", () => {
   // A silently empty matrix would turn the whole seam green. It only happens
@@ -43,6 +70,14 @@ test.describe("docs preview pages", () => {
       // Self-hosted Geist: a screenshot taken mid-swap is the one flaky thing
       // left. Resolve to a plain value — a FontFaceSet isn't serializable.
       await page.evaluate(() => document.fonts.ready.then(() => true));
+      // Neither of the waits above sees an island that reflows *after* it
+      // hydrates. The Theme Builder is `client:only` and re-runs its WCAG check
+      // against the state it hydrates in `onMount`, so the contrast verdict
+      // switches between a one-line "✓" and a paragraph plus a warning list —
+      // ~78px of page height, and a full-page screenshot that disagrees with
+      // its baseline about the image size. Settle on a height that survives
+      // consecutive frames instead of racing it.
+      await settled(page);
       await expect(page).toHaveScreenshot(`${doc.name}.png`, { fullPage: true });
     });
   }
