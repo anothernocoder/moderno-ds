@@ -5,6 +5,7 @@ import { App } from "../playground/app.js";
 import { Button } from "../src/button.js";
 import { Field } from "../src/field.js";
 import { Checkbox } from "../src/checkbox.js";
+import { partAttrs, partTags } from "../../core/test/ssr-parts.ts";
 
 afterEach(() => {
   document.body.replaceChildren();
@@ -25,10 +26,13 @@ describe("SSR (Vue)", () => {
     // Checkbox serialises its Ark state, not just its scope.
     expect(html).toMatch(/data-part="control"[^>]*data-state="checked"/);
     expect(html).toMatch(/data-part="control"[^>]*data-state="indeterminate"/);
-    // Field's own recipe, over both controls: the sized roots and the textarea.
-    expect(html).toContain('data-size="sm"');
-    expect(html).toContain('data-size="lg"');
-    expect(html).toContain('data-part="textarea"');
+    // Field's own recipe, read off the field roots themselves — a whole-document
+    // match would be satisfied by the Buttons' `data-size` and would survive a
+    // Root that stopped applying the recipe (Vue's attrs forwarding is exactly
+    // the kind of thing that can drop it).
+    expect(partAttrs(html, "field", "root", "data-size")).toEqual(["sm", "lg"]);
+    // The second field's control is Field's own Textarea part.
+    expect(partTags(html, "field", "textarea")).toHaveLength(1);
   });
 
   it("server-renders the dialog/select popover markup when open", async () => {

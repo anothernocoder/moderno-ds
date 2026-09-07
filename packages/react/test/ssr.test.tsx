@@ -5,6 +5,7 @@ import { act } from "@testing-library/react";
 import { renderToString } from "react-dom/server";
 import { hydrateRoot, type Root } from "react-dom/client";
 import { App } from "../playground/app.js";
+import { partAttrs, partTags } from "../../core/test/ssr-parts.ts";
 
 afterEach(() => {
   document.body.replaceChildren();
@@ -25,10 +26,12 @@ describe("SSR + hydration (React 19)", () => {
     // Checkbox serialises its Ark state, not just its scope.
     expect(html).toMatch(/data-part="control"[^>]*data-state="checked"/);
     expect(html).toMatch(/data-part="control"[^>]*data-state="indeterminate"/);
-    // Field's own recipe, over both controls: the sized roots and the textarea.
-    expect(html).toContain('data-size="sm"');
-    expect(html).toContain('data-size="lg"');
-    expect(html).toContain('data-part="textarea"');
+    // Field's own recipe, read off the field roots themselves — a whole-document
+    // match would be satisfied by the Buttons' `data-size` and would survive a
+    // Root that stopped applying the recipe.
+    expect(partAttrs(html, "field", "root", "data-size")).toEqual(["sm", "lg"]);
+    // The second field's control is Field's own Textarea part.
+    expect(partTags(html, "field", "textarea")).toHaveLength(1);
   });
 
   async function hydrateAndCountWarnings(tree: ReactElement): Promise<number> {
