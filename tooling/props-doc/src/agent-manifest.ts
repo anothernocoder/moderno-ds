@@ -31,6 +31,7 @@ import {
   buttonRecipe,
   cardRecipe,
   checkboxRecipe,
+  dividerRecipe,
   fieldRecipe,
   selectRecipe,
 } from "@moderno-ui/core";
@@ -132,6 +133,16 @@ export const AGENT_COMPONENTS: AgentComponentSpec[] = [
       { name: "footer" },
     ],
     variants: cardRecipe.variants,
+  },
+  {
+    name: "Divider",
+    slug: "divider",
+    scope: "divider",
+    propsEntry: findEntry("Divider"),
+    // The rule itself is drawn with the root's ::before/::after, so `label` is
+    // the only part `components.css` targets besides the root.
+    parts: [{ name: "root" }, { name: "label" }],
+    variants: dividerRecipe.variants,
   },
   {
     name: "Field",

@@ -1,4 +1,7 @@
 /**
+ * SSR playground — the Solid twin of the React harness. Mounts every one of the
+ * primitives in their default (closed) state; `open` mounts the Dialog + Select
+ * popovers so the SSR smoke can exercise the portal/id path.
  * SSR playground — the Solid twin of the React harness. Mounts the primitives
  * in their default (closed) state; `open` mounts the Dialog + Select popovers
  * so the SSR smoke can exercise the portal/id path.
@@ -6,6 +9,7 @@
 import { For } from "solid-js";
 import { Alert } from "../src/alert.jsx";
 import { Button } from "../src/button.jsx";
+import { Divider } from "../src/divider.jsx";
 import { Field } from "../src/field.jsx";
 import { Card } from "../src/card.jsx";
 import { Checkbox } from "../src/checkbox.jsx";
@@ -61,6 +65,13 @@ export function App(props: { open?: boolean }) {
         <Button variant="destructive" size="lg">
           Destructive
         </Button>
+      </section>
+
+      <section aria-label="dividers">
+        <Divider />
+        <Divider align="start">Or</Divider>
+        <Divider orientation="vertical" />
+        <Divider orientation="vertical">Or</Divider>
       </section>
 
       <section aria-label="alerts">

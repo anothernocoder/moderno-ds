@@ -25,6 +25,15 @@ describe("SSR (Svelte, server-only island)", () => {
     // The card's compound anatomy survives serialisation part by part.
     expect(html).toContain('data-part="title"');
     expect(html).toContain('data-part="footer"');
+    expect(html).toContain('data-scope="divider"');
+    // Both divider shapes survive serialisation: the bare rule keeps its
+    // separator role, the captioned one its label part.
+    expect(html).toContain('role="separator"');
+    expect(html).toMatch(/data-scope="divider"[^>]*data-part="label"/);
+    // …including the captioned *vertical* rule: that combination is the one
+    // whose gap depends on the label's rotated writing mode, so orientation and
+    // label have to serialise onto the same root.
+    expect(html).toMatch(/data-orientation="vertical"(?:(?!<\/div>)[\s\S])*?data-part="label"/);
     expect(html).toContain("Open dialog");
     expect(html).toContain("Framework");
     expect(html).toContain('data-variant="destructive"');

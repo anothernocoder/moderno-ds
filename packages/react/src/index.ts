@@ -24,6 +24,8 @@ export type {
   CardVariant,
   CardSize,
 } from "./card.js";
+export { Divider } from "./divider.js";
+export type { DividerProps } from "./divider.js";
 
 export { Field } from "./field.js";
 export type {

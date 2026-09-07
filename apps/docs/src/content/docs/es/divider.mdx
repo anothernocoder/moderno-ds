@@ -1,0 +1,37 @@
+---
+title: Divisor
+description: Una regla horizontal o vertical con etiqueta opcional, trazada desde el slot --border por la hoja de estilos compartida.
+group: Componentes
+order: 15
+component: Divider
+pkg: "@moderno-ui/react"
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import DividerDemo from "../../../islands/DividerDemo.svelte";
+
+Divider es solo CSS: no hay máquina headless detrás de una regla. Las dos
+mitades de la línea son el `::before`/`::after` de la raíz, así que un divisor
+sin etiqueta es un trazo continuo y uno con etiqueta se abre alrededor de
+`[data-part="label"]` sin marcado extra. `data-orientation`/`data-align` de la
+receta determinan cada estilo en `components.css`.
+
+<Preview
+  code={`<Divider />
+<Divider>O continúa con</Divider>
+<Divider align="start">Recientes</Divider>
+<Divider orientation="vertical" />
+<Divider orientation="vertical">o</Divider>`}
+>
+  <DividerDemo client:visible />
+</Preview>
+
+## Instalación
+
+<Install pkg="@moderno-ui/react" />
+
+## Propiedades
+
+<PropsTable component="Divider" />
