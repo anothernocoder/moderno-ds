@@ -1,0 +1,74 @@
+---
+title: Alert
+description: An inline status message with an icon slot, title, description and optional action, in four statuses painted from the contract's status slots.
+group: Components
+order: 15
+component: Alert
+pkg: "@moderno-ui/react"
+agentPropsHash: "sha256:3986319b64aa98465da18f625299b61c1931ed1a3e1450c92a3d03f2cfe6fce2"
+agent:
+  intent: An inline status message that stays on the page.
+  whenToUse: Reporting the outcome or state of something the page is already showing — a failed payment, an expiring card, a saved change.
+  whenNotToUse:
+    - case: A transient confirmation that disappears on its own
+      use: Toast
+    - case: A message that must block until acknowledged
+      use: Dialog
+    - case: A field-level validation message
+      use: Field.ErrorText
+  gotchas:
+    - "variant/size are the only visual knobs; do not add className colour overrides."
+    - "The icon is a slot — pass your own glyph; the primitive ships no icon set and never imports one."
+    - "role is derived from the status (warning/error announce assertively, info/success politely); override it only when the alert is not a live region."
+    - "An alert already on the page at load is not announced by screen readers; render it in response to the event it reports."
+  theming:
+    - "Each status tints one surface from its contract slot: --info / --success / --warning, and --destructive for error."
+    - "Surface and border are color-mix over --card; re-map the status slot in your theme rather than restyling the part."
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import AlertDemo from "../../../islands/AlertDemo.svelte";
+
+Alert is a CSS-only primitive: Ark has no alert machine because an alert has no
+behaviour to own — it is a static region. So, like Button, it is the contract in
+its purest form: elements carrying `data-scope`/`data-part` plus the recipe's
+`data-variant`/`data-size`, with every pixel coming from `components.css`.
+
+The anatomy is `root > icon + content(> title + description + action)`. `Icon`
+is a slot, never an icon set: primitives stay icon-agnostic, so you pass your own
+glyph and the part hands it the status hue through `currentColor`.
+
+<Preview
+  code={`<Alert.Root variant="warning">
+  <Alert.Icon>
+    <TriangleAlert aria-hidden />
+  </Alert.Icon>
+  <Alert.Content>
+    <Alert.Title>Card expiring</Alert.Title>
+    <Alert.Description>The card ending 4242 expires next month.</Alert.Description>
+    <Alert.Action>
+      <Button size="sm" variant="outline">Update card</Button>
+    </Alert.Action>
+  </Alert.Content>
+</Alert.Root>`}
+>
+  <AlertDemo client:visible />
+</Preview>
+
+## Statuses
+
+`info`, `success`, `warning` and `error` each tint one surface from the matching
+contract slot — `--info`, `--success`, `--warning`, and `--destructive` for
+`error`, so a destructive action and an error message speak with one voice.
+Urgency follows the status: `warning` and `error` render `role="alert"`
+(assertive), `info` and `success` `role="status"` (polite).
+
+## Installation
+
+<Install pkg="@moderno-ui/react" />
+
+## Props
+
+<PropsTable component="Alert" />

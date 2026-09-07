@@ -11,6 +11,9 @@
 export { Button } from "./button.js";
 export type { ButtonVariant, ButtonSize } from "./button.js";
 
+export { Alert } from "./alert.js";
+export type { AlertVariant, AlertSize } from "./alert.js";
+
 export { Field } from "./field.js";
 export type {
   FieldSize,

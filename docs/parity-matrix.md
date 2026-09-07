@@ -14,9 +14,9 @@
 | Tokens / brand   | `@moderno-ui/tokens` → contract slots          | one theme re-themes 5 |
 
 Each binding's only job is to spread `data-scope`/`data-part` + the recipe's
-`data-*` onto markup. Button is the sole authored element; Dialog is a verbatim
-Ark re-export; Field, Select and Checkbox wrap only `Root` to inject
-`data-size`.
+`data-*` onto markup. Button and Alert are the authored elements (neither has a
+headless machine to wrap); Dialog is a verbatim Ark re-export; Field, Select and
+Checkbox wrap only `Root` to inject `data-size`.
 
 ## Component × framework × state
 
@@ -33,6 +33,19 @@ shared stylesheet keys on.
 | no baked class/style     |  ✅   | ✅  |   ✅   |  ✅   |
 | `type` default+override  |  ✅   | ✅  |   ✅   |  ✅   |
 | native props + events    |  ✅   | ✅  |   ✅   |  ✅   |
+
+### Alert (`alertRecipe`: `data-variant` × `data-size`; no Ark machine)
+
+| State / prop                   | React | Vue | Svelte | Solid |
+| ------------------------------ | :---: | :-: | :----: | :---: |
+| scope/part + defaults          |  ✅   | ✅  |   ✅   |  ✅   |
+| variant → `data-variant`       |  ✅   | ✅  |   ✅   |  ✅   |
+| size → `data-size`             |  ✅   | ✅  |   ✅   |  ✅   |
+| full anatomy renders           |  ✅   | ✅  |   ✅   |  ✅   |
+| status → `role` (alert/status) |  ✅   | ✅  |   ✅   |  ✅   |
+| consumer `role` overrides      |  ✅   | ✅  |   ✅   |  ✅   |
+| icon part `aria-hidden`        |  ✅   | ✅  |   ✅   |  ✅   |
+| no baked class/style           |  ✅   | ✅  |   ✅   |  ✅   |
 
 ### Field (`fieldRecipe`: `data-size`; state is Ark's `data-invalid` / `data-disabled`)
 
@@ -87,9 +100,9 @@ shared stylesheet keys on.
 | `defaultOpen` survives SSR                  |  ✅   | ✅  |   ✅   |  ✅   |
 
 ¹ Vue hydration is verified on the portal-free primitives (Button + Field +
-Checkbox), the deterministic `useId` hazard; Ark's portaled popovers position
-via floating-ui measurement absent in jsdom, so their hydration is covered by
-the string + interaction suites.
+Checkbox + Alert), the deterministic `useId` hazard; Ark's portaled popovers
+position via floating-ui measurement absent in jsdom, so their hydration is
+covered by the string + interaction suites.
 ² Svelte/Solid use a separate SSR-compiled test project (`*.ssr.test.*`) that
 asserts the static server string; Svelte additionally proves the zero-runtime
 Astro-island guarantee (F3.5).

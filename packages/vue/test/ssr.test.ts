@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { createSSRApp, defineComponent, h, type Component } from "vue";
 import { renderToString } from "@vue/server-renderer";
 import { App } from "../playground/app.js";
+import { Alert } from "../src/alert.js";
 import { Button } from "../src/button.js";
 import { Field } from "../src/field.js";
 import { Checkbox } from "../src/checkbox.js";
@@ -17,6 +18,12 @@ describe("SSR (Vue)", () => {
     expect(html).toContain('data-scope="button"');
     expect(html).toContain('data-scope="field"');
     expect(html).toContain('data-scope="checkbox"');
+    expect(html).toContain('data-scope="alert"');
+    // The CSS-only primitive serialises its anatomy plus the resolved role:
+    // "info" reports politely, "error" interrupts.
+    expect(html).toContain("Payment failed");
+    expect(html).toContain('role="status"');
+    expect(html).toContain('role="alert"');
     // Triggers are present even while the dialog/select popovers are closed.
     expect(html).toContain("Open dialog");
     expect(html).toContain("Framework");
@@ -52,7 +59,7 @@ describe("SSR (Vue)", () => {
  * Hydration safety — the genuine, deterministic SSR hazard is `useId`: the
  * Field's label/control ids and the Checkbox's label ↔ hidden-input pairing
  * must match across server and client render. The portal-free primitives
- * (Button + Field + Checkbox) exercise exactly that, so a warning-free
+ * (Button + Field + Checkbox + Alert) exercise exactly that, so a warning-free
  * hydration here proves the id path is stable. Ark's portaled popovers
  * (Dialog/Select) position via floating-ui measurement that jsdom does not
  * provide, so their hydration is covered by the string + interaction suites
@@ -74,6 +81,13 @@ const HydrationApp = defineComponent({
           h(Checkbox.Control, {}, () => h(Checkbox.Indicator, {}, () => "✓")),
           h(Checkbox.Label, {}, () => "Email me updates"),
           h(Checkbox.HiddenInput),
+        ]),
+        h(Alert.Root, { variant: "error" }, () => [
+          h(Alert.Icon, {}, () => "!"),
+          h(Alert.Content, {}, () => [
+            h(Alert.Title, {}, () => "Payment failed"),
+            h(Alert.Description, {}, () => "We could not charge your card."),
+          ]),
         ]),
       ]);
   },

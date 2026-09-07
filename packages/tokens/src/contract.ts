@@ -57,6 +57,20 @@ export const CONTRACT: readonly ContractSlot[] = [
   color("muted-foreground", "support", "muted"),
   color("destructive", "support"),
   color("destructive-foreground", "support", "destructive"),
+  /*
+   * Status hues. `--destructive` covers the error case for *actions* (a delete
+   * button); a status surface additionally needs a positive, a cautionary and an
+   * informational hue. Without them a component with info/success/warning/error
+   * variants (Alert, Callout, Badge…) could only be painted from literals, which
+   * the golden rule forbids. Themed like every other slot: a brand re-maps them
+   * and every status surface follows.
+   */
+  color("info", "support"),
+  color("info-foreground", "support", "info"),
+  color("success", "support"),
+  color("success-foreground", "support", "success"),
+  color("warning", "support"),
+  color("warning-foreground", "support", "warning"),
   color("border", "support"),
   color("input", "support"),
   color("ring", "support"),

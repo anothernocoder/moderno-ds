@@ -17,6 +17,12 @@ describe("SSR + hydration (React 19)", () => {
     expect(html).toContain('data-scope="button"');
     expect(html).toContain('data-scope="field"');
     expect(html).toContain('data-scope="checkbox"');
+    expect(html).toContain('data-scope="alert"');
+    // The CSS-only primitive serialises its anatomy plus the resolved role:
+    // "info" reports politely, "error" interrupts.
+    expect(html).toContain("Payment failed");
+    expect(html).toContain('role="status"');
+    expect(html).toContain('role="alert"');
     // Triggers are present even while the dialog/select popovers are closed.
     expect(html).toContain("Open dialog");
     expect(html).toContain("Framework");
