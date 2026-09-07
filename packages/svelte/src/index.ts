@@ -7,8 +7,13 @@
  *
  *   import "@moderno-ui/css";
  */
-import { Checkbox as ArkCheckbox, Select as ArkSelect } from "@ark-ui/svelte";
+import {
+  Checkbox as ArkCheckbox,
+  Field as ArkField,
+  Select as ArkSelect,
+} from "@ark-ui/svelte";
 import CheckboxRoot from "./CheckboxRoot.svelte";
+import FieldRoot from "./FieldRoot.svelte";
 import SelectRoot from "./SelectRoot.svelte";
 
 export { default as Button } from "./Button.svelte";
@@ -24,11 +29,16 @@ export { default as BarChart } from "./BarChart.svelte";
 export { default as ScatterChart } from "./ScatterChart.svelte";
 
 /**
- * Field — re-exported from `@ark-ui/svelte`. Ark wires `label[for]` ↔ control
- * `id` and emits `data-invalid`/`data-disabled`/`data-required`; the shared
- * `components.css` dresses that native output, no recipe needed.
+ * Field — only `Root` is wrapped (to inject the `size` recipe); every other
+ * part is Ark's verbatim. Ark wires `label[for]` ↔ control `id` and emits
+ * `data-invalid`/`data-disabled`/`data-required`, which the shared
+ * `components.css` styles directly. Annotated so the emitted `.d.ts` doesn't
+ * inline an un-nameable `@zag-js` type (TS2742).
  */
-export { Field } from "@ark-ui/svelte";
+export const Field: Omit<typeof ArkField, "Root"> & { Root: typeof FieldRoot } = {
+  ...ArkField,
+  Root: FieldRoot,
+};
 
 /**
  * Dialog + Portal — re-exported from `@ark-ui/svelte` (portal + focus trap +

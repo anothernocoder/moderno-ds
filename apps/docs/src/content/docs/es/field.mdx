@@ -1,21 +1,56 @@
 ---
 title: Field
-description: Un control de formulario con etiqueta y manejo de ayuda/error — la máquina Field de Ark asocia la etiqueta con el id y expone los data-attributes de inválido/deshabilitado/requerido; components.css hace el resto.
+description: Un control de formulario con etiqueta y manejo de ayuda/error — la máquina Field de Ark asocia la etiqueta con el id y expone los data-attributes de inválido/deshabilitado/requerido; una receta de tamaño en la raíz define la densidad de todas las partes.
 group: Componentes
 order: 20
 component: Field
 pkg: "@moderno-ui/react"
 ---
 
+import Preview from "../../../components/Preview.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import PropsTable from "../../../components/PropsTable.astro";
 import Install from "../../../components/Install.astro";
+import FieldDemo from "../../../islands/FieldDemo.svelte";
 
 Field resuelve accesibilidad, no apariencia: la máquina Field de Ark asocia
 `label[for]` con el `id` del control y refleja `aria-invalid`/
 `aria-describedby`/`aria-required` en `data-invalid`/`data-disabled`/
 `data-required` — esos atributos, no variantes de CVA, son los que
 `components.css` usa para el estilo de error/deshabilitado.
+
+Lo único que eliges es `size`. Va en `Field.Root`, y el único `data-size` que
+emite dimensiona todas las partes a la vez: la etiqueta, la altura y el padding
+del control, y el texto de ayuda/error.
+
+<Preview
+  code={`<Field.Root size="sm">
+  <Field.Label>Email</Field.Label>
+  <Field.Input placeholder="tu@ejemplo.com" />
+  <Field.HelperText>Small — formularios densos y barras de filtros.</Field.HelperText>
+</Field.Root>
+
+<Field.Root size="lg" invalid>
+  <Field.Label>URL del espacio</Field.Label>
+  <Field.Input placeholder="acme" />
+  <Field.ErrorText>Usa minúsculas, números y guiones.</Field.ErrorText>
+</Field.Root>
+
+<Field.Root size="md">
+  <Field.Label>Biografía</Field.Label>
+  <Field.Textarea placeholder="Cuéntanos sobre ti" />
+</Field.Root>`}
+>
+  <FieldDemo client:visible />
+</Preview>
+
+## Input y Textarea
+
+Ambos controles son partes de Ark del mismo scope, así que comparten borde,
+radio, anillo de foco y tratamiento de inválido. Se diferencian donde cambia la
+forma: un input es una línea de altura fija, y un textarea tiene una altura
+mínima por tamaño y solo se redimensiona en vertical, de modo que nunca se sale
+de la columna del campo.
 
 <CodeBlock
   code={`<Field.Root invalid={hasError}>

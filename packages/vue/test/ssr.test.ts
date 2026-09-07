@@ -25,6 +25,10 @@ describe("SSR (Vue)", () => {
     // Checkbox serialises its Ark state, not just its scope.
     expect(html).toMatch(/data-part="control"[^>]*data-state="checked"/);
     expect(html).toMatch(/data-part="control"[^>]*data-state="indeterminate"/);
+    // Field's own recipe, over both controls: the sized roots and the textarea.
+    expect(html).toContain('data-size="sm"');
+    expect(html).toContain('data-size="lg"');
+    expect(html).toContain('data-part="textarea"');
   });
 
   it("server-renders the dialog/select popover markup when open", async () => {

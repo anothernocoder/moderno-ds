@@ -14,8 +14,8 @@
 | Tokens / brand   | `@moderno-ui/tokens` → contract slots          | one theme re-themes 5 |
 
 Each binding's only job is to spread `data-scope`/`data-part` + the recipe's
-`data-*` onto markup. Button is the sole authored element; Field and Dialog are
-verbatim Ark re-exports; Select and Checkbox wrap only `Root` to inject
+`data-*` onto markup. Button is the sole authored element; Dialog is a verbatim
+Ark re-export; Field, Select and Checkbox wrap only `Root` to inject
 `data-size`.
 
 ## Component × framework × state
@@ -34,15 +34,18 @@ shared stylesheet keys on.
 | `type` default+override  |  ✅   | ✅  |   ✅   |  ✅   |
 | native props + events    |  ✅   | ✅  |   ✅   |  ✅   |
 
-### Field (Ark `data-invalid` / `data-disabled`, no recipe)
+### Field (`fieldRecipe`: `data-size`; state is Ark's `data-invalid` / `data-disabled`)
 
-| State                        | React | Vue | Svelte | Solid |
-| ---------------------------- | :---: | :-: | :----: | :---: |
-| label ↔ control (`for`/`id`) |  ✅   | ✅  |   ✅   |  ✅   |
-| scope/part attributes        |  ✅   | ✅  |   ✅   |  ✅   |
-| invalid → `data-invalid`     |  ✅   | ✅  |   ✅   |  ✅   |
-| error text hidden when valid |  ✅   | ✅  |   ✅   |  ✅   |
-| disabled propagates          |  ✅   | ✅  |   ✅   |  ✅   |
+| State / prop                    | React | Vue | Svelte | Solid |
+| ------------------------------- | :---: | :-: | :----: | :---: |
+| label ↔ control (`for`/`id`)    |  ✅   | ✅  |   ✅   |  ✅   |
+| scope/part attributes           |  ✅   | ✅  |   ✅   |  ✅   |
+| invalid → `data-invalid`        |  ✅   | ✅  |   ✅   |  ✅   |
+| error text hidden when valid    |  ✅   | ✅  |   ✅   |  ✅   |
+| disabled propagates             |  ✅   | ✅  |   ✅   |  ✅   |
+| default size → root `data-size` |  ✅   | ✅  |   ✅   |  ✅   |
+| size → root `data-size` only    |  ✅   | ✅  |   ✅   |  ✅   |
+| textarea control → `data-part`  |  ✅   | ✅  |   ✅   |  ✅   |
 
 ### Checkbox (`checkboxRecipe`: `data-size`; Ark tri-state machine)
 
@@ -78,6 +81,7 @@ shared stylesheet keys on.
 | ------------------------------------------- | :---: | :-: | :----: | :---: |
 | stable server HTML (scope/part + recipe)    |  ✅   | ✅  |   ✅   |  ✅   |
 | checkbox `data-state` survives SSR          |  ✅   | ✅  |   ✅   |  ✅   |
+| Field sizes + textarea survive SSR          |  ✅   | ✅  |   ✅   |  ✅   |
 | warning-free hydration (id path)            |  ✅   | ✅¹ |   —²   |  —²   |
 | static server-only island (zero `<script>`) |   —   |  —  |   ✅   |   —   |
 | `defaultOpen` survives SSR                  |  ✅   | ✅  |   ✅   |  ✅   |
@@ -98,6 +102,6 @@ Astro-island guarantee (F3.5).
 - **Authoring style** mirrors each ecosystem: React/Solid JSX, Vue `h()` render
   functions (no SFC → tsup builds it), Svelte 5 `.svelte` runes (built with
   `svelte-package`).
-- **Typing**: the wrapped `Select` and `Checkbox` exports are annotated in every
-  package so the emitted `.d.ts` never inlines an un-nameable `@zag-js` type
-  (TS2742).
+- **Typing**: the wrapped `Field`, `Select` and `Checkbox` exports are annotated
+  in every package so the emitted `.d.ts` never inlines an un-nameable `@zag-js`
+  type (TS2742).

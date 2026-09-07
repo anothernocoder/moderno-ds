@@ -14,6 +14,7 @@ import type { ComponentEntry } from "./index.ts";
 export const ENTRIES: ComponentEntry[] = [
   { name: "Button", file: "src/button.tsx", type: "ButtonProps" },
   { name: "Checkbox", file: "src/checkbox.tsx", type: "ModernoCheckboxRootProps" },
+  { name: "Field", file: "src/field.tsx", type: "ModernoFieldRootProps" },
   { name: "Select", file: "src/select.tsx", type: "ModernoSelectRootProps" },
   { name: "LineChart", file: "src/charts.tsx", type: "LineChartProps" },
   { name: "AreaChart", file: "src/charts.tsx", type: "AreaChartProps" },

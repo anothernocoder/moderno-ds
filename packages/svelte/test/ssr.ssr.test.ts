@@ -20,6 +20,10 @@ describe("SSR (Svelte, server-only island)", () => {
     expect(html).toContain('data-size="md"');
     expect(html).toMatch(/data-part="control"[^>]*data-state="checked"/);
     expect(html).toMatch(/data-part="control"[^>]*data-state="indeterminate"/);
+    // Field's own recipe, over both controls: the sized roots and the textarea.
+    expect(html).toContain('data-size="sm"');
+    expect(html).toContain('data-size="lg"');
+    expect(html).toContain('data-part="textarea"');
   });
 
   it("emits static markup with no client runtime (zero <script>)", () => {

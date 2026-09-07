@@ -54,9 +54,12 @@ describe("buildComponentsManifest", () => {
     expect(button.import).toBe('import { Button } from "@moderno-ui/vue"');
   });
 
-  it("resolves Button/Select/Checkbox props from the canonical react source", () => {
+  it("resolves Button/Select/Checkbox/Field props from the canonical react source", () => {
     const button = manifest.components.find((c) => c.name === "Button")!;
     expect(button.props.map((p) => p.name).sort()).toEqual(["size", "variant"]);
+
+    const field = manifest.components.find((c) => c.name === "Field")!;
+    expect(field.props.map((p) => p.name)).toEqual(["size"]);
 
     const select = manifest.components.find((c) => c.name === "Select")!;
     expect(select.props.map((p) => p.name)).toEqual(["size"]);
@@ -65,12 +68,10 @@ describe("buildComponentsManifest", () => {
     expect(checkbox.props.map((p) => p.name)).toEqual(["size"]);
   });
 
-  it("gives Field and Dialog empty props — they add none of their own", () => {
-    for (const name of ["Field", "Dialog"]) {
-      const doc = manifest.components.find((c) => c.name === name)!;
-      expect(doc.props).toEqual([]);
-      expect(doc.variants).toBeUndefined();
-    }
+  it("gives Dialog empty props — it adds none of its own", () => {
+    const doc = manifest.components.find((c) => c.name === "Dialog")!;
+    expect(doc.props).toEqual([]);
+    expect(doc.variants).toBeUndefined();
   });
 
   it("reads variants straight off the shared @moderno-ui/core recipes", () => {
@@ -85,6 +86,9 @@ describe("buildComponentsManifest", () => {
 
     const checkbox = manifest.components.find((c) => c.name === "Checkbox")!;
     expect(checkbox.variants).toEqual({ size: ["sm", "md", "lg"] });
+
+    const field = manifest.components.find((c) => c.name === "Field")!;
+    expect(field.variants).toEqual({ size: ["sm", "md", "lg"] });
   });
 
   it("attaches framework-specific examples, not the react snippet reused verbatim", () => {

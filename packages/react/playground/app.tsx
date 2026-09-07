@@ -5,7 +5,9 @@
  * It mounts all five reference primitives in their default (closed) state. Each
  * one is deliberately exercised for an SSR hazard:
  *   - Button   — the trivial baseline (no ids, no portal).
- *   - Field    — `useId`-generated label/control ids must match across render.
+ *   - Field    — `useId`-generated label/control ids must match across render,
+ *                mounted at two sizes and over both controls (input + textarea)
+ *                so the recipe's `data-size` is proven to survive SSR too.
  *   - Checkbox — a label bound to a visually hidden native input by `useId`,
  *                plus indicators the machine hides via the `hidden` attribute.
  *   - Dialog   — a Portal + focus-trap machine that must emit a stable,
@@ -81,12 +83,21 @@ export function App({ open = false }: AppProps) {
         </Button>
       </section>
 
-      <Field.Root>
-        <Field.Label>Email</Field.Label>
-        <Field.Input placeholder="you@example.com" />
-        <Field.HelperText>We never share it.</Field.HelperText>
-        <Field.ErrorText>Email is required.</Field.ErrorText>
-      </Field.Root>
+      <section aria-label="fields">
+        <Field.Root size="sm">
+          <Field.Label>Email</Field.Label>
+          <Field.Input placeholder="you@example.com" />
+          <Field.HelperText>We never share it.</Field.HelperText>
+          <Field.ErrorText>Email is required.</Field.ErrorText>
+        </Field.Root>
+
+        <Field.Root size="lg" invalid>
+          <Field.Label>Bio</Field.Label>
+          <Field.Textarea placeholder="Tell us about yourself" />
+          <Field.HelperText>A short introduction.</Field.HelperText>
+          <Field.ErrorText>Bio is required.</Field.ErrorText>
+        </Field.Root>
+      </section>
 
       <section aria-label="checkboxes">
         <Checkbox.Root defaultChecked>

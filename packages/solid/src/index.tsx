@@ -11,15 +11,17 @@
 export { Button } from "./button.jsx";
 export type { ButtonProps, ButtonVariant, ButtonSize } from "./button.jsx";
 
-export { Field } from "./field.js";
+export { Field } from "./field.jsx";
 export type {
+  FieldSize,
+  ModernoFieldRootProps,
   FieldRootProps,
   FieldLabelProps,
   FieldInputProps,
   FieldTextareaProps,
   FieldHelperTextProps,
   FieldErrorTextProps,
-} from "./field.js";
+} from "./field.jsx";
 
 export { Checkbox } from "./checkbox.jsx";
 export type {
