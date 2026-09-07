@@ -38,7 +38,13 @@ function findSignals(code: string, scope: string): number[] {
 
   if (scope === "button") {
     for (const usage of findComponentUsages(code, "button")) {
-      const classValue = usage.attrs.className ?? usage.attrs.class;
+      // `class` in markup, `className` in JSX, `:class`/`v-bind:class` when a
+      // Vue template computes it — `findComponentUsages` keeps the prefix.
+      const classValue =
+        usage.attrs.className ??
+        usage.attrs.class ??
+        usage.attrs[":class"] ??
+        usage.attrs["v-bind:class"];
       if (typeof classValue === "string" && VARIANT_CLASS_SIGNAL.test(classValue)) {
         positions.add(usage.start);
       }

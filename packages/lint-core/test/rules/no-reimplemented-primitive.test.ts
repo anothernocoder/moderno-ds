@@ -39,6 +39,20 @@ describe("moderno/no-reimplemented-primitive", () => {
     expect(check("<button onClick={submit}>Save</button>")).toHaveLength(0);
   });
 
+  it("reads the class off a Vue binding too, shorthand or long form", () => {
+    // `findComponentUsages` keeps the `:`/`v-bind:` prefix on the attribute
+    // name, so the class lookup has to ask for those spellings by name.
+    for (const code of [
+      `<button :class="'btn-primary'">Save</button>`,
+      `<button v-bind:class="'btn-primary'">Save</button>`,
+    ]) {
+      expect(
+        noReimplementedPrimitive.check({ code, framework: "vue", manifests }),
+        code,
+      ).toHaveLength(1);
+    }
+  });
+
   it("does not warn on the Moderno <Dialog>/<Button> components themselves", () => {
     expect(check('<Dialog>...</Dialog><Button variant="primary">Save</Button>')).toHaveLength(0);
   });
