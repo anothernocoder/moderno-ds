@@ -26,6 +26,16 @@ rail, the `.layout` grid geometry, prose, `<Preview>` / `<Install>` /
 `<PropsTable>` — is independent of how many pages exist and stays in every
 capture.
 
+The rule is scoped to `.layout > aside.sidebar` — `SIDEBAR_SELECTOR`, the one
+constant the stylesheet, the collapse assertion and the fixture are all built
+from. A bare `.sidebar` would reach **any** element with that class, including
+one a block or screen demo renders inside `.preview-panel--demo`: that demo
+would be blanked inside its own baseline while every guard stayed green, since
+a `querySelector(".sidebar")` rot check finds the layout aside first. Nothing
+in the docs collides today; the ~100 block and screen pages this decoupling
+unblocks are exactly where an app shell with a sidebar shows up. `docs.spec.ts`
+constructs that collision and asserts the demo still paints.
+
 Masking would not have worked. Playwright's `mask` is pure paint: the element
 keeps its box. Above the 56rem breakpoint that is enough, because `docs.css`
 gives `.sidebar` a fixed `height: calc(100vh - 6rem)` scroll box — but below it
@@ -50,10 +60,37 @@ would change the width of all 28 narrow baselines at once.)
 `chrome.spec.ts` captures `chrome-en.png` and `chrome-es.png` — the real
 `BaseLayout` markup and the real `docs.css`, at the same six width × scheme
 combinations, with only the page-inventory-driven content swapped for a fixture:
-a fixed sidebar (two groups, five rows, one `aria-current="page"`), fixed
+a fixed sidebar (three groups, six rows, one `aria-current="page"`), fixed
 `<main>` copy, and a fixed TOC list with a fixed highlight. Twelve baselines
 whose subject is genuinely shared, and which are **constant with respect to the
 page count** — adding a docs page does not move them.
+
+Every label in that fixture is a **real** `group` / `title` from the content
+collection, and the set is a frozen worst-case sample rather than a mirror:
+three sections so the `h2` margins stack between consecutive `.sidebar-group`
+blocks (and one of them holds a single row, like the real `Guides` / `Blocks` /
+`Screens` / `Flows`), and each locale's longest real row label — 179.9px of the
+236.8px a row has at 1280, and 176.8px in Spanish — so a narrower
+`--docs-sidebar` or a larger row font crosses the wrap threshold and moves
+pixels. **Do not add a row to it when you add a docs page**: deriving it from
+the collection would put the page count straight back into twelve baselines.
+
+Three post-conditions keep the fixture honest, because every branch of
+`freezeChrome` is a "replace it if it is still there" branch: it reports the
+selectors it could not find, and the spec asserts that list is empty and then
+re-reads the frozen sidebar, `<h1>` and TOC rows off the live page. Rename
+`<main id="main">` and the capture fails instead of quietly absorbing
+`button.mdx`'s prose and repainting on every edit to it from then on.
+
+The sidebar's `overflow-y: auto` scroll box is asserted in geometry, not in
+pixels — the `sidebar box` test. `docs.css` gives it `height: calc(100vh - 6rem)`
+above 56rem, 804px at this suite's 900px viewport, and neither the fixture
+(335px of rows) nor the real sidebar (768px at 1280, fifteen pages) fills it, so
+nothing is clipped and deleting `overflow-y: auto` moves zero pixels here _and_
+on the real site. Growing the fixture past 804px would buy the clip at the price
+of ~470px of stacked nav in the eight narrow baselines, for a property that is
+inert in production until the page list outgrows the box. The computed-style
+assertion costs no image and fails at all three widths.
 
 Both anchors (`/en/button/`, `/es/button/`) are asserted to be members of
 `previewPages()` before capture, so renaming or deleting one is a red test
@@ -127,8 +164,8 @@ itself is not on the default branch yet, since GitHub only offers
 | `pages.ts`                                               | The pages, read from `dist/`: `previewPages()` and `allPages()`.     |
 | `settle.ts`                                              | The "has it stopped moving?" wait, shared by both capture specs.     |
 | `chrome.ts`                                              | The sidebar-neutralising rule, the chrome anchors and their fixture. |
-| `docs.spec.ts`                                           | One capture per preview page, sidebar collapsed.                     |
-| `chrome.spec.ts`                                         | Two frozen chrome captures, one per locale.                          |
+| `docs.spec.ts`                                           | One capture per preview page, sidebar collapsed; the scoping guard.  |
+| `chrome.spec.ts`                                         | One frozen chrome capture per locale, plus the scroll-box guard.     |
 | `guards.spec.ts`                                         | Non-pixel guards: sidebar inventory, island coverage.                |
 | `__screenshots__/{platform}/{width}-{scheme}/{page}.png` | The baselines.                                                       |
 | `../../playwright.config.ts`                             | The width × scheme matrix, the static server, the tolerance.         |
