@@ -51,6 +51,18 @@ describe("moderno/no-hardcoded-dimension — Tailwind arbitrary lengths", () => 
     expect(check(code)).toHaveLength(0);
   });
 
+  it("flags the modern viewport and container units, not just the 2015 ones", () => {
+    const code = '<div class="min-h-[100dvh] h-[50svh] w-[80cqw] pt-[12pt]">';
+    expect(check(code)).toHaveLength(4);
+  });
+
+  it("flags a raw length in a multi-value shorthand", () => {
+    // Tailwind spells a shorthand's spaces as underscores; one raw length among
+    // the components is still a raw length.
+    expect(check('<div class="p-[8px_16px]">')).toHaveLength(1);
+    expect(check('<div class="m-[0_auto_12px]">')).toHaveLength(1);
+  });
+
   it("does not flag arbitrary values that are not lengths", () => {
     const code =
       '<div class="grid-cols-[repeat(auto-fit,minmax(0,1fr))] bg-[url(/hero.png)] w-[--w]">';

@@ -1,7 +1,12 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { beforeAll, describe, expect, it } from "vitest";
-import { DOCS_TAILWIND_ENTRY, buildDocsTailwind, extractCandidates } from "./tailwind.ts";
+import {
+  DOCS_TAILWIND_ENTRY,
+  buildDocsTailwind,
+  compileCandidates,
+  extractCandidates,
+} from "./tailwind.ts";
 
 /**
  * The docs are where a block's container queries are shown to actually work, so
@@ -38,6 +43,21 @@ describe("extractCandidates", () => {
 
   it("ignores markup that is not a class attribute", () => {
     expect(extractCandidates('<a href="/en/blocks">grid</a>')).toEqual([]);
+  });
+
+  /**
+   * ADR-0005 welcomes intrinsic layout ("an `auto-fit` grid is not a
+   * breakpoint") and `no-hardcoded-dimension` names these as the escape hatch
+   * for what the contract does not name — so the first block to take the ADR up
+   * on it must not render in the preview with its grid quietly missing.
+   */
+  it("keeps an arbitrary value whole", () => {
+    expect(
+      extractCandidates(
+        '<div class="grid-cols-[repeat(auto-fit,minmax(0,1fr))] bg-[url(/x.png)]">',
+      ),
+    ).toEqual(["bg-[url(/x.png)]", "grid-cols-[repeat(auto-fit,minmax(0,1fr))]"]);
+    expect(extractCandidates('<div class="p-6 [&>*]:mt-0">')).toEqual(["[&>*]:mt-0", "p-6"]);
   });
 });
 
@@ -86,6 +106,12 @@ describe("the docs Tailwind build compiles what blocks are written with", () => 
     for (const slot of selfReferenced) {
       expect(tokensCss, `${slot} must be defined in tokens.css`).toContain(`${slot}:`);
     }
+  });
+
+  it("compiles the arbitrary values ADR-0005 blesses, end to end", async () => {
+    const source = '<div class="grid-cols-[repeat(auto-fit,minmax(0,1fr))]">';
+    const out = await compileCandidates(extractCandidates(source));
+    expect(out).toContain("repeat(auto-fit,minmax(0,1fr))");
   });
 
   it("declares the layer order that puts a block's utilities above components.css", () => {

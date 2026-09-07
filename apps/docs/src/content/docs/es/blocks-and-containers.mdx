@@ -21,12 +21,12 @@ que un bloque se maqueta.
 
 ## Un bloque, dos contenedores
 
-Abajo hay un único bloque `Pricing`, montado dos veces. Las dos copias son
-idénticas: mismo código, mismas props. La de la izquierda está limitada a 24rem,
-por debajo del paso `@md` del bloque, así que sus planes se apilan. La de la
-derecha ocupa todo el panel y pasa a tres columnas en cuanto ese panel mide al
-menos 36rem — estrecha esta ventana y se apilará por su cuenta, sin ninguna media
-query dentro del bloque.
+Abajo hay un único bloque `Pricing`, montado dos veces, una encima de la otra.
+Las dos copias son idénticas: mismo código, mismas props. La primera está
+limitada a 24rem, por debajo del paso `@md` del bloque, así que sus planes se
+apilan. La segunda ocupa todo el panel y pasa a tres columnas en cuanto ese panel
+mide al menos 36rem — estrecha esta ventana y se apilará por su cuenta, sin
+ninguna media query dentro del bloque.
 
 <Preview
   code={`<section className="@container">

@@ -21,12 +21,12 @@ with.
 
 ## One block, two containers
 
-Below is a single `Pricing` block, mounted twice. Nothing about the two copies
-differs: same source, same props. The one on the left is capped at 24rem, under
-the block's `@md` step, so its plans stack. The one on the right takes the whole
-panel and goes three-up as soon as that panel is at least 36rem wide — narrow
-this browser window and it will stack on its own, without a media query anywhere
-in the block.
+Below is a single `Pricing` block, mounted twice, one above the other. Nothing
+about the two copies differs: same source, same props. The first is capped at
+24rem, under the block's `@md` step, so its plans stack. The second takes the
+whole panel and goes three-up as soon as that panel is at least 36rem wide —
+narrow this browser window and it will stack on its own, without a media query
+anywhere in the block.
 
 <Preview
   code={`<section className="@container">

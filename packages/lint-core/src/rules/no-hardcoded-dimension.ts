@@ -77,18 +77,36 @@ const DIMENSION_UTILITIES = [
   "rounded-bl",
 ];
 
-const LENGTH_UNITS = "px|rem|em|ch|ex|vh|vw|vmin|vmax";
+/**
+ * Absolute and viewport-relative units, including the ones a 2020s stylesheet
+ * actually reaches for: `dvh`/`svh`/`lvh` are today's spelling of `vh`, and the
+ * container units (`cqw`, `cqi`, …) are the ones a container-query design
+ * system invites. A percentage is deliberately absent — it is relative to the
+ * container, which is the policy, not a breach of it.
+ */
+const LENGTH_UNITS =
+  "px|rem|em|ch|ex|pt|pc|in|cm|mm|q|lh|rlh|vh|vw|vb|vi|vmin|vmax|svh|svw|svmin|svmax|lvh|lvw|lvmin|lvmax|dvh|dvw|dvmin|dvmax|cqw|cqh|cqi|cqb|cqmin|cqmax";
+
+const RAW_LENGTH = new RegExp(String.raw`^-?[\d.]+(?:${LENGTH_UNITS})$`, "i");
 
 /**
- * `max-w-[42rem]`, `-mt-[3px]`, `@md:gap-[13px]` — the utility may carry a
- * variant prefix and a negative sign, and must be preceded by a class-list
- * boundary (start of string, whitespace, quote or backtick) so a longer
- * identifier that merely ends in one of the names cannot match.
+ * `max-w-[42rem]`, `-mt-[3px]`, `@md:gap-[13px]`, `p-[8px_16px]` — the utility
+ * may carry a variant prefix and a negative sign, and must be preceded by a
+ * class-list boundary (start of string, whitespace, quote or backtick) so a
+ * longer identifier that merely ends in one of the names cannot match. The
+ * arbitrary value is captured whole and split below: Tailwind writes a
+ * multi-value shorthand with underscores, and one raw length among them is one
+ * raw length too many.
  */
-const HARDCODED_UTILITY_LENGTH = new RegExp(
-  String.raw`(?<=^|[\s"'\`])(?:[\w@:.[\]/-]*:)?-?(?:${DIMENSION_UTILITIES.join("|")})-\[(-?[\d.]+(?:${LENGTH_UNITS}))\]`,
+const DIMENSION_UTILITY_VALUE = new RegExp(
+  String.raw`(?<=^|[\s"'\`])(?:[\w@:.[\]/-]*:)?-?(?:${DIMENSION_UTILITIES.join("|")})-\[([^\]\s"'\`]*)\]`,
   "g",
 );
+
+/** Whether an arbitrary value hardcodes a length in any of its components. */
+function hasRawLength(value: string): boolean {
+  return value.split("_").some((component) => RAW_LENGTH.test(component));
+}
 
 export const noHardcodedDimension: Rule = {
   id: "moderno/no-hardcoded-dimension",
@@ -107,7 +125,8 @@ export const noHardcodedDimension: Rule = {
         suggestion: `Reference a contract radius slot instead, e.g. border-radius: var(${slot}).`,
       });
     }
-    for (const match of ctx.code.matchAll(HARDCODED_UTILITY_LENGTH)) {
+    for (const match of ctx.code.matchAll(DIMENSION_UTILITY_VALUE)) {
+      if (!hasRawLength(match[1]!)) continue;
       findings.push({
         ruleId: "moderno/no-hardcoded-dimension",
         severity: "error",

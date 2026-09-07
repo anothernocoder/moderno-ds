@@ -114,12 +114,19 @@ rebuild. Two rules follow from
    sidebar, a modal or a page; `md:` — Tailwind's _viewport_ variant, one
    character away — makes it right in exactly one of them.
    `blocks/pricing` is the worked example.
-2. **No literal colours or dimensions.** Not as CSS, and not inside an arbitrary
-   value (`w-[320px]`).
+2. **No literal colours or dimensions.** Paint from contract slots and size from
+   the preset's scales. A colour literal is rejected wherever it appears — a CSS
+   declaration or an arbitrary value — and so is a raw length inside an
+   arbitrary value (`w-[320px]`, `p-[8px_16px]`).
 
 Both are enforced on every PR: `pnpm lint:registry` runs `moderno-lint` over
 every source file listed in `registry.json`, and a test rejects `@media` and
 viewport variants in blocks.
+
+One gap worth knowing while it lasts: as _CSS_, `no-hardcoded-dimension` still
+only reads `border-radius` (spacing and motion were deferred from #43), so a
+`width: 320px` in an SFC's `<style>` block passes the linter today. Write the
+dimensions as utilities and the gate has the whole surface.
 
 ## Themes & the multi-brand switch
 

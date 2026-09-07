@@ -8,7 +8,7 @@
  * That makes the utility set small, closed and knowable, so the docs compile it
  * directly with Tailwind's own `compile()` rather than wiring a bundler plugin
  * and a PostCSS chain into Astro for one preview panel. The pure half lives
- * here; `bin-tailwind.ts` is the thin entry the docs `prebuild` runs.
+ * here; `build-tailwind.ts` is the thin entry the docs `prebuild` runs.
  *
  * Two deliberate omissions from a stock `@import "tailwindcss"`:
  *
@@ -80,7 +80,52 @@ const CLASS_ATTRIBUTE =
   /\b(?:class|className|class:list)\s*=\s*(?:"([^"]*)"|'([^']*)'|\{([^}]*)\})/g;
 
 /** Everything that can separate one candidate from the next inside an attribute. */
-const CANDIDATE_SEPARATOR = /[\s,`'"[\]{}()]+/;
+const CANDIDATE_SEPARATOR = /[\s,`'"{}()]/;
+
+/**
+ * Splits an attribute value into candidates, keeping a bracketed segment whole.
+ *
+ * A bracket opens an arbitrary value (`grid-cols-[repeat(auto-fit,minmax(0,1fr))]`,
+ * `bg-[url(/hero.png)]`) or an arbitrary variant (`[&>*]:mt-0`), and either runs
+ * to its matching `]` as one candidate. ADR-0005 blesses exactly those — an
+ * `auto-fit` grid is intrinsic layout, not a breakpoint — so splitting on the
+ * bracket would silently drop the escape hatch and render the preview with no
+ * grid at all, no error and no failing test.
+ *
+ * The one bracket that is not a candidate's is the host dialect's own array
+ * (`class:list={['p-6', 'grid']}`), recognised by the quote or space that
+ * follows it, and skipped.
+ */
+function candidatesIn(value: string, found: Set<string>): void {
+  let token = "";
+  let depth = 0;
+  const flush = () => {
+    if (token.length > 0 && !token.includes("=")) found.add(token);
+    token = "";
+  };
+  for (let i = 0; i < value.length; i += 1) {
+    const char = value[i]!;
+    if (depth > 0) {
+      token += char;
+      if (char === "[") depth += 1;
+      else if (char === "]") depth -= 1;
+      continue;
+    }
+    if (char === "[") {
+      const next = value[i + 1];
+      if (token.length === 0 && (next === undefined || /[\s'"`]/.test(next))) continue;
+      token += char;
+      depth = 1;
+      continue;
+    }
+    if (char === "]" || CANDIDATE_SEPARATOR.test(char)) {
+      flush();
+      continue;
+    }
+    token += char;
+  }
+  flush();
+}
 
 /**
  * Every Tailwind candidate written in a `class` attribute in `source`.
@@ -90,10 +135,7 @@ const CANDIDATE_SEPARATOR = /[\s,`'"[\]{}()]+/;
 export function extractCandidates(source: string): string[] {
   const found = new Set<string>();
   for (const match of source.matchAll(CLASS_ATTRIBUTE)) {
-    const value = match[1] ?? match[2] ?? match[3] ?? "";
-    for (const token of value.split(CANDIDATE_SEPARATOR)) {
-      if (token.length > 0 && !token.includes("=")) found.add(token);
-    }
+    candidatesIn(match[1] ?? match[2] ?? match[3] ?? "", found);
   }
   return [...found].sort();
 }
@@ -108,6 +150,18 @@ async function loadStylesheet(id: string, base: string) {
   return { base: dirname(path), path, content: readFileSync(path, "utf8") };
 }
 
+/** Compiles the docs' utility stylesheet for an explicit candidate set. */
+export async function compileCandidates(candidates: Iterable<string>): Promise<string> {
+  const compiled = await compile(DOCS_TAILWIND_ENTRY, {
+    base: process.cwd(),
+    loadStylesheet,
+    loadModule: async () => {
+      throw new Error("the docs Tailwind entry must not require JS modules");
+    },
+  });
+  return compiled.build([...new Set(candidates)].sort());
+}
+
 /**
  * Compiles the docs' utility stylesheet from the candidates used across
  * `sourceFiles`. Returns the CSS to write; the caller decides where.
@@ -119,12 +173,5 @@ export async function buildDocsTailwind(sourceFiles: string[]): Promise<string> 
       candidates.add(candidate);
     }
   }
-  const compiled = await compile(DOCS_TAILWIND_ENTRY, {
-    base: process.cwd(),
-    loadStylesheet,
-    loadModule: async () => {
-      throw new Error("the docs Tailwind entry must not require JS modules");
-    },
-  });
-  return compiled.build([...candidates].sort());
+  return compileCandidates(candidates);
 }
