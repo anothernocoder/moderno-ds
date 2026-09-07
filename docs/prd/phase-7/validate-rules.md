@@ -59,10 +59,16 @@ For any Moderno component usage, every prop/attribute must exist in that
 component's manifest `props`, and enum-valued props (`variant`, `size`, …) must
 be one of the manifest `variants` values.
 
-- Consults: component `props` + `variants`.
+- Consults: component `props` + `variants` + `propsComplete`.
 - Catches: `<Button variant="primaryy">`, `<Button loud>`, misspelled props —
   the hallucinated-API failure mode, deterministically.
 - Suggestion: closest valid value / prop by edit distance.
+- The unknown-prop half runs only where `propsComplete` is true. A root wrapped
+  around a headless machine (`Select`, `Field`, `Dialog`) reaches the manifest
+  with only its workspace-declared props — props-doc drops Ark/Zag's
+  declarations with the DOM noise — so `<Select.Root collection={…}>` is not
+  judged. The `variants` half still applies there: it is generated from the
+  recipe and is always complete.
 
 ### 4. `moderno/no-raw-ark` — error, fixable
 
