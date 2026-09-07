@@ -12,6 +12,7 @@ describe("AGENT_COMPONENTS", () => {
     const names = AGENT_COMPONENTS.map((c) => c.name);
     expect(names).toEqual([
       "Button",
+      "Alert",
       "Field",
       "Checkbox",
       "Dialog",
@@ -72,6 +73,24 @@ describe("buildComponentsManifest", () => {
     const doc = manifest.components.find((c) => c.name === "Dialog")!;
     expect(doc.props).toEqual([]);
     expect(doc.variants).toBeUndefined();
+  });
+
+  it("carries Alert's props, statuses and full anatomy — what validate_usage checks against", () => {
+    const alert = manifest.components.find((c) => c.name === "Alert")!;
+    expect(alert.scope).toBe("alert");
+    expect(alert.props.map((p) => p.name).sort()).toEqual(["size", "variant"]);
+    expect(alert.variants).toEqual({
+      variant: ["info", "success", "warning", "error"],
+      size: ["sm", "md"],
+    });
+    expect(alert.parts.map((p) => p.name)).toEqual([
+      "root",
+      "icon",
+      "content",
+      "title",
+      "description",
+      "action",
+    ]);
   });
 
   it("reads variants straight off the shared @moderno-ui/core recipes", () => {

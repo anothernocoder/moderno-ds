@@ -47,10 +47,18 @@ in `:root` (light) with a `.dark` override.
 | `--muted` / `--muted-foreground`             | muted surface + subdued text |
 | `--accent` / `--accent-foreground`           | accent surface               |
 | `--destructive` / `--destructive-foreground` | destructive action           |
+| `--info` / `--info-foreground`               | informational status         |
+| `--success` / `--success-foreground`         | positive status              |
+| `--warning` / `--warning-foreground`         | cautionary status            |
 | `--border`                                   | borders / separators         |
 | `--input`                                    | form control borders         |
 | `--ring`                                     | focus ring                   |
 | `--chart-1` … `--chart-5`                    | data-viz series              |
+
+The status slots carry the hue of a _state_, not of an action: an Alert or a
+Badge tints its surface with them (`color-mix` against `--card`), while the
+error state reuses `--destructive` so a destructive action and an error message
+speak with one voice.
 
 Non-color contract slots: `--radius`, `--font-sans`, `--font-mono`. Every theme
 must define these and all the color slots above, in both scopes.

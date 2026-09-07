@@ -4,6 +4,7 @@
  * popovers so the SSR smoke can exercise the portal/id path.
  */
 import { For } from "solid-js";
+import { Alert } from "../src/alert.jsx";
 import { Button } from "../src/button.jsx";
 import { Field } from "../src/field.jsx";
 import { Checkbox } from "../src/checkbox.jsx";
@@ -59,6 +60,28 @@ export function App(props: { open?: boolean }) {
         <Button variant="destructive" size="lg">
           Destructive
         </Button>
+      </section>
+
+      <section aria-label="alerts">
+        <Alert.Root variant="info">
+          <Alert.Icon>i</Alert.Icon>
+          <Alert.Content>
+            <Alert.Title>Heads up</Alert.Title>
+            <Alert.Description>Your trial ends in three days.</Alert.Description>
+            <Alert.Action>
+              <Button size="sm" variant="outline">
+                Manage plan
+              </Button>
+            </Alert.Action>
+          </Alert.Content>
+        </Alert.Root>
+        <Alert.Root variant="error" size="sm">
+          <Alert.Icon>!</Alert.Icon>
+          <Alert.Content>
+            <Alert.Title>Payment failed</Alert.Title>
+            <Alert.Description>We could not charge your card.</Alert.Description>
+          </Alert.Content>
+        </Alert.Root>
       </section>
 
       <section aria-label="fields">

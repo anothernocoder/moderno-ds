@@ -5,6 +5,7 @@
  * Select popovers to exercise the harder portal/id path.
  */
 import { defineComponent, h, type Component } from "vue";
+import { Alert } from "../src/alert.js";
 import { Button } from "../src/button.js";
 import { Field } from "../src/field.js";
 import { Checkbox } from "../src/checkbox.js";
@@ -61,6 +62,26 @@ export const App = defineComponent({
           h(Button, { variant: "outline" }, () => "Outline"),
           h(Button, { variant: "ghost", size: "sm" }, () => "Ghost"),
           h(Button, { variant: "destructive", size: "lg" }, () => "Destructive"),
+        ]),
+
+        h("section", { "aria-label": "alerts" }, [
+          h(Alert.Root, { variant: "info" }, () => [
+            h(Alert.Icon, {}, () => "i"),
+            h(Alert.Content, {}, () => [
+              h(Alert.Title, {}, () => "Heads up"),
+              h(Alert.Description, {}, () => "Your trial ends in three days."),
+              h(Alert.Action, {}, () =>
+                h(Button, { size: "sm", variant: "outline" }, () => "Manage plan"),
+              ),
+            ]),
+          ]),
+          h(Alert.Root, { variant: "error", size: "sm" }, () => [
+            h(Alert.Icon, {}, () => "!"),
+            h(Alert.Content, {}, () => [
+              h(Alert.Title, {}, () => "Payment failed"),
+              h(Alert.Description, {}, () => "We could not charge your card."),
+            ]),
+          ]),
         ]),
 
         h("section", { "aria-label": "fields" }, [

@@ -5,6 +5,7 @@
   + Select popovers.
 -->
 <script lang="ts">
+  import { Alert } from "../src/index.js";
   import { Button } from "../src/index.js";
   import { Field } from "../src/index.js";
   import { Checkbox } from "../src/index.js";
@@ -44,6 +45,27 @@
     <Button variant="ghost" size="sm">Ghost</Button>
     <Button variant="destructive" size="lg">Destructive</Button>
   </section>
+
+  <section aria-label="alerts">
+    <Alert.Root variant="info">
+      <Alert.Icon>i</Alert.Icon>
+      <Alert.Content>
+        <Alert.Title>Heads up</Alert.Title>
+        <Alert.Description>Your trial ends in three days.</Alert.Description>
+        <Alert.Action>
+          <Button size="sm" variant="outline">Manage plan</Button>
+        </Alert.Action>
+      </Alert.Content>
+    </Alert.Root>
+    <Alert.Root variant="error" size="sm">
+      <Alert.Icon>!</Alert.Icon>
+      <Alert.Content>
+        <Alert.Title>Payment failed</Alert.Title>
+        <Alert.Description>We could not charge your card.</Alert.Description>
+      </Alert.Content>
+    </Alert.Root>
+  </section>
+
 
   <section aria-label="fields">
     <Field.Root size="sm">

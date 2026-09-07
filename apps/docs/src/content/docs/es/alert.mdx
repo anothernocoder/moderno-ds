@@ -1,0 +1,57 @@
+---
+title: Alert
+description: Un mensaje de estado en línea con ranura de icono, título, descripción y acción opcional, en cuatro estados pintados desde los slots de estado del contrato.
+group: Componentes
+order: 15
+component: Alert
+pkg: "@moderno-ui/react"
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import AlertDemo from "../../../islands/AlertDemo.svelte";
+
+Alert es una primitiva solo-CSS: Ark no tiene una máquina para alert porque una
+alerta no tiene comportamiento que gobernar — es una región estática. Así que,
+como Button, es el contrato en su forma más pura: elementos que llevan
+`data-scope`/`data-part` más el `data-variant`/`data-size` de la receta, con cada
+píxel proveniente de `components.css`.
+
+La anatomía es `root > icon + content(> title + description + action)`. `Icon` es
+una ranura, nunca un set de iconos: las primitivas siguen siendo agnósticas del
+icono, así que pasas tu propio glifo y la parte le entrega el tono del estado a
+través de `currentColor`.
+
+<Preview
+  code={`<Alert.Root variant="warning">
+  <Alert.Icon>
+    <TriangleAlert aria-hidden />
+  </Alert.Icon>
+  <Alert.Content>
+    <Alert.Title>La tarjeta vence</Alert.Title>
+    <Alert.Description>La tarjeta terminada en 4242 vence el mes próximo.</Alert.Description>
+    <Alert.Action>
+      <Button size="sm" variant="outline">Actualizar tarjeta</Button>
+    </Alert.Action>
+  </Alert.Content>
+</Alert.Root>`}
+>
+  <AlertDemo client:visible />
+</Preview>
+
+## Estados
+
+`info`, `success`, `warning` y `error` tiñen una superficie desde el slot del
+contrato correspondiente — `--info`, `--success`, `--warning`, y `--destructive`
+para `error`, de modo que una acción destructiva y un mensaje de error hablen con
+una sola voz. La urgencia sigue al estado: `warning` y `error` renderizan
+`role="alert"` (asertivo), `info` y `success` `role="status"` (cortés).
+
+## Instalación
+
+<Install pkg="@moderno-ui/react" />
+
+## Propiedades
+
+<PropsTable component="Alert" />

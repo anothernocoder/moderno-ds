@@ -11,6 +11,9 @@
 export { Button } from "./button.js";
 export type { ButtonProps } from "./button.js";
 
+export { Alert } from "./alert.js";
+export type { AlertRootProps, AlertPartProps, AlertVariant, AlertSize } from "./alert.js";
+
 export { Field } from "./field.js";
 export type {
   FieldSize,
