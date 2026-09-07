@@ -7,6 +7,7 @@
 <script lang="ts">
   import { Button } from "../src/index.js";
   import { Field } from "../src/index.js";
+  import { Checkbox } from "../src/index.js";
   import { Dialog, Portal } from "../src/index.js";
   import { Select, createListCollection } from "../src/index.js";
   import { AreaChart, BarChart, LineChart, ScatterChart } from "../src/index.js";
@@ -50,6 +51,32 @@
     <Field.HelperText>We never share it.</Field.HelperText>
     <Field.ErrorText>Email is required.</Field.ErrorText>
   </Field.Root>
+
+  <section aria-label="checkboxes">
+    <Checkbox.Root defaultChecked>
+      <Checkbox.Control>
+        <Checkbox.Indicator>✓</Checkbox.Indicator>
+        <Checkbox.Indicator indeterminate>–</Checkbox.Indicator>
+      </Checkbox.Control>
+      <Checkbox.Label>Email me updates</Checkbox.Label>
+      <Checkbox.HiddenInput />
+    </Checkbox.Root>
+    <Checkbox.Root size="sm" defaultChecked="indeterminate">
+      <Checkbox.Control>
+        <Checkbox.Indicator>✓</Checkbox.Indicator>
+        <Checkbox.Indicator indeterminate>–</Checkbox.Indicator>
+      </Checkbox.Control>
+      <Checkbox.Label>Select all</Checkbox.Label>
+      <Checkbox.HiddenInput />
+    </Checkbox.Root>
+    <Checkbox.Root size="lg" disabled>
+      <Checkbox.Control>
+        <Checkbox.Indicator>✓</Checkbox.Indicator>
+      </Checkbox.Control>
+      <Checkbox.Label>Unavailable</Checkbox.Label>
+      <Checkbox.HiddenInput />
+    </Checkbox.Root>
+  </section>
 
   <Dialog.Root defaultOpen={open}>
     <Dialog.Trigger>Open dialog</Dialog.Trigger>

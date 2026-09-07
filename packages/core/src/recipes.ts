@@ -24,6 +24,17 @@ export const buttonRecipe = cva({
   defaultVariants: { variant: "primary", size: "md" },
 });
 
+/**
+ * Checkbox: control `size` (the box + label density). Checked, indeterminate,
+ * disabled and invalid are Ark's own `data-state`/`data-*`, not variants.
+ */
+export const checkboxRecipe = cva({
+  variants: {
+    size: ["sm", "md", "lg"],
+  },
+  defaultVariants: { size: "md" },
+});
+
 /** Select: control `size` (the trigger/menu density). Selection state is Ark's. */
 export const selectRecipe = cva({
   variants: {
@@ -46,3 +57,6 @@ export type ButtonSize = NonNullable<VariantProps<typeof buttonRecipe.variants>[
 
 /** Select's control density (trigger/menu). Selection state stays Ark's. */
 export type SelectSize = NonNullable<VariantProps<typeof selectRecipe.variants>["size"]>;
+
+/** Checkbox's control density (box + label). Checked state stays Ark's. */
+export type CheckboxSize = NonNullable<VariantProps<typeof checkboxRecipe.variants>["size"]>;

@@ -15,7 +15,8 @@
 
 Each binding's only job is to spread `data-scope`/`data-part` + the recipe's
 `data-*` onto markup. Button is the sole authored element; Field and Dialog are
-verbatim Ark re-exports; Select wraps only `Root` to inject `data-size`.
+verbatim Ark re-exports; Select and Checkbox wrap only `Root` to inject
+`data-size`.
 
 ## Component × framework × state
 
@@ -43,6 +44,16 @@ shared stylesheet keys on.
 | error text hidden when valid |  ✅   | ✅  |   ✅   |  ✅   |
 | disabled propagates          |  ✅   | ✅  |   ✅   |  ✅   |
 
+### Checkbox (`checkboxRecipe`: `data-size`; Ark tri-state machine)
+
+| State                             | React | Vue | Svelte | Solid |
+| --------------------------------- | :---: | :-: | :----: | :---: |
+| size → root `data-size` (+ `md`)  |  ✅   | ✅  |   ✅   |  ✅   |
+| label ↔ hidden input (`for`/`id`) |  ✅   | ✅  |   ✅   |  ✅   |
+| click toggles → `data-state`      |  ✅   | ✅  |   ✅   |  ✅   |
+| indeterminate → `data-state`      |  ✅   | ✅  |   ✅   |  ✅   |
+| disabled → `data-disabled`, inert |  ✅   | ✅  |   ✅   |  ✅   |
+
 ### Dialog (Ark portal + focus trap + ids)
 
 | State                    | React | Vue | Svelte | Solid |
@@ -66,14 +77,15 @@ shared stylesheet keys on.
 | Guarantee                                   | React | Vue | Svelte | Solid |
 | ------------------------------------------- | :---: | :-: | :----: | :---: |
 | stable server HTML (scope/part + recipe)    |  ✅   | ✅  |   ✅   |  ✅   |
+| checkbox `data-state` survives SSR          |  ✅   | ✅  |   ✅   |  ✅   |
 | warning-free hydration (id path)            |  ✅   | ✅¹ |   —²   |  —²   |
 | static server-only island (zero `<script>`) |   —   |  —  |   ✅   |   —   |
 | `defaultOpen` survives SSR                  |  ✅   | ✅  |   ✅   |  ✅   |
 
-¹ Vue hydration is verified on the portal-free primitives (Button + Field), the
-deterministic `useId` hazard; Ark's portaled popovers position via floating-ui
-measurement absent in jsdom, so their hydration is covered by the string +
-interaction suites.
+¹ Vue hydration is verified on the portal-free primitives (Button + Field +
+Checkbox), the deterministic `useId` hazard; Ark's portaled popovers position
+via floating-ui measurement absent in jsdom, so their hydration is covered by
+the string + interaction suites.
 ² Svelte/Solid use a separate SSR-compiled test project (`*.ssr.test.*`) that
 asserts the static server string; Svelte additionally proves the zero-runtime
 Astro-island guarantee (F3.5).
@@ -86,5 +98,6 @@ Astro-island guarantee (F3.5).
 - **Authoring style** mirrors each ecosystem: React/Solid JSX, Vue `h()` render
   functions (no SFC → tsup builds it), Svelte 5 `.svelte` runes (built with
   `svelte-package`).
-- **Typing**: the wrapped `Select` export is annotated in every package so the
-  emitted `.d.ts` never inlines an un-nameable `@zag-js` type (TS2742).
+- **Typing**: the wrapped `Select` and `Checkbox` exports are annotated in every
+  package so the emitted `.d.ts` never inlines an un-nameable `@zag-js` type
+  (TS2742).

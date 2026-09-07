@@ -1,0 +1,59 @@
+---
+title: Checkbox
+description: A tri-state checkbox with a label — Ark binds the label to a visually hidden native input and stamps data-state on every part; the Moderno size recipe adds a data-size to the root so components.css keys the box and label density off it.
+group: Components
+order: 25
+component: Checkbox
+pkg: "@moderno-ui/react"
+agentPropsHash: "sha256:5ac68846bf8a09ce75a826a04e49b9dacac97529942eb19d27f0534a9988c728"
+agent:
+  intent: Toggle one independent boolean, optionally with a mixed (indeterminate) state.
+  whenToUse: An opt-in, a terms acceptance, or one row of a multi-select list whose parent shows the mixed state.
+  whenNotToUse:
+    - case: One choice out of 2–5 mutually exclusive options
+      use: Radio Group
+    - case: An immediate on/off setting that applies without a submit
+      use: Switch
+    - case: A bounded list where the trigger shows the current value
+      use: Select
+  gotchas:
+    - "Render Checkbox.HiddenInput — it is the real form control that carries name/value and focus."
+    - "Two indicators, not one: <Checkbox.Indicator> shows when checked and <Checkbox.Indicator indeterminate> when mixed."
+    - "size is the only visual knob; checked/indeterminate/disabled/invalid are Ark's data-state and data-* attributes, not props to style around."
+  theming:
+    - "The filled box uses --primary with the glyph on --primary-foreground; the resting border is --input."
+    - "Invalid re-colours the border from --destructive; do not pass a hex."
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import CheckboxDemo from "../../../islands/CheckboxDemo.svelte";
+
+Only `Checkbox.Root` is wrapped, to inject the `size` recipe's `data-size`;
+every other part is Ark's verbatim. The root is a `<label>` bound to a visually
+hidden native `<input type="checkbox">`, so forms, `name`/`value` and screen
+readers work with no extra wiring, and `components.css` paints the control from
+Ark's `data-state="checked|unchecked|indeterminate"` plus
+`data-disabled`/`data-invalid`.
+
+<Preview
+  code={`<Checkbox.Root size="md" defaultChecked="indeterminate">
+  <Checkbox.Control>
+    <Checkbox.Indicator>✓</Checkbox.Indicator>
+    <Checkbox.Indicator indeterminate>–</Checkbox.Indicator>
+  </Checkbox.Control>
+  <Checkbox.Label>Email me updates</Checkbox.Label>
+  <Checkbox.HiddenInput />
+</Checkbox.Root>`}
+>
+  <CheckboxDemo client:visible />
+</Preview>
+
+## Installation
+
+<Install pkg="@moderno-ui/react" />
+
+## Props
+
+<PropsTable component="Checkbox" />

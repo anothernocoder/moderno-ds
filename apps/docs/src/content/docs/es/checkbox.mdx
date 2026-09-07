@@ -1,0 +1,42 @@
+---
+title: Checkbox
+description: Una casilla de tres estados con etiqueta — Ark enlaza la etiqueta con un input nativo oculto y marca data-state en cada parte; la receta size de Moderno agrega un data-size a la raíz para que components.css ajuste la densidad de la casilla y la etiqueta.
+group: Componentes
+order: 25
+component: Checkbox
+pkg: "@moderno-ui/react"
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import CheckboxDemo from "../../../islands/CheckboxDemo.svelte";
+
+Solo `Checkbox.Root` está envuelto, para inyectar el `data-size` de la receta
+`size`; el resto de las partes son las de Ark tal cual. La raíz es un `<label>`
+enlazado a un `<input type="checkbox">` nativo visualmente oculto, así que los
+formularios, `name`/`value` y los lectores de pantalla funcionan sin cableado
+extra, y `components.css` pinta el control según el
+`data-state="checked|unchecked|indeterminate"` de Ark más
+`data-disabled`/`data-invalid`.
+
+<Preview
+  code={`<Checkbox.Root size="md" defaultChecked="indeterminate">
+  <Checkbox.Control>
+    <Checkbox.Indicator>✓</Checkbox.Indicator>
+    <Checkbox.Indicator indeterminate>–</Checkbox.Indicator>
+  </Checkbox.Control>
+  <Checkbox.Label>Quiero recibir novedades</Checkbox.Label>
+  <Checkbox.HiddenInput />
+</Checkbox.Root>`}
+>
+  <CheckboxDemo client:visible />
+</Preview>
+
+## Instalación
+
+<Install pkg="@moderno-ui/react" />
+
+## Propiedades
+
+<PropsTable component="Checkbox" />

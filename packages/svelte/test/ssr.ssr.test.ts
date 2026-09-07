@@ -13,10 +13,13 @@ describe("SSR (Svelte, server-only island)", () => {
     const { html } = render(App);
     expect(html).toContain('data-scope="button"');
     expect(html).toContain('data-scope="field"');
+    expect(html).toContain('data-scope="checkbox"');
     expect(html).toContain("Open dialog");
     expect(html).toContain("Framework");
     expect(html).toContain('data-variant="destructive"');
     expect(html).toContain('data-size="md"');
+    expect(html).toMatch(/data-part="control"[^>]*data-state="checked"/);
+    expect(html).toMatch(/data-part="control"[^>]*data-state="indeterminate"/);
   });
 
   it("emits static markup with no client runtime (zero <script>)", () => {

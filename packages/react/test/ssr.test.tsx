@@ -15,12 +15,16 @@ describe("SSR + hydration (React 19)", () => {
     const html = renderToString(<App />);
     expect(html).toContain('data-scope="button"');
     expect(html).toContain('data-scope="field"');
+    expect(html).toContain('data-scope="checkbox"');
     // Triggers are present even while the dialog/select popovers are closed.
     expect(html).toContain("Open dialog");
     expect(html).toContain("Framework");
     // The recipe attributes survive serialisation.
     expect(html).toContain('data-variant="destructive"');
     expect(html).toContain('data-size="md"');
+    // Checkbox serialises its Ark state, not just its scope.
+    expect(html).toMatch(/data-part="control"[^>]*data-state="checked"/);
+    expect(html).toMatch(/data-part="control"[^>]*data-state="indeterminate"/);
   });
 
   async function hydrateAndCountWarnings(tree: ReactElement): Promise<number> {

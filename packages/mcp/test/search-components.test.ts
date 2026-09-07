@@ -42,7 +42,7 @@ describe("searchComponents", () => {
 
   it("returns every component (ranked, not filtered out) when nothing scores", () => {
     const result = searchComponents(manifests, { query: "xyzzy", framework: "react" });
-    expect(result.matches).toHaveLength(2);
+    expect(result.matches).toHaveLength(3);
     expect(result.matches.every((m) => m.score === 0)).toBe(true);
   });
 });

@@ -13,6 +13,7 @@ import type { ComponentEntry } from "./index.ts";
 /** Components with consumer-authored props worth a table. */
 export const ENTRIES: ComponentEntry[] = [
   { name: "Button", file: "src/button.tsx", type: "ButtonProps" },
+  { name: "Checkbox", file: "src/checkbox.tsx", type: "ModernoCheckboxRootProps" },
   { name: "Select", file: "src/select.tsx", type: "ModernoSelectRootProps" },
   { name: "LineChart", file: "src/charts.tsx", type: "LineChartProps" },
   { name: "AreaChart", file: "src/charts.tsx", type: "AreaChartProps" },

@@ -21,6 +21,19 @@ export type {
   FieldErrorTextProps,
 } from "./field.js";
 
+export { Checkbox } from "./checkbox.js";
+export type {
+  CheckboxSize,
+  ModernoCheckboxRootProps,
+  CheckboxRootProps,
+  CheckboxControlProps,
+  CheckboxIndicatorProps,
+  CheckboxLabelProps,
+  CheckboxHiddenInputProps,
+  CheckboxCheckedChangeDetails,
+  CheckboxCheckedState,
+} from "./checkbox.js";
+
 export { Dialog, Portal } from "./dialog.js";
 export type {
   DialogRootProps,
