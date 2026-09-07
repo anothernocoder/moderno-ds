@@ -6,7 +6,7 @@
  * `class`/`className`, `data-*`/`aria-*`, `children`/`ref`/`key`/`style`), and
  * enum-valued props must be one of the manifest's `variants`.
  *
- * Two things stop the check from being a plain "is this name in `props`?":
+ * Three things stop the check from being a plain "is this name in `props`?":
  *
  * - The manifest's `props` is not exhaustive. `@moderno-ui/props-doc` keeps
  *   only workspace-declared props, so a binding that extends
@@ -20,6 +20,15 @@
  *   down to the prop it actually sets, or to "not a prop" — comparing raw
  *   markup against a camelCase manifest is how `<LineChart :x-ticks="3" />`,
  *   the DS's own documented Vue usage, ended up reported as an error.
+ * - The unknown-prop half only runs where the manifest says its prop list is
+ *   complete (`propsComplete`). A root wrapped around a headless machine —
+ *   `Select.Root`, `Checkbox.Root`, `Field.Root`, `Dialog.Root` — reaches the
+ *   manifest with only the props declared in this workspace, because
+ *   `props-doc` drops Ark/Zag's declarations along with the DOM noise; flagging
+ *   `collection` or `invalid` there would make the tool that exists to catch
+ *   invented APIs invent errors on the DS's own examples. The enum check still
+ *   applies to those roots: it consults `variants`, which is generated from the
+ *   recipe and always complete.
  */
 import type { Finding, Rule } from "./types.ts";
 import { findComponentUsages } from "./component-usages.ts";
@@ -148,6 +157,12 @@ export const validProps: Rule = {
           }
 
           if (isPassthrough(prop)) continue;
+
+          // Not in the list — but the list is only exhaustive when the
+          // component owns every prop it accepts. Otherwise this attribute is
+          // as likely one of Ark's as one the agent made up, and silence is the
+          // only honest answer.
+          if (!component.propsComplete) continue;
 
           const suggestion = closest(propNames, prop);
           findings.push({

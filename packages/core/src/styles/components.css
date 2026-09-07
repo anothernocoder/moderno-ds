@@ -164,13 +164,19 @@
     padding: var(--spacing-6);
   }
 
-  /* Density. Those three regions are the root's only children, so
-     `> [data-scope="card"]` reaches exactly them — and the child combinator
-     keeps a nested card on its own size instead of inheriting its host's. */
-  [data-scope="card"][data-size="sm"] > [data-scope="card"] {
+  /* Density — the same three regions the base rule names, spelled out again so
+     the step can never reach a part the base does not pad. Every part is
+     optional and the order is the consumer's, so a root holding only a title
+     must look the same at `sm`/`lg` as at `md`. The child combinator keeps a
+     nested card on its own size instead of inheriting its host's. */
+  [data-scope="card"][data-size="sm"] > [data-scope="card"][data-part="header"],
+  [data-scope="card"][data-size="sm"] > [data-scope="card"][data-part="content"],
+  [data-scope="card"][data-size="sm"] > [data-scope="card"][data-part="footer"] {
     padding: var(--spacing-4);
   }
-  [data-scope="card"][data-size="lg"] > [data-scope="card"] {
+  [data-scope="card"][data-size="lg"] > [data-scope="card"][data-part="header"],
+  [data-scope="card"][data-size="lg"] > [data-scope="card"][data-part="content"],
+  [data-scope="card"][data-size="lg"] > [data-scope="card"][data-part="footer"] {
     padding: var(--spacing-8);
   }
   /* Consecutive regions share one padding step between them instead of

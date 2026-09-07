@@ -152,6 +152,12 @@ function parseAttrs(text: string): Record<string, string | true> {
  * not: they take only native attributes plus whatever the headless machine
  * hands them (`<Select.Item item={…}>`), none of which the root's prop list
  * knows about.
+ *
+ * The root of a machine-backed primitive has the same problem one level up —
+ * `<Select.Root collection={…}>` is Ark's prop, absent from the manifest — but
+ * that is a question about the *prop list*, not about what counts as a usage,
+ * so it belongs to the caller: `valid-props` gates its unknown-prop check on
+ * the manifest's `propsComplete`.
  */
 export function findComponentUsages(code: string, name: string): ComponentUsage[] {
   const usages: ComponentUsage[] = [];

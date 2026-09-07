@@ -66,6 +66,33 @@ describe("components.css — Card", () => {
     }
   });
 
+  it("pads the same three regions at every density", () => {
+    // Every part is optional and the order is the consumer's, so a density
+    // step that reached further than the base rule would let identical markup
+    // gain padding purely by changing `size` — and would pad a nested root.
+    const paddedBy = new Map<string, Set<string>>();
+    root.walkRules((rule: Rule) => {
+      if (!rule.selector.includes('[data-scope="card"]')) return;
+      rule.walkDecls("padding", (d: Declaration) => {
+        const parts = paddedBy.get(d.value) ?? new Set<string>();
+        for (const selector of rule.selectors) {
+          const subject = selector.split(">").pop()!;
+          parts.add(/\[data-part="([a-z-]+)"\]/.exec(subject)?.[1] ?? `any child (${selector})`);
+        }
+        paddedBy.set(d.value, parts);
+      });
+    });
+
+    expect([...paddedBy.keys()].sort()).toEqual([
+      "var(--spacing-4)",
+      "var(--spacing-6)",
+      "var(--spacing-8)",
+    ]);
+    for (const [step, parts] of paddedBy) {
+      expect([...parts].sort(), `padding: ${step}`).toEqual(["content", "footer", "header"]);
+    }
+  });
+
   it("styles the whole anatomy the bindings emit", () => {
     const parts = new Set<string>();
     root.walkRules((rule: Rule) => {
