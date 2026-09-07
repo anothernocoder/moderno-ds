@@ -4,12 +4,12 @@ How an agent works one `ready-for-agent` ticket to a merged PR, and how an orche
 
 ## Working a ticket
 
-1. **Claim.** `gh issue view <N> --comments`. Start only if every issue under "Blocked by" is closed. Comment "Working on this" so a parallel agent skips it. Done when: the claim comment is posted.
+1. **Claim.** `gh issue view <N> --comments`. A blocker is **settled** when its issue is closed, or when its PR carries a `Review: PASS` comment with green CI (then you build on that PR's branch: **stacked**). Start only if every issue under "Blocked by" is settled. Comment "Working on this" so a parallel agent skips it. Done when: the claim comment is posted and you know your base branch: `main`, or the branch of the newest unmerged blocker PR.
 2. **Read the domain, then the ticket's parents.** `CONTEXT.md` and the ADRs the ticket names (see `docs/agents/domain.md`); the spec and epic it links. Done when: you can name the glossary term for every noun in the ticket title.
-3. **Branch from fresh `main`** in your own worktree: `<kind>/<slug>` (`primitive/tabs`, `block/kpi-card`, `screen/cart`, `flow/auth`). Done when: `git log main..HEAD` is empty and `pnpm -r build` passes before you change anything.
+3. **Branch from your fresh base** (`main`, or the stacked blocker branch) in a worktree: `<kind>/<slug>` (`primitive/tabs`, `block/kpi-card`, `screen/cart`, `flow/auth`). Use the worktree the orchestrator handed you; otherwise `git worktree add` your own. Done when: `git log <base>..HEAD` is empty and `pnpm install --offline && pnpm -r build` pass before you change anything.
 4. **Deliver every acceptance criterion.** Tick each checkbox in the issue body as it lands (`gh issue edit`). The criteria are the definition of done; a ticket with an unticked box is not done. Done when: every box is ticked and `pnpm typecheck`, `pnpm test`, `pnpm theme:build`, `pnpm docs:parity`, `pnpm agent:check-drift` and the lint over the registry are green locally.
-5. **Rebase on `main` right before the PR.** Shared files (`components.css`, `registry.json`, the parity matrix, docs navigation, screenshot baselines) collide between parallel tickets; resolve by keeping both sides, then rerun step 4's checks. Done when: the branch is a fast-forward of `main`.
-6. **Open the PR.** Title = ticket title. Body: what changed, `Closes #N`, and a screenshot of the docs preview at 375 and 1280 for anything visual. Comment the issue with the PR link. Done when: CI is green or you have posted the failing job's log excerpt on the PR and stopped.
+5. **Rebase on your base right before the PR.** Shared files (`components.css`, `registry.json`, the parity matrix, docs navigation, screenshot baselines) collide between parallel tickets; resolve by keeping both sides, then rerun step 4's checks. Done when: the branch is a fast-forward of its base.
+6. **Open the PR** with `--base <your base>`: `main`, or the blocker's branch for a stacked PR (GitHub retargets it to `main` when the base PR merges). Title = ticket title. Body: what changed, `Closes #N`, `Stacked on #<PR>` when stacked, and a screenshot of the docs preview at 375 and 1280 for anything visual. Comment the issue with the PR link. If you created the worktree yourself, `git worktree remove` it once the push is confirmed; the branch lives on `origin`. Done when: CI is green or you have posted the failing job's log excerpt on the PR and stopped.
 7. **Report one line**: PR number, CI state, anything left unticked and why. A human merges; leave the PR open.
 
 ## Reviewing a PR
@@ -27,18 +27,19 @@ When the verdict is `CHANGES`, a fresh implementing agent takes the same branch:
 
 The orchestrator's only job is dispatch. Reading diffs, code or CI logs pulls the work into its own context and ends in hallucinated status; every token it spends must be about *which ticket*, never *how*.
 
-- **Frontier** = open `ready-for-agent` issues in the current epic whose blockers are all closed. Recompute it from `gh` each round; never from memory.
+- **Frontier** = open `ready-for-agent` issues in the current epic, not yet claimed, whose blockers are all settled (closed, or `Review: PASS` + green CI, in which case the ticket is dispatched stacked on that PR's branch). Recompute it from `gh` each round; never from memory. Stacking is what lets a dependency chain finish in one AFK run; the maintainer merges the stack bottom-up.
 - **Epics in order** (`#71` → `#72` → `#73` → `#74`, all under `#70`). Epic A is the pipeline the other hundred tickets stand on; finish and merge it before dispatching Epic C or D.
-- **Concurrency 3.** Not a token limit: a merge-conflict limit on the shared files listed in step 5.
+- **Concurrency 3** for agents that write (implement, fix). Not a token limit: a merge-conflict limit on the shared files listed in step 5. Reviewers are read-only and unbounded.
 - **One fresh agent per ticket**, in its own worktree, with the implement prompt below and nothing else. The agent returns one line; record it and move on.
 - **One fresh agent per green PR** with the review prompt below, once the implementing agent has returned. A `CHANGES` verdict dispatches one more implementing agent on the same branch (at most twice per PR).
-- **Round done when** the frontier is empty and every open PR carries a `Review:` comment. Then list the PRs by verdict and the tickets still blocked, and stop. Merging is the maintainer's; it never happens in the loop.
+- **Round done when** every dispatched PR carries a `Review:` comment. A `PASS` can settle blockers, so recompute the frontier and go again; the run ends when a round dispatches nothing. Then `git worktree prune` and remove worktrees whose branch is on `origin` with a clean tree, list the PRs by verdict in merge order (stacks bottom-up) and the tickets still blocked, and stop. Merging is the maintainer's; it never happens in the loop.
+- **Saved workflow**: `.claude/workflows/dispatch-epic.js` implements this loop; launch it from a clean session with `Workflow({name: "dispatch-epic", args: {epic: 71}})`.
 
 Prompts handed to agents:
 
 ```
 Implement issue #N of anothernocoder/moderno-ds following docs/agents/ticket-workflow.md, "Working a ticket".
-Return one line: PR number, CI state, anything left unticked.
+Base branch: <main | stacked blocker branch>. Return one line: PR number, CI state, anything left unticked.
 ```
 
 ```
