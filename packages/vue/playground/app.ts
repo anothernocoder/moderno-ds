@@ -1,12 +1,13 @@
 /**
- * SSR playground — the Vue twin of the React harness. Mounts all five
- * primitives in their default (closed) state so the SSR suite can assert a
- * stable server string and a warning-free hydration. `open` mounts the Dialog +
- * Select popovers to exercise the harder portal/id path.
+ * SSR playground — the Vue twin of the React harness. Mounts the primitives in
+ * their default (closed) state so the SSR suite can assert a stable server
+ * string and a warning-free hydration. `open` mounts the Dialog + Select
+ * popovers to exercise the harder portal/id path.
  */
 import { defineComponent, h, type Component } from "vue";
 import { Alert } from "../src/alert.js";
 import { Button } from "../src/button.js";
+import { Card } from "../src/card.js";
 import { Field } from "../src/field.js";
 import { Checkbox } from "../src/checkbox.js";
 import { Dialog, Portal } from "../src/dialog.js";
@@ -97,6 +98,15 @@ export const App = defineComponent({
             h(Field.HelperText, {}, () => "A short introduction."),
             h(Field.ErrorText, {}, () => "Bio is required."),
           ]),
+        ]),
+
+        h(Card.Root, { variant: "outline", size: "md" }, () => [
+          h(Card.Header, {}, () => [
+            h(Card.Title, {}, () => "Monthly report"),
+            h(Card.Description, {}, () => "Revenue across every channel."),
+          ]),
+          h(Card.Content, {}, () => "Up 12% on last month."),
+          h(Card.Footer, {}, () => h(Button, { variant: "outline", size: "sm" }, () => "Export")),
         ]),
 
         h("section", { "aria-label": "checkboxes" }, [

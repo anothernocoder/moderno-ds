@@ -44,10 +44,45 @@ describe("moderno/valid-props", () => {
     expect(check("<Button variant={variant}>Save</Button>")).toHaveLength(0);
   });
 
-  it("checks every component in the manifest, not just the first", () => {
-    const findings = check('<Dialog bogus="x">...</Dialog>');
+  it("validates a compound primitive through its Root part", () => {
+    expect(check('<Card.Root variant="outline">…</Card.Root>')).toHaveLength(0);
+
+    const findings = check('<Card.Root variant="outlined">…</Card.Root>');
     expect(findings).toHaveLength(1);
-    expect(findings[0]!.message).toContain("<Dialog>");
+    expect(findings[0]!.message).toContain('Invalid value "outlined"');
+    expect(findings[0]!.suggestion).toContain("outline");
+
+    const invented = check('<Card.Root elevation="high">…</Card.Root>');
+    expect(invented).toHaveLength(1);
+    expect(invented[0]!.message).toContain('Unknown prop "elevation"');
+  });
+
+  it("leaves a compound primitive's other parts alone — they take native attrs", () => {
+    // Card.Title's props are not Card.Root's; flagging them would be noise.
+    expect(check('<Card.Title id="t">Monthly report</Card.Title>')).toHaveLength(0);
+  });
+
+  it("stays silent on a machine-backed root's own props, which the manifest can't list", () => {
+    // Select.Root's `collection` and Field.Root's `invalid` are Ark's, dropped
+    // by props-doc with the DOM noise. Calling them unknown would fail the DS's
+    // own published examples.
+    expect(check('<Select.Root collection={collection} size="sm">…</Select.Root>')).toHaveLength(0);
+    expect(check("<Field.Root invalid={hasError}>…</Field.Root>")).toHaveLength(0);
+    expect(check("<Dialog.Root open={open} lazyMount unmountOnExit>…</Dialog.Root>")).toHaveLength(
+      0,
+    );
+  });
+
+  it("still checks a machine-backed root's recipe values — variants are complete", () => {
+    const findings = check('<Select.Root collection={c} size="huge">…</Select.Root>');
+    expect(findings).toHaveLength(1);
+    expect(findings[0]!.message).toContain('Invalid value "huge"');
+  });
+
+  it("checks every component in the manifest, not just the first", () => {
+    const findings = check('<Card.Root bogus="x">...</Card.Root>');
+    expect(findings).toHaveLength(1);
+    expect(findings[0]!.message).toContain("<Card>");
   });
 
   it("returns nothing for a framework with no manifest", () => {

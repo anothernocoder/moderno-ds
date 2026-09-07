@@ -168,6 +168,91 @@ export const AGENT_EXAMPLES: Record<string, Partial<Record<Framework, AgentExamp
     ],
   },
 
+  Card: {
+    react: [
+      {
+        title: "Report card with a footer action",
+        code: [
+          'import { Button, Card } from "@moderno-ui/react";',
+          "",
+          '<Card.Root variant="outline" size="md">',
+          "  <Card.Header>",
+          "    <Card.Title>Monthly report</Card.Title>",
+          "    <Card.Description>Revenue across every channel.</Card.Description>",
+          "  </Card.Header>",
+          "  <Card.Content>Up 12% on last month.</Card.Content>",
+          "  <Card.Footer>",
+          '    <Button variant="outline" size="sm">Export</Button>',
+          "  </Card.Footer>",
+          "</Card.Root>",
+        ].join("\n"),
+      },
+    ],
+    vue: [
+      {
+        title: "Report card with a footer action",
+        code: [
+          '<script setup lang="ts">',
+          'import { Button, Card } from "@moderno-ui/vue";',
+          "</script>",
+          "",
+          "<template>",
+          '  <Card.Root variant="outline" size="md">',
+          "    <Card.Header>",
+          "      <Card.Title>Monthly report</Card.Title>",
+          "      <Card.Description>Revenue across every channel.</Card.Description>",
+          "    </Card.Header>",
+          "    <Card.Content>Up 12% on last month.</Card.Content>",
+          "    <Card.Footer>",
+          '      <Button variant="outline" size="sm">Export</Button>',
+          "    </Card.Footer>",
+          "  </Card.Root>",
+          "</template>",
+        ].join("\n"),
+      },
+    ],
+    svelte: [
+      {
+        title: "Report card with a footer action",
+        code: [
+          '<script lang="ts">',
+          '  import { Button, Card } from "@moderno-ui/svelte";',
+          "</script>",
+          "",
+          '<Card.Root variant="outline" size="md">',
+          "  <Card.Header>",
+          "    <Card.Title>Monthly report</Card.Title>",
+          "    <Card.Description>Revenue across every channel.</Card.Description>",
+          "  </Card.Header>",
+          "  <Card.Content>Up 12% on last month.</Card.Content>",
+          "  <Card.Footer>",
+          '    <Button variant="outline" size="sm">Export</Button>',
+          "  </Card.Footer>",
+          "</Card.Root>",
+        ].join("\n"),
+      },
+    ],
+    solid: [
+      {
+        title: "Report card with a footer action",
+        code: [
+          'import { Button, Card } from "@moderno-ui/solid";',
+          "",
+          '<Card.Root variant="outline" size="md">',
+          "  <Card.Header>",
+          "    <Card.Title>Monthly report</Card.Title>",
+          "    <Card.Description>Revenue across every channel.</Card.Description>",
+          "  </Card.Header>",
+          "  <Card.Content>Up 12% on last month.</Card.Content>",
+          "  <Card.Footer>",
+          '    <Button variant="outline" size="sm">Export</Button>',
+          "  </Card.Footer>",
+          "</Card.Root>",
+        ].join("\n"),
+      },
+    ],
+  },
+
   Field: {
     react: [
       {

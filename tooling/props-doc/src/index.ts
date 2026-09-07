@@ -8,6 +8,13 @@
  * DOM attributes that come from `lib.dom.d.ts` / `node_modules`. The docs
  * `<PropsTable>` reads the emitted JSON; column labels are translated downstream
  * while the prop `name`/`type` stay in English (the real API).
+ *
+ * Dropping is lossy in one case that matters downstream: a root wrapped around
+ * a headless machine inherits real props from `@ark-ui/*` / `@zag-js/*`, and
+ * those go the same way as the DOM noise. Each `ComponentDoc` therefore
+ * carries `propsComplete`, derived from where the dropped declarations came
+ * from, so a consumer can tell "these are all the props" from "these are the
+ * props we can see".
  */
 
 /** One row of a `<PropsTable>`. */
@@ -30,6 +37,16 @@ export interface ComponentDoc {
   name: string;
   /** Props kept after the workspace-origin filter, sorted by name. */
   props: PropDoc[];
+  /**
+   * True when `props` is the component's whole API: everything the filter
+   * dropped was a native attribute the binding merely forwards. False when a
+   * real prop was dropped because it is declared in a dependency — a root
+   * wrapped around a headless machine (`Select.Root` inherits Ark/Zag's
+   * `collection`, `value`, `onValueChange`…), whose API the extractor cannot
+   * see. Consumers that reason about "is this prop real?" — `valid-props`
+   * above all — must not treat an incomplete list as exhaustive.
+   */
+  propsComplete: boolean;
 }
 
 /** A component to document: where its props interface lives. */
@@ -62,6 +79,24 @@ import { Node, Project, SymbolFlags, type Symbol as TsSymbol } from "ts-morph";
 function defaultInclude(declFilePath: string): boolean {
   const p = declFilePath.replace(/\\/g, "/");
   return p.includes("/packages/") && !p.includes("/node_modules/");
+}
+
+/**
+ * Whether a *dropped* declaration is a native attribute rather than a real
+ * API: the framework's own DOM typings (`@types/react`'s `HTMLAttributes` and
+ * friends), `csstype`'s `style`, and TypeScript's own `lib.*.d.ts`. These are
+ * the hundreds of pass-through attributes the signal/noise rule exists to
+ * drop. Anything else dropped from `node_modules` is a prop the component
+ * really accepts and the manifest will never list — which is exactly what
+ * `propsComplete` records.
+ */
+function isNativeAttrOrigin(declFilePath: string): boolean {
+  const p = declFilePath.replace(/\\/g, "/");
+  return (
+    p.includes("/node_modules/@types/") ||
+    p.includes("/node_modules/csstype/") ||
+    /\/lib\.[^/]*\.d\.ts$/.test(p)
+  );
 }
 
 /** Collapse multi-line type text and drop the implicit optional `| undefined`. */
@@ -100,10 +135,14 @@ export function extractProps(opts: ExtractOptions): ComponentDoc[] {
     }
 
     const props: PropDoc[] = [];
+    let propsComplete = true;
     for (const sym of decl.getType().getProperties()) {
       const decls = sym.getDeclarations();
       const declFile = decls[0]?.getSourceFile().getFilePath();
-      if (!declFile || !include(declFile)) continue;
+      if (!declFile || !include(declFile)) {
+        if (declFile && !isNativeAttrOrigin(declFile)) propsComplete = false;
+        continue;
+      }
 
       const required = (sym.getFlags() & SymbolFlags.Optional) === 0;
       const type = formatType(sym.getTypeAtLocation(decl).getText(decl));
@@ -114,6 +153,6 @@ export function extractProps(opts: ExtractOptions): ComponentDoc[] {
     }
 
     props.sort((a, b) => a.name.localeCompare(b.name));
-    return { name: entry.name, props };
+    return { name: entry.name, props, propsComplete };
   });
 }

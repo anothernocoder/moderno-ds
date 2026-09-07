@@ -120,6 +120,114 @@
     color: var(--accent-foreground);
   }
 
+  /* ──────────────────────────── Card ──────────────────────────── *
+   * `cardRecipe` variant × size on the root part. A surface, not a control:
+   * no Ark machine, no interactive state — the whole primitive is these
+   * rules plus the anatomy the bindings emit (root > header > title +
+   * description, content, footer).
+   *
+   * Depth comes from a surface step and a 1px border, never a shadow
+   * (DESIGN.md, "Elevation & Depth"); the corner follows --radius, which
+   * theme-moderno pins to 0 — so "no shadow, no radius" is the theme's
+   * decision, not a value baked in here. */
+  [data-scope="card"][data-part="root"] {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--card);
+    color: var(--card-foreground);
+    font-family: var(--font-sans);
+    /* A card sizes to its container, so blocks can drop it into any grid. */
+    inline-size: 100%;
+  }
+
+  /* Variants — the surface treatment. `outline` is the DESIGN.md card: the
+     card fill with a 1px border. `muted` is the recessed well. `ghost` keeps
+     the anatomy's rhythm with no surface of its own. */
+  [data-scope="card"][data-part="root"][data-variant="muted"] {
+    background-color: var(--muted);
+    color: var(--foreground);
+  }
+  [data-scope="card"][data-part="root"][data-variant="ghost"] {
+    border-color: transparent;
+    background-color: transparent;
+    color: var(--foreground);
+  }
+
+  /* The three padded regions. `md` is the base; `sm`/`lg` re-step it next,
+     the same shape Select uses for its density. Every step is a --spacing-*
+     slot, so a theme re-scales the card by re-mapping the scale. */
+  [data-scope="card"][data-part="header"],
+  [data-scope="card"][data-part="content"],
+  [data-scope="card"][data-part="footer"] {
+    padding: var(--spacing-6);
+  }
+
+  /* Density — the same three regions the base rule names, spelled out again so
+     the step can never reach a part the base does not pad. Every part is
+     optional and the order is the consumer's, so a root holding only a title
+     must look the same at `sm`/`lg` as at `md`. The child combinator keeps a
+     nested card on its own size instead of inheriting its host's. */
+  [data-scope="card"][data-size="sm"] > [data-scope="card"][data-part="header"],
+  [data-scope="card"][data-size="sm"] > [data-scope="card"][data-part="content"],
+  [data-scope="card"][data-size="sm"] > [data-scope="card"][data-part="footer"] {
+    padding: var(--spacing-4);
+  }
+  [data-scope="card"][data-size="lg"] > [data-scope="card"][data-part="header"],
+  [data-scope="card"][data-size="lg"] > [data-scope="card"][data-part="content"],
+  [data-scope="card"][data-size="lg"] > [data-scope="card"][data-part="footer"] {
+    padding: var(--spacing-8);
+  }
+  /* Consecutive regions share one padding step between them instead of
+     stacking two, which keeps the vertical rhythm on the scale. Last, so it
+     collapses the seam at every density. */
+  [data-scope="card"][data-part="header"] + [data-scope="card"][data-part="content"],
+  [data-scope="card"][data-part="content"] + [data-scope="card"][data-part="footer"],
+  [data-scope="card"][data-part="header"] + [data-scope="card"][data-part="footer"] {
+    padding-block-start: 0;
+  }
+
+  [data-scope="card"][data-part="header"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-1);
+  }
+
+  [data-scope="card"][data-part="title"] {
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+  /* Only `lg` promotes the title: a bigger card is usually a bigger claim on
+     the page. `sm` tightens the padding but keeps the same voice. */
+  [data-scope="card"][data-size="lg"] > [data-part="header"] > [data-part="title"] {
+    font-size: 1.125rem;
+  }
+
+  [data-scope="card"][data-part="description"] {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--muted-foreground);
+  }
+
+  /* The body is the only part that grows, so a row of cards in a grid keeps
+     its footers aligned however long the content runs. */
+  [data-scope="card"][data-part="content"] {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--spacing-3);
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  [data-scope="card"][data-part="footer"] {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+  }
+
   /* ─────────────────────────── Field ──────────────────────────── *
    * Ark wires label↔control + `data-invalid`/`data-disabled`; we style. The
    * only prop-driven knob is `fieldRecipe`'s `data-size` on the root, which

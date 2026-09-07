@@ -14,9 +14,9 @@
 | Tokens / brand   | `@moderno-ui/tokens` → contract slots          | one theme re-themes 5 |
 
 Each binding's only job is to spread `data-scope`/`data-part` + the recipe's
-`data-*` onto markup. Button and Alert are the authored elements (neither has a
-headless machine to wrap); Dialog is a verbatim Ark re-export; Field, Select and
-Checkbox wrap only `Root` to inject `data-size`.
+`data-*` onto markup. Button, Alert and Card are the authored elements — none
+has an Ark machine to wrap, so all of their parts are ours; Dialog is a verbatim
+Ark re-export; Field, Select and Checkbox wrap only `Root` to inject `data-size`.
 
 ## Component × framework × state
 
@@ -33,6 +33,18 @@ shared stylesheet keys on.
 | no baked class/style     |  ✅   | ✅  |   ✅   |  ✅   |
 | `type` default+override  |  ✅   | ✅  |   ✅   |  ✅   |
 | native props + events    |  ✅   | ✅  |   ✅   |  ✅   |
+
+### Card (`cardRecipe`: `data-variant` × `data-size`; CSS-only, no Ark machine)
+
+| State / prop                           | React | Vue | Svelte | Solid |
+| -------------------------------------- | :---: | :-: | :----: | :---: |
+| root scope/part + recipe defaults      |  ✅   | ✅  |   ✅   |  ✅   |
+| every part carries scope + `data-part` |  ✅   | ✅  |   ✅   |  ✅   |
+| variant → `data-variant`               |  ✅   | ✅  |   ✅   |  ✅   |
+| size → `data-size`                     |  ✅   | ✅  |   ✅   |  ✅   |
+| title renders as a heading (`h3`)      |  ✅   | ✅  |   ✅   |  ✅   |
+| no baked class/style                   |  ✅   | ✅  |   ✅   |  ✅   |
+| native props + events                  |  ✅   | ✅  |   ✅   |  ✅   |
 
 ### Alert (`alertRecipe`: `data-variant` × `data-size`; no Ark machine)
 
@@ -99,6 +111,8 @@ shared stylesheet keys on.
 | static server-only island (zero `<script>`) |   —   |  —  |   ✅   |   —   |
 | `defaultOpen` survives SSR                  |  ✅   | ✅  |   ✅   |  ✅   |
 
+¹ Vue hydration is verified on the portal-free primitives (Button, Card, Field
+and Checkbox), the deterministic `useId` hazard; Ark's portaled popovers
 ¹ Vue hydration is verified on the portal-free primitives (Button + Field +
 Checkbox + Alert), the deterministic `useId` hazard; Ark's portaled popovers
 position via floating-ui measurement absent in jsdom, so their hydration is

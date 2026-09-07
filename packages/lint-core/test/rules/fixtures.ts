@@ -3,6 +3,13 @@
  * already-aggregated manifests, so tests exercise them directly rather than
  * going through `discoverManifests`' filesystem discovery (that's
  * `consumer-fixture.ts`'s job, used by the tool-level integration tests).
+ *
+ * It carries both kinds of component the real manifest holds: the authored
+ * primitives (Button, Card), whose `props` is their whole API, and the
+ * machine-backed ones (Select, Field, Dialog), whose roots inherit props from
+ * Ark that `props-doc` cannot see — `propsComplete: false`. Rules that judge
+ * whether a prop is real behave differently on the two, so the fixture has to
+ * contain both.
  */
 import type { AggregatedManifests } from "../../src/manifests.ts";
 
@@ -43,9 +50,21 @@ export const manifests: AggregatedManifests = {
           import: 'import { Button } from "@moderno-ui/react"',
           propsHash: "sha256:fixture-button",
           props: [{ name: "variant", type: '"primary" | "outline"', required: false }],
+          propsComplete: true,
           parts: [{ name: "root" }],
           variants: { variant: ["primary", "outline"] },
           guidance: { intent: "A single click action." },
+        },
+        {
+          name: "Card",
+          scope: "card",
+          import: 'import { Card } from "@moderno-ui/react"',
+          propsHash: "sha256:fixture-card",
+          props: [{ name: "variant", type: '"outline" | "muted"', required: false }],
+          propsComplete: true,
+          parts: [{ name: "root" }, { name: "title" }, { name: "content" }],
+          variants: { variant: ["outline", "muted"] },
+          guidance: { intent: "A bounded surface that groups related content." },
         },
         {
           name: "Dialog",
@@ -53,28 +72,49 @@ export const manifests: AggregatedManifests = {
           import: 'import { Dialog } from "@moderno-ui/react"',
           propsHash: "sha256:fixture-dialog",
           props: [],
+          propsComplete: false,
           parts: [{ name: "content" }, { name: "title" }],
           guidance: {
             intent: "A modal surface that interrupts and traps focus until dismissed.",
           },
         },
         {
+          // Ark's Root with the `size` recipe folded in, like Select below:
+          // `size` is the only prop declared in the workspace, so it is the
+          // only one the manifest lists — `checked`, `name` and the rest are
+          // Ark's.
           name: "Checkbox",
           scope: "checkbox",
           import: 'import { Checkbox } from "@moderno-ui/react"',
           propsHash: "sha256:fixture-checkbox",
           props: [{ name: "size", type: '"sm" | "md" | "lg"', required: false }],
+          propsComplete: false,
           parts: [{ name: "root" }, { name: "control" }, { name: "indicator" }, { name: "label" }],
           variants: { size: ["sm", "md", "lg"] },
           guidance: { intent: "Toggle one independent boolean." },
         },
         {
+          // Ark's Root with the `size` recipe folded in: `size` is the only
+          // prop declared in the workspace, so it is the only one the manifest
+          // lists — `collection`, `value` and the rest are Ark's.
           name: "Select",
           scope: "select",
           import: 'import { Select } from "@moderno-ui/react"',
           propsHash: "sha256:fixture-select",
+          props: [{ name: "size", type: '"sm" | "md"', required: false }],
+          propsComplete: false,
+          parts: [{ name: "root" }, { name: "trigger" }, { name: "content" }, { name: "item" }],
+          variants: { size: ["sm", "md"] },
+        },
+        {
+          // Ark's Field verbatim: not one prop of its root is declared here.
+          name: "Field",
+          scope: "field",
+          import: 'import { Field } from "@moderno-ui/react"',
+          propsHash: "sha256:fixture-field",
           props: [],
-          parts: [{ name: "trigger" }, { name: "content" }, { name: "item" }],
+          propsComplete: false,
+          parts: [{ name: "root" }, { name: "label" }, { name: "input" }],
         },
         {
           // A camelCase, non-enum prop surface — what Vue templates spell in
@@ -88,6 +128,7 @@ export const manifests: AggregatedManifests = {
             { name: "width", type: "number", required: false },
             { name: "xTicks", type: "number", required: false },
           ],
+          propsComplete: true,
           parts: [{ name: "root" }, { name: "line" }],
         },
       ],
@@ -108,6 +149,7 @@ export const manifests: AggregatedManifests = {
           import: 'import { Button } from "@moderno-ui/vue"',
           propsHash: "sha256:fixture-button",
           props: [{ name: "variant", type: '"primary" | "outline"', required: false }],
+          propsComplete: true,
           parts: [{ name: "root" }],
           variants: { variant: ["primary", "outline"] },
         },
@@ -121,6 +163,7 @@ export const manifests: AggregatedManifests = {
             { name: "width", type: "number", required: false },
             { name: "xTicks", type: "number", required: false },
           ],
+          propsComplete: true,
           parts: [{ name: "root" }, { name: "line" }],
         },
       ],

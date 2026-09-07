@@ -3,6 +3,7 @@ import {
   alertRecipe,
   alertRole,
   buttonRecipe,
+  cardRecipe,
   checkboxRecipe,
   fieldRecipe,
   selectRecipe,
@@ -31,6 +32,24 @@ describe("buttonRecipe", () => {
   it("rejects values outside the schema", () => {
     // @ts-expect-error — "huge" is not a valid size
     expect(() => buttonRecipe({ size: "huge" })).toThrow(/invalid value/);
+  });
+});
+
+describe("cardRecipe", () => {
+  it("applies defaults when no props are given", () => {
+    expect(cardRecipe()).toEqual({ "data-variant": "outline", "data-size": "md" });
+  });
+
+  it("maps props to data-attributes", () => {
+    expect(cardRecipe({ variant: "muted", size: "lg" })).toEqual({
+      "data-variant": "muted",
+      "data-size": "lg",
+    });
+  });
+
+  it("rejects values outside the schema", () => {
+    // @ts-expect-error — "elevated" is not a valid card variant
+    expect(() => cardRecipe({ variant: "elevated" })).toThrow(/invalid value/);
   });
 });
 

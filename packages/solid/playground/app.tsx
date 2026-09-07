@@ -1,12 +1,13 @@
 /**
- * SSR playground — the Solid twin of the React harness. Mounts all five
- * primitives in their default (closed) state; `open` mounts the Dialog + Select
- * popovers so the SSR smoke can exercise the portal/id path.
+ * SSR playground — the Solid twin of the React harness. Mounts the primitives
+ * in their default (closed) state; `open` mounts the Dialog + Select popovers
+ * so the SSR smoke can exercise the portal/id path.
  */
 import { For } from "solid-js";
 import { Alert } from "../src/alert.jsx";
 import { Button } from "../src/button.jsx";
 import { Field } from "../src/field.jsx";
+import { Card } from "../src/card.jsx";
 import { Checkbox } from "../src/checkbox.jsx";
 import { Dialog, Portal } from "../src/dialog.js";
 import { Select, createListCollection } from "../src/select.jsx";
@@ -99,6 +100,18 @@ export function App(props: { open?: boolean }) {
           <Field.ErrorText>Bio is required.</Field.ErrorText>
         </Field.Root>
       </section>
+      <Card.Root variant="outline" size="md">
+        <Card.Header>
+          <Card.Title>Monthly report</Card.Title>
+          <Card.Description>Revenue across every channel.</Card.Description>
+        </Card.Header>
+        <Card.Content>Up 12% on last month.</Card.Content>
+        <Card.Footer>
+          <Button variant="outline" size="sm">
+            Export
+          </Button>
+        </Card.Footer>
+      </Card.Root>
 
       <section aria-label="checkboxes">
         <Checkbox.Root defaultChecked>

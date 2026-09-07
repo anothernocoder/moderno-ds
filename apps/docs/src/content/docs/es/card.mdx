@@ -1,0 +1,54 @@
+---
+title: Card
+description: Una superficie solo-CSS con anatomía estilo Ark — partes header, title, description, content y footer, pintadas desde los slots card y border, sin sombra propia.
+group: Componentes
+order: 45
+component: Card
+pkg: "@moderno-ui/react"
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import CardDemo from "../../../islands/CardDemo.svelte";
+
+Card es la primera primitiva compuesta que se escribe en vez de reexportarse: no
+existe una máquina de Ark para una superficie — no hay nada que abrir, enfocar o
+conectar —, así que todas las partes son nuestras. Lo que la vuelve una
+primitiva de Moderno es el mismo contrato que sigue Button, extendido a una
+anatomía: cada parte emite `data-scope="card"` más su propio `data-part`, la
+raíz lleva el `data-variant` y el `data-size` de `cardRecipe`, y
+`components.css` lo pinta todo desde slots de tokens.
+
+<Preview
+  code={`<Card.Root variant="outline" size="md">
+  <Card.Header>
+    <Card.Title>Reporte mensual</Card.Title>
+    <Card.Description>Ingresos de todos los canales.</Card.Description>
+  </Card.Header>
+  <Card.Content>12% más que el mes pasado.</Card.Content>
+  <Card.Footer>
+    <Button variant="outline" size="sm">Exportar</Button>
+  </Card.Footer>
+</Card.Root>`}
+>
+  <CardDemo client:visible />
+</Preview>
+
+## Anatomía
+
+`root` es la superficie; `header` contiene `title` y `description`; `content` es
+el cuerpo y la única parte que crece, así que una fila de cards mantiene sus
+footers alineados; `footer` es la fila de acciones. Todas las partes son
+opcionales y el orden lo eliges tú — el par que quede adyacente comparte un solo
+paso de padding en vez de apilar dos.
+
+## Instalación
+
+<Install pkg="@moderno-ui/react" />
+
+## Propiedades
+
+Las props van en `Card.Root`. Las demás partes solo aceptan atributos nativos.
+
+<PropsTable component="Card" />

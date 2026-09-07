@@ -25,7 +25,7 @@ const REACT_TSCONFIG = join(repoRoot, "packages/react/tsconfig.json");
 const DOCS_EN_DIR = join(repoRoot, "apps/docs/src/content/docs/en");
 
 function main(): number {
-  const propsByName = resolveComponentProps(AGENT_COMPONENTS, REACT_TSCONFIG);
+  const docsByName = resolveComponentProps(AGENT_COMPONENTS, REACT_TSCONFIG);
 
   const inputs: AgentDriftCheckInput[] = AGENT_COMPONENTS.map((c) => {
     const frontmatter = readFrontmatter(join(DOCS_EN_DIR, `${c.slug}.mdx`));
@@ -34,7 +34,7 @@ function main(): number {
       slug: c.slug,
       agent: frontmatter.agent as AgentGuidance | undefined,
       agentPropsHash: frontmatter.agentPropsHash as string | undefined,
-      currentPropsHash: computePropsHash(propsByName.get(c.name) ?? []),
+      currentPropsHash: computePropsHash(docsByName.get(c.name)?.props ?? []),
     };
   });
 

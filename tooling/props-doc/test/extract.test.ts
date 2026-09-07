@@ -28,6 +28,22 @@ describe("extractProps — Button (react)", () => {
     expect(names).not.toContain("className");
   });
 
+  it("calls the list complete when only native attributes were dropped", () => {
+    expect(buttonDoc().propsComplete).toBe(true);
+  });
+
+  it("calls the list incomplete when a dependency declares real props", () => {
+    // Select.Root is Ark's, wrapped for the `size` recipe: `collection`,
+    // `value` and the rest are declared in @ark-ui / @zag-js and dropped with
+    // the DOM noise, so `props` is not the component's whole API.
+    const [doc] = extractProps({
+      tsConfigFilePath: reactTsConfig,
+      entries: [{ name: "Select", file: "src/select.tsx", type: "ModernoSelectRootProps" }],
+    });
+    expect(doc!.props.map((p) => p.name)).toEqual(["size"]);
+    expect(doc!.propsComplete).toBe(false);
+  });
+
   it("strips import() path qualifiers from cross-package types", () => {
     const [chart] = extractProps({
       tsConfigFilePath: reactTsConfig,

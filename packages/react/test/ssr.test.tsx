@@ -15,6 +15,7 @@ describe("SSR + hydration (React 19)", () => {
   it("server-renders the primitives to a stable HTML string", () => {
     const html = renderToString(<App />);
     expect(html).toContain('data-scope="button"');
+    expect(html).toContain('data-scope="card"');
     expect(html).toContain('data-scope="field"');
     expect(html).toContain('data-scope="checkbox"');
     expect(html).toContain('data-scope="alert"');
@@ -23,6 +24,9 @@ describe("SSR + hydration (React 19)", () => {
     expect(html).toContain("Payment failed");
     expect(html).toContain('role="status"');
     expect(html).toContain('role="alert"');
+    // The card's compound anatomy survives serialisation part by part.
+    expect(html).toContain('data-part="title"');
+    expect(html).toContain('data-part="footer"');
     // Triggers are present even while the dialog/select popovers are closed.
     expect(html).toContain("Open dialog");
     expect(html).toContain("Framework");

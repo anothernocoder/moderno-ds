@@ -11,6 +11,18 @@
 export { Button } from "./button.jsx";
 export type { ButtonProps, ButtonVariant, ButtonSize } from "./button.jsx";
 
+export { Card } from "./card.jsx";
+export type {
+  CardRootProps,
+  CardHeaderProps,
+  CardTitleProps,
+  CardDescriptionProps,
+  CardContentProps,
+  CardFooterProps,
+  CardVariant,
+  CardSize,
+} from "./card.jsx";
+
 export { Alert } from "./alert.jsx";
 export type { AlertRootProps, AlertPartProps, AlertVariant, AlertSize } from "./alert.jsx";
 

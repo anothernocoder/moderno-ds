@@ -14,8 +14,10 @@
    * --font-mono contract (packages/tokens) stays the intentionally-neutral
    * system stack — live component previews keep using that, unaffected.
    */
-  --docs-font-sans: "Geist Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --docs-font-mono: "Geist Mono Variable", ui-monospace, "SFMono-Regular", "Menlo", "Consolas", monospace;
+  --docs-font-sans:
+    "Geist Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --docs-font-mono:
+    "Geist Mono Variable", ui-monospace, "SFMono-Regular", "Menlo", "Consolas", monospace;
 }
 
 * {
@@ -368,6 +370,16 @@ main :where(h1, h2, h3) {
 }
 .demo-row + .demo-row {
   margin-top: 1rem;
+}
+
+/* Surface demos (Card): an intrinsic grid, so the samples sit side by side on a
+   wide docs column and stack on a narrow one. The layout belongs to the page —
+   a card only fills the box it is given. */
+.demo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 0.75rem;
+  align-items: stretch;
 }
 
 /* Code blocks — standalone ones (in prose) get their own bordered/rounded

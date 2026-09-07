@@ -13,6 +13,7 @@ describe("AGENT_COMPONENTS", () => {
     expect(names).toEqual([
       "Button",
       "Alert",
+      "Card",
       "Field",
       "Checkbox",
       "Dialog",
@@ -90,6 +91,23 @@ describe("buildComponentsManifest", () => {
       "title",
       "description",
       "action",
+    ]);
+  });
+
+  it("marks the prop list complete only where the workspace declares every prop", () => {
+    // The authored primitives own their whole API. The Ark-backed roots do
+    // not: `Select.Root`'s `collection`, `Field.Root`'s `invalid` and
+    // `Dialog.Root`'s `open` are declared under node_modules and dropped, so
+    // `validate_usage` must not read their prop lists as exhaustive.
+    const complete = manifest.components.filter((c) => c.propsComplete).map((c) => c.name);
+    expect(complete).toEqual([
+      "Button",
+      "Alert",
+      "Card",
+      "LineChart",
+      "AreaChart",
+      "BarChart",
+      "ScatterChart",
     ]);
   });
 

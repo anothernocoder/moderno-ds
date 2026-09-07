@@ -7,6 +7,7 @@
 <script lang="ts">
   import { Alert } from "../src/index.js";
   import { Button } from "../src/index.js";
+  import { Card } from "../src/index.js";
   import { Field } from "../src/index.js";
   import { Checkbox } from "../src/index.js";
   import { Dialog, Portal } from "../src/index.js";
@@ -82,6 +83,16 @@
       <Field.ErrorText>Bio is required.</Field.ErrorText>
     </Field.Root>
   </section>
+  <Card.Root variant="outline" size="md">
+    <Card.Header>
+      <Card.Title>Monthly report</Card.Title>
+      <Card.Description>Revenue across every channel.</Card.Description>
+    </Card.Header>
+    <Card.Content>Up 12% on last month.</Card.Content>
+    <Card.Footer>
+      <Button variant="outline" size="sm">Export</Button>
+    </Card.Footer>
+  </Card.Root>
 
   <section aria-label="checkboxes">
     <Checkbox.Root defaultChecked>
