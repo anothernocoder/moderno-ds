@@ -98,6 +98,8 @@ export const App = defineComponent({
             h(Field.HelperText, {}, () => "A short introduction."),
             h(Field.ErrorText, {}, () => "Bio is required."),
           ]),
+        ]),
+
         h(Card.Root, { variant: "outline", size: "md" }, () => [
           h(Card.Header, {}, () => [
             h(Card.Title, {}, () => "Monthly report"),
@@ -105,13 +107,6 @@ export const App = defineComponent({
           ]),
           h(Card.Content, {}, () => "Up 12% on last month."),
           h(Card.Footer, {}, () => h(Button, { variant: "outline", size: "sm" }, () => "Export")),
-        ]),
-
-        h(Field.Root, {}, () => [
-          h(Field.Label, {}, () => "Email"),
-          h(Field.Input, { placeholder: "you@example.com" }),
-          h(Field.HelperText, {}, () => "We never share it."),
-          h(Field.ErrorText, {}, () => "Email is required."),
         ]),
 
         h("section", { "aria-label": "checkboxes" }, [

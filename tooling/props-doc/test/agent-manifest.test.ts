@@ -102,6 +102,7 @@ describe("buildComponentsManifest", () => {
     const complete = manifest.components.filter((c) => c.propsComplete).map((c) => c.name);
     expect(complete).toEqual([
       "Button",
+      "Alert",
       "Card",
       "LineChart",
       "AreaChart",

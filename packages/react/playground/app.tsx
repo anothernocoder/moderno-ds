@@ -138,13 +138,6 @@ export function App({ open = false }: AppProps) {
         </Card.Footer>
       </Card.Root>
 
-      <Field.Root>
-        <Field.Label>Email</Field.Label>
-        <Field.Input placeholder="you@example.com" />
-        <Field.HelperText>We never share it.</Field.HelperText>
-        <Field.ErrorText>Email is required.</Field.ErrorText>
-      </Field.Root>
-
       <section aria-label="checkboxes">
         <Checkbox.Root defaultChecked>
           <Checkbox.Control>
