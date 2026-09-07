@@ -7,38 +7,25 @@
  * markup moved. The width × scheme matrix comes from `playwright.config.ts`
  * (one project per combination); this file only decides *what* is on screen and
  * *when* it has settled.
+ *
+ * ## The sidebar is not on screen
+ *
+ * `BaseLayout.astro` renders `<aside class="sidebar">` from
+ * `getCollection("docs")`, so it lists *every* page of the locale on *every*
+ * page. Captured as-is, adding one docs page repaints all 84 baselines: two
+ * tickets adding a page in parallel then collide on every one of them, and
+ * whichever merges second is stale on arrival. So the sidebar is collapsed here
+ * (`NEUTRALISE_SIDEBAR_CSS`) and watched once, from a frozen fixture, in
+ * `chrome.spec.ts`. Everything else the layout renders — header, search, TOC
+ * rail, grid geometry, prose — is page-count-independent and stays in every
+ * capture. See `chrome.ts` for the rule that decides which is which.
  */
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test } from "@playwright/test";
+import { NEUTRALISE_SIDEBAR_CSS } from "./chrome.ts";
 import { previewPages } from "./pages.ts";
+import { settled } from "./settle.ts";
 
 const pages = previewPages();
-
-/**
- * Block until the full-page height stops moving.
- *
- * A hydrating island can reflow after both `networkidle` and `document.fonts
- * .ready` have resolved, and `toHaveScreenshot` fails on a size mismatch before
- * any pixel tolerance applies — so the height is the thing to stabilise. Two
- * consecutive frames at the same height is enough to clear a reflow driven by
- * `onMount` or an effect; the polling stops as soon as that holds, so a static
- * prose page pays two frames, not the timeout.
- */
-async function settled(page: Page, stableFrames = 2, timeoutMs = 5000): Promise<void> {
-  await page.waitForFunction(
-    ([needed, deadlineAt]) => {
-      const w = window as unknown as { __h?: number; __n?: number };
-      const height = document.documentElement.scrollHeight;
-      w.__n = height === w.__h ? (w.__n ?? 0) + 1 : 0;
-      w.__h = height;
-      // Give up quietly rather than failing the run: a page that genuinely
-      // never settles should be caught by the pixel diff, not by a timeout
-      // whose message says nothing about what moved.
-      return w.__n >= needed || Date.now() > deadlineAt;
-    },
-    [stableFrames, Date.now() + timeoutMs] as const,
-    { polling: "raf", timeout: timeoutMs + 1000 },
-  );
-}
 
 test.describe("docs preview pages", () => {
   // A silently empty matrix would turn the whole seam green. It only happens
@@ -67,6 +54,12 @@ test.describe("docs preview pages", () => {
       // `networkidle` covers the Pagefind UI bundle, which is imported lazily
       // and injects the search input — a late layout shift otherwise.
       await page.goto(doc.path, { waitUntil: "networkidle" });
+      // ORDER IS LOAD-BEARING: this stylesheet changes the page height (at
+      // 375/768 it removes the stacked sidebar entirely), so it must be applied
+      // *before* `settled` below. Reorder these and `settled` certifies a
+      // height the style is about to invalidate, and the capture races the
+      // reflow again.
+      await page.addStyleTag({ content: NEUTRALISE_SIDEBAR_CSS });
       // Self-hosted Geist: a screenshot taken mid-swap is the one flaky thing
       // left. Resolve to a plain value — a FontFaceSet isn't serializable.
       await page.evaluate(() => document.fonts.ready.then(() => true));
@@ -78,6 +71,21 @@ test.describe("docs preview pages", () => {
       // its baseline about the image size. Settle on a height that survives
       // consecutive frames instead of racing it.
       await settled(page);
+      // The neutralising rule is `!important` CSS aimed at one class name. If
+      // `docs.css` renames `.sidebar`, wraps it in a container query or gives
+      // it an `!important` height of its own, the rule stops applying and the
+      // per-page height drift comes back — silently, because the baselines
+      // would simply be regenerated with a sidebar in them. Fail here instead.
+      // Read the box directly rather than through `boundingBox()`, which
+      // reports `null` for anything Playwright considers invisible — and
+      // `visibility: hidden` is exactly that.
+      const sidebarHeight = await page.evaluate(
+        () => document.querySelector(".sidebar")?.getBoundingClientRect().height ?? -1,
+      );
+      expect(
+        sidebarHeight,
+        "expected .sidebar to exist and be collapsed to 0 — NEUTRALISE_SIDEBAR_CSS has rotted, see chrome.ts",
+      ).toBe(0);
       await expect(page).toHaveScreenshot(`${doc.name}.png`, { fullPage: true });
     });
   }

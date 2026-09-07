@@ -23,6 +23,8 @@ export interface DocsPage {
   path: string;
   /** Snapshot-safe name, e.g. `en-button`. */
   name: string;
+  /** Absolute path to the built `index.html`, for non-pixel guards. */
+  file: string;
 }
 
 /** Astro's marker for a hydrated component — one per live demo on the page. */
@@ -41,6 +43,23 @@ function* indexFiles(dir: string, prefix = ""): Generator<{ file: string; urlPat
   }
 }
 
+function toPage({ file, urlPath }: { file: string; urlPath: string }): DocsPage {
+  return {
+    path: urlPath,
+    name: urlPath.replace(/^\/|\/$/g, "").replace(/\//g, "-") || "index",
+    file,
+  };
+}
+
+/**
+ * Every built page, sorted by URL. Superset of `previewPages()` — the non-pixel
+ * guards in `guards.spec.ts` walk this, since a prose page can regress in ways
+ * that have nothing to do with an island.
+ */
+export function allPages(dir: string = distDir): DocsPage[] {
+  return [...indexFiles(dir)].map(toPage);
+}
+
 /**
  * Every built preview page, sorted by URL so the suite's test order — and the
  * baseline filenames — stay stable across machines.
@@ -48,8 +67,5 @@ function* indexFiles(dir: string, prefix = ""): Generator<{ file: string; urlPat
 export function previewPages(dir: string = distDir): DocsPage[] {
   return [...indexFiles(dir)]
     .filter(({ file }) => readFileSync(file, "utf8").includes(ISLAND_MARKER))
-    .map(({ urlPath }) => ({
-      path: urlPath,
-      name: urlPath.replace(/^\/|\/$/g, "").replace(/\//g, "-") || "index",
-    }));
+    .map(toPage);
 }
