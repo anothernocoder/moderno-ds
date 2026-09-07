@@ -4,6 +4,7 @@ import svelte from "@astrojs/svelte";
 import vercel from "@astrojs/vercel";
 import expressiveCode from "astro-expressive-code";
 import { defineConfig, passthroughImageService } from "astro/config";
+import { fileURLToPath } from "node:url";
 
 // GitHub Pages serves this as a project site under /moderno-ds/, so it needs
 // its own base path and can't use the Vercel adapter (which targets the
@@ -39,5 +40,18 @@ export default defineConfig({
   vite: {
     // The Svelte islands import the published CSS contract once, globally.
     ssr: { noExternal: ["@moderno-ui/css"] },
+    resolve: {
+      alias: {
+        // A block preview mounts the registry source itself (registry/blocks/…)
+        // rather than a copy, so the docs can never show markup that has
+        // drifted from what the CLI installs. Those files sit outside this app
+        // and have no `node_modules` of their own, so their bare import of the
+        // framework package has nothing to resolve against — this points it at
+        // the same workspace package the islands already use.
+        "@moderno-ui/svelte": fileURLToPath(
+          new URL("./node_modules/@moderno-ui/svelte", import.meta.url),
+        ),
+      },
+    },
   },
 });

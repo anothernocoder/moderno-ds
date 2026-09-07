@@ -5,6 +5,9 @@ group: Blocks
 order: 100
 ---
 
+import Preview from "../../../components/Preview.astro";
+import BlocksDemo from "../../../islands/BlocksDemo.svelte";
+
 A **block** is a page _section_ composed of primitives — a hero, a pricing
 table, a login form. You copy it into your project with the CLI and own it from
 that moment on; it is not an npm dependency.
@@ -24,3 +27,65 @@ primitives, if it uses any — and records each one under its own version in
 A block composes only primitives, never a screen or a flow — the registry
 enforces that direction. The catalog is being filled as the predecessor's
 inventory is absorbed; each published block gets its own page in this section.
+
+## What ships today
+
+Three blocks, one registry entry per framework each. The previews below import
+the Svelte source straight out of `registry/blocks/`, so what renders is exactly
+what the CLI copies — not a mockup of it.
+
+### Login form
+
+Composes `Field` (label, helper text, error text) and `Button`.
+
+<Preview
+  code={`<form>
+  <Field.Root>
+    <Field.Label>Email</Field.Label>
+    <Field.Input type="email" placeholder="you@example.com" />
+    <Field.HelperText>We never share it.</Field.HelperText>
+  </Field.Root>
+  <Button type="submit">Sign in</Button>
+</form>`}
+>
+  <BlocksDemo block="login-form" client:visible />
+</Preview>
+
+### Pricing
+
+Three plans from a local `plans` array — edit it, it is your file now.
+
+<Preview
+  code={`const plans = [
+  { name: "Starter", price: "$0/mo", features: [/* … */] },
+  // …
+];`}
+>
+  <BlocksDemo block="pricing" client:visible />
+</Preview>
+
+### Empty state
+
+A centred placeholder with one call to action.
+
+<Preview
+  code={`<div>
+  <h2>No projects yet</h2>
+  <p>Create your first project to get started.</p>
+  <Button type="button">New project</Button>
+</div>`}
+>
+  <BlocksDemo block="empty-state" client:visible />
+</Preview>
+
+## Section layout is not painted yet
+
+Those previews look plain, and that is the honest state rather than a rendering
+fault. A block's primitives are fully painted by `components.css`, but the
+block's own wrapper carries a bare `moderno-block-*` class with **no rules on
+`main`** — no grid, no spacing scale, no card surface. Section layout arrives
+with the container-query styling pipeline described in ADR-0005.
+
+Showing the gap is the point: these previews are captured by the visual suite,
+so when the pipeline lands, the baselines move and the change has to be reviewed
+rather than noticed later.
