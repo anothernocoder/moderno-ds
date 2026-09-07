@@ -11,6 +11,9 @@
 export { Button } from "./button.jsx";
 export type { ButtonProps, ButtonVariant, ButtonSize } from "./button.jsx";
 
+export { Divider } from "./divider.jsx";
+export type { DividerProps, DividerAlign, DividerOrientation } from "./divider.jsx";
+
 export { Card } from "./card.jsx";
 export type {
   CardRootProps,

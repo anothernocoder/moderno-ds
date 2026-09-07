@@ -17,6 +17,7 @@ export const ENTRIES: ComponentEntry[] = [
   { name: "Checkbox", file: "src/checkbox.tsx", type: "ModernoCheckboxRootProps" },
   { name: "Field", file: "src/field.tsx", type: "ModernoFieldRootProps" },
   { name: "Alert", file: "src/alert.tsx", type: "AlertRootProps" },
+  { name: "Divider", file: "src/divider.tsx", type: "DividerProps" },
   { name: "Select", file: "src/select.tsx", type: "ModernoSelectRootProps" },
   { name: "LineChart", file: "src/charts.tsx", type: "LineChartProps" },
   { name: "AreaChart", file: "src/charts.tsx", type: "AreaChartProps" },

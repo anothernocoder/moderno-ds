@@ -1,0 +1,53 @@
+---
+title: Divider
+description: A horizontal or vertical rule with an optional label, drawn from the --border slot by the shared stylesheet.
+group: Components
+order: 15
+component: Divider
+pkg: "@moderno-ui/react"
+agentPropsHash: "sha256:5384c43595629b5886e19d6cc9f35d2e2f3600ccc3b47897941489a47ca088bd"
+agent:
+  intent: A rule that separates content.
+  whenToUse: "Between sections of a list, card or form, or between inline items as a vertical rule."
+  whenNotToUse:
+    - case: A titled section of a page
+      use: a heading, which carries the structure a rule only hints at
+    - case: A border around one element
+      use: that element's own border (Card, or the --border slot directly)
+  gotchas:
+    - "The label is the children/slot; with no children the divider is a bare rule."
+    - "A bare divider is role=separator; a labelled one drops the role, because separator makes its children presentational and would hide the label."
+    - "align only moves the label — it does nothing on a divider with no children."
+    - "orientation=vertical takes its length from the row it sits in; give that row a height."
+  theming:
+    - "The stroke is --border; the label is --muted-foreground. Never pass a colour."
+    - "Spacing around the label comes from --spacing-2/--spacing-3; do not set margins inline."
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import DividerDemo from "../../../islands/DividerDemo.svelte";
+
+Divider is CSS-only: there is no headless machine behind a rule. The two halves
+of the line are the root's `::before`/`::after`, so a bare divider is one
+continuous stroke and a labelled one splits around `[data-part="label"]` with no
+extra markup. `data-orientation`/`data-align` from the recipe key every style in
+`components.css`.
+
+<Preview
+  code={`<Divider />
+<Divider>Or continue with</Divider>
+<Divider align="start">Recent</Divider>
+<Divider orientation="vertical" />`}
+>
+  <DividerDemo client:visible />
+</Preview>
+
+## Installation
+
+<Install pkg="@moderno-ui/react" />
+
+## Props
+
+<PropsTable component="Divider" />

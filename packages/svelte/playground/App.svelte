@@ -7,6 +7,7 @@
 <script lang="ts">
   import { Alert } from "../src/index.js";
   import { Button } from "../src/index.js";
+  import { Divider } from "../src/index.js";
   import { Card } from "../src/index.js";
   import { Field } from "../src/index.js";
   import { Checkbox } from "../src/index.js";
@@ -45,6 +46,12 @@
     <Button variant="outline">Outline</Button>
     <Button variant="ghost" size="sm">Ghost</Button>
     <Button variant="destructive" size="lg">Destructive</Button>
+  </section>
+
+  <section aria-label="dividers">
+    <Divider />
+    <Divider align="start">Or</Divider>
+    <Divider orientation="vertical" />
   </section>
 
   <section aria-label="alerts">

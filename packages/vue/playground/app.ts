@@ -1,4 +1,8 @@
 /**
+ * SSR playground — the Vue twin of the React harness. Mounts every one of the
+ * primitives in their default (closed) state so the SSR suite can assert a
+ * stable server string and a warning-free hydration. `open` mounts the Dialog +
+ * Select popovers to exercise the harder portal/id path.
  * SSR playground — the Vue twin of the React harness. Mounts the primitives in
  * their default (closed) state so the SSR suite can assert a stable server
  * string and a warning-free hydration. `open` mounts the Dialog + Select
@@ -7,6 +11,7 @@
 import { defineComponent, h, type Component } from "vue";
 import { Alert } from "../src/alert.js";
 import { Button } from "../src/button.js";
+import { Divider } from "../src/divider.js";
 import { Card } from "../src/card.js";
 import { Field } from "../src/field.js";
 import { Checkbox } from "../src/checkbox.js";
@@ -63,6 +68,12 @@ export const App = defineComponent({
           h(Button, { variant: "outline" }, () => "Outline"),
           h(Button, { variant: "ghost", size: "sm" }, () => "Ghost"),
           h(Button, { variant: "destructive", size: "lg" }, () => "Destructive"),
+        ]),
+
+        h("section", { "aria-label": "dividers" }, [
+          h(Divider),
+          h(Divider, { align: "start" }, () => "Or"),
+          h(Divider, { orientation: "vertical" }),
         ]),
 
         h("section", { "aria-label": "alerts" }, [

@@ -25,6 +25,11 @@ describe("SSR (Solid)", () => {
     // The card's compound anatomy survives serialisation part by part.
     expect(html).toContain('data-part="title"');
     expect(html).toContain('data-part="footer"');
+    expect(html).toContain('data-scope="divider"');
+    // Both divider shapes survive serialisation: the bare rule keeps its
+    // separator role, the captioned one its label part.
+    expect(html).toContain('role="separator"');
+    expect(html).toMatch(/data-scope="divider"[^>]*data-part="label"/);
     expect(html).toContain("Open dialog");
     expect(html).toContain("Framework");
     expect(html).toContain('data-variant="destructive"');

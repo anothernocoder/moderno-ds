@@ -253,6 +253,63 @@ export const AGENT_EXAMPLES: Record<string, Partial<Record<Framework, AgentExamp
     ],
   },
 
+  Divider: {
+    react: [
+      {
+        title: "Plain rule and a captioned one",
+        code: [
+          'import { Divider } from "@moderno-ui/react";',
+          "",
+          "<Divider />",
+          "<Divider>Or continue with</Divider>",
+          '<Divider orientation="vertical" />',
+        ].join("\n"),
+      },
+    ],
+    vue: [
+      {
+        title: "Plain rule and a captioned one",
+        code: [
+          '<script setup lang="ts">',
+          'import { Divider } from "@moderno-ui/vue";',
+          "</script>",
+          "",
+          "<template>",
+          "  <Divider />",
+          "  <Divider>Or continue with</Divider>",
+          '  <Divider orientation="vertical" />',
+          "</template>",
+        ].join("\n"),
+      },
+    ],
+    svelte: [
+      {
+        title: "Plain rule and a captioned one",
+        code: [
+          '<script lang="ts">',
+          '  import { Divider } from "@moderno-ui/svelte";',
+          "</script>",
+          "",
+          "<Divider />",
+          "<Divider>Or continue with</Divider>",
+          '<Divider orientation="vertical" />',
+        ].join("\n"),
+      },
+    ],
+    solid: [
+      {
+        title: "Plain rule and a captioned one",
+        code: [
+          'import { Divider } from "@moderno-ui/solid";',
+          "",
+          "<Divider />",
+          "<Divider>Or continue with</Divider>",
+          '<Divider orientation="vertical" />',
+        ].join("\n"),
+      },
+    ],
+  },
+
   Field: {
     react: [
       {

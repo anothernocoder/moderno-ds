@@ -228,6 +228,71 @@
     gap: var(--spacing-3);
   }
 
+  /* ────────────────────────── Divider ─────────────────────────── *
+   * data-orientation × data-align from `dividerRecipe`. No Ark machine —
+   * a rule is pure CSS. The two halves of the line are the root's ::before
+   * and ::after, so an unlabelled divider renders as one continuous stroke
+   * and a labelled one splits around [data-part="label"] with no extra
+   * markup. The stroke reads --border; a 1px rule is a rendering primitive,
+   * the same literal the contract already tolerates for every border.       */
+  [data-scope="divider"][data-part="root"] {
+    display: flex;
+    align-items: center;
+  }
+  [data-scope="divider"][data-part="root"]::before,
+  [data-scope="divider"][data-part="root"]::after {
+    content: "";
+    flex: 1 1 0;
+    background-color: var(--border);
+  }
+
+  [data-scope="divider"][data-part="root"][data-orientation="horizontal"] {
+    flex-direction: row;
+    width: 100%;
+  }
+  [data-scope="divider"][data-part="root"][data-orientation="horizontal"]::before,
+  [data-scope="divider"][data-part="root"][data-orientation="horizontal"]::after {
+    height: 1px;
+  }
+
+  /* A vertical rule takes its length from the row it sits in; the min-height
+     keeps it visible when that row has no height of its own. */
+  [data-scope="divider"][data-part="root"][data-orientation="vertical"] {
+    flex-direction: column;
+    align-self: stretch;
+    min-height: var(--spacing-4);
+  }
+  [data-scope="divider"][data-part="root"][data-orientation="vertical"]::before,
+  [data-scope="divider"][data-part="root"][data-orientation="vertical"]::after {
+    width: 1px;
+  }
+
+  /* Alignment shortens the leading (start) or trailing (end) half so the label
+     sits near that edge; `center` leaves both halves free to grow. */
+  [data-scope="divider"][data-part="root"][data-align="start"]::before {
+    flex: 0 0 var(--spacing-4);
+  }
+  [data-scope="divider"][data-part="root"][data-align="end"]::after {
+    flex: 0 0 var(--spacing-4);
+  }
+
+  /* The label's own margins open the gap in the rule, so an unlabelled divider
+     needs no `gap` reset — nothing sits between the halves and they meet. */
+  [data-scope="divider"][data-part="label"] {
+    flex: 0 0 auto;
+    color: var(--muted-foreground);
+    font-size: 0.8125rem;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  [data-scope="divider"][data-orientation="horizontal"] [data-part="label"] {
+    margin-inline: var(--spacing-3);
+  }
+  [data-scope="divider"][data-orientation="vertical"] [data-part="label"] {
+    margin-block: var(--spacing-2);
+    writing-mode: vertical-rl;
+  }
+
   /* ─────────────────────────── Field ──────────────────────────── *
    * Ark wires label↔control + `data-invalid`/`data-disabled`; we style. The
    * only prop-driven knob is `fieldRecipe`'s `data-size` on the root, which

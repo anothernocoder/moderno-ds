@@ -48,6 +48,19 @@ export const checkboxRecipe = cva({
   defaultVariants: { size: "md" },
 });
 
+/**
+ * Divider: `orientation` (the rule's axis) × `align` (where an optional label
+ * sits along it). Both are consumer choices, so both are recipe variants; the
+ * rule itself is drawn by `components.css` from the `--border` slot.
+ */
+export const dividerRecipe = cva({
+  variants: {
+    orientation: ["horizontal", "vertical"],
+    align: ["start", "center", "end"],
+  },
+  defaultVariants: { orientation: "horizontal", align: "center" },
+});
+
 /** Select: control `size` (the trigger/menu density). Selection state is Ark's. */
 export const selectRecipe = cva({
   variants: {
@@ -129,3 +142,10 @@ export type AlertSize = NonNullable<VariantProps<typeof alertRecipe.variants>["s
 export function alertRole(variant?: AlertVariant): "alert" | "status" {
   return variant === "warning" || variant === "error" ? "alert" : "status";
 }
+/** Divider's axis (`horizontal`, `vertical`). */
+export type DividerOrientation = NonNullable<
+  VariantProps<typeof dividerRecipe.variants>["orientation"]
+>;
+
+/** Where a Divider's optional label sits along the rule. */
+export type DividerAlign = NonNullable<VariantProps<typeof dividerRecipe.variants>["align"]>;

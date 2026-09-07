@@ -17,6 +17,9 @@ Each binding's only job is to spread `data-scope`/`data-part` + the recipe's
 `data-*` onto markup. Button, Alert and Card are the authored elements — none
 has an Ark machine to wrap, so all of their parts are ours; Dialog is a verbatim
 Ark re-export; Field, Select and Checkbox wrap only `Root` to inject `data-size`.
+`data-*` onto markup. Button and Divider are the authored elements (neither has
+a headless machine behind it); Field and Dialog are verbatim Ark re-exports;
+Select and Checkbox wrap only `Root` to inject `data-size`.
 
 ## Component × framework × state
 
@@ -35,6 +38,20 @@ shared stylesheet keys on.
 | native props + events    |  ✅   | ✅  |   ✅   |  ✅   |
 
 ### Card (`cardRecipe`: `data-variant` × `data-size`; CSS-only, no Ark machine)
+
+### Divider (`dividerRecipe`: `data-orientation` × `data-align`)
+
+| State / prop                     | React | Vue | Svelte | Solid |
+| -------------------------------- | :---: | :-: | :----: | :---: |
+| scope/part + defaults            |  ✅   | ✅  |   ✅   |  ✅   |
+| orientation → `data-orientation` |  ✅   | ✅  |   ✅   |  ✅   |
+| align → `data-align`             |  ✅   | ✅  |   ✅   |  ✅   |
+| label → `[data-part="label"]`    |  ✅   | ✅  |   ✅   |  ✅   |
+| `role=separator` only when bare  |  ✅   | ✅  |   ✅   |  ✅   |
+| no baked class/style             |  ✅   | ✅  |   ✅   |  ✅   |
+| native props forwarded           |  ✅   | ✅  |   ✅   |  ✅   |
+
+### Field (Ark `data-invalid` / `data-disabled`, no recipe)
 
 | State / prop                           | React | Vue | Svelte | Solid |
 | -------------------------------------- | :---: | :-: | :----: | :---: |
@@ -115,6 +132,8 @@ shared stylesheet keys on.
 and Checkbox), the deterministic `useId` hazard; Ark's portaled popovers
 ¹ Vue hydration is verified on the portal-free primitives (Button + Field +
 Checkbox + Alert), the deterministic `useId` hazard; Ark's portaled popovers
+¹ Vue hydration is verified on the portal-free primitives (Button + Divider +
+Field + Checkbox), the deterministic `useId` hazard; Ark's portaled popovers
 position via floating-ui measurement absent in jsdom, so their hydration is
 covered by the string + interaction suites.
 ² Svelte/Solid use a separate SSR-compiled test project (`*.ssr.test.*`) that

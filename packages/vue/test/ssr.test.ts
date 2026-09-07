@@ -5,6 +5,7 @@ import { App } from "../playground/app.js";
 import { Alert } from "../src/alert.js";
 import { Button } from "../src/button.js";
 import { Card } from "../src/card.js";
+import { Divider } from "../src/divider.js";
 import { Field } from "../src/field.js";
 import { Checkbox } from "../src/checkbox.js";
 import { partAttrs, partTags } from "../../core/test/ssr-parts.ts";
@@ -29,6 +30,11 @@ describe("SSR (Vue)", () => {
     // The card's compound anatomy survives serialisation part by part.
     expect(html).toContain('data-part="title"');
     expect(html).toContain('data-part="footer"');
+    expect(html).toContain('data-scope="divider"');
+    // Both divider shapes survive serialisation: the bare rule keeps its
+    // separator role, the captioned one its label part.
+    expect(html).toContain('role="separator"');
+    expect(html).toMatch(/data-scope="divider"[^>]*data-part="label"/);
     // Triggers are present even while the dialog/select popovers are closed.
     expect(html).toContain("Open dialog");
     expect(html).toContain("Framework");
@@ -69,6 +75,10 @@ describe("SSR (Vue)", () => {
  * hydration here proves the id path is stable. Ark's portaled popovers
  * (Dialog/Select) position via floating-ui measurement that jsdom does not
  * provide, so their hydration is covered by the string + interaction suites
+ * (Button + Divider + Field + Checkbox) exercise exactly that, so a
+ * warning-free hydration here proves the id path is stable. Ark's portaled
+ * popovers (Dialog/Select) position via floating-ui measurement that jsdom does
+ * not provide, so their hydration is covered by the string + interaction suites
  * instead.
  */
 const HydrationApp = defineComponent({
@@ -86,6 +96,8 @@ const HydrationApp = defineComponent({
           h(Card.Content, {}, () => "Up 12% on last month."),
           h(Card.Footer, {}, () => h(Button, { size: "sm" }, () => "Export")),
         ]),
+        h(Divider),
+        h(Divider, { align: "start" }, () => "Or"),
         h(Field.Root, {}, () => [
           h(Field.Label, {}, () => "Email"),
           h(Field.Input, { placeholder: "you@example.com" }),

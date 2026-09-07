@@ -10,6 +10,8 @@
  *                so the recipe's `data-size` is proven to survive SSR too.
  *   - Card     — a compound, CSS-only surface: every part must serialise its
  *                own `data-part` and the root its recipe attributes.
+ *   - Divider  — CSS-only, but proves an optional child (the label) and the
+ *                conditional separator role serialise identically both ways.
  *   - Field    — `useId`-generated label/control ids must match across render.
  *   - Checkbox — a label bound to a visually hidden native input by `useId`,
  *                plus indicators the machine hides via the `hidden` attribute.
@@ -26,6 +28,7 @@
  */
 import { Alert } from "../src/alert.js";
 import { Button } from "../src/button.js";
+import { Divider } from "../src/divider.js";
 import { Card } from "../src/card.js";
 import { Field } from "../src/field.js";
 import { Checkbox } from "../src/checkbox.js";
@@ -86,6 +89,12 @@ export function App({ open = false }: AppProps) {
         <Button variant="destructive" size="lg">
           Destructive
         </Button>
+      </section>
+
+      <section aria-label="dividers">
+        <Divider />
+        <Divider align="start">Or</Divider>
+        <Divider orientation="vertical" />
       </section>
 
       <section aria-label="alerts">

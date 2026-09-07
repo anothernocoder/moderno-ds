@@ -83,6 +83,12 @@ export type {
 export type { CardVariant, CardSize } from "@moderno-ui/core";
 
 /**
+ * Divider — a CSS-only rule (no Ark machine). Same `dividerRecipe` and
+ * `components.css` stroke as every other binding.
+ */
+export { default as Divider } from "./Divider.svelte";
+
+/**
  * Charts (Phase 4) — pure SVG maps over `@moderno-ui/charts-core` models. Each
  * renders the identical scaffold across frameworks; they carry zero colour and
  * paint from `--chart-*` via the data-series index in components.css.

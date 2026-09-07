@@ -14,6 +14,7 @@ describe("AGENT_COMPONENTS", () => {
       "Button",
       "Alert",
       "Card",
+      "Divider",
       "Field",
       "Checkbox",
       "Dialog",
@@ -104,11 +105,28 @@ describe("buildComponentsManifest", () => {
       "Button",
       "Alert",
       "Card",
+      "Divider",
       "LineChart",
       "AreaChart",
       "BarChart",
       "ScatterChart",
     ]);
+  });
+
+  it("resolves Divider's recipe props, variants and styled parts", () => {
+    const divider = manifest.components.find((c) => c.name === "Divider")!;
+    expect(divider.props.map((p) => p.name)).toEqual(["align", "orientation"]);
+    expect(divider.variants).toEqual({
+      orientation: ["horizontal", "vertical"],
+      align: ["start", "center", "end"],
+    });
+    expect(divider.parts.map((p) => p.name)).toEqual(["root", "label"]);
+  });
+
+  it("gives Dialog empty props — it adds none of its own", () => {
+    const doc = manifest.components.find((c) => c.name === "Dialog")!;
+    expect(doc.props).toEqual([]);
+    expect(doc.variants).toBeUndefined();
   });
 
   it("reads variants straight off the shared @moderno-ui/core recipes", () => {
