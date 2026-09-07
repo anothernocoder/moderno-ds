@@ -7,7 +7,8 @@
  *
  *   import "@moderno-ui/css";
  */
-import { Select as ArkSelect } from "@ark-ui/svelte";
+import { Checkbox as ArkCheckbox, Select as ArkSelect } from "@ark-ui/svelte";
+import CheckboxRoot from "./CheckboxRoot.svelte";
 import SelectRoot from "./SelectRoot.svelte";
 
 export { default as Button } from "./Button.svelte";
@@ -37,6 +38,18 @@ export { Field } from "@ark-ui/svelte";
 export { Dialog, Portal } from "@ark-ui/svelte";
 
 /**
+ * Checkbox — tri-state (unchecked / checked / indeterminate) with a label. Ark
+ * binds the root `<label>` to a visually hidden native input and stamps
+ * `data-state` / `data-disabled` / `data-invalid` on every part; only `Root` is
+ * wrapped, to inject the `size` recipe. Annotated so the emitted `.d.ts`
+ * doesn't inline an un-nameable `@zag-js` type (TS2742).
+ */
+export const Checkbox: Omit<typeof ArkCheckbox, "Root"> & { Root: typeof CheckboxRoot } = {
+  ...ArkCheckbox,
+  Root: CheckboxRoot,
+};
+
+/**
  * Select — only `Root` is wrapped (to inject the `size` recipe); every other
  * part is Ark's verbatim. Annotated so the emitted `.d.ts` doesn't inline an
  * un-nameable `@zag-js` type (TS2742).
@@ -48,4 +61,8 @@ export const Select: Omit<typeof ArkSelect, "Root"> & { Root: typeof SelectRoot 
 
 export { createListCollection } from "@ark-ui/svelte";
 
-export type { SelectValueChangeDetails } from "@ark-ui/svelte";
+export type {
+  CheckboxCheckedChangeDetails,
+  CheckboxCheckedState,
+  SelectValueChangeDetails,
+} from "@ark-ui/svelte";

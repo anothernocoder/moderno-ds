@@ -1,5 +1,5 @@
 /**
- * SSR playground — the Vue twin of the React harness. Mounts all four
+ * SSR playground — the Vue twin of the React harness. Mounts all five
  * primitives in their default (closed) state so the SSR suite can assert a
  * stable server string and a warning-free hydration. `open` mounts the Dialog +
  * Select popovers to exercise the harder portal/id path.
@@ -7,6 +7,7 @@
 import { defineComponent, h, type Component } from "vue";
 import { Button } from "../src/button.js";
 import { Field } from "../src/field.js";
+import { Checkbox } from "../src/checkbox.js";
 import { Dialog, Portal } from "../src/dialog.js";
 import { Select, createListCollection } from "../src/select.js";
 import { AreaChart, BarChart, LineChart, ScatterChart } from "../src/charts.js";
@@ -67,6 +68,34 @@ export const App = defineComponent({
           h(Field.Input, { placeholder: "you@example.com" }),
           h(Field.HelperText, {}, () => "We never share it."),
           h(Field.ErrorText, {}, () => "Email is required."),
+        ]),
+
+        h("section", { "aria-label": "checkboxes" }, [
+          h(Checkbox.Root as unknown as Component, { defaultChecked: true }, () => [
+            h(Checkbox.Control, {}, () => [
+              h(Checkbox.Indicator, {}, () => "✓"),
+              h(Checkbox.Indicator, { indeterminate: true }, () => "–"),
+            ]),
+            h(Checkbox.Label, {}, () => "Email me updates"),
+            h(Checkbox.HiddenInput),
+          ]),
+          h(
+            Checkbox.Root as unknown as Component,
+            { size: "sm", defaultChecked: "indeterminate" },
+            () => [
+              h(Checkbox.Control, {}, () => [
+                h(Checkbox.Indicator, {}, () => "✓"),
+                h(Checkbox.Indicator, { indeterminate: true }, () => "–"),
+              ]),
+              h(Checkbox.Label, {}, () => "Select all"),
+              h(Checkbox.HiddenInput),
+            ],
+          ),
+          h(Checkbox.Root as unknown as Component, { size: "lg", disabled: true }, () => [
+            h(Checkbox.Control, {}, () => h(Checkbox.Indicator, {}, () => "✓")),
+            h(Checkbox.Label, {}, () => "Unavailable"),
+            h(Checkbox.HiddenInput),
+          ]),
         ]),
 
         h(Dialog.Root, { defaultOpen: props.open }, () => [

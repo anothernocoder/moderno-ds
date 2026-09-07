@@ -1,11 +1,12 @@
 /**
- * SSR playground — the Solid twin of the React harness. Mounts all four
+ * SSR playground — the Solid twin of the React harness. Mounts all five
  * primitives in their default (closed) state; `open` mounts the Dialog + Select
  * popovers so the SSR smoke can exercise the portal/id path.
  */
 import { For } from "solid-js";
 import { Button } from "../src/button.jsx";
 import { Field } from "../src/field.js";
+import { Checkbox } from "../src/checkbox.jsx";
 import { Dialog, Portal } from "../src/dialog.js";
 import { Select, createListCollection } from "../src/select.jsx";
 import { AreaChart, BarChart, LineChart, ScatterChart } from "../src/charts.jsx";
@@ -66,6 +67,32 @@ export function App(props: { open?: boolean }) {
         <Field.HelperText>We never share it.</Field.HelperText>
         <Field.ErrorText>Email is required.</Field.ErrorText>
       </Field.Root>
+
+      <section aria-label="checkboxes">
+        <Checkbox.Root defaultChecked>
+          <Checkbox.Control>
+            <Checkbox.Indicator>✓</Checkbox.Indicator>
+            <Checkbox.Indicator indeterminate>–</Checkbox.Indicator>
+          </Checkbox.Control>
+          <Checkbox.Label>Email me updates</Checkbox.Label>
+          <Checkbox.HiddenInput />
+        </Checkbox.Root>
+        <Checkbox.Root size="sm" defaultChecked="indeterminate">
+          <Checkbox.Control>
+            <Checkbox.Indicator>✓</Checkbox.Indicator>
+            <Checkbox.Indicator indeterminate>–</Checkbox.Indicator>
+          </Checkbox.Control>
+          <Checkbox.Label>Select all</Checkbox.Label>
+          <Checkbox.HiddenInput />
+        </Checkbox.Root>
+        <Checkbox.Root size="lg" disabled>
+          <Checkbox.Control>
+            <Checkbox.Indicator>✓</Checkbox.Indicator>
+          </Checkbox.Control>
+          <Checkbox.Label>Unavailable</Checkbox.Label>
+          <Checkbox.HiddenInput />
+        </Checkbox.Root>
+      </section>
 
       <Dialog.Root defaultOpen={props.open}>
         <Dialog.Trigger>Open dialog</Dialog.Trigger>

@@ -13,6 +13,7 @@ describe("AGENT_COMPONENTS", () => {
     expect(names).toEqual([
       "Button",
       "Field",
+      "Checkbox",
       "Dialog",
       "Select",
       "LineChart",
@@ -53,12 +54,15 @@ describe("buildComponentsManifest", () => {
     expect(button.import).toBe('import { Button } from "@moderno-ui/vue"');
   });
 
-  it("resolves Button/Select props from the canonical react source", () => {
+  it("resolves Button/Select/Checkbox props from the canonical react source", () => {
     const button = manifest.components.find((c) => c.name === "Button")!;
     expect(button.props.map((p) => p.name).sort()).toEqual(["size", "variant"]);
 
     const select = manifest.components.find((c) => c.name === "Select")!;
     expect(select.props.map((p) => p.name)).toEqual(["size"]);
+
+    const checkbox = manifest.components.find((c) => c.name === "Checkbox")!;
+    expect(checkbox.props.map((p) => p.name)).toEqual(["size"]);
   });
 
   it("gives Field and Dialog empty props — they add none of their own", () => {
@@ -78,6 +82,9 @@ describe("buildComponentsManifest", () => {
 
     const select = manifest.components.find((c) => c.name === "Select")!;
     expect(select.variants).toEqual({ size: ["sm", "md", "lg"] });
+
+    const checkbox = manifest.components.find((c) => c.name === "Checkbox")!;
+    expect(checkbox.variants).toEqual({ size: ["sm", "md", "lg"] });
   });
 
   it("attaches framework-specific examples, not the react snippet reused verbatim", () => {

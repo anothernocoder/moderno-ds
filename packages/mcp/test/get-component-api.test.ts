@@ -42,7 +42,7 @@ describe("getComponentApi", () => {
 
   it("throws with the available component names when asked for one that doesn't exist", () => {
     expect(() => getComponentApi(manifests, { name: "Toggle", framework: "react" })).toThrow(
-      /Button, Dialog/,
+      /Button, Checkbox, Dialog/,
     );
   });
 

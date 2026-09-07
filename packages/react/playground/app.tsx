@@ -2,10 +2,12 @@
  * SSR playground — the reusable harness that validates Moderno's second
  * guarantee: server-render + hydrate with zero React warnings.
  *
- * It mounts all four reference primitives in their default (closed) state. Each
+ * It mounts all five reference primitives in their default (closed) state. Each
  * one is deliberately exercised for an SSR hazard:
  *   - Button   — the trivial baseline (no ids, no portal).
  *   - Field    — `useId`-generated label/control ids must match across render.
+ *   - Checkbox — a label bound to a visually hidden native input by `useId`,
+ *                plus indicators the machine hides via the `hidden` attribute.
  *   - Dialog   — a Portal + focus-trap machine that must emit a stable,
  *                hydration-safe trigger while its content stays unmounted-visible.
  *   - Select   — a collection + popover whose hidden native <select> and ids
@@ -19,6 +21,7 @@
  */
 import { Button } from "../src/button.js";
 import { Field } from "../src/field.js";
+import { Checkbox } from "../src/checkbox.js";
 import { Dialog, Portal } from "../src/dialog.js";
 import { Select, createListCollection } from "../src/select.js";
 import { AreaChart, BarChart, LineChart, ScatterChart } from "../src/charts.js";
@@ -84,6 +87,32 @@ export function App({ open = false }: AppProps) {
         <Field.HelperText>We never share it.</Field.HelperText>
         <Field.ErrorText>Email is required.</Field.ErrorText>
       </Field.Root>
+
+      <section aria-label="checkboxes">
+        <Checkbox.Root defaultChecked>
+          <Checkbox.Control>
+            <Checkbox.Indicator>✓</Checkbox.Indicator>
+            <Checkbox.Indicator indeterminate>–</Checkbox.Indicator>
+          </Checkbox.Control>
+          <Checkbox.Label>Email me updates</Checkbox.Label>
+          <Checkbox.HiddenInput />
+        </Checkbox.Root>
+        <Checkbox.Root size="sm" defaultChecked="indeterminate">
+          <Checkbox.Control>
+            <Checkbox.Indicator>✓</Checkbox.Indicator>
+            <Checkbox.Indicator indeterminate>–</Checkbox.Indicator>
+          </Checkbox.Control>
+          <Checkbox.Label>Select all</Checkbox.Label>
+          <Checkbox.HiddenInput />
+        </Checkbox.Root>
+        <Checkbox.Root size="lg" disabled>
+          <Checkbox.Control>
+            <Checkbox.Indicator>✓</Checkbox.Indicator>
+          </Checkbox.Control>
+          <Checkbox.Label>Unavailable</Checkbox.Label>
+          <Checkbox.HiddenInput />
+        </Checkbox.Root>
+      </section>
 
       <Dialog.Root defaultOpen={open}>
         <Dialog.Trigger>Open dialog</Dialog.Trigger>

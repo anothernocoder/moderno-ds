@@ -59,6 +59,16 @@ export const manifests: AggregatedManifests = {
           },
         },
         {
+          name: "Checkbox",
+          scope: "checkbox",
+          import: 'import { Checkbox } from "@moderno-ui/react"',
+          propsHash: "sha256:fixture-checkbox",
+          props: [{ name: "size", type: '"sm" | "md" | "lg"', required: false }],
+          parts: [{ name: "root" }, { name: "control" }, { name: "indicator" }, { name: "label" }],
+          variants: { size: ["sm", "md", "lg"] },
+          guidance: { intent: "Toggle one independent boolean." },
+        },
+        {
           name: "Select",
           scope: "select",
           import: 'import { Select } from "@moderno-ui/react"',
