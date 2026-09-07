@@ -57,6 +57,8 @@ export const Alert: {
 
 export type { AlertRootProps, AlertPartProps } from "./alert-props.js";
 export type { AlertVariant, AlertSize } from "@moderno-ui/core";
+
+/**
  * Card — a CSS-only surface with an Ark-style anatomy. No Ark machine exists
  * for a card (nothing to track), so every part is authored here; each emits
  * `data-scope="card"` plus its own `data-part`, and the root carries

@@ -8,7 +8,6 @@ import { Alert } from "../src/alert.jsx";
 import { Button } from "../src/button.jsx";
 import { Field } from "../src/field.jsx";
 import { Card } from "../src/card.jsx";
-import { Field } from "../src/field.js";
 import { Checkbox } from "../src/checkbox.jsx";
 import { Dialog, Portal } from "../src/dialog.js";
 import { Select, createListCollection } from "../src/select.jsx";

@@ -117,6 +117,8 @@ export const AGENT_COMPONENTS: AgentComponentSpec[] = [
       { name: "action" },
     ],
     variants: alertRecipe.variants,
+  },
+  {
     name: "Card",
     slug: "card",
     scope: "card",
