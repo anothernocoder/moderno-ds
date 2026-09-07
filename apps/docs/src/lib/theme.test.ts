@@ -35,6 +35,29 @@ describe("tokensToState / stateToTokens — round trip", () => {
     expect(doc.light.radius.$type).toBe("dimension");
     expect(doc.light["font-sans"].$type).toBe("fontFamily");
   });
+
+  it("reads the extended slots the theme expresses, so the editor can show them", () => {
+    const state = tokensToState(modernoTokens);
+    expect(state.light["font-serif"]).toMatch(/Hedvig Letters Serif/);
+    expect(state.light["shadow-md"]).toBeTruthy();
+    expect(state.dark["shadow-md"]).toBeTruthy();
+    expect(state.light["container-lg"]).toBe("48rem");
+  });
+
+  it("exports the extended slots with their DTCG types", () => {
+    const doc = stateToTokens(tokensToState(modernoTokens));
+    expect(doc.light["font-serif"].$type).toBe("fontFamily");
+    expect(doc.light["shadow-lg"].$type).toBe("shadow");
+    expect(doc.light["container-sm"].$type).toBe("dimension");
+  });
+
+  it("drops a slot the editor left blank rather than exporting an empty value", () => {
+    const state = tokensToState(modernoTokens);
+    state.light["font-serif"] = "";
+    const doc = stateToTokens(state);
+    expect(doc.light["font-serif"]).toBeUndefined();
+    expect(buildTheme(state).valid).toBe(true);
+  });
 });
 
 describe("buildTheme — export bundle", () => {

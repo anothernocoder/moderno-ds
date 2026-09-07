@@ -5,12 +5,15 @@
  * uses, so a theme that exports clean here is a theme that passes CI.
  */
 import { compileTheme, ThemeValidationError } from "@moderno-ui/theme-compile";
-import { COLOR_SLOTS, OTHER_SLOTS, slotType } from "@moderno-ui/tokens/contract";
+import { COLOR_SLOTS, EXTENDED_SLOTS, OTHER_SLOTS, slotType } from "@moderno-ui/tokens/contract";
 import modernoTokens from "../../../../registry/themes/theme-moderno/tokens.dtcg.json";
 
 // The slot lists come from the contract data in @moderno-ui/tokens — the same
 // source theme-compile validates against, so editor and compiler can't drift.
-export { COLOR_SLOTS, OTHER_SLOTS };
+export { COLOR_SLOTS, EXTENDED_SLOTS, OTHER_SLOTS };
+
+/** Every slot the editor puts a field on, in contract order. */
+const EDITABLE_SLOTS = [...COLOR_SLOTS, ...OTHER_SLOTS, ...EXTENDED_SLOTS];
 
 export type Scope = Record<string, string>;
 
@@ -33,7 +36,7 @@ export interface ThemeDoc {
 function scopeToState(scope: unknown): Scope {
   const out: Scope = {};
   const s = (scope ?? {}) as Record<string, Token | undefined>;
-  for (const slot of [...COLOR_SLOTS, ...OTHER_SLOTS]) {
+  for (const slot of EDITABLE_SLOTS) {
     const value = s[slot]?.$value;
     if (typeof value === "string") out[slot] = value;
   }
@@ -55,6 +58,10 @@ export function tokensToState(doc: unknown): ThemeState {
 function stateToScope(scope: Scope): TokenScope {
   const out: TokenScope = {};
   for (const [slot, value] of Object.entries(scope)) {
+    // An editor field left blank is an *unexpressed* extended slot: the theme
+    // inherits the neutral default from @moderno-ui/tokens. Emitting it would
+    // instead blank the slot, and theme-compile rejects that.
+    if (typeof value !== "string" || value.trim() === "") continue;
     out[slot] = { $type: slotType(slot), $value: value };
   }
   return out;

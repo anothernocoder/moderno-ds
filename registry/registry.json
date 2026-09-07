@@ -6,7 +6,7 @@
     {
       "name": "theme-moderno",
       "type": "registry:theme",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "Theme Moderno",
       "description": "The default Moderno brand: near-black monochrome workspace with sharp corners. Defines the contract slots in :root (light) and .dark (dark).",
       "dependencies": [],
@@ -22,7 +22,7 @@
     {
       "name": "theme-contrast",
       "type": "registry:theme",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "Theme Contrast",
       "description": "Synthetic maximum-contrast brand scoped under [data-brand=\"contrast\"], composed with .dark. Demonstrates the multi-brand switch.",
       "dependencies": [],

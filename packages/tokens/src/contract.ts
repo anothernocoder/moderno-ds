@@ -12,12 +12,13 @@
  */
 
 /** DTCG `$type` a slot serialises to in a theme's `tokens.dtcg.json`. */
-export type ContractSlotType = "color" | "dimension" | "fontFamily" | "duration";
+export type ContractSlotType = "color" | "dimension" | "fontFamily" | "duration" | "shadow";
 
 /**
- * Where a slot lives in the Theme Builder editor. `extended` slots are
- * base-only defaults in `@moderno-ui/tokens` — themes are not required to define
- * them and the editor does not surface them.
+ * Where a slot lives in the Theme Builder editor. `extended` slots ship a
+ * neutral default in `@moderno-ui/tokens`: a theme *may* override them but is
+ * not required to, so the editor surfaces them as optional fields (blank =
+ * inherit the neutral default) while `other` slots are mandatory.
  */
 export type ContractGroup = "surfaces" | "brand" | "support" | "charts" | "other" | "extended";
 
@@ -82,6 +83,16 @@ export const CONTRACT: readonly ContractSlot[] = [
   { name: "motion-fast", type: "duration", group: "extended" },
   { name: "motion-normal", type: "duration", group: "extended" },
   { name: "radius-full", type: "dimension", group: "extended" },
+  // Display face: headings and pull quotes; the brand's serif in theme-moderno.
+  { name: "font-serif", type: "fontFamily", group: "extended" },
+  // Elevation: three steps for overlays (popover, menu, drawer, toast).
+  { name: "shadow-sm", type: "shadow", group: "extended" },
+  { name: "shadow-md", type: "shadow", group: "extended" },
+  { name: "shadow-lg", type: "shadow", group: "extended" },
+  // Container breakpoints: what blocks and screens respond to (ADR-0005).
+  { name: "container-sm", type: "dimension", group: "extended" },
+  { name: "container-md", type: "dimension", group: "extended" },
+  { name: "container-lg", type: "dimension", group: "extended" },
 ];
 
 /** Colour slots every theme must define in both scopes (CONTRACT.md minimum). */
@@ -94,7 +105,7 @@ export const OTHER_SLOTS: readonly string[] = CONTRACT.filter((s) => s.group ===
   (s) => s.name,
 );
 
-/** Base-only slots shipped by `@moderno-ui/tokens`, not required in themes. */
+/** Slots `@moderno-ui/tokens` gives a default; a theme overrides them or not. */
 export const EXTENDED_SLOTS: readonly string[] = CONTRACT.filter((s) => s.group === "extended").map(
   (s) => s.name,
 );

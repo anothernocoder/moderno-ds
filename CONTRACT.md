@@ -52,7 +52,8 @@ in `:root` (light) with a `.dark` override.
 | `--ring`                                     | focus ring                   |
 | `--chart-1` … `--chart-5`                    | data-viz series              |
 
-Non-color contract slots: `--radius`, `--font-sans`, `--font-mono`.
+Non-color contract slots: `--radius`, `--font-sans`, `--font-mono`. Every theme
+must define these and all the color slots above, in both scopes.
 
 ## Extended contract
 
@@ -62,8 +63,25 @@ Beyond color, the contract also standardizes:
 - **Motion** — `--motion-instant` (150ms), `--motion-fast` (200ms),
   `--motion-normal` (300ms).
 - **Radius** — `--radius` (base) and `--radius-full` (pills/dots).
+- **Display face** — `--font-serif`, the face headings and pull quotes use when
+  the brand has one (`theme-moderno`: Hedvig Letters Serif). Body copy stays on
+  `--font-sans`.
+- **Elevation** — `--shadow-sm` / `--shadow-md` / `--shadow-lg`, three steps for
+  overlays (popover, menu, drawer, toast). A theme may compose a hairline ring
+  with the shadow so an overlay still separates from a near-black canvas;
+  `theme-moderno` does. The `.dark` scope carries its own three values — a
+  light-mode shadow disappears on a dark surface.
+- **Container breakpoints** — `--container-sm` (24rem), `--container-md` (36rem),
+  `--container-lg` (48rem). Blocks and screens respond to the width of their
+  _container_, never the viewport (ADR-0005).
 
-No hardcoded spacing, durations, or radii in components — reference the slot.
+No hardcoded spacing, durations, radii, shadows, or widths in components —
+reference the slot.
+
+Extended slots are **optional in a theme**: `@moderno-ui/tokens` ships a neutral
+default for each, and a theme overrides only what its brand actually changes.
+The color and non-color slots above are mandatory; `theme-compile` fails a
+theme that omits one.
 
 ## Theming rules
 
@@ -77,7 +95,12 @@ No hardcoded spacing, durations, or radii in components — reference the slot.
   tokens. (`@moderno-ui/tokens` ships a `contrast` demo scope.)
 - **Tailwind v4**: import `@moderno-ui/css/preset`. It maps each slot to a theme
   namespace with `@theme inline`, so utilities reference `var(--slot)` directly
-  and runtime overrides re-theme without a rebuild.
+  and runtime overrides re-theme without a rebuild — `bg-primary`, `font-serif`,
+  `shadow-md`, `rounded-lg`. The one exception is `--container-*`: a CSS
+  container query condition cannot contain `var()`, so those are registered with
+  a plain `@theme` block carrying the same three literal lengths. `@sm:`/`@md:`/
+  `@lg:` therefore fire at fixed widths, while `max-w-sm` and friends still read
+  `var(--container-sm)` and follow a theme override at runtime.
 
 ## Styling convention: `data-scope` / `data-part`
 

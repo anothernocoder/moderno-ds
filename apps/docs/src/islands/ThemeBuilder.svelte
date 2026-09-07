@@ -15,6 +15,7 @@
     defaultThemeState,
     slugify,
     tokensToState,
+    EXTENDED_SLOTS,
     OTHER_SLOTS,
     type ThemeState,
   } from "../lib/theme.ts";
@@ -33,6 +34,8 @@
     contrastFail: string;
     invalid: string;
     copied: string;
+    /** Placeholder on an optional (extended) slot left blank. */
+    inherited: string;
     /** Editor group labels, keyed by the contract group id. */
     groups: Record<string, string>;
   }
@@ -191,6 +194,26 @@
         <label class="tb-slot tb-slot--wide">
           <span class="tb-slot-name">{slot}</span>
           <input type="text" spellcheck="false" bind:value={state[scope][slot]} />
+        </label>
+      {/each}
+    </fieldset>
+
+    <!--
+      Extended slots (display face, elevation, container breakpoints, spacing,
+      motion) are optional: @moderno-ui/tokens ships a neutral default for each,
+      so a blank field means "inherit it" and exports nothing for that slot.
+    -->
+    <fieldset class="tb-group">
+      <legend>{strings.groups["extended"] ?? "Extended"}</legend>
+      {#each EXTENDED_SLOTS as slot (slot)}
+        <label class="tb-slot tb-slot--wide">
+          <span class="tb-slot-name">{slot}</span>
+          <input
+            type="text"
+            spellcheck="false"
+            placeholder={strings.inherited}
+            bind:value={state[scope][slot]}
+          />
         </label>
       {/each}
     </fieldset>

@@ -160,7 +160,9 @@
             "radius": { "type": "array", "items": { "type": "string" } },
             "font": { "type": "array", "items": { "type": "string" } },
             "spacing": { "type": "array", "items": { "type": "string" } },
-            "motion": { "type": "array", "items": { "type": "string" } }
+            "motion": { "type": "array", "items": { "type": "string" } },
+            "shadow": { "type": "array", "items": { "type": "string" } },
+            "container": { "type": "array", "items": { "type": "string" } }
           }
         },
         "theming": {

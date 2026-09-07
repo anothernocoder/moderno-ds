@@ -41,6 +41,16 @@ beforeAll(async () => {
     "rounded-lg",
     "font-sans",
     "font-mono",
+    "font-serif",
+    "shadow-sm",
+    "shadow-md",
+    "shadow-lg",
+    "max-w-sm",
+    "max-w-md",
+    "w-lg",
+    "@sm:flex",
+    "@md:grid",
+    "@lg:block",
   ]);
 });
 
@@ -60,9 +70,36 @@ describe("@moderno-ui/tokens preset — generated utilities resolve to contract 
   it("registers font utilities (the inline @theme font mapping is required, not a no-op)", () => {
     expect(utilities).toMatch(/\.font-sans\s*\{[^}]*var\(--font-sans\)/s);
     expect(utilities).toMatch(/\.font-mono\s*\{[^}]*var\(--font-mono\)/s);
+    expect(utilities).toMatch(/\.font-serif\s*\{[^}]*var\(--font-serif\)/s);
   });
 
   it("derives radius utilities from the contract --radius", () => {
     expect(utilities).toMatch(/\.rounded-lg\s*\{[^}]*var\(--radius\)/s);
+  });
+
+  it("emits shadow utilities backed by the elevation slots, not copied values", () => {
+    for (const step of ["sm", "md", "lg"]) {
+      expect(utilities, `.shadow-${step}`).toMatch(
+        new RegExp(`\\.shadow-${step}\\s*\\{[^}]*var\\(--shadow-${step}\\)`, "s"),
+      );
+    }
+  });
+
+  /**
+   * The two halves of the container mapping, which is why it is not `inline`:
+   * the width utilities must stay runtime-themeable, while the container-query
+   * variants must carry a literal length — `@container (width >= var(…))` never
+   * matches, so an inline mapping would silently drop every `@sm:` utility.
+   */
+  it("keeps container width utilities pointed at var(--container-*)", () => {
+    expect(utilities).toMatch(/\.max-w-sm\s*\{[^}]*var\(--container-sm\)/s);
+    expect(utilities).toMatch(/\.max-w-md\s*\{[^}]*var\(--container-md\)/s);
+    expect(utilities).toMatch(/\.w-lg\s*\{[^}]*var\(--container-lg\)/s);
+  });
+
+  it("emits @sm/@md/@lg container-query variants at the contract widths", () => {
+    expect(utilities).toContain("@container (width >= 24rem)");
+    expect(utilities).toContain("@container (width >= 36rem)");
+    expect(utilities).toContain("@container (width >= 48rem)");
   });
 });

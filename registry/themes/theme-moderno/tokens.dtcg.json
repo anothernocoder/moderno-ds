@@ -40,7 +40,26 @@
     "font-mono": {
       "$type": "fontFamily",
       "$value": "ui-monospace, \"SFMono-Regular\", \"Menlo\", \"Consolas\", monospace"
-    }
+    },
+    "font-serif": {
+      "$type": "fontFamily",
+      "$value": "\"Hedvig Letters Serif\", ui-serif, Georgia, \"Times New Roman\", serif"
+    },
+    "shadow-sm": {
+      "$type": "shadow",
+      "$value": "0 0 0 1px oklch(0.922 0 0), 0 1px 2px 0 oklch(0 0 0 / 0.04)"
+    },
+    "shadow-md": {
+      "$type": "shadow",
+      "$value": "0 0 0 1px oklch(0.922 0 0), 0 4px 12px -2px oklch(0 0 0 / 0.08)"
+    },
+    "shadow-lg": {
+      "$type": "shadow",
+      "$value": "0 0 0 1px oklch(0.922 0 0), 0 12px 32px -8px oklch(0 0 0 / 0.12)"
+    },
+    "container-sm": { "$type": "dimension", "$value": "24rem" },
+    "container-md": { "$type": "dimension", "$value": "36rem" },
+    "container-lg": { "$type": "dimension", "$value": "48rem" }
   },
   "dark": {
     "background": { "$type": "color", "$value": "oklch(0.16 0 0)" },
@@ -75,6 +94,25 @@
     "font-mono": {
       "$type": "fontFamily",
       "$value": "ui-monospace, \"SFMono-Regular\", \"Menlo\", \"Consolas\", monospace"
-    }
+    },
+    "font-serif": {
+      "$type": "fontFamily",
+      "$value": "\"Hedvig Letters Serif\", ui-serif, Georgia, \"Times New Roman\", serif"
+    },
+    "shadow-sm": {
+      "$type": "shadow",
+      "$value": "0 0 0 1px oklch(0.27 0 0), 0 1px 2px 0 oklch(0 0 0 / 0.6)"
+    },
+    "shadow-md": {
+      "$type": "shadow",
+      "$value": "0 0 0 1px oklch(0.27 0 0), 0 4px 12px -2px oklch(0 0 0 / 0.7)"
+    },
+    "shadow-lg": {
+      "$type": "shadow",
+      "$value": "0 0 0 1px oklch(0.27 0 0), 0 12px 32px -8px oklch(0 0 0 / 0.8)"
+    },
+    "container-sm": { "$type": "dimension", "$value": "24rem" },
+    "container-md": { "$type": "dimension", "$value": "36rem" },
+    "container-lg": { "$type": "dimension", "$value": "48rem" }
   }
 }
