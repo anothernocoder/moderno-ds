@@ -1,6 +1,6 @@
 # Moderno Design System
 
-Framework-agnostic design system monorepo: primitives versioned via npm, blocks/themes via a shadcn-style registry, documentation in Astro. Platform decisions (toolchain, publish, docs, themes): **ADR-0001** (`docs/adr/0001-platform-distribution-docs-theming.md`).
+Framework-agnostic design system monorepo: primitives versioned via npm, blocks/themes via a shadcn-style registry, documentation in Astro. Platform decisions (toolchain, publish, docs, themes): **ADR-0001** (`docs/adr/0001-platform-distribution-docs-theming.md`). Absorption of the predecessor `moderno` and the npm scope: **ADR-0004**. Responsive policy and registry tiers: **ADR-0005**.
 
 ## Language
 
@@ -13,8 +13,16 @@ Headless component + shared styles, distributed as a versioned npm package (`@mo
 _Avoid_: Component, widget
 
 **Block**:
-A composition of primitives (e.g. login form, pricing table) that the consumer copies with the CLI and can modify freely.
-_Avoid_: Template, pattern, organism
+A page *section* composed of primitives (e.g. hero, pricing table, login form) that the consumer copies with the CLI and can modify freely. A block does not own the viewport and carries no navigation state.
+_Avoid_: Template, pattern, organism, section (as a domain term)
+
+**Screen**:
+A full-viewport composition of blocks that represents one state of a flow (e.g. `sign-in`, `cart`). Presentational: it receives data and callbacks, holds no navigation state of its own. Installable on its own via the CLI; installing it pulls in the blocks it composes.
+_Avoid_: Page, view, layout (as a domain term)
+
+**Flow**:
+An ordered sequence of screens plus an example assembly that supplies the navigation state between them (e.g. `auth`: sign-in → sign-up → forgot-password → reset-password → verify). Installable as a unit via the CLI.
+_Avoid_: Wizard, journey, funnel, multi-step form (for the registry unit)
 
 **Theme**:
 A CSS file of variables that defines the appearance of a brand. The brand lives 100% in CSS variables, never inside the components.
@@ -97,8 +105,8 @@ The prefix of published packages: `@moderno-ui/*` (`@moderno-ui/tokens`, `@moder
 _Avoid_: @ds/_, moderno-ds/_ (as an npm scope), private registry (v1)
 
 **Extended contract**:
-Beyond shadcn color slots, the contract includes spacing (`--spacing-1…8`), motion (`--motion-instant|fast|normal`), and radius (`--radius`, `--radius-full`). Defined in CONTRACT.md, defaults in `@moderno-ui/tokens`, overrides in themes.
-_Avoid_: Hardcoded spacing, magic numbers in CSS
+Beyond shadcn color slots, the contract includes spacing (`--spacing-1…8`), motion (`--motion-instant|fast|normal`), radius (`--radius`, `--radius-full`), a display face (`--font-serif`), elevation (`--shadow-sm|md|lg`) and container breakpoints (`--container-sm|md|lg`). Defined in CONTRACT.md, defaults in `@moderno-ui/tokens`, overrides in themes.
+_Avoid_: Hardcoded spacing, magic numbers in CSS, viewport breakpoints as tokens
 
 **Theme Moderno v1**:
 Includes complete OKLCH ramps for light (`:root`) and dark (`.dark`), with semantic aliases in both scopes. A functional light/dark toggle from v1.
@@ -111,6 +119,14 @@ _Avoid_: Typography component, custom .text-\* classes in core
 **Component variant**:
 An alternative visual style (outline, sm, destructive…) expressed as `data-variant`, `data-size`, etc. on the `[data-part=root]`. CVA in `@moderno-ui/core` resolves props → data attributes; CSS in `components.css`.
 _Avoid_: Variant class, CVA Tailwind string
+
+**Predecessor (`moderno`)**:
+The earlier design-system repo (`anothernocoder/moderno`: Zag.js directly, `--md-*` tokens, `[data-theme]`, Starlight docs). Its inventory of primitives, blocks, screens and flows is the *source material* being absorbed into this DS; its code is not copied verbatim. Archived once the absorption is complete. Its `styles`, `class-contract`, `chart-core` and `registry` packages are deprecated on npm in favour of `@moderno-ui/css`, `@moderno-ui/core`, `@moderno-ui/charts-core` and `@moderno-ui/cli`.
+_Avoid_: "the app", "moderno v1", legacy DS (unqualified)
+
+**Responsive**:
+Blocks and screens adapt to the width of their *container* (container queries against `--container-*`), never to the viewport; a block must look right wherever it is placed. Primitives that change shape on small viewports (a dialog becoming a bottom sheet) use viewport media queries. Intrinsic grids (`auto-fit`) are welcome but are not, on their own, "responsive".
+_Avoid_: Viewport-only breakpoints in blocks, mobile-specific component families
 
 **Maintainer**:
 A single person responsible for the DS. A design constraint that prioritizes DRY and automation over ad-hoc flexibility.
