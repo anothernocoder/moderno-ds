@@ -173,10 +173,6 @@
   [data-scope="card"][data-size="lg"] > [data-scope="card"] {
     padding: var(--spacing-8);
   }
-  [data-scope="card"][data-size="lg"] > [data-part="header"] > [data-part="title"] {
-    font-size: 1.125rem;
-  }
-
   /* Consecutive regions share one padding step between them instead of
      stacking two, which keeps the vertical rhythm on the scale. Last, so it
      collapses the seam at every density. */
@@ -196,6 +192,11 @@
     font-size: 1rem;
     font-weight: 600;
     line-height: 1.4;
+  }
+  /* Only `lg` promotes the title: a bigger card is usually a bigger claim on
+     the page. `sm` tightens the padding but keeps the same voice. */
+  [data-scope="card"][data-size="lg"] > [data-part="header"] > [data-part="title"] {
+    font-size: 1.125rem;
   }
 
   [data-scope="card"][data-part="description"] {
