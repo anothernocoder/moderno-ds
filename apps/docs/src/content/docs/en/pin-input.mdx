@@ -1,0 +1,62 @@
+---
+title: PinInput
+description: A one-time-code input — Ark moves focus between cells, distributes a pasted code, masks the characters and flags the invalid state; the Moderno size recipe folds a data-size onto the root so components.css keys the cell density off it.
+group: Components
+order: 45
+component: PinInput
+pkg: "@moderno-ui/react"
+agentPropsHash: "sha256:732285cfb7fedc673af02798ba75d61170c5d811dcf76e796a4437c002c58e4f"
+agent:
+  intent: Enter a short code the user received out of band — an SMS OTP, an emailed verification code, a 2FA token.
+  whenToUse: A fixed-length code where each character deserves its own cell and the whole code is submitted at once.
+  whenNotToUse:
+    - case: Free-form secret of unknown length (a password)
+      use: Field with a password input
+    - case: A number the user reasons about (quantity, amount)
+      use: Number Input
+  gotchas:
+    - "Each cell is authored by the consumer: render one PinInput.Input per index inside PinInput.Control."
+    - "Pass count on the Root so the server-rendered aria labels match the client's; without it SSR labels say 'of 0'."
+    - "Add PinInput.HiddenInput when the code must be submitted with a form — that's the named field."
+    - "type defaults to numeric (cells render as type=tel); use alphanumeric for a mixed code."
+    - "invalid/complete/filled are Ark data-attributes, not props of the recipe; style them, don't recreate them."
+  theming:
+    - Cells paint from --input / --background and turn --primary as they fill, --destructive when invalid.
+    - Cell width and height come from --spacing-*; size is the only visual knob.
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import PinInputDemo from "../../../islands/PinInputDemo.svelte";
+
+Only `PinInput.Root` is wrapped, to inject the `size` recipe's `data-size`;
+every other part is Ark's verbatim. Ark advances focus as characters land,
+retreats on backspace, distributes a pasted code across the cells, swaps them to
+`type="password"` when `mask` is set, and mirrors `invalid` onto `aria-invalid`
+plus a `data-invalid` on every part — so `components.css` styles the filled,
+complete and invalid states without the binding tracking any of them.
+
+<Preview
+  code={`const cells = [0, 1, 2, 3, 4, 5];
+
+<PinInput.Root count={cells.length} otp onValueComplete={submit}>
+  <PinInput.Label>Verification code</PinInput.Label>
+  <PinInput.Control>
+    {cells.map((index) => (
+      <PinInput.Input key={index} index={index} />
+    ))}
+  </PinInput.Control>
+  <PinInput.HiddenInput />
+</PinInput.Root>`}
+>
+  <PinInputDemo client:visible />
+</Preview>
+
+## Installation
+
+<Install pkg="@moderno-ui/react" />
+
+## Props
+
+<PropsTable component="PinInput" />

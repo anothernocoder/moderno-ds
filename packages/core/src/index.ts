@@ -20,6 +20,7 @@ export {
   fieldRecipe,
   alertRecipe,
   alertRole,
+  pinInputRecipe,
 } from "./recipes.js";
 export type {
   ButtonVariant,
@@ -33,4 +34,5 @@ export type {
   FieldSize,
   AlertVariant,
   AlertSize,
+  PinInputSize,
 } from "./recipes.js";

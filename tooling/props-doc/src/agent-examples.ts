@@ -795,6 +795,92 @@ export const AGENT_EXAMPLES: Record<string, Partial<Record<Framework, AgentExamp
     ],
   },
 
+  PinInput: {
+    react: [
+      {
+        title: "Six-digit verification code",
+        code: [
+          'import { PinInput } from "@moderno-ui/react";',
+          "",
+          "const cells = [0, 1, 2, 3, 4, 5];",
+          "",
+          "<PinInput.Root count={cells.length} otp onValueComplete={submit}>",
+          "  <PinInput.Label>Verification code</PinInput.Label>",
+          "  <PinInput.Control>",
+          "    {cells.map((index) => (",
+          "      <PinInput.Input key={index} index={index} />",
+          "    ))}",
+          "  </PinInput.Control>",
+          "  <PinInput.HiddenInput />",
+          "</PinInput.Root>",
+        ].join("\n"),
+      },
+    ],
+    vue: [
+      {
+        title: "Six-digit verification code",
+        code: [
+          '<script setup lang="ts">',
+          'import { PinInput } from "@moderno-ui/vue";',
+          "",
+          "const cells = [0, 1, 2, 3, 4, 5];",
+          "</script>",
+          "",
+          "<template>",
+          '  <PinInput.Root :count="cells.length" otp @value-complete="submit">',
+          "    <PinInput.Label>Verification code</PinInput.Label>",
+          "    <PinInput.Control>",
+          '      <PinInput.Input v-for="index in cells" :key="index" :index="index" />',
+          "    </PinInput.Control>",
+          "    <PinInput.HiddenInput />",
+          "  </PinInput.Root>",
+          "</template>",
+        ].join("\n"),
+      },
+    ],
+    svelte: [
+      {
+        title: "Six-digit verification code",
+        code: [
+          '<script lang="ts">',
+          '  import { PinInput } from "@moderno-ui/svelte";',
+          "",
+          "  const cells = [0, 1, 2, 3, 4, 5];",
+          "</script>",
+          "",
+          "<PinInput.Root count={cells.length} otp onValueComplete={submit}>",
+          "  <PinInput.Label>Verification code</PinInput.Label>",
+          "  <PinInput.Control>",
+          "    {#each cells as index (index)}",
+          "      <PinInput.Input {index} />",
+          "    {/each}",
+          "  </PinInput.Control>",
+          "  <PinInput.HiddenInput />",
+          "</PinInput.Root>",
+        ].join("\n"),
+      },
+    ],
+    solid: [
+      {
+        title: "Six-digit verification code",
+        code: [
+          'import { For } from "solid-js";',
+          'import { PinInput } from "@moderno-ui/solid";',
+          "",
+          "const cells = [0, 1, 2, 3, 4, 5];",
+          "",
+          "<PinInput.Root count={cells.length} otp onValueComplete={submit}>",
+          "  <PinInput.Label>Verification code</PinInput.Label>",
+          "  <PinInput.Control>",
+          "    <For each={cells}>{(index) => <PinInput.Input index={index} />}</For>",
+          "  </PinInput.Control>",
+          "  <PinInput.HiddenInput />",
+          "</PinInput.Root>",
+        ].join("\n"),
+      },
+    ],
+  },
+
   LineChart: {
     react: [
       {

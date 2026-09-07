@@ -20,6 +20,9 @@ Ark re-export; Field, Select and Checkbox wrap only `Root` to inject `data-size`
 `data-*` onto markup. Button and Divider are the authored elements (neither has
 a headless machine behind it); Field and Dialog are verbatim Ark re-exports;
 Select and Checkbox wrap only `Root` to inject `data-size`.
+`data-*` onto markup. Button is the sole authored element; Field and Dialog are
+verbatim Ark re-exports; Select, Checkbox and PinInput wrap only `Root` to inject
+`data-size`.
 
 ## Component × framework × state
 
@@ -117,6 +120,17 @@ shared stylesheet keys on.
 | select by click reports value |  ✅   | ✅  |   ✅   |  ✅   |
 | open listbox from keyboard    |  ✅   | ✅  |   ✅   |  ✅   |
 
+### PinInput (`pinInputRecipe`: `data-size`; Ark focus/paste/mask machine)
+
+| State                                  | React | Vue | Svelte | Solid |
+| -------------------------------------- | :---: | :-: | :----: | :---: |
+| size → root `data-size`                |  ✅   | ✅  |   ✅   |  ✅   |
+| one cell per index, labelled, otp      |  ✅   | ✅  |   ✅   |  ✅   |
+| typing fills → `data-filled`/-complete |  ✅   | ✅  |   ✅   |  ✅   |
+| paste distributes across the cells     |  ✅   | ✅  |   ✅   |  ✅   |
+| mask → `type="password"`               |  ✅   | ✅  |   ✅   |  ✅   |
+| invalid → `data-invalid` + aria        |  ✅   | ✅  |   ✅   |  ✅   |
+
 ## SSR (F3.3 / F3.5)
 
 | Guarantee                                   | React | Vue | Svelte | Solid |
@@ -127,6 +141,7 @@ shared stylesheet keys on.
 | warning-free hydration (id path)            |  ✅   | ✅¹ |   —²   |  —²   |
 | static server-only island (zero `<script>`) |   —   |  —  |   ✅   |   —   |
 | `defaultOpen` survives SSR                  |  ✅   | ✅  |   ✅   |  ✅   |
+| PinInput `count` → correct server aria      |  ✅   | ✅  |   ✅   |  ✅   |
 
 ¹ Vue hydration is verified on the portal-free primitives (Button, Card, Field
 and Checkbox), the deterministic `useId` hazard; Ark's portaled popovers
@@ -136,6 +151,9 @@ Checkbox + Alert), the deterministic `useId` hazard; Ark's portaled popovers
 Field + Checkbox), the deterministic `useId` hazard; Ark's portaled popovers
 position via floating-ui measurement absent in jsdom, so their hydration is
 covered by the string + interaction suites.
+Checkbox + PinInput), the deterministic `useId` hazard; Ark's portaled popovers position
+via floating-ui measurement absent in jsdom, so their hydration is covered by
+the string + interaction suites.
 ² Svelte/Solid use a separate SSR-compiled test project (`*.ssr.test.*`) that
 asserts the static server string; Svelte additionally proves the zero-runtime
 Astro-island guarantee (F3.5).
@@ -151,3 +169,10 @@ Astro-island guarantee (F3.5).
 - **Typing**: the wrapped `Field`, `Select` and `Checkbox` exports are annotated
   in every package so the emitted `.d.ts` never inlines an un-nameable `@zag-js`
   type (TS2742).
+- **Typing**: the wrapped `Select`, `Checkbox` and `PinInput` exports are annotated
+  in every package so the emitted `.d.ts` never inlines an un-nameable `@zag-js`
+  type (TS2742).
+- **PinInput cells** are authored by the consumer — one `PinInput.Input` per
+  index inside `PinInput.Control` — so the cell count is the same declaration in
+  all four bindings; `count` on the Root is what makes the server render the
+  right aria labels.

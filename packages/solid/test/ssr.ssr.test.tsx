@@ -34,6 +34,11 @@ describe("SSR (Solid)", () => {
     // whose gap depends on the label's rotated writing mode, so orientation and
     // label have to serialise onto the same root.
     expect(html).toMatch(/data-orientation="vertical"(?:(?!<\/div>)[\s\S])*?data-part="label"/);
+    expect(html).toContain('data-scope="pin-input"');
+    // Every code cell is on the server, and `count` makes the server's aria
+    // labels agree with the client's — the PinInput-specific SSR hazard.
+    expect(html.match(/data-index="/g) ?? []).toHaveLength(6);
+    expect(html).toContain('aria-label="pin code 6 of 6"');
     expect(html).toContain("Open dialog");
     expect(html).toContain("Framework");
     expect(html).toContain('data-variant="destructive"');

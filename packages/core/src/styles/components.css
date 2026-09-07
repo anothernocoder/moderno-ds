@@ -745,6 +745,77 @@
     color: var(--destructive);
   }
 
+  /* ────────────────────────── Pin Input ───────────────────────── *
+   * `pinInputRecipe` size on root; Ark drives focus movement, paste
+   * distribution, masking and the invalid/complete flags. Scope "pin-input",
+   * parts root/label/control/input.                                     */
+  [data-scope="pin-input"][data-part="root"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+  }
+  [data-scope="pin-input"][data-part="label"] {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--foreground);
+  }
+  [data-scope="pin-input"][data-part="control"] {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-2);
+  }
+  /* One code cell. Square by construction so a 4- or 6-digit code reads as a
+     row of slots rather than a row of text fields; the digit is monospaced so
+     cells don't twitch as characters land. */
+  [data-scope="pin-input"][data-part="input"] {
+    width: var(--spacing-8);
+    height: var(--spacing-8);
+    padding: 0;
+    border: 1px solid var(--input);
+    border-radius: var(--radius);
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    text-align: center;
+    caret-color: var(--ring);
+    transition: border-color var(--motion-fast);
+  }
+  [data-scope="pin-input"][data-part="input"]::placeholder {
+    color: var(--muted-foreground);
+  }
+  /* The shared focus ring keys off [data-part="root"]; the cells are a separate
+     part, so they get their own ring here (same as Field's control). */
+  [data-scope="pin-input"][data-part="input"]:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  /* Density driven by the recipe's data-size on the root part. `lg` exceeds the
+     top spacing slot, so it sums two slots rather than inventing a token. */
+  [data-scope="pin-input"][data-size="sm"] [data-part="input"] {
+    width: var(--spacing-7);
+    height: var(--spacing-7);
+    font-size: 0.8125rem;
+  }
+  [data-scope="pin-input"][data-size="lg"] [data-part="input"] {
+    width: calc(var(--spacing-8) + var(--spacing-2));
+    height: calc(var(--spacing-8) + var(--spacing-2));
+    font-size: 0.9375rem;
+  }
+  /* Ark flags each cell that holds a character, and the root once every cell
+     does. The three state rules below share one specificity (0,3,0), so their
+     source order is the precedence: filled < complete < invalid. */
+  [data-scope="pin-input"] [data-part="input"][data-filled] {
+    border-color: color-mix(in oklab, var(--primary) 35%, var(--input));
+  }
+  [data-scope="pin-input"][data-complete] [data-part="input"] {
+    border-color: var(--primary);
+  }
+  [data-scope="pin-input"] [data-part="input"][data-invalid] {
+    border-color: var(--destructive);
+  }
+
   /* ─────────────────────────── Charts ─────────────────────────── *
    * Custom SVG charts (line/area/bar/scatter). All geometry is computed in
    * @moderno-ui/charts-core; this only paints. Series colour is decoupled from

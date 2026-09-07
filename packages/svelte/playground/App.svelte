@@ -13,6 +13,7 @@
   import { Checkbox } from "../src/index.js";
   import { Dialog, Portal } from "../src/index.js";
   import { Select, createListCollection } from "../src/index.js";
+  import { PinInput } from "../src/index.js";
   import { AreaChart, BarChart, LineChart, ScatterChart } from "../src/index.js";
 
   let { open = false }: { open?: boolean } = $props();
@@ -28,6 +29,10 @@
   ];
   const quarters = ["Q1", "Q2", "Q3", "Q4"];
   const revenue = [{ name: "revenue", values: [12, 28, 19, 34] }];
+
+  // A six-digit one-time code: the cell indices the PinInput renders. `count` on
+  // the Root tells Ark the same number so the server-rendered aria labels match.
+  const codeCells = [0, 1, 2, 3, 4, 5];
 
   const frameworks = createListCollection({
     items: [
@@ -163,6 +168,16 @@
       </Select.Positioner>
     </Portal>
   </Select.Root>
+
+  <PinInput.Root count={codeCells.length} otp size="md">
+    <PinInput.Label>Verification code</PinInput.Label>
+    <PinInput.Control>
+      {#each codeCells as index (index)}
+        <PinInput.Input {index} />
+      {/each}
+    </PinInput.Control>
+    <PinInput.HiddenInput />
+  </PinInput.Root>
 
   <section aria-label="charts">
     <LineChart width={320} height={180} series={sales} />

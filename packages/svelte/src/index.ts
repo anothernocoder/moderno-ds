@@ -8,9 +8,15 @@
  *   import "@moderno-ui/css";
  */
 import type { Component } from "svelte";
-import { Checkbox as ArkCheckbox, Field as ArkField, Select as ArkSelect } from "@ark-ui/svelte";
+import {
+  Checkbox as ArkCheckbox,
+  Field as ArkField,
+  PinInput as ArkPinInput,
+  Select as ArkSelect,
+} from "@ark-ui/svelte";
 import CheckboxRoot from "./CheckboxRoot.svelte";
 import FieldRoot from "./FieldRoot.svelte";
+import PinInputRoot from "./PinInputRoot.svelte";
 import SelectRoot from "./SelectRoot.svelte";
 import type { AlertPartProps, AlertRootProps } from "./alert-props.js";
 import AlertRoot from "./AlertRoot.svelte";
@@ -139,10 +145,24 @@ export const Select: Omit<typeof ArkSelect, "Root"> & { Root: typeof SelectRoot 
   Root: SelectRoot,
 };
 
+/**
+ * PinInput — the one-time-code control for a verify screen. Ark drives focus
+ * movement, paste distribution, masking and the invalid/complete flags; only
+ * `Root` is wrapped (to inject the `size` recipe), every other part is Ark's
+ * verbatim. Annotated so the emitted `.d.ts` doesn't inline an un-nameable
+ * `@zag-js` type (TS2742).
+ */
+export const PinInput: Omit<typeof ArkPinInput, "Root"> & { Root: typeof PinInputRoot } = {
+  ...ArkPinInput,
+  Root: PinInputRoot,
+};
+
 export { createListCollection } from "@ark-ui/svelte";
 
 export type {
   CheckboxCheckedChangeDetails,
   CheckboxCheckedState,
   SelectValueChangeDetails,
+  PinInputValueChangeDetails,
+  PinInputValueInvalidDetails,
 } from "@ark-ui/svelte";

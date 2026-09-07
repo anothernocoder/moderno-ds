@@ -33,6 +33,7 @@ import {
   checkboxRecipe,
   dividerRecipe,
   fieldRecipe,
+  pinInputRecipe,
   selectRecipe,
 } from "@moderno-ui/core";
 import { extractProps, type ComponentDoc, type ComponentEntry, type PropDoc } from "./index.ts";
@@ -193,6 +194,14 @@ export const AGENT_COMPONENTS: AgentComponentSpec[] = [
       { name: "item" },
     ],
     variants: selectRecipe.variants,
+  },
+  {
+    name: "PinInput",
+    slug: "pin-input",
+    scope: "pin-input",
+    propsEntry: findEntry("PinInput"),
+    parts: [{ name: "root" }, { name: "label" }, { name: "control" }, { name: "input" }],
+    variants: pinInputRecipe.variants,
   },
   {
     name: "LineChart",

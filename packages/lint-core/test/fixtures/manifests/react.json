@@ -89,6 +89,30 @@
         "intent": "A modal surface that interrupts and traps focus until dismissed.",
         "whenToUse": "A blocking decision or short focused task the user must resolve."
       }
+    },
+    {
+      "name": "PinInput",
+      "scope": "pin-input",
+      "import": "import { PinInput } from \"@moderno-ui/react\"",
+      "propsHash": "sha256:fixture-pin-input",
+      "props": [{ "name": "size", "type": "\"sm\" | \"md\" | \"lg\"", "required": false }],
+      "parts": [
+        { "name": "root" },
+        { "name": "label" },
+        { "name": "control" },
+        { "name": "input" }
+      ],
+      "variants": { "size": ["sm", "md", "lg"] },
+      "examples": [
+        {
+          "title": "Six-digit verification code",
+          "code": "import { PinInput } from \"@moderno-ui/react\";\n\n<PinInput.Root count={6} otp>\n  <PinInput.Control>\n    <PinInput.Input index={0} />\n  </PinInput.Control>\n</PinInput.Root>"
+        }
+      ],
+      "guidance": {
+        "intent": "Enter a short code the user received out of band — an SMS OTP or an emailed verification code.",
+        "whenToUse": "A fixed-length code where each character deserves its own cell."
+      }
     }
   ]
 }

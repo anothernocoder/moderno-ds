@@ -54,6 +54,19 @@ export type {
   DialogCloseTriggerProps,
 } from "./dialog.js";
 
+export { PinInput } from "./pin-input.js";
+export type {
+  PinInputSize,
+  ModernoPinInputRootProps,
+  PinInputRootProps,
+  PinInputLabelProps,
+  PinInputControlProps,
+  PinInputInputProps,
+  PinInputHiddenInputProps,
+  PinInputValueChangeDetails,
+  PinInputValueInvalidDetails,
+} from "./pin-input.js";
+
 export { Select, createListCollection } from "./select.js";
 export type {
   SelectSize,
