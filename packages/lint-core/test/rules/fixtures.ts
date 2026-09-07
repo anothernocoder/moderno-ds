@@ -48,6 +48,16 @@ export const manifests: AggregatedManifests = {
           guidance: { intent: "A single click action." },
         },
         {
+          name: "Card",
+          scope: "card",
+          import: 'import { Card } from "@moderno-ui/react"',
+          propsHash: "sha256:fixture-card",
+          props: [{ name: "variant", type: '"outline" | "muted"', required: false }],
+          parts: [{ name: "root" }, { name: "title" }, { name: "content" }],
+          variants: { variant: ["outline", "muted"] },
+          guidance: { intent: "A bounded surface that groups related content." },
+        },
+        {
           name: "Dialog",
           scope: "dialog",
           import: 'import { Dialog } from "@moderno-ui/react"',

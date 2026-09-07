@@ -4,6 +4,7 @@ import { renderToString } from "@vue/server-renderer";
 import { App } from "../playground/app.js";
 import { Alert } from "../src/alert.js";
 import { Button } from "../src/button.js";
+import { Card } from "../src/card.js";
 import { Field } from "../src/field.js";
 import { Checkbox } from "../src/checkbox.js";
 import { partAttrs, partTags } from "../../core/test/ssr-parts.ts";
@@ -16,6 +17,7 @@ describe("SSR (Vue)", () => {
   it("server-renders the primitives to a stable HTML string", async () => {
     const html = await renderToString(createSSRApp({ render: () => h(App) }));
     expect(html).toContain('data-scope="button"');
+    expect(html).toContain('data-scope="card"');
     expect(html).toContain('data-scope="field"');
     expect(html).toContain('data-scope="checkbox"');
     expect(html).toContain('data-scope="alert"');
@@ -24,6 +26,9 @@ describe("SSR (Vue)", () => {
     expect(html).toContain("Payment failed");
     expect(html).toContain('role="status"');
     expect(html).toContain('role="alert"');
+    // The card's compound anatomy survives serialisation part by part.
+    expect(html).toContain('data-part="title"');
+    expect(html).toContain('data-part="footer"');
     // Triggers are present even while the dialog/select popovers are closed.
     expect(html).toContain("Open dialog");
     expect(html).toContain("Framework");
@@ -60,6 +65,7 @@ describe("SSR (Vue)", () => {
  * Field's label/control ids and the Checkbox's label ↔ hidden-input pairing
  * must match across server and client render. The portal-free primitives
  * (Button + Field + Checkbox + Alert) exercise exactly that, so a warning-free
+ * (Button, Card, Field and Checkbox) exercise exactly that, so a warning-free
  * hydration here proves the id path is stable. Ark's portaled popovers
  * (Dialog/Select) position via floating-ui measurement that jsdom does not
  * provide, so their hydration is covered by the string + interaction suites
@@ -72,6 +78,14 @@ const HydrationApp = defineComponent({
       h("main", {}, [
         h(Button, { variant: "primary" }, () => "Primary"),
         h(Button, { variant: "destructive", size: "lg" }, () => "Destructive"),
+        h(Card.Root, { variant: "muted", size: "sm" }, () => [
+          h(Card.Header, {}, () => [
+            h(Card.Title, {}, () => "Monthly report"),
+            h(Card.Description, {}, () => "Revenue across every channel."),
+          ]),
+          h(Card.Content, {}, () => "Up 12% on last month."),
+          h(Card.Footer, {}, () => h(Button, { size: "sm" }, () => "Export")),
+        ]),
         h(Field.Root, {}, () => [
           h(Field.Label, {}, () => "Email"),
           h(Field.Input, { placeholder: "you@example.com" }),

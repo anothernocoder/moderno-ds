@@ -13,6 +13,8 @@ export type { ButtonVariant, ButtonSize } from "./button.js";
 
 export { Alert } from "./alert.js";
 export type { AlertVariant, AlertSize } from "./alert.js";
+export { Card } from "./card.js";
+export type { CardVariant, CardSize } from "./card.js";
 
 export { Field } from "./field.js";
 export type {

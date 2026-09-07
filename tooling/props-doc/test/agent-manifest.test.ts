@@ -13,6 +13,7 @@ describe("AGENT_COMPONENTS", () => {
     expect(names).toEqual([
       "Button",
       "Alert",
+      "Card",
       "Field",
       "Checkbox",
       "Dialog",

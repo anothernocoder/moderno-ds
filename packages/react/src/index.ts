@@ -13,6 +13,17 @@ export type { ButtonProps } from "./button.js";
 
 export { Alert } from "./alert.js";
 export type { AlertRootProps, AlertPartProps, AlertVariant, AlertSize } from "./alert.js";
+export { Card } from "./card.js";
+export type {
+  CardRootProps,
+  CardHeaderProps,
+  CardTitleProps,
+  CardDescriptionProps,
+  CardContentProps,
+  CardFooterProps,
+  CardVariant,
+  CardSize,
+} from "./card.js";
 
 export { Field } from "./field.js";
 export type {

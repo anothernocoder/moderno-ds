@@ -25,6 +25,38 @@
       }
     },
     {
+      "name": "Card",
+      "scope": "card",
+      "import": "import { Card } from \"@moderno-ui/react\"",
+      "propsHash": "sha256:fixture-card",
+      "props": [
+        { "name": "variant", "type": "\"outline\" | \"muted\" | \"ghost\"", "required": false },
+        { "name": "size", "type": "\"sm\" | \"md\" | \"lg\"", "required": false }
+      ],
+      "parts": [
+        { "name": "root" },
+        { "name": "header" },
+        { "name": "title" },
+        { "name": "description" },
+        { "name": "content" },
+        { "name": "footer" }
+      ],
+      "variants": {
+        "variant": ["outline", "muted", "ghost"],
+        "size": ["sm", "md", "lg"]
+      },
+      "examples": [
+        {
+          "title": "Report card",
+          "code": "import { Card } from \"@moderno-ui/react\";\n\n<Card.Root variant=\"outline\">\n  <Card.Title>Monthly report</Card.Title>\n</Card.Root>"
+        }
+      ],
+      "guidance": {
+        "intent": "A bounded surface that groups related content.",
+        "whenToUse": "Grouping content that belongs together on a page."
+      }
+    },
+    {
       "name": "Checkbox",
       "scope": "checkbox",
       "import": "import { Checkbox } from \"@moderno-ui/react\"",

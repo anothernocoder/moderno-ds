@@ -11,10 +11,20 @@ export type { Cva, CvaConfig, VariantProps, VariantsDef } from "./cva.js";
 export { cx, partAttrs } from "./utils.js";
 export type { ClassValue } from "./utils.js";
 
-export { buttonRecipe, checkboxRecipe, selectRecipe, fieldRecipe, alertRecipe, alertRole } from "./recipes.js";
+export {
+  buttonRecipe,
+  cardRecipe,
+  checkboxRecipe,
+  selectRecipe,
+  fieldRecipe,
+  alertRecipe,
+  alertRole,
+} from "./recipes.js";
 export type {
   ButtonVariant,
   ButtonSize,
+  CardVariant,
+  CardSize,
   CheckboxSize,
   SelectSize,
   FieldSize,

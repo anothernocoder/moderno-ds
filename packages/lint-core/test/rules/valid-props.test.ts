@@ -44,6 +44,20 @@ describe("moderno/valid-props", () => {
     expect(check("<Button variant={variant}>Save</Button>")).toHaveLength(0);
   });
 
+  it("validates a compound primitive through its Root part", () => {
+    expect(check('<Card.Root variant="outline">…</Card.Root>')).toHaveLength(0);
+
+    const findings = check('<Card.Root variant="outlined">…</Card.Root>');
+    expect(findings).toHaveLength(1);
+    expect(findings[0]!.message).toContain('Invalid value "outlined"');
+    expect(findings[0]!.suggestion).toContain("outline");
+  });
+
+  it("leaves a compound primitive's other parts alone — they take native attrs", () => {
+    // Card.Title's props are not Card.Root's; flagging them would be noise.
+    expect(check('<Card.Title id="t">Monthly report</Card.Title>')).toHaveLength(0);
+  });
+
   it("checks every component in the manifest, not just the first", () => {
     const findings = check('<Dialog bogus="x">...</Dialog>');
     expect(findings).toHaveLength(1);

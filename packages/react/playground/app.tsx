@@ -2,12 +2,15 @@
  * SSR playground — the reusable harness that validates Moderno's second
  * guarantee: server-render + hydrate with zero React warnings.
  *
- * It mounts all five reference primitives in their default (closed) state. Each
- * one is deliberately exercised for an SSR hazard:
+ * It mounts the reference primitives in their default (closed) state. Each one
+ * is deliberately exercised for an SSR hazard:
  *   - Button   — the trivial baseline (no ids, no portal).
  *   - Field    — `useId`-generated label/control ids must match across render,
  *                mounted at two sizes and over both controls (input + textarea)
  *                so the recipe's `data-size` is proven to survive SSR too.
+ *   - Card     — a compound, CSS-only surface: every part must serialise its
+ *                own `data-part` and the root its recipe attributes.
+ *   - Field    — `useId`-generated label/control ids must match across render.
  *   - Checkbox — a label bound to a visually hidden native input by `useId`,
  *                plus indicators the machine hides via the `hidden` attribute.
  *   - Dialog   — a Portal + focus-trap machine that must emit a stable,
@@ -23,6 +26,7 @@
  */
 import { Alert } from "../src/alert.js";
 import { Button } from "../src/button.js";
+import { Card } from "../src/card.js";
 import { Field } from "../src/field.js";
 import { Checkbox } from "../src/checkbox.js";
 import { Dialog, Portal } from "../src/dialog.js";
@@ -121,6 +125,25 @@ export function App({ open = false }: AppProps) {
           <Field.ErrorText>Bio is required.</Field.ErrorText>
         </Field.Root>
       </section>
+      <Card.Root variant="outline" size="md">
+        <Card.Header>
+          <Card.Title>Monthly report</Card.Title>
+          <Card.Description>Revenue across every channel.</Card.Description>
+        </Card.Header>
+        <Card.Content>Up 12% on last month.</Card.Content>
+        <Card.Footer>
+          <Button variant="outline" size="sm">
+            Export
+          </Button>
+        </Card.Footer>
+      </Card.Root>
+
+      <Field.Root>
+        <Field.Label>Email</Field.Label>
+        <Field.Input placeholder="you@example.com" />
+        <Field.HelperText>We never share it.</Field.HelperText>
+        <Field.ErrorText>Email is required.</Field.ErrorText>
+      </Field.Root>
 
       <section aria-label="checkboxes">
         <Checkbox.Root defaultChecked>

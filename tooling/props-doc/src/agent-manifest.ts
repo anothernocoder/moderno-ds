@@ -24,7 +24,14 @@
  * job when a part gains or loses styling.
  */
 import { createHash } from "node:crypto";
-import { alertRecipe, buttonRecipe, checkboxRecipe, fieldRecipe, selectRecipe } from "@moderno-ui/core";
+import {
+  alertRecipe,
+  buttonRecipe,
+  cardRecipe,
+  checkboxRecipe,
+  fieldRecipe,
+  selectRecipe,
+} from "@moderno-ui/core";
 import { extractProps, type ComponentEntry, type PropDoc } from "./index.ts";
 import { ENTRIES } from "./manifest.ts";
 import { AGENT_EXAMPLES } from "./agent-examples.ts";
@@ -108,6 +115,19 @@ export const AGENT_COMPONENTS: AgentComponentSpec[] = [
       { name: "action" },
     ],
     variants: alertRecipe.variants,
+    name: "Card",
+    slug: "card",
+    scope: "card",
+    propsEntry: findEntry("Card"),
+    parts: [
+      { name: "root" },
+      { name: "header" },
+      { name: "title" },
+      { name: "description" },
+      { name: "content" },
+      { name: "footer" },
+    ],
+    variants: cardRecipe.variants,
   },
   {
     name: "Field",

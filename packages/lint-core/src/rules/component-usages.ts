@@ -143,10 +143,19 @@ function parseAttrs(text: string): Record<string, string | true> {
   return attrs;
 }
 
-/** Every `<name ...>` usage of a component in `code`, in document order. */
+/**
+ * Every `<name ...>` usage of a component in `code`, in document order.
+ *
+ * A compound primitive is invoked through its namespace (`<Card.Root …>`,
+ * `<Select.Root …>`), and the manifest's `props` are that root part's props, so
+ * `<Name.Root>` counts as a usage of `Name`. The other parts deliberately do
+ * not: they take only native attributes plus whatever the headless machine
+ * hands them (`<Select.Item item={…}>`), none of which the root's prop list
+ * knows about.
+ */
 export function findComponentUsages(code: string, name: string): ComponentUsage[] {
   const usages: ComponentUsage[] = [];
-  const openTag = new RegExp(`<${escapeRegExp(name)}(?=[\\s/>])`, "g");
+  const openTag = new RegExp(`<${escapeRegExp(name)}(?:\\.Root)?(?=[\\s/>])`, "g");
   let match: RegExpExecArray | null;
   while ((match = openTag.exec(code))) {
     const start = match.index;

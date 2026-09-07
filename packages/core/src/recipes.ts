@@ -25,6 +25,19 @@ export const buttonRecipe = cva({
 });
 
 /**
+ * Card: surface `variant` × padding `size`. A CSS-only primitive — no Ark
+ * machine exists for a card, so this recipe is its entire behavioural surface
+ * and `components.css` paints every part from `[data-scope="card"]`.
+ */
+export const cardRecipe = cva({
+  variants: {
+    variant: ["outline", "muted", "ghost"],
+    size: ["sm", "md", "lg"],
+  },
+  defaultVariants: { variant: "outline", size: "md" },
+});
+
+/**
  * Checkbox: control `size` (the box + label density). Checked, indeterminate,
  * disabled and invalid are Ark's own `data-state`/`data-*`, not variants.
  */
@@ -84,6 +97,12 @@ export type ButtonSize = NonNullable<VariantProps<typeof buttonRecipe.variants>[
 
 /** Select's control density (trigger/menu). Selection state stays Ark's. */
 export type SelectSize = NonNullable<VariantProps<typeof selectRecipe.variants>["size"]>;
+
+/** Card's surface treatment (`outline`, `muted`, `ghost`). */
+export type CardVariant = NonNullable<VariantProps<typeof cardRecipe.variants>["variant"]>;
+
+/** Card's padding density. */
+export type CardSize = NonNullable<VariantProps<typeof cardRecipe.variants>["size"]>;
 
 /** Checkbox's control density (box + label). Checked state stays Ark's. */
 export type CheckboxSize = NonNullable<VariantProps<typeof checkboxRecipe.variants>["size"]>;
