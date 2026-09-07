@@ -64,6 +64,53 @@ export const manifests: AggregatedManifests = {
           props: [],
           parts: [{ name: "trigger" }, { name: "content" }, { name: "item" }],
         },
+        {
+          // A camelCase, non-enum prop surface — what Vue templates spell in
+          // kebab-case, and what the charts really look like.
+          name: "LineChart",
+          scope: "chart",
+          import: 'import { LineChart } from "@moderno-ui/react"',
+          propsHash: "sha256:fixture-line-chart",
+          props: [
+            { name: "series", type: "Series[]", required: true },
+            { name: "width", type: "number", required: false },
+            { name: "xTicks", type: "number", required: false },
+          ],
+          parts: [{ name: "root" }, { name: "line" }],
+        },
+      ],
+    },
+    {
+      // Same components, published for Vue — the bindings share one API by
+      // contract, so the only difference a rule should see is how the markup
+      // spells an attribute.
+      package: "@moderno-ui/vue",
+      version: "0.5.0",
+      kind: "components",
+      framework: "vue",
+      generatedFrom: { propsDoc: true, mdxAgentBlock: true },
+      components: [
+        {
+          name: "Button",
+          scope: "button",
+          import: 'import { Button } from "@moderno-ui/vue"',
+          propsHash: "sha256:fixture-button",
+          props: [{ name: "variant", type: '"primary" | "outline"', required: false }],
+          parts: [{ name: "root" }],
+          variants: { variant: ["primary", "outline"] },
+        },
+        {
+          name: "LineChart",
+          scope: "chart",
+          import: 'import { LineChart } from "@moderno-ui/vue"',
+          propsHash: "sha256:fixture-line-chart",
+          props: [
+            { name: "series", type: "Series[]", required: true },
+            { name: "width", type: "number", required: false },
+            { name: "xTicks", type: "number", required: false },
+          ],
+          parts: [{ name: "root" }, { name: "line" }],
+        },
       ],
     },
   ],

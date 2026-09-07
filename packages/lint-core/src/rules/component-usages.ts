@@ -15,7 +15,12 @@ import { escapeRegExp } from "./text.ts";
 
 export interface ComponentUsage {
   name: string;
-  /** Attribute name -> string literal value, or `true` for a valueless/dynamic attribute. */
+  /**
+   * Attribute name -> string literal value, or `true` for a valueless/dynamic
+   * attribute. Names keep whatever prefix the markup wrote them with (`:series`,
+   * `@click`, `on:click`) — see `ATTR_NAME`; callers that want the underlying
+   * prop are responsible for stripping it per framework.
+   */
   attrs: Record<string, string | true>;
   /** Offset of the usage's opening `<`. */
   start: number;
@@ -82,6 +87,17 @@ function asStringLiteral(raw: string): string | undefined {
   return literal?.[1];
 }
 
+/**
+ * An attribute name as each binding's markup spells it, prefix and all:
+ * plain JSX/HTML (`disabled`, `data-testid`, `aria-label`), Vue's shorthands
+ * and directives (`:series`, `@click.prevent`, `#footer`, `v-model.trim`,
+ * `v-bind:variant`, `@update:modelValue`), and Svelte's namespaced ones
+ * (`on:click`, `bind:value`, `class:active`). Keeping the prefix is what lets
+ * `valid-props` tell a bound prop from a directive that binds no prop at all —
+ * without it `@click` parses as an attribute literally named `click`.
+ */
+const ATTR_NAME = /^[@:#]?[A-Za-z_][\w-]*(?::[\w-]+)?(?:\.[\w-]+)*/;
+
 function parseAttrs(text: string): Record<string, string | true> {
   const attrs: Record<string, string | true> = {};
   let i = 0;
@@ -95,7 +111,7 @@ function parseAttrs(text: string): Record<string, string | true> {
       i = skipBraceGroup(text, i);
       continue;
     }
-    const nameMatch = /^[A-Za-z_][\w-]*/.exec(text.slice(i));
+    const nameMatch = ATTR_NAME.exec(text.slice(i));
     if (!nameMatch) {
       i++;
       continue;
