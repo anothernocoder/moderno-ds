@@ -7,11 +7,7 @@
  *
  *   import "@moderno-ui/css";
  */
-import {
-  Checkbox as ArkCheckbox,
-  Field as ArkField,
-  Select as ArkSelect,
-} from "@ark-ui/svelte";
+import { Checkbox as ArkCheckbox, Field as ArkField, Select as ArkSelect } from "@ark-ui/svelte";
 import CheckboxRoot from "./CheckboxRoot.svelte";
 import FieldRoot from "./FieldRoot.svelte";
 import SelectRoot from "./SelectRoot.svelte";
