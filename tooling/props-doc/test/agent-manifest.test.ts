@@ -113,7 +113,9 @@ describe("buildComponentsManifest", () => {
         expect(component.examples!.length, `${framework}/${component.name}`).toBeGreaterThan(0);
       }
     }
-  });
+    // Four ts-morph manifest builds in one test; exceeds the 5s default under
+    // the full parallel run.
+  }, 30_000);
 
   it("attaches guidance only for components a caller supplied it for", () => {
     const button = manifest.components.find((c) => c.name === "Button")!;
