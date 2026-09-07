@@ -15,3 +15,7 @@ Canonical triage roles map 1:1 to GitHub labels (`needs-triage`, `needs-info`, `
 ### Domain docs
 
 Single-context: `CONTEXT.md` + `docs/adr/` at repo root. See `docs/agents/domain.md`.
+
+### Ticket workflow
+
+Implementing a `ready-for-agent` issue, reviewing its PR, or dispatching tickets AFK: one ticket, one fresh agent, one PR; a separate fresh agent reviews and posts a `Review:` verdict; a human merges. See `docs/agents/ticket-workflow.md`.
