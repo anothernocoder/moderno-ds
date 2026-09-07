@@ -173,9 +173,18 @@
   /* Hover raises the border to the focus colour — the affordance that says
      "this is editable" before the caret lands. Keyed on the native `:disabled`
      of the control itself (Ark forwards the Field's `disabled` down to it), so
-     a dead control never offers it. */
-  [data-scope="field"][data-part="input"]:hover:not(:disabled),
-  [data-scope="field"][data-part="textarea"]:hover:not(:disabled) {
+     a dead control never offers it.
+     `:not([data-invalid])` is what keeps an invalid control red under the
+     pointer: `:not()` takes its argument's specificity, so without it this rule
+     outranks the `[data-invalid]` rule below and the border would go neutral
+     while the tint and the error text stayed red — the same "reads as fixed
+     before it is" failure the invalid focus rule avoids. Excluding the state
+     here (rather than repainting it in a later rule) leaves `[data-invalid]`
+     the single owner of the destructive border.
+     `test/components-css.cascade.test.ts` resolves this cascade and fails if
+     the exclusion goes. */
+  [data-scope="field"][data-part="input"]:hover:not(:disabled):not([data-invalid]),
+  [data-scope="field"][data-part="textarea"]:hover:not(:disabled):not([data-invalid]) {
     border-color: var(--ring);
   }
   /* The shared focus ring keys off [data-part="root"]; Field's control is a
