@@ -6,12 +6,14 @@ and the static registry served under `/r/`.
 
 ## Scripts
 
-| Script              | What it does                                                     |
-| ------------------- | ---------------------------------------------------------------- |
-| `pnpm dev`          | Prebuild (props + registry) then `astro dev`.                    |
-| `pnpm build`        | Prebuild → `astro build` → per-locale Pagefind index.            |
-| `pnpm typecheck`    | `astro check`.                                                   |
-| `pnpm check:parity` | Fail if any docs slug lacks an en/es translation (the CI guard). |
+| Script                    | What it does                                                       |
+| ------------------------- | ------------------------------------------------------------------ |
+| `pnpm dev`                | Prebuild (props + registry) then `astro dev`.                      |
+| `pnpm build`              | Prebuild → `astro build` → per-locale Pagefind index.              |
+| `pnpm typecheck`          | `astro check`.                                                     |
+| `pnpm check:parity`       | Fail if any docs slug lacks an en/es translation (the CI guard).   |
+| `pnpm test:visual`        | Screenshot every preview page of `dist/` against the baselines.    |
+| `pnpm test:visual:update` | Regenerate those baselines from CI (see `tests/visual/README.md`). |
 
 ## Build pipeline
 
@@ -22,6 +24,14 @@ and the static registry served under `/r/`.
    locale.
 3. **index** — Pagefind indexes `dist/en` and `dist/es` into separate bundles
    (`dist/<locale>/pagefind`) so search never mixes languages.
+
+## Visual regression
+
+`tests/visual` screenshots every **preview page** of `dist/` at 375/768/1280 px
+in light and dark and compares it against a committed baseline, so a visual
+regression on any primitive or block fails CI. The baselines are rendered in a
+pinned Playwright container and refreshed with `pnpm docs:visual:update` —
+see `tests/visual/README.md`.
 
 ## i18n
 
