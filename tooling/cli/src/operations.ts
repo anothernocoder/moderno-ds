@@ -103,18 +103,31 @@ async function appendThemeImport(
   await writeFileEnsuringDir(entryFile, css.replace(/\s*$/, "\n") + line + "\n");
 }
 
+export type AddResult = {
+  /** Every item written, dependencies first, the requested item last. */
+  installed: string[];
+  /** npm packages the installed items need, deduped across the whole tree. */
+  dependencies: string[];
+};
+
 /**
  * Install a registry item (and its registryDependencies) into the project:
  * copy each file to its target, record version + a pristine content hash in the
  * manifest, and wire theme imports into the styles entry.
+ *
+ * The walk is what makes the tiers useful: `add auth` (a flow) installs the
+ * screens it composes and the blocks those screens compose, each recorded under
+ * its own version, so `update` and `diff` stay per item afterwards.
  */
-export async function addItem(opts: AddOptions): Promise<{ installed: string[] }> {
+export async function addItem(opts: AddOptions): Promise<AddResult> {
   const { registry, projectDir, name, manifest } = opts;
   const stylesEntry = opts.stylesEntry ?? DEFAULT_STYLES_ENTRY;
   const items = resolveInstallOrder(registry, name);
   const installed: string[] = [];
+  const dependencies = new Set<string>();
 
   for (const item of items) {
+    for (const dep of item.dependencies ?? []) dependencies.add(dep);
     const files: ManifestFile[] = [];
     for (const file of item.files) {
       const content = await registry.readFile(file.path);
@@ -128,7 +141,7 @@ export async function addItem(opts: AddOptions): Promise<{ installed: string[] }
     installed.push(item.name);
   }
   await writeManifest(projectDir, manifest);
-  return { installed };
+  return { installed, dependencies: [...dependencies] };
 }
 
 type ItemOptions = {

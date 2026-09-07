@@ -1,0 +1,26 @@
+---
+title: Flujos
+description: Una secuencia ordenada de pantallas más el ensamblaje de ejemplo que aporta el estado de navegación entre ellas.
+group: Flujos
+order: 120
+---
+
+Un **flujo** es una secuencia ordenada de pantallas más un ensamblaje de ejemplo
+que aporta el estado de navegación entre ellas — `auth` es sign-in → sign-up →
+forgot-password → reset-password → verify. Las pantallas siguen siendo
+presentacionales; el ensamblaje es la única pieza que sabe qué va después de
+qué, y es código de ejemplo que se espera que reconectes a tu propio router.
+
+```sh
+npx @moderno-ui/cli add auth
+```
+
+Instalar un flujo es transitivo: sus pantallas, los bloques de esas pantallas y
+las primitivas de debajo llegan con un solo comando, cada uno registrado con su
+propia versión en `.moderno/manifest.json`. `moderno update` y `moderno diff`
+funcionan entonces por ítem, así que una pantalla que editaste sigue editada
+mientras el resto del flujo avanza.
+
+Un flujo compone solo pantallas. El catálogo se va llenando a medida que se
+absorbe el inventario del predecesor; cada flujo publicado tendrá su propia
+página en esta sección.

@@ -1,0 +1,25 @@
+---
+title: Flows
+description: An ordered sequence of screens plus the example assembly that supplies the navigation state between them.
+group: Flows
+order: 120
+---
+
+A **flow** is an ordered sequence of screens plus an example assembly that
+supplies the navigation state between them — `auth` is sign-in → sign-up →
+forgot-password → reset-password → verify. The screens stay presentational; the
+assembly is the one piece that knows what comes after what, and it is example
+code you are expected to rewire to your own router.
+
+```sh
+npx @moderno-ui/cli add auth
+```
+
+Installing a flow is transitive: its screens, their blocks and the primitives
+underneath all land in one command, each recorded under its own version in
+`.moderno/manifest.json`. `moderno update` and `moderno diff` then work per
+item, so a screen you edited stays edited while the rest of the flow moves
+forward.
+
+A flow composes screens only. The catalog is being filled as the predecessor's
+inventory is absorbed; each published flow gets its own page in this section.
