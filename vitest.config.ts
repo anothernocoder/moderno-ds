@@ -10,6 +10,10 @@ export default defineConfig({
     name: "react-core",
     environment: "node",
     setupFiles: ["./vitest.setup.ts"],
+    // The props-doc suites build ts-morph projects over the framework
+    // packages; under the full parallel run on a CI runner they exceed the
+    // 5s default (observed 5-10s). A ceiling, not a target.
+    testTimeout: 30_000,
     include: [
       "packages/**/*.test.ts",
       "packages/**/*.test.tsx",
