@@ -12,6 +12,8 @@
     "index": "pagefind --site dist/en --output-path dist/en/pagefind && pagefind --site dist/es --output-path dist/es/pagefind",
     "preview": "astro preview",
     "typecheck": "astro check",
+    "test:visual": "playwright test",
+    "test:visual:update": "node --experimental-strip-types ./scripts/update-visual-baselines.ts",
     "check:parity": "node --experimental-strip-types ./scripts/check-parity.ts"
   },
   "dependencies": {
@@ -33,6 +35,7 @@
     "@astrojs/svelte": "^7.0.9",
     "@astrojs/vercel": "^8.1.0",
     "@moderno-ui/props-doc": "workspace:*",
+    "@playwright/test": "1.63.0",
     "astro": "^5.13.0",
     "pagefind": "^1.3.0",
     "svelte": "^5.0.0",

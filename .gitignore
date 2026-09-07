@@ -6,3 +6,11 @@ coverage/
 .DS_Store
 .vitest/
 *.log
+
+# Playwright (visual regression seam — see apps/docs/tests/visual/README.md).
+# Only the Linux baselines are committed: they are the ones CI compares against.
+test-results/
+playwright-report/
+blob-report/
+apps/docs/tests/visual/__screenshots__/*
+!apps/docs/tests/visual/__screenshots__/linux/

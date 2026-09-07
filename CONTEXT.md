@@ -13,7 +13,7 @@ Headless component + shared styles, distributed as a versioned npm package (`@mo
 _Avoid_: Component, widget
 
 **Block**:
-A page *section* composed of primitives (e.g. hero, pricing table, login form) that the consumer copies with the CLI and can modify freely. A block does not own the viewport and carries no navigation state.
+A page _section_ composed of primitives (e.g. hero, pricing table, login form) that the consumer copies with the CLI and can modify freely. A block does not own the viewport and carries no navigation state.
 _Avoid_: Template, pattern, organism, section (as a domain term)
 
 **Screen**:
@@ -121,11 +121,11 @@ An alternative visual style (outline, sm, destructive…) expressed as `data-var
 _Avoid_: Variant class, CVA Tailwind string
 
 **Predecessor (`moderno`)**:
-The earlier design-system repo (`anothernocoder/moderno`: Zag.js directly, `--md-*` tokens, `[data-theme]`, Starlight docs). Its inventory of primitives, blocks, screens and flows is the *source material* being absorbed into this DS; its code is not copied verbatim. Archived once the absorption is complete. Its `styles`, `class-contract`, `chart-core` and `registry` packages are deprecated on npm in favour of `@moderno-ui/css`, `@moderno-ui/core`, `@moderno-ui/charts-core` and `@moderno-ui/cli`.
+The earlier design-system repo (`anothernocoder/moderno`: Zag.js directly, `--md-*` tokens, `[data-theme]`, Starlight docs). Its inventory of primitives, blocks, screens and flows is the _source material_ being absorbed into this DS; its code is not copied verbatim. Archived once the absorption is complete. Its `styles`, `class-contract`, `chart-core` and `registry` packages are deprecated on npm in favour of `@moderno-ui/css`, `@moderno-ui/core`, `@moderno-ui/charts-core` and `@moderno-ui/cli`.
 _Avoid_: "the app", "moderno v1", legacy DS (unqualified)
 
 **Responsive**:
-Blocks and screens adapt to the width of their *container* (container queries against `--container-*`), never to the viewport; a block must look right wherever it is placed. Primitives that change shape on small viewports (a dialog becoming a bottom sheet) use viewport media queries. Intrinsic grids (`auto-fit`) are welcome but are not, on their own, "responsive".
+Blocks and screens adapt to the width of their _container_ (container queries against `--container-*`), never to the viewport; a block must look right wherever it is placed. Primitives that change shape on small viewports (a dialog becoming a bottom sheet) use viewport media queries. Intrinsic grids (`auto-fit`) are welcome but are not, on their own, "responsive".
 _Avoid_: Viewport-only breakpoints in blocks, mobile-specific component families
 
 **Maintainer**:
@@ -159,6 +159,14 @@ _Avoid_: English-only docs, translating prop names
 **PropsTable**:
 Generated at build time by the `tooling/props-doc` script (ts-morph) → JSON per component; `<PropsTable>` in Astro consumes that JSON. Column labels translated via i18n; prop names in English.
 _Avoid_: react-docgen-only, hand-maintained prop tables
+
+**Preview page**:
+A built docs page that hydrates at least one island — where the design system renders for real (the live `<Preview>` demos and the Theme Builder), as opposed to a prose page of code blocks and prop tables. The unit the visual regression seam captures; the list is read from `dist/`, never hand-maintained.
+_Avoid_: Demo page, story (Storybook term)
+
+**Visual baseline**:
+The committed screenshot a preview page is compared against, one per width (375/768/1280) × colour scheme. Rendered in the pinned Playwright container (`.github/workflows/visual-baselines.yml`) because screenshots only reproduce inside the environment that made them; refreshed with `pnpm docs:visual:update` in the same PR as the change that moved them. Local runs write a host-platform directory that `.gitignore` drops.
+_Avoid_: Golden file (unqualified), snapshot (that is Vitest's), laptop-rendered baselines
 
 **Chart render tree**:
 The serializable SVG node tree `@moderno-ui/charts-core` emits per chart
