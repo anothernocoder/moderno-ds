@@ -47,8 +47,13 @@ test.describe("built docs", () => {
   // Pure text assertions over the build: nothing here depends on the width or
   // the colour scheme, so one project runs them and the other five skip rather
   // than reporting the same failure six times.
-  test.beforeEach((_fixtures, testInfo) => {
-    test.skip(testInfo.project.name !== "1280-light", "width- and scheme-independent");
+  //
+  // Takes no arguments on purpose. Playwright rejects a first parameter that
+  // isn't an object-destructuring pattern (it reads fixture names off the
+  // signature), and an empty `{}` pattern is an eslint error — so read the
+  // project off `test.info()` instead of asking for a fixture nothing here uses.
+  test.beforeEach(() => {
+    test.skip(test.info().project.name !== "1280-light", "width- and scheme-independent");
   });
 
   for (const locale of LOCALES) {
