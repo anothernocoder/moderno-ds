@@ -55,8 +55,10 @@ jobs:
           retention-days: 14
       # A page with no baseline yet (a brand-new docs page) still fails the run,
       # but Playwright writes the screenshot it would have compared against.
-      # Committing this artifact is how such a page joins the matrix; changed
-      # pages need `pnpm docs:visual:update` instead, which rewrites all of them.
+      # Copying *that page's files* out of this artifact is how it joins the
+      # matrix — never the whole directory, which would revert baselines merged
+      # since this branch's base. A changed page needs `pnpm docs:visual:update`
+      # instead (`--only <name>` to keep it to the pages that actually moved).
       - if: failure()
         uses: actions/upload-artifact@v4
         with:
