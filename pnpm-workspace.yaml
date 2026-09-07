@@ -21,6 +21,9 @@ overrides:
   # Astro's toolchain pulls @types/node 24; pin to one version so a single
   # vite type instance is shared (avoids vite5-node22 vs vite5-node24 clashes).
   "@types/node": "22.19.21"
+  # GHSA-23hp-3jrh-7fpw: node-tar decompression DoS, pulled transitively by
+  # @astrojs/vercel -> @vercel/nft -> @mapbox/node-pre-gyp.
+  tar: ">=7.5.19"
 
 onlyBuiltDependencies:
   - esbuild
