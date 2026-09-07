@@ -1,9 +1,11 @@
 /**
- * Best-effort `Framework` guess from a file's extension, for callers that
- * don't pass one explicitly (the ESLint rule's `framework` option, the CLI's
- * `--framework` flag). `.tsx`/`.jsx` default to `react` — Solid also authors
- * in `.tsx`, so a Solid consumer must override explicitly; there's no
- * extension-only way to tell the two apart.
+ * Best-effort `Framework` guess for callers that don't pass one explicitly
+ * (the ESLint rule's `framework` option, the CLI's `--framework` flag).
+ *
+ * Two guesses, weakest last. A path segment naming a framework is decisive —
+ * registry sources are laid out `blocks/<name>/<framework>/<file>`, which is
+ * the only signal that separates Solid from React (both author in `.tsx`).
+ * Failing that, the extension decides, and `.tsx`/`.jsx` fall back to react.
  */
 import type { Framework } from "@moderno-ui/lint-core";
 
@@ -18,4 +20,17 @@ const EXTENSION_FRAMEWORK: Record<string, Framework> = {
 export function frameworkFromFilename(filename: string): Framework {
   const ext = filename.slice(filename.lastIndexOf("."));
   return EXTENSION_FRAMEWORK[ext] ?? "react";
+}
+
+/**
+ * As `frameworkFromFilename`, but reads a framework-named directory segment
+ * first: `blocks/pricing/solid/pricing.tsx` is Solid, not React.
+ */
+export function frameworkFromPath(path: string): Framework {
+  const segments = path.split(/[\\/]/).slice(0, -1);
+  for (let i = segments.length - 1; i >= 0; i--) {
+    const match = FRAMEWORKS.find((f) => f === segments[i]);
+    if (match) return match;
+  }
+  return frameworkFromFilename(path);
 }

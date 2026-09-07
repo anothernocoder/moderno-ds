@@ -99,6 +99,28 @@ recorded pristine hash (i.e. unedited). Edited files are preserved and reported
 as conflicts — this is what makes `update` safe and is why primitives are
 **themed, not edited**.
 
+## Authoring a block
+
+A block is styled with the Tailwind v4 preset (`@moderno-ui/css/preset`), whose
+utilities resolve to contract slots — `bg-card`, `text-muted-foreground`,
+`rounded-lg`, `shadow-sm`, `max-w-md` — so installing a theme re-skins it with no
+rebuild. Two rules follow from
+[ADR-0005](../docs/adr/0005-responsive-container-queries-and-registry-tiers.md)
+(the full policy is in [`CONTRACT.md`](../CONTRACT.md#responsive-policy)):
+
+1. **Respond to the container, not the viewport.** Declare `@container` on the
+   block root and lay out with `@sm:` / `@md:` / `@lg:`, bound to
+   `--container-sm|md|lg`. A block cannot know whether it was mounted in a
+   sidebar, a modal or a page; `md:` — Tailwind's _viewport_ variant, one
+   character away — makes it right in exactly one of them.
+   `blocks/pricing` is the worked example.
+2. **No literal colours or dimensions.** Not as CSS, and not inside an arbitrary
+   value (`w-[320px]`).
+
+Both are enforced on every PR: `pnpm lint:registry` runs `moderno-lint` over
+every source file listed in `registry.json`, and a test rejects `@media` and
+viewport variants in blocks.
+
 ## Themes & the multi-brand switch
 
 Themes are authored as `tokens.dtcg.json` and compiled to `theme.css` by

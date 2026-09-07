@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { frameworkFromFilename } from "../src/framework.ts";
+import { frameworkFromFilename, frameworkFromPath } from "../src/framework.ts";
 
 describe("frameworkFromFilename", () => {
   it("maps .vue to vue", () => {
@@ -28,5 +28,30 @@ describe("frameworkFromFilename", () => {
 
   it("handles an absolute path", () => {
     expect(frameworkFromFilename("/repo/src/components/Card.vue")).toBe("vue");
+  });
+});
+
+describe("frameworkFromPath", () => {
+  it("reads the framework from a directory segment — the only way to tell Solid from React", () => {
+    expect(frameworkFromPath("registry/blocks/pricing/solid/pricing.tsx")).toBe("solid");
+    expect(frameworkFromPath("registry/blocks/pricing/react/pricing.tsx")).toBe("react");
+  });
+
+  it("prefers the nearest framework segment when a path has more than one", () => {
+    expect(frameworkFromPath("/repo/packages/react/registry/blocks/x/solid/x.tsx")).toBe("solid");
+  });
+
+  it("ignores a framework name in the filename itself — only directories decide", () => {
+    expect(frameworkFromPath("registry/blocks/solid.tsx")).toBe("react");
+  });
+
+  it("falls back to the extension when no segment names a framework", () => {
+    expect(frameworkFromPath("registry/blocks/pricing/Pricing.vue")).toBe("vue");
+    expect(frameworkFromPath("registry/blocks/pricing/Pricing.svelte")).toBe("svelte");
+    expect(frameworkFromPath("registry/primitives/button.tsx")).toBe("react");
+  });
+
+  it("handles Windows-style separators", () => {
+    expect(frameworkFromPath("registry\\blocks\\pricing\\solid\\pricing.tsx")).toBe("solid");
   });
 });

@@ -1,0 +1,68 @@
+---
+title: Bloques y contenedores
+description: Cómo un bloque responde al ancho de su contenedor en lugar del viewport — las variantes @container ligadas a --container-sm|md|lg y las verificaciones de CI que mantienen los bloques ahí.
+group: Guías
+order: 1
+---
+
+import Preview from "../../../components/Preview.astro";
+import PricingBlockDemo from "../../../islands/PricingBlockDemo.svelte";
+
+Un **bloque** es una sección de página — un hero, una tabla de precios, un
+formulario de acceso — que copias a tu proyecto con el CLI. No es dueño del
+viewport y no puede saber dónde lo vas a montar: esa misma tabla de precios
+puede vivir en una barra lateral, en un modal o en una página completa.
+
+Por eso un bloque se adapta a **su contenedor**, nunca a la ventana. El contrato
+de tokens nombra tres anchos de contenedor — `--container-sm` (24rem),
+`--container-md` (36rem) y `--container-lg` (48rem) — y el preset de Tailwind los
+convierte en las variantes de container query `@sm:` / `@md:` / `@lg:` con las
+que un bloque se maqueta.
+
+## Un bloque, dos contenedores
+
+Abajo hay un único bloque `Pricing`, montado dos veces. Las dos copias son
+idénticas: mismo código, mismas props. La de la izquierda está limitada a 24rem,
+por debajo del paso `@md` del bloque, así que sus planes se apilan. La de la
+derecha ocupa todo el panel y pasa a tres columnas en cuanto ese panel mide al
+menos 36rem — estrecha esta ventana y se apilará por su cuenta, sin ninguna media
+query dentro del bloque.
+
+<Preview
+  code={`<section className="@container">
+  <h2 className="text-lg font-semibold @md:text-xl">Pricing</h2>
+  <ul className="mt-6 grid gap-4 @md:grid-cols-3">
+    {/* … un <li> por plan … */}
+  </ul>
+</section>`}
+>
+  <PricingBlockDemo client:visible />
+</Preview>
+
+## Las reglas
+
+- **`@container`, no `@media`.** Un bloque declara `@container` en su raíz y
+  responde con los tres pasos del contrato. Una media query de viewport queda
+  reservada para un primitivo que realmente cambia de forma en pantallas
+  pequeñas — un diálogo presentado como hoja inferior — y la hoja de estilos
+  compartida mantiene una lista explícita de qué primitivos se la han ganado.
+  Hoy está vacía.
+- **Tres pasos, y solo tres.** El preset reemplaza la escala de contenedores de
+  Tailwind en lugar de extenderla, así que `@sm:`, `@md:` y `@lg:` son todo el
+  vocabulario. `@xl:` y superiores no existen aquí.
+- **Sin colores ni dimensiones literales.** Los bloques pintan desde slots del
+  contrato (`bg-card`, `text-muted-foreground`, `rounded-lg`, `shadow-sm`) y
+  dimensionan con las escalas del preset. Un hex, o una longitud colada en un
+  valor arbitrario como `w-[320px]`, falla en `moderno-lint` — que CI ejecuta
+  sobre cada archivo fuente que publica el registro.
+- **La maquetación intrínseca es bienvenida.** Un `grid` con columnas `auto-fit`
+  no necesita ningún breakpoint. Usa una container query cuando la maquetación
+  tenga que cambiar de forma, no simplemente refluir.
+
+## Por qué no breakpoints de viewport
+
+Un bloque estilizado contra el viewport se ve distinto según dónde se haya
+montado: correcto en la página para la que se diseñó, roto en la barra lateral de
+la siguiente. Las container queries eliminan esa clase de error de raíz, y por eso
+son la política y no una preferencia. El razonamiento está en el ADR-0005, y el
+contrato en sí está en `CONTRACT.md`, bajo «Responsive policy».
