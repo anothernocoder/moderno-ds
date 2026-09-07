@@ -1,0 +1,24 @@
+---
+title: Screens
+description: Full-viewport compositions of blocks — one state of a flow, installable on its own.
+group: Screens
+order: 110
+---
+
+A **screen** is a full-viewport composition of blocks that represents one state
+of a flow — `sign-in`, `cart`, `checkout`. It is presentational: it receives its
+data and callbacks as props and holds no navigation state of its own, so you can
+mount it under any router.
+
+```sh
+npx @moderno-ui/cli add sign-in
+```
+
+Installing a screen pulls in the blocks it composes, and the primitives those
+blocks compose, each recorded under its own version in `.moderno/manifest.json`.
+Installing a screen never pulls in the flow it belongs to — `cart` arrives
+without `checkout`, which is the whole reason screens are their own tier.
+
+Like blocks, screens respond to their container rather than the viewport. The
+catalog is being filled as the predecessor's inventory is absorbed; each
+published screen gets its own page in this section.

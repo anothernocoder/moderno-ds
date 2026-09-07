@@ -1,5 +1,6 @@
 ---
 import { getCollection } from "astro:content";
+import { sidebarSections } from "../i18n/nav.ts";
 import { defaultLocale, locales, splitId, useTranslations, type Locale } from "../i18n/ui.ts";
 import LanguageSwitcher from "../components/LanguageSwitcher.astro";
 import Search from "../components/Search.astro";
@@ -29,17 +30,17 @@ const t = useTranslations(locale);
 const site = Astro.site ?? new URL("https://moderno.style");
 
 // Sidebar: this locale's pages, grouped and ordered.
-const pages = (await getCollection("docs"))
-  .map((entry) => ({ entry, ...splitId(entry.id) }))
-  .filter((p) => p.locale === locale && p.slug !== "index")
-  .sort((a, b) => a.entry.data.order - b.entry.data.order);
-
-const groups = new Map<string, typeof pages>();
-for (const p of pages) {
-  const g = p.entry.data.group;
-  if (!groups.has(g)) groups.set(g, []);
-  groups.get(g)!.push(p);
-}
+const sections = sidebarSections(
+  (await getCollection("docs"))
+    .map((entry) => ({ entry, ...splitId(entry.id) }))
+    .filter((p) => p.locale === locale && p.slug !== "index")
+    .map((p) => ({
+      slug: p.slug,
+      title: p.entry.data.title,
+      group: p.entry.data.group,
+      order: p.entry.data.order,
+    })),
+);
 
 // BASE_URL has no trailing slash ("" on Vercel, "/moderno-ds" on GitHub
 // Pages); normalize to always end in exactly one "/".
@@ -98,17 +99,17 @@ const pageTitle = slug === "index" ? title : `${title} — Moderno`;
     <div class:list={["layout", tocHeadings.length > 0 && "layout--with-toc"]}>
       <aside class="sidebar" aria-label={t("nav.docs")}>
         {
-          [...groups].map(([group, items]) => (
+          sections.map((section) => (
             <section class="sidebar-group">
-              <h2>{group}</h2>
+              <h2>{section.group}</h2>
               <ul>
-                {items.map((p) => (
+                {section.pages.map((p) => (
                   <li>
                     <a
                       href={`${base}${locale}/${p.slug}`}
                       aria-current={p.slug === slug ? "page" : undefined}
                     >
-                      {p.entry.data.title}
+                      {p.title}
                     </a>
                   </li>
                 ))}

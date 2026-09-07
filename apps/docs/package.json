@@ -21,6 +21,7 @@
     "@fontsource-variable/geist-mono": "^5.2.8",
     "@lucide/astro": "^1.25.0",
     "@moderno-ui/charts-core": "workspace:*",
+    "@moderno-ui/cli": "workspace:*",
     "@moderno-ui/core": "workspace:*",
     "@moderno-ui/css": "workspace:*",
     "@moderno-ui/svelte": "workspace:*",

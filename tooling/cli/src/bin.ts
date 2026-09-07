@@ -33,14 +33,6 @@ async function loadRegistry(
   return createRegistry(source).load();
 }
 
-function collectDeps(names: string[], registry: RegistryClient): string[] {
-  const deps = new Set<string>();
-  for (const name of names) {
-    for (const d of registry.getItem(name)?.dependencies ?? []) deps.add(d);
-  }
-  return [...deps];
-}
-
 function printDepHint(deps: string[], runner: Runner): void {
   if (deps.length === 0) return;
   console.log(`\nInstall required dependencies:\n  ${installCommand(runner, deps)}`);
@@ -84,13 +76,20 @@ async function main(argv: string[]): Promise<number> {
       if (rest.length === 0) return fail("add requires at least one item name");
       const registry = await loadRegistry(registryOverride, projectDir);
       const manifest = await readManifest(projectDir);
+      const deps = new Set<string>();
       for (const name of rest) {
-        const { installed } = await addItem({ registry, projectDir, name, manifest });
+        const { installed, dependencies } = await addItem({
+          registry,
+          projectDir,
+          name,
+          manifest,
+        });
+        for (const d of dependencies) deps.add(d);
         console.log(
           `✓ added ${name}${installed.length > 1 ? ` (+ ${installed.slice(0, -1).join(", ")})` : ""}`,
         );
       }
-      printDepHint(collectDeps(rest, registry), await detectRunner(projectDir));
+      printDepHint([...deps], await detectRunner(projectDir));
       return 0;
     }
     case "update": {

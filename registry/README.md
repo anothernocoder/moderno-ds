@@ -2,19 +2,49 @@
 
 Versioned, shadcn-style **copy items** installed with `@moderno-ui/cli`. Unlike the
 `@moderno-ui/*` npm packages (primitives, tokens, css), registry items are copied
-into the consumer project and owned by them: **themes**, **blocks**, and
-**ejected primitives**.
+into the consumer project and owned by them: **themes**, **blocks**, **screens**,
+**flows**, and **ejected primitives**.
 
 Source of truth: [`registry.json`](registry.json). Public URL (Phase 6):
 `https://moderno.style/r/registry.json`. The CLI default is overridable via
 `components.json` → `registry` or the `MODERNO_REGISTRY_URL` env var.
+
+## Tiers
+
+Above the primitives the registry has three **copy tiers**, plus themes off to
+the side (ADR-0005). Each tier is a glossary term (`CONTEXT.md`), and composition
+is expressed with the ordinary `registryDependencies` field — there is no
+`composes` field, so `add`, `update` and `diff` keep working per item and shadcn
+tooling still understands the manifest.
+
+| `type`               | What it is                                                                                 | May compose        |
+| -------------------- | ------------------------------------------------------------------------------------------ | ------------------ |
+| `registry:theme`     | **Theme item** — brand CSS + assets, installed on its own and painting everything at once  | nothing            |
+| `registry:component` | An **ejected primitive** — the escape hatch for owning a primitive's markup                | components         |
+| `registry:block`     | A **block** — a page section; no viewport, no navigation state                             | components         |
+| `registry:screen`    | A **screen** — a full-viewport composition of blocks, one state of a flow; presentational  | blocks, components |
+| `registry:flow`      | A **flow** — an ordered sequence of screens plus the example assembly that owns navigation | screens            |
+
+The direction is the rule: a tier may compose the tiers below it, never above,
+and never in a cycle. `checkTiers` (`@moderno-ui/cli`) enforces it in the
+registry integrity test and again in the docs copy step, so a registry that
+would make `moderno add login-form` install a router never reaches `/r/`.
+
+Installing is transitive and per item: `moderno add auth` copies the flow, its
+screens, their blocks and the primitives underneath, recording **each one under
+its own version** in the manifest. Nothing is pulled in upward — `moderno add
+cart` installs a screen without the flow it belongs to.
+
+Blocks may declare an icon set (Lucide) in `dependencies`; primitives never do —
+they take icons as children.
 
 ## Item shape
 
 ```jsonc
 {
   "name": "theme-moderno",
-  "type": "registry:theme", // registry:theme | registry:block | registry:component
+  // registry:theme | registry:component | registry:block | registry:screen | registry:flow
+  "type": "registry:theme",
   "version": "0.1.0", // semver per item — drives `update` / `diff`
   "dependencies": [], // npm packages the item needs
   "registryDependencies": [], // other registry items installed first (recursively)
@@ -38,6 +68,8 @@ moderno init                       # scaffold components.json + src/styles/moder
 moderno add theme-moderno          # copy theme.css + append its @import to moderno.css
 moderno add button                 # eject a primitive (escape hatch)
 moderno add login-form-react       # copy a block, pulling registryDependencies first
+moderno add sign-in                # copy a screen + the blocks it composes
+moderno add auth                   # copy a flow + its screens + their blocks
 moderno update [item...]           # re-apply unedited items; never clobbers local edits
 moderno diff <item>                # show what changed vs the registry version
 ```

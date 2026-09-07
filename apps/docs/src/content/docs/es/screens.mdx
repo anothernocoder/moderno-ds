@@ -1,0 +1,25 @@
+---
+title: Pantallas
+description: Composiciones de bloques a viewport completo — un estado de un flujo, instalable por sí sola.
+group: Pantallas
+order: 110
+---
+
+Una **pantalla** es una composición de bloques a viewport completo que
+representa un estado de un flujo — `sign-in`, `cart`, `checkout`. Es
+presentacional: recibe sus datos y callbacks como props y no guarda estado de
+navegación propio, así que puedes montarla bajo cualquier router.
+
+```sh
+npx @moderno-ui/cli add sign-in
+```
+
+Instalar una pantalla arrastra los bloques que compone, y las primitivas que
+esos bloques componen, cada uno registrado con su propia versión en
+`.moderno/manifest.json`. Instalar una pantalla nunca arrastra el flujo al que
+pertenece — `cart` llega sin `checkout`, que es justamente la razón de que las
+pantallas sean su propio nivel.
+
+Igual que los bloques, las pantallas responden a su contenedor y no al viewport.
+El catálogo se va llenando a medida que se absorbe el inventario del predecesor;
+cada pantalla publicada tendrá su propia página en esta sección.

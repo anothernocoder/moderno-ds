@@ -1,0 +1,28 @@
+---
+title: Bloques
+description: Secciones de página compuestas por primitivas, copiadas a tu proyecto con la CLI y tuyas para modificar.
+group: Bloques
+order: 100
+---
+
+Un **bloque** es una _sección_ de página compuesta por primitivas — un hero, una
+tabla de precios, un formulario de acceso. Lo copias a tu proyecto con la CLI y
+es tuyo desde ese momento; no es una dependencia de npm.
+
+Un bloque nunca es dueño del viewport y no guarda estado de navegación. Responde
+a su **contenedor**, no al viewport, así que el mismo bloque se ve bien en una
+barra lateral, en un modal o en una página completa sin saber dónde está.
+
+```sh
+npx @moderno-ui/cli add login-form-react
+```
+
+Instalar un bloque instala también los ítems del registro que compone —
+primitivas extraídas, si usa alguna — y registra cada uno con su propia versión
+en `.moderno/manifest.json`, de modo que `moderno update` y `moderno diff`
+siguen funcionando por ítem.
+
+Un bloque compone solo primitivas, nunca una pantalla ni un flujo — el registro
+impone esa dirección. El catálogo se va llenando a medida que se absorbe el
+inventario del predecesor; cada bloque publicado tendrá su propia página en esta
+sección.

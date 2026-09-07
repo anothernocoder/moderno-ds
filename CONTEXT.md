@@ -29,7 +29,7 @@ A CSS file of variables that defines the appearance of a brand. The brand lives 
 _Avoid_: Skin, palette file
 
 **Registry**:
-A versioned catalog of items installable via the CLI (blocks, themes, primitives in eject mode). Source in the repo: `registry/registry.json`. Public URL: `https://moderno.style/r/registry.json` (served from the docs deploy).
+A versioned catalog of items installable via the CLI, in copy tiers (`registry:component` for primitives in eject mode, `registry:block`, `registry:screen`, `registry:flow`) plus `registry:theme`. A tier composes only the tiers below it; installing one installs those transitively. Source in the repo: `registry/registry.json`. Public URL: `https://moderno.style/r/registry.json` (served from the docs deploy).
 _Avoid_: Catalog, manifest (when referring to the complete catalog)
 
 **Eject**:

@@ -71,6 +71,9 @@ importers:
       '@moderno-ui/charts-core':
         specifier: workspace:*
         version: link:../../packages/charts-core
+      '@moderno-ui/cli':
+        specifier: workspace:*
+        version: link:../../tooling/cli
       '@moderno-ui/core':
         specifier: workspace:*
         version: link:../../packages/core

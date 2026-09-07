@@ -2,7 +2,8 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import type { Registry } from "../src/types.ts";
+import { checkTiers } from "../src/tiers.ts";
+import { isRegistryItemType, REGISTRY_ITEM_TYPES, type Registry } from "../src/types.ts";
 
 const registryDir = fileURLToPath(new URL("../../../registry", import.meta.url));
 const repoRoot = fileURLToPath(new URL("../../../", import.meta.url));
@@ -37,6 +38,19 @@ describe("registry.json integrity", () => {
         expect(names.has(dep), `${item.name} depends on unknown ${dep}`).toBe(true);
       }
     }
+  });
+
+  it("gives every item one of the published types", () => {
+    for (const item of registry.items) {
+      expect(isRegistryItemType(item.type), `${item.name} → ${item.type}`).toBe(true);
+    }
+    // the two composition tiers above blocks are part of that set
+    expect(REGISTRY_ITEM_TYPES).toContain("registry:screen");
+    expect(REGISTRY_ITEM_TYPES).toContain("registry:flow");
+  });
+
+  it("obeys the tier rules — no upward or cyclic composition", () => {
+    expect(checkTiers(registry.items).map((v) => v.message)).toEqual([]);
   });
 
   it("keeps the ejected button in sync with the @moderno-ui/react source", () => {

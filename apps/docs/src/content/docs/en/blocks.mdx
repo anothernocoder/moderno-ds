@@ -1,0 +1,26 @@
+---
+title: Blocks
+description: Page sections composed of primitives, copied into your project with the CLI and yours to modify.
+group: Blocks
+order: 100
+---
+
+A **block** is a page _section_ composed of primitives — a hero, a pricing
+table, a login form. You copy it into your project with the CLI and own it from
+that moment on; it is not an npm dependency.
+
+A block never owns the viewport and carries no navigation state. It responds to
+its **container**, not the viewport, so the same block looks right in a sidebar,
+a modal or a full page without knowing which.
+
+```sh
+npx @moderno-ui/cli add login-form-react
+```
+
+Installing a block also installs the registry items it composes — ejected
+primitives, if it uses any — and records each one under its own version in
+`.moderno/manifest.json`, so `moderno update` and `moderno diff` stay per item.
+
+A block composes only primitives, never a screen or a flow — the registry
+enforces that direction. The catalog is being filled as the predecessor's
+inventory is absorbed; each published block gets its own page in this section.
