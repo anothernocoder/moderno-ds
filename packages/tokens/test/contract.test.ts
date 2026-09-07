@@ -203,4 +203,19 @@ describe("@moderno-ui/tokens — Tailwind v4 preset", () => {
       );
     }
   });
+
+  /**
+   * `--container-*` is Tailwind's own namespace and the contract's three steps
+   * are not its values, so the preset resets it before declaring them: keeping
+   * Tailwind's `xl`/`2xl`/`3xl` alongside would leave `max-w-lg` (48rem) wider
+   * than `max-w-xl` (36rem). The contract owns the namespace whole.
+   */
+  it("resets the Tailwind container namespace, leaving only the contract's steps", () => {
+    const plainTheme = themeBlockDecls(presetCss, "");
+    expect(plainTheme.get("container-*")).toBe("initial");
+    const containerKeys = [...plainTheme.keys()].filter((k) => k.startsWith("container-"));
+    expect(containerKeys.sort()).toEqual(
+      ["container-*", "container-lg", "container-md", "container-sm"].sort(),
+    );
+  });
 });

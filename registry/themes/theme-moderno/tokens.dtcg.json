@@ -56,10 +56,7 @@
     "shadow-lg": {
       "$type": "shadow",
       "$value": "0 0 0 1px oklch(0.922 0 0), 0 12px 32px -8px oklch(0 0 0 / 0.12)"
-    },
-    "container-sm": { "$type": "dimension", "$value": "24rem" },
-    "container-md": { "$type": "dimension", "$value": "36rem" },
-    "container-lg": { "$type": "dimension", "$value": "48rem" }
+    }
   },
   "dark": {
     "background": { "$type": "color", "$value": "oklch(0.16 0 0)" },
@@ -110,9 +107,6 @@
     "shadow-lg": {
       "$type": "shadow",
       "$value": "0 0 0 1px oklch(0.27 0 0), 0 12px 32px -8px oklch(0 0 0 / 0.8)"
-    },
-    "container-sm": { "$type": "dimension", "$value": "24rem" },
-    "container-md": { "$type": "dimension", "$value": "36rem" },
-    "container-lg": { "$type": "dimension", "$value": "48rem" }
+    }
   }
 }

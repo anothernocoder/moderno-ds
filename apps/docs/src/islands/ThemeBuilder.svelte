@@ -13,6 +13,7 @@
   import {
     buildTheme,
     defaultThemeState,
+    previewStyle,
     slugify,
     tokensToState,
     EXTENDED_SLOTS,
@@ -50,11 +51,10 @@
 
   const bundle = $derived(buildTheme(state));
   const activeScope = $derived(state[scope]);
-  const previewVars = $derived(
-    Object.entries(state[scope])
-      .map(([slot, value]) => `--${slot}: ${value}`)
-      .join("; "),
-  );
+  // Built by the same helper the export uses, so a cleared optional field
+  // previews the inherited default instead of a blanked slot (`--slot: ` makes
+  // var(--slot) substitute to nothing, and the stage loses that padding/radius).
+  const previewVars = $derived(previewStyle(state[scope]));
 
   const chartSeries = [
     { name: "A", points: [{ x: 0, y: 8 }, { x: 1, y: 22 }, { x: 2, y: 16 }, { x: 3, y: 34 }] },

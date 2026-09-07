@@ -80,6 +80,12 @@
    * lengths so `@sm:`/`@md:`/`@lg:` container-query variants fire at the same
    * widths — a CSS container query condition cannot read a custom property, so
    * the threshold has to be a literal there.
+   *
+   * These three names are also Tailwind's own container-scale keys, and this
+   * `:root` is unlayered, so it beats Tailwind's `@layer theme` defaults: in a
+   * Tailwind app, importing this file alone already gives `max-w-md` 36rem and
+   * `max-w-lg` 48rem while `max-w-xl` stays 36rem. Import `@moderno-ui/css/preset`
+   * too — it resets the namespace to exactly these three ordered steps.
    */
   --container-sm: 24rem;
   --container-md: 36rem;

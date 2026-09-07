@@ -74,7 +74,8 @@ tiene detrás — `theme-moderno` lo hace:
 Los **breakpoints de contenedor** son a lo que responden los blocks y las
 screens. Un block lee el ancho de su _contenedor_, nunca el del viewport, así
 que el mismo block se ve correcto en una barra lateral, en un modal y a página
-completa.
+completa. Tres pasos son toda la escala: un block se maqueta con `@sm:` /
+`@md:` / `@lg:` y nada más ancho.
 
 ## Tailwind v4
 
@@ -96,6 +97,36 @@ condición de container query en CSS no puede contener `var()` — `@container
 tres longitudes de forma literal y `@sm:` se dispara en 24rem fijos. Las
 utilidades de ancho no se ven afectadas: `max-w-sm` sigue resolviendo a
 `var(--container-sm)` y respeta el override del tema en tiempo de ejecución.
+
+### La escala de contenedor se reemplaza, no se amplía
+
+`--container-*` es el propio namespace de Tailwind — `sm 24rem, md 28rem,
+lg 32rem, xl 36rem, 2xl 42rem, 3xl 48rem, …` — y los tres pasos del contrato no
+son esos valores. En vez de redefinir tres claves dentro de una escala que
+quedaría desordenada (`max-w-lg`, 48rem, sería _más ancha_ que `max-w-xl`,
+36rem, y `@lg:` se dispararía después de `@xl:`), el preset resetea el namespace
+y declara solo los pasos del contrato:
+
+```css
+@theme {
+  --container-*: initial;
+
+  --container-sm: 24rem;
+  --container-md: 36rem;
+  --container-lg: 48rem;
+}
+```
+
+Así que tras instalar el preset tienes `max-w-sm|md|lg`, `w-sm|md|lg` y
+`@sm:` / `@md:` / `@lg:`, y los tamaños de contenedor más anchos de Tailwind
+(`max-w-xl` en adelante, `@xl:` en adelante) desaparecen. Si los necesitas,
+declara tus propias claves en un bloque `@theme` de tu aplicación.
+
+Una advertencia si te saltas el preset: `@moderno-ui/css` declara esos tres
+nombres en un `:root` sin capa, que gana a `@layer theme` de Tailwind, así que
+importarlo solo ya deja `max-w-md` en 36rem y `max-w-lg` en 48rem mientras
+`max-w-xl` se queda en los 36rem de Tailwind. Importa el preset junto a él para
+tener la escala ordenada.
 
 ## Leerlo como datos
 

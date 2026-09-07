@@ -7,6 +7,7 @@ import {
   decodeState,
   defaultThemeState,
   encodeState,
+  previewStyle,
   stateToTokens,
   tokensToState,
 } from "./theme.ts";
@@ -41,11 +42,20 @@ describe("tokensToState / stateToTokens — round trip", () => {
     expect(state.light["font-serif"]).toMatch(/Hedvig Letters Serif/);
     expect(state.light["shadow-md"]).toBeTruthy();
     expect(state.dark["shadow-md"]).toBeTruthy();
-    expect(state.light["container-lg"]).toBe("48rem");
+  });
+
+  it("leaves an extended slot the theme inherits blank, so the field shows its placeholder", () => {
+    const state = tokensToState(modernoTokens);
+    // theme-moderno's brand changes the serif face and the elevation steps; the
+    // container breakpoints it takes from @moderno-ui/tokens unchanged.
+    expect(state.light["container-lg"]).toBeUndefined();
+    expect(state.dark["container-lg"]).toBeUndefined();
   });
 
   it("exports the extended slots with their DTCG types", () => {
-    const doc = stateToTokens(tokensToState(modernoTokens));
+    const state = tokensToState(modernoTokens);
+    state.light["container-sm"] = "30rem";
+    const doc = stateToTokens(state);
     expect(doc.light["font-serif"].$type).toBe("fontFamily");
     expect(doc.light["shadow-lg"].$type).toBe("shadow");
     expect(doc.light["container-sm"].$type).toBe("dimension");
@@ -57,6 +67,39 @@ describe("tokensToState / stateToTokens — round trip", () => {
     const doc = stateToTokens(state);
     expect(doc.light["font-serif"]).toBeUndefined();
     expect(buildTheme(state).valid).toBe(true);
+  });
+});
+
+/**
+ * The preview stage renders the editor state as inline custom properties. It
+ * has to skip a blank field for the same reason the export does: `--spacing-3: `
+ * is a valid *empty* custom property, so `padding-inline: var(--spacing-3)` in
+ * components.css computes to nothing and the previewed button loses its padding
+ * — while the exported theme.css, which simply omits the slot, inherits
+ * `0.75rem` and renders correctly. Preview and artifact must agree.
+ */
+describe("previewStyle — the preview matches what the export renders", () => {
+  it("serialises the slots the theme expresses", () => {
+    const style = previewStyle(tokensToState(modernoTokens).light);
+    expect(style).toContain("--background: oklch(1 0 0)");
+    expect(style).toContain("--font-serif: ");
+  });
+
+  it("skips a cleared field instead of blanking the slot", () => {
+    const state = tokensToState(modernoTokens);
+    state.light["spacing-3"] = "";
+    const style = previewStyle(state.light);
+    expect(style).not.toContain("--spacing-3");
+  });
+
+  it("previews exactly the slots the export emits", () => {
+    const state = tokensToState(modernoTokens);
+    state.light["font-serif"] = "  ";
+    const previewed = previewStyle(state.light)
+      .split("; ")
+      .map((decl) => decl.slice(2, decl.indexOf(":")))
+      .sort();
+    expect(previewed).toEqual(Object.keys(stateToTokens(state).light).sort());
   });
 });
 

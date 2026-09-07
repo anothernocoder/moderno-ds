@@ -69,7 +69,8 @@ an overlay still separates from the surface behind it — `theme-moderno` does:
 
 **Container breakpoints** are what blocks and screens respond to. A block reads
 the width of its _container_, never the viewport, so the same block is correct
-in a sidebar, a modal and a full page.
+in a sidebar, a modal and a full page. Three steps is the whole scale: a block
+lays out with `@sm:` / `@md:` / `@lg:` and nothing wider.
 
 ## Tailwind v4
 
@@ -91,6 +92,35 @@ var(--container-sm))` never matches — so the preset registers the three length
 literally, and `@sm:` fires at a fixed 24rem. The width utilities are unaffected:
 `max-w-sm` still resolves to `var(--container-sm)` and follows a theme override
 at runtime.
+
+### The container scale is replaced, not extended
+
+`--container-*` is Tailwind's own namespace — `sm 24rem, md 28rem, lg 32rem,
+xl 36rem, 2xl 42rem, 3xl 48rem, …` — and the contract's three steps are not
+those values. Rather than redefine three keys inside a scale that would then be
+out of order (`max-w-lg` at 48rem would be _wider_ than `max-w-xl` at 36rem, and
+`@lg:` would fire later than `@xl:`), the preset resets the namespace and
+declares the contract's steps alone:
+
+```css
+@theme {
+  --container-*: initial;
+
+  --container-sm: 24rem;
+  --container-md: 36rem;
+  --container-lg: 48rem;
+}
+```
+
+So after installing the preset you have `max-w-sm|md|lg`, `w-sm|md|lg` and
+`@sm:` / `@md:` / `@lg:` — and Tailwind's wider container sizes (`max-w-xl` and
+up, `@xl:` and up) are gone. Add your own keys in an app-level `@theme` block if
+you need them.
+
+One caveat if you skip the preset: `@moderno-ui/css` declares these three names
+in an unlayered `:root`, which beats Tailwind's `@layer theme`, so importing it
+by itself already gives `max-w-md` 36rem and `max-w-lg` 48rem while `max-w-xl`
+stays at Tailwind's 36rem. Import the preset alongside it for the ordered scale.
 
 ## Reading it as data
 

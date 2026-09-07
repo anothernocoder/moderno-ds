@@ -73,7 +73,9 @@ Beyond color, the contract also standardizes:
   light-mode shadow disappears on a dark surface.
 - **Container breakpoints** — `--container-sm` (24rem), `--container-md` (36rem),
   `--container-lg` (48rem). Blocks and screens respond to the width of their
-  _container_, never the viewport (ADR-0005).
+  _container_, never the viewport (ADR-0005). These three are the whole scale a
+  block may use: in Tailwind they replace the container namespace rather than
+  extend it (see below).
 
 No hardcoded spacing, durations, radii, shadows, or widths in components —
 reference the slot.
@@ -96,11 +98,22 @@ theme that omits one.
 - **Tailwind v4**: import `@moderno-ui/css/preset`. It maps each slot to a theme
   namespace with `@theme inline`, so utilities reference `var(--slot)` directly
   and runtime overrides re-theme without a rebuild — `bg-primary`, `font-serif`,
-  `shadow-md`, `rounded-lg`. The one exception is `--container-*`: a CSS
-  container query condition cannot contain `var()`, so those are registered with
-  a plain `@theme` block carrying the same three literal lengths. `@sm:`/`@md:`/
-  `@lg:` therefore fire at fixed widths, while `max-w-sm` and friends still read
-  `var(--container-sm)` and follow a theme override at runtime.
+  `shadow-md`, `rounded-lg`. The one exception is `--container-*`, in two ways:
+  - It is not `inline`. A CSS container query condition cannot contain `var()`,
+    so the three lengths are registered literally; `@sm:`/`@md:`/`@lg:` fire at
+    fixed widths, while `max-w-sm` and friends still read `var(--container-sm)`
+    and follow a theme override at runtime.
+  - **It replaces Tailwind's container scale, it does not extend it.**
+    `--container-*` is Tailwind's own namespace — its `md` is 28rem, its `lg`
+    32rem, its `xl` 36rem — and the contract's three steps are not those values,
+    so the preset resets the namespace (`--container-*: initial`) before
+    declaring them. Installing Moderno therefore leaves `max-w-sm|md|lg`,
+    `w-sm|md|lg` and `@sm:`/`@md:`/`@lg:` and **removes** `max-w-xl`, `@2xl:` and
+    the rest of Tailwind's container sizes; blocks use the three contract steps
+    only. Without the reset the scale would be out of order — `max-w-lg` (48rem)
+    wider than `max-w-xl` (36rem). Note that `@moderno-ui/css` on its own already
+    retunes `md`/`lg` (its `:root` is unlayered and beats `@layer theme`), so
+    import the preset alongside it to get the ordered three-step scale.
 
 ## Styling convention: `data-scope` / `data-part`
 

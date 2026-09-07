@@ -31,9 +31,6 @@
   --shadow-sm: 0 0 0 1px oklch(0.922 0 0), 0 1px 2px 0 oklch(0 0 0 / 0.04);
   --shadow-md: 0 0 0 1px oklch(0.922 0 0), 0 4px 12px -2px oklch(0 0 0 / 0.08);
   --shadow-lg: 0 0 0 1px oklch(0.922 0 0), 0 12px 32px -8px oklch(0 0 0 / 0.12);
-  --container-sm: 24rem;
-  --container-md: 36rem;
-  --container-lg: 48rem;
 }
 
 .dark {
@@ -68,7 +65,4 @@
   --shadow-sm: 0 0 0 1px oklch(0.27 0 0), 0 1px 2px 0 oklch(0 0 0 / 0.6);
   --shadow-md: 0 0 0 1px oklch(0.27 0 0), 0 4px 12px -2px oklch(0 0 0 / 0.7);
   --shadow-lg: 0 0 0 1px oklch(0.27 0 0), 0 12px 32px -8px oklch(0 0 0 / 0.8);
-  --container-sm: 24rem;
-  --container-md: 36rem;
-  --container-lg: 48rem;
 }

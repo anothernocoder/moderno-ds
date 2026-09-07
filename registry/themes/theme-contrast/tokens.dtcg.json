@@ -41,16 +41,9 @@
       "$type": "fontFamily",
       "$value": "ui-monospace, \"SFMono-Regular\", \"Menlo\", \"Consolas\", monospace"
     },
-    "font-serif": {
-      "$type": "fontFamily",
-      "$value": "ui-serif, Georgia, Cambria, \"Times New Roman\", serif"
-    },
     "shadow-sm": { "$type": "shadow", "$value": "0 0 0 1px oklch(0 0 0)" },
     "shadow-md": { "$type": "shadow", "$value": "0 0 0 2px oklch(0 0 0)" },
-    "shadow-lg": { "$type": "shadow", "$value": "0 0 0 3px oklch(0 0 0)" },
-    "container-sm": { "$type": "dimension", "$value": "24rem" },
-    "container-md": { "$type": "dimension", "$value": "36rem" },
-    "container-lg": { "$type": "dimension", "$value": "48rem" }
+    "shadow-lg": { "$type": "shadow", "$value": "0 0 0 3px oklch(0 0 0)" }
   },
   "dark": {
     "background": { "$type": "color", "$value": "oklch(0 0 0)" },
@@ -86,15 +79,8 @@
       "$type": "fontFamily",
       "$value": "ui-monospace, \"SFMono-Regular\", \"Menlo\", \"Consolas\", monospace"
     },
-    "font-serif": {
-      "$type": "fontFamily",
-      "$value": "ui-serif, Georgia, Cambria, \"Times New Roman\", serif"
-    },
     "shadow-sm": { "$type": "shadow", "$value": "0 0 0 1px oklch(1 0 0)" },
     "shadow-md": { "$type": "shadow", "$value": "0 0 0 2px oklch(1 0 0)" },
-    "shadow-lg": { "$type": "shadow", "$value": "0 0 0 3px oklch(1 0 0)" },
-    "container-sm": { "$type": "dimension", "$value": "24rem" },
-    "container-md": { "$type": "dimension", "$value": "36rem" },
-    "container-lg": { "$type": "dimension", "$value": "48rem" }
+    "shadow-lg": { "$type": "shadow", "$value": "0 0 0 3px oklch(1 0 0)" }
   }
 }
