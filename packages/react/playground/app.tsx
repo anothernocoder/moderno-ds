@@ -2,8 +2,8 @@
  * SSR playground — the reusable harness that validates Moderno's second
  * guarantee: server-render + hydrate with zero React warnings.
  *
- * It mounts the reference primitives in their default (closed) state. Each one
- * is deliberately exercised for an SSR hazard:
+ * It mounts every one of the reference primitives in their default (closed)
+ * state. Each one is deliberately exercised for an SSR hazard:
  *   - Button   — the trivial baseline (no ids, no portal).
  *   - Field    — `useId`-generated label/control ids must match across render,
  *                mounted at two sizes and over both controls (input + textarea)
@@ -12,6 +12,8 @@
  *                own `data-part` and the root its recipe attributes.
  *   - Divider  — CSS-only, but proves an optional child (the label) and the
  *                conditional separator role serialise identically both ways.
+ *                Mounted in every recipe cell the props table advertises,
+ *                captioned × vertical included.
  *   - Field    — `useId`-generated label/control ids must match across render.
  *   - Checkbox — a label bound to a visually hidden native input by `useId`,
  *                plus indicators the machine hides via the `hidden` attribute.
@@ -95,6 +97,7 @@ export function App({ open = false }: AppProps) {
         <Divider />
         <Divider align="start">Or</Divider>
         <Divider orientation="vertical" />
+        <Divider orientation="vertical">Or</Divider>
       </section>
 
       <section aria-label="alerts">

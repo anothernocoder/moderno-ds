@@ -71,6 +71,7 @@ export function App(props: { open?: boolean }) {
         <Divider />
         <Divider align="start">Or</Divider>
         <Divider orientation="vertical" />
+        <Divider orientation="vertical">Or</Divider>
       </section>
 
       <section aria-label="alerts">

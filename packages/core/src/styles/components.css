@@ -277,7 +277,12 @@
   }
 
   /* The label's own margins open the gap in the rule, so an unlabelled divider
-     needs no `gap` reset — nothing sits between the halves and they meet. */
+     needs no `gap` reset — nothing sits between the halves and they meet.
+     Flow-relative margins resolve against the *label's own* writing mode, and
+     the vertical label is `vertical-rl`, so its inline axis is the page's
+     vertical one: `margin-inline` is the along-the-rule axis in both
+     orientations. `margin-block` on the vertical label would pad its sides
+     instead — widening the rule and letting the stroke butt into the glyphs. */
   [data-scope="divider"][data-part="label"] {
     flex: 0 0 auto;
     color: var(--muted-foreground);
@@ -289,8 +294,8 @@
     margin-inline: var(--spacing-3);
   }
   [data-scope="divider"][data-orientation="vertical"] [data-part="label"] {
-    margin-block: var(--spacing-2);
     writing-mode: vertical-rl;
+    margin-inline: var(--spacing-2);
   }
 
   /* ─────────────────────────── Field ──────────────────────────── *

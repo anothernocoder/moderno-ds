@@ -28,6 +28,21 @@ describe("Divider (Vue)", () => {
     expect(label.getAttribute("data-part")).toBe("label");
   });
 
+  // orientation × label is the cell the docs preview and the SSR playground now
+  // both carry: the label part has to survive the vertical orientation, since
+  // that is the shape whose gap depends on the label's rotated writing mode.
+  it("keeps the label part on a vertical rule", () => {
+    const { container } = render(Divider, {
+      props: { orientation: "vertical" },
+      slots: { default: () => "Or" },
+    });
+    const root = container.firstElementChild!;
+    expect(root.getAttribute("data-orientation")).toBe("vertical");
+    const label = screen.getByText("Or");
+    expect(label.getAttribute("data-part")).toBe("label");
+    expect(label.parentElement).toBe(root);
+  });
+
   it("is a separator when bare, and drops the role when it has a label", () => {
     const bare = render(Divider, { props: { orientation: "vertical" } }).container
       .firstElementChild!;

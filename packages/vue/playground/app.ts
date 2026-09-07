@@ -74,6 +74,7 @@ export const App = defineComponent({
           h(Divider),
           h(Divider, { align: "start" }, () => "Or"),
           h(Divider, { orientation: "vertical" }),
+          h(Divider, { orientation: "vertical" }, () => "Or"),
         ]),
 
         h("section", { "aria-label": "alerts" }, [

@@ -35,6 +35,10 @@ describe("SSR (Vue)", () => {
     // separator role, the captioned one its label part.
     expect(html).toContain('role="separator"');
     expect(html).toMatch(/data-scope="divider"[^>]*data-part="label"/);
+    // …including the captioned *vertical* rule: that combination is the one
+    // whose gap depends on the label's rotated writing mode, so orientation and
+    // label have to serialise onto the same root.
+    expect(html).toMatch(/data-orientation="vertical"(?:(?!<\/div>)[\s\S])*?data-part="label"/);
     // Triggers are present even while the dialog/select popovers are closed.
     expect(html).toContain("Open dialog");
     expect(html).toContain("Framework");
@@ -98,6 +102,7 @@ const HydrationApp = defineComponent({
         ]),
         h(Divider),
         h(Divider, { align: "start" }, () => "Or"),
+        h(Divider, { orientation: "vertical" }, () => "Or"),
         h(Field.Root, {}, () => [
           h(Field.Label, {}, () => "Email"),
           h(Field.Input, { placeholder: "you@example.com" }),

@@ -19,6 +19,7 @@ agent:
     - "A bare divider is role=separator; a labelled one drops the role, because separator makes its children presentational and would hide the label."
     - "align only moves the label — it does nothing on a divider with no children."
     - "orientation=vertical takes its length from the row it sits in; give that row a height."
+    - "A vertical divider with a label turns the caption sideways and widens the rule to fit it; the gap opens along the rule, above and below the caption."
   theming:
     - "The stroke is --border; the label is --muted-foreground. Never pass a colour."
     - "Spacing around the label comes from --spacing-2/--spacing-3; do not set margins inline."
@@ -39,7 +40,8 @@ extra markup. `data-orientation`/`data-align` from the recipe key every style in
   code={`<Divider />
 <Divider>Or continue with</Divider>
 <Divider align="start">Recent</Divider>
-<Divider orientation="vertical" />`}
+<Divider orientation="vertical" />
+<Divider orientation="vertical">or</Divider>`}
 >
   <DividerDemo client:visible />
 </Preview>
