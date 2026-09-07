@@ -21,6 +21,8 @@
  *                hydration-safe trigger while its content stays unmounted-visible.
  *   - Select   — a collection + popover whose hidden native <select> and ids
  *                must serialise identically on server and client.
+ *   - PinInput — n cells whose ids and aria labels are derived from the root id
+ *                and `count`, so the server must know the cell count too.
  *
  * The same tree is `renderToString`-ed on the server and `hydrateRoot`-ed on the
  * client. `open` mounts the Dialog and Select popovers so the SSR test can
@@ -36,6 +38,7 @@ import { Field } from "../src/field.js";
 import { Checkbox } from "../src/checkbox.js";
 import { Dialog, Portal } from "../src/dialog.js";
 import { Select, createListCollection } from "../src/select.js";
+import { PinInput } from "../src/pin-input.js";
 import { AreaChart, BarChart, LineChart, ScatterChart } from "../src/charts.js";
 
 // A shared sample dataset for the four chart examples (Phase 4 deliverable).
@@ -63,6 +66,10 @@ const sales = [
 ];
 const quarters = ["Q1", "Q2", "Q3", "Q4"];
 const revenue = [{ name: "revenue", values: [12, 28, 19, 34] }];
+
+// A six-digit one-time code: the cell indices the PinInput renders. `count` on
+// the Root tells Ark the same number so the server-rendered aria labels match.
+const CODE_CELLS = [0, 1, 2, 3, 4, 5];
 
 const frameworks = createListCollection({
   items: [
@@ -211,6 +218,16 @@ export function App({ open = false }: AppProps) {
           </Select.Positioner>
         </Portal>
       </Select.Root>
+
+      <PinInput.Root count={CODE_CELLS.length} otp size="md">
+        <PinInput.Label>Verification code</PinInput.Label>
+        <PinInput.Control>
+          {CODE_CELLS.map((index) => (
+            <PinInput.Input key={index} index={index} />
+          ))}
+        </PinInput.Control>
+        <PinInput.HiddenInput />
+      </PinInput.Root>
 
       <section aria-label="charts">
         <LineChart width={320} height={180} series={sales} />

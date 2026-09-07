@@ -17,6 +17,7 @@ import { Field } from "../src/field.js";
 import { Checkbox } from "../src/checkbox.js";
 import { Dialog, Portal } from "../src/dialog.js";
 import { Select, createListCollection } from "../src/select.js";
+import { PinInput } from "../src/pin-input.js";
 import { AreaChart, BarChart, LineChart, ScatterChart } from "../src/charts.js";
 
 // A shared sample dataset for the four chart examples (Phase 4 deliverable).
@@ -44,6 +45,10 @@ const sales = [
 ];
 const quarters = ["Q1", "Q2", "Q3", "Q4"];
 const revenue = [{ name: "revenue", values: [12, 28, 19, 34] }];
+
+// A six-digit one-time code: the cell indices the PinInput renders. `count` on
+// the Root tells Ark the same number so the server-rendered aria labels match.
+const CODE_CELLS = [0, 1, 2, 3, 4, 5];
 
 const frameworks = createListCollection({
   items: [
@@ -188,6 +193,14 @@ export const App = defineComponent({
             ),
           ],
         ),
+
+        h(PinInput.Root, { count: CODE_CELLS.length, otp: true, size: "md" }, () => [
+          h(PinInput.Label, {}, () => "Verification code"),
+          h(PinInput.Control, {}, () =>
+            CODE_CELLS.map((index) => h(PinInput.Input, { key: index, index })),
+          ),
+          h(PinInput.HiddenInput),
+        ]),
 
         h("section", { "aria-label": "charts" }, [
           h(LineChart, { width: 320, height: 180, series: sales }),

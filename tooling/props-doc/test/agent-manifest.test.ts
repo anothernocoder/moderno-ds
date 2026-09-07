@@ -19,6 +19,7 @@ describe("AGENT_COMPONENTS", () => {
       "Checkbox",
       "Dialog",
       "Select",
+      "PinInput",
       "LineChart",
       "AreaChart",
       "BarChart",
@@ -57,7 +58,7 @@ describe("buildComponentsManifest", () => {
     expect(button.import).toBe('import { Button } from "@moderno-ui/vue"');
   });
 
-  it("resolves Button/Select/Checkbox/Field props from the canonical react source", () => {
+  it("resolves Button/Select/Checkbox/Field/PinInput props from the canonical react source", () => {
     const button = manifest.components.find((c) => c.name === "Button")!;
     expect(button.props.map((p) => p.name).sort()).toEqual(["size", "variant"]);
 
@@ -69,6 +70,12 @@ describe("buildComponentsManifest", () => {
 
     const checkbox = manifest.components.find((c) => c.name === "Checkbox")!;
     expect(checkbox.props.map((p) => p.name)).toEqual(["size"]);
+
+    // Ark's own Root props (count, mask, otp, …) are inherited from
+    // node_modules and stay out of the table; only what Moderno declares.
+    const pinInput = manifest.components.find((c) => c.name === "PinInput")!;
+    expect(pinInput.props.map((p) => p.name)).toEqual(["size"]);
+    expect(pinInput.variants).toEqual({ size: ["sm", "md", "lg"] });
   });
 
   it("gives Dialog empty props — it adds none of its own", () => {

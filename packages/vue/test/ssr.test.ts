@@ -9,6 +9,7 @@ import { Divider } from "../src/divider.js";
 import { Field } from "../src/field.js";
 import { Checkbox } from "../src/checkbox.js";
 import { partAttrs, partTags } from "../../core/test/ssr-parts.ts";
+import { PinInput } from "../src/pin-input.js";
 
 afterEach(() => {
   document.body.replaceChildren();
@@ -39,6 +40,11 @@ describe("SSR (Vue)", () => {
     // whose gap depends on the label's rotated writing mode, so orientation and
     // label have to serialise onto the same root.
     expect(html).toMatch(/data-orientation="vertical"(?:(?!<\/div>)[\s\S])*?data-part="label"/);
+    expect(html).toContain('data-scope="pin-input"');
+    // Every code cell is on the server, and `count` makes the server's aria
+    // labels agree with the client's — the PinInput-specific SSR hazard.
+    expect(html.match(/data-index="/g) ?? []).toHaveLength(6);
+    expect(html).toContain('aria-label="pin code 6 of 6"');
     // Triggers are present even while the dialog/select popovers are closed.
     expect(html).toContain("Open dialog");
     expect(html).toContain("Framework");
@@ -76,6 +82,9 @@ describe("SSR (Vue)", () => {
  * must match across server and client render. The portal-free primitives
  * (Button + Field + Checkbox + Alert) exercise exactly that, so a warning-free
  * (Button, Card, Field and Checkbox) exercise exactly that, so a warning-free
+ * must match across server and client render, and PinInput derives every cell
+ * id (plus the label's `for`) from the same root id. The portal-free primitives
+ * (Button + Field + Checkbox + PinInput) exercise exactly that, so a warning-free
  * hydration here proves the id path is stable. Ark's portaled popovers
  * (Dialog/Select) position via floating-ui measurement that jsdom does not
  * provide, so their hydration is covered by the string + interaction suites
@@ -119,6 +128,13 @@ const HydrationApp = defineComponent({
             h(Alert.Title, {}, () => "Payment failed"),
             h(Alert.Description, {}, () => "We could not charge your card."),
           ]),
+        ]),
+        h(PinInput.Root, { count: 4, otp: true }, () => [
+          h(PinInput.Label, {}, () => "Verification code"),
+          h(PinInput.Control, {}, () =>
+            [0, 1, 2, 3].map((index) => h(PinInput.Input, { key: index, index })),
+          ),
+          h(PinInput.HiddenInput),
         ]),
       ]);
   },

@@ -15,6 +15,7 @@ import { Card } from "../src/card.jsx";
 import { Checkbox } from "../src/checkbox.jsx";
 import { Dialog, Portal } from "../src/dialog.js";
 import { Select, createListCollection } from "../src/select.jsx";
+import { PinInput } from "../src/pin-input.jsx";
 import { AreaChart, BarChart, LineChart, ScatterChart } from "../src/charts.jsx";
 
 // A shared sample dataset for the four chart examples (Phase 4 deliverable).
@@ -42,6 +43,10 @@ const sales = [
 ];
 const quarters = ["Q1", "Q2", "Q3", "Q4"];
 const revenue = [{ name: "revenue", values: [12, 28, 19, 34] }];
+
+// A six-digit one-time code: the cell indices the PinInput renders. `count` on
+// the Root tells Ark the same number so the server-rendered aria labels match.
+const CODE_CELLS = [0, 1, 2, 3, 4, 5];
 
 const frameworks = createListCollection({
   items: [
@@ -187,6 +192,14 @@ export function App(props: { open?: boolean }) {
           </Select.Positioner>
         </Portal>
       </Select.Root>
+
+      <PinInput.Root count={CODE_CELLS.length} otp size="md">
+        <PinInput.Label>Verification code</PinInput.Label>
+        <PinInput.Control>
+          <For each={CODE_CELLS}>{(index) => <PinInput.Input index={index} />}</For>
+        </PinInput.Control>
+        <PinInput.HiddenInput />
+      </PinInput.Root>
 
       <section aria-label="charts">
         <LineChart width={320} height={180} series={sales} />

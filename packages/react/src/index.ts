@@ -66,6 +66,19 @@ export type {
 export { LineChart, AreaChart, BarChart, ScatterChart } from "./charts.js";
 export type { LineChartProps, AreaChartProps, BarChartProps, ScatterChartProps } from "./charts.js";
 
+export { PinInput } from "./pin-input.js";
+export type {
+  PinInputSize,
+  ModernoPinInputRootProps,
+  PinInputRootProps,
+  PinInputLabelProps,
+  PinInputControlProps,
+  PinInputInputProps,
+  PinInputHiddenInputProps,
+  PinInputValueChangeDetails,
+  PinInputValueInvalidDetails,
+} from "./pin-input.js";
+
 export { Select, createListCollection } from "./select.js";
 export type {
   SelectSize,
