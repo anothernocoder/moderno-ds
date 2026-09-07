@@ -23,8 +23,10 @@ if (links.length) {
       if (visible.length) setActive(visible[0].target.id);
     },
     // Treat the top ~30% of the viewport (below the sticky header) as the
-    // "current section" band.
-    { rootMargin: "-4.5rem 0px -70% 0px", threshold: 0 },
+    // "current section" band. `rootMargin` only parses px and %, never rem —
+    // a rem here throws at construction and takes the whole scrollspy with it,
+    // so the 4.5rem header offset is spelled in the pixels it resolves to.
+    { rootMargin: "-72px 0px -70% 0px", threshold: 0 },
   );
 
   headingEls.forEach((el) => observer.observe(el));
