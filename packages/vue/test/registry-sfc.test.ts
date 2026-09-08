@@ -2,7 +2,7 @@
 import { readFileSync } from "node:fs";
 import { relative } from "node:path";
 import { fileURLToPath } from "node:url";
-import { compileScript, parse } from "vue/compiler-sfc";
+import { compileScript, compileTemplate, parse } from "vue/compiler-sfc";
 import { describe, expect, it } from "vitest";
 import { registryFiles } from "../../lint/src/registry.ts";
 
@@ -10,9 +10,9 @@ import { registryFiles } from "../../lint/src/registry.ts";
  * (`node` rather than the project's jsdom default: under jsdom `import.meta.url`
  * is not a `file:` URL, and this suite only reads files.)
  *
- * Every `.vue` file the registry ships has to survive `compileScript` — the
- * pass `@vitejs/plugin-vue` runs on every `<script setup>` SFC before a
- * consumer's build sees it.
+ * Every `.vue` file the registry ships has to survive `compileScript` and
+ * `compileTemplate` — the passes `@vitejs/plugin-vue` runs on every
+ * `<script setup>` SFC before a consumer's build sees it.
  *
  * This gate exists because three tickets shipped Vue items that do not compile
  * at all. `moderno-lint --registry` reads the sources as *text*, and the docs
@@ -22,6 +22,11 @@ import { registryFiles } from "../../lint/src/registry.ts";
  * (`checkInvalidScopeReference`, an unconditional guard): four files, one
  * three-line shape, invisible to every other gate and fatal on the consumer's
  * first `vite build`.
+ *
+ * Compiling is the floor, not the bar — `registry-render.ssr.test.ts` runs the
+ * same files, because a `<script setup>` can compile and still throw the first
+ * time it paints. This suite is the half that names *which* compiler pass
+ * rejected the file.
  *
  * The registry manifest is the set, for the reason `registry.ts` gives: what
  * CI compiles is exactly what the CLI would copy into a consumer project.
@@ -48,5 +53,12 @@ describe("registry Vue SFCs compile", () => {
     const { descriptor, errors } = parse(readFileSync(path, "utf8"), { filename: path });
     expect(errors.map(String), `${label} failed to parse`).toEqual([]);
     expect(() => compileScript(descriptor, { id: label })).not.toThrow();
+
+    const template = compileTemplate({
+      source: descriptor.template?.content ?? "",
+      filename: path,
+      id: label,
+    });
+    expect(template.errors.map(String), `${label} failed to compile its template`).toEqual([]);
   });
 });

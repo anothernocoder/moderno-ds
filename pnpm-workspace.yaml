@@ -21,6 +21,7 @@ overrides:
   vite-node>vite: "5.4.21"
   "@vitest/mocker>vite": "5.4.21"
   vite-plugin-solid>vite: "5.4.21"
+  "@vitejs/plugin-vue>vite": "5.4.21"
   # @moderno-ui/svelte tests on the v4 plugin (vite 5); @astrojs/svelte pulls the
   # v7 plugin (vite 8). Version-scope so each resolves a single matching vite.
   "@sveltejs/vite-plugin-svelte@4>vite": "5.4.21"

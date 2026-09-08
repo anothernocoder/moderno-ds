@@ -10,6 +10,7 @@
 export default [
   "./vitest.config.ts",
   "./packages/vue/vitest.config.ts",
+  "./packages/vue/vitest.ssr.config.ts",
   "./packages/solid/vitest.config.ts",
   "./packages/solid/vitest.ssr.config.ts",
   "./packages/svelte/vitest.config.ts",

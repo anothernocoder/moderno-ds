@@ -154,11 +154,15 @@ const emit = defineEmits<{
  * Resolved beside the props rather than as a `withDefaults` factory: a default
  * that reads a `const` from this same `<script setup>` is hoisted out of
  * `setup()` and `@vue/compiler-sfc` refuses to compile the file.
+ *
+ * Named apart from the prop on purpose. A setup binding outranks a prop of the
+ * same name in the template, so a shadowing `notices` would silently be this
+ * one — correct here, and a trap for the next person to read it.
  */
-const notices = computed(() => props.notices ?? serviceNotices);
+const resolvedNotices = computed(() => props.notices ?? serviceNotices);
 
 const showNotices = computed(
-  () => Boolean(props.noticesError) || props.noticesLoading || notices.value.length > 0,
+  () => Boolean(props.noticesError) || props.noticesLoading || resolvedNotices.value.length > 0,
 );
 </script>
 
@@ -202,7 +206,7 @@ const showNotices = computed(
           <AlertList
             heading="Before you sign in"
             description="Anything affecting access right now."
-            :alerts="notices"
+            :alerts="resolvedNotices"
             :error="noticesError"
             :loading="noticesLoading"
             @action="emit('noticeAction', $event)"

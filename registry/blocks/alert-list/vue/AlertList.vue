@@ -153,11 +153,15 @@ const emit = defineEmits<{
  * Resolved beside the props rather than as a `withDefaults` factory: a default
  * that reads a `const` from this same `<script setup>` is hoisted out of
  * `setup()` and `@vue/compiler-sfc` refuses to compile the file.
+ *
+ * Named apart from the prop on purpose. A setup binding outranks a prop of the
+ * same name in the template, so a shadowing `alerts` would silently be this
+ * one — correct here, and a trap for the next person to read it.
  */
-const alerts = computed(() => props.alerts ?? sampleAlerts);
+const resolvedAlerts = computed(() => props.alerts ?? sampleAlerts);
 
 const inert = computed(() => props.loading || props.disabled);
-const showList = computed(() => !props.error && !props.loading && alerts.value.length > 0);
+const showList = computed(() => !props.error && !props.loading && resolvedAlerts.value.length > 0);
 </script>
 
 <template>
@@ -229,7 +233,7 @@ const showList = computed(() => !props.error && !props.loading && alerts.value.l
         </Card.Content>
       </Card.Root>
 
-      <Card.Root v-if="!error && !loading && alerts.length === 0">
+      <Card.Root v-if="!error && !loading && resolvedAlerts.length === 0">
         <Card.Header class="items-center text-center">
           <Card.Title>You are all caught up</Card.Title>
           <Card.Description>
@@ -239,7 +243,7 @@ const showList = computed(() => !props.error && !props.loading && alerts.value.l
       </Card.Root>
 
       <ul v-if="showList" class="grid gap-3">
-        <li v-for="item in alerts" :key="item.id">
+        <li v-for="item in resolvedAlerts" :key="item.id">
           <Alert.Root :variant="item.variant" size="sm">
             <Alert.Icon>
               <svg

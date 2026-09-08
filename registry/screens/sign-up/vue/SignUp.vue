@@ -87,7 +87,7 @@ const trialHighlights: Highlight[] = [
   },
 ];
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     /** The account could not be created at all. Raises the form-level alert. */
     error?: string;
@@ -135,8 +135,12 @@ const emit = defineEmits<{
  * Resolved beside the props rather than as a `withDefaults` factory: a default
  * that reads a `const` from this same `<script setup>` is hoisted out of
  * `setup()` and `@vue/compiler-sfc` refuses to compile the file.
+ *
+ * Named apart from the prop on purpose. A setup binding outranks a prop of the
+ * same name in the template, so a shadowing `highlights` would silently be this
+ * one — correct here, and a trap for the next person to read it.
  */
-const highlights = computed(() => props.highlights ?? trialHighlights);
+const resolvedHighlights = computed(() => props.highlights ?? trialHighlights);
 </script>
 
 <template>
@@ -178,11 +182,11 @@ const highlights = computed(() => props.highlights ?? trialHighlights);
           />
         </div>
 
-        <aside v-if="highlights.length > 0" class="mx-auto grid w-full max-w-md gap-4">
+        <aside v-if="resolvedHighlights.length > 0" class="mx-auto grid w-full max-w-md gap-4">
           <h2 class="text-base font-semibold tracking-tight">What you get on day one</h2>
           <ul class="grid gap-4">
             <li
-              v-for="highlight in highlights"
+              v-for="highlight in resolvedHighlights"
               :key="highlight.id"
               class="grid gap-1 border-l-2 border-border pl-4"
             >
