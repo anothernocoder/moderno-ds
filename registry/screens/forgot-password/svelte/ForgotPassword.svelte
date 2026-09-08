@@ -209,6 +209,7 @@
       <div class="mx-auto w-full max-w-sm">
         <LoginForm
           mode="forgot-password"
+          titleLevel={1}
           {sent}
           {sentTo}
           {error}

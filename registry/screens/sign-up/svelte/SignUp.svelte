@@ -170,6 +170,7 @@
       <div class="mx-auto w-full max-w-sm">
         <LoginForm
           mode="sign-up"
+          titleLevel={1}
           {error}
           {errors}
           {loading}

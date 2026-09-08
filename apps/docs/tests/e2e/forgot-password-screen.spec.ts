@@ -10,7 +10,7 @@
  * still legible in both schemes?" — is a computed-style fact, and asking the
  * browser for it directly is both cheaper and more precise than diffing images.
  *
- * Five claims, per width and per scheme:
+ * Six claims, per width and per scheme:
  *
  * 1. **Container, not viewport.** All three of the screen's steps are read off
  *    the width of the frame it was mounted in, never the window: the masthead
@@ -33,7 +33,12 @@
  *    `name`, so the resend is a plain form submission, and the confirmation
  *    sentence says "if … has an account" — never whether it does. Every other
  *    copy is still asking.
- * 5. **AA contrast** on every text the screen paints itself — the wordmark, the
+ * 5. **The outline reads as one page.** The screen's first heading is level 1 —
+ *    the card's title, carrying `titleLevel`, because the card *is* what the
+ *    page is called — and no heading after it skips a rank. And the card's
+ *    header is a live region in every copy, so the confirmation that rewrites it
+ *    in place is announced rather than only seen.
+ * 6. **AA contrast** on every text the screen paints itself — the wordmark, the
  *    support line and its link, the copyright, the legal links — plus the notes
  *    heading it hands the block, in light and in dark.
  */
@@ -76,6 +81,10 @@ interface ScreenMetrics {
   emailInputType: string;
   /** The card's description line — the sentence that must stay conditional. */
   cardDescription: string;
+  /** Every heading's *effective* rank, in document order (`aria-level` wins). */
+  headingLevels: number[];
+  /** `role` on the card's header — the live region the confirmation replaces. */
+  cardHeaderRole: string;
 }
 
 /** Every mounted copy of the screen on the page, in document order. */
@@ -107,6 +116,13 @@ async function screenMetrics(page: Page): Promise<ScreenMetrics[]> {
         ),
         emailInputType: email?.type ?? "",
         cardDescription: description?.textContent?.trim() ?? "",
+        headingLevels: [...root.querySelectorAll("h1, h2, h3, h4, h5, h6")].map((h) =>
+          Number(h.getAttribute("aria-level") ?? h.tagName.slice(1)),
+        ),
+        cardHeaderRole:
+          root
+            .querySelector('.moderno-block-login [data-scope="card"][data-part="header"]')
+            ?.getAttribute("role") ?? "",
       };
     });
   });
@@ -238,6 +254,22 @@ for (const scheme of ["light", "dark"] as const) {
           expect(screen.fieldNames, `${where}: fields`).toEqual(["email"]);
           // …and it never claims the address is known.
           expect(screen.cardDescription, `${where}: description`).not.toContain("We have sent");
+          // A screen is the whole route, so it has a top-level heading and the
+          // headings under it descend one rank at a time. The card's title is
+          // that `h1` (it is what the page is *called*), which is why the block
+          // takes `titleLevel` rather than the screen printing a second one.
+          expect(screen.headingLevels[0], `${where}: first heading`).toBe(1);
+          for (const [i, level] of screen.headingLevels.entries()) {
+            if (i === 0) continue;
+            expect(
+              level,
+              `${where}: heading ${i + 1} of ${screen.headingLevels.join("/")}`,
+            ).toBeLessThanOrEqual(screen.headingLevels[i - 1]! + 1);
+          }
+          // The confirmation rewrites the card's header in place. Nothing moves,
+          // so nothing but a live region can tell a screen reader it happened —
+          // and the region has to be there before the change, in every copy.
+          expect(screen.cardHeaderRole, `${where}: card header role`).toBe("status");
         }
 
         // The fourth copy is the sent one: the same card, confirming. Its field

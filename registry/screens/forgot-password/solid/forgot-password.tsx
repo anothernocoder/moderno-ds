@@ -165,6 +165,7 @@ export function ForgotPassword(props: ForgotPasswordProps) {
           <div class="mx-auto w-full max-w-sm">
             <LoginForm
               mode="forgot-password"
+              titleLevel={1}
               sent={props.sent}
               sentTo={props.sentTo}
               error={props.error}

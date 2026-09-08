@@ -51,6 +51,8 @@
  * the docs compile the previews' Tailwind from `class` attributes, so a class
  * assembled in JS would render here and vanish in the preview.
  */
+import { computed } from "vue";
+
 import LoginForm from "@/components/blocks/LoginForm.vue";
 
 type SignUpDestination = "home" | "signIn" | "privacy" | "terms";
@@ -111,7 +113,7 @@ withDefaults(
     errors: undefined,
     loading: false,
     disabled: false,
-    highlights: () => trialHighlights,
+    highlights: undefined,
     signInHref: "#",
     homeHref: "#",
     privacyHref: "#",
@@ -128,6 +130,13 @@ const emit = defineEmits<{
   submit: [event: Event];
   navigate: [destination: SignUpDestination, event: MouseEvent];
 }>();
+
+/**
+ * Resolved beside the props rather than as a `withDefaults` factory: a default
+ * that reads a `const` from this same `<script setup>` is hoisted out of
+ * `setup()` and `@vue/compiler-sfc` refuses to compile the file.
+ */
+const highlights = computed(() => props.highlights ?? trialHighlights);
 </script>
 
 <template>
@@ -157,6 +166,7 @@ const emit = defineEmits<{
         <div class="mx-auto w-full max-w-sm">
           <LoginForm
             mode="sign-up"
+            :title-level="1"
             :error="error"
             :errors="errors"
             :loading="loading"

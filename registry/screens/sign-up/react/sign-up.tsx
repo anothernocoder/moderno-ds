@@ -176,6 +176,7 @@ export function SignUp({
           <div className="mx-auto w-full max-w-sm">
             <LoginForm
               mode="sign-up"
+              titleLevel={1}
               error={error}
               errors={errors}
               loading={loading}

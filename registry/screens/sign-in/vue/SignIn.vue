@@ -124,7 +124,7 @@ const props = withDefaults(
     error: undefined,
     loading: false,
     disabled: false,
-    notices: () => serviceNotices,
+    notices: undefined,
     noticesError: undefined,
     noticesLoading: false,
     forgotHref: "#",
@@ -150,8 +150,15 @@ const emit = defineEmits<{
   retryNotices: [];
 }>();
 
+/**
+ * Resolved beside the props rather than as a `withDefaults` factory: a default
+ * that reads a `const` from this same `<script setup>` is hoisted out of
+ * `setup()` and `@vue/compiler-sfc` refuses to compile the file.
+ */
+const notices = computed(() => props.notices ?? serviceNotices);
+
 const showNotices = computed(
-  () => Boolean(props.noticesError) || props.noticesLoading || props.notices.length > 0,
+  () => Boolean(props.noticesError) || props.noticesLoading || notices.value.length > 0,
 );
 </script>
 
@@ -181,6 +188,7 @@ const showNotices = computed(
       <div class="grid content-center gap-8 @lg:grid-cols-2 @lg:items-start @lg:gap-10">
         <div class="mx-auto w-full max-w-sm">
           <LoginForm
+            :title-level="1"
             :error="error"
             :loading="loading"
             :disabled="disabled"

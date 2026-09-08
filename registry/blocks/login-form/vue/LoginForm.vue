@@ -70,6 +70,14 @@ const props = withDefaults(
   defineProps<{
     /** Which card this is: the returning person, the new one, or the locked-out one. */
     mode?: Mode;
+    /**
+     * The rank `Card.Title` carries in the page's heading outline. `3` is the
+     * card's own default and leaves the element exactly as it was — a card is a
+     * section of a page, not its heading. A *screen* that mounts this card as
+     * the whole route passes `1`, so the document has a top-level heading and
+     * the headings after it do not skip a rank.
+     */
+    titleLevel?: 1 | 2 | 3;
     /** `forgot-password` only — the link has gone out: the card confirms instead of asking. */
     sent?: boolean;
     /** `forgot-password` only — the address the link went to: named in the confirmation, and resubmitted by "Send it again". */
@@ -95,6 +103,7 @@ const props = withDefaults(
   }>(),
   {
     mode: "sign-in",
+    titleLevel: 3,
     sent: false,
     sentTo: "",
     error: undefined,
@@ -147,8 +156,20 @@ const busyLabel = computed(() =>
 <template>
   <section class="@container moderno-block-login text-foreground">
     <Card.Root class="mx-auto w-full max-w-sm">
-      <Card.Header>
-        <Card.Title class="text-lg @md:text-xl">{{ title }}</Card.Title>
+      <!--
+        Recovering, the header is a live region from the moment the card mounts —
+        `sent` rewrites the title and the description in place, and a card whose
+        whole content changed with no announcement leaves a screen reader user
+        with one clue that anything happened: the button they just pressed
+        renamed itself. The region has to exist *before* the change, which is why
+        it hangs off `forgot` and not off `confirming`.
+      -->
+      <Card.Header :role="forgot ? 'status' : undefined">
+        <Card.Title
+          class="text-lg @md:text-xl"
+          :aria-level="titleLevel === 3 ? undefined : titleLevel"
+          >{{ title }}</Card.Title
+        >
         <Card.Description>{{ description }}</Card.Description>
       </Card.Header>
 

@@ -263,6 +263,16 @@ describe("moderno add forgot-password-<framework>", () => {
       // …and it resubmits the address from a hidden input, so "Send it again"
       // is a plain form submission on a page that never hydrated.
       expect(cardSource).toContain('type="hidden"');
+      // The screen is the whole route, so the card's title is the page's `h1`:
+      // the screen asks for that rank and the card that landed beside it knows
+      // how to carry it. Without both halves the installed page opens with an
+      // `h3` and no top-level heading at all.
+      expect(written).toMatch(/title-?[Ll]evel[=:]?\s*[{"']?1/);
+      expect(cardSource).toContain("titleLevel");
+      expect(cardSource).toContain("aria-level");
+      // The confirmation rewrites the header in place; the live region is the
+      // only thing that tells a screen reader it happened.
+      expect(cardSource).toContain('"status"');
 
       const recorded = await readManifest(project);
       expect(recorded.items[item]!.type).toBe("registry:screen");

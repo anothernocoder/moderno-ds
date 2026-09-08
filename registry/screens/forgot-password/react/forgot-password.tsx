@@ -207,6 +207,7 @@ export function ForgotPassword({
           <div className="mx-auto w-full max-w-sm">
             <LoginForm
               mode="forgot-password"
+              titleLevel={1}
               sent={sent}
               sentTo={sentTo}
               error={error}

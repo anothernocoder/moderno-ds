@@ -25,6 +25,8 @@ agent:
     - '`errors` is read in `sign-up` only, and the terms links (`termsHref` / `privacyHref`) render there only — as does the required consent checkbox, which is `name="terms"` in the submitted form.'
     - "`loading` implies inert: every control is disabled and the submit carries aria-busy, so a second submit cannot be fired mid-request."
     - "The block responds to its container, never the viewport. Mount it in something narrower than --container-sm and the secondary row stacks on its own."
+    - "`titleLevel` is the rank the card's title carries in the page's heading outline. It defaults to `3` — a card is a section of a page, not its heading — and a screen that mounts this card as the whole route passes `1`, so the document has a top-level heading and nothing after it skips a rank."
+    - "In `forgot-password` the card's header is a live region, so the confirmation that rewrites it in place is announced and not only seen."
     - "It is a block, so you own the copy: the labels, the links and the hrefs are yours to edit after `moderno add`."
   theming:
     - "The surface is Card (--card, --border, --radius); the controls are Field and Checkbox; the submit is Button's primary variant. Nothing is painted here."
@@ -120,6 +122,21 @@ whether one exists or not. A recovery card that answers differently for a known
 and an unknown address is an account-enumeration endpoint; the block will not be
 one, and the code you wire behind it should not be either.
 
+The card's title is an `h3`, because a card is a section of a page and not its
+heading. A **screen** mounts this card _as_ the whole route, though, and there
+`h3` is wrong twice over: the page has no top-level heading, and the `h2` the
+aside prints next reads as an outline that skips a rank. So the card takes
+`titleLevel`, and the three auth screens pass `1` — the title of the card is what
+the page is called, so it is the page's `h1` rather than a second heading printed
+above it. The default is `3`, so a card you mount yourself is unchanged.
+
+Recovering, the card's header is also a live region. `sent` rewrites the title
+and the description where they stand — that is the point — but a card whose whole
+content changed silently leaves a screen reader user one clue that anything
+happened: the button they just pressed renamed itself. The region is there from
+the moment the card mounts, because a live region added at the same time as the
+change is not announced.
+
 The preview above is the `sign-in` mode in its container widths and states; the
 `sign-up` mode is previewed on the [sign-up screen](/en/sign-up/) page and the
 `forgot-password` mode, both faces, on the
@@ -151,6 +168,7 @@ merely rude, so `errors` names them.
 | Prop          | Type                                          | Default     | What it does                                                                                  |
 | ------------- | --------------------------------------------- | ----------- | --------------------------------------------------------------------------------------------- |
 | `mode`        | `"sign-in" \| "sign-up" \| "forgot-password"` | `"sign-in"` | Which card this is: the returning person, the new one, or the locked-out one.                 |
+| `titleLevel`  | `1 \| 2 \| 3`                                 | `3`         | The rank the card's title carries in the page's heading outline; a screen passes `1`.         |
 | `sent`        | `boolean`                                     | `false`     | `forgot-password` — the link has gone out: the card confirms instead of asking.               |
 | `sentTo`      | `string`                                      | `""`        | `forgot-password` — the address named in the confirmation and resubmitted by "Send it again". |
 | `error`       | `string`                                      | —           | Form-level failure message; renders the alert, and in `sign-in` invalidates both fields.      |

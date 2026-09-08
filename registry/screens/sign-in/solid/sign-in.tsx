@@ -156,6 +156,7 @@ export function SignIn(props: SignInProps) {
         <div class="grid content-center gap-8 @lg:grid-cols-2 @lg:items-start @lg:gap-10">
           <div class="mx-auto w-full max-w-sm">
             <LoginForm
+              titleLevel={1}
               error={props.error}
               loading={props.loading}
               disabled={props.disabled}

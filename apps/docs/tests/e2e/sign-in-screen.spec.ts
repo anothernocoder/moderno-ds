@@ -59,6 +59,8 @@ interface ScreenMetrics {
   contentColumns: number;
   /** Whether the notices aside is rendered at all (it is not when empty). */
   hasNotices: boolean;
+  /** Every heading's *effective* rank, in document order (`aria-level` wins). */
+  headingLevels: number[];
 }
 
 /** Every mounted copy of the screen on the page, in document order. */
@@ -81,6 +83,9 @@ async function screenMetrics(page: Page): Promise<ScreenMetrics[]> {
         footerDisplay: getComputedStyle(footer).display,
         contentColumns: getComputedStyle(content).gridTemplateColumns.split(/\s+/).length,
         hasNotices: content.querySelector("aside") !== null,
+        headingLevels: [...root.querySelectorAll("h1, h2, h3, h4, h5, h6")].map((h) =>
+          Number(h.getAttribute("aria-level") ?? h.tagName.slice(1)),
+        ),
       };
     });
   });
@@ -207,6 +212,18 @@ for (const scheme of ["light", "dark"] as const) {
           expect(screen.rootHeight, `${where}: root height`).toBeGreaterThanOrEqual(
             screen.frameHeight,
           );
+          // A screen is the whole route, so it has a top-level heading and the
+          // headings under it descend one rank at a time. The card's title is
+          // that `h1` (it is what the page is *called*), which is why the block
+          // takes `titleLevel` rather than the screen printing a second one.
+          expect(screen.headingLevels[0], `${where}: first heading`).toBe(1);
+          for (const [i, level] of screen.headingLevels.entries()) {
+            if (i === 0) continue;
+            expect(
+              level,
+              `${where}: heading ${i + 1} of ${screen.headingLevels.join("/")}`,
+            ).toBeLessThanOrEqual(screen.headingLevels[i - 1]! + 1);
+          }
         }
 
         // The last copy is the empty one: nothing is wrong today, so the aside

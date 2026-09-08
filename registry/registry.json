@@ -54,9 +54,9 @@
     {
       "name": "login-form-react",
       "type": "registry:block",
-      "version": "0.4.0",
+      "version": "0.5.0",
       "title": "Login Form (React)",
-      "description": "Credential card composing the @moderno-ui/react Card, Field, Checkbox, Button and Alert primitives, in any of its three modes: sign-in (email, password, remember-me, recovery link), sign-up (full name, email, a new password and consent) or forgot-password (the address alone, and the same card confirming once the link is sent). Responds to its container (@container) rather than the viewport, and renders its default, disabled, loading and error states from props.",
+      "description": "Credential card composing the @moderno-ui/react Card, Field, Checkbox, Button and Alert primitives, in any of its three modes: sign-in (email, password, remember-me, recovery link), sign-up (full name, email, a new password and consent) or forgot-password (the address alone, and the same card confirming once the link is sent). Responds to its container (@container) rather than the viewport, renders its default, disabled, loading and error states from props, and takes the heading rank its title carries (titleLevel) so a screen can mount it as the whole route.",
       "dependencies": ["@moderno-ui/react"],
       "registryDependencies": [],
       "files": [
@@ -70,9 +70,9 @@
     {
       "name": "login-form-vue",
       "type": "registry:block",
-      "version": "0.4.0",
+      "version": "0.5.0",
       "title": "Login Form (Vue)",
-      "description": "Credential card composing the @moderno-ui/vue Card, Field, Checkbox, Button and Alert primitives, in any of its three modes: sign-in (email, password, remember-me, recovery link), sign-up (full name, email, a new password and consent) or forgot-password (the address alone, and the same card confirming once the link is sent). Responds to its container (@container) rather than the viewport, and renders its default, disabled, loading and error states from props.",
+      "description": "Credential card composing the @moderno-ui/vue Card, Field, Checkbox, Button and Alert primitives, in any of its three modes: sign-in (email, password, remember-me, recovery link), sign-up (full name, email, a new password and consent) or forgot-password (the address alone, and the same card confirming once the link is sent). Responds to its container (@container) rather than the viewport, renders its default, disabled, loading and error states from props, and takes the heading rank its title carries (titleLevel) so a screen can mount it as the whole route.",
       "dependencies": ["@moderno-ui/vue"],
       "registryDependencies": [],
       "files": [
@@ -86,9 +86,9 @@
     {
       "name": "login-form-svelte",
       "type": "registry:block",
-      "version": "0.4.0",
+      "version": "0.5.0",
       "title": "Login Form (Svelte)",
-      "description": "Credential card composing the @moderno-ui/svelte Card, Field, Checkbox, Button and Alert primitives, in any of its three modes: sign-in (email, password, remember-me, recovery link), sign-up (full name, email, a new password and consent) or forgot-password (the address alone, and the same card confirming once the link is sent). Responds to its container (@container) rather than the viewport, and renders its default, disabled, loading and error states from props.",
+      "description": "Credential card composing the @moderno-ui/svelte Card, Field, Checkbox, Button and Alert primitives, in any of its three modes: sign-in (email, password, remember-me, recovery link), sign-up (full name, email, a new password and consent) or forgot-password (the address alone, and the same card confirming once the link is sent). Responds to its container (@container) rather than the viewport, renders its default, disabled, loading and error states from props, and takes the heading rank its title carries (titleLevel) so a screen can mount it as the whole route.",
       "dependencies": ["@moderno-ui/svelte"],
       "registryDependencies": [],
       "files": [
@@ -102,9 +102,9 @@
     {
       "name": "login-form-solid",
       "type": "registry:block",
-      "version": "0.4.0",
+      "version": "0.5.0",
       "title": "Login Form (Solid)",
-      "description": "Credential card composing the @moderno-ui/solid Card, Field, Checkbox, Button and Alert primitives, in any of its three modes: sign-in (email, password, remember-me, recovery link), sign-up (full name, email, a new password and consent) or forgot-password (the address alone, and the same card confirming once the link is sent). Responds to its container (@container) rather than the viewport, and renders its default, disabled, loading and error states from props.",
+      "description": "Credential card composing the @moderno-ui/solid Card, Field, Checkbox, Button and Alert primitives, in any of its three modes: sign-in (email, password, remember-me, recovery link), sign-up (full name, email, a new password and consent) or forgot-password (the address alone, and the same card confirming once the link is sent). Responds to its container (@container) rather than the viewport, renders its default, disabled, loading and error states from props, and takes the heading rank its title carries (titleLevel) so a screen can mount it as the whole route.",
       "dependencies": ["@moderno-ui/solid"],
       "registryDependencies": [],
       "files": [
@@ -198,7 +198,7 @@
     {
       "name": "alert-list-vue",
       "type": "registry:block",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "title": "Alert List (Vue)",
       "description": "Notification centre composing the @moderno-ui/vue Alert, Button and Card primitives: a stack of dismissible status alerts in all four variants, with its own empty, loading and error renders and a heading it takes as a prop; responds to its container (@container) across all three contract steps — the header lines up at @sm, each dismiss control grows its label at @md, each timestamp moves to the trailing edge at @lg.",
       "dependencies": ["@moderno-ui/vue"],
@@ -374,7 +374,7 @@
     {
       "name": "sign-in-react",
       "type": "registry:screen",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "title": "Sign in (React)",
       "description": "Full-viewport sign-in screen composing the login-form and alert-list blocks: the credential form with its error, loading and disabled states, and the service notices a person needs before signing in. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the notices move beside the card at @lg.",
       "dependencies": ["@moderno-ui/react"],
@@ -390,7 +390,7 @@
     {
       "name": "sign-in-vue",
       "type": "registry:screen",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "title": "Sign in (Vue)",
       "description": "Full-viewport sign-in screen composing the login-form and alert-list blocks: the credential form with its error, loading and disabled states, and the service notices a person needs before signing in. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the notices move beside the card at @lg.",
       "dependencies": ["@moderno-ui/vue"],
@@ -406,7 +406,7 @@
     {
       "name": "sign-in-svelte",
       "type": "registry:screen",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "title": "Sign in (Svelte)",
       "description": "Full-viewport sign-in screen composing the login-form and alert-list blocks: the credential form with its error, loading and disabled states, and the service notices a person needs before signing in. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the notices move beside the card at @lg.",
       "dependencies": ["@moderno-ui/svelte"],
@@ -422,7 +422,7 @@
     {
       "name": "sign-in-solid",
       "type": "registry:screen",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "title": "Sign in (Solid)",
       "description": "Full-viewport sign-in screen composing the login-form and alert-list blocks: the credential form with its error, loading and disabled states, and the service notices a person needs before signing in. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the notices move beside the card at @lg.",
       "dependencies": ["@moderno-ui/solid"],
@@ -438,7 +438,7 @@
     {
       "name": "sign-up-react",
       "type": "registry:screen",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "title": "Sign up (React)",
       "description": "Full-viewport sign-up screen composing the login-form block in its sign-up mode: full name, email, a new password and the consent box, with the reasons to create an account beside the card. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the highlights move beside the card at @lg.",
       "dependencies": ["@moderno-ui/react"],
@@ -454,7 +454,7 @@
     {
       "name": "sign-up-vue",
       "type": "registry:screen",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "title": "Sign up (Vue)",
       "description": "Full-viewport sign-up screen composing the login-form block in its sign-up mode: full name, email, a new password and the consent box, with the reasons to create an account beside the card. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the highlights move beside the card at @lg.",
       "dependencies": ["@moderno-ui/vue"],
@@ -470,7 +470,7 @@
     {
       "name": "sign-up-svelte",
       "type": "registry:screen",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "title": "Sign up (Svelte)",
       "description": "Full-viewport sign-up screen composing the login-form block in its sign-up mode: full name, email, a new password and the consent box, with the reasons to create an account beside the card. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the highlights move beside the card at @lg.",
       "dependencies": ["@moderno-ui/svelte"],
@@ -486,7 +486,7 @@
     {
       "name": "sign-up-solid",
       "type": "registry:screen",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "title": "Sign up (Solid)",
       "description": "Full-viewport sign-up screen composing the login-form block in its sign-up mode: full name, email, a new password and the consent box, with the reasons to create an account beside the card. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the highlights move beside the card at @lg.",
       "dependencies": ["@moderno-ui/solid"],
@@ -502,7 +502,7 @@
     {
       "name": "forgot-password-react",
       "type": "registry:screen",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "title": "Forgot password (React)",
       "description": "Full-viewport password-recovery screen composing the login-form block in its forgot-password mode and the alert-list block: the address field and — once sent — the same card confirming the link is on its way, with the notes that answer \"it has not arrived\" beside it. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the notes move beside the card at @lg.",
       "dependencies": ["@moderno-ui/react"],
@@ -518,7 +518,7 @@
     {
       "name": "forgot-password-vue",
       "type": "registry:screen",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "title": "Forgot password (Vue)",
       "description": "Full-viewport password-recovery screen composing the login-form block in its forgot-password mode and the alert-list block: the address field and — once sent — the same card confirming the link is on its way, with the notes that answer \"it has not arrived\" beside it. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the notes move beside the card at @lg.",
       "dependencies": ["@moderno-ui/vue"],
@@ -534,7 +534,7 @@
     {
       "name": "forgot-password-svelte",
       "type": "registry:screen",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "title": "Forgot password (Svelte)",
       "description": "Full-viewport password-recovery screen composing the login-form block in its forgot-password mode and the alert-list block: the address field and — once sent — the same card confirming the link is on its way, with the notes that answer \"it has not arrived\" beside it. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the notes move beside the card at @lg.",
       "dependencies": ["@moderno-ui/svelte"],
@@ -550,7 +550,7 @@
     {
       "name": "forgot-password-solid",
       "type": "registry:screen",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "title": "Forgot password (Solid)",
       "description": "Full-viewport password-recovery screen composing the login-form block in its forgot-password mode and the alert-list block: the address field and — once sent — the same card confirming the link is on its way, with the notes that answer \"it has not arrived\" beside it. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the notes move beside the card at @lg.",
       "dependencies": ["@moderno-ui/solid"],

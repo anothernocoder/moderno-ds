@@ -94,6 +94,22 @@ exista o no. Una tarjeta de recuperación que responde distinto a una dirección
 conocida y a una desconocida es un endpoint de enumeración de cuentas; el bloque
 no lo es, y el código que conectes detrás tampoco debería serlo.
 
+El título de la tarjeta es un `h3`, porque una tarjeta es una sección de una
+página y no su encabezado. Pero una **pantalla** monta esta tarjeta _como_ la ruta
+entera, y ahí el `h3` está mal por partida doble: la página no tiene encabezado de
+primer nivel, y el `h2` que imprime el lateral a continuación deja un esquema que
+se salta un rango. Por eso la tarjeta acepta `titleLevel`, y las tres pantallas de
+autenticación pasan `1` — el título de la tarjeta es como se llama la página, así
+que es su `h1` y no un segundo encabezado impreso encima. El valor por defecto es
+`3`, de modo que una tarjeta que montes tú no cambia.
+
+En recuperación, el encabezado de la tarjeta es además una región viva. `sent`
+reescribe el título y la descripción donde están — de eso se trata — pero una
+tarjeta que cambia entera en silencio deja a quien usa un lector de pantalla con
+una sola pista de que ha pasado algo: que el botón que acaba de pulsar se ha
+cambiado de nombre. La región existe desde que la tarjeta se monta, porque una
+región viva añadida a la vez que el cambio no se anuncia.
+
 La previsualización de arriba es el modo `sign-in` en sus anchos y estados; el
 modo `sign-up` se previsualiza en la página de la
 [pantalla de registro](/es/sign-up/) y el modo `forgot-password`, en sus dos
@@ -126,6 +142,7 @@ descortés, así que `errors` los nombra.
 | Prop          | Tipo                                          | Por defecto | Qué hace                                                                                            |
 | ------------- | --------------------------------------------- | ----------- | --------------------------------------------------------------------------------------------------- |
 | `mode`        | `"sign-in" \| "sign-up" \| "forgot-password"` | `"sign-in"` | Qué tarjeta es esta: quien vuelve, quien llega o quien no puede entrar.                             |
+| `titleLevel`  | `1 \| 2 \| 3`                                 | `3`         | El rango que el título de la tarjeta ocupa en el esquema de encabezados; una pantalla pasa `1`.     |
 | `sent`        | `boolean`                                     | `false`     | `forgot-password` — el enlace ya salió: la tarjeta confirma en vez de preguntar.                    |
 | `sentTo`      | `string`                                      | `""`        | `forgot-password` — la dirección que nombra la confirmación y que reenvía «Send it again».          |
 | `error`       | `string`                                      | —           | Mensaje de error de formulario; muestra la alerta y, en `sign-in`, invalida ambos campos.           |

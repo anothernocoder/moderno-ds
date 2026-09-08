@@ -129,7 +129,7 @@ const props = withDefaults(
     disabled?: boolean;
   }>(),
   {
-    alerts: () => sampleAlerts,
+    alerts: undefined,
     heading: "Notifications",
     description: "What happened in your workspace while you were away.",
     error: undefined,
@@ -149,8 +149,15 @@ const emit = defineEmits<{
   retry: [];
 }>();
 
+/**
+ * Resolved beside the props rather than as a `withDefaults` factory: a default
+ * that reads a `const` from this same `<script setup>` is hoisted out of
+ * `setup()` and `@vue/compiler-sfc` refuses to compile the file.
+ */
+const alerts = computed(() => props.alerts ?? sampleAlerts);
+
 const inert = computed(() => props.loading || props.disabled);
-const showList = computed(() => !props.error && !props.loading && props.alerts.length > 0);
+const showList = computed(() => !props.error && !props.loading && alerts.value.length > 0);
 </script>
 
 <template>

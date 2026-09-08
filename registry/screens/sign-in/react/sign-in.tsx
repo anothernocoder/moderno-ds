@@ -177,6 +177,7 @@ export function SignIn({
         <div className="grid content-center gap-8 @lg:grid-cols-2 @lg:items-start @lg:gap-10">
           <div className="mx-auto w-full max-w-sm">
             <LoginForm
+              titleLevel={1}
               error={error}
               loading={loading}
               disabled={disabled}
