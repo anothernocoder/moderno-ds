@@ -417,25 +417,27 @@ main {
   background-color: var(--shiki-light-bg);
 }
 
-/* github-light and github-dark both ship as inline custom properties on the
-   <pre> and on every token span (shiki.config.ts sets `defaultColor: false`),
-   so switching palette is a variable re-point, not a repaint. The site's own
+/* github-light and github-dark ship as inline custom properties on the <pre>
+   and on every token span (shiki.config.ts sets `defaultColor: false`), so
+   switching palette is a variable re-point, not a repaint. The site's own
    toggle owns the `.dark` class on <html> — deliberately no
    `prefers-color-scheme` here, so a reader who overrides the OS scheme gets
-   the palette they picked. */
+   the palette they picked.
+
+   Only four variables exist to read: neither theme sets a font style, weight or
+   text-decoration on any token, so Shiki emits --shiki-light/--shiki-dark and
+   their -bg pair and nothing else. Declaring --shiki-*-font-style and friends
+   here would be invalid on every block (each resolving to inherit or to the
+   property's initial value) while reading like working plumbing; a theme with
+   italic comments or bold keywords needs those rules added back, checked
+   against real output. */
 .astro-code,
 .astro-code span {
   color: var(--shiki-light);
-  font-style: var(--shiki-light-font-style);
-  font-weight: var(--shiki-light-font-weight);
-  text-decoration: var(--shiki-light-text-decoration);
 }
 .dark .astro-code,
 .dark .astro-code span {
   color: var(--shiki-dark);
-  font-style: var(--shiki-dark-font-style);
-  font-weight: var(--shiki-dark-font-weight);
-  text-decoration: var(--shiki-dark-text-decoration);
 }
 .dark .astro-code {
   background-color: var(--shiki-dark-bg);
