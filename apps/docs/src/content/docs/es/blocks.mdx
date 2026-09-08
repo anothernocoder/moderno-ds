@@ -5,6 +5,9 @@ group: Bloques
 order: 100
 ---
 
+import Preview from "../../../components/Preview.astro";
+import BlocksDemo from "../../../islands/BlocksDemo.svelte";
+
 Un **bloque** es una _sección_ de página compuesta por primitivas — un hero, una
 tabla de precios, un formulario de acceso. Lo copias a tu proyecto con la CLI y
 es tuyo desde ese momento; no es una dependencia de npm.
@@ -26,3 +29,66 @@ Un bloque compone solo primitivas, nunca una pantalla ni un flujo — el registr
 impone esa dirección. El catálogo se va llenando a medida que se absorbe el
 inventario del predecesor; cada bloque publicado tendrá su propia página en esta
 sección.
+
+## Lo que existe hoy
+
+Tres bloques, una entrada de registro por framework cada uno. Las vistas previas
+de abajo importan el fuente Svelte directo de `registry/blocks/`, así que lo que
+se renderiza es exactamente lo que copia la CLI — no una maqueta.
+
+### Formulario de acceso
+
+Compone `Field` (etiqueta, texto de ayuda, texto de error) y `Button`.
+
+<Preview
+  code={`<form>
+  <Field.Root>
+    <Field.Label>Email</Field.Label>
+    <Field.Input type="email" placeholder="tu@ejemplo.com" />
+    <Field.HelperText>Nunca lo compartimos.</Field.HelperText>
+  </Field.Root>
+  <Button type="submit">Entrar</Button>
+</form>`}
+>
+  <BlocksDemo block="login-form" client:visible />
+</Preview>
+
+### Precios
+
+Tres planes desde un arreglo `plans` local — edítalo, el archivo ya es tuyo.
+
+<Preview
+  code={`const plans = [
+  { name: "Starter", price: "$0/mo", features: [/* … */] },
+  // …
+];`}
+>
+  <BlocksDemo block="pricing" client:visible />
+</Preview>
+
+### Estado vacío
+
+Un marcador centrado con una sola llamada a la acción.
+
+<Preview
+  code={`<div>
+  <h2>Aún no hay proyectos</h2>
+  <p>Crea tu primer proyecto para empezar.</p>
+  <Button type="button">Nuevo proyecto</Button>
+</div>`}
+>
+  <BlocksDemo block="empty-state" client:visible />
+</Preview>
+
+## El layout de sección todavía no se pinta
+
+Esas vistas previas se ven planas, y ese es el estado honesto, no una falla de
+renderizado. Las primitivas del bloque sí las pinta `components.css`, pero el
+contenedor propio del bloque lleva una clase `moderno-block-*` **sin reglas en
+`main`**: sin grilla, sin escala de espaciado, sin superficie de tarjeta. El
+layout de sección llega con el pipeline de estilos por container queries que
+describe el ADR-0005.
+
+Mostrar el hueco es el punto: estas vistas previas las captura la suite visual,
+así que cuando el pipeline aterrice las líneas base se mueven y el cambio tiene
+que revisarse, no descubrirse después.
