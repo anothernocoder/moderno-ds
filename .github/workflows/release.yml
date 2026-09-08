@@ -50,6 +50,12 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
+          # `pnpm -r build` below includes apps/docs, so this job is subject
+          # to Astro 7's >=22.12 floor as much as ci.yml and deploy-docs.yml
+          # are. Plain `22` is left as-is rather than raised to `^22.12`:
+          # setup-node resolves the newest 22.x it has, which is long past
+          # 22.12 and only moves forward. Raise it here if the floor ever
+          # crosses a major.
           node-version: 22
           cache: pnpm
           registry-url: https://registry.npmjs.org

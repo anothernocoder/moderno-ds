@@ -21,7 +21,8 @@ jobs:
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          # This job builds apps/docs too, so it carries Astro 7's floor.
+          node-version: "^22.12"
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm theme:build

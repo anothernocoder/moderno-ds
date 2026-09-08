@@ -1,5 +1,6 @@
 ---
-import { Code } from "astro-expressive-code/components";
+import { Code } from "astro:components";
+import shikiConfig from "../../shiki.config.ts";
 import { uid } from "../lib/uid.ts";
 
 interface Props {
@@ -49,7 +50,7 @@ const name = uid("install");
   {
     managers.map((m) => (
       <div class={`install-panel install-panel--${m.id}`} role="tabpanel">
-        <Code code={m.cmd} lang="sh" />
+        <Code code={m.cmd} lang="sh" {...shikiConfig} />
       </div>
     ))
   }

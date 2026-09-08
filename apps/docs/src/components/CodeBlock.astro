@@ -1,14 +1,16 @@
 ---
-import { Code } from "astro-expressive-code/components";
+import type { CodeLanguage } from "astro";
+import { Code } from "astro:components";
+import shikiConfig from "../../shiki.config.ts";
 
 interface Props {
   code: string;
-  lang?: string;
+  lang?: CodeLanguage;
 }
 
 const { code, lang = "tsx" } = Astro.props;
 ---
 
 <div class="code-block">
-  <Code code={code} lang={lang} />
+  <Code code={code} lang={lang} {...shikiConfig} />
 </div>

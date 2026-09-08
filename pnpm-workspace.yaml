@@ -7,16 +7,22 @@ allowBuilds:
   esbuild: true
   sharp: false
 
-# Astro pulls vite 6; the framework test toolchains (vite-plugin-solid/svelte/vue)
-# are on vite 5. Pin the shared vitest toolchain to vite 5 so a single vite type
-# instance reaches each package's vitest.config.ts — astro keeps its own vite 6.
+# Astro (apps/docs) pulls vite 8; the framework test toolchains
+# (vite-plugin-solid/svelte/vue) are on vite 5. Pin the shared vitest toolchain
+# to vite 5 so a single vite type instance reaches each package's
+# vitest.config.ts — astro keeps its own vite 8.
+#
+# Every version-scoped key below (`pkg@N>dep`) must name a version that is
+# actually in the tree: pnpm does not error on an override that matches nothing,
+# so a key scoped to a version the lockfile no longer has looks applied and is
+# not. Check the lockfile after any upgrade that moves these.
 overrides:
   vitest>vite: "5.4.21"
   vite-node>vite: "5.4.21"
   "@vitest/mocker>vite": "5.4.21"
   vite-plugin-solid>vite: "5.4.21"
-  # @moderno-ui/svelte tests on the v4 plugin (vite 5); astro's v5 plugin keeps
-  # vite 6. Version-scope so each resolves a single matching vite.
+  # @moderno-ui/svelte tests on the v4 plugin (vite 5); @astrojs/svelte pulls the
+  # v7 plugin (vite 8). Version-scope so each resolves a single matching vite.
   "@sveltejs/vite-plugin-svelte@4>vite": "5.4.21"
   # Astro's toolchain pulls @types/node 24; pin to one version so a single
   # vite type instance is shared (avoids vite5-node22 vs vite5-node24 clashes).
