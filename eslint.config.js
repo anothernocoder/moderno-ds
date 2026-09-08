@@ -15,6 +15,8 @@ export default tseslint.config(
       "**/.vercel/**",
       "apps/docs/public/r/**",
       "apps/docs/src/generated/**",
+      // Stale worktrees from earlier workflow runs are whole copies of the repo.
+      ".claude/worktrees/**",
     ],
   },
   js.configs.recommended,
@@ -22,6 +24,23 @@ export default tseslint.config(
   {
     languageOptions: {
       globals: { ...globals.node },
+    },
+  },
+  {
+    // Workflow scripts run inside Claude Code's Workflow runtime, which injects
+    // these as free globals (see the workflow-authoring reference).
+    files: [".claude/workflows/**/*.js"],
+    languageOptions: {
+      globals: {
+        args: "readonly",
+        agent: "readonly",
+        phase: "readonly",
+        log: "readonly",
+        parallel: "readonly",
+        pipeline: "readonly",
+        workflow: "readonly",
+        budget: "readonly",
+      },
     },
   },
   prettier,

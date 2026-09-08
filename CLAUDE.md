@@ -18,4 +18,4 @@ Single-context: `CONTEXT.md` + `docs/adr/` at repo root. See `docs/agents/domain
 
 ### Ticket workflow
 
-Implementing a `ready-for-agent` issue, reviewing its PR, or dispatching tickets AFK: one ticket, one fresh agent, one PR; a separate fresh agent reviews and posts a `Review:` verdict; a human merges. See `docs/agents/ticket-workflow.md`.
+Implementing a `ready-for-agent` issue, reviewing its landing, or dispatching an epic AFK: one epic, one branch, one draft PR; one ticket, one fresh agent, one commit on that branch, in order; a separate fresh agent reviews each landing and posts a `Review:` verdict on the issue; a human merges the epic PR. See `docs/agents/ticket-workflow.md`.
