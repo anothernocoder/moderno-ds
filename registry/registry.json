@@ -54,9 +54,9 @@
     {
       "name": "login-form-react",
       "type": "registry:block",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "title": "Login Form (React)",
-      "description": "Credential card composing the @moderno-ui/react Card, Field, Checkbox, Button and Alert primitives, in either of its two modes: sign-in (email, password, remember-me, recovery link) or sign-up (full name, email, a new password and consent). Responds to its container (@container) rather than the viewport, and renders its default, disabled, loading and error states from props.",
+      "description": "Credential card composing the @moderno-ui/react Card, Field, Checkbox, Button and Alert primitives, in any of its three modes: sign-in (email, password, remember-me, recovery link), sign-up (full name, email, a new password and consent) or forgot-password (the address alone, and the same card confirming once the link is sent). Responds to its container (@container) rather than the viewport, and renders its default, disabled, loading and error states from props.",
       "dependencies": ["@moderno-ui/react"],
       "registryDependencies": [],
       "files": [
@@ -70,9 +70,9 @@
     {
       "name": "login-form-vue",
       "type": "registry:block",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "title": "Login Form (Vue)",
-      "description": "Credential card composing the @moderno-ui/vue Card, Field, Checkbox, Button and Alert primitives, in either of its two modes: sign-in (email, password, remember-me, recovery link) or sign-up (full name, email, a new password and consent). Responds to its container (@container) rather than the viewport, and renders its default, disabled, loading and error states from props.",
+      "description": "Credential card composing the @moderno-ui/vue Card, Field, Checkbox, Button and Alert primitives, in any of its three modes: sign-in (email, password, remember-me, recovery link), sign-up (full name, email, a new password and consent) or forgot-password (the address alone, and the same card confirming once the link is sent). Responds to its container (@container) rather than the viewport, and renders its default, disabled, loading and error states from props.",
       "dependencies": ["@moderno-ui/vue"],
       "registryDependencies": [],
       "files": [
@@ -86,9 +86,9 @@
     {
       "name": "login-form-svelte",
       "type": "registry:block",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "title": "Login Form (Svelte)",
-      "description": "Credential card composing the @moderno-ui/svelte Card, Field, Checkbox, Button and Alert primitives, in either of its two modes: sign-in (email, password, remember-me, recovery link) or sign-up (full name, email, a new password and consent). Responds to its container (@container) rather than the viewport, and renders its default, disabled, loading and error states from props.",
+      "description": "Credential card composing the @moderno-ui/svelte Card, Field, Checkbox, Button and Alert primitives, in any of its three modes: sign-in (email, password, remember-me, recovery link), sign-up (full name, email, a new password and consent) or forgot-password (the address alone, and the same card confirming once the link is sent). Responds to its container (@container) rather than the viewport, and renders its default, disabled, loading and error states from props.",
       "dependencies": ["@moderno-ui/svelte"],
       "registryDependencies": [],
       "files": [
@@ -102,9 +102,9 @@
     {
       "name": "login-form-solid",
       "type": "registry:block",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "title": "Login Form (Solid)",
-      "description": "Credential card composing the @moderno-ui/solid Card, Field, Checkbox, Button and Alert primitives, in either of its two modes: sign-in (email, password, remember-me, recovery link) or sign-up (full name, email, a new password and consent). Responds to its container (@container) rather than the viewport, and renders its default, disabled, loading and error states from props.",
+      "description": "Credential card composing the @moderno-ui/solid Card, Field, Checkbox, Button and Alert primitives, in any of its three modes: sign-in (email, password, remember-me, recovery link), sign-up (full name, email, a new password and consent) or forgot-password (the address alone, and the same card confirming once the link is sent). Responds to its container (@container) rather than the viewport, and renders its default, disabled, loading and error states from props.",
       "dependencies": ["@moderno-ui/solid"],
       "registryDependencies": [],
       "files": [
@@ -496,6 +496,70 @@
           "path": "screens/sign-up/solid/sign-up.tsx",
           "type": "registry:screen",
           "target": "src/components/screens/sign-up.tsx"
+        }
+      ]
+    },
+    {
+      "name": "forgot-password-react",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Forgot password (React)",
+      "description": "Full-viewport password-recovery screen composing the login-form block in its forgot-password mode and the alert-list block: the address field and — once sent — the same card confirming the link is on its way, with the notes that answer \"it has not arrived\" beside it. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the notes move beside the card at @lg.",
+      "dependencies": ["@moderno-ui/react"],
+      "registryDependencies": ["login-form-react", "alert-list-react"],
+      "files": [
+        {
+          "path": "screens/forgot-password/react/forgot-password.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/forgot-password.tsx"
+        }
+      ]
+    },
+    {
+      "name": "forgot-password-vue",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Forgot password (Vue)",
+      "description": "Full-viewport password-recovery screen composing the login-form block in its forgot-password mode and the alert-list block: the address field and — once sent — the same card confirming the link is on its way, with the notes that answer \"it has not arrived\" beside it. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the notes move beside the card at @lg.",
+      "dependencies": ["@moderno-ui/vue"],
+      "registryDependencies": ["login-form-vue", "alert-list-vue"],
+      "files": [
+        {
+          "path": "screens/forgot-password/vue/ForgotPassword.vue",
+          "type": "registry:screen",
+          "target": "src/components/screens/ForgotPassword.vue"
+        }
+      ]
+    },
+    {
+      "name": "forgot-password-svelte",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Forgot password (Svelte)",
+      "description": "Full-viewport password-recovery screen composing the login-form block in its forgot-password mode and the alert-list block: the address field and — once sent — the same card confirming the link is on its way, with the notes that answer \"it has not arrived\" beside it. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the notes move beside the card at @lg.",
+      "dependencies": ["@moderno-ui/svelte"],
+      "registryDependencies": ["login-form-svelte", "alert-list-svelte"],
+      "files": [
+        {
+          "path": "screens/forgot-password/svelte/ForgotPassword.svelte",
+          "type": "registry:screen",
+          "target": "src/components/screens/ForgotPassword.svelte"
+        }
+      ]
+    },
+    {
+      "name": "forgot-password-solid",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Forgot password (Solid)",
+      "description": "Full-viewport password-recovery screen composing the login-form block in its forgot-password mode and the alert-list block: the address field and — once sent — the same card confirming the link is on its way, with the notes that answer \"it has not arrived\" beside it. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the notes move beside the card at @lg.",
+      "dependencies": ["@moderno-ui/solid"],
+      "registryDependencies": ["login-form-solid", "alert-list-solid"],
+      "files": [
+        {
+          "path": "screens/forgot-password/solid/forgot-password.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/forgot-password.tsx"
         }
       ]
     }

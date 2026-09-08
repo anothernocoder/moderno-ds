@@ -4,13 +4,22 @@
   `moderno add login-form-svelte` and edit it freely: every visual comes from
   the token contract, so a theme re-skins it without a diff here.
 
-  Two modes, one card. `mode="sign-in"` (the default) is the returning person:
+  Three modes, one card. `mode="sign-in"` (the default) is the returning person:
   email, password, remember-me, the recovery link. `mode="sign-up"` is the new
   one: full name, email, a new password and the consent that has to be given
-  before an account can exist. They are one block rather than two because they
-  are one thing — the same card, the same width, the same rhythm — and a person
-  moving between them should not feel the page change under them. The `sign-in`
-  and `sign-up` screens each mount this file in one of its modes.
+  before an account can exist. `mode="forgot-password"` is the one who cannot
+  get in: the address alone, and — once `sent` — the same card confirming the
+  link is on its way. They are one block rather than three because they are one
+  thing — the same card, the same width, the same rhythm — and a person walking
+  the auth flow should not feel the page change under them. The `sign-in`,
+  `sign-up` and `forgot-password` screens each mount this file in one of its
+  modes.
+
+  The recovery card confirms in place. `sent` does not swap the card for a
+  different component: the header rewrites itself, the email field gives way to
+  the sentence explaining what was sent, and the submit becomes a secondary
+  "Send it again" that resubmits the same address — carried in a hidden input,
+  so the resend still works with no JavaScript on the page.
 
   Presentational. The block owns no credentials, no request and no navigation:
   it takes `error` / `errors` / `loading` / `disabled` and hands the native
@@ -33,15 +42,21 @@
   a locked account, a closed beta), and loading makes it inert and marks the
   button aria-busy.
 
-  Error is the one place the two modes deliberately disagree. Signing in,
-  `error` raises one form-level Alert and marks both credential fields invalid —
-  never "the password is wrong", which would confirm to an attacker that the
-  email exists. Signing up, there is nothing to leak yet and a form that will
-  not say which field it rejected is merely rude, so `errors` names them: keyed
-  by the field's `name` (fullName, email, password), each key marking that field
+  Error is the one place the modes deliberately disagree. Signing in, `error`
+  raises one form-level Alert and marks both credential fields invalid — never
+  "the password is wrong", which would confirm to an attacker that the email
+  exists. Signing up, there is nothing to leak yet and a form that will not say
+  which field it rejected is merely rude, so `errors` names them: keyed by the
+  field's `name` (fullName, email, password), each key marking that field
   invalid and printing its own message. `error` stays the form-level failure —
   the account could not be created at all, the consent box is unticked, the
   service is down.
+
+  Recovering, `errors.email` marks a malformed address, which leaks nothing; but
+  whether the address has an account is never told, in this card or in the code
+  behind it. The confirmation is deliberately conditional — "if that address has
+  an account" — because a recovery form that answers differently for a known and
+  an unknown address is an account-enumeration endpoint with a friendly face.
 
   Class strings are written out in full rather than shared through a variable:
   the docs compile the previews' Tailwind from `class` attributes, so a class
@@ -50,14 +65,38 @@
 <script lang="ts">
   import { Alert, Button, Card, Checkbox, Field } from "@moderno-ui/svelte";
 
-  type Mode = "sign-in" | "sign-up";
+  type Mode = "sign-in" | "sign-up" | "forgot-password";
+
+  /**
+   * What the card says it is, per mode. The `forgot-password` card rewrites
+   * both lines once the link is sent, which is the only copy that is not read
+   * straight off this table.
+   */
+  const cardCopy: Record<Mode, { title: string; description: string }> = {
+    "sign-in": {
+      title: "Sign in",
+      description: "Enter your email and password to continue.",
+    },
+    "sign-up": {
+      title: "Create your account",
+      description: "Fourteen days of everything, no card and no sales call.",
+    },
+    "forgot-password": {
+      title: "Reset your password",
+      description: "Enter the address you sign in with and we will email you a link.",
+    },
+  };
 
   interface Props {
-    /** Which card this is: the returning person, or the new one. */
+    /** Which card this is: the returning person, the new one, or the locked-out one. */
     mode?: Mode;
+    /** `forgot-password` only — the link has gone out: the card confirms instead of asking. */
+    sent?: boolean;
+    /** `forgot-password` only — the address the link went to: named in the confirmation, and resubmitted by "Send it again". */
+    sentTo?: string;
     /** Form-level failure message. Renders the alert; in `sign-in` it also invalidates both credential fields. */
     error?: string;
-    /** `sign-up` only — per-field messages keyed by the field's `name`; each marks that field invalid. */
+    /** `sign-up` and `forgot-password` — per-field messages keyed by the field's `name`; each marks that field invalid. */
     errors?: Record<string, string>;
     /** The submit is in flight: every control is inert and the button reads busy. */
     loading?: boolean;
@@ -69,7 +108,7 @@
     forgotHref?: string;
     /** `sign-in` only — where "Create an account" points. */
     signUpHref?: string;
-    /** `sign-up` only — where "Sign in" points. */
+    /** `sign-up` and `forgot-password` — where "Sign in" points. */
     signInHref?: string;
     /** `sign-up` only — where the terms link under the consent box points. */
     termsHref?: string;
@@ -79,6 +118,8 @@
 
   let {
     mode = "sign-in",
+    sent = false,
+    sentTo = "",
     error,
     errors,
     loading = false,
@@ -92,25 +133,42 @@
   }: Props = $props();
 
   const signUp = $derived(mode === "sign-up");
+  const forgot = $derived(mode === "forgot-password");
+  /** The confirmation: the recovery card after the link has gone out. */
+  const confirming = $derived(forgot && sent);
   const inert = $derived(loading || disabled);
   /**
    * Signing in, one failure invalidates both credential fields and names
-   * neither. Signing up, only the field that was actually rejected is marked.
+   * neither. In the other two modes only the field that was actually rejected
+   * is marked, because there is nothing to leak by saying which one it was.
    */
-  const invalid = (field: string) => (signUp ? Boolean(errors?.[field]) : Boolean(error));
+  const invalid = (field: string) =>
+    mode === "sign-in" ? Boolean(error) : Boolean(errors?.[field]);
+  const title = $derived(confirming ? "Check your inbox" : cardCopy[mode].title);
+  const description = $derived(
+    confirming
+      ? `If ${sentTo || "that address"} has an account, a link to set a new password is on its way.`
+      : cardCopy[mode].description,
+  );
+  const submitLabel = $derived(
+    confirming
+      ? "Send it again"
+      : forgot
+        ? "Send reset link"
+        : signUp
+          ? "Create account"
+          : "Sign in",
+  );
+  const busyLabel = $derived(
+    forgot ? "Sending link" : signUp ? "Creating account" : "Signing in",
+  );
 </script>
 
 <section class="@container moderno-block-login text-foreground">
   <Card.Root class="mx-auto w-full max-w-sm">
     <Card.Header>
-      <Card.Title class="text-lg @md:text-xl">
-        {signUp ? "Create your account" : "Sign in"}
-      </Card.Title>
-      <Card.Description>
-        {signUp
-          ? "Fourteen days of everything, no card and no sales call."
-          : "Enter your email and password to continue."}
-      </Card.Description>
+      <Card.Title class="text-lg @md:text-xl">{title}</Card.Title>
+      <Card.Description>{description}</Card.Description>
     </Card.Header>
 
     <Card.Content>
@@ -123,6 +181,20 @@
           </Alert.Root>
         {/if}
 
+        {#if confirming}
+          <!--
+            The address travels with the resend in a hidden input rather than in
+            a closure: "Send it again" is then a plain form submission, which
+            still works on a page whose JavaScript never arrived — the same
+            reason the recovery link itself is an href.
+          -->
+          <input type="hidden" name="email" value={sentTo} />
+          <p class="text-sm text-muted-foreground">
+            The link expires in 30 minutes and can be used once. Nothing in your inbox? Look in
+            spam, then send it again.
+          </p>
+        {/if}
+
         {#if signUp}
           <Field.Root required invalid={invalid("fullName")} disabled={inert}>
             <Field.Label>Full name</Field.Label>
@@ -131,28 +203,40 @@
           </Field.Root>
         {/if}
 
-        <Field.Root required invalid={invalid("email")} disabled={inert}>
-          <Field.Label>Email</Field.Label>
-          <Field.Input name="email" type="email" autocomplete="email" placeholder="you@example.com" />
-          {#if signUp}
-            <Field.ErrorText>{errors?.email}</Field.ErrorText>
-          {/if}
-        </Field.Root>
+        {#if !confirming}
+          <Field.Root required invalid={invalid("email")} disabled={inert}>
+            <Field.Label>Email</Field.Label>
+            <Field.Input
+              name="email"
+              type="email"
+              autocomplete="email"
+              placeholder="you@example.com"
+            />
+            {#if signUp || forgot}
+              <Field.ErrorText>{errors?.email}</Field.ErrorText>
+            {/if}
+          </Field.Root>
+        {/if}
 
-        <Field.Root required invalid={invalid("password")} disabled={inert}>
-          <Field.Label>Password</Field.Label>
-          <Field.Input
-            name="password"
-            type="password"
-            autocomplete={signUp ? "new-password" : "current-password"}
-            placeholder="••••••••"
-          />
-          {#if signUp}
-            <Field.HelperText>At least 12 characters. A passphrase beats a puzzle.</Field.HelperText>
-            <Field.ErrorText>{errors?.password}</Field.ErrorText>
-          {/if}
-        </Field.Root>
+        {#if !forgot}
+          <Field.Root required invalid={invalid("password")} disabled={inert}>
+            <Field.Label>Password</Field.Label>
+            <Field.Input
+              name="password"
+              type="password"
+              autocomplete={signUp ? "new-password" : "current-password"}
+              placeholder="••••••••"
+            />
+            {#if signUp}
+              <Field.HelperText>
+                At least 12 characters. A passphrase beats a puzzle.
+              </Field.HelperText>
+              <Field.ErrorText>{errors?.password}</Field.ErrorText>
+            {/if}
+          </Field.Root>
+        {/if}
 
+        <!-- Recovery asks for the address and nothing else: no secondary row. -->
         {#if signUp}
           <!--
             Consent is one checkbox with a short label, and the two legal links
@@ -186,7 +270,7 @@
               </a>.
             </p>
           </div>
-        {:else}
+        {:else if !forgot}
           <div class="grid gap-3 @sm:flex @sm:items-center @sm:justify-between">
             <Checkbox.Root name="remember" size="sm" disabled={inert}>
               <Checkbox.Control>
@@ -205,24 +289,30 @@
           </div>
         {/if}
 
-        <Button type="submit" class="w-full" disabled={inert} aria-busy={loading}>
+        <Button
+          type="submit"
+          variant={confirming ? "secondary" : "primary"}
+          class="w-full"
+          disabled={inert}
+          aria-busy={loading}
+        >
           {#if loading}
             <span
               aria-hidden="true"
               class="size-4 animate-spin rounded-full border-2 border-current border-t-transparent motion-reduce:animate-none"
             ></span>
-            {signUp ? "Creating account" : "Signing in"}
+            {busyLabel}
           {:else}
-            {signUp ? "Create account" : "Sign in"}
+            {submitLabel}
           {/if}
         </Button>
       </form>
     </Card.Content>
 
     <Card.Footer class="justify-center">
-      {#if signUp}
+      {#if signUp || forgot}
         <p class="text-sm text-muted-foreground">
-          Already have an account?
+          {forgot ? "Remembered it?" : "Already have an account?"}
           <a
             class="rounded-sm font-medium text-foreground underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
             href={signInHref}
