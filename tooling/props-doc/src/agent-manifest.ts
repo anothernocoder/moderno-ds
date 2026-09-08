@@ -10,10 +10,9 @@
  *
  * - `props` — resolved by `extractProps` against the canonical `@moderno-ui/react`
  *   source, the same "React is the single source of truth" rule `manifest.ts`
- *   already uses (props are identical across bindings by contract). A root
- *   wrapped around a headless machine publishes Ark/Zag's props too — they are
- *   its API. `propsComplete` rides along from the same extraction, so
- *   `validate_usage` knows when a list isn't exhaustive.
+ *   already uses (props are identical across bindings by contract). `propsComplete`
+ *   rides along from the same extraction: false for the roots that inherit their
+ *   API from Ark/Zag, so `validate_usage` knows the list isn't exhaustive.
  * - `variants` — read straight off the shared `@moderno-ui/core` recipe, when the
  *   component has one (Dialog has none: its visual states are Ark's own
  *   data-attributes, not CVA variants).
@@ -293,8 +292,9 @@ export function computePropsHash(props: PropDoc[]): string {
  * same `propsHash` from the same source of truth.
  *
  * A component with no `propsEntry` is absent from the map; callers read that as
- * no props, and as a prop list that is *not* complete — the honest reading of
- * "nobody resolved this component's API", not a claim that it accepts nothing.
+ * no props, and as a prop list that is *not* complete. Dialog resolves to the
+ * same empty list the long way round — its entry exists so the docs can tell
+ * "adds no props of its own" from "was never resolved".
  */
 export function resolveComponentProps(
   components: AgentComponentSpec[],

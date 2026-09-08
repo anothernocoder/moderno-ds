@@ -16,11 +16,12 @@ describe("props-doc manifest", () => {
   it("resolves every entry against the real @moderno-ui/react types", () => {
     const docs = extractProps({ tsConfigFilePath: reactTsConfig, entries: ENTRIES });
     expect(docs.map((d) => d.name)).toEqual(ENTRIES.map((e) => e.name));
-    for (const doc of docs) {
-      // An empty table means the workspace-origin filter dropped everything —
-      // the entry points at the wrong type.
-      expect(doc.props.length, `${doc.name} extracted no props`).toBeGreaterThan(0);
-    }
+    // An empty table usually means the workspace-origin filter dropped
+    // everything because the entry points at the wrong type. Dialog is the one
+    // honest empty: it adds nothing to Ark's machine, and its entry exists so
+    // the docs can say that rather than fall back to a generic empty state.
+    const empty = docs.filter((d) => d.props.length === 0).map((d) => d.name);
+    expect(empty).toEqual(["Dialog"]);
   });
 
   it("documents each component once", () => {

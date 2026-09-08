@@ -532,20 +532,13 @@ main {
 .props-type {
   color: var(--muted-foreground);
 }
-/* A type whose object shape would swamp its row opens on demand: the summary
-   carries the short form (`Partial<{ … }>`), the body the full shape. */
-.props-type-more summary {
-  cursor: pointer;
+/* What the table can't list: the props a wrapped root inherits from Ark. */
+.props-inherited {
+  margin: 0;
+  padding: 0.6rem 0.85rem;
+  border-top: 1px solid var(--border);
   color: var(--muted-foreground);
-}
-.props-type-more summary::marker {
-  color: var(--muted-foreground);
-}
-.props-type-more > .props-type {
-  display: block;
-  margin-top: 0.35rem;
-  /* The expanded shape is printed one member per line — keep those lines. */
-  white-space: pre-wrap;
+  font-size: 0.82rem;
 }
 /* The prop's summary, under its name: a measure narrow enough to read and wide
    enough that Ark's one-sentence descriptions rarely take more than two lines,

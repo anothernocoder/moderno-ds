@@ -62,39 +62,26 @@ describe("buildComponentsManifest", () => {
     const button = manifest.components.find((c) => c.name === "Button")!;
     expect(button.props.map((p) => p.name).sort()).toEqual(["size", "variant"]);
 
-    // The Ark-backed roots publish the machine's props alongside the recipe's:
-    // `collection` and `count` are what a consumer actually sets, and a list of
-    // just `size` documented the wrapper instead of the component.
+    // Ark's own Root props (collection, count, mask, otp, …) are inherited from
+    // node_modules and stay out of the manifest; only what Moderno declares.
     const field = manifest.components.find((c) => c.name === "Field")!;
-    expect(field.props.map((p) => p.name)).toEqual(
-      expect.arrayContaining(["size", "invalid", "required", "disabled"]),
-    );
+    expect(field.props.map((p) => p.name)).toEqual(["size"]);
 
     const select = manifest.components.find((c) => c.name === "Select")!;
-    expect(select.props.map((p) => p.name)).toEqual(
-      expect.arrayContaining(["size", "collection", "value", "onValueChange"]),
-    );
+    expect(select.props.map((p) => p.name)).toEqual(["size"]);
 
     const checkbox = manifest.components.find((c) => c.name === "Checkbox")!;
-    expect(checkbox.props.map((p) => p.name)).toEqual(
-      expect.arrayContaining(["size", "checked", "onCheckedChange"]),
-    );
+    expect(checkbox.props.map((p) => p.name)).toEqual(["size"]);
 
     const pinInput = manifest.components.find((c) => c.name === "PinInput")!;
-    expect(pinInput.props.map((p) => p.name)).toEqual(
-      expect.arrayContaining(["size", "count", "mask", "otp"]),
-    );
+    expect(pinInput.props.map((p) => p.name)).toEqual(["size"]);
     expect(pinInput.variants).toEqual({ size: ["sm", "md", "lg"] });
   });
 
-  it("resolves Dialog's props through the type its binding only re-exports", () => {
-    // Dialog adds nothing to Ark's machine, so `DialogRootProps` is declared in
-    // @ark-ui and re-exported: the entry resolves through the re-export rather
-    // than reporting a component with no API at all.
+  it("gives Dialog empty props — it adds none of its own", () => {
     const doc = manifest.components.find((c) => c.name === "Dialog")!;
-    expect(doc.props.map((p) => p.name)).toEqual(
-      expect.arrayContaining(["open", "modal", "onOpenChange", "trapFocus"]),
-    );
+    expect(doc.props).toEqual([]);
+    expect(doc.propsComplete).toBe(false);
     expect(doc.variants).toBeUndefined();
   });
 
@@ -116,14 +103,22 @@ describe("buildComponentsManifest", () => {
     ]);
   });
 
-  it("marks every documented component's prop list complete", () => {
-    // Every entry resolves either its own declarations or the headless
-    // machine's, so the only props dropped are native attributes and
-    // `validate_usage` may read each list as exhaustive. A component whose real
-    // props came from somewhere the extractor cannot see would show up here —
-    // that is the flag's remaining job.
-    const incomplete = manifest.components.filter((c) => !c.propsComplete).map((c) => c.name);
-    expect(incomplete).toEqual([]);
+  it("marks the prop list complete only where the workspace declares every prop", () => {
+    // The authored primitives own their whole API. The Ark-backed roots do
+    // not: `Select.Root`'s `collection`, `Field.Root`'s `invalid` and
+    // `Dialog.Root`'s `open` are declared under node_modules and dropped, so
+    // `validate_usage` must not read their prop lists as exhaustive.
+    const complete = manifest.components.filter((c) => c.propsComplete).map((c) => c.name);
+    expect(complete).toEqual([
+      "Button",
+      "Alert",
+      "Card",
+      "Divider",
+      "LineChart",
+      "AreaChart",
+      "BarChart",
+      "ScatterChart",
+    ]);
   });
 
   it("resolves Divider's recipe props, variants and styled parts", () => {

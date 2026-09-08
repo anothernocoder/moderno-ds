@@ -43,6 +43,9 @@ export const ui = {
     "props.yes": "Yes",
     "props.no": "No",
     "props.empty": "This component forwards the native element's attributes only.",
+    "props.inherited": "The root also accepts every prop of the Ark machine it wraps.",
+    "props.arkOnly":
+      "Moderno adds no props of its own here — the root takes the Ark machine's props unchanged.",
     "install.title": "Installation",
     "toc.title": "On this page",
     "lang.switch": "Español",
@@ -86,6 +89,9 @@ export const ui = {
     "props.yes": "Sí",
     "props.no": "No",
     "props.empty": "Este componente solo reenvía los atributos del elemento nativo.",
+    "props.inherited": "El root acepta además todas las props de la máquina de Ark que envuelve.",
+    "props.arkOnly":
+      "Moderno no añade props propias aquí — el root toma las props de la máquina de Ark tal cual.",
     "install.title": "Instalación",
     "toc.title": "En esta página",
     "lang.switch": "English",

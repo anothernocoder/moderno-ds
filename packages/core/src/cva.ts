@@ -24,6 +24,12 @@ export interface Cva<V extends VariantsDef> {
   (props?: VariantProps<V>): Record<string, string>;
   /** The variant schema, exposed for docs/introspection (e.g. PropsTable). */
   readonly variants: V;
+  /**
+   * The value each variant falls back to, exposed for the same reason as
+   * `variants`: the docs' Default column has no other source — a default that
+   * lives in this table can't be read off the prop's type.
+   */
+  readonly defaultVariants: Readonly<Record<string, string>>;
 }
 
 /** camelCase → kebab-case for the data-attribute name (`fullWidth` → `full-width`). */
@@ -53,5 +59,8 @@ export function cva<const V extends VariantsDef>(config: CvaConfig<V>): Cva<V> {
     return attrs;
   };
 
-  return Object.assign(resolve, { variants: config.variants });
+  return Object.assign(resolve, {
+    variants: config.variants,
+    defaultVariants: defaults as Readonly<Record<string, string>>,
+  });
 }
