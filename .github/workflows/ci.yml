@@ -17,6 +17,10 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm -r build
+      # The registry is what consumers copy: a block that hardcodes a colour or
+      # a dimension never reaches them (ADR-0005, CONTRACT.md "Responsive
+      # policy"). Needs the build above — the CLI runs on @moderno-ui/lint-core.
+      - run: pnpm lint:registry
       - run: pnpm theme:build
       - run: pnpm docs:parity
       - run: pnpm agent:check-drift

@@ -1,0 +1,67 @@
+---
+title: Blocks and containers
+description: How a block responds to the width of its container instead of the viewport — the @container variants bound to --container-sm|md|lg, and the CI gates that keep blocks on them.
+group: Guides
+order: 1
+---
+
+import Preview from "../../../components/Preview.astro";
+import PricingBlockDemo from "../../../islands/PricingBlockDemo.svelte";
+
+A **block** is a page section — a hero, a pricing table, a login form — that you
+copy into your project with the CLI. It does not own the viewport, and it cannot
+know where you will mount it: the same pricing table might sit in a sidebar, a
+modal, or a full-width page.
+
+So a block adapts to **its container**, never to the window. The token contract
+names three container widths — `--container-sm` (24rem), `--container-md`
+(36rem) and `--container-lg` (48rem) — and the Tailwind preset turns them into
+the `@sm:` / `@md:` / `@lg:` container-query variants a block lays itself out
+with.
+
+## One block, two containers
+
+Below is a single `Pricing` block, mounted twice, one above the other. Nothing
+about the two copies differs: same source, same props. The first is capped at
+24rem, under the block's `@md` step, so its plans stack. The second takes the
+whole panel and goes three-up as soon as that panel is at least 36rem wide —
+narrow this browser window and it will stack on its own, without a media query
+anywhere in the block.
+
+<Preview
+  code={`<section className="@container">
+  <h2 className="text-lg font-semibold @md:text-xl">Pricing</h2>
+  <ul className="mt-6 grid gap-4 @md:grid-cols-3">
+    {/* … one <li> per plan … */}
+  </ul>
+</section>`}
+>
+  <PricingBlockDemo client:visible />
+</Preview>
+
+## The rules
+
+- **`@container`, not `@media`.** A block declares `@container` on its root and
+  responds with the three contract steps. A viewport media query is reserved for
+  a primitive that genuinely changes shape on a small screen — a dialog
+  presented as a bottom sheet — and the shared stylesheet keeps an explicit
+  allow-list of which primitives have earned one. It is currently empty.
+- **Three steps, and only three.** The preset replaces Tailwind's container
+  scale rather than extending it, so `@sm:`, `@md:` and `@lg:` are the whole
+  vocabulary. `@xl:` and up do not exist here.
+- **No literal colours or dimensions.** Blocks paint from contract slots
+  (`bg-card`, `text-muted-foreground`, `rounded-lg`, `shadow-sm`) and size from
+  the preset's scales. A hex, or a length smuggled into an arbitrary value like
+  `w-[320px]`, fails `moderno-lint` — which CI runs over every source file the
+  registry ships.
+- **Intrinsic layout is welcome.** A `grid` with `auto-fit` columns needs no
+  breakpoint at all. Reach for a container query when the layout has to change
+  shape, not merely reflow.
+
+## Why not viewport breakpoints
+
+A block styled against the viewport renders differently depending on where it
+was mounted: correct on the page it was designed for, broken in the sidebar of
+the next one. Container queries remove that class of bug outright, which is why
+they are the policy rather than a preference. The reasoning is recorded in
+ADR-0005, and the contract itself is in `CONTRACT.md` under "Responsive policy".
