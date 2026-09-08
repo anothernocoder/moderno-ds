@@ -14,7 +14,7 @@ agent:
     - case: A notification centre after sign-in
       use: the AlertList block on its own — here it carries service notices, not a signed-in person's feed
   gotchas:
-    - "Presentational: no credentials, no request, no router. `onSubmit` hands back the native event and `onNavigate` names the destination of every link the screen draws itself; where those go is the mounting page's business."
+    - "Presentational: no credentials, no request, no router. `onSubmit` hands back the native event and `onNavigate` names the destination of every link the screen draws itself and hands back the click event with it, so a router can `preventDefault()`; where those destinations go is the mounting page's business."
     - "The form's two links (recovery and sign-up) are `href`s, not callbacks — a credential-recovery link has to work when hydration fails, which is exactly when someone is locked out. Pass `forgotHref` and `signUpHref`."
     - "`notices={[]}` is the screen's empty state: the aside is not rendered at all and the card sits centred and alone. It is not the block's 'all caught up' card."
     - "`noticesError` and `noticesLoading` are about the notices, not the sign-in; `error`, `loading` and `disabled` are about the sign-in, not the notices. The two halves fail independently because they load independently."
@@ -121,29 +121,44 @@ notices.
 
 ## Props
 
-| Prop               | Type              | Default     | What it does                                                                                     |
-| ------------------ | ----------------- | ----------- | ------------------------------------------------------------------------------------------------ |
-| `error`            | `string`          | —           | Sign-in failed: raises the form-level alert and invalidates both credential fields.              |
-| `loading`          | `boolean`         | `false`     | The submit is in flight: every control inert, the button busy.                                   |
-| `disabled`         | `boolean`         | `false`     | Sign-in is unavailable.                                                                          |
-| `notices`          | `AlertListItem[]` | two samples | Service notices beside the form. `[]` renders the form alone.                                    |
-| `noticesError`     | `string`          | —           | The notices could not be loaded; that message replaces the list.                                 |
-| `noticesLoading`   | `boolean`         | `false`     | A busy region stands in for the notices.                                                         |
-| `onSubmit`         | `(event) => void` | —           | Native submit. React/Solid `onSubmit`, Svelte `onsubmit`, Vue emits `submit`.                    |
-| `onNavigate`       | `(to) => void`    | —           | A link the screen draws itself was activated: `home`, `support`, `privacy` or `terms`.           |
-| `onNoticeAction`   | `(id) => void`    | —           | A notice's own action, with that notice's id. Svelte `onnoticeaction`, Vue emits `noticeAction`. |
-| `onDismissNotice`  | `(id) => void`    | —           | One notice was dismissed. Svelte `ondismissnotice`, Vue emits `dismissNotice`.                   |
-| `onDismissNotices` | `() => void`      | —           | Every notice at once. Svelte `ondismissnotices`, Vue emits `dismissNotices`.                     |
-| `onRetryNotices`   | `() => void`      | —           | Retry after `noticesError`. Svelte `onretrynotices`, Vue emits `retryNotices`.                   |
-| `forgotHref`       | `string`          | `"#"`       | Where "Forgot your password?" points.                                                            |
-| `signUpHref`       | `string`          | `"#"`       | Where "Create an account" points.                                                                |
-| `homeHref`         | `string`          | `"#"`       | Where the wordmark points.                                                                       |
-| `supportHref`      | `string`          | `"#"`       | Where "Contact support" points.                                                                  |
-| `privacyHref`      | `string`          | `"#"`       | Where the privacy link points.                                                                   |
-| `termsHref`        | `string`          | `"#"`       | Where the terms link points.                                                                     |
+| Prop               | Type                  | Default     | What it does                                                                                                                                   |
+| ------------------ | --------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `error`            | `string`              | —           | Sign-in failed: raises the form-level alert and invalidates both credential fields.                                                            |
+| `loading`          | `boolean`             | `false`     | The submit is in flight: every control inert, the button busy.                                                                                 |
+| `disabled`         | `boolean`             | `false`     | Sign-in is unavailable.                                                                                                                        |
+| `notices`          | `AlertListItem[]`     | two samples | Service notices beside the form. `[]` renders the form alone.                                                                                  |
+| `noticesError`     | `string`              | —           | The notices could not be loaded; that message replaces the list.                                                                               |
+| `noticesLoading`   | `boolean`             | `false`     | A busy region stands in for the notices.                                                                                                       |
+| `onSubmit`         | `(event) => void`     | —           | Native submit. React/Solid `onSubmit`, Svelte `onsubmit`, Vue emits `submit`.                                                                  |
+| `onNavigate`       | `(to, event) => void` | —           | A link the screen draws itself was activated: `home`, `support`, `privacy` or `terms`, with the click event that did it. Vue emits `navigate`. |
+| `onNoticeAction`   | `(id) => void`        | —           | A notice's own action, with that notice's id. Svelte `onnoticeaction`, Vue emits `noticeAction`.                                               |
+| `onDismissNotice`  | `(id) => void`        | —           | One notice was dismissed. Svelte `ondismissnotice`, Vue emits `dismissNotice`.                                                                 |
+| `onDismissNotices` | `() => void`          | —           | Every notice at once. Svelte `ondismissnotices`, Vue emits `dismissNotices`.                                                                   |
+| `onRetryNotices`   | `() => void`          | —           | Retry after `noticesError`. Svelte `onretrynotices`, Vue emits `retryNotices`.                                                                 |
+| `forgotHref`       | `string`              | `"#"`       | Where "Forgot your password?" points.                                                                                                          |
+| `signUpHref`       | `string`              | `"#"`       | Where "Create an account" points.                                                                                                              |
+| `homeHref`         | `string`              | `"#"`       | Where the wordmark points.                                                                                                                     |
+| `supportHref`      | `string`              | `"#"`       | Where "Contact support" points.                                                                                                                |
+| `privacyHref`      | `string`              | `"#"`       | Where the privacy link points.                                                                                                                 |
+| `termsHref`        | `string`              | `"#"`       | Where the terms link points.                                                                                                                   |
 
-The screen's own links carry an `href` **and** call `onNavigate`, so a client
-router can `preventDefault()` while the markup keeps meaning something without
-JavaScript. The form's two links are `href`-only on purpose: a person following
-"Forgot your password?" is already having a bad day, and that link should not
-depend on hydration having succeeded.
+The screen's own links carry an `href` **and** call `onNavigate`, which is
+handed the destination _and_ the click event — so a client router can
+`preventDefault()` on it (after checking `metaKey` / `ctrlKey`, to leave a
+new-tab click to the browser) while the markup keeps meaning something without
+JavaScript:
+
+```tsx
+<SignIn
+  homeHref="/"
+  onNavigate={(to, event) => {
+    if (event.metaKey || event.ctrlKey) return; // let the browser open a new tab
+    event.preventDefault();
+    router.push(routes[to]);
+  }}
+/>
+```
+
+The form's two links are `href`-only on purpose: a person following "Forgot your
+password?" is already having a bad day, and that link should not depend on
+hydration having succeeded.

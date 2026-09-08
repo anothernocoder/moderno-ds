@@ -120,7 +120,7 @@
       "type": "registry:block",
       "version": "0.1.0",
       "title": "Form Layout (React)",
-      "description": "Grouped settings form composing the @moderno-ui/react Field, Checkbox, Divider, Button and Alert primitives; responds to its container (@container) across all three contract steps \u2014 actions row at @sm, two-up field grid at @md, group headings beside their fields at @lg \u2014 and renders its default, disabled, loading and error states from props.",
+      "description": "Grouped settings form composing the @moderno-ui/react Field, Checkbox, Divider, Button and Alert primitives; responds to its container (@container) across all three contract steps — actions row at @sm, two-up field grid at @md, group headings beside their fields at @lg — and renders its default, disabled, loading and error states from props.",
       "dependencies": ["@moderno-ui/react"],
       "registryDependencies": [],
       "files": [
@@ -136,7 +136,7 @@
       "type": "registry:block",
       "version": "0.1.0",
       "title": "Form Layout (Vue)",
-      "description": "Grouped settings form composing the @moderno-ui/vue Field, Checkbox, Divider, Button and Alert primitives; responds to its container (@container) across all three contract steps \u2014 actions row at @sm, two-up field grid at @md, group headings beside their fields at @lg \u2014 and renders its default, disabled, loading and error states from props.",
+      "description": "Grouped settings form composing the @moderno-ui/vue Field, Checkbox, Divider, Button and Alert primitives; responds to its container (@container) across all three contract steps — actions row at @sm, two-up field grid at @md, group headings beside their fields at @lg — and renders its default, disabled, loading and error states from props.",
       "dependencies": ["@moderno-ui/vue"],
       "registryDependencies": [],
       "files": [
@@ -152,7 +152,7 @@
       "type": "registry:block",
       "version": "0.1.0",
       "title": "Form Layout (Svelte)",
-      "description": "Grouped settings form composing the @moderno-ui/svelte Field, Checkbox, Divider, Button and Alert primitives; responds to its container (@container) across all three contract steps \u2014 actions row at @sm, two-up field grid at @md, group headings beside their fields at @lg \u2014 and renders its default, disabled, loading and error states from props.",
+      "description": "Grouped settings form composing the @moderno-ui/svelte Field, Checkbox, Divider, Button and Alert primitives; responds to its container (@container) across all three contract steps — actions row at @sm, two-up field grid at @md, group headings beside their fields at @lg — and renders its default, disabled, loading and error states from props.",
       "dependencies": ["@moderno-ui/svelte"],
       "registryDependencies": [],
       "files": [
@@ -168,7 +168,7 @@
       "type": "registry:block",
       "version": "0.1.0",
       "title": "Form Layout (Solid)",
-      "description": "Grouped settings form composing the @moderno-ui/solid Field, Checkbox, Divider, Button and Alert primitives; responds to its container (@container) across all three contract steps \u2014 actions row at @sm, two-up field grid at @md, group headings beside their fields at @lg \u2014 and renders its default, disabled, loading and error states from props.",
+      "description": "Grouped settings form composing the @moderno-ui/solid Field, Checkbox, Divider, Button and Alert primitives; responds to its container (@container) across all three contract steps — actions row at @sm, two-up field grid at @md, group headings beside their fields at @lg — and renders its default, disabled, loading and error states from props.",
       "dependencies": ["@moderno-ui/solid"],
       "registryDependencies": [],
       "files": [
@@ -184,7 +184,7 @@
       "type": "registry:block",
       "version": "0.2.0",
       "title": "Alert List (React)",
-      "description": "Notification centre composing the @moderno-ui/react Alert, Button and Card primitives: a stack of dismissible status alerts in all four variants, with its own empty, loading and error renders and a heading it takes as a prop; responds to its container (@container) across all three contract steps \u2014 the header lines up at @sm, each dismiss control grows its label at @md, each timestamp moves to the trailing edge at @lg.",
+      "description": "Notification centre composing the @moderno-ui/react Alert, Button and Card primitives: a stack of dismissible status alerts in all four variants, with its own empty, loading and error renders and a heading it takes as a prop; responds to its container (@container) across all three contract steps — the header lines up at @sm, each dismiss control grows its label at @md, each timestamp moves to the trailing edge at @lg.",
       "dependencies": ["@moderno-ui/react"],
       "registryDependencies": [],
       "files": [
@@ -200,7 +200,7 @@
       "type": "registry:block",
       "version": "0.2.0",
       "title": "Alert List (Vue)",
-      "description": "Notification centre composing the @moderno-ui/vue Alert, Button and Card primitives: a stack of dismissible status alerts in all four variants, with its own empty, loading and error renders and a heading it takes as a prop; responds to its container (@container) across all three contract steps \u2014 the header lines up at @sm, each dismiss control grows its label at @md, each timestamp moves to the trailing edge at @lg.",
+      "description": "Notification centre composing the @moderno-ui/vue Alert, Button and Card primitives: a stack of dismissible status alerts in all four variants, with its own empty, loading and error renders and a heading it takes as a prop; responds to its container (@container) across all three contract steps — the header lines up at @sm, each dismiss control grows its label at @md, each timestamp moves to the trailing edge at @lg.",
       "dependencies": ["@moderno-ui/vue"],
       "registryDependencies": [],
       "files": [
@@ -216,7 +216,7 @@
       "type": "registry:block",
       "version": "0.2.0",
       "title": "Alert List (Svelte)",
-      "description": "Notification centre composing the @moderno-ui/svelte Alert, Button and Card primitives: a stack of dismissible status alerts in all four variants, with its own empty, loading and error renders and a heading it takes as a prop; responds to its container (@container) across all three contract steps \u2014 the header lines up at @sm, each dismiss control grows its label at @md, each timestamp moves to the trailing edge at @lg.",
+      "description": "Notification centre composing the @moderno-ui/svelte Alert, Button and Card primitives: a stack of dismissible status alerts in all four variants, with its own empty, loading and error renders and a heading it takes as a prop; responds to its container (@container) across all three contract steps — the header lines up at @sm, each dismiss control grows its label at @md, each timestamp moves to the trailing edge at @lg.",
       "dependencies": ["@moderno-ui/svelte"],
       "registryDependencies": [],
       "files": [
@@ -232,7 +232,7 @@
       "type": "registry:block",
       "version": "0.2.0",
       "title": "Alert List (Solid)",
-      "description": "Notification centre composing the @moderno-ui/solid Alert, Button and Card primitives: a stack of dismissible status alerts in all four variants, with its own empty, loading and error renders and a heading it takes as a prop; responds to its container (@container) across all three contract steps \u2014 the header lines up at @sm, each dismiss control grows its label at @md, each timestamp moves to the trailing edge at @lg.",
+      "description": "Notification centre composing the @moderno-ui/solid Alert, Button and Card primitives: a stack of dismissible status alerts in all four variants, with its own empty, loading and error renders and a heading it takes as a prop; responds to its container (@container) across all three contract steps — the header lines up at @sm, each dismiss control grows its label at @md, each timestamp moves to the trailing edge at @lg.",
       "dependencies": ["@moderno-ui/solid"],
       "registryDependencies": [],
       "files": [
@@ -376,7 +376,7 @@
       "type": "registry:screen",
       "version": "0.1.0",
       "title": "Sign in (React)",
-      "description": "Full-viewport sign-in screen composing the login-form and alert-list blocks: the credential form with its error, loading and disabled states, and the service notices a person needs before signing in. Presentational \u2014 data and callbacks in, no navigation state \u2014 and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the notices move beside the card at @lg.",
+      "description": "Full-viewport sign-in screen composing the login-form and alert-list blocks: the credential form with its error, loading and disabled states, and the service notices a person needs before signing in. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the notices move beside the card at @lg.",
       "dependencies": ["@moderno-ui/react"],
       "registryDependencies": ["login-form-react", "alert-list-react"],
       "files": [
@@ -392,7 +392,7 @@
       "type": "registry:screen",
       "version": "0.1.0",
       "title": "Sign in (Vue)",
-      "description": "Full-viewport sign-in screen composing the login-form and alert-list blocks: the credential form with its error, loading and disabled states, and the service notices a person needs before signing in. Presentational \u2014 data and callbacks in, no navigation state \u2014 and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the notices move beside the card at @lg.",
+      "description": "Full-viewport sign-in screen composing the login-form and alert-list blocks: the credential form with its error, loading and disabled states, and the service notices a person needs before signing in. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the notices move beside the card at @lg.",
       "dependencies": ["@moderno-ui/vue"],
       "registryDependencies": ["login-form-vue", "alert-list-vue"],
       "files": [
@@ -408,7 +408,7 @@
       "type": "registry:screen",
       "version": "0.1.0",
       "title": "Sign in (Svelte)",
-      "description": "Full-viewport sign-in screen composing the login-form and alert-list blocks: the credential form with its error, loading and disabled states, and the service notices a person needs before signing in. Presentational \u2014 data and callbacks in, no navigation state \u2014 and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the notices move beside the card at @lg.",
+      "description": "Full-viewport sign-in screen composing the login-form and alert-list blocks: the credential form with its error, loading and disabled states, and the service notices a person needs before signing in. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the notices move beside the card at @lg.",
       "dependencies": ["@moderno-ui/svelte"],
       "registryDependencies": ["login-form-svelte", "alert-list-svelte"],
       "files": [
@@ -424,7 +424,7 @@
       "type": "registry:screen",
       "version": "0.1.0",
       "title": "Sign in (Solid)",
-      "description": "Full-viewport sign-in screen composing the login-form and alert-list blocks: the credential form with its error, loading and disabled states, and the service notices a person needs before signing in. Presentational \u2014 data and callbacks in, no navigation state \u2014 and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the notices move beside the card at @lg.",
+      "description": "Full-viewport sign-in screen composing the login-form and alert-list blocks: the credential form with its error, loading and disabled states, and the service notices a person needs before signing in. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the notices move beside the card at @lg.",
       "dependencies": ["@moderno-ui/solid"],
       "registryDependencies": ["login-form-solid", "alert-list-solid"],
       "files": [

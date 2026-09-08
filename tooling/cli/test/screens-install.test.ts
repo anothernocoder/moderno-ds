@@ -73,6 +73,14 @@ describe("moderno add sign-in-<framework>", () => {
       expect(written).toContain("@lg:");
       expect(written).not.toContain("@media");
 
+      // Every link the screen draws itself hands the click event back with the
+      // destination, or the `preventDefault()` the docs promise a router is
+      // unwritable: a consumer would get the callback *and* a full document
+      // navigation on every masthead and footer link.
+      const navigateCalls = written.match(/on[Nn]avigate\?\.\([^)]*\)/g) ?? [];
+      expect(navigateCalls).toHaveLength(4);
+      for (const call of navigateCalls) expect(call).toContain("event");
+
       // Each block is on disk as its own file, not inlined into the screen.
       for (const block of blocks) {
         expect(await readFile(join(project, block.target), "utf8")).toContain("@container");

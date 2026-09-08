@@ -101,29 +101,44 @@ avisos.
 
 ## Props
 
-| Prop               | Tipo              | Por defecto    | Qué hace                                                                                    |
-| ------------------ | ----------------- | -------------- | ------------------------------------------------------------------------------------------- |
-| `error`            | `string`          | —              | Falló el inicio de sesión: levanta la alerta y marca inválidos ambos campos.                |
-| `loading`          | `boolean`         | `false`        | El envío está en curso: controles inertes y botón ocupado.                                  |
-| `disabled`         | `boolean`         | `false`        | Iniciar sesión no está disponible.                                                          |
-| `notices`          | `AlertListItem[]` | dos de ejemplo | Avisos de servicio junto al formulario. `[]` deja solo la tarjeta.                          |
-| `noticesError`     | `string`          | —              | No se pudieron cargar los avisos; ese mensaje sustituye a la lista.                         |
-| `noticesLoading`   | `boolean`         | `false`        | Una región ocupada sustituye a los avisos.                                                  |
-| `onSubmit`         | `(event) => void` | —              | Envío nativo. React/Solid `onSubmit`, Svelte `onsubmit`, Vue emite `submit`.                |
-| `onNavigate`       | `(to) => void`    | —              | Se activó un enlace que dibuja la pantalla: `home`, `support`, `privacy` o `terms`.         |
-| `onNoticeAction`   | `(id) => void`    | —              | La acción propia de un aviso, con su id. Svelte `onnoticeaction`, Vue emite `noticeAction`. |
-| `onDismissNotice`  | `(id) => void`    | —              | Se descartó un aviso. Svelte `ondismissnotice`, Vue emite `dismissNotice`.                  |
-| `onDismissNotices` | `() => void`      | —              | Se descartaron todos. Svelte `ondismissnotices`, Vue emite `dismissNotices`.                |
-| `onRetryNotices`   | `() => void`      | —              | Reintentar tras `noticesError`. Svelte `onretrynotices`, Vue emite `retryNotices`.          |
-| `forgotHref`       | `string`          | `"#"`          | A dónde apunta «Forgot your password?».                                                     |
-| `signUpHref`       | `string`          | `"#"`          | A dónde apunta «Create an account».                                                         |
-| `homeHref`         | `string`          | `"#"`          | A dónde apunta el logotipo.                                                                 |
-| `supportHref`      | `string`          | `"#"`          | A dónde apunta «Contact support».                                                           |
-| `privacyHref`      | `string`          | `"#"`          | A dónde apunta el enlace de privacidad.                                                     |
-| `termsHref`        | `string`          | `"#"`          | A dónde apunta el enlace de términos.                                                       |
+| Prop               | Tipo                  | Por defecto    | Qué hace                                                                                                                                         |
+| ------------------ | --------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `error`            | `string`              | —              | Falló el inicio de sesión: levanta la alerta y marca inválidos ambos campos.                                                                     |
+| `loading`          | `boolean`             | `false`        | El envío está en curso: controles inertes y botón ocupado.                                                                                       |
+| `disabled`         | `boolean`             | `false`        | Iniciar sesión no está disponible.                                                                                                               |
+| `notices`          | `AlertListItem[]`     | dos de ejemplo | Avisos de servicio junto al formulario. `[]` deja solo la tarjeta.                                                                               |
+| `noticesError`     | `string`              | —              | No se pudieron cargar los avisos; ese mensaje sustituye a la lista.                                                                              |
+| `noticesLoading`   | `boolean`             | `false`        | Una región ocupada sustituye a los avisos.                                                                                                       |
+| `onSubmit`         | `(event) => void`     | —              | Envío nativo. React/Solid `onSubmit`, Svelte `onsubmit`, Vue emite `submit`.                                                                     |
+| `onNavigate`       | `(to, event) => void` | —              | Se activó un enlace que dibuja la pantalla: `home`, `support`, `privacy` o `terms`, junto al evento de clic que lo activó. Vue emite `navigate`. |
+| `onNoticeAction`   | `(id) => void`        | —              | La acción propia de un aviso, con su id. Svelte `onnoticeaction`, Vue emite `noticeAction`.                                                      |
+| `onDismissNotice`  | `(id) => void`        | —              | Se descartó un aviso. Svelte `ondismissnotice`, Vue emite `dismissNotice`.                                                                       |
+| `onDismissNotices` | `() => void`          | —              | Se descartaron todos. Svelte `ondismissnotices`, Vue emite `dismissNotices`.                                                                     |
+| `onRetryNotices`   | `() => void`          | —              | Reintentar tras `noticesError`. Svelte `onretrynotices`, Vue emite `retryNotices`.                                                               |
+| `forgotHref`       | `string`              | `"#"`          | A dónde apunta «Forgot your password?».                                                                                                          |
+| `signUpHref`       | `string`              | `"#"`          | A dónde apunta «Create an account».                                                                                                              |
+| `homeHref`         | `string`              | `"#"`          | A dónde apunta el logotipo.                                                                                                                      |
+| `supportHref`      | `string`              | `"#"`          | A dónde apunta «Contact support».                                                                                                                |
+| `privacyHref`      | `string`              | `"#"`          | A dónde apunta el enlace de privacidad.                                                                                                          |
+| `termsHref`        | `string`              | `"#"`          | A dónde apunta el enlace de términos.                                                                                                            |
 
-Los enlaces de la propia pantalla llevan `href` **y** llaman a `onNavigate`, así
-que un router de cliente puede hacer `preventDefault()` mientras el marcado
-sigue significando algo sin JavaScript. Los dos enlaces del formulario son solo
-`href` a propósito: quien sigue «Forgot your password?» ya está teniendo un mal
-día, y ese enlace no debería depender de que la hidratación haya funcionado.
+Los enlaces de la propia pantalla llevan `href` **y** llaman a `onNavigate`, que
+recibe el destino _y_ el evento de clic: así un router de cliente puede hacer
+`preventDefault()` sobre él (tras mirar `metaKey` / `ctrlKey`, para dejarle al
+navegador el clic que abre una pestaña nueva) mientras el marcado sigue
+significando algo sin JavaScript:
+
+```tsx
+<SignIn
+  homeHref="/"
+  onNavigate={(to, event) => {
+    if (event.metaKey || event.ctrlKey) return; // que el navegador abra la pestaña
+    event.preventDefault();
+    router.push(routes[to]);
+  }}
+/>
+```
+
+Los dos enlaces del formulario son solo `href` a propósito: quien sigue «Forgot
+your password?» ya está teniendo un mal día, y ese enlace no debería depender de
+que la hidratación haya funcionado.

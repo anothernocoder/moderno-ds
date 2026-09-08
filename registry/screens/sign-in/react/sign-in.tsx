@@ -1,4 +1,4 @@
-import type { FormEvent } from "react";
+import type { FormEvent, MouseEvent } from "react";
 import { AlertList, type AlertListItem } from "@/components/blocks/alert-list";
 import { LoginForm } from "@/components/blocks/login-form";
 
@@ -20,8 +20,14 @@ import { LoginForm } from "@/components/blocks/login-form";
  * callbacks — a credential-recovery link has to work when hydration fails,
  * which is exactly the moment someone is locked out — so the screen forwards
  * `forgotHref` and `signUpHref` to the block. Its own links carry an `href`
- * too and call `onNavigate` on top, so a client router can `preventDefault()`
- * without the markup losing its meaning.
+ * too and call `onNavigate(destination, event)` on top: the click event comes
+ * with the destination, so a client router can `preventDefault()` — and read
+ * `metaKey` before it does, to leave a ctrl/cmd-click to the browser — while
+ * the markup keeps its meaning without JavaScript.
+ *
+ * The notices sit in an `<aside>`, deliberately unlabelled: the block's own
+ * `heading` is the `h2` inside it, and an `aria-label` repeating that string
+ * would make a screen reader announce the same sentence twice.
  *
  * The root is a `<div>`, not a `<main>`: the screen is the page's content, but
  * whether it *is* the `main` landmark depends on the route that mounts it —
@@ -95,8 +101,12 @@ export interface SignInProps {
   noticesLoading?: boolean;
   /** Native submit; call `event.preventDefault()` and read the form yourself. */
   onSubmit?: (event: FormEvent<HTMLFormElement>) => void;
-  /** A link the screen draws itself was activated. */
-  onNavigate?: (destination: SignInDestination) => void;
+  /**
+   * A link the screen draws itself was activated, with the click event that
+   * did it: `preventDefault()` on it to route without a document navigation,
+   * and read `metaKey` / `ctrlKey` first to leave a new-tab click alone.
+   */
+  onNavigate?: (destination: SignInDestination, event: MouseEvent<HTMLAnchorElement>) => void;
   /** A notice's own action (`actionLabel`), reported with that notice's id. */
   onNoticeAction?: (id: string) => void;
   /** A notice was dismissed; you drop it from your own state. */
@@ -148,7 +158,7 @@ export function SignIn({
           <a
             className="rounded-sm text-base font-semibold tracking-tight underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
             href={homeHref}
-            onClick={() => onNavigate?.("home")}
+            onClick={(event) => onNavigate?.("home", event)}
           >
             Moderno
           </a>
@@ -157,7 +167,7 @@ export function SignIn({
             <a
               className="rounded-sm font-medium text-foreground underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
               href={supportHref}
-              onClick={() => onNavigate?.("support")}
+              onClick={(event) => onNavigate?.("support", event)}
             >
               Contact support
             </a>
@@ -177,7 +187,7 @@ export function SignIn({
           </div>
 
           {showNotices ? (
-            <aside className="mx-auto w-full max-w-md" aria-label="Before you sign in">
+            <aside className="mx-auto w-full max-w-md">
               <AlertList
                 heading="Before you sign in"
                 description="Anything affecting access right now."
@@ -199,14 +209,14 @@ export function SignIn({
             <a
               className="rounded-sm underline-offset-4 transition-colors hover:text-foreground hover:underline focus-visible:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
               href={privacyHref}
-              onClick={() => onNavigate?.("privacy")}
+              onClick={(event) => onNavigate?.("privacy", event)}
             >
               Privacy
             </a>
             <a
               className="rounded-sm underline-offset-4 transition-colors hover:text-foreground hover:underline focus-visible:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
               href={termsHref}
-              onClick={() => onNavigate?.("terms")}
+              onClick={(event) => onNavigate?.("terms", event)}
             >
               Terms
             </a>

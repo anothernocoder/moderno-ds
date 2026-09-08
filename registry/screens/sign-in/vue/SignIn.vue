@@ -17,8 +17,14 @@
  * emits — a credential-recovery link has to work when hydration fails, which is
  * exactly the moment someone is locked out — so the screen forwards
  * `forgotHref` and `signUpHref` to the block. Its own links carry an `href` too
- * and emit `navigate` on top, so a client router can `preventDefault()` without
- * the markup losing its meaning.
+ * and emit `navigate` with the destination *and* the click event on top, so a
+ * client router can `preventDefault()` — and read `metaKey` before it does, to
+ * leave a ctrl/cmd-click to the browser — while the markup keeps its meaning
+ * without JavaScript.
+ *
+ * The notices sit in an `<aside>`, deliberately unlabelled: the block's own
+ * `heading` is the `h2` inside it, and an `aria-label` repeating that string
+ * would make a screen reader announce the same sentence twice.
  *
  * The root is a `<div>`, not a `<main>`: the screen is the page's content, but
  * whether it *is* the `main` landmark depends on the route that mounts it —
@@ -132,11 +138,12 @@ const props = withDefaults(
 
 /**
  * `submit` is the native form event; `navigate` names the destination a link
- * the screen draws itself points at. The notice emits mirror the block's.
+ * the screen draws itself points at and hands back the click event that did it,
+ * so the listener can `preventDefault()`. The notice emits mirror the block's.
  */
 const emit = defineEmits<{
   submit: [event: Event];
-  navigate: [destination: SignInDestination];
+  navigate: [destination: SignInDestination, event: MouseEvent];
   noticeAction: [id: string];
   dismissNotice: [id: string];
   dismissNotices: [];
@@ -155,7 +162,7 @@ const showNotices = computed(
         <a
           class="rounded-sm text-base font-semibold tracking-tight underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
           :href="homeHref"
-          @click="emit('navigate', 'home')"
+          @click="emit('navigate', 'home', $event)"
         >
           Moderno
         </a>
@@ -164,7 +171,7 @@ const showNotices = computed(
           <a
             class="rounded-sm font-medium text-foreground underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
             :href="supportHref"
-            @click="emit('navigate', 'support')"
+            @click="emit('navigate', 'support', $event)"
           >
             Contact support
           </a>
@@ -183,7 +190,7 @@ const showNotices = computed(
           />
         </div>
 
-        <aside v-if="showNotices" class="mx-auto w-full max-w-md" aria-label="Before you sign in">
+        <aside v-if="showNotices" class="mx-auto w-full max-w-md">
           <AlertList
             heading="Before you sign in"
             description="Anything affecting access right now."
@@ -206,14 +213,14 @@ const showNotices = computed(
           <a
             class="rounded-sm underline-offset-4 transition-colors hover:text-foreground hover:underline focus-visible:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
             :href="privacyHref"
-            @click="emit('navigate', 'privacy')"
+            @click="emit('navigate', 'privacy', $event)"
           >
             Privacy
           </a>
           <a
             class="rounded-sm underline-offset-4 transition-colors hover:text-foreground hover:underline focus-visible:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
             :href="termsHref"
-            @click="emit('navigate', 'terms')"
+            @click="emit('navigate', 'terms', $event)"
           >
             Terms
           </a>

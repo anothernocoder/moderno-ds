@@ -16,8 +16,14 @@
   callbacks — a credential-recovery link has to work when hydration fails, which
   is exactly the moment someone is locked out — so the screen forwards
   `forgotHref` and `signUpHref` to the block. Its own links carry an `href` too
-  and call `onnavigate` on top, so a client router can `preventDefault()`
-  without the markup losing its meaning.
+  and call `onnavigate(destination, event)` on top: the click event comes with
+  the destination, so a client router can `preventDefault()` — and read
+  `metaKey` before it does, to leave a ctrl/cmd-click to the browser — while the
+  markup keeps its meaning without JavaScript.
+
+  The notices sit in an <aside>, deliberately unlabelled: the block's own
+  `heading` is the h2 inside it, and an `aria-label` repeating that string would
+  make a screen reader announce the same sentence twice.
 
   The root is a <div>, not a <main>: the screen is the page's content, but
   whether it is the `main` landmark depends on the route that mounts it — most
@@ -78,8 +84,12 @@
     noticesLoading?: boolean;
     /** Native submit; call `event.preventDefault()` and read the form yourself. */
     onsubmit?: (event: SubmitEvent) => void;
-    /** A link the screen draws itself was activated. */
-    onnavigate?: (destination: SignInDestination) => void;
+    /**
+     * A link the screen draws itself was activated, with the click event that
+     * did it: `preventDefault()` on it to route without a document navigation,
+     * and read `metaKey` / `ctrlKey` first to leave a new-tab click alone.
+     */
+    onnavigate?: (destination: SignInDestination, event: MouseEvent) => void;
     /** A notice's own action (`actionLabel`), reported with that notice's id. */
     onnoticeaction?: (id: string) => void;
     /** A notice was dismissed; you drop it from your own state. */
@@ -155,7 +165,7 @@
       <a
         class="rounded-sm text-base font-semibold tracking-tight underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
         href={homeHref}
-        onclick={() => onnavigate?.("home")}
+        onclick={(event) => onnavigate?.("home", event)}
       >
         Moderno
       </a>
@@ -164,7 +174,7 @@
         <a
           class="rounded-sm font-medium text-foreground underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
           href={supportHref}
-          onclick={() => onnavigate?.("support")}
+          onclick={(event) => onnavigate?.("support", event)}
         >
           Contact support
         </a>
@@ -177,7 +187,7 @@
       </div>
 
       {#if showNotices}
-        <aside class="mx-auto w-full max-w-md" aria-label="Before you sign in">
+        <aside class="mx-auto w-full max-w-md">
           <AlertList
             heading="Before you sign in"
             description="Anything affecting access right now."
@@ -201,14 +211,14 @@
         <a
           class="rounded-sm underline-offset-4 transition-colors hover:text-foreground hover:underline focus-visible:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
           href={privacyHref}
-          onclick={() => onnavigate?.("privacy")}
+          onclick={(event) => onnavigate?.("privacy", event)}
         >
           Privacy
         </a>
         <a
           class="rounded-sm underline-offset-4 transition-colors hover:text-foreground hover:underline focus-visible:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
           href={termsHref}
-          onclick={() => onnavigate?.("terms")}
+          onclick={(event) => onnavigate?.("terms", event)}
         >
           Terms
         </a>
