@@ -11,6 +11,7 @@
       "import": "import { Button } from \"@moderno-ui/vue\"",
       "propsHash": "sha256:fixture-button-vue",
       "props": [{ "name": "variant", "type": "\"primary\" | \"outline\"", "required": false }],
+      "propsComplete": true,
       "parts": [{ "name": "root" }],
       "variants": { "variant": ["primary", "outline"] },
       "examples": [

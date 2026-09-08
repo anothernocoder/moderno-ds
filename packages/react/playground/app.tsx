@@ -2,9 +2,18 @@
  * SSR playground — the reusable harness that validates Moderno's second
  * guarantee: server-render + hydrate with zero React warnings.
  *
- * It mounts all five reference primitives in their default (closed) state. Each
- * one is deliberately exercised for an SSR hazard:
+ * It mounts every one of the reference primitives in their default (closed)
+ * state. Each one is deliberately exercised for an SSR hazard:
  *   - Button   — the trivial baseline (no ids, no portal).
+ *   - Field    — `useId`-generated label/control ids must match across render,
+ *                mounted at two sizes and over both controls (input + textarea)
+ *                so the recipe's `data-size` is proven to survive SSR too.
+ *   - Card     — a compound, CSS-only surface: every part must serialise its
+ *                own `data-part` and the root its recipe attributes.
+ *   - Divider  — CSS-only, but proves an optional child (the label) and the
+ *                conditional separator role serialise identically both ways.
+ *                Mounted in every recipe cell the props table advertises,
+ *                captioned × vertical included.
  *   - Field    — `useId`-generated label/control ids must match across render.
  *   - Checkbox — a label bound to a visually hidden native input by `useId`,
  *                plus indicators the machine hides via the `hidden` attribute.
@@ -12,6 +21,8 @@
  *                hydration-safe trigger while its content stays unmounted-visible.
  *   - Select   — a collection + popover whose hidden native <select> and ids
  *                must serialise identically on server and client.
+ *   - PinInput — n cells whose ids and aria labels are derived from the root id
+ *                and `count`, so the server must know the cell count too.
  *
  * The same tree is `renderToString`-ed on the server and `hydrateRoot`-ed on the
  * client. `open` mounts the Dialog and Select popovers so the SSR test can
@@ -19,11 +30,15 @@
  * `aria-controls`/`aria-activedescendant` wiring must still hydrate clean.
  * Phases 3–4 reuse this shape for the other frameworks.
  */
+import { Alert } from "../src/alert.js";
 import { Button } from "../src/button.js";
+import { Divider } from "../src/divider.js";
+import { Card } from "../src/card.js";
 import { Field } from "../src/field.js";
 import { Checkbox } from "../src/checkbox.js";
 import { Dialog, Portal } from "../src/dialog.js";
 import { Select, createListCollection } from "../src/select.js";
+import { PinInput } from "../src/pin-input.js";
 import { AreaChart, BarChart, LineChart, ScatterChart } from "../src/charts.js";
 
 // A shared sample dataset for the four chart examples (Phase 4 deliverable).
@@ -51,6 +66,10 @@ const sales = [
 ];
 const quarters = ["Q1", "Q2", "Q3", "Q4"];
 const revenue = [{ name: "revenue", values: [12, 28, 19, 34] }];
+
+// A six-digit one-time code: the cell indices the PinInput renders. `count` on
+// the Root tells Ark the same number so the server-rendered aria labels match.
+const CODE_CELLS = [0, 1, 2, 3, 4, 5];
 
 const frameworks = createListCollection({
   items: [
@@ -81,12 +100,62 @@ export function App({ open = false }: AppProps) {
         </Button>
       </section>
 
-      <Field.Root>
-        <Field.Label>Email</Field.Label>
-        <Field.Input placeholder="you@example.com" />
-        <Field.HelperText>We never share it.</Field.HelperText>
-        <Field.ErrorText>Email is required.</Field.ErrorText>
-      </Field.Root>
+      <section aria-label="dividers">
+        <Divider />
+        <Divider align="start">Or</Divider>
+        <Divider orientation="vertical" />
+        <Divider orientation="vertical">Or</Divider>
+      </section>
+
+      <section aria-label="alerts">
+        <Alert.Root variant="info">
+          <Alert.Icon>i</Alert.Icon>
+          <Alert.Content>
+            <Alert.Title>Heads up</Alert.Title>
+            <Alert.Description>Your trial ends in three days.</Alert.Description>
+            <Alert.Action>
+              <Button size="sm" variant="outline">
+                Manage plan
+              </Button>
+            </Alert.Action>
+          </Alert.Content>
+        </Alert.Root>
+        <Alert.Root variant="error" size="sm">
+          <Alert.Icon>!</Alert.Icon>
+          <Alert.Content>
+            <Alert.Title>Payment failed</Alert.Title>
+            <Alert.Description>We could not charge your card.</Alert.Description>
+          </Alert.Content>
+        </Alert.Root>
+      </section>
+
+      <section aria-label="fields">
+        <Field.Root size="sm">
+          <Field.Label>Email</Field.Label>
+          <Field.Input placeholder="you@example.com" />
+          <Field.HelperText>We never share it.</Field.HelperText>
+          <Field.ErrorText>Email is required.</Field.ErrorText>
+        </Field.Root>
+
+        <Field.Root size="lg" invalid>
+          <Field.Label>Bio</Field.Label>
+          <Field.Textarea placeholder="Tell us about yourself" />
+          <Field.HelperText>A short introduction.</Field.HelperText>
+          <Field.ErrorText>Bio is required.</Field.ErrorText>
+        </Field.Root>
+      </section>
+      <Card.Root variant="outline" size="md">
+        <Card.Header>
+          <Card.Title>Monthly report</Card.Title>
+          <Card.Description>Revenue across every channel.</Card.Description>
+        </Card.Header>
+        <Card.Content>Up 12% on last month.</Card.Content>
+        <Card.Footer>
+          <Button variant="outline" size="sm">
+            Export
+          </Button>
+        </Card.Footer>
+      </Card.Root>
 
       <section aria-label="checkboxes">
         <Checkbox.Root defaultChecked>
@@ -149,6 +218,16 @@ export function App({ open = false }: AppProps) {
           </Select.Positioner>
         </Portal>
       </Select.Root>
+
+      <PinInput.Root count={CODE_CELLS.length} otp size="md">
+        <PinInput.Label>Verification code</PinInput.Label>
+        <PinInput.Control>
+          {CODE_CELLS.map((index) => (
+            <PinInput.Input key={index} index={index} />
+          ))}
+        </PinInput.Control>
+        <PinInput.HiddenInput />
+      </PinInput.Root>
 
       <section aria-label="charts">
         <LineChart width={320} height={180} series={sales} />

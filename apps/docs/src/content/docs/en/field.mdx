@@ -1,25 +1,31 @@
 ---
 title: Field
-description: A labelled form control with helper/error wiring — Ark's Field machine owns the label/id association and the invalid/disabled/required data-attributes; components.css does the rest.
+description: A labelled form control with helper/error wiring — Ark's Field machine owns the label/id association and the invalid/disabled/required data-attributes; a size recipe on the root sets the density of every part.
 group: Components
 order: 20
 component: Field
 pkg: "@moderno-ui/react"
-agentPropsHash: "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+agentPropsHash: "sha256:30862889b91779e601185ef88a42767d97abd4ae32ce3a6ef9943c835c5c996c"
 agent:
   intent: A labelled form control with helper/error wiring.
   whenToUse: Any text/textarea input that needs a label and validation messaging.
   whenNotToUse:
     - case: Boolean input
       use: Checkbox or Switch
+    - case: Picking from a known list of options
+      use: Select
   gotchas:
     - label/input association is automatic via the parts; do not add htmlFor by hand.
     - "error-text is announced; put validation copy there, not in a sibling div."
+    - "size goes on Field.Root, not on Field.Input/Field.Textarea — one attribute sizes every part."
+    - "Use Field.Textarea for multi-line copy; it is its own part, not Field.Input with rows."
   theming:
     - input border uses --input; focus ring uses --ring.
+    - "invalid switches border, tint and focus ring to --destructive; disabled fills with --muted."
 ---
 
 import Preview from "../../../components/Preview.astro";
+import CodeBlock from "../../../components/CodeBlock.astro";
 import PropsTable from "../../../components/PropsTable.astro";
 import Install from "../../../components/Install.astro";
 import FieldDemo from "../../../islands/FieldDemo.svelte";
@@ -30,15 +36,45 @@ Field wires accessibility, not appearance: Ark's Field machine associates
 `data-required` — those attributes, not CVA variants, are what
 `components.css` keys the error/disabled look off.
 
+The one thing you choose is `size`. It goes on `Field.Root`, and the single
+`data-size` it emits sizes every part at once: the label, the control's height
+and padding, and the helper/error text.
+
 <Preview
+  code={`<Field.Root size="sm">
+  <Field.Label>Email</Field.Label>
+  <Field.Input placeholder="you@example.com" />
+  <Field.HelperText>Small — dense forms and filter bars.</Field.HelperText>
+</Field.Root>
+
+<Field.Root size="lg" invalid>
+  <Field.Label>Workspace URL</Field.Label>
+  <Field.Input placeholder="acme" />
+  <Field.ErrorText>Use lowercase letters, numbers and dashes.</Field.ErrorText>
+</Field.Root>
+
+<Field.Root size="md">
+  <Field.Label>Bio</Field.Label>
+  <Field.Textarea placeholder="Tell us about yourself" />
+</Field.Root>`}
+>
+  <FieldDemo client:visible />
+</Preview>
+
+## Input and Textarea
+
+Both controls are Ark parts of the same scope, so they share the border, radius,
+focus ring and invalid treatment. They differ where the shape differs: an input
+is one line with a fixed height, a textarea has a minimum height per size and
+resizes vertically only, so it can never break out of the field's column.
+
+<CodeBlock
   code={`<Field.Root invalid={hasError}>
   <Field.Label>Email</Field.Label>
   <Field.Input type="email" />
   <Field.ErrorText>Enter a valid email.</Field.ErrorText>
 </Field.Root>`}
->
-  <FieldDemo client:visible />
-</Preview>
+/>
 
 ## Installation
 

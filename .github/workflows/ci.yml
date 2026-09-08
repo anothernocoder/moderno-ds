@@ -17,6 +17,10 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm -r build
+      # The registry is what consumers copy: a block that hardcodes a colour or
+      # a dimension never reaches them (ADR-0005, CONTRACT.md "Responsive
+      # policy"). Needs the build above — the CLI runs on @moderno-ui/lint-core.
+      - run: pnpm lint:registry
       - run: pnpm theme:build
       - run: pnpm docs:parity
       - run: pnpm agent:check-drift
@@ -55,8 +59,10 @@ jobs:
           retention-days: 14
       # A page with no baseline yet (a brand-new docs page) still fails the run,
       # but Playwright writes the screenshot it would have compared against.
-      # Committing this artifact is how such a page joins the matrix; changed
-      # pages need `pnpm docs:visual:update` instead, which rewrites all of them.
+      # Copying *that page's files* out of this artifact is how it joins the
+      # matrix — never the whole directory, which would revert baselines merged
+      # since this branch's base. A changed page needs `pnpm docs:visual:update`
+      # instead (`--only <name>` to keep it to the pages that actually moved).
       - if: failure()
         uses: actions/upload-artifact@v4
         with:

@@ -14,8 +14,14 @@
 | Tokens / brand   | `@moderno-ui/tokens` → contract slots          | one theme re-themes 5 |
 
 Each binding's only job is to spread `data-scope`/`data-part` + the recipe's
+`data-*` onto markup. Button, Alert and Card are the authored elements — none
+has an Ark machine to wrap, so all of their parts are ours; Dialog is a verbatim
+Ark re-export; Field, Select and Checkbox wrap only `Root` to inject `data-size`.
+`data-*` onto markup. Button and Divider are the authored elements (neither has
+a headless machine behind it); Field and Dialog are verbatim Ark re-exports;
+Select and Checkbox wrap only `Root` to inject `data-size`.
 `data-*` onto markup. Button is the sole authored element; Field and Dialog are
-verbatim Ark re-exports; Select and Checkbox wrap only `Root` to inject
+verbatim Ark re-exports; Select, Checkbox and PinInput wrap only `Root` to inject
 `data-size`.
 
 ## Component × framework × state
@@ -34,15 +40,57 @@ shared stylesheet keys on.
 | `type` default+override  |  ✅   | ✅  |   ✅   |  ✅   |
 | native props + events    |  ✅   | ✅  |   ✅   |  ✅   |
 
+### Card (`cardRecipe`: `data-variant` × `data-size`; CSS-only, no Ark machine)
+
+### Divider (`dividerRecipe`: `data-orientation` × `data-align`)
+
+| State / prop                     | React | Vue | Svelte | Solid |
+| -------------------------------- | :---: | :-: | :----: | :---: |
+| scope/part + defaults            |  ✅   | ✅  |   ✅   |  ✅   |
+| orientation → `data-orientation` |  ✅   | ✅  |   ✅   |  ✅   |
+| align → `data-align`             |  ✅   | ✅  |   ✅   |  ✅   |
+| label → `[data-part="label"]`    |  ✅   | ✅  |   ✅   |  ✅   |
+| `role=separator` only when bare  |  ✅   | ✅  |   ✅   |  ✅   |
+| no baked class/style             |  ✅   | ✅  |   ✅   |  ✅   |
+| native props forwarded           |  ✅   | ✅  |   ✅   |  ✅   |
+
 ### Field (Ark `data-invalid` / `data-disabled`, no recipe)
 
-| State                        | React | Vue | Svelte | Solid |
-| ---------------------------- | :---: | :-: | :----: | :---: |
-| label ↔ control (`for`/`id`) |  ✅   | ✅  |   ✅   |  ✅   |
-| scope/part attributes        |  ✅   | ✅  |   ✅   |  ✅   |
-| invalid → `data-invalid`     |  ✅   | ✅  |   ✅   |  ✅   |
-| error text hidden when valid |  ✅   | ✅  |   ✅   |  ✅   |
-| disabled propagates          |  ✅   | ✅  |   ✅   |  ✅   |
+| State / prop                           | React | Vue | Svelte | Solid |
+| -------------------------------------- | :---: | :-: | :----: | :---: |
+| root scope/part + recipe defaults      |  ✅   | ✅  |   ✅   |  ✅   |
+| every part carries scope + `data-part` |  ✅   | ✅  |   ✅   |  ✅   |
+| variant → `data-variant`               |  ✅   | ✅  |   ✅   |  ✅   |
+| size → `data-size`                     |  ✅   | ✅  |   ✅   |  ✅   |
+| title renders as a heading (`h3`)      |  ✅   | ✅  |   ✅   |  ✅   |
+| no baked class/style                   |  ✅   | ✅  |   ✅   |  ✅   |
+| native props + events                  |  ✅   | ✅  |   ✅   |  ✅   |
+
+### Alert (`alertRecipe`: `data-variant` × `data-size`; no Ark machine)
+
+| State / prop                   | React | Vue | Svelte | Solid |
+| ------------------------------ | :---: | :-: | :----: | :---: |
+| scope/part + defaults          |  ✅   | ✅  |   ✅   |  ✅   |
+| variant → `data-variant`       |  ✅   | ✅  |   ✅   |  ✅   |
+| size → `data-size`             |  ✅   | ✅  |   ✅   |  ✅   |
+| full anatomy renders           |  ✅   | ✅  |   ✅   |  ✅   |
+| status → `role` (alert/status) |  ✅   | ✅  |   ✅   |  ✅   |
+| consumer `role` overrides      |  ✅   | ✅  |   ✅   |  ✅   |
+| icon part `aria-hidden`        |  ✅   | ✅  |   ✅   |  ✅   |
+| no baked class/style           |  ✅   | ✅  |   ✅   |  ✅   |
+
+### Field (`fieldRecipe`: `data-size`; state is Ark's `data-invalid` / `data-disabled`)
+
+| State / prop                    | React | Vue | Svelte | Solid |
+| ------------------------------- | :---: | :-: | :----: | :---: |
+| label ↔ control (`for`/`id`)    |  ✅   | ✅  |   ✅   |  ✅   |
+| scope/part attributes           |  ✅   | ✅  |   ✅   |  ✅   |
+| invalid → `data-invalid`        |  ✅   | ✅  |   ✅   |  ✅   |
+| error text hidden when valid    |  ✅   | ✅  |   ✅   |  ✅   |
+| disabled propagates             |  ✅   | ✅  |   ✅   |  ✅   |
+| default size → root `data-size` |  ✅   | ✅  |   ✅   |  ✅   |
+| size → root `data-size` only    |  ✅   | ✅  |   ✅   |  ✅   |
+| textarea control → `data-part`  |  ✅   | ✅  |   ✅   |  ✅   |
 
 ### Checkbox (`checkboxRecipe`: `data-size`; Ark tri-state machine)
 
@@ -72,18 +120,38 @@ shared stylesheet keys on.
 | select by click reports value |  ✅   | ✅  |   ✅   |  ✅   |
 | open listbox from keyboard    |  ✅   | ✅  |   ✅   |  ✅   |
 
+### PinInput (`pinInputRecipe`: `data-size`; Ark focus/paste/mask machine)
+
+| State                                  | React | Vue | Svelte | Solid |
+| -------------------------------------- | :---: | :-: | :----: | :---: |
+| size → root `data-size`                |  ✅   | ✅  |   ✅   |  ✅   |
+| one cell per index, labelled, otp      |  ✅   | ✅  |   ✅   |  ✅   |
+| typing fills → `data-filled`/-complete |  ✅   | ✅  |   ✅   |  ✅   |
+| paste distributes across the cells     |  ✅   | ✅  |   ✅   |  ✅   |
+| mask → `type="password"`               |  ✅   | ✅  |   ✅   |  ✅   |
+| invalid → `data-invalid` + aria        |  ✅   | ✅  |   ✅   |  ✅   |
+
 ## SSR (F3.3 / F3.5)
 
 | Guarantee                                   | React | Vue | Svelte | Solid |
 | ------------------------------------------- | :---: | :-: | :----: | :---: |
 | stable server HTML (scope/part + recipe)    |  ✅   | ✅  |   ✅   |  ✅   |
 | checkbox `data-state` survives SSR          |  ✅   | ✅  |   ✅   |  ✅   |
+| Field sizes + textarea survive SSR          |  ✅   | ✅  |   ✅   |  ✅   |
 | warning-free hydration (id path)            |  ✅   | ✅¹ |   —²   |  —²   |
 | static server-only island (zero `<script>`) |   —   |  —  |   ✅   |   —   |
 | `defaultOpen` survives SSR                  |  ✅   | ✅  |   ✅   |  ✅   |
+| PinInput `count` → correct server aria      |  ✅   | ✅  |   ✅   |  ✅   |
 
+¹ Vue hydration is verified on the portal-free primitives (Button, Card, Field
+and Checkbox), the deterministic `useId` hazard; Ark's portaled popovers
 ¹ Vue hydration is verified on the portal-free primitives (Button + Field +
-Checkbox), the deterministic `useId` hazard; Ark's portaled popovers position
+Checkbox + Alert), the deterministic `useId` hazard; Ark's portaled popovers
+¹ Vue hydration is verified on the portal-free primitives (Button + Divider +
+Field + Checkbox), the deterministic `useId` hazard; Ark's portaled popovers
+position via floating-ui measurement absent in jsdom, so their hydration is
+covered by the string + interaction suites.
+Checkbox + PinInput), the deterministic `useId` hazard; Ark's portaled popovers position
 via floating-ui measurement absent in jsdom, so their hydration is covered by
 the string + interaction suites.
 ² Svelte/Solid use a separate SSR-compiled test project (`*.ssr.test.*`) that
@@ -98,6 +166,13 @@ Astro-island guarantee (F3.5).
 - **Authoring style** mirrors each ecosystem: React/Solid JSX, Vue `h()` render
   functions (no SFC → tsup builds it), Svelte 5 `.svelte` runes (built with
   `svelte-package`).
-- **Typing**: the wrapped `Select` and `Checkbox` exports are annotated in every
-  package so the emitted `.d.ts` never inlines an un-nameable `@zag-js` type
-  (TS2742).
+- **Typing**: the wrapped `Field`, `Select` and `Checkbox` exports are annotated
+  in every package so the emitted `.d.ts` never inlines an un-nameable `@zag-js`
+  type (TS2742).
+- **Typing**: the wrapped `Select`, `Checkbox` and `PinInput` exports are annotated
+  in every package so the emitted `.d.ts` never inlines an un-nameable `@zag-js`
+  type (TS2742).
+- **PinInput cells** are authored by the consumer — one `PinInput.Input` per
+  index inside `PinInput.Control` — so the cell count is the same declaration in
+  all four bindings; `count` on the Root is what makes the server render the
+  right aria labels.

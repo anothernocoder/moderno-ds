@@ -143,10 +143,25 @@ function parseAttrs(text: string): Record<string, string | true> {
   return attrs;
 }
 
-/** Every `<name ...>` usage of a component in `code`, in document order. */
+/**
+ * Every `<name ...>` usage of a component in `code`, in document order.
+ *
+ * A compound primitive is invoked through its namespace (`<Card.Root …>`,
+ * `<Select.Root …>`), and the manifest's `props` are that root part's props, so
+ * `<Name.Root>` counts as a usage of `Name`. The other parts deliberately do
+ * not: they take only native attributes plus whatever the headless machine
+ * hands them (`<Select.Item item={…}>`), none of which the root's prop list
+ * knows about.
+ *
+ * The root of a machine-backed primitive has the same problem one level up —
+ * `<Select.Root collection={…}>` is Ark's prop, absent from the manifest — but
+ * that is a question about the *prop list*, not about what counts as a usage,
+ * so it belongs to the caller: `valid-props` gates its unknown-prop check on
+ * the manifest's `propsComplete`.
+ */
 export function findComponentUsages(code: string, name: string): ComponentUsage[] {
   const usages: ComponentUsage[] = [];
-  const openTag = new RegExp(`<${escapeRegExp(name)}(?=[\\s/>])`, "g");
+  const openTag = new RegExp(`<${escapeRegExp(name)}(?:\\.Root)?(?=[\\s/>])`, "g");
   let match: RegExpExecArray | null;
   while ((match = openTag.exec(code))) {
     const start = match.index;

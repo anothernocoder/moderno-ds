@@ -12,10 +12,14 @@ describe("AGENT_COMPONENTS", () => {
     const names = AGENT_COMPONENTS.map((c) => c.name);
     expect(names).toEqual([
       "Button",
+      "Alert",
+      "Card",
+      "Divider",
       "Field",
       "Checkbox",
       "Dialog",
       "Select",
+      "PinInput",
       "LineChart",
       "AreaChart",
       "BarChart",
@@ -54,23 +58,82 @@ describe("buildComponentsManifest", () => {
     expect(button.import).toBe('import { Button } from "@moderno-ui/vue"');
   });
 
-  it("resolves Button/Select/Checkbox props from the canonical react source", () => {
+  it("resolves Button/Select/Checkbox/Field/PinInput props from the canonical react source", () => {
     const button = manifest.components.find((c) => c.name === "Button")!;
     expect(button.props.map((p) => p.name).sort()).toEqual(["size", "variant"]);
+
+    const field = manifest.components.find((c) => c.name === "Field")!;
+    expect(field.props.map((p) => p.name)).toEqual(["size"]);
 
     const select = manifest.components.find((c) => c.name === "Select")!;
     expect(select.props.map((p) => p.name)).toEqual(["size"]);
 
     const checkbox = manifest.components.find((c) => c.name === "Checkbox")!;
     expect(checkbox.props.map((p) => p.name)).toEqual(["size"]);
+
+    // Ark's own Root props (count, mask, otp, …) are inherited from
+    // node_modules and stay out of the table; only what Moderno declares.
+    const pinInput = manifest.components.find((c) => c.name === "PinInput")!;
+    expect(pinInput.props.map((p) => p.name)).toEqual(["size"]);
+    expect(pinInput.variants).toEqual({ size: ["sm", "md", "lg"] });
   });
 
-  it("gives Field and Dialog empty props — they add none of their own", () => {
-    for (const name of ["Field", "Dialog"]) {
-      const doc = manifest.components.find((c) => c.name === name)!;
-      expect(doc.props).toEqual([]);
-      expect(doc.variants).toBeUndefined();
-    }
+  it("gives Dialog empty props — it adds none of its own", () => {
+    const doc = manifest.components.find((c) => c.name === "Dialog")!;
+    expect(doc.props).toEqual([]);
+    expect(doc.variants).toBeUndefined();
+  });
+
+  it("carries Alert's props, statuses and full anatomy — what validate_usage checks against", () => {
+    const alert = manifest.components.find((c) => c.name === "Alert")!;
+    expect(alert.scope).toBe("alert");
+    expect(alert.props.map((p) => p.name).sort()).toEqual(["size", "variant"]);
+    expect(alert.variants).toEqual({
+      variant: ["info", "success", "warning", "error"],
+      size: ["sm", "md"],
+    });
+    expect(alert.parts.map((p) => p.name)).toEqual([
+      "root",
+      "icon",
+      "content",
+      "title",
+      "description",
+      "action",
+    ]);
+  });
+
+  it("marks the prop list complete only where the workspace declares every prop", () => {
+    // The authored primitives own their whole API. The Ark-backed roots do
+    // not: `Select.Root`'s `collection`, `Field.Root`'s `invalid` and
+    // `Dialog.Root`'s `open` are declared under node_modules and dropped, so
+    // `validate_usage` must not read their prop lists as exhaustive.
+    const complete = manifest.components.filter((c) => c.propsComplete).map((c) => c.name);
+    expect(complete).toEqual([
+      "Button",
+      "Alert",
+      "Card",
+      "Divider",
+      "LineChart",
+      "AreaChart",
+      "BarChart",
+      "ScatterChart",
+    ]);
+  });
+
+  it("resolves Divider's recipe props, variants and styled parts", () => {
+    const divider = manifest.components.find((c) => c.name === "Divider")!;
+    expect(divider.props.map((p) => p.name)).toEqual(["align", "orientation"]);
+    expect(divider.variants).toEqual({
+      orientation: ["horizontal", "vertical"],
+      align: ["start", "center", "end"],
+    });
+    expect(divider.parts.map((p) => p.name)).toEqual(["root", "label"]);
+  });
+
+  it("gives Dialog empty props — it adds none of its own", () => {
+    const doc = manifest.components.find((c) => c.name === "Dialog")!;
+    expect(doc.props).toEqual([]);
+    expect(doc.variants).toBeUndefined();
   });
 
   it("reads variants straight off the shared @moderno-ui/core recipes", () => {
@@ -85,6 +148,9 @@ describe("buildComponentsManifest", () => {
 
     const checkbox = manifest.components.find((c) => c.name === "Checkbox")!;
     expect(checkbox.variants).toEqual({ size: ["sm", "md", "lg"] });
+
+    const field = manifest.components.find((c) => c.name === "Field")!;
+    expect(field.variants).toEqual({ size: ["sm", "md", "lg"] });
   });
 
   it("attaches framework-specific examples, not the react snippet reused verbatim", () => {

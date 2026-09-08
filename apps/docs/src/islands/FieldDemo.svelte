@@ -1,57 +1,50 @@
 <!--
-  Live Field preview — the real `Field` parts re-exported by @moderno-ui/svelte
-  (Ark's, verbatim), across the states components.css actually paints:
-  helper text, required indicator, invalid, disabled, and the textarea control.
-
-  Every state is rendered at once on purpose. Field carries no recipe and no
-  variants; its whole visual surface is the `data-invalid` / `data-disabled` /
-  `data-required` attributes Ark emits, so a preview that shows only the resting
-  state would leave most of the stylesheet unwitnessed — and, since this page is
-  captured by the visual suite, unguarded.
+  Live Field preview — the real @moderno-ui/svelte primitive across its three
+  sizes, over both controls (Input and Textarea) and in the invalid state.
+  Hydrated as an island; painted by @moderno-ui/css from the active theme, so it
+  re-skins live with the Theme Builder and the color-scheme toggle.
 -->
 <script lang="ts">
   import { Field } from "@moderno-ui/svelte";
 </script>
 
-<div class="demo-fields">
-  <Field.Root>
+<div class="demo-stack">
+  <Field.Root size="sm">
     <Field.Label>Email</Field.Label>
-    <Field.Input type="email" placeholder="you@example.com" />
-    <Field.HelperText>We never share it.</Field.HelperText>
+    <Field.Input placeholder="you@example.com" />
+    <Field.HelperText>Small — dense forms and filter bars.</Field.HelperText>
   </Field.Root>
 
-  <Field.Root required>
-    <Field.Label>
-      Full name
-      <Field.RequiredIndicator>*</Field.RequiredIndicator>
-    </Field.Label>
+  <Field.Root size="md">
+    <Field.Label>Full name</Field.Label>
     <Field.Input placeholder="Ada Lovelace" />
+    <Field.HelperText>Medium — the default.</Field.HelperText>
   </Field.Root>
 
-  <Field.Root invalid>
-    <Field.Label>Password</Field.Label>
-    <Field.Input type="password" value="short" />
-    <Field.ErrorText>Must be at least 12 characters.</Field.ErrorText>
+  <Field.Root size="lg" invalid>
+    <Field.Label>Workspace URL</Field.Label>
+    <Field.Input placeholder="acme" value="not a url" />
+    <Field.ErrorText>Use lowercase letters, numbers and dashes.</Field.ErrorText>
   </Field.Root>
 
-  <Field.Root disabled>
-    <Field.Label>Workspace</Field.Label>
-    <Field.Input value="acme-inc" />
-    <Field.HelperText>Set once at sign-up.</Field.HelperText>
+  <Field.Root size="md">
+    <Field.Label>Bio</Field.Label>
+    <Field.Textarea placeholder="Tell us about yourself" />
+    <Field.HelperText>Textarea grows vertically; the size sets its floor.</Field.HelperText>
   </Field.Root>
 
-  <Field.Root>
-    <Field.Label>Notes</Field.Label>
-    <Field.Textarea rows={3} placeholder="Anything we should know?" />
+  <Field.Root size="md" disabled>
+    <Field.Label>Plan</Field.Label>
+    <Field.Input value="Enterprise" />
+    <Field.HelperText>Disabled — managed by your administrator.</Field.HelperText>
   </Field.Root>
 </div>
 
 <style>
-  /* One column at every width. The preview panel is never wide enough for a
-     second one, and a form column narrower than its inputs is worse than a
-     stack — so no container query here rather than one that never fires. */
-  .demo-fields {
+  /* Layout only: the fields themselves carry no styling of their own. */
+  .demo-stack {
     display: grid;
-    gap: var(--spacing-5);
+    gap: 1.25rem;
+    max-width: 24rem;
   }
 </style>

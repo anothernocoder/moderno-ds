@@ -88,12 +88,61 @@ describe("validateUsage", () => {
     expect(rawArk[0]!.suggestion).toContain('import { Checkbox } from "@moderno-ui/react"');
   });
 
+  it("accepts a real PinInput usage and its own data-part overrides", () => {
+    const code = [
+      'import { PinInput } from "@moderno-ui/react";',
+      "",
+      '<PinInput.Root count={6} otp size="lg">',
+      "  <PinInput.Control>",
+      "    <PinInput.Input index={0} />",
+      "  </PinInput.Control>",
+      "</PinInput.Root>",
+      "",
+      '[data-scope="pin-input"][data-part="control"] { gap: var(--spacing-3); }',
+    ].join("\n");
+    expect(validateUsage(manifests, { code, framework: "react" }).findings).toHaveLength(0);
+  });
+
+  it("flags a data-part the PinInput anatomy doesn't have", () => {
+    const { findings } = validateUsage(manifests, {
+      framework: "react",
+      code: '[data-scope="pin-input"][data-part="cell"] { color: var(--foreground); }',
+    });
+    expect(findings).toHaveLength(1);
+    expect(findings[0]).toMatchObject({ ruleId: "moderno/valid-data-part-override" });
+    expect(findings[0]!.message).toContain('"cell" is not a real part of PinInput');
+  });
+
   it("returns no findings for clean, valid usage", () => {
     const { findings } = validateUsage(manifests, {
       framework: "react",
       code: '<Button variant="primary">Save</Button>',
     });
     expect(findings).toHaveLength(0);
+  });
+
+  it("accepts a compound primitive's props on its Root, and catches a wrong one", () => {
+    const valid = validateUsage(manifests, {
+      framework: "react",
+      code: [
+        '<Card.Root variant="outline" size="md">',
+        "  <Card.Header>",
+        "    <Card.Title>Monthly report</Card.Title>",
+        "    <Card.Description>Revenue across every channel.</Card.Description>",
+        "  </Card.Header>",
+        "  <Card.Content>Up 12% on last month.</Card.Content>",
+        "  <Card.Footer>Export</Card.Footer>",
+        "</Card.Root>",
+      ].join("\n"),
+    });
+    expect(valid.findings).toHaveLength(0);
+
+    const invalid = validateUsage(manifests, {
+      framework: "react",
+      code: '<Card.Root elevation="high">…</Card.Root>',
+    });
+    expect(invalid.findings).toHaveLength(1);
+    expect(invalid.findings[0]).toMatchObject({ ruleId: "moderno/valid-props" });
   });
 
   it("throws a ModernoMcpError for a framework that isn't installed", () => {

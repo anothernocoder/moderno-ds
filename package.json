@@ -10,6 +10,7 @@
   "scripts": {
     "prepare": "git rev-parse --git-dir > /dev/null 2>&1 && git config core.hooksPath .githooks || true",
     "lint": "eslint .",
+    "lint:registry": "node --experimental-strip-types packages/lint/src/bin.ts --registry registry/registry.json",
     "format": "prettier --check .",
     "format:write": "prettier --write .",
     "typecheck": "tsc --noEmit -p tsconfig.json && pnpm --filter @moderno-ui/react typecheck && pnpm --filter @moderno-ui/vue typecheck && pnpm --filter @moderno-ui/solid typecheck && pnpm --filter @moderno-ui/svelte typecheck && pnpm --filter @moderno-ui/docs typecheck",

@@ -120,9 +120,191 @@
     color: var(--accent-foreground);
   }
 
+  /* ──────────────────────────── Card ──────────────────────────── *
+   * `cardRecipe` variant × size on the root part. A surface, not a control:
+   * no Ark machine, no interactive state — the whole primitive is these
+   * rules plus the anatomy the bindings emit (root > header > title +
+   * description, content, footer).
+   *
+   * Depth comes from a surface step and a 1px border, never a shadow
+   * (DESIGN.md, "Elevation & Depth"); the corner follows --radius, which
+   * theme-moderno pins to 0 — so "no shadow, no radius" is the theme's
+   * decision, not a value baked in here. */
+  [data-scope="card"][data-part="root"] {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--card);
+    color: var(--card-foreground);
+    font-family: var(--font-sans);
+    /* A card sizes to its container, so blocks can drop it into any grid. */
+    inline-size: 100%;
+  }
+
+  /* Variants — the surface treatment. `outline` is the DESIGN.md card: the
+     card fill with a 1px border. `muted` is the recessed well. `ghost` keeps
+     the anatomy's rhythm with no surface of its own. */
+  [data-scope="card"][data-part="root"][data-variant="muted"] {
+    background-color: var(--muted);
+    color: var(--foreground);
+  }
+  [data-scope="card"][data-part="root"][data-variant="ghost"] {
+    border-color: transparent;
+    background-color: transparent;
+    color: var(--foreground);
+  }
+
+  /* The three padded regions. `md` is the base; `sm`/`lg` re-step it next,
+     the same shape Select uses for its density. Every step is a --spacing-*
+     slot, so a theme re-scales the card by re-mapping the scale. */
+  [data-scope="card"][data-part="header"],
+  [data-scope="card"][data-part="content"],
+  [data-scope="card"][data-part="footer"] {
+    padding: var(--spacing-6);
+  }
+
+  /* Density — the same three regions the base rule names, spelled out again so
+     the step can never reach a part the base does not pad. Every part is
+     optional and the order is the consumer's, so a root holding only a title
+     must look the same at `sm`/`lg` as at `md`. The child combinator keeps a
+     nested card on its own size instead of inheriting its host's. */
+  [data-scope="card"][data-size="sm"] > [data-scope="card"][data-part="header"],
+  [data-scope="card"][data-size="sm"] > [data-scope="card"][data-part="content"],
+  [data-scope="card"][data-size="sm"] > [data-scope="card"][data-part="footer"] {
+    padding: var(--spacing-4);
+  }
+  [data-scope="card"][data-size="lg"] > [data-scope="card"][data-part="header"],
+  [data-scope="card"][data-size="lg"] > [data-scope="card"][data-part="content"],
+  [data-scope="card"][data-size="lg"] > [data-scope="card"][data-part="footer"] {
+    padding: var(--spacing-8);
+  }
+  /* Consecutive regions share one padding step between them instead of
+     stacking two, which keeps the vertical rhythm on the scale. Last, so it
+     collapses the seam at every density. */
+  [data-scope="card"][data-part="header"] + [data-scope="card"][data-part="content"],
+  [data-scope="card"][data-part="content"] + [data-scope="card"][data-part="footer"],
+  [data-scope="card"][data-part="header"] + [data-scope="card"][data-part="footer"] {
+    padding-block-start: 0;
+  }
+
+  [data-scope="card"][data-part="header"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-1);
+  }
+
+  [data-scope="card"][data-part="title"] {
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+  /* Only `lg` promotes the title: a bigger card is usually a bigger claim on
+     the page. `sm` tightens the padding but keeps the same voice. */
+  [data-scope="card"][data-size="lg"] > [data-part="header"] > [data-part="title"] {
+    font-size: 1.125rem;
+  }
+
+  [data-scope="card"][data-part="description"] {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--muted-foreground);
+  }
+
+  /* The body is the only part that grows, so a row of cards in a grid keeps
+     its footers aligned however long the content runs. */
+  [data-scope="card"][data-part="content"] {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--spacing-3);
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  [data-scope="card"][data-part="footer"] {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+  }
+
+  /* ────────────────────────── Divider ─────────────────────────── *
+   * data-orientation × data-align from `dividerRecipe`. No Ark machine —
+   * a rule is pure CSS. The two halves of the line are the root's ::before
+   * and ::after, so an unlabelled divider renders as one continuous stroke
+   * and a labelled one splits around [data-part="label"] with no extra
+   * markup. The stroke reads --border; a 1px rule is a rendering primitive,
+   * the same literal the contract already tolerates for every border.       */
+  [data-scope="divider"][data-part="root"] {
+    display: flex;
+    align-items: center;
+  }
+  [data-scope="divider"][data-part="root"]::before,
+  [data-scope="divider"][data-part="root"]::after {
+    content: "";
+    flex: 1 1 0;
+    background-color: var(--border);
+  }
+
+  [data-scope="divider"][data-part="root"][data-orientation="horizontal"] {
+    flex-direction: row;
+    width: 100%;
+  }
+  [data-scope="divider"][data-part="root"][data-orientation="horizontal"]::before,
+  [data-scope="divider"][data-part="root"][data-orientation="horizontal"]::after {
+    height: 1px;
+  }
+
+  /* A vertical rule takes its length from the row it sits in; the min-height
+     keeps it visible when that row has no height of its own. */
+  [data-scope="divider"][data-part="root"][data-orientation="vertical"] {
+    flex-direction: column;
+    align-self: stretch;
+    min-height: var(--spacing-4);
+  }
+  [data-scope="divider"][data-part="root"][data-orientation="vertical"]::before,
+  [data-scope="divider"][data-part="root"][data-orientation="vertical"]::after {
+    width: 1px;
+  }
+
+  /* Alignment shortens the leading (start) or trailing (end) half so the label
+     sits near that edge; `center` leaves both halves free to grow. */
+  [data-scope="divider"][data-part="root"][data-align="start"]::before {
+    flex: 0 0 var(--spacing-4);
+  }
+  [data-scope="divider"][data-part="root"][data-align="end"]::after {
+    flex: 0 0 var(--spacing-4);
+  }
+
+  /* The label's own margins open the gap in the rule, so an unlabelled divider
+     needs no `gap` reset — nothing sits between the halves and they meet.
+     Flow-relative margins resolve against the *label's own* writing mode, and
+     the vertical label is `vertical-rl`, so its inline axis is the page's
+     vertical one: `margin-inline` is the along-the-rule axis in both
+     orientations. `margin-block` on the vertical label would pad its sides
+     instead — widening the rule and letting the stroke butt into the glyphs. */
+  [data-scope="divider"][data-part="label"] {
+    flex: 0 0 auto;
+    color: var(--muted-foreground);
+    font-size: 0.8125rem;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  [data-scope="divider"][data-orientation="horizontal"] [data-part="label"] {
+    margin-inline: var(--spacing-3);
+  }
+  [data-scope="divider"][data-orientation="vertical"] [data-part="label"] {
+    writing-mode: vertical-rl;
+    margin-inline: var(--spacing-2);
+  }
+
   /* ─────────────────────────── Field ──────────────────────────── *
-   * Ark wires label↔control + `data-invalid`/`data-disabled`; we only
-   * style. Scope "field", parts root/label/input/helper-text/error-text. */
+   * Ark wires label↔control + `data-invalid`/`data-disabled`; we style. The
+   * only prop-driven knob is `fieldRecipe`'s `data-size` on the root, which
+   * sizes every part at once (label, control, helper/error) — the base rules
+   * below ARE the `md` step, so an un-sized root still renders correctly, and
+   * `sm`/`lg` override only the density declarations (same shape as Select).
+   * Scope "field", parts root/label/input/textarea/helper-text/error-text. */
   [data-scope="field"][data-part="root"] {
     display: flex;
     flex-direction: column;
@@ -131,6 +313,7 @@
   [data-scope="field"][data-part="label"] {
     font-size: 0.875rem;
     font-weight: 500;
+    line-height: 1.4;
     color: var(--foreground);
   }
   [data-scope="field"][data-part="input"],
@@ -143,13 +326,44 @@
     color: var(--foreground);
     font-family: var(--font-sans);
     font-size: 0.875rem;
+    /* A control announces focus and validity by moving colour, not geometry;
+       transitioning both keeps the change legible instead of instant. */
+    transition:
+      border-color var(--motion-fast),
+      background-color var(--motion-fast);
   }
+  /* An input is one line: fix the height so the box never depends on its
+     content. A textarea grows, so it gets a floor and vertical resize only —
+     horizontal resize would break out of the field's column. */
   [data-scope="field"][data-part="input"] {
     height: var(--spacing-8);
+    padding-block: 0;
+  }
+  [data-scope="field"][data-part="textarea"] {
+    min-height: calc(var(--spacing-8) * 2.5);
+    line-height: 1.5;
+    resize: vertical;
   }
   [data-scope="field"][data-part="input"]::placeholder,
   [data-scope="field"][data-part="textarea"]::placeholder {
     color: var(--muted-foreground);
+  }
+  /* Hover raises the border to the focus colour — the affordance that says
+     "this is editable" before the caret lands. Keyed on the native `:disabled`
+     of the control itself (Ark forwards the Field's `disabled` down to it), so
+     a dead control never offers it.
+     `:not([data-invalid])` is what keeps an invalid control red under the
+     pointer: `:not()` takes its argument's specificity, so without it this rule
+     outranks the `[data-invalid]` rule below and the border would go neutral
+     while the tint and the error text stayed red — the same "reads as fixed
+     before it is" failure the invalid focus rule avoids. Excluding the state
+     here (rather than repainting it in a later rule) leaves `[data-invalid]`
+     the single owner of the destructive border.
+     `test/components-css.cascade.test.ts` resolves this cascade and fails if
+     the exclusion goes. */
+  [data-scope="field"][data-part="input"]:hover:not(:disabled):not([data-invalid]),
+  [data-scope="field"][data-part="textarea"]:hover:not(:disabled):not([data-invalid]) {
+    border-color: var(--ring);
   }
   /* The shared focus ring keys off [data-part="root"]; Field's control is a
      separate part, so it gets its own ring here. */
@@ -161,17 +375,79 @@
   [data-scope="field"][data-part="input"][data-invalid],
   [data-scope="field"][data-part="textarea"][data-invalid] {
     border-color: var(--destructive);
+    background-color: color-mix(in oklab, var(--destructive) 4%, var(--background));
+  }
+  /* An invalid control keeps its error colour while focused; a neutral ring
+     over a red border reads as "fixed" before it is. */
+  [data-scope="field"][data-part="input"][data-invalid]:focus-visible,
+  [data-scope="field"][data-part="textarea"][data-invalid]:focus-visible {
+    outline-color: var(--destructive);
+  }
+  /* The base layer already dims disabled parts; a muted fill is what tells a
+     reader the box is inert rather than merely low-contrast. */
+  [data-scope="field"][data-part="input"]:disabled,
+  [data-scope="field"][data-part="textarea"]:disabled {
+    background-color: var(--muted);
+  }
+  [data-scope="field"][data-part="helper-text"],
+  [data-scope="field"][data-part="error-text"] {
+    font-size: 0.8125rem;
+    line-height: 1.4;
   }
   [data-scope="field"][data-part="helper-text"] {
-    font-size: 0.8125rem;
     color: var(--muted-foreground);
   }
   [data-scope="field"][data-part="error-text"] {
-    font-size: 0.8125rem;
     color: var(--destructive);
   }
   [data-scope="field"][data-part="required-indicator"] {
     color: var(--destructive);
+  }
+
+  /* Density driven by the recipe's data-size on the root part. Heights compose
+     from the in-contract spacing slots exactly as Button's do; `lg` exceeds the
+     top slot, so it sums two rather than inventing an off-contract value. */
+  [data-scope="field"][data-part="root"][data-size="sm"] {
+    gap: var(--spacing-1);
+  }
+  [data-scope="field"][data-size="sm"] [data-part="label"] {
+    font-size: 0.8125rem;
+  }
+  [data-scope="field"][data-size="sm"] [data-part="input"],
+  [data-scope="field"][data-size="sm"] [data-part="textarea"] {
+    padding-inline: var(--spacing-2);
+    font-size: 0.8125rem;
+  }
+  [data-scope="field"][data-size="sm"] [data-part="input"] {
+    height: var(--spacing-7);
+  }
+  [data-scope="field"][data-size="sm"] [data-part="textarea"] {
+    min-height: calc(var(--spacing-8) * 2);
+    padding-block: var(--spacing-1);
+  }
+  [data-scope="field"][data-size="sm"] [data-part="helper-text"],
+  [data-scope="field"][data-size="sm"] [data-part="error-text"] {
+    font-size: 0.75rem;
+  }
+
+  [data-scope="field"][data-size="lg"] [data-part="label"] {
+    font-size: 0.9375rem;
+  }
+  [data-scope="field"][data-size="lg"] [data-part="input"],
+  [data-scope="field"][data-size="lg"] [data-part="textarea"] {
+    padding-inline: var(--spacing-4);
+    font-size: 0.9375rem;
+  }
+  [data-scope="field"][data-size="lg"] [data-part="input"] {
+    height: calc(var(--spacing-8) + var(--spacing-2));
+  }
+  [data-scope="field"][data-size="lg"] [data-part="textarea"] {
+    min-height: calc(var(--spacing-8) * 3);
+    padding-block: var(--spacing-3);
+  }
+  [data-scope="field"][data-size="lg"] [data-part="helper-text"],
+  [data-scope="field"][data-size="lg"] [data-part="error-text"] {
+    font-size: 0.875rem;
   }
 
   /* ────────────────────────── Checkbox ────────────────────────── *
@@ -368,6 +644,171 @@
   }
   [data-scope="select"][data-part="item"][data-state="checked"] {
     font-weight: 600;
+  }
+
+  /* ─────────────────────────── Alert ──────────────────────────── *
+   * `alertRecipe` variant × size on the root part. No Ark machine — a static
+   * region, so every attribute comes from the recipe. Anatomy:
+   * root > icon + content(> title + description + action).
+   *
+   * Each status tints one surface from its contract slot: the fill is that hue
+   * mixed into --card at low strength, the border at higher strength, and the
+   * icon paints the hue at full strength. `error` reads --destructive so a
+   * destructive action and an error message speak with one voice. */
+  [data-scope="alert"][data-part="root"] {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-3);
+    padding: var(--spacing-4);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--card);
+    color: var(--card-foreground);
+  }
+  [data-scope="alert"][data-part="root"][data-size="sm"] {
+    gap: var(--spacing-2);
+    padding: var(--spacing-3);
+  }
+
+  /* The icon is the consumer's (primitives never depend on an icon set); the
+     part only positions it and hands down the status hue via currentColor. */
+  [data-scope="alert"][data-part="icon"] {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    /* Optically centre a 1em glyph on the first line of the title. */
+    height: 1.25rem;
+  }
+  [data-scope="alert"][data-part="content"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-1);
+    /* Let long words wrap instead of stretching the flex row. */
+    min-width: 0;
+    flex: 1;
+  }
+  [data-scope="alert"][data-part="title"] {
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.25rem;
+    color: var(--foreground);
+  }
+  [data-scope="alert"][data-part="description"] {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--muted-foreground);
+  }
+  [data-scope="alert"][data-part="action"] {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    margin-top: var(--spacing-2);
+  }
+  [data-scope="alert"][data-size="sm"] [data-part="title"],
+  [data-scope="alert"][data-size="sm"] [data-part="description"] {
+    font-size: 0.8125rem;
+  }
+
+  /* Status tints. Written per variant rather than through one shared custom
+     property so every colour still traces to a contract slot by name. */
+  [data-scope="alert"][data-part="root"][data-variant="info"] {
+    border-color: color-mix(in oklab, var(--info) 28%, var(--border));
+    background-color: color-mix(in oklab, var(--info) 8%, var(--card));
+  }
+  [data-scope="alert"][data-variant="info"] [data-part="icon"] {
+    color: var(--info);
+  }
+  [data-scope="alert"][data-part="root"][data-variant="success"] {
+    border-color: color-mix(in oklab, var(--success) 28%, var(--border));
+    background-color: color-mix(in oklab, var(--success) 8%, var(--card));
+  }
+  [data-scope="alert"][data-variant="success"] [data-part="icon"] {
+    color: var(--success);
+  }
+  [data-scope="alert"][data-part="root"][data-variant="warning"] {
+    border-color: color-mix(in oklab, var(--warning) 28%, var(--border));
+    background-color: color-mix(in oklab, var(--warning) 8%, var(--card));
+  }
+  [data-scope="alert"][data-variant="warning"] [data-part="icon"] {
+    color: var(--warning);
+  }
+  [data-scope="alert"][data-part="root"][data-variant="error"] {
+    border-color: color-mix(in oklab, var(--destructive) 28%, var(--border));
+    background-color: color-mix(in oklab, var(--destructive) 8%, var(--card));
+  }
+  [data-scope="alert"][data-variant="error"] [data-part="icon"] {
+    color: var(--destructive);
+  }
+
+  /* ────────────────────────── Pin Input ───────────────────────── *
+   * `pinInputRecipe` size on root; Ark drives focus movement, paste
+   * distribution, masking and the invalid/complete flags. Scope "pin-input",
+   * parts root/label/control/input.                                     */
+  [data-scope="pin-input"][data-part="root"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+  }
+  [data-scope="pin-input"][data-part="label"] {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--foreground);
+  }
+  [data-scope="pin-input"][data-part="control"] {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-2);
+  }
+  /* One code cell. Square by construction so a 4- or 6-digit code reads as a
+     row of slots rather than a row of text fields; the digit is monospaced so
+     cells don't twitch as characters land. */
+  [data-scope="pin-input"][data-part="input"] {
+    width: var(--spacing-8);
+    height: var(--spacing-8);
+    padding: 0;
+    border: 1px solid var(--input);
+    border-radius: var(--radius);
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    text-align: center;
+    caret-color: var(--ring);
+    transition: border-color var(--motion-fast);
+  }
+  [data-scope="pin-input"][data-part="input"]::placeholder {
+    color: var(--muted-foreground);
+  }
+  /* The shared focus ring keys off [data-part="root"]; the cells are a separate
+     part, so they get their own ring here (same as Field's control). */
+  [data-scope="pin-input"][data-part="input"]:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  /* Density driven by the recipe's data-size on the root part. `lg` exceeds the
+     top spacing slot, so it sums two slots rather than inventing a token. */
+  [data-scope="pin-input"][data-size="sm"] [data-part="input"] {
+    width: var(--spacing-7);
+    height: var(--spacing-7);
+    font-size: 0.8125rem;
+  }
+  [data-scope="pin-input"][data-size="lg"] [data-part="input"] {
+    width: calc(var(--spacing-8) + var(--spacing-2));
+    height: calc(var(--spacing-8) + var(--spacing-2));
+    font-size: 0.9375rem;
+  }
+  /* Ark flags each cell that holds a character, and the root once every cell
+     does. The three state rules below share one specificity (0,3,0), so their
+     source order is the precedence: filled < complete < invalid. */
+  [data-scope="pin-input"] [data-part="input"][data-filled] {
+    border-color: color-mix(in oklab, var(--primary) 35%, var(--input));
+  }
+  [data-scope="pin-input"][data-complete] [data-part="input"] {
+    border-color: var(--primary);
+  }
+  [data-scope="pin-input"] [data-part="input"][data-invalid] {
+    border-color: var(--destructive);
   }
 
   /* ─────────────────────────── Charts ─────────────────────────── *

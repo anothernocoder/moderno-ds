@@ -1,15 +1,23 @@
 /**
- * SSR playground — the Vue twin of the React harness. Mounts all five
+ * SSR playground — the Vue twin of the React harness. Mounts every one of the
  * primitives in their default (closed) state so the SSR suite can assert a
  * stable server string and a warning-free hydration. `open` mounts the Dialog +
  * Select popovers to exercise the harder portal/id path.
+ * SSR playground — the Vue twin of the React harness. Mounts the primitives in
+ * their default (closed) state so the SSR suite can assert a stable server
+ * string and a warning-free hydration. `open` mounts the Dialog + Select
+ * popovers to exercise the harder portal/id path.
  */
 import { defineComponent, h, type Component } from "vue";
+import { Alert } from "../src/alert.js";
 import { Button } from "../src/button.js";
+import { Divider } from "../src/divider.js";
+import { Card } from "../src/card.js";
 import { Field } from "../src/field.js";
 import { Checkbox } from "../src/checkbox.js";
 import { Dialog, Portal } from "../src/dialog.js";
 import { Select, createListCollection } from "../src/select.js";
+import { PinInput } from "../src/pin-input.js";
 import { AreaChart, BarChart, LineChart, ScatterChart } from "../src/charts.js";
 
 // A shared sample dataset for the four chart examples (Phase 4 deliverable).
@@ -38,6 +46,10 @@ const sales = [
 const quarters = ["Q1", "Q2", "Q3", "Q4"];
 const revenue = [{ name: "revenue", values: [12, 28, 19, 34] }];
 
+// A six-digit one-time code: the cell indices the PinInput renders. `count` on
+// the Root tells Ark the same number so the server-rendered aria labels match.
+const CODE_CELLS = [0, 1, 2, 3, 4, 5];
+
 const frameworks = createListCollection({
   items: [
     { label: "React", value: "react" },
@@ -63,11 +75,55 @@ export const App = defineComponent({
           h(Button, { variant: "destructive", size: "lg" }, () => "Destructive"),
         ]),
 
-        h(Field.Root, {}, () => [
-          h(Field.Label, {}, () => "Email"),
-          h(Field.Input, { placeholder: "you@example.com" }),
-          h(Field.HelperText, {}, () => "We never share it."),
-          h(Field.ErrorText, {}, () => "Email is required."),
+        h("section", { "aria-label": "dividers" }, [
+          h(Divider),
+          h(Divider, { align: "start" }, () => "Or"),
+          h(Divider, { orientation: "vertical" }),
+          h(Divider, { orientation: "vertical" }, () => "Or"),
+        ]),
+
+        h("section", { "aria-label": "alerts" }, [
+          h(Alert.Root, { variant: "info" }, () => [
+            h(Alert.Icon, {}, () => "i"),
+            h(Alert.Content, {}, () => [
+              h(Alert.Title, {}, () => "Heads up"),
+              h(Alert.Description, {}, () => "Your trial ends in three days."),
+              h(Alert.Action, {}, () =>
+                h(Button, { size: "sm", variant: "outline" }, () => "Manage plan"),
+              ),
+            ]),
+          ]),
+          h(Alert.Root, { variant: "error", size: "sm" }, () => [
+            h(Alert.Icon, {}, () => "!"),
+            h(Alert.Content, {}, () => [
+              h(Alert.Title, {}, () => "Payment failed"),
+              h(Alert.Description, {}, () => "We could not charge your card."),
+            ]),
+          ]),
+        ]),
+
+        h("section", { "aria-label": "fields" }, [
+          h(Field.Root as unknown as Component, { size: "sm" }, () => [
+            h(Field.Label, {}, () => "Email"),
+            h(Field.Input, { placeholder: "you@example.com" }),
+            h(Field.HelperText, {}, () => "We never share it."),
+            h(Field.ErrorText, {}, () => "Email is required."),
+          ]),
+          h(Field.Root as unknown as Component, { size: "lg", invalid: true }, () => [
+            h(Field.Label, {}, () => "Bio"),
+            h(Field.Textarea, { placeholder: "Tell us about yourself" }),
+            h(Field.HelperText, {}, () => "A short introduction."),
+            h(Field.ErrorText, {}, () => "Bio is required."),
+          ]),
+        ]),
+
+        h(Card.Root, { variant: "outline", size: "md" }, () => [
+          h(Card.Header, {}, () => [
+            h(Card.Title, {}, () => "Monthly report"),
+            h(Card.Description, {}, () => "Revenue across every channel."),
+          ]),
+          h(Card.Content, {}, () => "Up 12% on last month."),
+          h(Card.Footer, {}, () => h(Button, { variant: "outline", size: "sm" }, () => "Export")),
         ]),
 
         h("section", { "aria-label": "checkboxes" }, [
@@ -137,6 +193,14 @@ export const App = defineComponent({
             ),
           ],
         ),
+
+        h(PinInput.Root, { count: CODE_CELLS.length, otp: true, size: "md" }, () => [
+          h(PinInput.Label, {}, () => "Verification code"),
+          h(PinInput.Control, {}, () =>
+            CODE_CELLS.map((index) => h(PinInput.Input, { key: index, index })),
+          ),
+          h(PinInput.HiddenInput),
+        ]),
 
         h("section", { "aria-label": "charts" }, [
           h(LineChart, { width: 320, height: 180, series: sales }),

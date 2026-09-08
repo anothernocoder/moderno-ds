@@ -1,0 +1,45 @@
+---
+title: PinInput
+description: Un campo de código de un solo uso — Ark mueve el foco entre celdas, reparte un código pegado, enmascara los caracteres y marca el estado inválido; la receta size de Moderno agrega un data-size a la raíz para que components.css ajuste la densidad de las celdas.
+group: Componentes
+order: 45
+component: PinInput
+pkg: "@moderno-ui/react"
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import PinInputDemo from "../../../islands/PinInputDemo.svelte";
+
+Solo `PinInput.Root` está envuelto, para inyectar el `data-size` de la receta
+`size`; el resto de las partes son las de Ark tal cual. Ark avanza el foco a
+medida que llegan los caracteres, retrocede con backspace, reparte un código
+pegado entre las celdas, las cambia a `type="password"` cuando se activa `mask`
+y refleja `invalid` en `aria-invalid` más un `data-invalid` en cada parte — así
+`components.css` pinta los estados lleno, completo e inválido sin que el binding
+lleve la cuenta de ninguno.
+
+<Preview
+  code={`const cells = [0, 1, 2, 3, 4, 5];
+
+<PinInput.Root count={cells.length} otp onValueComplete={submit}>
+  <PinInput.Label>Código de verificación</PinInput.Label>
+  <PinInput.Control>
+    {cells.map((index) => (
+      <PinInput.Input key={index} index={index} />
+    ))}
+  </PinInput.Control>
+  <PinInput.HiddenInput />
+</PinInput.Root>`}
+>
+  <PinInputDemo client:visible />
+</Preview>
+
+## Instalación
+
+<Install pkg="@moderno-ui/react" />
+
+## Propiedades
+
+<PropsTable component="PinInput" />

@@ -5,11 +5,15 @@
   + Select popovers.
 -->
 <script lang="ts">
+  import { Alert } from "../src/index.js";
   import { Button } from "../src/index.js";
+  import { Divider } from "../src/index.js";
+  import { Card } from "../src/index.js";
   import { Field } from "../src/index.js";
   import { Checkbox } from "../src/index.js";
   import { Dialog, Portal } from "../src/index.js";
   import { Select, createListCollection } from "../src/index.js";
+  import { PinInput } from "../src/index.js";
   import { AreaChart, BarChart, LineChart, ScatterChart } from "../src/index.js";
 
   let { open = false }: { open?: boolean } = $props();
@@ -25,6 +29,10 @@
   ];
   const quarters = ["Q1", "Q2", "Q3", "Q4"];
   const revenue = [{ name: "revenue", values: [12, 28, 19, 34] }];
+
+  // A six-digit one-time code: the cell indices the PinInput renders. `count` on
+  // the Root tells Ark the same number so the server-rendered aria labels match.
+  const codeCells = [0, 1, 2, 3, 4, 5];
 
   const frameworks = createListCollection({
     items: [
@@ -45,12 +53,59 @@
     <Button variant="destructive" size="lg">Destructive</Button>
   </section>
 
-  <Field.Root>
-    <Field.Label>Email</Field.Label>
-    <Field.Input placeholder="you@example.com" />
-    <Field.HelperText>We never share it.</Field.HelperText>
-    <Field.ErrorText>Email is required.</Field.ErrorText>
-  </Field.Root>
+  <section aria-label="dividers">
+    <Divider />
+    <Divider align="start">Or</Divider>
+    <Divider orientation="vertical" />
+    <Divider orientation="vertical">Or</Divider>
+  </section>
+
+  <section aria-label="alerts">
+    <Alert.Root variant="info">
+      <Alert.Icon>i</Alert.Icon>
+      <Alert.Content>
+        <Alert.Title>Heads up</Alert.Title>
+        <Alert.Description>Your trial ends in three days.</Alert.Description>
+        <Alert.Action>
+          <Button size="sm" variant="outline">Manage plan</Button>
+        </Alert.Action>
+      </Alert.Content>
+    </Alert.Root>
+    <Alert.Root variant="error" size="sm">
+      <Alert.Icon>!</Alert.Icon>
+      <Alert.Content>
+        <Alert.Title>Payment failed</Alert.Title>
+        <Alert.Description>We could not charge your card.</Alert.Description>
+      </Alert.Content>
+    </Alert.Root>
+  </section>
+
+
+  <section aria-label="fields">
+    <Field.Root size="sm">
+      <Field.Label>Email</Field.Label>
+      <Field.Input placeholder="you@example.com" />
+      <Field.HelperText>We never share it.</Field.HelperText>
+      <Field.ErrorText>Email is required.</Field.ErrorText>
+    </Field.Root>
+
+    <Field.Root size="lg" invalid>
+      <Field.Label>Bio</Field.Label>
+      <Field.Textarea placeholder="Tell us about yourself" />
+      <Field.HelperText>A short introduction.</Field.HelperText>
+      <Field.ErrorText>Bio is required.</Field.ErrorText>
+    </Field.Root>
+  </section>
+  <Card.Root variant="outline" size="md">
+    <Card.Header>
+      <Card.Title>Monthly report</Card.Title>
+      <Card.Description>Revenue across every channel.</Card.Description>
+    </Card.Header>
+    <Card.Content>Up 12% on last month.</Card.Content>
+    <Card.Footer>
+      <Button variant="outline" size="sm">Export</Button>
+    </Card.Footer>
+  </Card.Root>
 
   <section aria-label="checkboxes">
     <Checkbox.Root defaultChecked>
@@ -113,6 +168,16 @@
       </Select.Positioner>
     </Portal>
   </Select.Root>
+
+  <PinInput.Root count={codeCells.length} otp size="md">
+    <PinInput.Label>Verification code</PinInput.Label>
+    <PinInput.Control>
+      {#each codeCells as index (index)}
+        <PinInput.Input {index} />
+      {/each}
+    </PinInput.Control>
+    <PinInput.HiddenInput />
+  </PinInput.Root>
 
   <section aria-label="charts">
     <LineChart width={320} height={180} series={sales} />

@@ -118,9 +118,9 @@
     {
       "name": "pricing-react",
       "type": "registry:block",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "Pricing (React)",
-      "description": "Three-plan pricing section composing the @moderno-ui/react Button primitive.",
+      "description": "Three-plan pricing section composing the @moderno-ui/react Button primitive; responds to its container (@container) rather than the viewport.",
       "dependencies": ["@moderno-ui/react"],
       "registryDependencies": [],
       "files": [
@@ -134,9 +134,9 @@
     {
       "name": "pricing-vue",
       "type": "registry:block",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "Pricing (Vue)",
-      "description": "Three-plan pricing section composing the @moderno-ui/vue Button primitive.",
+      "description": "Three-plan pricing section composing the @moderno-ui/vue Button primitive; responds to its container (@container) rather than the viewport.",
       "dependencies": ["@moderno-ui/vue"],
       "registryDependencies": [],
       "files": [
@@ -150,9 +150,9 @@
     {
       "name": "pricing-svelte",
       "type": "registry:block",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "Pricing (Svelte)",
-      "description": "Three-plan pricing section composing the @moderno-ui/svelte Button primitive.",
+      "description": "Three-plan pricing section composing the @moderno-ui/svelte Button primitive; responds to its container (@container) rather than the viewport.",
       "dependencies": ["@moderno-ui/svelte"],
       "registryDependencies": [],
       "files": [
@@ -166,9 +166,9 @@
     {
       "name": "pricing-solid",
       "type": "registry:block",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "Pricing (Solid)",
-      "description": "Three-plan pricing section composing the @moderno-ui/solid Button primitive.",
+      "description": "Three-plan pricing section composing the @moderno-ui/solid Button primitive; responds to its container (@container) rather than the viewport.",
       "dependencies": ["@moderno-ui/solid"],
       "registryDependencies": [],
       "files": [

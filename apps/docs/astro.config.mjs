@@ -3,8 +3,8 @@ import sitemap from "@astrojs/sitemap";
 import svelte from "@astrojs/svelte";
 import vercel from "@astrojs/vercel";
 import expressiveCode from "astro-expressive-code";
-import { defineConfig, passthroughImageService } from "astro/config";
 import { fileURLToPath } from "node:url";
+import { defineConfig, passthroughImageService } from "astro/config";
 
 // GitHub Pages serves this as a project site under /moderno-ds/, so it needs
 // its own base path and can't use the Vercel adapter (which targets the

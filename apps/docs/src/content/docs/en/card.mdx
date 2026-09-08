@@ -1,0 +1,69 @@
+---
+title: Card
+description: A CSS-only surface with an Ark-style anatomy — header, title, description, content and footer parts, painted from the card and border slots with no shadow of its own.
+group: Components
+order: 45
+component: Card
+pkg: "@moderno-ui/react"
+agentPropsHash: "sha256:0ad589a8101e5059ded4f12cb1174734425d5b6e9e8393ebdcfd47a4031e2b9c"
+agent:
+  intent: A bounded surface that groups related content.
+  whenToUse: "Grouping content that belongs together on a page: a summary, a record, a settings group."
+  whenNotToUse:
+    - case: Interrupting the user and trapping focus
+      use: Dialog
+    - case: A whole page section with its own heading and layout
+      use: a block from the registry, which composes cards
+  gotchas:
+    - "Every part is optional; header/content/footer collapse the padding between whichever pair is adjacent."
+    - "Card.Title renders an h3 — a card is a section of a page, not its heading. Override role/aria-level if the outline needs another rank."
+    - "The root fills its container and does not lay itself out; the grid or flex row belongs to the page."
+  theming:
+    - "Surface and text come from --card / --card-foreground; the muted variant uses --muted."
+    - "The edge is a 1px --border and the corner is --radius — theme-moderno pins --radius to 0, which is where 'no radius' comes from. Depth is a surface step and a border, never a shadow."
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import CardDemo from "../../../islands/CardDemo.svelte";
+
+Card is the first compound primitive that is authored rather than re-exported:
+there is no Ark machine for a surface — nothing to open, focus or wire — so
+every part is ours. What makes it a Moderno primitive is the same contract
+Button follows, widened across an anatomy: each part emits `data-scope="card"`
+plus its own `data-part`, the root carries `cardRecipe`'s `data-variant` and
+`data-size`, and `components.css` paints all of it from token slots.
+
+<Preview
+  code={`<Card.Root variant="outline" size="md">
+  <Card.Header>
+    <Card.Title>Monthly report</Card.Title>
+    <Card.Description>Revenue across every channel.</Card.Description>
+  </Card.Header>
+  <Card.Content>Up 12% on last month.</Card.Content>
+  <Card.Footer>
+    <Button variant="outline" size="sm">Export</Button>
+  </Card.Footer>
+</Card.Root>`}
+>
+  <CardDemo client:visible />
+</Preview>
+
+## Anatomy
+
+`root` is the surface; `header` holds `title` and `description`; `content` is
+the body and the only part that grows, so a row of cards keeps its footers
+aligned; `footer` is the actions row. Every part is optional and the order is
+yours — whichever pair ends up adjacent shares one padding step instead of
+stacking two.
+
+## Installation
+
+<Install pkg="@moderno-ui/react" />
+
+## Props
+
+Props sit on `Card.Root`. The other parts take only native attributes.
+
+<PropsTable component="Card" />

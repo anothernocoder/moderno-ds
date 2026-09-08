@@ -1,7 +1,7 @@
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { runCli } from "../src/cli.ts";
 import {
   createConsumerFixture,
@@ -140,6 +140,132 @@ describe("runCli", () => {
       expect(out.some((l) => l.startsWith(dirty))).toBe(true);
       expect(out.some((l) => l.startsWith(clean))).toBe(false);
     });
+  });
+});
+
+/**
+ * `--registry` is the CI gate over the catalog (#77): every source file a
+ * registry item ships is linted, with the framework read from the item's
+ * directory layout.
+ */
+describe("runCli --registry", () => {
+  let dir: string;
+
+  function writeRegistry(items: unknown[]): string {
+    const manifestPath = join(dir, "registry.json");
+    writeFileSync(manifestPath, JSON.stringify({ name: "test", items }));
+    return manifestPath;
+  }
+
+  function writeItemFile(relative: string, content: string): string {
+    const path = join(dir, relative);
+    mkdirSync(join(path, ".."), { recursive: true });
+    writeFileSync(path, content);
+    return relative;
+  }
+
+  beforeEach(() => {
+    dir = mkdtempSync(join(tmpdir(), "moderno-lint-registry-"));
+  });
+
+  afterEach(() => {
+    rmSync(dir, { recursive: true, force: true });
+  });
+
+  it("fails on a block that hardcodes a colour", () => {
+    const path = writeItemFile(
+      "blocks/hero/react/hero.tsx",
+      '<section style={{ background: "#ff0000" }} />',
+    );
+    const manifest = writeRegistry([
+      { name: "hero-react", type: "registry:block", files: [{ path, type: "registry:block" }] },
+    ]);
+    const { stdout, stderr, out } = capture();
+
+    expect(runCli(["--registry", manifest], { cwd: dir, stdout, stderr })).toBe(1);
+    expect(out.some((l) => l.includes("moderno/no-hardcoded-color"))).toBe(true);
+  });
+
+  it("fails on a block that hardcodes a dimension in a Tailwind arbitrary value", () => {
+    const path = writeItemFile(
+      "blocks/hero/svelte/Hero.svelte",
+      '<section class="max-w-[42rem]" />',
+    );
+    const manifest = writeRegistry([
+      { name: "hero-svelte", type: "registry:block", files: [{ path, type: "registry:block" }] },
+    ]);
+    const { stdout, stderr, out } = capture();
+
+    expect(runCli(["--registry", manifest], { cwd: dir, stdout, stderr })).toBe(1);
+    expect(out.some((l) => l.includes("moderno/no-hardcoded-dimension"))).toBe(true);
+  });
+
+  it("passes a block that styles with contract-backed preset utilities", () => {
+    const path = writeItemFile(
+      "blocks/hero/react/hero.tsx",
+      '<section className="@container max-w-md rounded-lg p-6 @md:grid-cols-3" />',
+    );
+    const manifest = writeRegistry([
+      { name: "hero-react", type: "registry:block", files: [{ path, type: "registry:block" }] },
+    ]);
+    const { stdout, stderr, out } = capture();
+
+    expect(runCli(["--registry", manifest], { cwd: dir, stdout, stderr })).toBe(0);
+    expect(out.some((l) => l.includes("no violations"))).toBe(true);
+  });
+
+  it("reads the framework from the item's directory, so a Solid .tsx is not linted as React", () => {
+    // Vue's fixture manifest has no `Dialog`; Solid's has no `Button` at all,
+    // so a Solid file is validated against Solid's surface, not React's.
+    const path = writeItemFile("blocks/hero/solid/hero.tsx", '<Button variant="primaryy" />');
+    const manifest = writeRegistry([
+      { name: "hero-solid", type: "registry:block", files: [{ path, type: "registry:block" }] },
+    ]);
+    const { stdout, stderr, out } = capture();
+
+    runCli(["--registry", manifest], { cwd: dir, stdout, stderr });
+    // React's fixture manifest would have produced a valid-props finding here.
+    expect(out.some((l) => l.includes("moderno/valid-props"))).toBe(false);
+  });
+
+  it("skips theme items — a theme's whole job is to carry literal brand values", () => {
+    const path = writeItemFile("themes/brand/theme.css", ":root { --primary: oklch(0.2 0 0); }");
+    const manifest = writeRegistry([
+      { name: "theme-brand", type: "registry:theme", files: [{ path, type: "registry:theme" }] },
+    ]);
+    const { stdout, stderr, err } = capture();
+
+    // Nothing left to lint once themes are excluded — an empty set is an error,
+    // not a silent pass, so a manifest that ships nothing lintable is visible.
+    expect(runCli(["--registry", manifest], { cwd: dir, stdout, stderr })).toBe(2);
+    expect(err.some((l) => l.includes("ships no files"))).toBe(true);
+  });
+
+  it("resolves file paths against the manifest's own directory, not the cwd", () => {
+    const path = writeItemFile("blocks/hero/react/hero.tsx", "<section />");
+    const manifest = writeRegistry([
+      { name: "hero-react", type: "registry:block", files: [{ path, type: "registry:block" }] },
+    ]);
+    const { stdout, stderr, out } = capture();
+
+    expect(runCli(["--registry", manifest], { cwd: tmpdir(), stdout, stderr })).toBe(0);
+    expect(out.some((l) => l.includes("1 file checked"))).toBe(true);
+  });
+
+  it("exits 2 on a missing manifest", () => {
+    const { stdout, stderr, err } = capture();
+
+    expect(runCli(["--registry", join(dir, "nope.json")], { cwd: dir, stdout, stderr })).toBe(2);
+    expect(err.some((l) => l.includes("no such registry manifest"))).toBe(true);
+  });
+
+  it("exits 2 on a malformed manifest instead of throwing", () => {
+    const manifestPath = join(dir, "registry.json");
+    writeFileSync(manifestPath, "{ not json");
+    const { stdout, stderr, err } = capture();
+
+    expect(runCli(["--registry", manifestPath], { cwd: dir, stdout, stderr })).toBe(2);
+    expect(err.some((l) => l.includes("could not read registry manifest"))).toBe(true);
   });
 });
 

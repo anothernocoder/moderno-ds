@@ -5,6 +5,7 @@ import { act } from "@testing-library/react";
 import { renderToString } from "react-dom/server";
 import { hydrateRoot, type Root } from "react-dom/client";
 import { App } from "../playground/app.js";
+import { partAttrs, partTags } from "../../core/test/ssr-parts.ts";
 
 afterEach(() => {
   document.body.replaceChildren();
@@ -14,8 +15,32 @@ describe("SSR + hydration (React 19)", () => {
   it("server-renders the primitives to a stable HTML string", () => {
     const html = renderToString(<App />);
     expect(html).toContain('data-scope="button"');
+    expect(html).toContain('data-scope="card"');
     expect(html).toContain('data-scope="field"');
     expect(html).toContain('data-scope="checkbox"');
+    expect(html).toContain('data-scope="alert"');
+    // The CSS-only primitive serialises its anatomy plus the resolved role:
+    // "info" reports politely, "error" interrupts.
+    expect(html).toContain("Payment failed");
+    expect(html).toContain('role="status"');
+    expect(html).toContain('role="alert"');
+    // The card's compound anatomy survives serialisation part by part.
+    expect(html).toContain('data-part="title"');
+    expect(html).toContain('data-part="footer"');
+    expect(html).toContain('data-scope="divider"');
+    // Both divider shapes survive serialisation: the bare rule keeps its
+    // separator role, the captioned one its label part.
+    expect(html).toContain('role="separator"');
+    expect(html).toMatch(/data-scope="divider"[^>]*data-part="label"/);
+    // …including the captioned *vertical* rule: that combination is the one
+    // whose gap depends on the label's rotated writing mode, so orientation and
+    // label have to serialise onto the same root.
+    expect(html).toMatch(/data-orientation="vertical"(?:(?!<\/div>)[\s\S])*?data-part="label"/);
+    expect(html).toContain('data-scope="pin-input"');
+    // Every code cell is on the server, and `count` makes the server's aria
+    // labels agree with the client's — the PinInput-specific SSR hazard.
+    expect(html.match(/data-index="/g) ?? []).toHaveLength(6);
+    expect(html).toContain('aria-label="pin code 6 of 6"');
     // Triggers are present even while the dialog/select popovers are closed.
     expect(html).toContain("Open dialog");
     expect(html).toContain("Framework");
@@ -25,6 +50,12 @@ describe("SSR + hydration (React 19)", () => {
     // Checkbox serialises its Ark state, not just its scope.
     expect(html).toMatch(/data-part="control"[^>]*data-state="checked"/);
     expect(html).toMatch(/data-part="control"[^>]*data-state="indeterminate"/);
+    // Field's own recipe, read off the field roots themselves — a whole-document
+    // match would be satisfied by the Buttons' `data-size` and would survive a
+    // Root that stopped applying the recipe.
+    expect(partAttrs(html, "field", "root", "data-size")).toEqual(["sm", "lg"]);
+    // The second field's control is Field's own Textarea part.
+    expect(partTags(html, "field", "textarea")).toHaveLength(1);
   });
 
   async function hydrateAndCountWarnings(tree: ReactElement): Promise<number> {
