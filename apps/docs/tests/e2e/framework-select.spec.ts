@@ -64,9 +64,9 @@ test.describe("framework selector", () => {
 
     const solidPanels = page.locator(".preview-source[data-fw='solid']");
     const reactPanels = page.locator(".preview-source[data-fw='react']");
-    // Four block previews on this page (login form, form layout, pricing,
-    // empty state) — every one of them switched, not just the first.
-    await expect(solidPanels).toHaveCount(4);
+    // Five block previews on this page (login form, form layout, alert list,
+    // pricing, empty state) — every one of them switched, not just the first.
+    await expect(solidPanels).toHaveCount(5);
     for (const panel of await solidPanels.all()) {
       await expect(panel).toBeVisible();
     }

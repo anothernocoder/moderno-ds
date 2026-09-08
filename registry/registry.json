@@ -180,6 +180,70 @@
       ]
     },
     {
+      "name": "alert-list-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Alert List (React)",
+      "description": "Notification centre composing the @moderno-ui/react Alert, Button and Card primitives: a stack of dismissible status alerts in all four variants, with its own empty, loading and error renders; responds to its container (@container) across all three contract steps — the header lines up at @sm, each dismiss control grows its label at @md, each timestamp moves to the trailing edge at @lg.",
+      "dependencies": ["@moderno-ui/react"],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/alert-list/react/alert-list.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/alert-list.tsx"
+        }
+      ]
+    },
+    {
+      "name": "alert-list-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Alert List (Vue)",
+      "description": "Notification centre composing the @moderno-ui/vue Alert, Button and Card primitives: a stack of dismissible status alerts in all four variants, with its own empty, loading and error renders; responds to its container (@container) across all three contract steps — the header lines up at @sm, each dismiss control grows its label at @md, each timestamp moves to the trailing edge at @lg.",
+      "dependencies": ["@moderno-ui/vue"],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/alert-list/vue/AlertList.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/AlertList.vue"
+        }
+      ]
+    },
+    {
+      "name": "alert-list-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Alert List (Svelte)",
+      "description": "Notification centre composing the @moderno-ui/svelte Alert, Button and Card primitives: a stack of dismissible status alerts in all four variants, with its own empty, loading and error renders; responds to its container (@container) across all three contract steps — the header lines up at @sm, each dismiss control grows its label at @md, each timestamp moves to the trailing edge at @lg.",
+      "dependencies": ["@moderno-ui/svelte"],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/alert-list/svelte/AlertList.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/AlertList.svelte"
+        }
+      ]
+    },
+    {
+      "name": "alert-list-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Alert List (Solid)",
+      "description": "Notification centre composing the @moderno-ui/solid Alert, Button and Card primitives: a stack of dismissible status alerts in all four variants, with its own empty, loading and error renders; responds to its container (@container) across all three contract steps — the header lines up at @sm, each dismiss control grows its label at @md, each timestamp moves to the trailing edge at @lg.",
+      "dependencies": ["@moderno-ui/solid"],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/alert-list/solid/alert-list.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/alert-list.tsx"
+        }
+      ]
+    },
+    {
       "name": "pricing-react",
       "type": "registry:block",
       "version": "0.2.0",

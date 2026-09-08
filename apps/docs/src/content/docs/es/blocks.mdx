@@ -16,6 +16,10 @@ import formLayoutReact from "../../../../../../registry/blocks/form-layout/react
 import formLayoutVue from "../../../../../../registry/blocks/form-layout/vue/FormLayout.vue?raw";
 import formLayoutSolid from "../../../../../../registry/blocks/form-layout/solid/form-layout.tsx?raw";
 import formLayoutSvelte from "../../../../../../registry/blocks/form-layout/svelte/FormLayout.svelte?raw";
+import alertListReact from "../../../../../../registry/blocks/alert-list/react/alert-list.tsx?raw";
+import alertListVue from "../../../../../../registry/blocks/alert-list/vue/AlertList.vue?raw";
+import alertListSolid from "../../../../../../registry/blocks/alert-list/solid/alert-list.tsx?raw";
+import alertListSvelte from "../../../../../../registry/blocks/alert-list/svelte/AlertList.svelte?raw";
 import pricingReact from "../../../../../../registry/blocks/pricing/react/pricing.tsx?raw";
 import pricingVue from "../../../../../../registry/blocks/pricing/vue/Pricing.vue?raw";
 import pricingSolid from "../../../../../../registry/blocks/pricing/solid/pricing.tsx?raw";
@@ -49,7 +53,7 @@ sección.
 
 ## Lo que existe hoy
 
-Cuatro bloques, una entrada de registro por framework cada uno. Cada Preview de
+Cinco bloques, una entrada de registro por framework cada uno. Cada Preview de
 abajo lee su fuente directo de `registry/blocks/<name>/<framework>/` — para los
 cuatro frameworks, intercambiable con el selector — así que lo que lees es
 exactamente lo que copia la CLI, no una maqueta.
@@ -92,6 +96,24 @@ todos los estados que renderiza.
   <BlocksDemo block="form-layout" client:visible />
 </Preview>
 
+### Lista de alertas
+
+Apila alertas de estado — las cuatro variantes — cada una descartable por su
+cuenta, con sus propios estados vacío, cargando y de error. Tiene página propia —
+[Lista de alertas](/es/alert-list/) — con los tres pasos de contenedor y todos
+los estados que renderiza.
+
+<Preview
+  examples={{
+    react: alertListReact,
+    vue: alertListVue,
+    solid: alertListSolid,
+    svelte: alertListSvelte,
+  }}
+>
+  <BlocksDemo block="alert-list" client:visible />
+</Preview>
+
 ### Precios
 
 Tres planes desde un arreglo `plans` local — edítalo, el archivo ya es tuyo.
@@ -122,10 +144,10 @@ Un marcador centrado con una sola llamada a la acción.
 El pipeline de estilos por container queries del ADR-0005 ya aterrizó, y los
 bloques se van reescribiendo sobre él de a uno. Un bloque reescrito se maqueta
 con las utilidades del preset de Tailwind respaldadas por el contrato y con las
-variantes de contenedor `@sm` / `@md` / `@lg`: `login-form`, `form-layout` y
-`pricing` arriba ya están sobre esa base, y cada uno estrena su propia página al
-aterrizar. `form-layout` es el que usa los tres pasos, una decisión de maquetado
-por cada uno.
+variantes de contenedor `@sm` / `@md` / `@lg`: `login-form`, `form-layout`,
+`alert-list` y `pricing` arriba ya están sobre esa base, y cada uno estrena su
+propia página al aterrizar. `form-layout` y `alert-list` son los que usan los
+tres pasos, una decisión de maquetado por cada uno.
 
 `empty-state` todavía no llega: su contenedor sigue llevando una clase
 `moderno-block-*` **sin reglas en `main`** — sin grilla, sin escala de

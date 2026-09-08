@@ -1,0 +1,118 @@
+---
+title: Alert list
+description: The notification centre — a stack of dismissible status alerts in all four variants, with its own empty, loading and error renders, composed from Alert, Button and Card.
+group: Blocks
+order: 103
+agent:
+  intent: A stack of dismissible status alerts — the notification centre of an app.
+  whenToUse: "Anywhere a collection of statuses is shown together: a notification drawer, an activity or alerts page, the top of a dashboard, a per-resource health list."
+  whenNotToUse:
+    - case: One status message about the thing the reader just did
+      use: the Alert primitive on its own — a list of one is not a list
+    - case: A form's validation failures
+      use: FormLayout, which raises a form-level Alert and marks each field
+    - case: A view with no data yet
+      use: EmptyState — this block's empty render is for a list that emptied, not for a feature that has never been used
+  gotchas:
+    - "Presentational: it removes nothing. `onDismiss` and `onDismissAll` report what the reader asked for; the array stays yours, which is what makes an optimistic removal or an undo possible."
+    - "`alerts` defaults to a sample feed so the block renders standalone. Pass your own array — or edit the constant, the file is yours after `moderno add`."
+    - "`alerts={[]}` is the empty state, not a bug: the list loaded and there is nothing in it."
+    - "`loading` replaces the list rather than dimming it, so nobody acts on a row that is about to change; `error` replaces it too, because an empty list and a list that failed to load are different facts."
+    - "Each row keeps Alert's live-region role, so a notification appended to a mounted list is announced. A list rendered with the page is not — live regions only announce changes."
+    - "The dismiss control is a glyph below `--container-md` and gains its label above it; its accessible name carries the alert's title at every width, so voice control and screen readers always hear which alert is being dismissed."
+  theming:
+    - "Nothing is painted here. The rows are Alert's four status variants, the controls are Button's secondary, outline and ghost variants, and the empty and loading renders are Card."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg."
+    - "The status hue reaches each glyph through the alert's icon part and currentColor, so the icons re-skin with the theme and no icon package is installed."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import AlertListBlockDemo from "../../../islands/AlertListBlockDemo.svelte";
+import alertListReact from "../../../../../../registry/blocks/alert-list/react/alert-list.tsx?raw";
+import alertListVue from "../../../../../../registry/blocks/alert-list/vue/AlertList.vue?raw";
+import alertListSolid from "../../../../../../registry/blocks/alert-list/solid/alert-list.tsx?raw";
+import alertListSvelte from "../../../../../../registry/blocks/alert-list/svelte/AlertList.svelte?raw";
+
+**Alert list** is what a single [Alert](/en/alert/) becomes once there is more
+than one of them: a stack of statuses, newest first, each dismissible on its
+own, under a heading that can clear the lot. It composes `Alert`, `Button` and
+`Card` and paints nothing of its own, so a theme re-skins it untouched.
+
+It is a _block_, not a screen: it does not own the viewport and it owns no
+notifications either. It renders the `alerts` you hand it and reports what the
+reader dismissed — you drop the item from your own state, which is what leaves
+an optimistic removal, an undo or a server round-trip yours to decide.
+
+<FrameworkSelect locale="en" />
+
+<Preview
+  examples={{
+    react: alertListReact,
+    vue: alertListVue,
+    solid: alertListSolid,
+    svelte: alertListSvelte,
+  }}
+>
+  <AlertListBlockDemo client:visible />
+</Preview>
+
+## Installation
+
+<Install item="alert-list" />
+
+Installing a block copies its file into your project and records it in
+`.moderno/manifest.json` under its own version, so `moderno update` and
+`moderno diff` keep working per item. From that moment the file is yours.
+
+## Sizing
+
+A notification centre is the block most likely to be mounted twice in one app —
+once in a 320px drawer, once across an activity page — so all three of its
+layout decisions are read off its container:
+
+| Step  | Slot             | What changes                                                                       |
+| ----- | ---------------- | ---------------------------------------------------------------------------------- |
+| `@sm` | `--container-sm` | The header stops stacking: the heading and "Dismiss all" share a row.              |
+| `@md` | `--container-md` | Each row's dismiss control grows its label instead of standing as a glyph.         |
+| `@lg` | `--container-lg` | Each timestamp leaves the stack under its title and lines up on the trailing edge. |
+
+None of that reads the window. The same file is correct in a 288px drawer, in a
+480px panel, in the page column and on a 50rem stage, in light and dark alike,
+without a single media query — which is why the preview above mounts it at four
+widths at once and they disagree with each other on one screen. The rules behind
+this are in [Blocks and containers](/en/blocks-and-containers/) and ADR-0005.
+
+## States
+
+| State         | What renders                                                                                                                                                        |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Default       | The list: one `Alert` per notification, in the status variant that notification speaks in — `info`, `success`, `warning` or `error`.                                |
+| Hover         | The controls' own affordances from `components.css`: the dismiss and action buttons take their variant's hover fill.                                                |
+| Focus visible | The shared 2px `--ring` outline on every dismiss, every row action and "Dismiss all", in the reading order of the list.                                             |
+| Disabled      | `disabled` — the alerts stay readable and every control is inert. A read-only or audit view, not a hidden list.                                                     |
+| Loading       | `loading` — a polite busy region stands in for the list, with a spinner that stops under `prefers-reduced-motion`, so nobody acts on rows that are about to change. |
+| Empty         | `alerts={[]}` — the list loaded and there is nothing in it, which is a render of its own: "You are all caught up", in a `Card`.                                     |
+| Error         | `error` — the list itself could not be loaded, so one `Alert` says so and offers a retry. An empty list and a failed one are different facts.                       |
+
+The four status variants all appear in the sample feed above, in the order a
+reader needs them: what is broken, what is about to break, what changed, what
+went right.
+
+## Props
+
+| Prop           | Type              | Default       | What it does                                                                                      |
+| -------------- | ----------------- | ------------- | ------------------------------------------------------------------------------------------------- |
+| `alerts`       | `AlertListItem[]` | a sample feed | The notifications to render, newest first. `[]` renders the empty state.                          |
+| `error`        | `string`          | —             | The list could not be loaded; this message replaces it.                                           |
+| `loading`      | `boolean`         | `false`       | The list is being loaded or refreshed: a busy region stands in for it.                            |
+| `disabled`     | `boolean`         | `false`       | Read-only: the alerts stay on screen and every control is inert.                                  |
+| `onDismiss`    | `(id) => void`    | —             | One row's dismiss control. React/Solid take `onDismiss`, Svelte `ondismiss`, Vue emits `dismiss`. |
+| `onDismissAll` | `() => void`      | —             | Clear the whole list. Svelte `ondismissall`, Vue emits `dismissAll`.                              |
+| `onAction`     | `(id) => void`    | —             | A row's own action (`actionLabel`), with that row's id. Svelte `onaction`, Vue emits `action`.    |
+| `onRetry`      | `() => void`      | —             | Retry after `error`. Svelte `onretry`, Vue emits `retry`.                                         |
+
+An `AlertListItem` is `{ id, variant, title, description?, meta?, actionLabel? }`
+— `variant` is one of Alert's four statuses, `meta` is the timestamp already
+phrased for a reader, and a row with no `actionLabel` is news rather than a task.
