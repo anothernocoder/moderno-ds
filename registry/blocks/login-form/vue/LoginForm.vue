@@ -1,11 +1,11 @@
 <script setup lang="ts">
 /**
  * LoginForm — the credential card, composed from @moderno-ui/vue primitives
- * (Card, Field, Checkbox, Button, Alert). Copy it into your project with
+ * (Card, Field, PinInput, Checkbox, Button, Alert). Copy it into your project with
  * `moderno add login-form-vue` and edit it freely: every visual comes from the
  * token contract, so a theme re-skins it without a diff here.
  *
- * Four modes, one card: `mode="sign-in"` (the default) is the returning person
+ * Five modes, one card: `mode="sign-in"` (the default) is the returning person
  * — email, password, remember-me, the recovery link — `mode="sign-up"` is the
  * new one (full name, email, a new password and the consent that has to be
  * given before an account can exist), `mode="forgot-password"` is the one who
@@ -13,8 +13,24 @@
  * confirming the link is on its way), and `mode="reset-password"` is the end of
  * that errand: the new password and its confirmation, the rules said out loud
  * as they are met, and the token from the emailed link riding along in a hidden
- * input. One block rather than four, because they are one thing: the same card,
- * the same width, the same rhythm.
+ * input. `mode="verify"` is the code that proves the address is real: one cell
+ * per digit and a second submit that asks for a new code. One block rather than
+ * five, because they are one thing: the same card, the same width, the same
+ * rhythm.
+ *
+ * The verify card asks for a code, and can ask again. `mode="verify"` swaps the
+ * credential fields for PinInput — Ark advances the focus as digits land,
+ * distributes a pasted code across the cells, and marks them
+ * autocomplete="one-time-code", so the platform offers the code straight out of
+ * the SMS or the mail app; the whole code posts under one name (`code`), from
+ * the hidden input Ark keeps in step with the cells. The resend is a second
+ * submit button, named `intent` and valued "resend", rather than an emit: it is
+ * then a plain form submission that still works with no JavaScript, and one
+ * handler serves both buttons — read `new FormData(form, event.submitter)` and
+ * branch on `intent`. `resendIn` counts the seconds until the button unlocks
+ * (the page above owns that timer — the card holds no state), and `resent`
+ * rewrites the header rather than adding a line, so the confirmation lands in
+ * the live region that is already there.
  *
  * The recovery card confirms in place: `sent` rewrites the header, drops the
  * email field for the sentence explaining what was sent, and turns the submit
@@ -52,16 +68,20 @@
  * both fields may be named — `errors.password` and `errors.confirmPassword` —
  * because the reader is holding the emailed token and there is nothing left to
  * leak; an expired or already-used link is `error`, since what went wrong there
- * is the token, not the password.
+ * is the token, not the password. Verifying, `errors.code` is the wrong or
+ * expired code: the cells go aria-invalid and the message is printed under them
+ * as an alert, so it is announced when it arrives — an alert rather than the
+ * input's described text, because a pin input is n controls and one value and
+ * the message only ever arrives after a submit.
  *
  * Class strings are written out in full rather than shared through a variable:
  * the docs compile the previews' Tailwind from `class` attributes, so a class
  * assembled in JS would render here and vanish in the preview.
  */
 import { computed } from "vue";
-import { Alert, Button, Card, Checkbox, Field } from "@moderno-ui/vue";
+import { Alert, Button, Card, Checkbox, Field, PinInput } from "@moderno-ui/vue";
 
-type Mode = "sign-in" | "sign-up" | "forgot-password" | "reset-password";
+type Mode = "sign-in" | "sign-up" | "forgot-password" | "reset-password" | "verify";
 
 /**
  * One rule the new password is judged against, and whether it is met yet.
@@ -78,11 +98,13 @@ interface PasswordRequirement {
 
 /**
  * What the card says it is, what its submit says, and what its footer offers,
- * per mode. Four modes turn every one of those into a four-way ternary if they
+ * per mode. Five modes turn every one of those into a five-way ternary if they
  * are written at the point of use; the table is the same decision made once.
- * The `forgot-password` card rewrites its title, its description and its submit
- * once the link is sent, and that confirmation is the only copy in the file not
- * read straight off here.
+ * Two sentences are not read straight off here: the `forgot-password` card
+ * rewrites its title, its description and its submit once the link is sent, and
+ * the `verify` card names the address and the number of digits as soon as it is
+ * told them — a description that says "six" while `codeLength` says four is a
+ * lie the table cannot see.
  */
 const cardCopy: Record<
   Mode,
@@ -116,6 +138,13 @@ const cardCopy: Record<
     busy: "Saving password",
     footerPrompt: "Changed your mind?",
   },
+  verify: {
+    title: "Enter your code",
+    description: "Type the code we sent, so we know the address is yours.",
+    submit: "Verify email",
+    busy: "Verifying",
+    footerPrompt: "Wrong account?",
+  },
 };
 
 /**
@@ -143,15 +172,21 @@ const props = withDefaults(
     titleLevel?: 1 | 2 | 3;
     /** `forgot-password` only — the link has gone out: the card confirms instead of asking. */
     sent?: boolean;
-    /** `forgot-password` only — the address the link went to: named in the confirmation, and resubmitted by "Send it again". */
+    /** `forgot-password` and `verify` — the address the link or the code went to: named in the card, and resubmitted from a hidden input by "Send it again" and by the resend. */
     sentTo?: string;
+    /** `verify` only — how many cells the code has, and the number the description names. */
+    codeLength?: number;
+    /** `verify` only — seconds until another code can be asked for; above zero the resend is locked and counts down. The timer is the page's, not the card's. */
+    resendIn?: number;
+    /** `verify` only — a new code has just gone out: the header says so, in the live region it already has. */
+    resent?: boolean;
     /** `reset-password` only — the token out of the emailed link, submitted with the new password from a hidden input. */
     token?: string;
     /** `reset-password` only — the rules under the new password and whether each is met yet. `[]` falls back to one line of helper text. */
     requirements?: PasswordRequirement[];
     /** Form-level failure message. Renders the alert; in `sign-in` it also invalidates both credential fields. */
     error?: string;
-    /** Every mode but `sign-in` — per-field messages keyed by the field's `name`; each marks that field invalid. */
+    /** Every mode but `sign-in` — per-field messages keyed by the field's `name` (`code` in `verify`); each marks that field invalid. */
     errors?: Record<string, string>;
     /** The submit is in flight: every control is inert and the button reads busy. */
     loading?: boolean;
@@ -173,6 +208,9 @@ const props = withDefaults(
     titleLevel: 3,
     sent: false,
     sentTo: "",
+    codeLength: 6,
+    resendIn: 0,
+    resent: false,
     token: "",
     requirements: undefined,
     error: undefined,
@@ -193,10 +231,17 @@ const emit = defineEmits<{ submit: [event: Event] }>();
 const signUp = computed(() => props.mode === "sign-up");
 const forgot = computed(() => props.mode === "forgot-password");
 const reset = computed(() => props.mode === "reset-password");
+const verify = computed(() => props.mode === "verify");
 /** The confirmation: the recovery card after the link has gone out. */
 const confirming = computed(() => forgot.value && props.sent);
 /** Only the modes that start from an address ask for one. */
-const asksForEmail = computed(() => !confirming.value && !reset.value);
+const asksForEmail = computed(() => !confirming.value && !reset.value && !verify.value);
+/** One cell per digit; the count is a prop because a code is not always six long. */
+const cells = computed(() =>
+  Array.from({ length: Math.max(1, Math.trunc(props.codeLength)) }, (_, index) => index),
+);
+/** Another code cannot be asked for yet: the page above is still counting down. */
+const waiting = computed(() => verify.value && props.resendIn > 0);
 /** A password is being *chosen*, so the field takes the rules and its own error. */
 const newPassword = computed(() => signUp.value || reset.value);
 const inert = computed(() => props.loading || props.disabled);
@@ -214,10 +259,26 @@ const passwordRules = computed(() => props.requirements ?? defaultRequirements);
 const invalid = (field: string) =>
   props.mode === "sign-in" ? Boolean(props.error) : Boolean(props.errors?.[field]);
 const title = computed(() => (confirming.value ? "Check your inbox" : cardCopy[props.mode].title));
+/**
+ * Verifying, the description is where the card says what happened: which address
+ * the code went to, how many digits to expect, and — after a resend — that a
+ * fresh code is on its way and the one before it is dead. It goes here rather
+ * than in a line of its own because the header is already the card's live
+ * region, so a screen reader hears the change without a second one.
+ */
+const verifyDescription = computed(() =>
+  props.resent
+    ? `A new code is on its way to ${props.sentTo || "your inbox"}. The one before it has stopped working.`
+    : props.sentTo
+      ? `Enter the ${cells.value.length}-digit code we sent to ${props.sentTo}.`
+      : cardCopy.verify.description,
+);
 const description = computed(() =>
   confirming.value
     ? `If ${props.sentTo || "that address"} has an account, a link to set a new password is on its way.`
-    : cardCopy[props.mode].description,
+    : verify.value
+      ? verifyDescription.value
+      : cardCopy[props.mode].description,
 );
 const submitLabel = computed(() =>
   confirming.value ? "Send it again" : cardCopy[props.mode].submit,
@@ -235,9 +296,11 @@ const footerPrompt = computed(() => cardCopy[props.mode].footerPrompt);
         whole content changed with no announcement leaves a screen reader user
         with one clue that anything happened: the button they just pressed
         renamed itself. The region has to exist *before* the change, which is why
-        it hangs off `forgot` and not off `confirming`.
+        it hangs off `forgot` and not off `confirming` — and the verify card
+        borrows it, because `resent` rewrites the description the same way and
+        for the same reason.
       -->
-      <Card.Header :role="forgot ? 'status' : undefined">
+      <Card.Header :role="forgot || verify ? 'status' : undefined">
         <Card.Title
           class="text-lg @md:text-xl"
           :aria-level="titleLevel === 3 ? undefined : titleLevel"
@@ -274,6 +337,47 @@ const footerPrompt = computed(() => cardCopy[props.mode].footerPrompt);
             spam, then send it again.
           </p>
 
+          <!--
+            The address rides with the code, so both submits — the check and the
+            resend — post everything the server needs from a page that never
+            hydrated. Same argument as the resend's address and the reset's
+            token above.
+          -->
+          <input v-if="verify && sentTo" type="hidden" name="email" :value="sentTo" />
+
+          <!--
+            One cell per digit, and one name for the whole code: Ark keeps a
+            hidden input in step with the cells, so `code` is what the form
+            submits. `otp` is what asks the platform for
+            autocomplete="one-time-code" — the reason a code can be tapped
+            straight out of the notification instead of memorised.
+          -->
+          <div v-if="verify" class="grid gap-2">
+            <PinInput.Root
+              name="code"
+              :count="cells.length"
+              otp
+              required
+              :disabled="inert"
+              :invalid="invalid('code')"
+            >
+              <PinInput.Label>Verification code</PinInput.Label>
+              <PinInput.Control>
+                <PinInput.Input v-for="index in cells" :key="index" :index="index" />
+              </PinInput.Control>
+              <PinInput.HiddenInput />
+            </PinInput.Root>
+            <!--
+              An alert rather than the input's described text: a pin input is n
+              controls and one value, so there is no single field to describe —
+              and this message only ever arrives after a submit, which is when an
+              alert is the right instrument.
+            -->
+            <p v-if="errors?.code" class="text-sm text-destructive" role="alert">
+              {{ errors.code }}
+            </p>
+          </div>
+
           <Field.Root v-if="signUp" required :invalid="invalid('fullName')" :disabled="inert">
             <Field.Label>Full name</Field.Label>
             <Field.Input name="fullName" autocomplete="name" placeholder="Ada Lovelace" />
@@ -291,7 +395,12 @@ const footerPrompt = computed(() => cardCopy[props.mode].footerPrompt);
             <Field.ErrorText v-if="signUp || forgot">{{ errors?.email }}</Field.ErrorText>
           </Field.Root>
 
-          <Field.Root v-if="!forgot" required :invalid="invalid('password')" :disabled="inert">
+          <Field.Root
+            v-if="!forgot && !verify"
+            required
+            :invalid="invalid('password')"
+            :disabled="inert"
+          >
             <Field.Label>{{ reset ? "New password" : "Password" }}</Field.Label>
             <Field.Input
               name="password"
@@ -386,7 +495,7 @@ const footerPrompt = computed(() => cardCopy[props.mode].footerPrompt);
           </div>
 
           <div
-            v-else-if="!forgot && !reset"
+            v-else-if="!forgot && !reset && !verify"
             class="grid gap-3 @sm:flex @sm:items-center @sm:justify-between"
           >
             <Checkbox.Root name="remember" size="sm" :disabled="inert">
@@ -421,13 +530,36 @@ const footerPrompt = computed(() => cardCopy[props.mode].footerPrompt);
             </template>
             <template v-else>{{ submitLabel }}</template>
           </Button>
+
+          <!--
+            The resend is a second submit, not an emit: named `intent` and valued
+            "resend", it posts the form the browser already has — the code cells,
+            the address, everything — with no JavaScript needed, and the one
+            submit listener tells the two buttons apart by reading the submitter.
+            It sits after the primary so the Enter key still verifies.
+
+            While the countdown runs the button is disabled and says how long: a
+            control that looks pressable and quietly does nothing is worse than
+            one that says why it cannot.
+          -->
+          <Button
+            v-if="verify"
+            type="submit"
+            name="intent"
+            value="resend"
+            variant="ghost"
+            class="w-full"
+            :disabled="inert || waiting"
+          >
+            {{ waiting ? `Send a new code in ${resendIn}s` : "Send a new code" }}
+          </Button>
         </form>
       </Card.Content>
 
       <!--
-        One footer, and the way out of the card is the same shape in all four
+        One footer, and the way out of the card is the same shape in all five
         modes: a question and the link that answers it. Only `sign-in` sends the
-        reader onward to an account they do not have yet; the other three send
+        reader onward to an account they do not have yet; the other four send
         them back to the one they do.
       -->
       <Card.Footer class="justify-center">

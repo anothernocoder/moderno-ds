@@ -1,16 +1,16 @@
 ---
 title: Login form
-description: The credential card in its four modes — sign in (email, password, remember-me), sign up (name, email, a new password, consent), forgot password (the address alone, then the confirmation) or reset password (a new password, its confirmation and the rules ticking off) — composed from Card, Field, Checkbox, Button and Alert, sized by its container rather than the viewport.
+description: The credential card in its five modes — sign in (email, password, remember-me), sign up (name, email, a new password, consent), forgot password (the address alone, then the confirmation), reset password (a new password, its confirmation and the rules ticking off) or verify (one cell per digit of a one-time code, and a resend) — composed from Card, Field, PinInput, Checkbox, Button and Alert, sized by its container rather than the viewport.
 group: Blocks
 order: 101
 agent:
-  intent: The credential card of an authentication screen, in its sign-in, sign-up, forgot-password or reset-password mode.
-  whenToUse: 'A page or panel where someone enters credentials: a sign-in screen, a registration screen (mode="sign-up"), a password-recovery screen (mode="forgot-password"), the page behind an emailed reset link (mode="reset-password"), a re-authentication step, a modal that unlocks a privileged action.'
+  intent: The credential card of an authentication screen, in its sign-in, sign-up, forgot-password, reset-password or verify mode.
+  whenToUse: 'A page or panel where someone enters credentials: a sign-in screen, a registration screen (mode="sign-up"), a password-recovery screen (mode="forgot-password"), the page behind an emailed reset link (mode="reset-password"), the one-time code that follows a sign-up (mode="verify"), a re-authentication step, a modal that unlocks a privileged action.'
   whenNotToUse:
-    - case: Collecting a one-time code sent by email or SMS
-      use: PinInput, inside the verify screen
+    - case: A one-time code with no card around it — inside a dialog you already styled, or a step of your own
+      use: PinInput directly; this block is the card, and mode="verify" is what puts a code inside it
     - case: A full-viewport page with its own heading, highlights and footer
-      use: the sign-in, sign-up, forgot-password or reset-password screen, each of which composes this block in one mode
+      use: the sign-in, sign-up, forgot-password, reset-password or verify screen, each of which composes this block in one mode
     - case: Changing a password the person still knows
       use: FormLayout — reset-password never asks for the old one, because whoever is on that page does not have it
     - case: A long form of grouped fields with one actions row
@@ -19,11 +19,14 @@ agent:
       use: Field and Button directly
   gotchas:
     - "Presentational: it holds no credentials and issues no request. Pass `error` / `loading` / `disabled` and handle the native submit event yourself."
-    - "`mode` decides which card this is: `sign-in` (the default), `sign-up`, `forgot-password` or `reset-password`. It changes the fields, the copy, the submit, the secondary row and the footer link; everything else — width, spacing, states — is shared."
+    - "`mode` decides which card this is: `sign-in` (the default), `sign-up`, `forgot-password`, `reset-password` or `verify`. It changes the fields, the copy, the submit, the secondary row and the footer link; everything else — width, spacing, states — is shared."
     - '`sent` is read in `forgot-password` only: the same card confirms in place instead of asking, names `sentTo` in the sentence and carries it in a hidden input, so "Send it again" is a plain form submission that works unhydrated. The confirmation says "if that address has an account" and never whether it does.'
     - "`error` is a form-level message. Signing in it also invalidates both credential fields and names neither, so the form never confirms that an email address exists; signing up there is nothing to leak yet, so `errors` (keyed by the field's `name`: `fullName`, `email`, `password`) names the field that was rejected."
     - '`errors` is read in every mode but `sign-in`, and the terms links (`termsHref` / `privacyHref`) render in `sign-up` only — as does the required consent checkbox, which is `name="terms"` in the submitted form.'
     - "`reset-password` submits three named controls: `password`, `confirmPassword` and — when you pass `token` — a hidden `token` carrying the value out of the emailed link, so the reset posts unhydrated. It never asks for the old password: whoever is on that page does not have it."
+    - '`verify` renders PinInput: `codeLength` cells (6 by default), all `autocomplete="one-time-code"`, submitting the whole code under one name — `code` — from the hidden input Ark keeps in step with them. `sentTo` is named in the description and rides in a hidden `email`, so a resend posts unhydrated.'
+    - 'The `verify` resend is a second submit button, `name="intent" value="resend"`, not a callback: read `new FormData(form, submitter)` and branch on `intent`. `resendIn` (seconds) locks it and counts down — you own that timer — and `resent` rewrites the header, which is already the card''s live region.'
+    - "`errors.code` marks the cells invalid and prints the reason under them as an `alert`; a pin input is n controls and one value, so there is no single field to describe."
     - "`requirements` is the rules under the new password (`{ id, label, met }`), rendered as that field's helper text so a screen reader reads them on focus. `met` is yours to recompute as the value changes; the block holds no value and enforces nothing, and the server must check every rule again."
     - "`loading` implies inert: every control is disabled and the submit carries aria-busy, so a second submit cannot be fired mid-request."
     - "The block responds to its container, never the viewport. Mount it in something narrower than --container-sm and the secondary row stacks on its own."
@@ -45,7 +48,7 @@ import loginFormVue from "../../../../../../registry/blocks/login-form/vue/Login
 import loginFormSolid from "../../../../../../registry/blocks/login-form/solid/login-form.tsx?raw";
 import loginFormSvelte from "../../../../../../registry/blocks/login-form/svelte/LoginForm.svelte?raw";
 
-**Login form** is the credential card, and it has four modes.
+**Login form** is the credential card, and it has five modes.
 `mode="sign-in"` — the default — is the returning person: an email field, a
 password field, remember-me, and the two links every sign-in screen needs.
 `mode="sign-up"` is the new one: full name, email, a new password, and the
@@ -53,19 +56,22 @@ consent that has to be given before an account can exist. `mode="forgot-password
 is the one who cannot get in: the address alone, and — once `sent` — the same
 card confirming that a link is on its way. `mode="reset-password"` is the end of
 that errand: a new password and its confirmation, the rules ticking off as they
-are met, and the emailed token in a hidden input. It composes `Card`, `Field`,
-`Checkbox`, `Button` and `Alert` and paints nothing of its own, so a theme
-re-skins it untouched.
+are met, and the emailed token in a hidden input. `mode="verify"` is the code
+that proves the address is real: one cell per digit, and a second submit that
+asks for a new code. It composes `Card`, `Field`, `PinInput`, `Checkbox`,
+`Button` and `Alert` and paints nothing of its own, so a theme re-skins it
+untouched.
 
-One block rather than four, because they are one thing: the same card, the same
+One block rather than five, because they are one thing: the same card, the same
 width cap, the same rhythm — so a person walking from [sign in](/en/sign-in/) to
-[sign up](/en/sign-up/) to [forgot password](/en/forgot-password/) to
+[sign up](/en/sign-up/) to [verify](/en/verify/) to
+[forgot password](/en/forgot-password/) to
 [reset password](/en/reset-password/) does not feel the page change under them.
 
 It is a _block_, not a screen: it does not own the viewport, holds no navigation
-state and issues no request. The `sign-in`, `sign-up`, `forgot-password` and
-`reset-password` screens compose it and keep the state; this file is a section
-you can also drop into a modal or a settings panel.
+state and issues no request. The `sign-in`, `sign-up`, `forgot-password`,
+`reset-password` and `verify` screens compose it and keep the state; this file is
+a section you can also drop into a modal or a settings panel.
 
 <FrameworkSelect locale="en" />
 
@@ -112,6 +118,7 @@ spacing, the container steps and every state below are shared.
 | `sign-up`           | Full name, email, password (`new-password`)          | Required consent box + legal links    | "Already have an account? Sign in" |
 | `forgot-password`   | Email                                                | None                                  | "Remembered it? Sign in"           |
 | `reset-password`    | Password + confirmation (both `new-password`), token | None                                  | "Changed your mind? Sign in"       |
+| `verify`            | One cell per digit of `code`, plus a hidden `email`  | A second submit: the resend           | "Wrong account? Sign in"           |
 
 `forgot-password` has a second face rather than a mode of its own. With `sent`, the
 same card keeps its place and rewrites itself: the header becomes "Check your
@@ -148,11 +155,32 @@ browser enforced is a rule an attacker skipped. What the card does guarantee is
 that with no JavaScript on the page the rules are still printed, the token still
 rides in the form, and the reset still posts.
 
+`verify` is the only mode with two buttons. The primary submit checks the code;
+the ghost button under it carries `name="intent" value="resend"` and asks for a
+new one. Both post the same form, so one handler serves both — read the form with
+the submitter, `new FormData(form, submitter)`, and branch on `intent`. That is
+what keeps the resend working on a page whose JavaScript never arrived, and it is
+why the address travels in a hidden input beside the code rather than in a
+closure.
+
+The cells are `PinInput`: Ark moves the focus as digits land, steps back on
+backspace, distributes a pasted code across them, and marks every one
+`autocomplete="one-time-code"` so a phone can offer the code straight out of the
+notification. `codeLength` sets how many there are — and the same number is what
+the description names, so the sentence cannot say "six" while the card shows
+four. The whole code posts under one name, `code`; the cells carry none.
+
+While a code is still fresh, `resendIn` (in seconds) disables the resend and says
+how long is left; the timer belongs to the page above, because the block holds no
+state. When a new code goes out, `resent` rewrites the card's header to say so —
+the header is already the live region `forgot-password` uses, so the confirmation
+is announced rather than merely printed.
+
 The card's title is an `h3`, because a card is a section of a page and not its
 heading. A **screen** mounts this card _as_ the whole route, though, and there
 `h3` is wrong twice over: the page has no top-level heading, and the `h2` the
 aside prints next reads as an outline that skips a rank. So the card takes
-`titleLevel`, and the four auth screens pass `1` — the title of the card is what
+`titleLevel`, and the five auth screens pass `1` — the title of the card is what
 the page is called, so it is the page's `h1` rather than a second heading printed
 above it. The default is `3`, so a card you mount yourself is unchanged.
 
@@ -168,8 +196,9 @@ The preview above is the `sign-in` mode in its container widths and states; the
 `forgot-password` mode, both faces, on the
 [forgot-password screen](/en/forgot-password/) page, and `reset-password` — rules
 half met, and the spent link — on the
-[reset-password screen](/en/reset-password/) page, each mounted in the screen
-that composes it.
+[reset-password screen](/en/reset-password/) page, and `verify` — the wrong
+code, the locked resend — on the [verify screen](/en/verify/) page, each mounted
+in the screen that composes it.
 
 ## States
 
@@ -184,6 +213,9 @@ that composes it.
 | Field errors    | `errors={{ email: "…" }}` — every mode but `sign-in`: that field is invalid and prints its own message.                     |
 | Sent            | `sent` — `forgot-password` only: the card confirms in place, and the submit becomes "Send it again".                        |
 | Rules met       | `requirements` — `reset-password` only: the rules under the new password, each row announced as it flips.                   |
+| Code rejected   | `errors={{ code: "…" }}` — `verify` only: every cell goes invalid and the reason prints under them as an `alert`.           |
+| Resend locked   | `resendIn` — `verify` only: the second submit is disabled and counts down instead of pretending it can send another code.   |
+| Resent          | `resent` — `verify` only: the header says a new code is on its way and the one before it has stopped working.               |
 
 Signing in, the error is deliberately form-level. Telling a visitor that _the
 password_ was wrong also tells them the email exists, which is the first half of
@@ -198,21 +230,24 @@ reader off to fix something that was never broken.
 
 ## Props
 
-| Prop           | Type                                                              | Default        | What it does                                                                                                  |
-| -------------- | ----------------------------------------------------------------- | -------------- | ------------------------------------------------------------------------------------------------------------- |
-| `mode`         | `"sign-in" \| "sign-up" \| "forgot-password" \| "reset-password"` | `"sign-in"`    | Which card this is: the returning person, the new one, the locked-out one, or the one choosing a replacement. |
-| `titleLevel`   | `1 \| 2 \| 3`                                                     | `3`            | The rank the card's title carries in the page's heading outline; a screen passes `1`.                         |
-| `sent`         | `boolean`                                                         | `false`        | `forgot-password` — the link has gone out: the card confirms instead of asking.                               |
-| `sentTo`       | `string`                                                          | `""`           | `forgot-password` — the address named in the confirmation and resubmitted by "Send it again".                 |
-| `token`        | `string`                                                          | `""`           | `reset-password` — the token out of the emailed link, submitted from a hidden input.                          |
-| `requirements` | `PasswordRequirement[]`                                           | three unticked | `reset-password` — the rules under the new password (`{ id, label, met }`). `[]` falls back to helper text.   |
-| `error`        | `string`                                                          | —              | Form-level failure message; renders the alert, and in `sign-in` invalidates both fields.                      |
-| `errors`       | `Record<string, string>`                                          | —              | Every mode but `sign-in` — per-field messages keyed by the field's `name`.                                    |
-| `loading`      | `boolean`                                                         | `false`        | The submit is in flight: controls inert, button busy.                                                         |
-| `disabled`     | `boolean`                                                         | `false`        | The form is unavailable (SSO-only workspace, locked account, spent reset link).                               |
-| `onSubmit`     | submit handler                                                    | —              | The native submit event. React/Solid take `onSubmit`, Svelte `onsubmit`, Vue emits `submit`.                  |
-| `forgotHref`   | `string`                                                          | `"#"`          | `sign-in` — where "Forgot your password?" points.                                                             |
-| `signUpHref`   | `string`                                                          | `"#"`          | `sign-in` — where "Create an account" points.                                                                 |
-| `signInHref`   | `string`                                                          | `"#"`          | Every mode but `sign-in` — where "Sign in" points.                                                            |
-| `termsHref`    | `string`                                                          | `"#"`          | `sign-up` — where the terms link under the consent box points.                                                |
-| `privacyHref`  | `string`                                                          | `"#"`          | `sign-up` — where the privacy link under the consent box points.                                              |
+| Prop           | Type                                                                          | Default        | What it does                                                                                                                          |
+| -------------- | ----------------------------------------------------------------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `mode`         | `"sign-in" \| "sign-up" \| "forgot-password" \| "reset-password" \| "verify"` | `"sign-in"`    | Which card this is: the returning person, the new one, the locked-out one, the one choosing a replacement, or the one holding a code. |
+| `titleLevel`   | `1 \| 2 \| 3`                                                                 | `3`            | The rank the card's title carries in the page's heading outline; a screen passes `1`.                                                 |
+| `sent`         | `boolean`                                                                     | `false`        | `forgot-password` — the link has gone out: the card confirms instead of asking.                                                       |
+| `sentTo`       | `string`                                                                      | `""`           | `forgot-password` and `verify` — the address named in the card and resubmitted from a hidden input.                                   |
+| `codeLength`   | `number`                                                                      | `6`            | `verify` — how many cells the code has, and the number the description names.                                                         |
+| `resendIn`     | `number`                                                                      | `0`            | `verify` — seconds until another code can be asked for; above zero the resend is locked and counts down.                              |
+| `resent`       | `boolean`                                                                     | `false`        | `verify` — a new code has just gone out: the header says so, in the live region it already has.                                       |
+| `token`        | `string`                                                                      | `""`           | `reset-password` — the token out of the emailed link, submitted from a hidden input.                                                  |
+| `requirements` | `PasswordRequirement[]`                                                       | three unticked | `reset-password` — the rules under the new password (`{ id, label, met }`). `[]` falls back to helper text.                           |
+| `error`        | `string`                                                                      | —              | Form-level failure message; renders the alert, and in `sign-in` invalidates both fields.                                              |
+| `errors`       | `Record<string, string>`                                                      | —              | Every mode but `sign-in` — per-field messages keyed by the field's `name`.                                                            |
+| `loading`      | `boolean`                                                                     | `false`        | The submit is in flight: controls inert, button busy.                                                                                 |
+| `disabled`     | `boolean`                                                                     | `false`        | The form is unavailable (SSO-only workspace, locked account, spent reset link).                                                       |
+| `onSubmit`     | submit handler                                                                | —              | The native submit event. React/Solid take `onSubmit`, Svelte `onsubmit`, Vue emits `submit`.                                          |
+| `forgotHref`   | `string`                                                                      | `"#"`          | `sign-in` — where "Forgot your password?" points.                                                                                     |
+| `signUpHref`   | `string`                                                                      | `"#"`          | `sign-in` — where "Create an account" points.                                                                                         |
+| `signInHref`   | `string`                                                                      | `"#"`          | Every mode but `sign-in` — where "Sign in" points.                                                                                    |
+| `termsHref`    | `string`                                                                      | `"#"`          | `sign-up` — where the terms link under the consent box points.                                                                        |
+| `privacyHref`  | `string`                                                                      | `"#"`          | `sign-up` — where the privacy link under the consent box points.                                                                      |

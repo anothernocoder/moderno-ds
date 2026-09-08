@@ -54,9 +54,9 @@
     {
       "name": "login-form-react",
       "type": "registry:block",
-      "version": "0.6.0",
+      "version": "0.7.0",
       "title": "Login Form (React)",
-      "description": "Credential card composing the @moderno-ui/react Card, Field, Checkbox, Button and Alert primitives, in any of its four modes: sign-in (email, password, remember-me, recovery link), sign-up (full name, email, a new password and consent), forgot-password (the address alone, and the same card confirming once the link is sent) or reset-password (a new password and its confirmation, the rules ticking off as they are met, and the emailed token in a hidden input). Responds to its container (@container) rather than the viewport, renders its default, disabled, loading and error states from props, and takes the heading rank its title carries (titleLevel) so a screen can mount it as the whole route.",
+      "description": "Credential card composing the @moderno-ui/react Card, Field, PinInput, Checkbox, Button and Alert primitives, in any of its five modes: sign-in (email, password, remember-me, recovery link), sign-up (full name, email, a new password and consent), forgot-password (the address alone, and the same card confirming once the link is sent), reset-password (a new password and its confirmation, the rules ticking off as they are met, and the emailed token in a hidden input) or verify (one cell per digit of a one-time code, the address riding along in a hidden input, and a second submit that asks for a new code once the countdown is up). Responds to its container (@container) rather than the viewport, renders its default, disabled, loading and error states from props, and takes the heading rank its title carries (titleLevel) so a screen can mount it as the whole route.",
       "dependencies": ["@moderno-ui/react"],
       "registryDependencies": [],
       "files": [
@@ -70,9 +70,9 @@
     {
       "name": "login-form-vue",
       "type": "registry:block",
-      "version": "0.6.0",
+      "version": "0.7.0",
       "title": "Login Form (Vue)",
-      "description": "Credential card composing the @moderno-ui/vue Card, Field, Checkbox, Button and Alert primitives, in any of its four modes: sign-in (email, password, remember-me, recovery link), sign-up (full name, email, a new password and consent), forgot-password (the address alone, and the same card confirming once the link is sent) or reset-password (a new password and its confirmation, the rules ticking off as they are met, and the emailed token in a hidden input). Responds to its container (@container) rather than the viewport, renders its default, disabled, loading and error states from props, and takes the heading rank its title carries (titleLevel) so a screen can mount it as the whole route.",
+      "description": "Credential card composing the @moderno-ui/vue Card, Field, PinInput, Checkbox, Button and Alert primitives, in any of its five modes: sign-in (email, password, remember-me, recovery link), sign-up (full name, email, a new password and consent), forgot-password (the address alone, and the same card confirming once the link is sent), reset-password (a new password and its confirmation, the rules ticking off as they are met, and the emailed token in a hidden input) or verify (one cell per digit of a one-time code, the address riding along in a hidden input, and a second submit that asks for a new code once the countdown is up). Responds to its container (@container) rather than the viewport, renders its default, disabled, loading and error states from props, and takes the heading rank its title carries (titleLevel) so a screen can mount it as the whole route.",
       "dependencies": ["@moderno-ui/vue"],
       "registryDependencies": [],
       "files": [
@@ -86,9 +86,9 @@
     {
       "name": "login-form-svelte",
       "type": "registry:block",
-      "version": "0.6.0",
+      "version": "0.7.0",
       "title": "Login Form (Svelte)",
-      "description": "Credential card composing the @moderno-ui/svelte Card, Field, Checkbox, Button and Alert primitives, in any of its four modes: sign-in (email, password, remember-me, recovery link), sign-up (full name, email, a new password and consent), forgot-password (the address alone, and the same card confirming once the link is sent) or reset-password (a new password and its confirmation, the rules ticking off as they are met, and the emailed token in a hidden input). Responds to its container (@container) rather than the viewport, renders its default, disabled, loading and error states from props, and takes the heading rank its title carries (titleLevel) so a screen can mount it as the whole route.",
+      "description": "Credential card composing the @moderno-ui/svelte Card, Field, PinInput, Checkbox, Button and Alert primitives, in any of its five modes: sign-in (email, password, remember-me, recovery link), sign-up (full name, email, a new password and consent), forgot-password (the address alone, and the same card confirming once the link is sent), reset-password (a new password and its confirmation, the rules ticking off as they are met, and the emailed token in a hidden input) or verify (one cell per digit of a one-time code, the address riding along in a hidden input, and a second submit that asks for a new code once the countdown is up). Responds to its container (@container) rather than the viewport, renders its default, disabled, loading and error states from props, and takes the heading rank its title carries (titleLevel) so a screen can mount it as the whole route.",
       "dependencies": ["@moderno-ui/svelte"],
       "registryDependencies": [],
       "files": [
@@ -102,9 +102,9 @@
     {
       "name": "login-form-solid",
       "type": "registry:block",
-      "version": "0.6.0",
+      "version": "0.7.0",
       "title": "Login Form (Solid)",
-      "description": "Credential card composing the @moderno-ui/solid Card, Field, Checkbox, Button and Alert primitives, in any of its four modes: sign-in (email, password, remember-me, recovery link), sign-up (full name, email, a new password and consent), forgot-password (the address alone, and the same card confirming once the link is sent) or reset-password (a new password and its confirmation, the rules ticking off as they are met, and the emailed token in a hidden input). Responds to its container (@container) rather than the viewport, renders its default, disabled, loading and error states from props, and takes the heading rank its title carries (titleLevel) so a screen can mount it as the whole route.",
+      "description": "Credential card composing the @moderno-ui/solid Card, Field, PinInput, Checkbox, Button and Alert primitives, in any of its five modes: sign-in (email, password, remember-me, recovery link), sign-up (full name, email, a new password and consent), forgot-password (the address alone, and the same card confirming once the link is sent), reset-password (a new password and its confirmation, the rules ticking off as they are met, and the emailed token in a hidden input) or verify (one cell per digit of a one-time code, the address riding along in a hidden input, and a second submit that asks for a new code once the countdown is up). Responds to its container (@container) rather than the viewport, renders its default, disabled, loading and error states from props, and takes the heading rank its title carries (titleLevel) so a screen can mount it as the whole route.",
       "dependencies": ["@moderno-ui/solid"],
       "registryDependencies": [],
       "files": [
@@ -624,6 +624,70 @@
           "path": "screens/reset-password/solid/reset-password.tsx",
           "type": "registry:screen",
           "target": "src/components/screens/reset-password.tsx"
+        }
+      ]
+    },
+    {
+      "name": "verify-react",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Verify (React)",
+      "description": "Full-viewport screen that takes the one-time code emailed after sign-up, composing the login-form block in its verify mode and the alert-list block: one cell per digit with autocomplete=\"one-time-code\", the address carried in a hidden input so a resend still posts without JavaScript, a second submit that asks for a new code once the countdown is up, and the notes that answer \"it has not arrived\" beside them. Presentational — data and callbacks in, no navigation state and no timer of its own — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the notes move beside the card at @lg.",
+      "dependencies": ["@moderno-ui/react"],
+      "registryDependencies": ["login-form-react", "alert-list-react"],
+      "files": [
+        {
+          "path": "screens/verify/react/verify.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/verify.tsx"
+        }
+      ]
+    },
+    {
+      "name": "verify-vue",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Verify (Vue)",
+      "description": "Full-viewport screen that takes the one-time code emailed after sign-up, composing the login-form block in its verify mode and the alert-list block: one cell per digit with autocomplete=\"one-time-code\", the address carried in a hidden input so a resend still posts without JavaScript, a second submit that asks for a new code once the countdown is up, and the notes that answer \"it has not arrived\" beside them. Presentational — data and callbacks in, no navigation state and no timer of its own — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the notes move beside the card at @lg.",
+      "dependencies": ["@moderno-ui/vue"],
+      "registryDependencies": ["login-form-vue", "alert-list-vue"],
+      "files": [
+        {
+          "path": "screens/verify/vue/Verify.vue",
+          "type": "registry:screen",
+          "target": "src/components/screens/Verify.vue"
+        }
+      ]
+    },
+    {
+      "name": "verify-svelte",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Verify (Svelte)",
+      "description": "Full-viewport screen that takes the one-time code emailed after sign-up, composing the login-form block in its verify mode and the alert-list block: one cell per digit with autocomplete=\"one-time-code\", the address carried in a hidden input so a resend still posts without JavaScript, a second submit that asks for a new code once the countdown is up, and the notes that answer \"it has not arrived\" beside them. Presentational — data and callbacks in, no navigation state and no timer of its own — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the notes move beside the card at @lg.",
+      "dependencies": ["@moderno-ui/svelte"],
+      "registryDependencies": ["login-form-svelte", "alert-list-svelte"],
+      "files": [
+        {
+          "path": "screens/verify/svelte/Verify.svelte",
+          "type": "registry:screen",
+          "target": "src/components/screens/Verify.svelte"
+        }
+      ]
+    },
+    {
+      "name": "verify-solid",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Verify (Solid)",
+      "description": "Full-viewport screen that takes the one-time code emailed after sign-up, composing the login-form block in its verify mode and the alert-list block: one cell per digit with autocomplete=\"one-time-code\", the address carried in a hidden input so a resend still posts without JavaScript, a second submit that asks for a new code once the countdown is up, and the notes that answer \"it has not arrived\" beside them. Presentational — data and callbacks in, no navigation state and no timer of its own — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the notes move beside the card at @lg.",
+      "dependencies": ["@moderno-ui/solid"],
+      "registryDependencies": ["login-form-solid", "alert-list-solid"],
+      "files": [
+        {
+          "path": "screens/verify/solid/verify.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/verify.tsx"
         }
       ]
     }

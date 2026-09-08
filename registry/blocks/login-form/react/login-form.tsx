@@ -1,13 +1,13 @@
 import type { FormEvent } from "react";
-import { Alert, Button, Card, Checkbox, Field } from "@moderno-ui/react";
+import { Alert, Button, Card, Checkbox, Field, PinInput } from "@moderno-ui/react";
 
 /**
  * LoginForm — the credential card, composed from @moderno-ui/react primitives
- * (Card, Field, Checkbox, Button, Alert). Copy it into your project with
- * `moderno add login-form-react` and edit it freely: every visual comes from
- * the token contract, so a theme re-skins it without a diff here.
+ * (Card, Field, PinInput, Checkbox, Button, Alert). Copy it into your project
+ * with `moderno add login-form-react` and edit it freely: every visual comes
+ * from the token contract, so a theme re-skins it without a diff here.
  *
- * **Four modes, one card.** `mode="sign-in"` (the default) is the returning
+ * **Five modes, one card.** `mode="sign-in"` (the default) is the returning
  * person: email, password, remember-me, the recovery link. `mode="sign-up"` is
  * the new one: full name, email, a new password and the consent that has to be
  * given before an account can exist. `mode="forgot-password"` is the one who
@@ -15,11 +15,30 @@ import { Alert, Button, Card, Checkbox, Field } from "@moderno-ui/react";
  * confirming the link is on its way. `mode="reset-password"` is the end of that
  * errand: the new password and its confirmation, the rules said out loud as they
  * are met, and the token from the emailed link riding along in a hidden input.
- * They are one block rather than four because they are one thing — the same
- * card, the same width, the same rhythm — and a person walking the auth flow
- * should not feel the page change under them. The `sign-in`, `sign-up`,
- * `forgot-password` and `reset-password` screens each mount this file in one of
- * its modes.
+ * `mode="verify"` is the code that proves the address is real: one cell per
+ * digit and a second submit that asks for a new code. They are one block rather
+ * than five because they are one thing — the same card, the same width, the
+ * same rhythm — and a person walking the auth flow should not feel the page
+ * change under them. The `sign-in`, `sign-up`, `forgot-password`,
+ * `reset-password` and `verify` screens each mount this file in one of its
+ * modes.
+ *
+ * **The verify card asks for a code, and can ask again.** `mode="verify"` swaps
+ * the credential fields for `PinInput` — Ark advances the focus as digits land,
+ * distributes a pasted code across the cells, and marks them
+ * `autocomplete="one-time-code"`, so the platform offers the code straight out
+ * of the SMS or the mail app. The whole code posts under one name (`code`),
+ * from the hidden input Ark keeps in step with the cells.
+ *
+ * The resend is a **second submit button**, named `intent` and valued
+ * `"resend"`, rather than a callback: it is then a plain form submission that
+ * still works with no JavaScript, and one handler serves both buttons — read
+ * `new FormData(form, event.nativeEvent.submitter)` and branch on `intent`. The
+ * address rides along in a hidden input for the same reason, so the resend
+ * knows where to send. `resendIn` counts the seconds until the button unlocks
+ * (the page above owns that timer — the card holds no state), and `resent`
+ * rewrites the header rather than adding a line, so the confirmation lands in
+ * the live region that is already there.
  *
  * **The recovery card confirms in place.** `sent` does not swap the card for a
  * different component: the header rewrites itself, the email field gives way to
@@ -85,11 +104,19 @@ import { Alert, Button, Card, Checkbox, Field } from "@moderno-ui/react";
  * already-used link belongs: what went wrong there is the token, not the
  * password, and no field should be marked for it.
  *
+ * Verifying, `errors.code` is the wrong or expired code: the cells go
+ * `aria-invalid` and the message is printed under them as an `alert`, so it is
+ * announced when it arrives. It is an `alert` rather than the input's described
+ * text because a pin input is *n* controls and one value — there is no single
+ * field to describe — and the message always arrives after a submit, which is
+ * exactly when an alert is the right instrument. `error` stays the form-level
+ * failure: too many attempts, or the address itself already verified.
+ *
  * Class strings are written out in full rather than shared through a constant:
  * the docs compile the previews' Tailwind from `class` attributes, so a class
  * assembled in JS would render here and vanish in the preview.
  */
-export type LoginFormMode = "sign-in" | "sign-up" | "forgot-password" | "reset-password";
+export type LoginFormMode = "sign-in" | "sign-up" | "forgot-password" | "reset-password" | "verify";
 
 /**
  * One rule the new password is judged against, and whether it is met yet.
@@ -106,11 +133,13 @@ export interface PasswordRequirement {
 
 /**
  * What the card says it is, what its submit says, and what its footer offers,
- * per mode. Four modes turn every one of those into a four-way ternary if they
+ * per mode. Five modes turn every one of those into a five-way ternary if they
  * are written at the point of use; the table is the same decision made once.
- * The `forgot-password` card rewrites its title, its description and its submit
- * once the link is sent, and that confirmation is the only copy in the file not
- * read straight off here.
+ * Two sentences are not read straight off here: the `forgot-password` card
+ * rewrites its title, its description and its submit once the link is sent, and
+ * the `verify` card names the address and the number of digits as soon as it is
+ * told them — a description that says "six" while `codeLength` says four is a
+ * lie the table cannot see.
  */
 const cardCopy: Record<
   LoginFormMode,
@@ -144,6 +173,13 @@ const cardCopy: Record<
     busy: "Saving password",
     footerPrompt: "Changed your mind?",
   },
+  verify: {
+    title: "Enter your code",
+    description: "Type the code we sent, so we know the address is yours.",
+    submit: "Verify email",
+    busy: "Verifying",
+    footerPrompt: "Wrong account?",
+  },
 };
 
 /**
@@ -170,15 +206,21 @@ export interface LoginFormProps {
   titleLevel?: 1 | 2 | 3;
   /** `forgot-password` only — the link has gone out: the card confirms instead of asking. */
   sent?: boolean;
-  /** `forgot-password` only — the address the link went to: named in the confirmation, and resubmitted by "Send it again". */
+  /** `forgot-password` and `verify` — the address the link or the code went to: named in the card, and resubmitted from a hidden input by "Send it again" and by the resend. */
   sentTo?: string;
+  /** `verify` only — how many cells the code has, and the number the description names. */
+  codeLength?: number;
+  /** `verify` only — seconds until another code can be asked for; above zero the resend is locked and counts down. The timer is the page's, not the card's. */
+  resendIn?: number;
+  /** `verify` only — a new code has just gone out: the header says so, in the live region it already has. */
+  resent?: boolean;
   /** `reset-password` only — the token out of the emailed link, submitted with the new password from a hidden input. */
   token?: string;
   /** `reset-password` only — the rules under the new password and whether each is met yet. `[]` falls back to one line of helper text. */
   requirements?: PasswordRequirement[];
   /** Form-level failure message. Renders the alert; in `sign-in` it also invalidates both credential fields. */
   error?: string;
-  /** Every mode but `sign-in` — per-field messages keyed by the field's `name`; each marks that field invalid. */
+  /** Every mode but `sign-in` — per-field messages keyed by the field's `name` (`code` in `verify`); each marks that field invalid. */
   errors?: Record<string, string>;
   /** The submit is in flight: every control is inert and the button reads busy. */
   loading?: boolean;
@@ -203,6 +245,9 @@ export function LoginForm({
   titleLevel = 3,
   sent = false,
   sentTo = "",
+  codeLength = 6,
+  resendIn = 0,
+  resent = false,
   token = "",
   requirements = defaultRequirements,
   error,
@@ -219,13 +264,18 @@ export function LoginForm({
   const signUp = mode === "sign-up";
   const forgot = mode === "forgot-password";
   const reset = mode === "reset-password";
+  const verify = mode === "verify";
   /** The confirmation: the recovery card after the link has gone out. */
   const confirming = forgot && sent;
   /** Only the modes that start from an address ask for one. */
-  const asksForEmail = !confirming && !reset;
+  const asksForEmail = !confirming && !reset && !verify;
   /** A password is being *chosen*, so the field takes the rules and its own error. */
   const newPassword = signUp || reset;
   const inert = loading || disabled;
+  /** One cell per digit; the count is a prop because a code is not always six long. */
+  const cells = Array.from({ length: Math.max(1, Math.trunc(codeLength)) }, (_, index) => index);
+  /** Another code cannot be asked for yet: the page above is still counting down. */
+  const waiting = verify && resendIn > 0;
   /**
    * Signing in, one failure invalidates both credential fields and names
    * neither. In the other two modes only the field that was actually rejected
@@ -234,9 +284,23 @@ export function LoginForm({
   const invalid = (field: string) =>
     mode === "sign-in" ? Boolean(error) : Boolean(errors?.[field]);
   const title = confirming ? "Check your inbox" : cardCopy[mode].title;
+  /**
+   * Verifying, the description is where the card says what happened: which
+   * address the code went to, how many digits to expect, and — after a resend —
+   * that a fresh code is on its way and the one before it is dead. It goes here
+   * rather than in a line of its own because the header is already the card's
+   * live region, so a screen reader hears the change without a second one.
+   */
+  const verifyDescription = resent
+    ? `A new code is on its way to ${sentTo || "your inbox"}. The one before it has stopped working.`
+    : sentTo
+      ? `Enter the ${cells.length}-digit code we sent to ${sentTo}.`
+      : cardCopy.verify.description;
   const description = confirming
     ? `If ${sentTo || "that address"} has an account, a link to set a new password is on its way.`
-    : cardCopy[mode].description;
+    : verify
+      ? verifyDescription
+      : cardCopy[mode].description;
   const submitLabel = confirming ? "Send it again" : cardCopy[mode].submit;
   const busyLabel = cardCopy[mode].busy;
 
@@ -249,9 +313,11 @@ export function LoginForm({
           card whose whole content changed with no announcement leaves a screen
           reader user with one clue that anything happened: the button they just
           pressed renamed itself. The region has to exist *before* the change,
-          which is why it hangs off `forgot` and not off `confirming`.
+          which is why it hangs off `forgot` and not off `confirming` — and the
+          verify card borrows it, because `resent` rewrites the description the
+          same way and for the same reason.
         */}
-        <Card.Header role={forgot ? "status" : undefined}>
+        <Card.Header role={forgot || verify ? "status" : undefined}>
           <Card.Title
             className="text-lg @md:text-xl"
             aria-level={titleLevel === 3 ? undefined : titleLevel}
@@ -299,6 +365,55 @@ export function LoginForm({
               </p>
             ) : null}
 
+            {verify && sentTo ? (
+              /*
+               * The address rides with the code, so both submits — the check and
+               * the resend — post everything the server needs from a page that
+               * never hydrated. Same argument as the resend's address above and
+               * the reset's token below it.
+               */
+              <input type="hidden" name="email" value={sentTo} />
+            ) : null}
+
+            {verify ? (
+              /*
+               * One cell per digit, and one name for the whole code: Ark keeps a
+               * hidden input in step with the cells, so `code` is what the form
+               * submits. `otp` is what asks the platform for
+               * `autocomplete="one-time-code"` — the reason a code can be tapped
+               * straight out of the notification instead of memorised.
+               */
+              <div className="grid gap-2">
+                <PinInput.Root
+                  name="code"
+                  count={cells.length}
+                  otp
+                  required
+                  disabled={inert}
+                  invalid={invalid("code")}
+                >
+                  <PinInput.Label>Verification code</PinInput.Label>
+                  <PinInput.Control>
+                    {cells.map((index) => (
+                      <PinInput.Input key={index} index={index} />
+                    ))}
+                  </PinInput.Control>
+                  <PinInput.HiddenInput />
+                </PinInput.Root>
+                {errors?.code ? (
+                  /*
+                   * An `alert` rather than the input's described text: a pin
+                   * input is *n* controls and one value, so there is no single
+                   * field to describe — and this message only ever arrives after
+                   * a submit, which is when an alert is the right instrument.
+                   */
+                  <p className="text-sm text-destructive" role="alert">
+                    {errors.code}
+                  </p>
+                ) : null}
+              </div>
+            ) : null}
+
             {signUp ? (
               <Field.Root required invalid={invalid("fullName")} disabled={inert}>
                 <Field.Label>Full name</Field.Label>
@@ -320,7 +435,7 @@ export function LoginForm({
               </Field.Root>
             ) : null}
 
-            {forgot ? null : (
+            {forgot || verify ? null : (
               <Field.Root required invalid={invalid("password")} disabled={inert}>
                 <Field.Label>{reset ? "New password" : "Password"}</Field.Label>
                 <Field.Input
@@ -387,7 +502,7 @@ export function LoginForm({
               </Field.Root>
             ) : null}
 
-            {forgot || reset ? null : signUp ? (
+            {forgot || reset || verify ? null : signUp ? (
               /*
                * Consent is one checkbox with a short label, and the two legal
                * links sit *under* it rather than inside it: Ark's checkbox root
@@ -460,13 +575,38 @@ export function LoginForm({
                 submitLabel
               )}
             </Button>
+
+            {verify ? (
+              /*
+               * The resend is a second *submit*, not a callback: named `intent`
+               * and valued `"resend"`, it posts the form the browser already
+               * has — the code cells, the address, everything — with no
+               * JavaScript needed, and the one submit handler tells the two
+               * buttons apart by reading the submitter. It sits after the
+               * primary so the Enter key still verifies.
+               *
+               * While the countdown runs the button is disabled and says how
+               * long: a control that looks pressable and quietly does nothing
+               * is worse than one that says why it cannot.
+               */
+              <Button
+                type="submit"
+                name="intent"
+                value="resend"
+                variant="ghost"
+                className="w-full"
+                disabled={inert || waiting}
+              >
+                {waiting ? `Send a new code in ${resendIn}s` : "Send a new code"}
+              </Button>
+            ) : null}
           </form>
         </Card.Content>
 
         {/*
-          One footer, and the way out of the card is the same shape in all four
+          One footer, and the way out of the card is the same shape in all five
           modes: a question and the link that answers it. Only `sign-in` sends
-          the reader onward to an account they do not have yet; the other three
+          the reader onward to an account they do not have yet; the other four
           send them back to the one they do.
         */}
         <Card.Footer className="justify-center">

@@ -1,0 +1,197 @@
+---
+title: Verificación
+description: La pantalla a viewport completo que recibe el código enviado tras el registro — una celda por dígito, un reenvío que es un submit normal, y las notas que responden a «no me ha llegado», compuesta con login-form y alert-list.
+group: Pantallas
+order: 115
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import VerifyScreenDemo from "../../../islands/VerifyScreenDemo.svelte";
+import verifyReact from "../../../../../../registry/screens/verify/react/verify.tsx?raw";
+import verifyVue from "../../../../../../registry/screens/verify/vue/Verify.vue?raw";
+import verifySolid from "../../../../../../registry/screens/verify/solid/verify.tsx?raw";
+import verifySvelte from "../../../../../../registry/screens/verify/svelte/Verify.svelte?raw";
+
+**Verificación** es el paso entre una dirección escrita y una dirección que se
+sabe que existe. Es una composición a viewport completo del
+[formulario de acceso](/es/login-form/) en su modo `verify` — una celda por
+dígito del código y un segundo botón que pide uno nuevo — y de la
+[lista de alertas](/es/alert-list/) con las tres respuestas a «no me ha
+llegado».
+
+Pide el código y nada más. Quien está aquí ya dio su dirección y ya eligió una
+contraseña; una segunda copia de cualquiera de las dos sería una pregunta que ya
+respondió.
+
+Como toda pantalla es presentacional: posee el viewport y nada más. Ni valor, ni
+petición, ni router — ni temporizador. `resendIn` es un número que imprime, no
+una cuenta atrás que ejecuta.
+
+<FrameworkSelect locale="es" />
+
+<Preview
+  examples={{
+    react: verifyReact,
+    vue: verifyVue,
+    solid: verifySolid,
+    svelte: verifySvelte,
+  }}
+>
+  <VerifyScreenDemo client:visible />
+</Preview>
+
+## Instalación
+
+<Install item="verify" />
+
+Instalar una pantalla instala los bloques que compone — aquí `login-form` y
+`alert-list`, los mismos dos que usan `sign-in`, `forgot-password` y
+`reset-password` — y registra cada uno con su propia versión en
+`.moderno/manifest.json`, así que `moderno update` y `moderno diff` siguen
+funcionando por elemento. Instalar las cinco pantallas de auth deja, por tanto,
+una sola copia de la tarjeta, no cinco. Nada se arrastra hacia arriba: esta
+pantalla llega sin el flujo `auth` al que pertenece.
+
+La pantalla importa sus bloques desde `@/components/blocks/…`, que es donde
+`moderno add` los escribe. Si tu proyecto mapea `@/` a algo distinto de `src/`,
+esas líneas de import son la única edición.
+
+Su raíz es un `<div>`, no un `<main>`: casi todos los shells de aplicación ya
+aportan el landmark `main`, y un documento con dos visibles es inválido.
+
+## Un formulario, dos botones
+
+El submit principal comprueba el código. El botón fantasma de debajo pide uno
+nuevo. Los dos son `type="submit"` del mismo `<form>`, y el segundo lleva
+`name="intent" value="resend"` — así que distinguirlos es leer el submitter, y
+ninguno necesita JavaScript para funcionar:
+
+```tsx
+<Verify
+  sentTo={email}
+  resendIn={secondsLeft}
+  resent={justResent}
+  onSubmit={async (event) => {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget, event.nativeEvent.submitter);
+    if (form.get("intent") === "resend") {
+      await sendNewCode(String(form.get("email")));
+      return;
+    }
+    await checkCode(String(form.get("code")));
+  }}
+/>
+```
+
+`new FormData(form, submitter)` es el segundo argumento estándar: añade el botón
+que se pulsó de verdad, y solo ese. Sin él el payload es el mismo en los dos
+casos y no hay forma de distinguir una comprobación de un reenvío.
+
+La dirección va en ese payload porque la tarjeta la pone en un input oculto junto
+al código — el mismo argumento que el token de la pantalla de nueva contraseña.
+Una página de verificación que solo reenvía cuando el bundle se hidrata abandona
+a quien está, por definición, a un paso de una cuenta que aún no puede usar.
+
+## El código
+
+Una celda por dígito, `count` y la descripción leyendo ambos de `codeLength`, y
+cada celda marcada con `autocomplete="one-time-code"`, que es lo que permite al
+móvil ofrecer el código desde la propia notificación. Ark mueve el foco a medida
+que caen los dígitos, retrocede con borrar, y reparte un código pegado entre las
+celdas en vez de meterlo entero en la primera. El código completo se envía bajo
+un solo nombre, `code`, desde el input oculto que Ark mantiene sincronizado con
+ellas — las celdas no llevan nombre.
+
+Un código incorrecto es `errors.code`: las celdas pasan a `aria-invalid` y el
+motivo se imprime debajo como un `alert`, anunciado al aparecer. Es un `alert` y
+no el texto descriptivo del input porque un pin input son _n_ controles y un solo
+valor — no hay un campo único al que describir — y el mensaje siempre llega
+después de un envío, que es justo cuando un alert es el instrumento correcto.
+
+## El reenvío, y la espera
+
+`resendIn` son segundos. Por encima de cero el segundo botón está deshabilitado y
+dice cuánto falta; en cero dice «Send a new code». Un control que parece pulsable
+y no hace nada es peor que uno que dice por qué no puede.
+
+La cuenta atrás es tuya. La pantalla no guarda estado — eso significa
+presentacional — así que la página que la monta descuenta el número y se lo pasa
+en cada render. Cuando el nuevo código sale, pasa `resent`: la tarjeta reescribe
+su propia cabecera para decirlo, dentro de la región viva que ya tiene, en vez de
+apilar otra línea bajo el formulario.
+
+## Tamaño
+
+«A viewport completo» es una **altura** — la raíz es `min-h-dvh`. Cada decisión
+de _ancho_ se lee del contenedor de la propia pantalla, así que sigue siendo
+correcta en un panel que no es la ventana.
+
+| Paso  | Slot             | Qué cambia                                                                       |
+| ----- | ---------------- | -------------------------------------------------------------------------------- |
+| `@sm` | `--container-sm` | La cabecera deja de apilarse: el logotipo y el enlace de soporte comparten fila. |
+| `@md` | `--container-md` | El pie deja de apilarse: el copyright y los enlaces legales comparten fila.      |
+| `@lg` | `--container-lg` | Las notas dejan su sitio bajo la tarjeta y se ponen a su lado.                   |
+
+Nada de eso lee la ventana, y por eso los tres marcos de arriba se contradicen
+entre sí en una misma pantalla. Las reglas están en
+[Bloques y contenedores](/es/blocks-and-containers/) y en la ADR-0005.
+
+Los dos bloques de dentro siguen leyendo _su propio_ contenedor, un nivel más
+abajo: la tarjeta se limita a `--container-sm` por mucho espacio que le dé la
+pantalla, y en `@lg` las notas se quedan con media fila. Ninguno de los dos sabe
+que lo montaron en una pantalla.
+
+## El esquema
+
+La pantalla es la ruta entera, así que lleva el `h1` de la página — y ese `h1` es
+el propio título de la tarjeta, pasado como `titleLevel={1}`, porque «Enter your
+code» es como se llama la página. Las notas de al lado imprimen el `h2`. No hay
+un segundo encabezado apilado encima de la tarjeta para cumplir con un esquema.
+
+## Estados
+
+| Estado            | Qué se renderiza                                                                                                                   |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Por defecto       | La tarjeta pidiendo el código, el reenvío listo, y las notas al lado o debajo.                                                     |
+| Error de campo    | `errors={{ code: "…" }}` — todas las celdas se marcan inválidas y el motivo se imprime debajo como `alert`.                        |
+| Error             | `error` — la alerta a nivel de formulario. Demasiados intentos, o una dirección ya verificada; acompáñalo de `disabled`.           |
+| Reenvío bloqueado | `resendIn` — el segundo botón se deshabilita y cuenta atrás en vez de fingir que puede enviar otro código.                         |
+| Reenviado         | `resent` — la cabecera dice que va un código nuevo y que el anterior ha dejado de funcionar.                                       |
+| Cargando          | `loading` — todos los controles inertes, el envío marcado `aria-busy` y su spinner detenido con `prefers-reduced-motion`.          |
+| Deshabilitado     | `disabled` — aquí no se puede comprobar ningún código; acompáñalo de `error` para que la pantalla diga por qué.                    |
+| Notas cargando    | `noticesLoading` — una región ocupada sustituye a la lista, en vez de dejar una lista vieja bajo un spinner.                       |
+| Error de notas    | `noticesError` — las notas no se pudieron cargar, y se dice, en vez de mostrar una columna vacía.                                  |
+| Vacío             | `notices={[]}` — nada que contar sobre el código, así que el aside no se renderiza y la tarjeta queda centrada y sola.             |
+| Foco visible      | El contorno compartido de 2px con `--ring` en cada celda, control y enlace, en el orden de lectura: cabecera, tarjeta, notas, pie. |
+
+## Props
+
+| Prop             | Tipo                     | Por defecto     | Qué hace                                                                                                                                |
+| ---------------- | ------------------------ | --------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `sentTo`         | `string`                 | `""`            | La dirección a la que fue el código: la nombra la tarjeta y viaja en un input oculto, para que el reenvío sepa a dónde enviar.          |
+| `codeLength`     | `number`                 | `6`             | Cuántas celdas tiene el código, y el número que nombra la descripción de la tarjeta.                                                    |
+| `resendIn`       | `number`                 | `0`             | Segundos hasta poder pedir otro código. Por encima de cero el reenvío se bloquea y dice cuánto falta; el temporizador es tuyo.          |
+| `resent`         | `boolean`                | `false`         | Acaba de salir un código nuevo: la cabecera de la tarjeta lo dice, en su propia región viva.                                            |
+| `error`          | `string`                 | —               | Fallo a nivel de formulario: demasiados intentos, o una dirección ya verificada.                                                        |
+| `errors`         | `Record<string, string>` | —               | Mensajes por campo, por el `name` del campo (`code`).                                                                                   |
+| `loading`        | `boolean`                | `false`         | Hay un envío en curso: todo inerte y el botón ocupado.                                                                                  |
+| `disabled`       | `boolean`                | `false`         | Aquí no se puede comprobar ningún código; acompáñalo de `error`.                                                                        |
+| `notices`        | `AlertListItem[]`        | tres de ejemplo | Las notas que se muestran junto a la tarjeta. `[]` deja la tarjeta sola.                                                                |
+| `noticesError`   | `string`                 | —               | Las notas no se pudieron cargar; ese mensaje sustituye a la lista.                                                                      |
+| `noticesLoading` | `boolean`                | `false`         | Una región ocupada sustituye a las notas.                                                                                               |
+| `onSubmit`       | `(event) => void`        | —               | Envío nativo, desde cualquiera de los dos botones. React/Solid `onSubmit`, Svelte `onsubmit`, Vue emite `submit`.                       |
+| `onNavigate`     | `(to, event) => void`    | —               | Se activó un enlace que dibuja la propia pantalla: `home`, `support`, `privacy` o `terms`, con el evento de clic. Vue emite `navigate`. |
+| `signInHref`     | `string`                 | `"#"`           | A dónde apunta «Sign in», en el pie de la tarjeta.                                                                                      |
+| `homeHref`       | `string`                 | `"#"`           | A dónde apunta el logotipo.                                                                                                             |
+| `supportHref`    | `string`                 | `"#"`           | A dónde apunta «Contact support».                                                                                                       |
+| `privacyHref`    | `string`                 | `"#"`           | A dónde apunta el enlace de privacidad.                                                                                                 |
+| `termsHref`      | `string`                 | `"#"`           | A dónde apunta el enlace de términos.                                                                                                   |
+
+Las notas también se reportan: `onNoticeAction`, `onDismissNotice`,
+`onDismissNotices` y `onRetryNotices` se pasan tal cual al bloque, los mismos
+cuatro que pasa la [pantalla de inicio de sesión](/es/sign-in/).
+
+El enlace «Sign in» de la tarjeta es solo `href` a propósito: quien verificó en
+otro dispositivo debería poder ir a la pantalla de acceso cargue o no el bundle.
