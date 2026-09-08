@@ -173,6 +173,7 @@ export const AGENT_COMPONENTS: AgentComponentSpec[] = [
     name: "Dialog",
     slug: "dialog",
     scope: "dialog",
+    propsEntry: findEntry("Dialog"),
     parts: [
       { name: "backdrop" },
       { name: "positioner" },
@@ -290,9 +291,10 @@ export function computePropsHash(props: PropDoc[]): string {
  * `buildComponentsManifest` and the CI drift gate (#45) so both compute the
  * same `propsHash` from the same source of truth.
  *
- * A component with no `propsEntry` (Field, Dialog — they add no props of their
- * own) is absent from the map; callers read that as no props, and as a prop
- * list that is *not* complete: what those roots accept is Ark's, invisible here.
+ * A component with no `propsEntry` is absent from the map; callers read that as
+ * no props, and as a prop list that is *not* complete. Dialog resolves to the
+ * same empty list the long way round — its entry exists so the docs can tell
+ * "adds no props of its own" from "was never resolved".
  */
 export function resolveComponentProps(
   components: AgentComponentSpec[],

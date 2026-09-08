@@ -12,6 +12,8 @@ interface PropDoc {
 interface ComponentDoc {
   name: string;
   props: PropDoc[];
+  /** False when the root inherits props from Ark that this table cannot list. */
+  propsComplete: boolean;
 }
 
 interface Props {
@@ -28,11 +30,14 @@ const modules = import.meta.glob<ComponentDoc>("../generated/props/*.json", { ea
 const entry = Object.entries(modules).find(([path]) => path.endsWith(`/${component}.json`));
 const doc = entry?.[1] as ComponentDoc | undefined;
 const props = doc?.props ?? [];
+// A wrapped root's own props are only part of what it accepts; say so rather
+// than let a one-row table read as the whole API.
+const inheritsFromArk = doc !== undefined && !doc.propsComplete;
 ---
 
 {
   props.length === 0 ? (
-    <p class="props-empty">{t("props.empty")}</p>
+    <p class="props-empty">{t(inheritsFromArk ? "props.arkOnly" : "props.empty")}</p>
   ) : (
     <div class="props-table-wrap">
       <table class="props-table">
@@ -42,25 +47,29 @@ const props = doc?.props ?? [];
             <th>{t("props.type")}</th>
             <th>{t("props.required")}</th>
             <th>{t("props.default")}</th>
-            {props.some((p) => p.description) && <th>{t("props.description")}</th>}
           </tr>
         </thead>
         <tbody>
           {props.map((p) => (
             <tr>
+              {/* The summary sits under the name rather than in a fifth column:
+                  a machine's Root has dozens of props with a sentence each, and
+                  a description column pushed the table into a horizontal
+                  scroll where every row was as tall as its hidden prose. */}
               <td>
                 <code>{p.name}</code>
+                {p.description && <p class="props-desc">{p.description}</p>}
               </td>
               <td>
                 <code class="props-type">{p.type}</code>
               </td>
               <td>{p.required ? t("props.yes") : t("props.no")}</td>
               <td>{p.default ? <code>{p.default}</code> : "—"}</td>
-              {props.some((q) => q.description) && <td>{p.description ?? ""}</td>}
             </tr>
           ))}
         </tbody>
       </table>
+      {inheritsFromArk && <p class="props-inherited">{t("props.inherited")}</p>}
     </div>
   )
 }

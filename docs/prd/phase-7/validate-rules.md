@@ -65,7 +65,7 @@ be one of the manifest `variants` values.
 - Suggestion: closest valid value / prop by edit distance.
 - The unknown-prop half runs only where `propsComplete` is true. A root wrapped
   around a headless machine (`Select`, `Field`, `Dialog`) reaches the manifest
-  with only its workspace-declared props — props-doc drops Ark/Zag's
+  with only the props Moderno itself adds — props-doc drops Ark/Zag's
   declarations with the DOM noise — so `<Select.Root collection={…}>` is not
   judged. The `variants` half still applies there: it is generated from the
   recipe and is always complete.

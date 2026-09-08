@@ -23,12 +23,12 @@
  * - The unknown-prop half only runs where the manifest says its prop list is
  *   complete (`propsComplete`). A root wrapped around a headless machine —
  *   `Select.Root`, `Checkbox.Root`, `Field.Root`, `Dialog.Root` — reaches the
- *   manifest with only the props declared in this workspace, because
- *   `props-doc` drops Ark/Zag's declarations along with the DOM noise; flagging
- *   `collection` or `invalid` there would make the tool that exists to catch
- *   invented APIs invent errors on the DS's own examples. The enum check still
- *   applies to those roots: it consults `variants`, which is generated from the
- *   recipe and always complete.
+ *   manifest with only the props Moderno itself adds, because `props-doc` drops
+ *   Ark/Zag's declarations along with the DOM noise; flagging `collection` or
+ *   `invalid` there would make the tool that exists to catch invented APIs
+ *   invent errors on the DS's own examples. The enum check still applies to
+ *   those roots: it consults `variants`, which is generated from the recipe and
+ *   always complete.
  */
 import type { Finding, Rule } from "./types.ts";
 import { findComponentUsages } from "./component-usages.ts";

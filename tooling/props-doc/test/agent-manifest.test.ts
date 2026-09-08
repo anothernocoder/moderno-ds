@@ -62,6 +62,8 @@ describe("buildComponentsManifest", () => {
     const button = manifest.components.find((c) => c.name === "Button")!;
     expect(button.props.map((p) => p.name).sort()).toEqual(["size", "variant"]);
 
+    // Ark's own Root props (collection, count, mask, otp, …) are inherited from
+    // node_modules and stay out of the manifest; only what Moderno declares.
     const field = manifest.components.find((c) => c.name === "Field")!;
     expect(field.props.map((p) => p.name)).toEqual(["size"]);
 
@@ -71,8 +73,6 @@ describe("buildComponentsManifest", () => {
     const checkbox = manifest.components.find((c) => c.name === "Checkbox")!;
     expect(checkbox.props.map((p) => p.name)).toEqual(["size"]);
 
-    // Ark's own Root props (count, mask, otp, …) are inherited from
-    // node_modules and stay out of the table; only what Moderno declares.
     const pinInput = manifest.components.find((c) => c.name === "PinInput")!;
     expect(pinInput.props.map((p) => p.name)).toEqual(["size"]);
     expect(pinInput.variants).toEqual({ size: ["sm", "md", "lg"] });
@@ -81,6 +81,7 @@ describe("buildComponentsManifest", () => {
   it("gives Dialog empty props — it adds none of its own", () => {
     const doc = manifest.components.find((c) => c.name === "Dialog")!;
     expect(doc.props).toEqual([]);
+    expect(doc.propsComplete).toBe(false);
     expect(doc.variants).toBeUndefined();
   });
 
@@ -128,12 +129,6 @@ describe("buildComponentsManifest", () => {
       align: ["start", "center", "end"],
     });
     expect(divider.parts.map((p) => p.name)).toEqual(["root", "label"]);
-  });
-
-  it("gives Dialog empty props — it adds none of its own", () => {
-    const doc = manifest.components.find((c) => c.name === "Dialog")!;
-    expect(doc.props).toEqual([]);
-    expect(doc.variants).toBeUndefined();
   });
 
   it("reads variants straight off the shared @moderno-ui/core recipes", () => {
