@@ -24,7 +24,12 @@ agent:
 import Preview from "../../../components/Preview.astro";
 import PropsTable from "../../../components/PropsTable.astro";
 import Install from "../../../components/Install.astro";
-import DialogDemo from "../../../islands/DialogDemo.svelte";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import DialogDemo from "../../../examples/dialog/dialog.svelte";
+import reactExample from "../../../examples/dialog/react.tsx?raw";
+import vueExample from "../../../examples/dialog/vue.vue?raw";
+import solidExample from "../../../examples/dialog/solid.tsx?raw";
+import svelteExample from "../../../examples/dialog/dialog.svelte?raw";
 
 Dialog composes as `Root > Trigger + Portal(> Backdrop + Positioner > Content)`.
 Ark drives focus trap, focus restore, scroll lock, and the `aria-labelledby`/
@@ -34,19 +39,10 @@ the layout with the `hidden` attribute, which `components.css` honours for every
 part. No CVA variants — the surface comes straight from the `--popover` /
 `--popover-foreground` token slots via `components.css`.
 
+<FrameworkSelect locale="en" />
+
 <Preview
-  code={`<Dialog.Root>
-  <Dialog.Trigger>Open</Dialog.Trigger>
-  <Portal>
-    <Dialog.Backdrop />
-    <Dialog.Positioner>
-      <Dialog.Content>
-        <Dialog.Title>Delete item</Dialog.Title>
-        <Dialog.Description>This can't be undone.</Dialog.Description>
-      </Dialog.Content>
-    </Dialog.Positioner>
-  </Portal>
-</Dialog.Root>`}
+  examples={{ react: reactExample, vue: vueExample, solid: solidExample, svelte: svelteExample }}
 >
   <DialogDemo client:visible />
 </Preview>

@@ -42,6 +42,15 @@
     "pagefind": "^1.5.2",
     "svelte": "^5.43.6",
     "tailwindcss": "^4.0.0",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "@moderno-ui/react": "workspace:*",
+    "@moderno-ui/vue": "workspace:*",
+    "@moderno-ui/solid": "workspace:*",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "vue": "^3.5.38",
+    "solid-js": "^1.9.13"
   }
 }

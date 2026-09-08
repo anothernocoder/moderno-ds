@@ -10,7 +10,12 @@ pkg: "@moderno-ui/react"
 import Preview from "../../../components/Preview.astro";
 import PropsTable from "../../../components/PropsTable.astro";
 import Install from "../../../components/Install.astro";
-import DividerDemo from "../../../islands/DividerDemo.svelte";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import DividerDemo from "../../../examples/divider/divider.svelte";
+import reactExample from "../../../examples/divider/react.tsx?raw";
+import vueExample from "../../../examples/divider/vue.vue?raw";
+import solidExample from "../../../examples/divider/solid.tsx?raw";
+import svelteExample from "../../../examples/divider/divider.svelte?raw";
 
 Divider es solo CSS: no hay máquina headless detrás de una regla. Las dos
 mitades de la línea son el `::before`/`::after` de la raíz, así que un divisor
@@ -18,12 +23,10 @@ sin etiqueta es un trazo continuo y uno con etiqueta se abre alrededor de
 `[data-part="label"]` sin marcado extra. `data-orientation`/`data-align` de la
 receta determinan cada estilo en `components.css`.
 
+<FrameworkSelect locale="es" />
+
 <Preview
-  code={`<Divider />
-<Divider>O continúa con</Divider>
-<Divider align="start">Recientes</Divider>
-<Divider orientation="vertical" />
-<Divider orientation="vertical">o</Divider>`}
+  examples={{ react: reactExample, vue: vueExample, solid: solidExample, svelte: svelteExample }}
 >
   <DividerDemo client:visible />
 </Preview>

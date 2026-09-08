@@ -16,6 +16,10 @@
      in place instead of through the portal: no focus trap, no scroll lock, no
      backdrop, positioner un-fixed by the local CSS below. Same component, same
      stylesheet; only the presentation container differs.
+
+  This file is the Example the docs page shows *and* mounts (CONTEXT.md
+  "Example") — the source below the live demo is this file, raw-imported, so
+  it cannot drift from what actually renders.
 -->
 <script lang="ts">
   import { Button, Dialog, Portal } from "@moderno-ui/svelte";

@@ -10,7 +10,12 @@ pkg: "@moderno-ui/react"
 import Preview from "../../../components/Preview.astro";
 import PropsTable from "../../../components/PropsTable.astro";
 import Install from "../../../components/Install.astro";
-import AlertDemo from "../../../islands/AlertDemo.svelte";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import AlertDemo from "../../../examples/alert/alert.svelte";
+import reactExample from "../../../examples/alert/react.tsx?raw";
+import vueExample from "../../../examples/alert/vue.vue?raw";
+import solidExample from "../../../examples/alert/solid.tsx?raw";
+import svelteExample from "../../../examples/alert/alert.svelte?raw";
 
 Alert es una primitiva solo-CSS: Ark no tiene una máquina para alert porque una
 alerta no tiene comportamiento que gobernar — es una región estática. Así que,
@@ -23,19 +28,10 @@ una ranura, nunca un set de iconos: las primitivas siguen siendo agnósticas del
 icono, así que pasas tu propio glifo y la parte le entrega el tono del estado a
 través de `currentColor`.
 
+<FrameworkSelect locale="es" />
+
 <Preview
-  code={`<Alert.Root variant="warning">
-  <Alert.Icon>
-    <TriangleAlert aria-hidden />
-  </Alert.Icon>
-  <Alert.Content>
-    <Alert.Title>La tarjeta vence</Alert.Title>
-    <Alert.Description>La tarjeta terminada en 4242 vence el mes próximo.</Alert.Description>
-    <Alert.Action>
-      <Button size="sm" variant="outline">Actualizar tarjeta</Button>
-    </Alert.Action>
-  </Alert.Content>
-</Alert.Root>`}
+  examples={{ react: reactExample, vue: vueExample, solid: solidExample, svelte: svelteExample }}
 >
   <AlertDemo client:visible />
 </Preview>

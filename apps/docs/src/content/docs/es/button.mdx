@@ -10,15 +10,21 @@ pkg: "@moderno-ui/react"
 import Preview from "../../../components/Preview.astro";
 import PropsTable from "../../../components/PropsTable.astro";
 import Install from "../../../components/Install.astro";
-import ButtonDemo from "../../../islands/ButtonDemo.svelte";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ButtonDemo from "../../../examples/button/button.svelte";
+import reactExample from "../../../examples/button/react.tsx?raw";
+import vueExample from "../../../examples/button/vue.vue?raw";
+import solidExample from "../../../examples/button/solid.tsx?raw";
+import svelteExample from "../../../examples/button/button.svelte?raw";
 
 Button establece el patrón de Moderno: el componente no lleva color ni radio;
 `data-variant`/`data-size` de la receta determinan cada estilo en
 `components.css`. Cambiar el tema lo vuelve a pintar sin tocar el marcado.
 
+<FrameworkSelect locale="es" />
+
 <Preview
-  code={`<Button variant="primary">Guardar</Button>
-<Button variant="outline">Cancelar</Button>`}
+  examples={{ react: reactExample, vue: vueExample, solid: solidExample, svelte: svelteExample }}
 >
   <ButtonDemo client:visible />
 </Preview>

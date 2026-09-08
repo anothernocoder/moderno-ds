@@ -28,7 +28,12 @@ agent:
 import Preview from "../../../components/Preview.astro";
 import PropsTable from "../../../components/PropsTable.astro";
 import Install from "../../../components/Install.astro";
-import CheckboxDemo from "../../../islands/CheckboxDemo.svelte";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import CheckboxDemo from "../../../examples/checkbox/checkbox.svelte";
+import reactExample from "../../../examples/checkbox/react.tsx?raw";
+import vueExample from "../../../examples/checkbox/vue.vue?raw";
+import solidExample from "../../../examples/checkbox/solid.tsx?raw";
+import svelteExample from "../../../examples/checkbox/checkbox.svelte?raw";
 
 Only `Checkbox.Root` is wrapped, to inject the `size` recipe's `data-size`;
 every other part is Ark's verbatim. The root is a `<label>` bound to a visually
@@ -37,15 +42,10 @@ readers work with no extra wiring, and `components.css` paints the control from
 Ark's `data-state="checked|unchecked|indeterminate"` plus
 `data-disabled`/`data-invalid`.
 
+<FrameworkSelect locale="en" />
+
 <Preview
-  code={`<Checkbox.Root size="md" defaultChecked="indeterminate">
-  <Checkbox.Control>
-    <Checkbox.Indicator>✓</Checkbox.Indicator>
-    <Checkbox.Indicator indeterminate>–</Checkbox.Indicator>
-  </Checkbox.Control>
-  <Checkbox.Label>Email me updates</Checkbox.Label>
-  <Checkbox.HiddenInput />
-</Checkbox.Root>`}
+  examples={{ react: reactExample, vue: vueExample, solid: solidExample, svelte: svelteExample }}
 >
   <CheckboxDemo client:visible />
 </Preview>

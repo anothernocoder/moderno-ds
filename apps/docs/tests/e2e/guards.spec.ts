@@ -83,8 +83,14 @@ test.describe("built docs", () => {
     // `pages.ts` derives its list from `<astro-island` markers in `dist/`, so a
     // demo whose page fails to hydrate drops out of the seam without a single
     // red test. Astro names the island bundle after its source file, which is
-    // enough to tie the two ends together.
-    const islands = readdirSync(resolve(srcDir, "islands"))
+    // enough to tie the two ends together — including a component-page's
+    // Example (CONTEXT.md "Example"), the file under `src/examples/**` that
+    // both the docs show and the live demo mounts; each is named after its
+    // component (`button/button.svelte`), never the generic `svelte.svelte`,
+    // precisely so this basename-matching stays one-to-one.
+    const islandDirs = ["islands", "examples"];
+    const islands = islandDirs
+      .flatMap((dir) => readdirSync(resolve(srcDir, dir), { recursive: true }) as string[])
       .filter((f) => f.endsWith(".svelte"))
       .map((f) => basename(f, ".svelte"))
       .sort();

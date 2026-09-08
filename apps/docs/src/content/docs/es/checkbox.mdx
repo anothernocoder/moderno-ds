@@ -10,7 +10,12 @@ pkg: "@moderno-ui/react"
 import Preview from "../../../components/Preview.astro";
 import PropsTable from "../../../components/PropsTable.astro";
 import Install from "../../../components/Install.astro";
-import CheckboxDemo from "../../../islands/CheckboxDemo.svelte";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import CheckboxDemo from "../../../examples/checkbox/checkbox.svelte";
+import reactExample from "../../../examples/checkbox/react.tsx?raw";
+import vueExample from "../../../examples/checkbox/vue.vue?raw";
+import solidExample from "../../../examples/checkbox/solid.tsx?raw";
+import svelteExample from "../../../examples/checkbox/checkbox.svelte?raw";
 
 Solo `Checkbox.Root` está envuelto, para inyectar el `data-size` de la receta
 `size`; el resto de las partes son las de Ark tal cual. La raíz es un `<label>`
@@ -20,15 +25,10 @@ extra, y `components.css` pinta el control según el
 `data-state="checked|unchecked|indeterminate"` de Ark más
 `data-disabled`/`data-invalid`.
 
+<FrameworkSelect locale="es" />
+
 <Preview
-  code={`<Checkbox.Root size="md" defaultChecked="indeterminate">
-  <Checkbox.Control>
-    <Checkbox.Indicator>✓</Checkbox.Indicator>
-    <Checkbox.Indicator indeterminate>–</Checkbox.Indicator>
-  </Checkbox.Control>
-  <Checkbox.Label>Quiero recibir novedades</Checkbox.Label>
-  <Checkbox.HiddenInput />
-</Checkbox.Root>`}
+  examples={{ react: reactExample, vue: vueExample, solid: solidExample, svelte: svelteExample }}
 >
   <CheckboxDemo client:visible />
 </Preview>

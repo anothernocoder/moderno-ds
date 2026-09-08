@@ -83,6 +83,13 @@ const pageTitle = slug === "index" ? title : `${title} — Moderno`;
       if (stored === "dark" || (!stored && matchMedia("(prefers-color-scheme: dark)").matches)) {
         document.documentElement.classList.add("dark");
       }
+      // Same flash-avoidance for the framework selector: every Preview's
+      // source panel and the Install command key off `[data-framework]` on
+      // <html> (docs.css), so it has to be set before first paint too, on
+      // every page — not only the ones that render <FrameworkSelect> — since
+      // the choice is remembered across pages (CONTEXT.md "Framework
+      // selector"). Default React.
+      document.documentElement.dataset.framework = localStorage.getItem("moderno-framework") || "react";
     </script>
   </head>
   <body>

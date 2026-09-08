@@ -10,14 +10,23 @@ pkg: "@moderno-ui/react"
 import Preview from "../../../components/Preview.astro";
 import PropsTable from "../../../components/PropsTable.astro";
 import Install from "../../../components/Install.astro";
-import AreaChartDemo from "../../../islands/AreaChartDemo.svelte";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import AreaChartDemo from "../../../examples/area-chart/area-chart.svelte";
+import reactExample from "../../../examples/area-chart/react.tsx?raw";
+import vueExample from "../../../examples/area-chart/vue.vue?raw";
+import solidExample from "../../../examples/area-chart/solid.tsx?raw";
+import svelteExample from "../../../examples/area-chart/area-chart.svelte?raw";
 
 AreaChart es un mapeo determinista desde un modelo construido por
 `@moderno-ui/charts-core` hacia elementos `<path>` — un área rellena más una línea
 superior trazada por serie. No incluye color propio — cada serie se pinta con
 `--chart-1…5` según su índice, así se re-tematiza con el resto del sistema.
 
-<Preview code={`<AreaChart width={520} height={260} series={series} />`}>
+<FrameworkSelect locale="es" />
+
+<Preview
+  examples={{ react: reactExample, vue: vueExample, solid: solidExample, svelte: svelteExample }}
+>
   <AreaChartDemo client:visible />
 </Preview>
 

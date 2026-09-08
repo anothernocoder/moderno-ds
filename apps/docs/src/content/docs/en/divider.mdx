@@ -28,7 +28,12 @@ agent:
 import Preview from "../../../components/Preview.astro";
 import PropsTable from "../../../components/PropsTable.astro";
 import Install from "../../../components/Install.astro";
-import DividerDemo from "../../../islands/DividerDemo.svelte";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import DividerDemo from "../../../examples/divider/divider.svelte";
+import reactExample from "../../../examples/divider/react.tsx?raw";
+import vueExample from "../../../examples/divider/vue.vue?raw";
+import solidExample from "../../../examples/divider/solid.tsx?raw";
+import svelteExample from "../../../examples/divider/divider.svelte?raw";
 
 Divider is CSS-only: there is no headless machine behind a rule. The two halves
 of the line are the root's `::before`/`::after`, so a bare divider is one
@@ -36,12 +41,10 @@ continuous stroke and a labelled one splits around `[data-part="label"]` with no
 extra markup. `data-orientation`/`data-align` from the recipe key every style in
 `components.css`.
 
+<FrameworkSelect locale="en" />
+
 <Preview
-  code={`<Divider />
-<Divider>Or continue with</Divider>
-<Divider align="start">Recent</Divider>
-<Divider orientation="vertical" />
-<Divider orientation="vertical">or</Divider>`}
+  examples={{ react: reactExample, vue: vueExample, solid: solidExample, svelte: svelteExample }}
 >
   <DividerDemo client:visible />
 </Preview>

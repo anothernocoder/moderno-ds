@@ -10,7 +10,12 @@ pkg: "@moderno-ui/react"
 import Preview from "../../../components/Preview.astro";
 import PropsTable from "../../../components/PropsTable.astro";
 import Install from "../../../components/Install.astro";
-import PinInputDemo from "../../../islands/PinInputDemo.svelte";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import PinInputDemo from "../../../examples/pin-input/pin-input.svelte";
+import reactExample from "../../../examples/pin-input/react.tsx?raw";
+import vueExample from "../../../examples/pin-input/vue.vue?raw";
+import solidExample from "../../../examples/pin-input/solid.tsx?raw";
+import svelteExample from "../../../examples/pin-input/pin-input.svelte?raw";
 
 Solo `PinInput.Root` está envuelto, para inyectar el `data-size` de la receta
 `size`; el resto de las partes son las de Ark tal cual. Ark avanza el foco a
@@ -20,18 +25,10 @@ y refleja `invalid` en `aria-invalid` más un `data-invalid` en cada parte — a
 `components.css` pinta los estados lleno, completo e inválido sin que el binding
 lleve la cuenta de ninguno.
 
-<Preview
-  code={`const cells = [0, 1, 2, 3, 4, 5];
+<FrameworkSelect locale="es" />
 
-<PinInput.Root count={cells.length} otp onValueComplete={submit}>
-  <PinInput.Label>Código de verificación</PinInput.Label>
-  <PinInput.Control>
-    {cells.map((index) => (
-      <PinInput.Input key={index} index={index} />
-    ))}
-  </PinInput.Control>
-  <PinInput.HiddenInput />
-</PinInput.Root>`}
+<Preview
+  examples={{ react: reactExample, vue: vueExample, solid: solidExample, svelte: svelteExample }}
 >
   <PinInputDemo client:visible />
 </Preview>

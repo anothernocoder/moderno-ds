@@ -12,6 +12,7 @@
     "test/**/*.ts",
     "test/**/*.tsx",
     "tsup.config.ts",
-    "vitest.config.ts"
+    "vitest.config.ts",
+    "../../apps/docs/src/examples/**/solid.tsx"
   ]
 }

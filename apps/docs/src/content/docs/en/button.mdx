@@ -25,15 +25,21 @@ agent:
 import Preview from "../../../components/Preview.astro";
 import PropsTable from "../../../components/PropsTable.astro";
 import Install from "../../../components/Install.astro";
-import ButtonDemo from "../../../islands/ButtonDemo.svelte";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ButtonDemo from "../../../examples/button/button.svelte";
+import reactExample from "../../../examples/button/react.tsx?raw";
+import vueExample from "../../../examples/button/vue.vue?raw";
+import solidExample from "../../../examples/button/solid.tsx?raw";
+import svelteExample from "../../../examples/button/button.svelte?raw";
 
 Button establishes the Moderno pattern: the component holds zero colour or
 radius; `data-variant`/`data-size` from the recipe key every style in
 `components.css`. Switching the theme re-skins it without touching the markup.
 
+<FrameworkSelect locale="en" />
+
 <Preview
-  code={`<Button variant="primary">Save</Button>
-<Button variant="outline">Cancel</Button>`}
+  examples={{ react: reactExample, vue: vueExample, solid: solidExample, svelte: svelteExample }}
 >
   <ButtonDemo client:visible />
 </Preview>

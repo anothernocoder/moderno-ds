@@ -29,7 +29,12 @@ agent:
 import Preview from "../../../components/Preview.astro";
 import PropsTable from "../../../components/PropsTable.astro";
 import Install from "../../../components/Install.astro";
-import AlertDemo from "../../../islands/AlertDemo.svelte";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import AlertDemo from "../../../examples/alert/alert.svelte";
+import reactExample from "../../../examples/alert/react.tsx?raw";
+import vueExample from "../../../examples/alert/vue.vue?raw";
+import solidExample from "../../../examples/alert/solid.tsx?raw";
+import svelteExample from "../../../examples/alert/alert.svelte?raw";
 
 Alert is a CSS-only primitive: Ark has no alert machine because an alert has no
 behaviour to own — it is a static region. So, like Button, it is the contract in
@@ -40,19 +45,10 @@ The anatomy is `root > icon + content(> title + description + action)`. `Icon`
 is a slot, never an icon set: primitives stay icon-agnostic, so you pass your own
 glyph and the part hands it the status hue through `currentColor`.
 
+<FrameworkSelect locale="en" />
+
 <Preview
-  code={`<Alert.Root variant="warning">
-  <Alert.Icon>
-    <TriangleAlert aria-hidden />
-  </Alert.Icon>
-  <Alert.Content>
-    <Alert.Title>Card expiring</Alert.Title>
-    <Alert.Description>The card ending 4242 expires next month.</Alert.Description>
-    <Alert.Action>
-      <Button size="sm" variant="outline">Update card</Button>
-    </Alert.Action>
-  </Alert.Content>
-</Alert.Root>`}
+  examples={{ react: reactExample, vue: vueExample, solid: solidExample, svelte: svelteExample }}
 >
   <AlertDemo client:visible />
 </Preview>

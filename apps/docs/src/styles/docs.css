@@ -500,14 +500,98 @@ main {
   }
 }
 
-/* Preview + tabs */
+/* Preview: stacked anatomy — demo above, source below, both always visible
+   (CONTEXT.md "Preview"; no Preview/Code tabs). One live island regardless of
+   framework; the source panel below switches which framework's file it shows
+   in step with the page's <FrameworkSelect>, via the `data-framework`
+   attribute BaseLayout's inline script sets on <html> — see
+   FrameworkSelect.astro for the attribution on that mechanism. */
 .preview {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   margin: 1.5rem 0;
   overflow: hidden;
 }
-.preview-tabs,
+.preview-panel--demo {
+  padding: 2rem;
+  /* A dot-grid backdrop separates "this is a rendered demo" from the prose
+     around it without a label — a stage, not a card. Dots are the foreground
+     colour at low opacity over the ordinary background, so the grid re-tints
+     with the theme instead of carrying a colour of its own. */
+  background-color: var(--background);
+  background-image: radial-gradient(
+    color-mix(in oklch, var(--foreground) 18%, transparent) 1px,
+    transparent 1px
+  );
+  background-size: 16px 16px;
+}
+.preview-panel--code {
+  padding: 0;
+  border-top: 1px solid var(--border);
+  /* The source scrolls past this height instead of growing the page — a
+     multi-variant demo's real source can run long. */
+  max-height: 24rem;
+  overflow-y: auto;
+}
+/* Only the source panel for the page's selected framework is shown; the exact
+   framework values a rule reacts to are also declared in FrameworkSelect.astro
+   and Install.astro — keep the four in sync if a framework is ever added. */
+.preview-source[data-fw] {
+  display: none;
+}
+:root:not([data-framework]) .preview-source[data-fw="react"],
+:root[data-framework="react"] .preview-source[data-fw="react"],
+:root[data-framework="vue"] .preview-source[data-fw="vue"],
+:root[data-framework="svelte"] .preview-source[data-fw="svelte"],
+:root[data-framework="solid"] .preview-source[data-fw="solid"] {
+  display: block;
+}
+.preview-source .astro-code {
+  margin: 0;
+  border: none;
+  border-radius: 0;
+}
+
+/* Framework selector — one page-wide control (CONTEXT.md "Framework
+   selector"). Visually a segmented control, the same tab styling the install
+   package-manager tabs use, so the two page-wide switches read as one family. */
+.framework-select {
+  display: inline-flex;
+  gap: 0.25rem;
+  padding: 0.3rem;
+  margin: 0 0 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--muted);
+}
+.framework-radio {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.framework-option {
+  font-size: 0.83rem;
+  font-weight: 500;
+  padding: 0.3rem 0.75rem;
+  border-radius: calc(var(--radius) - 2px);
+  cursor: pointer;
+  color: var(--muted-foreground);
+  transition:
+    color 0.15s ease,
+    background 0.15s ease;
+}
+.framework-option:hover {
+  color: var(--foreground);
+}
+.framework-radio:checked + .framework-option {
+  background: var(--background);
+  color: var(--foreground);
+  box-shadow: 0 1px 2px color-mix(in oklch, var(--foreground) 8%, transparent);
+}
+.framework-radio:focus-visible + .framework-option {
+  outline: 2px solid var(--ring);
+}
+
 .install-tabs {
   display: flex;
   gap: 0.25rem;
@@ -515,13 +599,11 @@ main {
   border-bottom: 1px solid var(--border);
   background: var(--muted);
 }
-.preview-radio,
 .install-radio {
   position: absolute;
   opacity: 0;
   pointer-events: none;
 }
-.preview-tab,
 .install-tab {
   font-size: 0.83rem;
   font-weight: 500;
@@ -533,35 +615,16 @@ main {
     color 0.15s ease,
     background 0.15s ease;
 }
-.preview-tab:hover,
 .install-tab:hover {
   color: var(--foreground);
 }
-.preview-radio:checked + .preview-tab,
 .install-radio:checked + .install-tab {
   background: var(--background);
   color: var(--foreground);
   box-shadow: 0 1px 2px color-mix(in oklch, var(--foreground) 8%, transparent);
 }
-.preview-radio:focus-visible + .preview-tab,
 .install-radio:focus-visible + .install-tab {
   outline: 2px solid var(--ring);
-}
-.preview-panel {
-  display: none;
-}
-.preview-panel--demo {
-  padding: 2rem;
-}
-.preview-panel--code {
-  padding: 0;
-}
-/* First radio → demo panel; second radio → code panel. The radios live inside
-   .preview-tabs, not as direct siblings of the panels, so `~` alone can never
-   reach them — :has() lets the whole .preview block react to a nested radio. */
-.preview:has(.preview-radio:nth-of-type(1):checked) .preview-panel--demo,
-.preview:has(.preview-radio:nth-of-type(2):checked) .preview-panel--code {
-  display: block;
 }
 
 .demo-row {
@@ -654,6 +717,19 @@ main {
 .install:has(.install-radio:nth-of-type(1):checked) .install-panel--bun,
 .install:has(.install-radio:nth-of-type(2):checked) .install-panel--pnpm,
 .install:has(.install-radio:nth-of-type(3):checked) .install-panel--npm {
+  display: block;
+}
+/* Inside the package-manager panel the framework selector picks which package
+   name shows — the same [data-fw] switch Preview's source panel uses, so one
+   attribute on <html> drives every Preview and the install command at once. */
+.install-panel [data-fw] {
+  display: none;
+}
+:root:not([data-framework]) .install-panel [data-fw="react"],
+:root[data-framework="react"] .install-panel [data-fw="react"],
+:root[data-framework="vue"] .install-panel [data-fw="vue"],
+:root[data-framework="svelte"] .install-panel [data-fw="svelte"],
+:root[data-framework="solid"] .install-panel [data-fw="solid"] {
   display: block;
 }
 

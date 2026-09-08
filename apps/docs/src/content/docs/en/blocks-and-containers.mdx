@@ -6,7 +6,12 @@ order: 1
 ---
 
 import Preview from "../../../components/Preview.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
 import PricingBlockDemo from "../../../islands/PricingBlockDemo.svelte";
+import pricingReact from "../../../../../../registry/blocks/pricing/react/pricing.tsx?raw";
+import pricingVue from "../../../../../../registry/blocks/pricing/vue/Pricing.vue?raw";
+import pricingSolid from "../../../../../../registry/blocks/pricing/solid/pricing.tsx?raw";
+import pricingSvelte from "../../../../../../registry/blocks/pricing/svelte/Pricing.svelte?raw";
 
 A **block** is a page section — a hero, a pricing table, a login form — that you
 copy into your project with the CLI. It does not own the viewport, and it cannot
@@ -28,13 +33,10 @@ whole panel and goes three-up as soon as that panel is at least 36rem wide —
 narrow this browser window and it will stack on its own, without a media query
 anywhere in the block.
 
+<FrameworkSelect locale="en" />
+
 <Preview
-  code={`<section className="@container">
-  <h2 className="text-lg font-semibold @md:text-xl">Pricing</h2>
-  <ul className="mt-6 grid gap-4 @md:grid-cols-3">
-    {/* … one <li> per plan … */}
-  </ul>
-</section>`}
+  examples={{ react: pricingReact, vue: pricingVue, solid: pricingSolid, svelte: pricingSvelte }}
 >
   <PricingBlockDemo client:visible />
 </Preview>

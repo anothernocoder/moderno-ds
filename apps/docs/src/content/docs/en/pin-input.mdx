@@ -28,7 +28,12 @@ agent:
 import Preview from "../../../components/Preview.astro";
 import PropsTable from "../../../components/PropsTable.astro";
 import Install from "../../../components/Install.astro";
-import PinInputDemo from "../../../islands/PinInputDemo.svelte";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import PinInputDemo from "../../../examples/pin-input/pin-input.svelte";
+import reactExample from "../../../examples/pin-input/react.tsx?raw";
+import vueExample from "../../../examples/pin-input/vue.vue?raw";
+import solidExample from "../../../examples/pin-input/solid.tsx?raw";
+import svelteExample from "../../../examples/pin-input/pin-input.svelte?raw";
 
 Only `PinInput.Root` is wrapped, to inject the `size` recipe's `data-size`;
 every other part is Ark's verbatim. Ark advances focus as characters land,
@@ -37,18 +42,10 @@ retreats on backspace, distributes a pasted code across the cells, swaps them to
 plus a `data-invalid` on every part — so `components.css` styles the filled,
 complete and invalid states without the binding tracking any of them.
 
-<Preview
-  code={`const cells = [0, 1, 2, 3, 4, 5];
+<FrameworkSelect locale="en" />
 
-<PinInput.Root count={cells.length} otp onValueComplete={submit}>
-  <PinInput.Label>Verification code</PinInput.Label>
-  <PinInput.Control>
-    {cells.map((index) => (
-      <PinInput.Input key={index} index={index} />
-    ))}
-  </PinInput.Control>
-  <PinInput.HiddenInput />
-</PinInput.Root>`}
+<Preview
+  examples={{ react: reactExample, vue: vueExample, solid: solidExample, svelte: svelteExample }}
 >
   <PinInputDemo client:visible />
 </Preview>
