@@ -11,7 +11,7 @@ data and callbacks as props and holds no navigation state of its own, so you can
 mount it under any router.
 
 ```sh
-npx @moderno-ui/cli add sign-in
+npx @moderno-ui/cli add sign-in-react
 ```
 
 Installing a screen pulls in the blocks it composes, and the primitives those
@@ -19,6 +19,16 @@ blocks compose, each recorded under its own version in `.moderno/manifest.json`.
 Installing a screen never pulls in the flow it belongs to — `cart` arrives
 without `checkout`, which is the whole reason screens are their own tier.
 
-Like blocks, screens respond to their container rather than the viewport. The
-catalog is being filled as the predecessor's inventory is absorbed; each
+Like blocks, screens respond to their container rather than the viewport —
+"full-viewport" is a height, not a set of breakpoints, so a screen is still
+right in a pane that is not the window.
+
+## What ships today
+
+One screen, one registry entry per framework:
+
+- [Sign in](/en/sign-in/) — the credential form beside the notices a person
+  needs before signing in, composed from `login-form` and `alert-list`.
+
+The catalog is being filled as the predecessor's inventory is absorbed; each
 published screen gets its own page in this section.

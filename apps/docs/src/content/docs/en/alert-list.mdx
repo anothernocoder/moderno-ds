@@ -22,6 +22,7 @@ agent:
     - "The dismiss control is a glyph below `--container-md` and gains its label above it; its accessible name carries the alert's title at every width, so voice control and screen readers always hear which alert is being dismissed."
   theming:
     - "Nothing is painted here. The rows are Alert's four status variants, the controls are Button's secondary, outline and ghost variants, and the empty and loading renders are Card."
+    - "The heading and its sentence are props, defaulting to the notification-centre wording: the same stack is a service-status panel on the sign-in screen and an audit trail on a settings page."
     - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg."
     - "The status hue reaches each glyph through the alert's icon part and currentColor, so the icons re-skin with the theme and no icon package is installed."
 ---
@@ -102,16 +103,18 @@ went right.
 
 ## Props
 
-| Prop           | Type              | Default       | What it does                                                                                      |
-| -------------- | ----------------- | ------------- | ------------------------------------------------------------------------------------------------- |
-| `alerts`       | `AlertListItem[]` | a sample feed | The notifications to render, newest first. `[]` renders the empty state.                          |
-| `error`        | `string`          | —             | The list could not be loaded; this message replaces it.                                           |
-| `loading`      | `boolean`         | `false`       | The list is being loaded or refreshed: a busy region stands in for it.                            |
-| `disabled`     | `boolean`         | `false`       | Read-only: the alerts stay on screen and every control is inert.                                  |
-| `onDismiss`    | `(id) => void`    | —             | One row's dismiss control. React/Solid take `onDismiss`, Svelte `ondismiss`, Vue emits `dismiss`. |
-| `onDismissAll` | `() => void`      | —             | Clear the whole list. Svelte `ondismissall`, Vue emits `dismissAll`.                              |
-| `onAction`     | `(id) => void`    | —             | A row's own action (`actionLabel`), with that row's id. Svelte `onaction`, Vue emits `action`.    |
-| `onRetry`      | `() => void`      | —             | Retry after `error`. Svelte `onretry`, Vue emits `retry`.                                         |
+| Prop           | Type              | Default           | What it does                                                                                      |
+| -------------- | ----------------- | ----------------- | ------------------------------------------------------------------------------------------------- |
+| `alerts`       | `AlertListItem[]` | a sample feed     | The notifications to render, newest first. `[]` renders the empty state.                          |
+| `heading`      | `string`          | `"Notifications"` | The heading over the stack — what this collection _is_.                                           |
+| `description`  | `string`          | a sentence        | The line under the heading; pass `""` for a heading on its own.                                   |
+| `error`        | `string`          | —                 | The list could not be loaded; this message replaces it.                                           |
+| `loading`      | `boolean`         | `false`           | The list is being loaded or refreshed: a busy region stands in for it.                            |
+| `disabled`     | `boolean`         | `false`           | Read-only: the alerts stay on screen and every control is inert.                                  |
+| `onDismiss`    | `(id) => void`    | —                 | One row's dismiss control. React/Solid take `onDismiss`, Svelte `ondismiss`, Vue emits `dismiss`. |
+| `onDismissAll` | `() => void`      | —                 | Clear the whole list. Svelte `ondismissall`, Vue emits `dismissAll`.                              |
+| `onAction`     | `(id) => void`    | —                 | A row's own action (`actionLabel`), with that row's id. Svelte `onaction`, Vue emits `action`.    |
+| `onRetry`      | `() => void`      | —                 | Retry after `error`. Svelte `onretry`, Vue emits `retry`.                                         |
 
 An `AlertListItem` is `{ id, variant, title, description?, meta?, actionLabel? }`
 — `variant` is one of Alert's four statuses, `meta` is the timestamp already

@@ -1,0 +1,149 @@
+---
+title: Sign in
+description: The full-viewport sign-in screen — the credential form beside the notices a person needs before signing in, composed from login-form and alert-list.
+group: Screens
+order: 111
+agent:
+  intent: The full-viewport sign-in screen — one state of the auth flow, presentational.
+  whenToUse: "The route a signed-out person lands on: /login, /sign-in, an SSO fallback page, the screen a session expiry redirects to."
+  whenNotToUse:
+    - case: A sign-in section inside a page you already own (a modal, a sidebar, a marketing page)
+      use: the LoginForm block — a block never owns the viewport
+    - case: The whole auth journey, with the navigation between its steps
+      use: the auth flow, which sequences this screen with sign-up, forgot-password, reset-password and verify
+    - case: A notification centre after sign-in
+      use: the AlertList block on its own — here it carries service notices, not a signed-in person's feed
+  gotchas:
+    - "Presentational: no credentials, no request, no router. `onSubmit` hands back the native event and `onNavigate` names the destination of every link the screen draws itself; where those go is the mounting page's business."
+    - "The form's two links (recovery and sign-up) are `href`s, not callbacks — a credential-recovery link has to work when hydration fails, which is exactly when someone is locked out. Pass `forgotHref` and `signUpHref`."
+    - "`notices={[]}` is the screen's empty state: the aside is not rendered at all and the card sits centred and alone. It is not the block's 'all caught up' card."
+    - "`noticesError` and `noticesLoading` are about the notices, not the sign-in; `error`, `loading` and `disabled` are about the sign-in, not the notices. The two halves fail independently because they load independently."
+    - "Full-viewport is a height (`min-h-dvh`). Every width decision is read off the screen's own container, so it is still correct mounted in a pane that is not the window."
+    - "The screen imports its blocks from `@/components/blocks/…`, where `moderno add` puts them. If your project uses a different path alias, those two import lines are the only thing to change."
+    - "The root is a `<div>`, not a `<main>` — most app shells already provide the `main` landmark, and two visible ones in a document is invalid. If your route has none, change that one element."
+  theming:
+    - "Nothing is painted here. The card is the LoginForm block, the notices are the AlertList block, and the screen's own chrome is `text-foreground` / `text-muted-foreground` on `bg-background`."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg."
+    - "The notices' heading is a prop, not a hardcoded string: the same AlertList that is a notification centre elsewhere says 'Before you sign in' here."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import SignInScreenDemo from "../../../islands/SignInScreenDemo.svelte";
+import signInReact from "../../../../../../registry/screens/sign-in/react/sign-in.tsx?raw";
+import signInVue from "../../../../../../registry/screens/sign-in/vue/SignIn.vue?raw";
+import signInSolid from "../../../../../../registry/screens/sign-in/solid/sign-in.tsx?raw";
+import signInSvelte from "../../../../../../registry/screens/sign-in/svelte/SignIn.svelte?raw";
+
+**Sign in** is the first [screen](/en/screens/) in the catalog: a full-viewport
+composition of the [login form](/en/login-form/) and the
+[alert list](/en/alert-list/), with the masthead, the footer and the layout that
+turn two sections into a page someone can land on.
+
+It is presentational, which for a screen means something specific: it owns the
+viewport and nothing else. No credentials, no request, no router. You hand it
+`error`, `loading` and the notices; it hands you back the submit event and the
+name of whatever link was activated. That is what lets the same file sit under
+Next's app router, SvelteKit and a plain SPA without a fork.
+
+<FrameworkSelect locale="en" />
+
+<Preview
+  examples={{
+    react: signInReact,
+    vue: signInVue,
+    solid: signInSolid,
+    svelte: signInSvelte,
+  }}
+>
+  <SignInScreenDemo client:visible />
+</Preview>
+
+## Installation
+
+<Install item="sign-in" />
+
+Installing a screen installs the blocks it composes — `login-form` and
+`alert-list` — and records each of the three under its own version in
+`.moderno/manifest.json`, so `moderno update` and `moderno diff` keep working
+per item. Nothing is pulled in upward: this screen arrives without the `auth`
+flow it belongs to.
+
+The screen imports its two blocks from `@/components/blocks/…`, which is where
+`moderno add` writes them. If your project maps `@/` somewhere other than
+`src/`, those two import lines are the only edit.
+
+Its root is a `<div>`, not a `<main>`: most app shells already provide the
+`main` landmark, and a document with two visible ones is invalid. The `<header>`
+and `<footer>` inside are the page's banner and contentinfo as soon as the
+screen is not nested in another landmark; if your route has no `<main>` at all,
+that root element is the one to change.
+
+## Sizing
+
+Full-viewport is a **height** — the root is `min-h-dvh`. Every _width_ decision
+is read off the screen's own container, so it is still right in a pane that is
+not the window: an Electron content area, a preview frame, an embedded console.
+
+| Step  | Slot             | What changes                                                                |
+| ----- | ---------------- | --------------------------------------------------------------------------- |
+| `@sm` | `--container-sm` | The masthead stops stacking: the wordmark and the support link share a row. |
+| `@md` | `--container-md` | The footer stops stacking: the copyright and the legal links share a row.   |
+| `@lg` | `--container-lg` | The notices leave their place under the card and stand beside it.           |
+
+None of that reads the window, which is why the three frames above disagree
+with each other on one screen. The rules behind this are in
+[Blocks and containers](/en/blocks-and-containers/) and ADR-0005.
+
+The two blocks inside keep reading _their own_ containers, one level down: at
+`@lg` the card and the notices each get half the row, so the notice rows can be
+in their glyph-only dismiss mode while the screen around them is in its widest.
+That nesting is the point of container queries — the block does not need to know
+it was mounted in a screen.
+
+## States
+
+The sign-in and the notices load independently, so they fail independently: the
+first three props below are about the credentials, the next two about the
+notices.
+
+| State           | What renders                                                                                                                                      |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Default         | The card, and beside or under it the service notices.                                                                                             |
+| Error           | `error` — the form-level alert, both credential fields invalid, neither one named. Never "the password is wrong": that confirms the email exists. |
+| Loading         | `loading` — every control inert, the submit marked `aria-busy`, its spinner stopped under `prefers-reduced-motion`.                               |
+| Disabled        | `disabled` — sign-in is unavailable here at all (an SSO-only workspace, a locked account).                                                        |
+| Notices loading | `noticesLoading` — a polite busy region stands in for the list while the form stays usable.                                                       |
+| Notices error   | `noticesError` — one alert with a retry replaces the list, because "nothing is wrong" and "we could not check" are different facts.               |
+| Empty           | `notices={[]}` — nothing is wrong today, so the aside is not rendered at all and the card sits centred and alone.                                 |
+| Focus visible   | The shared 2px `--ring` outline on every field, control and link, in the reading order of the page: masthead, form, notices, footer.              |
+
+## Props
+
+| Prop               | Type              | Default     | What it does                                                                                     |
+| ------------------ | ----------------- | ----------- | ------------------------------------------------------------------------------------------------ |
+| `error`            | `string`          | —           | Sign-in failed: raises the form-level alert and invalidates both credential fields.              |
+| `loading`          | `boolean`         | `false`     | The submit is in flight: every control inert, the button busy.                                   |
+| `disabled`         | `boolean`         | `false`     | Sign-in is unavailable.                                                                          |
+| `notices`          | `AlertListItem[]` | two samples | Service notices beside the form. `[]` renders the form alone.                                    |
+| `noticesError`     | `string`          | —           | The notices could not be loaded; that message replaces the list.                                 |
+| `noticesLoading`   | `boolean`         | `false`     | A busy region stands in for the notices.                                                         |
+| `onSubmit`         | `(event) => void` | —           | Native submit. React/Solid `onSubmit`, Svelte `onsubmit`, Vue emits `submit`.                    |
+| `onNavigate`       | `(to) => void`    | —           | A link the screen draws itself was activated: `home`, `support`, `privacy` or `terms`.           |
+| `onNoticeAction`   | `(id) => void`    | —           | A notice's own action, with that notice's id. Svelte `onnoticeaction`, Vue emits `noticeAction`. |
+| `onDismissNotice`  | `(id) => void`    | —           | One notice was dismissed. Svelte `ondismissnotice`, Vue emits `dismissNotice`.                   |
+| `onDismissNotices` | `() => void`      | —           | Every notice at once. Svelte `ondismissnotices`, Vue emits `dismissNotices`.                     |
+| `onRetryNotices`   | `() => void`      | —           | Retry after `noticesError`. Svelte `onretrynotices`, Vue emits `retryNotices`.                   |
+| `forgotHref`       | `string`          | `"#"`       | Where "Forgot your password?" points.                                                            |
+| `signUpHref`       | `string`          | `"#"`       | Where "Create an account" points.                                                                |
+| `homeHref`         | `string`          | `"#"`       | Where the wordmark points.                                                                       |
+| `supportHref`      | `string`          | `"#"`       | Where "Contact support" points.                                                                  |
+| `privacyHref`      | `string`          | `"#"`       | Where the privacy link points.                                                                   |
+| `termsHref`        | `string`          | `"#"`       | Where the terms link points.                                                                     |
+
+The screen's own links carry an `href` **and** call `onNavigate`, so a client
+router can `preventDefault()` while the markup keeps meaning something without
+JavaScript. The form's two links are `href`-only on purpose: a person following
+"Forgot your password?" is already having a bad day, and that link should not
+depend on hydration having succeeded.

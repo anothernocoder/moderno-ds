@@ -50,11 +50,16 @@ import { Alert, Button, Card } from "@moderno-ui/react";
  * part hands down the status hue, so a glyph follows the theme, and the block
  * stays installable without pulling an icon set into your dependencies.
  *
+ * The heading and its sentence are props with the notification-centre wording
+ * as defaults, because the same stack is a service-status panel on a sign-in
+ * screen and an audit trail on a settings page: a block that hardcodes "your
+ * workspace while you were away" can only be composed into one of them.
+ *
  * The timestamp is an `Alert.Description` too, sized down, rather than a muted
  * span of the block's own: secondary text on a status tint has to come from the
  * primitive, because the tint eats `--muted-foreground`'s AA margin and a block
  * may not invent a colour to make up the difference.
- * *
+ *
  * Class strings are written out in full rather than shared through a constant:
  * the docs compile the previews' Tailwind from `class` attributes, so a class
  * assembled in JS would render here and vanish in the preview.
@@ -160,6 +165,10 @@ function DismissIcon() {
 export interface AlertListProps {
   /** The notifications to render, newest first. `[]` renders the empty state. */
   alerts?: AlertListItem[];
+  /** The heading over the stack — what this collection *is*. */
+  heading?: string;
+  /** The sentence under the heading; pass `""` for a heading on its own. */
+  description?: string;
   /** The list itself could not be loaded; this message replaces it. */
   error?: string;
   /** The list is being loaded or refreshed: a busy region stands in for it. */
@@ -178,6 +187,8 @@ export interface AlertListProps {
 
 export function AlertList({
   alerts = sampleAlerts,
+  heading = "Notifications",
+  description = "What happened in your workspace while you were away.",
   error,
   loading = false,
   disabled = false,
@@ -194,10 +205,8 @@ export function AlertList({
       <div className="grid gap-4">
         <div className="grid gap-3 @sm:flex @sm:items-center @sm:justify-between">
           <div className="grid gap-1">
-            <h2 className="text-lg font-semibold @md:text-xl">Notifications</h2>
-            <p className="text-sm text-muted-foreground">
-              What happened in your workspace while you were away.
-            </p>
+            <h2 className="text-lg font-semibold @md:text-xl">{heading}</h2>
+            {description ? <p className="text-sm text-muted-foreground">{description}</p> : null}
           </div>
           <Button
             type="button"

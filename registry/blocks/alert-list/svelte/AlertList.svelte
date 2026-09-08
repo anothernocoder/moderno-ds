@@ -42,6 +42,11 @@
   part hands down the status hue, so a glyph follows the theme, and the block
   stays installable without pulling an icon set into your dependencies.
 
+  The heading and its sentence are props with the notification-centre wording as
+  defaults, because the same stack is a service-status panel on a sign-in screen
+  and an audit trail on a settings page: a block that hardcodes "your workspace
+  while you were away" can only be composed into one of them.
+
   The timestamp is an Alert.Description too, sized down, rather than a muted
   span of the block's own: secondary text on a status tint has to come from the
   primitive, because the tint eats --muted-foreground's AA margin and a block
@@ -74,6 +79,10 @@
   interface Props {
     /** The notifications to render, newest first. `[]` renders the empty state. */
     alerts?: AlertListItem[];
+    /** The heading over the stack — what this collection *is*. */
+    heading?: string;
+    /** The sentence under the heading; pass `""` for a heading on its own. */
+    description?: string;
     /** The list itself could not be loaded; this message replaces it. */
     error?: string;
     /** The list is being loaded or refreshed: a busy region stands in for it. */
@@ -140,6 +149,8 @@
 
   let {
     alerts = sampleAlerts,
+    heading = "Notifications",
+    description = "What happened in your workspace while you were away.",
     error,
     loading = false,
     disabled = false,
@@ -187,10 +198,10 @@
   <div class="grid gap-4">
     <div class="grid gap-3 @sm:flex @sm:items-center @sm:justify-between">
       <div class="grid gap-1">
-        <h2 class="text-lg font-semibold @md:text-xl">Notifications</h2>
-        <p class="text-sm text-muted-foreground">
-          What happened in your workspace while you were away.
-        </p>
+        <h2 class="text-lg font-semibold @md:text-xl">{heading}</h2>
+        {#if description}
+          <p class="text-sm text-muted-foreground">{description}</p>
+        {/if}
       </div>
       <Button
         type="button"

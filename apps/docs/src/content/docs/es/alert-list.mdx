@@ -87,6 +87,8 @@ salió bien.
 | Prop           | Tipo              | Por defecto         | Qué hace                                                                                                    |
 | -------------- | ----------------- | ------------------- | ----------------------------------------------------------------------------------------------------------- |
 | `alerts`       | `AlertListItem[]` | un ejemplo incluido | Las notificaciones a renderizar, de la más reciente a la más antigua. `[]` muestra el estado vacío.         |
+| `heading`      | `string`          | `"Notifications"`   | El encabezado sobre la pila — qué _es_ esta colección.                                                      |
+| `description`  | `string`          | una frase           | La línea bajo el encabezado; pasa `""` para dejar solo el encabezado.                                       |
 | `error`        | `string`          | —                   | La lista no se pudo cargar; este mensaje la sustituye.                                                      |
 | `loading`      | `boolean`         | `false`             | La lista se está cargando o refrescando: una región ocupada la sustituye.                                   |
 | `disabled`     | `boolean`         | `false`             | Solo lectura: las alertas siguen en pantalla y todos los controles quedan inertes.                          |
