@@ -402,10 +402,47 @@ main {
   align-items: stretch;
 }
 
-/* Code blocks — standalone ones (in prose) get their own bordered/rounded
-   card from Expressive Code (ec.config.mjs styleOverrides, using our own
-   --border/--radius tokens). This wrapper just controls placement inside
-   .preview-panel--code. */
+/* Code blocks — Astro's native Shiki emits a bare <pre class="astro-code">, so
+   all of the chrome is ours: the same bordered, rounded card as the rest of the
+   site's surfaces, painted from --border/--radius and the docs mono face so it
+   re-themes with the brand. */
+.astro-code {
+  font-family: var(--docs-font-mono);
+  font-size: 0.9rem;
+  line-height: 1.65;
+  margin: 1.25rem 0;
+  padding: 0.9rem 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background-color: var(--shiki-light-bg);
+}
+
+/* github-light and github-dark both ship as inline custom properties on the
+   <pre> and on every token span (shiki.config.ts sets `defaultColor: false`),
+   so switching palette is a variable re-point, not a repaint. The site's own
+   toggle owns the `.dark` class on <html> — deliberately no
+   `prefers-color-scheme` here, so a reader who overrides the OS scheme gets
+   the palette they picked. */
+.astro-code,
+.astro-code span {
+  color: var(--shiki-light);
+  font-style: var(--shiki-light-font-style);
+  font-weight: var(--shiki-light-font-weight);
+  text-decoration: var(--shiki-light-text-decoration);
+}
+.dark .astro-code,
+.dark .astro-code span {
+  color: var(--shiki-dark);
+  font-style: var(--shiki-dark-font-style);
+  font-weight: var(--shiki-dark-font-weight);
+  text-decoration: var(--shiki-dark-text-decoration);
+}
+.dark .astro-code {
+  background-color: var(--shiki-dark-bg);
+}
+
+/* The wrapper only controls placement: inside .preview-panel--code the panel
+   supplies the margin, in prose the <pre> keeps its own. */
 .code-block {
   margin: 0;
 }
@@ -421,14 +458,14 @@ main {
   display: none;
   background: var(--card);
 }
-/* .preview/.install already draw their own outer card — strip Expressive
-   Code's border/radius on embedded blocks so there's one frame, not a
-   nested one. !important: EC injects its own <style> per instance later in
-   the DOM than this stylesheet, so it wins ties on equal specificity. */
-.preview-panel--code pre,
-.install-panel pre {
-  border: none !important;
-  border-radius: 0 !important;
+/* .preview/.install already draw their own outer card — strip the border,
+   radius and margin off the embedded block so there's one frame, not a nested
+   one. */
+.preview-panel--code .astro-code,
+.install-panel .astro-code {
+  margin: 0;
+  border: none;
+  border-radius: 0;
 }
 .install:has(.install-radio:nth-of-type(1):checked) .install-panel--bun,
 .install:has(.install-radio:nth-of-type(2):checked) .install-panel--pnpm,
