@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
 import { getCollection } from "astro:content";
 import { llmsIndex } from "../../lib/markdown.ts";
+import { byReadingOrder } from "../../i18n/nav.ts";
 import { locales, splitId } from "../../i18n/ui.ts";
 
 const SITE = process.env.SITE_URL ?? "https://moderno.style";
@@ -12,9 +13,9 @@ export function getStaticPaths() {
 export const GET: APIRoute = async ({ params }) => {
   const lang = params.lang!;
   const pages = (await getCollection("docs"))
-    .map((entry) => ({ entry, ...splitId(entry.id) }))
+    .map((entry) => ({ entry, ...splitId(entry.id), order: entry.data.order }))
     .filter((p) => p.locale === lang && p.slug !== "index")
-    .sort((a, b) => a.entry.data.order - b.entry.data.order)
+    .sort(byReadingOrder)
     .map((p) => ({
       slug: p.slug,
       title: p.entry.data.title,
