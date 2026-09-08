@@ -52,9 +52,9 @@ aside here — the only criterion is whether the documentation gets better.
 - **Order of delivery:** the upgrade lands first in its own PR, so a failure
   there is found before anything is built on it; then the ToC rail, the
   sidebar filter and search, which do not touch previews; the stacked Preview
-  and framework selector last. The pixel baselines go with #217, which merges before the first
-  ticket starts: from then on the e2e seams in `apps/docs/tests/e2e` are the
-  gate, and each ticket extends them.
+  and framework selector last. The pixel baselines go with #217, which
+  merges before the first ticket starts; from then on the e2e seams in
+  `apps/docs/tests/e2e` are the gate, and each ticket extends them.
 
 ## Alternatives rejected
 
