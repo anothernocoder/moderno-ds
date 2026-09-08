@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import { byReadingOrder } from "../../i18n/nav.ts";
 import { locales, splitId, useTranslations, type Locale } from "../../i18n/ui.ts";
 
 export function getStaticPaths() {
@@ -13,9 +14,9 @@ const t = useTranslations(lang);
 const all = await getCollection("docs");
 const home = all.find((e) => e.id === `${lang}/index`);
 const pages = all
-  .map((entry) => ({ entry, ...splitId(entry.id) }))
+  .map((entry) => ({ entry, ...splitId(entry.id), order: entry.data.order }))
   .filter((p) => p.locale === lang && p.slug !== "index")
-  .sort((a, b) => a.entry.data.order - b.entry.data.order);
+  .sort(byReadingOrder);
 
 const title = home?.data.title ?? "Moderno";
 const description = home?.data.description ?? "Framework-agnostic design system.";

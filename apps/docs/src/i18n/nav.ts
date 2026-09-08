@@ -19,13 +19,28 @@ export interface NavSection {
 }
 
 /**
+ * The reading order of docs pages, shared by every surface that lists them —
+ * the sidebar, the index card grid, `llms.txt`. `order` decides it; the slug is
+ * the tie-break, so two pages that share an `order` can never fall back to
+ * whatever sequence the content loader happened to yield. `order` values are
+ * unique per locale (a test holds that), so the tie-break should stay unused —
+ * it is here so a future duplicate is merely redundant, not silently unstable.
+ */
+export function byReadingOrder(
+  a: { slug: string; order: number },
+  b: { slug: string; order: number },
+): number {
+  return a.order - b.order || a.slug.localeCompare(b.slug);
+}
+
+/**
  * Group one locale's pages into sidebar sections. Pages are ranked by `order`;
  * a section is ranked by its first page, so moving a page up can promote its
  * whole section — which is how "Blocks" lands after "Components" without a
  * second ordering knob.
  */
 export function sidebarSections(pages: readonly NavPage[]): NavSection[] {
-  const sorted = [...pages].sort((a, b) => a.order - b.order || a.slug.localeCompare(b.slug));
+  const sorted = [...pages].sort(byReadingOrder);
   const sections = new Map<string, NavPage[]>();
   for (const page of sorted) {
     const existing = sections.get(page.group);
