@@ -54,9 +54,9 @@
     {
       "name": "login-form-react",
       "type": "registry:block",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "title": "Login Form (React)",
-      "description": "Sign-in section composing the @moderno-ui/react Card, Field, Checkbox, Button and Alert primitives; responds to its container (@container) rather than the viewport, and renders its default, disabled, loading and error states from props.",
+      "description": "Credential card composing the @moderno-ui/react Card, Field, Checkbox, Button and Alert primitives, in either of its two modes: sign-in (email, password, remember-me, recovery link) or sign-up (full name, email, a new password and consent). Responds to its container (@container) rather than the viewport, and renders its default, disabled, loading and error states from props.",
       "dependencies": ["@moderno-ui/react"],
       "registryDependencies": [],
       "files": [
@@ -70,9 +70,9 @@
     {
       "name": "login-form-vue",
       "type": "registry:block",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "title": "Login Form (Vue)",
-      "description": "Sign-in section composing the @moderno-ui/vue Card, Field, Checkbox, Button and Alert primitives; responds to its container (@container) rather than the viewport, and renders its default, disabled, loading and error states from props.",
+      "description": "Credential card composing the @moderno-ui/vue Card, Field, Checkbox, Button and Alert primitives, in either of its two modes: sign-in (email, password, remember-me, recovery link) or sign-up (full name, email, a new password and consent). Responds to its container (@container) rather than the viewport, and renders its default, disabled, loading and error states from props.",
       "dependencies": ["@moderno-ui/vue"],
       "registryDependencies": [],
       "files": [
@@ -86,9 +86,9 @@
     {
       "name": "login-form-svelte",
       "type": "registry:block",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "title": "Login Form (Svelte)",
-      "description": "Sign-in section composing the @moderno-ui/svelte Card, Field, Checkbox, Button and Alert primitives; responds to its container (@container) rather than the viewport, and renders its default, disabled, loading and error states from props.",
+      "description": "Credential card composing the @moderno-ui/svelte Card, Field, Checkbox, Button and Alert primitives, in either of its two modes: sign-in (email, password, remember-me, recovery link) or sign-up (full name, email, a new password and consent). Responds to its container (@container) rather than the viewport, and renders its default, disabled, loading and error states from props.",
       "dependencies": ["@moderno-ui/svelte"],
       "registryDependencies": [],
       "files": [
@@ -102,9 +102,9 @@
     {
       "name": "login-form-solid",
       "type": "registry:block",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "title": "Login Form (Solid)",
-      "description": "Sign-in section composing the @moderno-ui/solid Card, Field, Checkbox, Button and Alert primitives; responds to its container (@container) rather than the viewport, and renders its default, disabled, loading and error states from props.",
+      "description": "Credential card composing the @moderno-ui/solid Card, Field, Checkbox, Button and Alert primitives, in either of its two modes: sign-in (email, password, remember-me, recovery link) or sign-up (full name, email, a new password and consent). Responds to its container (@container) rather than the viewport, and renders its default, disabled, loading and error states from props.",
       "dependencies": ["@moderno-ui/solid"],
       "registryDependencies": [],
       "files": [
@@ -432,6 +432,70 @@
           "path": "screens/sign-in/solid/sign-in.tsx",
           "type": "registry:screen",
           "target": "src/components/screens/sign-in.tsx"
+        }
+      ]
+    },
+    {
+      "name": "sign-up-react",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Sign up (React)",
+      "description": "Full-viewport sign-up screen composing the login-form block in its sign-up mode: full name, email, a new password and the consent box, with the reasons to create an account beside the card. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the highlights move beside the card at @lg.",
+      "dependencies": ["@moderno-ui/react"],
+      "registryDependencies": ["login-form-react"],
+      "files": [
+        {
+          "path": "screens/sign-up/react/sign-up.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/sign-up.tsx"
+        }
+      ]
+    },
+    {
+      "name": "sign-up-vue",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Sign up (Vue)",
+      "description": "Full-viewport sign-up screen composing the login-form block in its sign-up mode: full name, email, a new password and the consent box, with the reasons to create an account beside the card. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the highlights move beside the card at @lg.",
+      "dependencies": ["@moderno-ui/vue"],
+      "registryDependencies": ["login-form-vue"],
+      "files": [
+        {
+          "path": "screens/sign-up/vue/SignUp.vue",
+          "type": "registry:screen",
+          "target": "src/components/screens/SignUp.vue"
+        }
+      ]
+    },
+    {
+      "name": "sign-up-svelte",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Sign up (Svelte)",
+      "description": "Full-viewport sign-up screen composing the login-form block in its sign-up mode: full name, email, a new password and the consent box, with the reasons to create an account beside the card. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the highlights move beside the card at @lg.",
+      "dependencies": ["@moderno-ui/svelte"],
+      "registryDependencies": ["login-form-svelte"],
+      "files": [
+        {
+          "path": "screens/sign-up/svelte/SignUp.svelte",
+          "type": "registry:screen",
+          "target": "src/components/screens/SignUp.svelte"
+        }
+      ]
+    },
+    {
+      "name": "sign-up-solid",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Sign up (Solid)",
+      "description": "Full-viewport sign-up screen composing the login-form block in its sign-up mode: full name, email, a new password and the consent box, with the reasons to create an account beside the card. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the highlights move beside the card at @lg.",
+      "dependencies": ["@moderno-ui/solid"],
+      "registryDependencies": ["login-form-solid"],
+      "files": [
+        {
+          "path": "screens/sign-up/solid/sign-up.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/sign-up.tsx"
         }
       ]
     }

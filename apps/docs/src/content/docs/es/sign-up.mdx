@@ -1,0 +1,139 @@
+---
+title: Crear cuenta
+description: La pantalla de registro a viewport completo — la tarjeta de credenciales en su modo de registro junto a las razones para crear una cuenta, compuesta con login-form.
+group: Pantallas
+order: 112
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import SignUpScreenDemo from "../../../islands/SignUpScreenDemo.svelte";
+import signUpReact from "../../../../../../registry/screens/sign-up/react/sign-up.tsx?raw";
+import signUpVue from "../../../../../../registry/screens/sign-up/vue/SignUp.vue?raw";
+import signUpSolid from "../../../../../../registry/screens/sign-up/solid/sign-up.tsx?raw";
+import signUpSvelte from "../../../../../../registry/screens/sign-up/svelte/SignUp.svelte?raw";
+
+**Crear cuenta** es la otra mitad de la entrada al producto: una composición a
+viewport completo del [formulario de acceso](/es/login-form/) en su modo
+`sign-up` — nombre completo, correo, una contraseña nueva y la casilla de
+consentimiento — con la cabecera, el pie y las razones para registrarse que
+convierten una sección en una página a la que se puede llegar.
+
+Compone **un** bloque a propósito. Esta tarjeta y la de
+[iniciar sesión](/es/sign-in/) son el mismo archivo en sus dos modos, así que
+quien pasa de una pantalla a la otra no siente que la página cambie bajo sus
+pies; y el otro bloque de formulario, [form layout](/es/form-layout/), es la
+forma de ajustes agrupados, que su propia guía desaconseja para un registro. Dos
+formularios y dos botones de envío en una pantalla no son una composición: son
+una decisión que nadie le pidió tomar a quien lee.
+
+Como toda pantalla es presentacional: posee el viewport y nada más. Ni
+credenciales, ni petición, ni router. Le pasas `error`, `errors`, `loading` y las
+razones; te devuelve el evento de envío y el nombre del enlace que se activó.
+
+<FrameworkSelect locale="es" />
+
+<Preview
+  examples={{
+    react: signUpReact,
+    vue: signUpVue,
+    solid: signUpSolid,
+    svelte: signUpSvelte,
+  }}
+>
+  <SignUpScreenDemo client:visible />
+</Preview>
+
+## Instalación
+
+<Install item="sign-up" />
+
+Instalar una pantalla instala los bloques que compone — aquí `login-form`, el
+mismo que usa `sign-in` — y registra cada uno con su propia versión en
+`.moderno/manifest.json`, así que `moderno update` y `moderno diff` siguen
+funcionando por elemento. Instalar las dos pantallas de auth deja, por tanto, una
+sola copia de la tarjeta, no dos. Nada se arrastra hacia arriba: esta pantalla
+llega sin el flujo `auth` al que pertenece.
+
+La pantalla importa su bloque desde `@/components/blocks/…`, que es donde
+`moderno add` lo escribe. Si tu proyecto mapea `@/` a algo distinto de `src/`,
+esa línea de import es la única edición.
+
+Su raíz es un `<div>`, no un `<main>`: casi todos los shells de aplicación ya
+aportan el landmark `main`, y un documento con dos visibles es inválido. El
+`<header>` y el `<footer>` de dentro son el banner y el contentinfo de la página
+en cuanto la pantalla no está anidada en otro landmark; si tu ruta no tiene
+`<main>`, ese elemento raíz es el que hay que cambiar.
+
+## Tamaño
+
+«A viewport completo» es una **altura** — la raíz es `min-h-dvh`. Cada decisión
+de _ancho_ se lee del contenedor de la propia pantalla, así que sigue siendo
+correcta en un panel que no es la ventana: el área de contenido de una app de
+escritorio, un marco de previsualización, una consola embebida.
+
+| Paso  | Slot             | Qué cambia                                                                      |
+| ----- | ---------------- | ------------------------------------------------------------------------------- |
+| `@sm` | `--container-sm` | La cabecera deja de apilarse: el logotipo y el enlace de acceso comparten fila. |
+| `@md` | `--container-md` | El pie deja de apilarse: el copyright y los enlaces legales comparten fila.     |
+| `@lg` | `--container-lg` | Las razones dejan su sitio bajo la tarjeta y se ponen a su lado.                |
+
+Nada de eso lee la ventana, y por eso los tres marcos de arriba se contradicen
+entre sí en una misma pantalla. Las reglas están en
+[Bloques y contenedores](/es/blocks-and-containers/) y en la ADR-0005.
+
+La tarjeta de dentro sigue leyendo _su propio_ contenedor, un nivel más abajo:
+se limita a `--container-sm` por mucho espacio que le dé la pantalla, porque un
+campo de credenciales más ancho que eso se lee peor, no mejor.
+
+## Estados
+
+| Estado           | Qué se renderiza                                                                                                                        |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| Por defecto      | La tarjeta y, al lado o debajo, las razones para crear una cuenta.                                                                      |
+| Error            | `error` — la alerta a nivel de formulario: la cuenta no se pudo crear (el servicio está caído, la casilla sin marcar).                  |
+| Errores de campo | `errors` — por el `name` del campo; cada clave lo marca inválido y escribe su mensaje. Un registro sí puede decir qué campo rechazó.    |
+| Cargando         | `loading` — todos los controles inertes, el envío marcado `aria-busy` y su spinner detenido con `prefers-reduced-motion`.               |
+| Deshabilitado    | `disabled` — el registro no está disponible (una beta cerrada, un espacio solo por invitación).                                         |
+| Vacío            | `highlights={[]}` — no hay nada que vender, así que el aside no se renderiza y la tarjeta queda centrada y sola.                        |
+| Foco visible     | El contorno compartido de 2px con `--ring` en cada campo, control y enlace, en el orden de lectura: cabecera, formulario, razones, pie. |
+
+## Props
+
+| Prop          | Tipo                     | Por defecto     | Qué hace                                                                                                                               |
+| ------------- | ------------------------ | --------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `error`       | `string`                 | —               | La cuenta no se pudo crear: levanta la alerta a nivel de formulario.                                                                   |
+| `errors`      | `Record<string, string>` | —               | Mensajes por campo, por el `name` del campo (`fullName`, `email`, `password`).                                                         |
+| `loading`     | `boolean`                | `false`         | El envío está en curso: todo inerte y el botón ocupado.                                                                                |
+| `disabled`    | `boolean`                | `false`         | El registro no está disponible.                                                                                                        |
+| `highlights`  | `SignUpHighlight[]`      | tres de ejemplo | Las razones que se muestran junto al formulario. `[]` deja la tarjeta sola.                                                            |
+| `onSubmit`    | `(event) => void`        | —               | Envío nativo. React/Solid `onSubmit`, Svelte `onsubmit`, Vue emite `submit`.                                                           |
+| `onNavigate`  | `(to, event) => void`    | —               | Se activó un enlace que dibuja la propia pantalla: `home`, `signIn`, `privacy` o `terms`, con el evento de clic. Vue emite `navigate`. |
+| `signInHref`  | `string`                 | `"#"`           | A dónde apunta «Sign in», en la cabecera y en el pie de la tarjeta.                                                                    |
+| `homeHref`    | `string`                 | `"#"`           | A dónde apunta el logotipo.                                                                                                            |
+| `privacyHref` | `string`                 | `"#"`           | A dónde apuntan los enlaces de privacidad.                                                                                             |
+| `termsHref`   | `string`                 | `"#"`           | A dónde apuntan los enlaces de términos.                                                                                               |
+
+Un `SignUpHighlight` es `{ id, title, description? }`; el id solo sirve de clave.
+
+Los enlaces que dibuja la propia pantalla llevan `href` **y** llaman a
+`onNavigate` con el destino _y_ el evento de clic, para que un router de cliente
+pueda hacer `preventDefault()` (tras comprobar `metaKey` / `ctrlKey`, y dejarle
+al navegador el clic que abre pestaña) sin que el marcado deje de significar algo
+sin JavaScript:
+
+```tsx
+<SignUp
+  homeHref="/"
+  onNavigate={(to, event) => {
+    if (event.metaKey || event.ctrlKey) return; // que el navegador abra la pestaña
+    event.preventDefault();
+    router.push(routes[to]);
+  }}
+/>
+```
+
+Los tres enlaces de la tarjeta son solo `href` a propósito. Dos de ellos son los
+términos y la política de privacidad que se le pide aceptar a alguien:
+consentir un documento que solo se abre si cargó el JavaScript no es consentir.

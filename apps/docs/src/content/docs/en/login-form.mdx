@@ -1,21 +1,25 @@
 ---
 title: Login form
-description: The sign-in section — email, password, remember-me, submit and the recovery and sign-up links — composed from Card, Field, Checkbox, Button and Alert, sized by its container rather than the viewport.
+description: The credential card in its two modes — sign in (email, password, remember-me) or sign up (name, email, a new password, consent) — composed from Card, Field, Checkbox, Button and Alert, sized by its container rather than the viewport.
 group: Blocks
 order: 101
 agent:
-  intent: The sign-in section of an authentication screen.
-  whenToUse: "A page or panel where a returning user enters an email and a password: a sign-in screen, a re-authentication step, a modal that unlocks a privileged action."
+  intent: The credential card of an authentication screen, in either its sign-in or its sign-up mode.
+  whenToUse: 'A page or panel where someone enters credentials: a sign-in screen, a registration screen (mode="sign-up"), a re-authentication step, a modal that unlocks a privileged action.'
   whenNotToUse:
     - case: Collecting a one-time code sent by email or SMS
       use: PinInput, inside the verify screen
-    - case: A full-viewport page with its own heading, illustration and footer
-      use: the sign-in screen, which composes this block
+    - case: A full-viewport page with its own heading, highlights and footer
+      use: the sign-in or sign-up screen, each of which composes this block in one mode
+    - case: A long form of grouped fields with one actions row
+      use: FormLayout — settings, profile, billing; this card is credentials only
     - case: A generic form of your own fields
       use: Field and Button directly
   gotchas:
     - "Presentational: it holds no credentials and issues no request. Pass `error` / `loading` / `disabled` and handle the native submit event yourself."
-    - "`error` is a form-level message, not a field-level one — both credential fields go invalid and neither says which was wrong, so the form never confirms that an email address exists."
+    - "`mode` decides which card this is: `sign-in` (the default) or `sign-up`. It changes the fields, the copy, the secondary row and the footer link; everything else — width, spacing, states — is shared."
+    - "`error` is a form-level message. Signing in it also invalidates both credential fields and names neither, so the form never confirms that an email address exists; signing up there is nothing to leak yet, so `errors` (keyed by the field's `name`: `fullName`, `email`, `password`) names the field that was rejected."
+    - '`errors` is read in `sign-up` only, and the terms links (`termsHref` / `privacyHref`) render there only — as does the required consent checkbox, which is `name="terms"` in the submitted form.'
     - "`loading` implies inert: every control is disabled and the submit carries aria-busy, so a second submit cannot be fired mid-request."
     - "The block responds to its container, never the viewport. Mount it in something narrower than --container-sm and the secondary row stacks on its own."
     - "It is a block, so you own the copy: the labels, the links and the hrefs are yours to edit after `moderno add`."
@@ -34,14 +38,23 @@ import loginFormVue from "../../../../../../registry/blocks/login-form/vue/Login
 import loginFormSolid from "../../../../../../registry/blocks/login-form/solid/login-form.tsx?raw";
 import loginFormSvelte from "../../../../../../registry/blocks/login-form/svelte/LoginForm.svelte?raw";
 
-**Login form** is the sign-in section: an email field, a password field,
-remember-me, the submit, and the two links every sign-in screen needs — password
-recovery and sign-up. It composes `Card`, `Field`, `Checkbox`, `Button` and
-`Alert` and paints nothing of its own, so a theme re-skins it untouched.
+**Login form** is the credential card, and it has two modes.
+`mode="sign-in"` — the default — is the returning person: an email field, a
+password field, remember-me, and the two links every sign-in screen needs.
+`mode="sign-up"` is the new one: full name, email, a new password, and the
+consent that has to be given before an account can exist. It composes `Card`,
+`Field`, `Checkbox`, `Button` and `Alert` and paints nothing of its own, so a
+theme re-skins it untouched.
+
+One block rather than two, because they are one thing: the same card, the same
+width cap, the same rhythm — so a person moving between
+[sign in](/en/sign-in/) and [sign up](/en/sign-up/) does not feel the page
+change under them.
 
 It is a _block_, not a screen: it does not own the viewport, holds no navigation
-state and issues no request. The `sign-in` screen composes it and keeps the
-state; this file is a section you can also drop into a modal or a settings panel.
+state and issues no request. The `sign-in` and `sign-up` screens compose it and
+keep the state; this file is a section you can also drop into a modal or a
+settings panel.
 
 <FrameworkSelect locale="en" />
 
@@ -77,6 +90,20 @@ centred on a 1280px page, in light and dark alike, without a single media query.
 The rules behind this are in [Blocks and containers](/en/blocks-and-containers/)
 and ADR-0005.
 
+## Modes
+
+`mode` changes what the card asks for and nothing else — the width cap, the
+spacing, the container steps and every state below are shared.
+
+| Mode                | Fields                                      | Secondary row                         | Footer link                        |
+| ------------------- | ------------------------------------------- | ------------------------------------- | ---------------------------------- |
+| `sign-in` (default) | Email, password (`current-password`)        | Remember me + "Forgot your password?" | "New here? Create an account"      |
+| `sign-up`           | Full name, email, password (`new-password`) | Required consent box + legal links    | "Already have an account? Sign in" |
+
+The preview above is the `sign-in` mode in its container widths and states; the
+`sign-up` mode is previewed on the [sign-up screen](/en/sign-up/) page, mounted
+in the screen that composes it.
+
 ## States
 
 | State           | What renders                                                                                                                |
@@ -86,20 +113,28 @@ and ADR-0005.
 | Focus visible   | The shared 2px `--ring` outline on every control, and on the two links.                                                     |
 | Disabled        | `disabled` — sign-in is unavailable (an SSO-only workspace, a locked account).                                              |
 | Loading         | `loading` — every control inert, the submit `aria-busy` with a spinner that stops under `prefers-reduced-motion`.           |
-| Error           | `error="…"` — one form-level `Alert`, both credential fields invalid.                                                       |
+| Error           | `error="…"` — one form-level `Alert`; in `sign-in` both credential fields also go invalid.                                  |
+| Field errors    | `errors={{ email: "…" }}` — `sign-up` only: that field is invalid and prints its own message under the input.               |
 
-The error is deliberately form-level. Telling a visitor that _the password_ was
-wrong also tells them the email exists, which is the first half of a credential
-stuffing run; the block never does that, and neither should the code you wire
-behind it.
+Signing in, the error is deliberately form-level. Telling a visitor that _the
+password_ was wrong also tells them the email exists, which is the first half of
+a credential stuffing run; the block never does that, and neither should the code
+you wire behind it. Signing up, that argument is gone — the address is being
+offered, not guessed — and a form that will not say which field it rejected is
+merely rude, so `errors` names them.
 
 ## Props
 
-| Prop         | Type           | Default | What it does                                                                                 |
-| ------------ | -------------- | ------- | -------------------------------------------------------------------------------------------- |
-| `error`      | `string`       | —       | Form-level failure message; renders the alert and invalidates both credential fields.        |
-| `loading`    | `boolean`      | `false` | The submit is in flight: controls inert, button busy.                                        |
-| `disabled`   | `boolean`      | `false` | Sign-in is unavailable.                                                                      |
-| `onSubmit`   | submit handler | —       | The native submit event. React/Solid take `onSubmit`, Svelte `onsubmit`, Vue emits `submit`. |
-| `forgotHref` | `string`       | `"#"`   | Where "Forgot your password?" points.                                                        |
-| `signUpHref` | `string`       | `"#"`   | Where "Create an account" points.                                                            |
+| Prop          | Type                     | Default     | What it does                                                                                    |
+| ------------- | ------------------------ | ----------- | ----------------------------------------------------------------------------------------------- |
+| `mode`        | `"sign-in" \| "sign-up"` | `"sign-in"` | Which card this is: the returning person, or the new one.                                       |
+| `error`       | `string`                 | —           | Form-level failure message; renders the alert, and in `sign-in` invalidates both fields.        |
+| `errors`      | `Record<string, string>` | —           | `sign-up` only — per-field messages keyed by the field's `name`; each marks that field invalid. |
+| `loading`     | `boolean`                | `false`     | The submit is in flight: controls inert, button busy.                                           |
+| `disabled`    | `boolean`                | `false`     | The form is unavailable (SSO-only workspace, locked account, closed beta).                      |
+| `onSubmit`    | submit handler           | —           | The native submit event. React/Solid take `onSubmit`, Svelte `onsubmit`, Vue emits `submit`.    |
+| `forgotHref`  | `string`                 | `"#"`       | `sign-in` — where "Forgot your password?" points.                                               |
+| `signUpHref`  | `string`                 | `"#"`       | `sign-in` — where "Create an account" points.                                                   |
+| `signInHref`  | `string`                 | `"#"`       | `sign-up` — where "Sign in" points.                                                             |
+| `termsHref`   | `string`                 | `"#"`       | `sign-up` — where the terms link under the consent box points.                                  |
+| `privacyHref` | `string`                 | `"#"`       | `sign-up` — where the privacy link under the consent box points.                                |

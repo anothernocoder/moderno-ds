@@ -1,13 +1,21 @@
 <!--
-  LoginForm — the sign-in section, composed from @moderno-ui/svelte primitives
+  LoginForm — the credential card, composed from @moderno-ui/svelte primitives
   (Card, Field, Checkbox, Button, Alert). Copy it into your project with
   `moderno add login-form-svelte` and edit it freely: every visual comes from
   the token contract, so a theme re-skins it without a diff here.
 
+  Two modes, one card. `mode="sign-in"` (the default) is the returning person:
+  email, password, remember-me, the recovery link. `mode="sign-up"` is the new
+  one: full name, email, a new password and the consent that has to be given
+  before an account can exist. They are one block rather than two because they
+  are one thing — the same card, the same width, the same rhythm — and a person
+  moving between them should not feel the page change under them. The `sign-in`
+  and `sign-up` screens each mount this file in one of its modes.
+
   Presentational. The block owns no credentials, no request and no navigation:
-  it takes `error` / `loading` / `disabled` and hands the native submit event
-  back, so the `sign-in` screen above it holds the state while this file stays a
-  section you can drop anywhere.
+  it takes `error` / `errors` / `loading` / `disabled` and hands the native
+  submit event back, so the screen above it holds the state while this file
+  stays a section you can drop anywhere.
 
   Responsive to its container, not the viewport (ADR-0005). The root declares
   `@container`; the secondary row (remember-me + the recovery link) stacks below
@@ -19,13 +27,21 @@
   with no media query anywhere.
 
   States. Default and empty are the same pristine render (placeholders, no
-  values) — a sign-in form has no collection to be empty of. Hover and
+  values) — a credential form has no collection to be empty of. Hover and
   focus-visible come from the primitives' own rules in components.css; the links
   here carry the matching pair. Disabled stops the form (an SSO-only workspace,
-  a locked account), loading makes it inert and marks the button aria-busy, and
-  error raises one form-level Alert and marks both credential fields invalid —
+  a locked account, a closed beta), and loading makes it inert and marks the
+  button aria-busy.
+
+  Error is the one place the two modes deliberately disagree. Signing in,
+  `error` raises one form-level Alert and marks both credential fields invalid —
   never "the password is wrong", which would confirm to an attacker that the
-  email exists.
+  email exists. Signing up, there is nothing to leak yet and a form that will
+  not say which field it rejected is merely rude, so `errors` names them: keyed
+  by the field's `name` (fullName, email, password), each key marking that field
+  invalid and printing its own message. `error` stays the form-level failure —
+  the account could not be created at all, the consent box is unticked, the
+  service is down.
 
   Class strings are written out in full rather than shared through a variable:
   the docs compile the previews' Tailwind from `class` attributes, so a class
@@ -34,39 +50,67 @@
 <script lang="ts">
   import { Alert, Button, Card, Checkbox, Field } from "@moderno-ui/svelte";
 
+  type Mode = "sign-in" | "sign-up";
+
   interface Props {
-    /** Form-level failure message. Renders the alert and invalidates both credential fields. */
+    /** Which card this is: the returning person, or the new one. */
+    mode?: Mode;
+    /** Form-level failure message. Renders the alert; in `sign-in` it also invalidates both credential fields. */
     error?: string;
+    /** `sign-up` only — per-field messages keyed by the field's `name`; each marks that field invalid. */
+    errors?: Record<string, string>;
     /** The submit is in flight: every control is inert and the button reads busy. */
     loading?: boolean;
-    /** Sign-in is unavailable (SSO-only workspace, locked account). */
+    /** The form is unavailable (SSO-only workspace, locked account, closed beta). */
     disabled?: boolean;
     /** Native submit; call `event.preventDefault()` and read the form yourself. */
     onsubmit?: (event: SubmitEvent) => void;
-    /** Where "Forgot your password?" points. */
+    /** `sign-in` only — where "Forgot your password?" points. */
     forgotHref?: string;
-    /** Where "Create an account" points. */
+    /** `sign-in` only — where "Create an account" points. */
     signUpHref?: string;
+    /** `sign-up` only — where "Sign in" points. */
+    signInHref?: string;
+    /** `sign-up` only — where the terms link under the consent box points. */
+    termsHref?: string;
+    /** `sign-up` only — where the privacy link under the consent box points. */
+    privacyHref?: string;
   }
 
   let {
+    mode = "sign-in",
     error,
+    errors,
     loading = false,
     disabled = false,
     onsubmit,
     forgotHref = "#",
     signUpHref = "#",
+    signInHref = "#",
+    termsHref = "#",
+    privacyHref = "#",
   }: Props = $props();
 
+  const signUp = $derived(mode === "sign-up");
   const inert = $derived(loading || disabled);
-  const invalid = $derived(Boolean(error));
+  /**
+   * Signing in, one failure invalidates both credential fields and names
+   * neither. Signing up, only the field that was actually rejected is marked.
+   */
+  const invalid = (field: string) => (signUp ? Boolean(errors?.[field]) : Boolean(error));
 </script>
 
 <section class="@container moderno-block-login text-foreground">
   <Card.Root class="mx-auto w-full max-w-sm">
     <Card.Header>
-      <Card.Title class="text-lg @md:text-xl">Sign in</Card.Title>
-      <Card.Description>Enter your email and password to continue.</Card.Description>
+      <Card.Title class="text-lg @md:text-xl">
+        {signUp ? "Create your account" : "Sign in"}
+      </Card.Title>
+      <Card.Description>
+        {signUp
+          ? "Fourteen days of everything, no card and no sales call."
+          : "Enter your email and password to continue."}
+      </Card.Description>
     </Card.Header>
 
     <Card.Content>
@@ -79,37 +123,87 @@
           </Alert.Root>
         {/if}
 
-        <Field.Root required {invalid} disabled={inert}>
+        {#if signUp}
+          <Field.Root required invalid={invalid("fullName")} disabled={inert}>
+            <Field.Label>Full name</Field.Label>
+            <Field.Input name="fullName" autocomplete="name" placeholder="Ada Lovelace" />
+            <Field.ErrorText>{errors?.fullName}</Field.ErrorText>
+          </Field.Root>
+        {/if}
+
+        <Field.Root required invalid={invalid("email")} disabled={inert}>
           <Field.Label>Email</Field.Label>
           <Field.Input name="email" type="email" autocomplete="email" placeholder="you@example.com" />
+          {#if signUp}
+            <Field.ErrorText>{errors?.email}</Field.ErrorText>
+          {/if}
         </Field.Root>
 
-        <Field.Root required {invalid} disabled={inert}>
+        <Field.Root required invalid={invalid("password")} disabled={inert}>
           <Field.Label>Password</Field.Label>
           <Field.Input
             name="password"
             type="password"
-            autocomplete="current-password"
+            autocomplete={signUp ? "new-password" : "current-password"}
             placeholder="••••••••"
           />
+          {#if signUp}
+            <Field.HelperText>At least 12 characters. A passphrase beats a puzzle.</Field.HelperText>
+            <Field.ErrorText>{errors?.password}</Field.ErrorText>
+          {/if}
         </Field.Root>
 
-        <div class="grid gap-3 @sm:flex @sm:items-center @sm:justify-between">
-          <Checkbox.Root name="remember" size="sm" disabled={inert}>
-            <Checkbox.Control>
-              <Checkbox.Indicator>✓</Checkbox.Indicator>
-            </Checkbox.Control>
-            <Checkbox.Label>Remember me</Checkbox.Label>
-            <Checkbox.HiddenInput />
-          </Checkbox.Root>
+        {#if signUp}
+          <!--
+            Consent is one checkbox with a short label, and the two legal links
+            sit under it rather than inside it: Ark's checkbox root is a
+            <label>, so an anchor in the label text is a link inside a control —
+            a click either follows it or ticks the box depending on the browser,
+            and neither answer is the one the reader meant.
+          -->
+          <div class="grid gap-2">
+            <Checkbox.Root name="terms" size="sm" required disabled={inert}>
+              <Checkbox.Control>
+                <Checkbox.Indicator>✓</Checkbox.Indicator>
+              </Checkbox.Control>
+              <Checkbox.Label>I agree to the terms and the privacy policy</Checkbox.Label>
+              <Checkbox.HiddenInput />
+            </Checkbox.Root>
+            <p class="text-sm text-muted-foreground">
+              Read the
+              <a
+                class="rounded-sm font-medium text-foreground underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                href={termsHref}
+              >
+                terms of service
+              </a>
+              and the
+              <a
+                class="rounded-sm font-medium text-foreground underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                href={privacyHref}
+              >
+                privacy policy
+              </a>.
+            </p>
+          </div>
+        {:else}
+          <div class="grid gap-3 @sm:flex @sm:items-center @sm:justify-between">
+            <Checkbox.Root name="remember" size="sm" disabled={inert}>
+              <Checkbox.Control>
+                <Checkbox.Indicator>✓</Checkbox.Indicator>
+              </Checkbox.Control>
+              <Checkbox.Label>Remember me</Checkbox.Label>
+              <Checkbox.HiddenInput />
+            </Checkbox.Root>
 
-          <a
-            class="rounded-sm text-sm font-medium text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline focus-visible:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-            href={forgotHref}
-          >
-            Forgot your password?
-          </a>
-        </div>
+            <a
+              class="rounded-sm text-sm font-medium text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline focus-visible:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+              href={forgotHref}
+            >
+              Forgot your password?
+            </a>
+          </div>
+        {/if}
 
         <Button type="submit" class="w-full" disabled={inert} aria-busy={loading}>
           {#if loading}
@@ -117,24 +211,36 @@
               aria-hidden="true"
               class="size-4 animate-spin rounded-full border-2 border-current border-t-transparent motion-reduce:animate-none"
             ></span>
-            Signing in
+            {signUp ? "Creating account" : "Signing in"}
           {:else}
-            Sign in
+            {signUp ? "Create account" : "Sign in"}
           {/if}
         </Button>
       </form>
     </Card.Content>
 
     <Card.Footer class="justify-center">
-      <p class="text-sm text-muted-foreground">
-        New here?
-        <a
-          class="rounded-sm font-medium text-foreground underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-          href={signUpHref}
-        >
-          Create an account
-        </a>
-      </p>
+      {#if signUp}
+        <p class="text-sm text-muted-foreground">
+          Already have an account?
+          <a
+            class="rounded-sm font-medium text-foreground underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            href={signInHref}
+          >
+            Sign in
+          </a>
+        </p>
+      {:else}
+        <p class="text-sm text-muted-foreground">
+          New here?
+          <a
+            class="rounded-sm font-medium text-foreground underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            href={signUpHref}
+          >
+            Create an account
+          </a>
+        </p>
+      {/if}
     </Card.Footer>
   </Card.Root>
 </section>
