@@ -1,6 +1,6 @@
 # Moderno Design System
 
-Framework-agnostic design system monorepo: primitives versioned via npm, blocks/themes via a shadcn-style registry, documentation in Astro. Platform decisions (toolchain, publish, docs, themes): **ADR-0001** (`docs/adr/0001-platform-distribution-docs-theming.md`). Absorption of the predecessor `moderno` and the npm scope: **ADR-0004**. Responsive policy and registry tiers: **ADR-0005**.
+Framework-agnostic design system monorepo: primitives versioned via npm, blocks/themes via a shadcn-style registry, documentation in Astro. Platform decisions (toolchain, publish, docs, themes): **ADR-0001** (`docs/adr/0001-platform-distribution-docs-theming.md`). Absorption of the predecessor `moderno` and the npm scope: **ADR-0004**. Responsive policy and registry tiers: **ADR-0005**. Docs craft — harvesting Nimbus, Astro 7, examples as files: **ADR-0006**.
 
 ## Language
 
@@ -149,8 +149,8 @@ _Avoid_: Registry-only-on-npm, unversioned raw GitHub URLs as default
 _Avoid_: Starlight, separate registry CDN in v1
 
 **Docs search**:
-**Pagefind** with a **per-locale index** (`en`, `es`). No Algolia in v1.
-_Avoid_: Client-side search SaaS (v1), a single search index mixing languages
+**Pagefind** with a **per-locale index** (`en`, `es`), behind Moderno's own dialog opened with a keyboard shortcut; never Pagefind's stock UI. No Algolia in v1.
+_Avoid_: Client-side search SaaS (v1), a single search index mixing languages, PagefindUI
 
 **i18n (docs)**:
 Two locales from v1: **`en`** (default) and **`es`**. Routes prefixed with `/en/...` and `/es/...`. Parallel Content Collections; the build fails if the translated pair is missing. Site UI translated; API identifiers and code blocks in English in both languages.
@@ -176,3 +176,19 @@ _Avoid_: per-framework chart markup, ChartFrame (retired)
 **Theme compile**:
 The `pnpm theme:build` script (`tooling/theme-compile`) validates and emits `theme.css` from `tokens.dtcg.json`. Used by CI, maintainers and the Theme Builder export. Includes WCAG AA warnings.
 _Avoid_: themes as npm packages, hand-written CSS without a schema
+
+**Preview**:
+The docs component that renders a demo live above its example source, both always visible. One live island per demo whatever the framework, because the component stylesheet is shared: one instance is the proof.
+_Avoid_: Preview/Code tabs, sandbox, playground
+
+**Example**:
+The source a docs page shows for a demo, one per framework, kept as a real file that the docs both display and mount — never a literal inside the page. A block's example is the registry item itself.
+_Avoid_: Snippet, code sample (as a string in MDX)
+
+**Framework selector**:
+The page-wide control that picks which framework's examples and install command a docs page shows. One choice applies to every example on the page and is remembered across pages.
+_Avoid_: Per-block code tabs, language tabs
+
+**Sidebar filter**:
+Narrowing the sidebar to the pages whose titles match what is typed. Operates on the navigation only; finding content is Docs search.
+_Avoid_: Search (for the sidebar), quick find
