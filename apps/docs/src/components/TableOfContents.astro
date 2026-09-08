@@ -1,4 +1,20 @@
 ---
+/**
+ * On-this-page rail: a vertical spine beside h2 items, h3 items forming an
+ * indented sub-group joined to the spine by curved connectors, and the active
+ * item marked by a thicker rail segment that follows `toc.ts`'s scroll-spy
+ * (it toggles `aria-current` on the link; the CSS reacts to that alone).
+ *
+ * The rail's shape — the per-link border segment plus the S-curve connectors
+ * bridging an indent change — is adapted from Nimbus's TOC component:
+ * `packages/nimbus-starter-source/src/components/ui/toc/TOC.astro`
+ * (https://github.com/cloudflare/nimbus), MIT License. Nimbus's rail is
+ * generic over arbitrary depths and its active indicator is an animated,
+ * JS-measured SVG path (`toc.client.ts`, a separate island); neither is
+ * ported here — this rail only ever has two levels (h2/h3), so the connector
+ * geometry is two fixed CSS classes instead of a per-item computation, and
+ * `toc.ts` remains the docs' only script.
+ */
 import { useTranslations, type Locale } from "../i18n/ui.ts";
 
 interface Heading {
@@ -24,13 +40,39 @@ const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
     <nav class="toc" aria-label={t("toc.title")}>
       <p class="toc-title">{t("toc.title")}</p>
       <ul class="toc-list">
-        {items.map((h) => (
-          <li class={`toc-item toc-item--${h.depth}`}>
-            <a href={`#${h.slug}`} data-toc-link={h.slug}>
-              {h.text}
-            </a>
-          </li>
-        ))}
+        {items.map((h, i) => {
+          const prevDepth = i > 0 ? items[i - 1].depth : h.depth;
+          const nextDepth = i < items.length - 1 ? items[i + 1].depth : h.depth;
+          const goingDeeper = h.depth > prevDepth;
+          const goingShallower = nextDepth < h.depth;
+          return (
+            <li class={`toc-item toc-item--${h.depth}`}>
+              {goingDeeper && (
+                <svg
+                  class="toc-connector toc-connector--in"
+                  aria-hidden="true"
+                  viewBox="0 0 1 1"
+                  preserveAspectRatio="none"
+                >
+                  <path d="M 0 0 C 0 0.5, 1 0.5, 1 1" vector-effect="non-scaling-stroke" />
+                </svg>
+              )}
+              <a href={`#${h.slug}`} data-toc-link={h.slug}>
+                {h.text}
+              </a>
+              {goingShallower && (
+                <svg
+                  class="toc-connector toc-connector--out"
+                  aria-hidden="true"
+                  viewBox="0 0 1 1"
+                  preserveAspectRatio="none"
+                >
+                  <path d="M 1 0 C 1 0.5, 0 0.5, 0 1" vector-effect="non-scaling-stroke" />
+                </svg>
+              )}
+            </li>
+          );
+        })}
       </ul>
     </nav>
   )

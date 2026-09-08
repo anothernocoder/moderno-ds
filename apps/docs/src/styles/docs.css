@@ -242,15 +242,22 @@ main {
   margin: 1.25rem 0 2.25rem;
 }
 
-/* On-this-page rail */
+/*
+  On-this-page rail. h2 items sit flush on the rail (indent 0); h3 items form
+  an indented sub-group (indent 1rem) joined to the rail by a curved
+  connector at each depth change. The rail itself is not one continuous
+  border on the nav — each link draws its own `border-left` segment at its
+  own indent, so a thicker/coloured segment can mark a single active item
+  without touching its neighbours; the connectors bridge the 1rem gap between
+  an h2 segment and the h3 segment above/below it. Adapted from Nimbus's TOC
+  (see the attribution header in TableOfContents.astro).
+*/
 .toc {
   position: sticky;
   top: 4.5rem;
   align-self: start;
   height: calc(100vh - 6rem);
   overflow-y: auto;
-  padding-left: 1.25rem;
-  border-left: 1px solid var(--border);
   font-size: 0.82rem;
 }
 .toc-title {
@@ -266,26 +273,60 @@ main {
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
 }
-.toc-item--3 {
-  padding-left: 0.85rem;
+.toc-item--2 a {
+  margin-left: 0;
+}
+.toc-item--3 a {
+  margin-left: 1rem;
 }
 .toc-list a {
   display: block;
   color: var(--muted-foreground);
-  border-left: 2px solid transparent;
-  margin-left: -1.27rem;
-  padding-left: 1.2rem;
-  transition: color 0.15s ease;
+  border-left: 2px solid var(--border);
+  padding: 0.3rem 0 0.3rem 1rem;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .toc-list a {
+    transition:
+      color 0.15s ease,
+      border-color 0.15s ease,
+      border-left-width 0.15s ease;
+  }
 }
 .toc-list a:hover {
   color: var(--foreground);
   text-decoration: none;
 }
+.toc-list a:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -1px;
+}
 .toc-list a[aria-current="true"] {
   color: var(--foreground);
+  font-weight: 500;
+  border-left-width: 3px;
   border-left-color: var(--primary);
+  padding-left: calc(1rem - 1px);
+}
+/* The S-curve bridging an indent change — a block between two links in the
+   same flex column, spanning the 1rem gap between the h2 segment's x=0 line
+   and the h3 segment's x=1rem line. `--in` (entering an h3 group) curves
+   top-left to bottom-right; `--out` (returning to h2) curves top-right to
+   bottom-left. `currentColor` picks up `--border` so it reads as a
+   continuation of the plain segments either side of it. */
+.toc-connector {
+  display: block;
+  width: 1rem;
+  height: 0.5rem;
+  color: var(--border);
+  overflow: visible;
+}
+.toc-connector path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
 }
 
 @media (max-width: 75rem) {
@@ -310,11 +351,9 @@ main {
     display: block;
     position: static;
     height: auto;
-    border-left: none;
-    border-top: 1px solid var(--border);
-    padding-left: 0;
-    padding-top: 1rem;
     margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
   }
 }
 
