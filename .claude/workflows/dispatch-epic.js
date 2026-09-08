@@ -5,6 +5,7 @@ export const meta = {
   phases: [
     { title: 'Setup', detail: 'epic branch from main and the draft PR that gives every landing CI' },
     { title: 'Order', detail: 'one cheap agent orders the tickets by their Blocked-by chains', model: 'sonnet' },
+    { title: 'Recheck', detail: 'before skipping a ticket, one cheap agent re-reads its outside blockers live', model: 'sonnet' },
     { title: 'Implement', detail: 'one fresh agent per ticket, in order, one commit on the epic branch' },
     { title: 'Review', detail: 'one fresh reviewer per landing; posts Review: PASS|CHANGES on the issue' },
     { title: 'Fix', detail: 'one more fresh agent per CHANGES verdict, then one re-review' },
@@ -36,9 +37,13 @@ const ORDER = { type: 'object', properties: {
   tickets: { type: 'array', items: { type: 'object', properties: {
     number: { type: 'number' }, title: { type: 'string' },
     blockedBy: { type: 'array', items: { type: 'number' }, description: 'every issue or PR number under Blocked by' },
-    settled: { type: 'boolean', description: 'true when every blocker outside this epic is closed or merged now' },
-  }, required: ['number', 'title', 'blockedBy', 'settled'] } },
+    openBlockers: { type: 'array', items: { type: 'number' }, description: 'ONLY the blockers this workflow will not land itself: the subset of blockedBy that is unresolved right now (issue open, or PR unmerged) AND is not one of the tickets you are returning. A blocker that is another ticket in your own list NEVER belongs here, however open it looks right now.' },
+  }, required: ['number', 'title', 'blockedBy', 'openBlockers'] } },
 }, required: ['tickets'] }
+const GATE = { type: 'object', properties: {
+  stillOpen: { type: 'array', items: { type: 'number' }, description: 'the subset still unsettled right now; empty means the ticket is clear to run' },
+  note: { type: 'string' },
+}, required: ['stillOpen'] }
 const LANDED = { type: 'object', properties: {
   landed: { type: 'boolean', description: 'true only when the commit is pushed to the epic branch' },
   sha: { type: 'string' }, ci: { type: 'string', enum: ['green', 'red', 'pending', 'none'] },
@@ -59,8 +64,13 @@ Otherwise require a clean tree (return pr=0 with a note if it is dirty), create 
 Return the structured result.`
 
 const orderPrompt = () => `Order the tickets of epic #${EPIC} of ${REPO} following ${DOC}, "Orchestrating an epic AFK", step Order.
-Use gh only; never guess from memory. Return every open ready-for-agent sub-issue of the epic in topological order of its Blocked-by chain (ties by ascending number), with blockedBy listing every number under Blocked by and settled=true only when each blocker outside the epic is closed (issue) or merged (PR) right now.
+Use gh only; never guess from memory. Return every open ready-for-agent sub-issue of the epic in topological order of its Blocked-by chain (ties by ascending number), with blockedBy listing every number under Blocked by.
+You read the repo before a single ticket has run, so every ticket you return is open by definition and its openness proves nothing. Judge only the blockers you are not returning: openBlockers is the subset of blockedBy that is unsettled right now and is not itself one of your tickets. Never put one of your own tickets in another ticket's openBlockers — the workflow lands those in order and tracks when each settles.
 Return the structured result only.`
+
+const gatePrompt = (t, blockers) => `Re-read the blockers of issue #${t.number} of ${REPO} right now with gh: ${blockers.map((n) => `#${n}`).join(', ')}.
+The ordering step read them before any ticket of this epic had run, so that read is old. For each number say whether it is settled as ${DOC} defines it — issue closed, or PR merged — at this moment.
+Return stillOpen: only the numbers that are neither. Judge nothing else and never touch the branch.`
 
 const implementPrompt = (t, branch) => `Implement issue #${t.number} of ${REPO} ("${t.title}") following ${DOC}, "Working a ticket", on the epic branch ${branch} in this checkout.
 Idempotent: if the issue is already closed with a landing comment, return landed=true with that sha and do nothing else.
@@ -96,10 +106,22 @@ log(`${order.tickets.length} tickets in order: ${order.tickets.map((t) => `#${t.
 const settled = new Set()
 const ledger = [] // {ticket, outcome, sha?, findings?, waitingOn?, note?}
 for (const t of order.tickets) {
-  const waitingOn = t.blockedBy.filter((b) => inEpic.has(b) && !settled.has(b))
-  if (!t.settled || waitingOn.length) {
-    ledger.push({ ticket: t.number, outcome: 'SKIPPED', waitingOn: t.settled ? waitingOn : t.blockedBy })
-    log(`#${t.number} skipped: blocked by ${(t.settled ? waitingOn : t.blockedBy).map((n) => `#${n}`).join(', ')}`)
+  // A blocker inside the epic is answered by this run's own ledger and nothing
+  // else: Order read the repo before any ticket had landed, so whatever it saw
+  // of a sibling is stale the moment the first one passes.
+  const inside = t.blockedBy.filter((b) => inEpic.has(b) && !settled.has(b))
+  // A blocker outside the epic is nobody's to land here, so it is re-read at the
+  // moment it would cost the ticket its turn — hours can pass between Order and
+  // here. In-epic numbers are stripped first in case the agent listed them anyway.
+  let outside = (t.openBlockers || []).filter((b) => !inEpic.has(b))
+  if (outside.length) {
+    const gate = await agent(gatePrompt(t, outside), { phase: 'Recheck', label: `recheck #${t.number}`, model: 'sonnet', effort: 'low', schema: GATE })
+    if (gate) outside = gate.stillOpen.filter((b) => !inEpic.has(b))
+  }
+  const waitingOn = [...inside, ...outside]
+  if (waitingOn.length) {
+    ledger.push({ ticket: t.number, outcome: 'SKIPPED', waitingOn })
+    log(`#${t.number} skipped: blocked by ${waitingOn.map((n) => `#${n}`).join(', ')}`)
     continue
   }
 
