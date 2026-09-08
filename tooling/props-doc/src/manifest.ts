@@ -10,7 +10,7 @@
  */
 import type { ComponentEntry } from "./index.ts";
 
-/** Components with consumer-authored props worth a table. */
+/** Every documented component: its props table is its whole public API. */
 export const ENTRIES: ComponentEntry[] = [
   { name: "Button", file: "src/button.tsx", type: "ButtonProps" },
   { name: "Card", file: "src/card.tsx", type: "CardRootProps" },
@@ -18,6 +18,7 @@ export const ENTRIES: ComponentEntry[] = [
   { name: "Field", file: "src/field.tsx", type: "ModernoFieldRootProps" },
   { name: "Alert", file: "src/alert.tsx", type: "AlertRootProps" },
   { name: "Divider", file: "src/divider.tsx", type: "DividerProps" },
+  { name: "Dialog", file: "src/dialog.tsx", type: "DialogRootProps" },
   { name: "Select", file: "src/select.tsx", type: "ModernoSelectRootProps" },
   { name: "PinInput", file: "src/pin-input.tsx", type: "ModernoPinInputRootProps" },
   { name: "LineChart", file: "src/charts.tsx", type: "LineChartProps" },

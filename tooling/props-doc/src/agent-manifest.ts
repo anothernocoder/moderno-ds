@@ -10,9 +10,10 @@
  *
  * - `props` — resolved by `extractProps` against the canonical `@moderno-ui/react`
  *   source, the same "React is the single source of truth" rule `manifest.ts`
- *   already uses (props are identical across bindings by contract). `propsComplete`
- *   rides along from the same extraction: false for the roots that inherit their
- *   API from Ark/Zag, so `validate_usage` knows the list isn't exhaustive.
+ *   already uses (props are identical across bindings by contract). A root
+ *   wrapped around a headless machine publishes Ark/Zag's props too — they are
+ *   its API. `propsComplete` rides along from the same extraction, so
+ *   `validate_usage` knows when a list isn't exhaustive.
  * - `variants` — read straight off the shared `@moderno-ui/core` recipe, when the
  *   component has one (Dialog has none: its visual states are Ark's own
  *   data-attributes, not CVA variants).
@@ -173,6 +174,7 @@ export const AGENT_COMPONENTS: AgentComponentSpec[] = [
     name: "Dialog",
     slug: "dialog",
     scope: "dialog",
+    propsEntry: findEntry("Dialog"),
     parts: [
       { name: "backdrop" },
       { name: "positioner" },
@@ -290,9 +292,9 @@ export function computePropsHash(props: PropDoc[]): string {
  * `buildComponentsManifest` and the CI drift gate (#45) so both compute the
  * same `propsHash` from the same source of truth.
  *
- * A component with no `propsEntry` (Field, Dialog — they add no props of their
- * own) is absent from the map; callers read that as no props, and as a prop
- * list that is *not* complete: what those roots accept is Ark's, invisible here.
+ * A component with no `propsEntry` is absent from the map; callers read that as
+ * no props, and as a prop list that is *not* complete — the honest reading of
+ * "nobody resolved this component's API", not a claim that it accepts nothing.
  */
 export function resolveComponentProps(
   components: AgentComponentSpec[],

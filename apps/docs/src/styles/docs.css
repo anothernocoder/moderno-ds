@@ -486,6 +486,30 @@ main {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.88rem;
+  /* Fixed layout so a machine's Root — thirty-odd props, some with a type as
+     long as `Partial<{ root: string; … }>` — can't let one cell dictate the
+     table's width and push the rest into a horizontal scroll. */
+  table-layout: fixed;
+}
+.props-table th:nth-child(1) {
+  width: 34%;
+}
+.props-table th:nth-child(2) {
+  width: 30%;
+}
+/* Wide enough for the Spanish labels ("Obligatoria", "Por defecto") to sit on
+   one line — at 14% they wrapped and the two headers read as one. */
+.props-table th:nth-child(3),
+.props-table th:nth-child(4) {
+  width: 18%;
+}
+.props-table td code {
+  /* Names break only when one can't fit its column at all; a type like
+     `Partial<{ root: string; … }>` may break wherever it must. */
+  overflow-wrap: break-word;
+}
+.props-table td code.props-type {
+  overflow-wrap: anywhere;
 }
 .props-table th,
 .props-table td {
@@ -507,6 +531,22 @@ main {
 }
 .props-type {
   color: var(--muted-foreground);
+  /* An `ids` prop's type is the whole part vocabulary spelled out; without a
+     cap that one row is taller than the ten around it. Capped and scrollable
+     rather than truncated — the full type is still there to read. */
+  display: block;
+  max-height: 8em;
+  overflow-y: auto;
+}
+/* The prop's summary, under its name: a measure narrow enough to read and wide
+   enough that Ark's one-sentence descriptions rarely take more than two lines,
+   so the name column still scans as a list of names. */
+.props-desc {
+  margin: 0.3rem 0 0;
+  color: var(--muted-foreground);
+  font-size: 0.82rem;
+  line-height: 1.45;
+  text-wrap: pretty;
 }
 .props-empty {
   color: var(--muted-foreground);

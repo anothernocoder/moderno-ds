@@ -65,9 +65,10 @@ be one of the manifest `variants` values.
 - Suggestion: closest valid value / prop by edit distance.
 - The unknown-prop half runs only where `propsComplete` is true. A root wrapped
   around a headless machine (`Select`, `Field`, `Dialog`) reaches the manifest
-  with only its workspace-declared props — props-doc drops Ark/Zag's
-  declarations with the DOM noise — so `<Select.Root collection={…}>` is not
-  judged. The `variants` half still applies there: it is generated from the
+  with Ark/Zag's props alongside its own — those are its API — so
+  `<Select.Root collection={…}>` is judged like any other usage. A component
+  whose props props-doc could not resolve would arrive incomplete and go
+  unjudged. The `variants` half applies either way: it is generated from the
   recipe and is always complete.
 
 ### 4. `moderno/no-raw-ark` — error, fixable

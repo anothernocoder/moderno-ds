@@ -2,19 +2,22 @@
  * @moderno-ui/props-doc — build-time prop extractor.
  *
  * Resolves a framework binding's exported props interface with ts-morph and
- * emits the props the consumer actually sets. The signal/noise rule: keep props
- * whose declaration originates inside the workspace (`packages/`, the recipe
- * variants and component-declared props), and drop the hundreds of inherited
- * DOM attributes that come from `lib.dom.d.ts` / `node_modules`. The docs
+ * emits the props the consumer actually sets. The signal/noise rule: keep the
+ * props that are the component's own API — declared in the workspace
+ * (`packages/`: recipe variants and component-declared props) or by the
+ * headless machine a root wraps (`@ark-ui/*`, `@zag-js/*`: `collection`,
+ * `invalid`, `onValueChange`…) — and drop the hundreds of inherited DOM
+ * attributes that come from `lib.dom.d.ts` / `@types/*`. The docs
  * `<PropsTable>` reads the emitted JSON; column labels are translated downstream
  * while the prop `name`/`type` stay in English (the real API).
  *
- * Dropping is lossy in one case that matters downstream: a root wrapped around
- * a headless machine inherits real props from `@ark-ui/*` / `@zag-js/*`, and
- * those go the same way as the DOM noise. Each `ComponentDoc` therefore
- * carries `propsComplete`, derived from where the dropped declarations came
- * from, so a consumer can tell "these are all the props" from "these are the
- * props we can see".
+ * Wrapping the machine is why the origin filter is a list of what to keep
+ * rather than "not node_modules": `Select.Root` accepts `collection` exactly as
+ * it accepts `size`, and a table that showed only `size` documented the wrapper
+ * instead of the component. Each `ComponentDoc` still carries `propsComplete`,
+ * derived from where the dropped declarations came from, so a consumer that
+ * reasons about "is this prop real?" can tell an exhaustive list from a
+ * partial one when some *other* dependency declares props we cannot see.
  */
 
 /** One row of a `<PropsTable>`. */
@@ -35,16 +38,15 @@ export interface PropDoc {
 export interface ComponentDoc {
   /** Display name (the entry name, e.g. `Button`). */
   name: string;
-  /** Props kept after the workspace-origin filter, sorted by name. */
+  /** Props kept after the origin filter, sorted by name. */
   props: PropDoc[];
   /**
    * True when `props` is the component's whole API: everything the filter
    * dropped was a native attribute the binding merely forwards. False when a
-   * real prop was dropped because it is declared in a dependency — a root
-   * wrapped around a headless machine (`Select.Root` inherits Ark/Zag's
-   * `collection`, `value`, `onValueChange`…), whose API the extractor cannot
-   * see. Consumers that reason about "is this prop real?" — `valid-props`
-   * above all — must not treat an incomplete list as exhaustive.
+   * real prop was dropped because a dependency outside the kept origins
+   * declares it, and the extractor therefore cannot see it. Consumers that
+   * reason about "is this prop real?" — `valid-props` above all — must not
+   * treat an incomplete list as exhaustive.
    */
   propsComplete: boolean;
 }
@@ -53,9 +55,13 @@ export interface ComponentDoc {
 export interface ComponentEntry {
   /** Display name. */
   name: string;
-  /** Source file declaring the interface, relative to the project root. */
+  /** Source file exporting the interface, relative to the project root. */
   file: string;
-  /** Exported interface/type name to resolve (e.g. `ButtonProps`). */
+  /**
+   * Exported interface/type name to resolve (e.g. `ButtonProps`). Declared in
+   * `file` or re-exported from it — `Dialog` adds nothing to Ark's machine, so
+   * its binding only re-exports `DialogRootProps`.
+   */
   type: string;
 }
 
@@ -66,19 +72,41 @@ export interface ExtractOptions {
   entries: ComponentEntry[];
   /**
    * Decide whether a prop whose symbol is declared in `declFilePath` is kept.
-   * Default: keep declarations under a workspace `packages/` dir, drop
-   * `node_modules` (inherited DOM/React attributes).
+   * Default: keep the workspace's own declarations plus the headless machine's
+   * (`@ark-ui/*`, `@zag-js/*`), drop the inherited DOM/React attributes.
    */
   include?: (declFilePath: string) => boolean;
 }
 
 import { dirname, resolve } from "node:path";
-import { Node, Project, SymbolFlags, type Symbol as TsSymbol } from "ts-morph";
+import {
+  Node,
+  Project,
+  SymbolFlags,
+  type SourceFile,
+  type Symbol as TsSymbol,
+  type Type,
+} from "ts-morph";
 
-/** Default origin filter: keep workspace `packages/` declarations, drop deps. */
+/** Whether a declaration comes from this workspace's own `packages/` sources. */
+function isWorkspaceOrigin(p: string): boolean {
+  return p.includes("/packages/") && !p.includes("/node_modules/");
+}
+
+/**
+ * Whether a declaration comes from the headless machine a root wraps. Ark's
+ * `Select.Root` props *are* Moderno's `Select.Root` props — the binding wraps
+ * the component to fold in one recipe, not to narrow its API — so these count
+ * as the component's own, not as dependency noise.
+ */
+function isHeadlessMachineOrigin(p: string): boolean {
+  return /\/@(ark-ui|zag-js)\//.test(p);
+}
+
+/** Default origin filter: keep the component's real API, drop DOM noise. */
 function defaultInclude(declFilePath: string): boolean {
   const p = declFilePath.replace(/\\/g, "/");
-  return p.includes("/packages/") && !p.includes("/node_modules/");
+  return isWorkspaceOrigin(p) || isHeadlessMachineOrigin(p);
 }
 
 /**
@@ -108,15 +136,81 @@ function formatType(text: string): string {
     .trim();
 }
 
+/**
+ * The type as a reader needs it: the members of a string-literal union rather
+ * than the alias that names them. TypeScript prints `size?: SelectSize` as
+ * `SelectSize`, which tells a reader nothing they could type into their editor,
+ * while the same union written inline (Divider's `orientation`) prints as
+ * `"horizontal" | "vertical"`. Only literal unions are unfolded — expanding
+ * `ListCollection<T>` or `PositioningOptions` would trade a name the reader can
+ * look up for a wall of structure.
+ */
+function displayType(type: Type, enclosing: Node): string {
+  if (type.isUnion()) {
+    const members = type.getUnionTypes().filter((t) => !t.isUndefined());
+    if (members.length > 1 && members.every((t) => t.isStringLiteral() || t.isNumberLiteral())) {
+      return members.map((t) => formatType(t.getText(enclosing))).join(" | ");
+    }
+  }
+  return formatType(type.getText(enclosing));
+}
+
+/**
+ * A JSDoc summary as a table cell can show it: one line (Ark's wrap over
+ * several), and without the `**bold**` markers a few of Ark's carry — the cell
+ * renders text, not Markdown, so the asterisks would show up as asterisks.
+ */
+function plainSummary(text: string): string {
+  return text
+    .replace(/\s+/g, " ")
+    .replace(/\*\*(.+?)\*\*/g, "$1")
+    .trim();
+}
+
 function jsDocSummary(sym: TsSymbol): string | undefined {
   for (const decl of sym.getDeclarations()) {
     if (Node.isJSDocable(decl)) {
       const docs = decl.getJsDocs();
-      const text = docs[docs.length - 1]?.getDescription().trim();
+      const text = plainSummary(docs[docs.length - 1]?.getDescription() ?? "");
       if (text) return text;
     }
   }
   return undefined;
+}
+
+/**
+ * The `@default` JSDoc tag, which is where Ark/Zag record what a prop falls
+ * back to (`closeOnSelect` is `true`, `count` is `0`). Without it the docs'
+ * Default column is an em dash on every row of every table, which reads as
+ * "this prop has no default" rather than "nobody wrote one down".
+ */
+function jsDocDefault(sym: TsSymbol): string | undefined {
+  for (const decl of sym.getDeclarations()) {
+    if (!Node.isJSDocable(decl)) continue;
+    for (const doc of decl.getJsDocs()) {
+      for (const tag of doc.getTags()) {
+        if (tag.getTagName() !== "default") continue;
+        const text = tag.getCommentText()?.replace(/\s+/g, " ").trim();
+        if (text) return text;
+      }
+    }
+  }
+  return undefined;
+}
+
+/** The interface/type/class `name` names in `source`, declared or re-exported. */
+function resolveDeclaration(source: SourceFile, name: string): Node | undefined {
+  const local = source.getInterface(name) ?? source.getTypeAlias(name) ?? source.getClass(name);
+  if (local) return local;
+  return source
+    .getExportedDeclarations()
+    .get(name)
+    ?.find(
+      (d) =>
+        Node.isInterfaceDeclaration(d) ||
+        Node.isTypeAliasDeclaration(d) ||
+        Node.isClassDeclaration(d),
+    );
 }
 
 export function extractProps(opts: ExtractOptions): ComponentDoc[] {
@@ -126,10 +220,7 @@ export function extractProps(opts: ExtractOptions): ComponentDoc[] {
 
   return opts.entries.map((entry) => {
     const source = project.getSourceFileOrThrow(resolve(projectRoot, entry.file));
-    const decl =
-      source.getInterface(entry.type) ??
-      source.getTypeAlias(entry.type) ??
-      source.getClass(entry.type);
+    const decl = resolveDeclaration(source, entry.type);
     if (!decl) {
       throw new Error(`${entry.file}: no exported type "${entry.type}"`);
     }
@@ -145,8 +236,10 @@ export function extractProps(opts: ExtractOptions): ComponentDoc[] {
       }
 
       const required = (sym.getFlags() & SymbolFlags.Optional) === 0;
-      const type = formatType(sym.getTypeAtLocation(decl).getText(decl));
+      const type = displayType(sym.getTypeAtLocation(decl), decl);
       const prop: PropDoc = { name: sym.getName(), type, required };
+      const defaultValue = jsDocDefault(sym);
+      if (defaultValue) prop.default = defaultValue;
       const description = jsDocSummary(sym);
       if (description) prop.description = description;
       props.push(prop);

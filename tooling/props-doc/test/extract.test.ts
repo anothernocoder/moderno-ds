@@ -6,6 +6,14 @@ const reactTsConfig = fileURLToPath(
   new URL("../../../packages/react/tsconfig.json", import.meta.url),
 );
 
+function selectDoc(): ComponentDoc {
+  const [doc] = extractProps({
+    tsConfigFilePath: reactTsConfig,
+    entries: [{ name: "Select", file: "src/select.tsx", type: "ModernoSelectRootProps" }],
+  });
+  return doc!;
+}
+
 function buttonDoc(): ComponentDoc {
   const [doc] = extractProps({
     tsConfigFilePath: reactTsConfig,
@@ -14,7 +22,7 @@ function buttonDoc(): ComponentDoc {
   return doc!;
 }
 
-describe("extractProps — Button (react)", () => {
+describe("extractProps (react)", () => {
   it("keeps the recipe variant props the consumer sets", () => {
     const doc = buttonDoc();
     const names = doc.props.map((p) => p.name);
@@ -32,16 +40,58 @@ describe("extractProps — Button (react)", () => {
     expect(buttonDoc().propsComplete).toBe(true);
   });
 
-  it("calls the list incomplete when a dependency declares real props", () => {
-    // Select.Root is Ark's, wrapped for the `size` recipe: `collection`,
-    // `value` and the rest are declared in @ark-ui / @zag-js and dropped with
-    // the DOM noise, so `props` is not the component's whole API.
+  it("keeps the headless machine's props on a wrapped root", () => {
+    // Select.Root is Ark's, wrapped only to fold in the `size` recipe, so
+    // `collection` and `onValueChange` are as much its API as `size` is — and
+    // nothing real is left to drop.
+    const doc = selectDoc();
+    const names = doc.props.map((p) => p.name);
+    expect(names).toContain("size");
+    expect(names).toContain("collection");
+    expect(names).toContain("onValueChange");
+    expect(names).not.toContain("className");
+    expect(doc.propsComplete).toBe(true);
+  });
+
+  it("calls the list incomplete when a real prop's origin is filtered out", () => {
+    // The same root under a filter that keeps only the binding's own file:
+    // Ark's props are dropped and they are not native attributes, so the list
+    // is no longer the whole API and `valid-props` must not judge by it.
     const [doc] = extractProps({
       tsConfigFilePath: reactTsConfig,
       entries: [{ name: "Select", file: "src/select.tsx", type: "ModernoSelectRootProps" }],
+      include: (declFilePath) => declFilePath.endsWith("/packages/react/src/select.tsx"),
     });
     expect(doc!.props.map((p) => p.name)).toEqual(["size"]);
     expect(doc!.propsComplete).toBe(false);
+  });
+
+  it("resolves a type the binding only re-exports", () => {
+    // Dialog adds no props of its own: `DialogRootProps` is Ark's, re-exported.
+    const [doc] = extractProps({
+      tsConfigFilePath: reactTsConfig,
+      entries: [{ name: "Dialog", file: "src/dialog.tsx", type: "DialogRootProps" }],
+    });
+    expect(doc!.props.map((p) => p.name)).toContain("modal");
+  });
+
+  it("unfolds an aliased literal union into the values a consumer can type", () => {
+    // `size?: SelectSize` prints as `SelectSize`, which documents nothing.
+    const size = selectDoc().props.find((p) => p.name === "size")!;
+    expect(size.type).toBe('"sm" | "md" | "lg"');
+  });
+
+  it("keeps a named non-literal type as its name", () => {
+    // Expanding `ListCollection<T>` would trade a name the reader can look up
+    // for a wall of structure.
+    const collection = selectDoc().props.find((p) => p.name === "collection")!;
+    expect(collection.type).toContain("ListCollection");
+  });
+
+  it("collapses a multi-line JSDoc summary onto one line", () => {
+    const defaultValue = selectDoc().props.find((p) => p.name === "defaultValue")!;
+    expect(defaultValue.description).toBeDefined();
+    expect(defaultValue.description).not.toContain("\n");
   });
 
   it("strips import() path qualifiers from cross-package types", () => {

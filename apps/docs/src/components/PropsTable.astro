@@ -42,21 +42,24 @@ const props = doc?.props ?? [];
             <th>{t("props.type")}</th>
             <th>{t("props.required")}</th>
             <th>{t("props.default")}</th>
-            {props.some((p) => p.description) && <th>{t("props.description")}</th>}
           </tr>
         </thead>
         <tbody>
           {props.map((p) => (
             <tr>
+              {/* The summary sits under the name rather than in a fifth column:
+                  a machine's Root has dozens of props with a sentence each, and
+                  a description column pushed the table into a horizontal
+                  scroll where every row was as tall as its hidden prose. */}
               <td>
                 <code>{p.name}</code>
+                {p.description && <p class="props-desc">{p.description}</p>}
               </td>
               <td>
                 <code class="props-type">{p.type}</code>
               </td>
               <td>{p.required ? t("props.yes") : t("props.no")}</td>
               <td>{p.default ? <code>{p.default}</code> : "—"}</td>
-              {props.some((q) => q.description) && <td>{p.description ?? ""}</td>}
             </tr>
           ))}
         </tbody>
