@@ -30,7 +30,7 @@ and never in a cycle. `checkTiers` (`@moderno-ui/cli`) enforces it in the
 registry integrity test and again in the docs copy step, so a registry that
 would make `moderno add login-form` install a router never reaches `/r/`.
 
-Installing is transitive and per item: `moderno add auth` copies the flow, its
+Installing is transitive and per item: `moderno add auth-react` copies the flow, its
 screens, their blocks and the primitives underneath, recording **each one under
 its own version** in the manifest. Nothing is pulled in upward — `moderno add
 cart` installs a screen without the flow it belongs to.

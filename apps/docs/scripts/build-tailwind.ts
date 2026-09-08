@@ -16,13 +16,14 @@ const here = resolve(fileURLToPath(import.meta.url), "..");
 const repoRoot = resolve(here, "../../..");
 
 /**
- * Where a Tailwind class can legitimately appear: the registry blocks and
- * screens (the design system's only Tailwind surface) and the docs markup that
- * mounts them.
+ * Where a Tailwind class can legitimately appear: the registry blocks, screens
+ * and flows (the design system's only Tailwind surface) and the docs markup
+ * that mounts them.
  */
 const SOURCE_DIRS = [
   resolve(repoRoot, "registry/blocks"),
   resolve(repoRoot, "registry/screens"),
+  resolve(repoRoot, "registry/flows"),
   resolve(here, "../src/islands"),
   resolve(here, "../src/components"),
   resolve(here, "../src/layouts"),

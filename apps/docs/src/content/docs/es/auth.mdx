@@ -1,0 +1,162 @@
+---
+title: Flujo de autenticación
+description: sign-in → sign-up → forgot-password → reset-password → verify, más el ensamblaje de ejemplo que aporta el estado de navegación entre ellas — intercepción de enlaces, envíos de formulario y la única cuenta atrás del recorrido.
+group: Flujos
+order: 121
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import AuthFlowDemo from "../../../islands/AuthFlowDemo.svelte";
+import authReact from "../../../../../../registry/flows/auth/react/auth-flow.tsx?raw";
+import authVue from "../../../../../../registry/flows/auth/vue/AuthFlow.vue?raw";
+import authSolid from "../../../../../../registry/flows/auth/solid/auth-flow.tsx?raw";
+import authSvelte from "../../../../../../registry/flows/auth/svelte/AuthFlow.svelte?raw";
+
+**Auth** es el primer [flujo](/es/flows/): las cinco pantallas que alguien
+atraviesa al entrar en una cuenta — [inicio de sesión](/es/sign-in/),
+[registro](/es/sign-up/), [recuperar contraseña](/es/forgot-password/),
+[restablecer contraseña](/es/reset-password/) y [verificación](/es/verify/) —
+más el ensamblaje de ejemplo que aporta el estado de navegación entre ellas.
+
+Las pantallas son presentacionales por diseño: props de entrada, callbacks de
+salida, sin paso, sin router y sin temporizador. Eso deja abierta exactamente
+una pregunta — qué va después de qué — y el ensamblaje es la respuesta, escrita
+una vez para que la leas y después la sustituyas por la tuya.
+
+<FrameworkSelect locale="es" />
+
+<Preview
+  examples={{
+    react: authReact,
+    vue: authVue,
+    solid: authSolid,
+    svelte: authSvelte,
+  }}
+>
+  <AuthFlowDemo client:visible />
+</Preview>
+
+## Instalación
+
+<Install item="auth" />
+
+Instalar un flujo es transitivo: llegan las cinco pantallas, los dos bloques que
+comparten (`login-form` y `alert-list`) llegan una sola vez entre todas, y cada
+ítem queda registrado con su propia versión en `.moderno/manifest.json`. Por eso
+`moderno update` y `moderno diff` siguen funcionando por ítem: puedes tomar una
+corrección de la pantalla de verificación mientras el ensamblaje que reescribiste
+se queda exactamente como lo dejaste.
+
+```
+src/components/
+  flows/auth-flow.tsx
+  screens/sign-in.tsx  sign-up.tsx  forgot-password.tsx  reset-password.tsx  verify.tsx
+  blocks/login-form.tsx  alert-list.tsx
+```
+
+Nada se arrastra hacia arriba, en ninguna dirección: una pantalla instalada por
+su cuenta llega sin este flujo, y el flujo llega sin ninguna pantalla que no
+secuencie.
+
+## La secuencia
+
+| Paso              | Se llega por                                                | Sale hacia                                |
+| ----------------- | ----------------------------------------------------------- | ----------------------------------------- |
+| `sign-in`         | el primer paso del flujo, o «Sign in» desde cualquier sitio | `onAuthenticated`, o los dos enlaces      |
+| `sign-up`         | «Create an account»                                         | `verify`, al enviar                       |
+| `forgot-password` | «Forgot your password?»                                     | su propia confirmación, y luego el correo |
+| `reset-password`  | el enlace del correo — `initialStep` más `resetToken`       | `onAuthenticated`, al enviar              |
+| `verify`          | un registro enviado                                         | `onAuthenticated`, con el código completo |
+
+## La navegación es intercepción de enlaces
+
+Cada ruta entre dos pantallas es un `href` real que dibuja una tarjeta o una
+cabecera — «Create an account», «Forgot your password?», «Sign in» — porque un
+enlace que sale de una página de acceso tiene que funcionar en una página cuyo
+JavaScript nunca llegó, que es justo el momento en que alguien está fuera de su
+cuenta. Así que el ensamblaje hace lo que hace un router de cliente: le entrega
+a cada pantalla las URLs a las que debe apuntar y captura los clics al subir.
+
+```tsx
+<AuthFlow
+  hrefFor={(step) => `/auth/${step}`}
+  initialStep={stepFromUrl}
+  onStepChange={(step) => router.push(`/auth/${step}`)}
+  onAuthenticated={() => router.push("/")}
+/>
+```
+
+`hrefFor` es toda la costura. Dibuja los enlaces **y** es contra lo que la
+intercepción compara, así que apuntarlo a tus rutas cambia las dos mitades a la
+vez sin mover una línea de marcado. Un clic solo se toma cuando es el clic
+izquierdo simple que un router puede reclamar: un clic con ⌘/Ctrl/Mayús/Alt, un
+clic central y cualquier enlace que no sea del flujo se dejan al navegador,
+intactos.
+
+## Los avances son envíos de formulario
+
+Cada pantalla envía un `<form>` normal. El ensamblaje lo lee con el botón que lo
+envió — `new FormData(form, submitter)` — porque la pantalla de verificación
+tiene dos botones de envío y solo el que se pulsó aparece en los datos:
+
+```tsx
+const form = new FormData(event.currentTarget, event.nativeEvent.submitter);
+if (form.get("intent") === "resend") {
+  /* un código nuevo */
+}
+```
+
+Sustituir cada rama por tu propia petición es la edición prevista. Las
+transiciones son la parte que conviene conservar.
+
+## El único borde que no puede tener
+
+A `reset-password` se llega en la vida real abriendo un enlace en la bandeja de
+entrada: es decir, **entrando** al flujo en ese paso con un token de la URL, que
+es para lo que están `initialStep` y `resetToken`. Un ejemplo no tiene servidor
+de correo, así que la confirmación ofrece el enlace como una nota y activarla
+mueve el flujo. Esa nota, y la rama del manejador que la atiende, son lo primero
+que hay que borrar en un proyecto real.
+
+## Qué posee el ensamblaje
+
+Todo lo que las pantallas se niegan a sostener, y nada más:
+
+| Estado     | Por qué está aquí                                                                                      |
+| ---------- | ------------------------------------------------------------------------------------------------------ |
+| `step`     | Qué pantalla está en la ruta. Una pantalla que supiera esto no podría montarse bajo tu router.         |
+| `email`    | Se lleva desde donde se escribió hasta donde se nombra después — del registro a la tarjeta del código. |
+| `token`    | El secreto del enlace del correo, enviado desde el input oculto de la tarjeta.                         |
+| `resendIn` | Los segundos que quedan del reenvío. El único `setTimeout` de todo el recorrido vive aquí.             |
+| `errors`   | Lo que rechazó el último envío, limpiado en cada cambio de paso.                                       |
+
+## Props
+
+| Prop              | Tipo               | Por defecto      | Qué hace                                                                                  |
+| ----------------- | ------------------ | ---------------- | ----------------------------------------------------------------------------------------- |
+| `initialStep`     | `AuthStep`         | `"sign-in"`      | Con qué pantalla abre el flujo — en una app real, lo que diga la ruta.                    |
+| `initialEmail`    | `string`           | `""`             | Una dirección ya conocida, transportada entre pasos desde el principio.                   |
+| `resetToken`      | `string`           | `""`             | El token del enlace del correo, cuando la ruta entró en `reset-password`.                 |
+| `resendSeconds`   | `number`           | `30`             | Cuánto queda bloqueado el reenvío tras salir un código.                                   |
+| `codeLength`      | `number`           | `6`              | Cuántos dígitos tiene el código de un solo uso.                                           |
+| `hrefFor`         | `(step) => string` | `` `#${step}` `` | La URL de cada paso. De aquí salen los enlaces dibujados y los clics interceptados.       |
+| `onStepChange`    | `(step) => void`   | —                | El flujo se movió: refléjalo en la URL. En Svelte `onstepchange`; Vue emite `stepChange`. |
+| `onAuthenticated` | `(email) => void`  | —                | La persona ya pasó. En Svelte `onauthenticated`; Vue emite `authenticated`.               |
+| `homeHref`        | `string`           | `"#"`            | A dónde apunta el logotipo, en todas las pantallas.                                       |
+| `supportHref`     | `string`           | `"#"`            | A dónde apunta «Contact support», en todas las pantallas.                                 |
+| `privacyHref`     | `string`           | `"#"`            | A dónde apuntan los enlaces de privacidad, en todas las pantallas.                        |
+| `termsHref`       | `string`           | `"#"`            | A dónde apuntan los enlaces de términos, en todas las pantallas.                          |
+
+Los cuatro enlaces de chrome se configuran una vez aquí en lugar de cinco: es el
+pequeño dividendo de tener algo por encima de las pantallas.
+
+## Tamaño
+
+El ensamblaje añade un único elemento contenedor y ningún estilo: cada decisión
+de ancho y de alto es de la pantalla que esté en la ruta, leída de su propio
+contenedor y no de la ventana (ADR-0005). Los dos marcos de arriba son el mismo
+flujo a dos anchos, en desacuerdo entre sí en una sola pantalla — por eso las
+reglas viven en las páginas de cada pantalla y en
+[Bloques y contenedores](/es/blocks-and-containers/), no aquí.

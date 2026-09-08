@@ -690,6 +690,94 @@
           "target": "src/components/screens/verify.tsx"
         }
       ]
+    },
+    {
+      "name": "auth-react",
+      "type": "registry:flow",
+      "version": "0.1.0",
+      "title": "Auth flow (React)",
+      "description": "Example assembly for the auth flow: sign-in → sign-up → forgot-password → reset-password → verify. It owns the navigation state the five screens refuse to hold — which step is on the route, the address carried between them, the reset token and the seconds left on the verify resend — and it moves between them the way a client router does: the screens draw plain hrefs (hrefFor), the assembly intercepts the clicks it owns and leaves modified clicks and every other link to the browser, and each forward step is a form submission read with its submitter. Rewrite it against your own router; the screens under it stay presentational.",
+      "dependencies": [],
+      "registryDependencies": [
+        "sign-in-react",
+        "sign-up-react",
+        "forgot-password-react",
+        "reset-password-react",
+        "verify-react"
+      ],
+      "files": [
+        {
+          "path": "flows/auth/react/auth-flow.tsx",
+          "type": "registry:flow",
+          "target": "src/components/flows/auth-flow.tsx"
+        }
+      ]
+    },
+    {
+      "name": "auth-vue",
+      "type": "registry:flow",
+      "version": "0.1.0",
+      "title": "Auth flow (Vue)",
+      "description": "Example assembly for the auth flow: sign-in → sign-up → forgot-password → reset-password → verify. It owns the navigation state the five screens refuse to hold — which step is on the route, the address carried between them, the reset token and the seconds left on the verify resend — and it moves between them the way a client router does: the screens draw plain hrefs (hrefFor), the assembly intercepts the clicks it owns and leaves modified clicks and every other link to the browser, and each forward step is a form submission read with its submitter. Rewrite it against your own router; the screens under it stay presentational.",
+      "dependencies": [],
+      "registryDependencies": [
+        "sign-in-vue",
+        "sign-up-vue",
+        "forgot-password-vue",
+        "reset-password-vue",
+        "verify-vue"
+      ],
+      "files": [
+        {
+          "path": "flows/auth/vue/AuthFlow.vue",
+          "type": "registry:flow",
+          "target": "src/components/flows/AuthFlow.vue"
+        }
+      ]
+    },
+    {
+      "name": "auth-svelte",
+      "type": "registry:flow",
+      "version": "0.1.0",
+      "title": "Auth flow (Svelte)",
+      "description": "Example assembly for the auth flow: sign-in → sign-up → forgot-password → reset-password → verify. It owns the navigation state the five screens refuse to hold — which step is on the route, the address carried between them, the reset token and the seconds left on the verify resend — and it moves between them the way a client router does: the screens draw plain hrefs (hrefFor), the assembly intercepts the clicks it owns and leaves modified clicks and every other link to the browser, and each forward step is a form submission read with its submitter. Rewrite it against your own router; the screens under it stay presentational.",
+      "dependencies": [],
+      "registryDependencies": [
+        "sign-in-svelte",
+        "sign-up-svelte",
+        "forgot-password-svelte",
+        "reset-password-svelte",
+        "verify-svelte"
+      ],
+      "files": [
+        {
+          "path": "flows/auth/svelte/AuthFlow.svelte",
+          "type": "registry:flow",
+          "target": "src/components/flows/AuthFlow.svelte"
+        }
+      ]
+    },
+    {
+      "name": "auth-solid",
+      "type": "registry:flow",
+      "version": "0.1.0",
+      "title": "Auth flow (Solid)",
+      "description": "Example assembly for the auth flow: sign-in → sign-up → forgot-password → reset-password → verify. It owns the navigation state the five screens refuse to hold — which step is on the route, the address carried between them, the reset token and the seconds left on the verify resend — and it moves between them the way a client router does: the screens draw plain hrefs (hrefFor), the assembly intercepts the clicks it owns and leaves modified clicks and every other link to the browser, and each forward step is a form submission read with its submitter. Rewrite it against your own router; the screens under it stay presentational.",
+      "dependencies": [],
+      "registryDependencies": [
+        "sign-in-solid",
+        "sign-up-solid",
+        "forgot-password-solid",
+        "reset-password-solid",
+        "verify-solid"
+      ],
+      "files": [
+        {
+          "path": "flows/auth/solid/auth-flow.tsx",
+          "type": "registry:flow",
+          "target": "src/components/flows/auth-flow.tsx"
+        }
+      ]
     }
   ]
 }

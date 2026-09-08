@@ -12,7 +12,7 @@ assembly is the one piece that knows what comes after what, and it is example
 code you are expected to rewire to your own router.
 
 ```sh
-npx @moderno-ui/cli add auth
+npx @moderno-ui/cli add auth-react
 ```
 
 Installing a flow is transitive: its screens, their blocks and the primitives
@@ -21,5 +21,16 @@ underneath all land in one command, each recorded under its own version in
 item, so a screen you edited stays edited while the rest of the flow moves
 forward.
 
-A flow composes screens only. The catalog is being filled as the predecessor's
-inventory is absorbed; each published flow gets its own page in this section.
+A flow composes screens only.
+
+## What ships today
+
+One flow, one registry entry per framework:
+
+- [Auth](/en/auth/) — sign-in → sign-up → forgot-password → reset-password →
+  verify, with an assembly that navigates by intercepting the links the screens
+  already draw, advances on plain form submissions, and owns the one countdown
+  in the journey.
+
+The catalog is being filled as the predecessor's inventory is absorbed; each
+published flow gets its own page in this section.

@@ -1,7 +1,7 @@
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "vitest/config";
 import vue from "@vitejs/plugin-vue";
-import { registryBlockAliases } from "../lint/src/registry.ts";
+import { registryAliases } from "../lint/src/registry.ts";
 
 // SSR project: node environment + `@vitejs/plugin-vue`, so the registry's
 // `<script setup>` SFCs are compiled exactly the way a consumer's build
@@ -12,7 +12,7 @@ const manifest = fileURLToPath(new URL("../../registry/registry.json", import.me
 
 export default defineConfig({
   plugins: [vue()],
-  resolve: { alias: registryBlockAliases(manifest, "vue") },
+  resolve: { alias: registryAliases(manifest, "vue") },
   test: {
     name: "vue-ssr",
     environment: "node",
