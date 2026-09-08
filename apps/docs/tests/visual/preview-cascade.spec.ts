@@ -66,8 +66,16 @@ async function figureMetrics(page: Page): Promise<FigureMetrics[]> {
   });
 }
 
+/**
+ * The guide that mounts the Pricing block twice. It is the only page with a
+ * `.preview-panel--demo`, so the slug lives here once: renaming the page and
+ * forgetting this line would otherwise land on a prose page and fail with
+ * "no .preview-panel--demo", several tests deep.
+ */
+const GUIDE = { en: "/en/blocks-and-containers/", es: "/es/blocks-and-containers/" };
+
 test.describe("the preview panel renders a block the way a consumer would see it", () => {
-  for (const path of ["/en/blocks/", "/es/blocks/"]) {
+  for (const path of [GUIDE.en, GUIDE.es]) {
     test(`block preview cascade — ${path}`, async ({ page }) => {
       await page.goto(path, { waitUntil: "networkidle" });
       await page.evaluate(() => document.fonts.ready.then(() => true));
@@ -107,7 +115,7 @@ test.describe("the preview panel renders a block the way a consumer would see it
   test("the two containers disagree about the type step when the panel is wide enough", async ({
     page,
   }) => {
-    await page.goto("/en/blocks/", { waitUntil: "networkidle" });
+    await page.goto(GUIDE.en, { waitUntil: "networkidle" });
     const [narrow, wide] = await figureMetrics(page);
     // `max-w-sm` caps the first figure below `--container-md` at every viewport.
     expect(narrow!.containerWidth).toBeLessThan(CONTAINER_MD);
@@ -122,7 +130,7 @@ test.describe("the preview panel renders a block the way a consumer would see it
   });
 
   test("the docs prose outside the panel keeps its own scale", async ({ page }) => {
-    await page.goto("/en/blocks/", { waitUntil: "networkidle" });
+    await page.goto(GUIDE.en, { waitUntil: "networkidle" });
     // The other half of the contract: scoping the preview must not reach out
     // and flatten the page around it.
     const prose = await page.evaluate(() => {
