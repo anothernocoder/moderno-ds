@@ -116,6 +116,70 @@
       ]
     },
     {
+      "name": "form-layout-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Form Layout (React)",
+      "description": "Grouped settings form composing the @moderno-ui/react Field, Checkbox, Divider, Button and Alert primitives; responds to its container (@container) across all three contract steps — actions row at @sm, two-up field grid at @md, group headings beside their fields at @lg — and renders its default, disabled, loading and error states from props.",
+      "dependencies": ["@moderno-ui/react"],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/form-layout/react/form-layout.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/form-layout.tsx"
+        }
+      ]
+    },
+    {
+      "name": "form-layout-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Form Layout (Vue)",
+      "description": "Grouped settings form composing the @moderno-ui/vue Field, Checkbox, Divider, Button and Alert primitives; responds to its container (@container) across all three contract steps — actions row at @sm, two-up field grid at @md, group headings beside their fields at @lg — and renders its default, disabled, loading and error states from props.",
+      "dependencies": ["@moderno-ui/vue"],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/form-layout/vue/FormLayout.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/FormLayout.vue"
+        }
+      ]
+    },
+    {
+      "name": "form-layout-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Form Layout (Svelte)",
+      "description": "Grouped settings form composing the @moderno-ui/svelte Field, Checkbox, Divider, Button and Alert primitives; responds to its container (@container) across all three contract steps — actions row at @sm, two-up field grid at @md, group headings beside their fields at @lg — and renders its default, disabled, loading and error states from props.",
+      "dependencies": ["@moderno-ui/svelte"],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/form-layout/svelte/FormLayout.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/FormLayout.svelte"
+        }
+      ]
+    },
+    {
+      "name": "form-layout-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Form Layout (Solid)",
+      "description": "Grouped settings form composing the @moderno-ui/solid Field, Checkbox, Divider, Button and Alert primitives; responds to its container (@container) across all three contract steps — actions row at @sm, two-up field grid at @md, group headings beside their fields at @lg — and renders its default, disabled, loading and error states from props.",
+      "dependencies": ["@moderno-ui/solid"],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/form-layout/solid/form-layout.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/form-layout.tsx"
+        }
+      ]
+    },
+    {
       "name": "pricing-react",
       "type": "registry:block",
       "version": "0.2.0",

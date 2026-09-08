@@ -1,0 +1,94 @@
+---
+title: Formulario por secciones
+description: El formulario de ajustes agrupado — un título y una descripción por grupo de campos relacionados, una rejilla de campos que se empareja cuando hay sitio y una sola fila de acciones — compuesto con Field, Checkbox, Divider, Button y Alert.
+group: Bloques
+order: 102
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import FormLayoutBlockDemo from "../../../islands/FormLayoutBlockDemo.svelte";
+import formLayoutReact from "../../../../../../registry/blocks/form-layout/react/form-layout.tsx?raw";
+import formLayoutVue from "../../../../../../registry/blocks/form-layout/vue/FormLayout.vue?raw";
+import formLayoutSolid from "../../../../../../registry/blocks/form-layout/solid/form-layout.tsx?raw";
+import formLayoutSvelte from "../../../../../../registry/blocks/form-layout/svelte/FormLayout.svelte?raw";
+
+**Form layout** es la forma que acaba necesitando toda página de ajustes: campos
+relacionados reunidos en un grupo con título y una frase que lo explica, grupos
+separados por una regla, y una única fila de acciones que confirma el conjunto.
+Compone `Field`, `Checkbox`, `Divider`, `Button` y `Alert`, y no pinta nada por
+su cuenta, así que un tema lo reviste sin tocarlo.
+
+Es un _bloque_, no una pantalla: no es dueño del viewport y no guarda valores. El
+ejemplo trae un formulario de ajustes de cuenta porque un bloque tiene que ser
+algo concreto — los grupos, los campos y los textos son tuyos para reescribirlos
+en cuanto `moderno add` copia el archivo.
+
+<FrameworkSelect locale="es" />
+
+<Preview
+  examples={{
+    react: formLayoutReact,
+    vue: formLayoutVue,
+    solid: formLayoutSolid,
+    svelte: formLayoutSvelte,
+  }}
+>
+  <FormLayoutBlockDemo client:visible />
+</Preview>
+
+## Instalación
+
+<Install item="form-layout" />
+
+Instalar un bloque copia su archivo dentro de tu proyecto y lo registra en
+`.moderno/manifest.json` con su propia versión, así que `moderno update` y
+`moderno diff` siguen funcionando por ítem. Desde ese momento el archivo es tuyo.
+
+## Dimensionado
+
+Este es el bloque que más se apoya en la política de container queries, porque un
+formulario cambia de forma tres veces según el sitio que se le dé — y cada cambio
+es una decisión distinta:
+
+| Paso  | Slot             | Qué cambia                                                                        |
+| ----- | ---------------- | --------------------------------------------------------------------------------- |
+| `@sm` | `--container-sm` | La fila de acciones deja de apilarse y se alinea al borde final.                  |
+| `@md` | `--container-md` | La rejilla de campos pasa de una a dos columnas y los campos cortos se emparejan. |
+| `@lg` | `--container-lg` | El título de cada grupo deja de estar encima de sus campos y se coloca al lado.   |
+
+Nada de eso lee la ventana. El mismo archivo se ve bien en una barra lateral de
+ajustes de 320px, en un panel de 480px, en la columna de la página y en un
+escenario de 50rem, tanto en claro como en oscuro, sin una sola media query —
+por eso la vista previa de arriba lo monta a cuatro anchos a la vez y no
+coinciden entre sí en una misma pantalla. Las reglas están en
+[Bloques y contenedores](/es/blocks-and-containers/) y en el ADR-0005.
+
+## Estados
+
+| Estado              | Qué se renderiza                                                                                                                                        |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Por defecto / vacío | El formulario en limpio — placeholders y texto de ayuda, sin valores. Un formulario es la superficie de entrada: «todavía nada» es su estado de reposo. |
+| Hover               | Las afordancias propias de los controles desde `components.css`: los bordes de los campos suben a `--ring` y los botones ganan un paso.                 |
+| Foco visible        | El contorno compartido de 2px con `--ring` en cada control y en ambas acciones; un campo inválido conserva el color destructivo al enfocarse.           |
+| Deshabilitado       | `disabled` — el formulario es de solo lectura (un miembro con rol de lectura, una cuenta bloqueada). Los controles toman el relleno atenuado.           |
+| Cargando            | `loading` — todos los controles y ambas acciones inertes, y el envío con `aria-busy` y un spinner que se detiene con `prefers-reduced-motion`.          |
+| Error               | `error` levanta una alerta de formulario; cada clave de `errors` marca ese campo como inválido e imprime su propio `Field.ErrorText`.                   |
+
+A diferencia de [Formulario de acceso](/es/login-form/), que nunca debe decir
+_qué_ credencial estaba mal, este bloque sí nombra el campo. Quien edita un
+formulario de ajustes ya es dueño de la cuenta, así que no hay nada que filtrar,
+y «Escribe una dirección de email válida» junto a la caja es el único mensaje
+sobre el que puede actuar.
+
+## Propiedades
+
+| Prop       | Tipo                     | Por defecto | Qué hace                                                                                            |
+| ---------- | ------------------------ | ----------- | --------------------------------------------------------------------------------------------------- |
+| `error`    | `string`                 | —           | Mensaje de error de formulario; muestra la alerta encima del primer grupo.                          |
+| `errors`   | `Record<string, string>` | —           | Mensajes por campo indexados por el `name` del campo; cada uno lo marca como inválido.              |
+| `loading`  | `boolean`                | `false`     | El guardado está en curso: controles inertes, botón ocupado.                                        |
+| `disabled` | `boolean`                | `false`     | El formulario es de solo lectura.                                                                   |
+| `onSubmit` | manejador de envío       | —           | El evento nativo de envío. React y Solid reciben `onSubmit`, Svelte `onsubmit`, Vue emite `submit`. |
+| `onCancel` | manejador                | —           | El «Cancelar» final. React y Solid reciben `onCancel`, Svelte `oncancel`, Vue emite `cancel`.       |

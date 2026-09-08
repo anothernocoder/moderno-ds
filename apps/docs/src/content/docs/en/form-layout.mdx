@@ -1,0 +1,114 @@
+---
+title: Form layout
+description: The grouped settings form — a heading and a description per group of related fields, a field grid that pairs off when there is room, and one actions row — composed from Field, Checkbox, Divider, Button and Alert.
+group: Blocks
+order: 102
+agent:
+  intent: A settings form laid out as titled groups of related fields with one actions row.
+  whenToUse: "Any form long enough to need sections: account or workspace settings, a profile editor, a billing or notification panel, the body of a multi-field create dialog."
+  whenNotToUse:
+    - case: A sign-in or sign-up form
+      use: LoginForm, which composes the credential fields inside a Card
+    - case: One or two fields with no grouping to do
+      use: Field and Button directly — a form layout with a single group is just overhead
+    - case: A list of records with per-row actions
+      use: a list block; this block collects input, it does not display a collection
+  gotchas:
+    - "Presentational: it holds no values and issues no request. The controls are uncontrolled — read the form in your submit handler, or swap in your form library's bindings once the file is yours."
+    - "`errors` is keyed by the field's `name` (`fullName`, `email`, `about`), so renaming a field means renaming its key."
+    - "`error` and `errors` are independent: the form-level alert says the save failed, the field messages say why. Passing only `errors` marks the fields without raising an alert."
+    - "`loading` implies inert: every control and both actions are disabled and the submit carries aria-busy, so a second save cannot be fired mid-request."
+    - "The block responds to its container, never the viewport, and uses all three steps. Mount it narrow and the actions row stacks, the fields run one-up and the group headings sit above their fields."
+    - "It is a block, so you own the copy: the groups, the fields, the labels and the helper text are yours to edit after `moderno add`."
+  theming:
+    - "Nothing is painted here. The controls are Field and Checkbox, the group rules are Divider, the actions are Button's primary and secondary variants, and the failure is Alert's error variant."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg."
+    - "The form sits on --background and inherits --foreground: it is a page section, not a surface, so a theme's canvas shows through it."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import FormLayoutBlockDemo from "../../../islands/FormLayoutBlockDemo.svelte";
+import formLayoutReact from "../../../../../../registry/blocks/form-layout/react/form-layout.tsx?raw";
+import formLayoutVue from "../../../../../../registry/blocks/form-layout/vue/FormLayout.vue?raw";
+import formLayoutSolid from "../../../../../../registry/blocks/form-layout/solid/form-layout.tsx?raw";
+import formLayoutSvelte from "../../../../../../registry/blocks/form-layout/svelte/FormLayout.svelte?raw";
+
+**Form layout** is the shape every settings page ends up needing: related fields
+gathered into a titled group with a sentence explaining it, groups separated by a
+rule, and one actions row that commits the whole thing. It composes `Field`,
+`Checkbox`, `Divider`, `Button` and `Alert` and paints nothing of its own, so a
+theme re-skins it untouched.
+
+It is a _block_, not a screen: it does not own the viewport and holds no values.
+The example ships an account-settings form because a block has to be something
+concrete — the groups, the fields and the copy are yours to rewrite the moment
+`moderno add` copies the file.
+
+<FrameworkSelect locale="en" />
+
+<Preview
+  examples={{
+    react: formLayoutReact,
+    vue: formLayoutVue,
+    solid: formLayoutSolid,
+    svelte: formLayoutSvelte,
+  }}
+>
+  <FormLayoutBlockDemo client:visible />
+</Preview>
+
+## Installation
+
+<Install item="form-layout" />
+
+Installing a block copies its file into your project and records it in
+`.moderno/manifest.json` under its own version, so `moderno update` and
+`moderno diff` keep working per item. From that moment the file is yours.
+
+## Sizing
+
+This is the block that leans hardest on the container-query policy, because a
+form changes shape three times as it is given room — and each change is a
+different decision:
+
+| Step  | Slot             | What changes                                                            |
+| ----- | ---------------- | ----------------------------------------------------------------------- |
+| `@sm` | `--container-sm` | The actions row stops stacking and lines up to the trailing edge.       |
+| `@md` | `--container-md` | The field grid goes one-up → two-up, so short fields pair off.          |
+| `@lg` | `--container-lg` | Each group's heading leaves the top of its fields and sits beside them. |
+
+None of that reads the window. The same file is correct in a 320px settings
+sidebar, in a 480px panel, in the page column and on a 50rem stage, in light and
+dark alike, without a single media query — which is why the preview above mounts
+it at four widths at once and they disagree with each other on one screen. The
+rules behind this are in [Blocks and containers](/en/blocks-and-containers/) and
+ADR-0005.
+
+## States
+
+| State           | What renders                                                                                                                             |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| Default / empty | The pristine form — placeholders and helper text, no values. A form is the input surface, so "nothing entered yet" is its resting state. |
+| Hover           | The controls' own affordances from `components.css`: the field borders raise to `--ring`, the buttons lift a step.                       |
+| Focus visible   | The shared 2px `--ring` outline on every control and on both actions; an invalid field keeps the destructive colour while focused.       |
+| Disabled        | `disabled` — the form is read-only (a viewer-role member, a locked account). Controls take the muted fill.                               |
+| Loading         | `loading` — every control and both actions inert, the submit `aria-busy` with a spinner that stops under `prefers-reduced-motion`.       |
+| Error           | `error` raises one form-level `Alert`; each key in `errors` marks that field invalid and prints its own `Field.ErrorText`.               |
+
+Unlike [Login form](/en/login-form/), which must never say _which_ credential was
+wrong, this block names the field. The person editing a settings form already
+owns the account, so there is nothing to leak, and "Enter a valid email address"
+next to the box is the only message they can act on.
+
+## Props
+
+| Prop       | Type                     | Default | What it does                                                                                 |
+| ---------- | ------------------------ | ------- | -------------------------------------------------------------------------------------------- |
+| `error`    | `string`                 | —       | Form-level failure message; renders the alert above the first group.                         |
+| `errors`   | `Record<string, string>` | —       | Per-field messages keyed by the field's `name`; each marks that field invalid.               |
+| `loading`  | `boolean`                | `false` | The save is in flight: controls inert, submit busy.                                          |
+| `disabled` | `boolean`                | `false` | The form is read-only.                                                                       |
+| `onSubmit` | submit handler           | —       | The native submit event. React/Solid take `onSubmit`, Svelte `onsubmit`, Vue emits `submit`. |
+| `onCancel` | handler                  | —       | The trailing "Cancel". React/Solid take `onCancel`, Svelte `oncancel`, Vue emits `cancel`.   |

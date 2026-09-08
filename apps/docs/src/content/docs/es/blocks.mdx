@@ -12,6 +12,10 @@ import loginFormReact from "../../../../../../registry/blocks/login-form/react/l
 import loginFormVue from "../../../../../../registry/blocks/login-form/vue/LoginForm.vue?raw";
 import loginFormSolid from "../../../../../../registry/blocks/login-form/solid/login-form.tsx?raw";
 import loginFormSvelte from "../../../../../../registry/blocks/login-form/svelte/LoginForm.svelte?raw";
+import formLayoutReact from "../../../../../../registry/blocks/form-layout/react/form-layout.tsx?raw";
+import formLayoutVue from "../../../../../../registry/blocks/form-layout/vue/FormLayout.vue?raw";
+import formLayoutSolid from "../../../../../../registry/blocks/form-layout/solid/form-layout.tsx?raw";
+import formLayoutSvelte from "../../../../../../registry/blocks/form-layout/svelte/FormLayout.svelte?raw";
 import pricingReact from "../../../../../../registry/blocks/pricing/react/pricing.tsx?raw";
 import pricingVue from "../../../../../../registry/blocks/pricing/vue/Pricing.vue?raw";
 import pricingSolid from "../../../../../../registry/blocks/pricing/solid/pricing.tsx?raw";
@@ -45,7 +49,7 @@ sección.
 
 ## Lo que existe hoy
 
-Tres bloques, una entrada de registro por framework cada uno. Cada Preview de
+Cuatro bloques, una entrada de registro por framework cada uno. Cada Preview de
 abajo lee su fuente directo de `registry/blocks/<name>/<framework>/` — para los
 cuatro frameworks, intercambiable con el selector — así que lo que lees es
 exactamente lo que copia la CLI, no una maqueta.
@@ -68,6 +72,24 @@ pasos de contenedor y todos los estados que renderiza.
   }}
 >
   <BlocksDemo block="login-form" client:visible />
+</Preview>
+
+### Formulario por secciones
+
+Agrupa campos relacionados bajo un título, los empareja cuando el contenedor da
+sitio y los confirma desde una sola fila de acciones. Tiene página propia —
+[Formulario por secciones](/es/form-layout/) — con los tres pasos de contenedor y
+todos los estados que renderiza.
+
+<Preview
+  examples={{
+    react: formLayoutReact,
+    vue: formLayoutVue,
+    solid: formLayoutSolid,
+    svelte: formLayoutSvelte,
+  }}
+>
+  <BlocksDemo block="form-layout" client:visible />
 </Preview>
 
 ### Precios
@@ -100,8 +122,10 @@ Un marcador centrado con una sola llamada a la acción.
 El pipeline de estilos por container queries del ADR-0005 ya aterrizó, y los
 bloques se van reescribiendo sobre él de a uno. Un bloque reescrito se maqueta
 con las utilidades del preset de Tailwind respaldadas por el contrato y con las
-variantes de contenedor `@sm` / `@md` / `@lg`: `login-form` y `pricing` arriba
-ya están sobre esa base, y cada uno estrena su propia página al aterrizar.
+variantes de contenedor `@sm` / `@md` / `@lg`: `login-form`, `form-layout` y
+`pricing` arriba ya están sobre esa base, y cada uno estrena su propia página al
+aterrizar. `form-layout` es el que usa los tres pasos, una decisión de maquetado
+por cada uno.
 
 `empty-state` todavía no llega: su contenedor sigue llevando una clase
 `moderno-block-*` **sin reglas en `main`** — sin grilla, sin escala de

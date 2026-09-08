@@ -12,15 +12,18 @@
 -->
 <script lang="ts">
   import LoginForm from "../../../../registry/blocks/login-form/svelte/LoginForm.svelte";
+  import FormLayout from "../../../../registry/blocks/form-layout/svelte/FormLayout.svelte";
   import Pricing from "../../../../registry/blocks/pricing/svelte/Pricing.svelte";
   import EmptyState from "../../../../registry/blocks/empty-state/svelte/EmptyState.svelte";
 
-  let { block }: { block: "login-form" | "pricing" | "empty-state" } = $props();
+  let { block }: { block: "login-form" | "form-layout" | "pricing" | "empty-state" } = $props();
 </script>
 
 <div class="demo-block">
   {#if block === "login-form"}
     <LoginForm />
+  {:else if block === "form-layout"}
+    <FormLayout />
   {:else if block === "pricing"}
     <Pricing />
   {:else}
