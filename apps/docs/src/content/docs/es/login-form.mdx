@@ -1,6 +1,6 @@
 ---
 title: Formulario de acceso
-description: La tarjeta de credenciales en sus tres modos — acceso (email, contraseña, recordarme), registro (nombre, email, contraseña nueva y consentimiento) o recuperación (solo la dirección, y después la confirmación) — compuesta con Card, Field, Checkbox, Button y Alert, y dimensionada por su contenedor en vez de por el viewport.
+description: La tarjeta de credenciales en sus cuatro modos — acceso (email, contraseña, recordarme), registro (nombre, email, contraseña nueva y consentimiento), recuperación (solo la dirección, y después la confirmación) o contraseña nueva (una contraseña, su confirmación y las reglas marcándose) — compuesta con Card, Field, Checkbox, Button y Alert, y dimensionada por su contenedor en vez de por el viewport.
 group: Bloques
 order: 101
 ---
@@ -14,26 +14,30 @@ import loginFormVue from "../../../../../../registry/blocks/login-form/vue/Login
 import loginFormSolid from "../../../../../../registry/blocks/login-form/solid/login-form.tsx?raw";
 import loginFormSvelte from "../../../../../../registry/blocks/login-form/svelte/LoginForm.svelte?raw";
 
-**Login form** es la tarjeta de credenciales, y tiene tres modos.
+**Login form** es la tarjeta de credenciales, y tiene cuatro modos.
 `mode="sign-in"` —el de por defecto— es quien vuelve: un campo de email, uno de
 contraseña, recordarme y los dos enlaces que toda pantalla de acceso necesita.
 `mode="sign-up"` es quien llega por primera vez: nombre completo, email, una
 contraseña nueva y el consentimiento que hay que dar antes de que una cuenta
 pueda existir. `mode="forgot-password"` es quien no puede entrar: solo la
 dirección y, una vez `sent`, la misma tarjeta confirmando que el enlace va en
-camino. Compone `Card`, `Field`, `Checkbox`, `Button` y `Alert`, y no pinta nada
-por su cuenta, así que un tema lo reviste sin tocarlo.
+camino. `mode="reset-password"` es el final de ese recado: una contraseña nueva y
+su confirmación, las reglas marcándose a medida que se cumplen, y el token del
+correo en un input oculto. Compone `Card`, `Field`, `Checkbox`, `Button` y
+`Alert`, y no pinta nada por su cuenta, así que un tema lo reviste sin tocarlo.
 
-Un bloque y no tres, porque son la misma cosa: la misma tarjeta, el mismo tope de
-ancho, el mismo ritmo — de modo que quien pasa de
-[iniciar sesión](/es/sign-in/) a [crear cuenta](/es/sign-up/) y a
-[recuperar contraseña](/es/forgot-password/) no siente que la página cambie bajo
-sus pies.
+Un bloque y no cuatro, porque son la misma cosa: la misma tarjeta, el mismo tope
+de ancho, el mismo ritmo — de modo que quien pasa de
+[iniciar sesión](/es/sign-in/) a [crear cuenta](/es/sign-up/), a
+[recuperar contraseña](/es/forgot-password/) y a
+[nueva contraseña](/es/reset-password/) no siente que la página cambie bajo sus
+pies.
 
 Es un _bloque_, no una pantalla: no es dueño del viewport, no guarda estado de
-navegación y no hace ninguna petición. Las pantallas `sign-in`, `sign-up` y
-`forgot-password` lo componen y sostienen el estado; este archivo es una sección
-que también puedes soltar en un modal o en un panel de ajustes.
+navegación y no hace ninguna petición. Las pantallas `sign-in`, `sign-up`,
+`forgot-password` y `reset-password` lo componen y sostienen el estado; este
+archivo es una sección que también puedes soltar en un modal o en un panel de
+ajustes.
 
 <FrameworkSelect locale="es" />
 
@@ -74,13 +78,14 @@ una sola media query. Las reglas están en
 `mode` cambia lo que pide la tarjeta y nada más: el tope de ancho, el espaciado,
 los pasos de contenedor y todos los estados de abajo son compartidos.
 
-| Modo                    | Campos                                              | Fila secundaria                             | Enlace del pie                     |
-| ----------------------- | --------------------------------------------------- | ------------------------------------------- | ---------------------------------- |
-| `sign-in` (por defecto) | Email, contraseña (`current-password`)              | Recordarme + «¿Olvidaste tu contraseña?»    | «New here? Create an account»      |
-| `sign-up`               | Nombre completo, email, contraseña (`new-password`) | Casilla de consentimiento + enlaces legales | «Already have an account? Sign in» |
-| `forgot-password`       | Email                                               | Ninguna                                     | «Remembered it? Sign in»           |
+| Modo                    | Campos                                                  | Fila secundaria                             | Enlace del pie                     |
+| ----------------------- | ------------------------------------------------------- | ------------------------------------------- | ---------------------------------- |
+| `sign-in` (por defecto) | Email, contraseña (`current-password`)                  | Recordarme + «¿Olvidaste tu contraseña?»    | «New here? Create an account»      |
+| `sign-up`               | Nombre completo, email, contraseña (`new-password`)     | Casilla de consentimiento + enlaces legales | «Already have an account? Sign in» |
+| `forgot-password`       | Email                                                   | Ninguna                                     | «Remembered it? Sign in»           |
+| `reset-password`        | Contraseña + confirmación (ambas `new-password`), token | Ninguna                                     | «Changed your mind? Sign in»       |
 
-`forgot-password` tiene una segunda cara, no un cuarto modo. Con `sent`, la misma
+`forgot-password` tiene una segunda cara, no un modo propio. Con `sent`, la misma
 tarjeta se queda en su sitio y se reescribe: el encabezado pasa a «Check your
 inbox», el campo deja paso a la frase que dice qué se envió y cuánto dura, y el
 envío se convierte en un «Send it again» secundario que reenvía `sentTo` desde un
@@ -94,11 +99,32 @@ exista o no. Una tarjeta de recuperación que responde distinto a una dirección
 conocida y a una desconocida es un endpoint de enumeración de cuentas; el bloque
 no lo es, y el código que conectes detrás tampoco debería serlo.
 
+`reset-password` es el otro extremo del mismo recado, y pide la contraseña nueva
+dos veces. La confirmación es un segundo campo y no un botón de «ver
+contraseña» porque responden a preguntas distintas —si puedes leer lo que
+escribiste, y si escribiste dos veces lo que querías— y ambos campos van marcados
+como `new-password`, así que un gestor ofrece generarla y luego guardarla. La
+contraseña anterior no se pide nunca: quien está en esa página no la tiene.
+
+Las reglas bajo el campo son `requirements`, una lista de `{ id, label, met }`.
+La tarjeta las imprime como el texto de ayuda del propio campo, que es lo que las
+mete en el `aria-describedby` del input: se leen al enfocar, no después de que el
+formulario vuelva rechazado. La lista es una región viva educada, así que la
+única regla que cambia anuncia su línea y las otras dos no, y cada fila duplica
+su marca con una palabra: el color nunca es el único portador. Pasa `[]` y las
+reglas vuelven a la única línea de ayuda que muestra `sign-up`.
+
+Nada de esto se impone. El bloque no guarda ningún valor, así que `met` lo
+calcula quien sí lo guarda, y el servidor tiene que volver a comprobar cada regla
+de todos modos: una regla impuesta en el navegador es una regla que un atacante
+rodea. Lo que la tarjeta sí garantiza es que sin JavaScript las reglas siguen
+impresas, el token sigue viajando en el formulario y el envío sigue funcionando.
+
 El título de la tarjeta es un `h3`, porque una tarjeta es una sección de una
 página y no su encabezado. Pero una **pantalla** monta esta tarjeta _como_ la ruta
 entera, y ahí el `h3` está mal por partida doble: la página no tiene encabezado de
 primer nivel, y el `h2` que imprime el lateral a continuación deja un esquema que
-se salta un rango. Por eso la tarjeta acepta `titleLevel`, y las tres pantallas de
+se salta un rango. Por eso la tarjeta acepta `titleLevel`, y las cuatro pantallas de
 autenticación pasan `1` — el título de la tarjeta es como se llama la página, así
 que es su `h1` y no un segundo encabezado impreso encima. El valor por defecto es
 `3`, de modo que una tarjeta que montes tú no cambia.
@@ -112,9 +138,11 @@ región viva añadida a la vez que el cambio no se anuncia.
 
 La previsualización de arriba es el modo `sign-in` en sus anchos y estados; el
 modo `sign-up` se previsualiza en la página de la
-[pantalla de registro](/es/sign-up/) y el modo `forgot-password`, en sus dos
-caras, en la de [recuperar contraseña](/es/forgot-password/) — cada uno montado
-dentro de la pantalla que lo compone.
+[pantalla de registro](/es/sign-up/), el modo `forgot-password`, en sus dos
+caras, en la de [recuperar contraseña](/es/forgot-password/), y
+`reset-password` —con las reglas a medio cumplir y con el enlace gastado— en la
+de [nueva contraseña](/es/reset-password/): cada uno montado dentro de la
+pantalla que lo compone.
 
 ## Estados
 
@@ -126,8 +154,9 @@ dentro de la pantalla que lo compone.
 | Deshabilitado       | `disabled` — el acceso no está disponible (un espacio solo con SSO, una cuenta bloqueada).                                                          |
 | Cargando            | `loading` — todos los controles inertes y el envío con `aria-busy` y un spinner que se detiene con `prefers-reduced-motion`.                        |
 | Error               | `error="…"` — una sola alerta a nivel de formulario; en `sign-in` además invalida ambos campos de credenciales.                                     |
-| Errores de campo    | `errors={{ email: "…" }}` — en `sign-up` y `forgot-password`: ese campo queda inválido e imprime su propio mensaje.                                 |
+| Errores de campo    | `errors={{ email: "…" }}` — en todos los modos menos `sign-in`: ese campo queda inválido e imprime su propio mensaje.                               |
 | Enviado             | `sent` — solo en `forgot-password`: la tarjeta confirma en el sitio y el envío pasa a ser «Send it again».                                          |
+| Reglas              | `requirements` — solo en `reset-password`: las reglas bajo la contraseña nueva, cada fila anunciada cuando cambia.                                  |
 
 Al iniciar sesión, el error es deliberadamente de formulario y no de campo.
 Decirle a alguien que _la contraseña_ estaba mal también le dice que el email
@@ -135,23 +164,29 @@ existe, que es la primera mitad de un ataque de credential stuffing; el bloque n
 lo hace, y el código que conectes detrás tampoco debería. Al registrarse ese
 argumento desaparece —la dirección la está ofreciendo quien escribe, no
 adivinándola— y un formulario que no dice qué campo rechazó es simplemente
-descortés, así que `errors` los nombra.
+descortés, así que `errors` los nombra. Al poner una contraseña nueva ocurre lo
+mismo, y por la misma razón: quien está ahí lleva el token del correo y ya no
+queda nada que filtrar. Un enlace caducado o ya usado es `error`, no un mensaje
+de campo — lo que falló es el token, y marcar un campo de contraseña manda a
+quien lee a arreglar algo que nunca estuvo roto.
 
 ## Propiedades
 
-| Prop          | Tipo                                          | Por defecto | Qué hace                                                                                            |
-| ------------- | --------------------------------------------- | ----------- | --------------------------------------------------------------------------------------------------- |
-| `mode`        | `"sign-in" \| "sign-up" \| "forgot-password"` | `"sign-in"` | Qué tarjeta es esta: quien vuelve, quien llega o quien no puede entrar.                             |
-| `titleLevel`  | `1 \| 2 \| 3`                                 | `3`         | El rango que el título de la tarjeta ocupa en el esquema de encabezados; una pantalla pasa `1`.     |
-| `sent`        | `boolean`                                     | `false`     | `forgot-password` — el enlace ya salió: la tarjeta confirma en vez de preguntar.                    |
-| `sentTo`      | `string`                                      | `""`        | `forgot-password` — la dirección que nombra la confirmación y que reenvía «Send it again».          |
-| `error`       | `string`                                      | —           | Mensaje de error de formulario; muestra la alerta y, en `sign-in`, invalida ambos campos.           |
-| `errors`      | `Record<string, string>`                      | —           | En `sign-up` y `forgot-password`: mensajes por campo, por el `name` del campo.                      |
-| `loading`     | `boolean`                                     | `false`     | El envío está en curso: controles inertes, botón ocupado.                                           |
-| `disabled`    | `boolean`                                     | `false`     | El formulario no está disponible (espacio solo con SSO, cuenta bloqueada, beta cerrada).            |
-| `onSubmit`    | manejador de envío                            | —           | El evento nativo de envío. React y Solid reciben `onSubmit`, Svelte `onsubmit`, Vue emite `submit`. |
-| `forgotHref`  | `string`                                      | `"#"`       | `sign-in` — a dónde apunta «¿Olvidaste tu contraseña?».                                             |
-| `signUpHref`  | `string`                                      | `"#"`       | `sign-in` — a dónde apunta «Crear una cuenta».                                                      |
-| `signInHref`  | `string`                                      | `"#"`       | `sign-up` y `forgot-password` — a dónde apunta «Sign in».                                           |
-| `termsHref`   | `string`                                      | `"#"`       | `sign-up` — a dónde apunta el enlace de términos bajo la casilla.                                   |
-| `privacyHref` | `string`                                      | `"#"`       | `sign-up` — a dónde apunta el enlace de privacidad bajo la casilla.                                 |
+| Prop           | Tipo                                                              | Por defecto     | Qué hace                                                                                                      |
+| -------------- | ----------------------------------------------------------------- | --------------- | ------------------------------------------------------------------------------------------------------------- |
+| `mode`         | `"sign-in" \| "sign-up" \| "forgot-password" \| "reset-password"` | `"sign-in"`     | Qué tarjeta es esta: quien vuelve, quien llega, quien no puede entrar o quien elige un reemplazo.             |
+| `titleLevel`   | `1 \| 2 \| 3`                                                     | `3`             | El rango que el título de la tarjeta ocupa en el esquema de encabezados; una pantalla pasa `1`.               |
+| `sent`         | `boolean`                                                         | `false`         | `forgot-password` — el enlace ya salió: la tarjeta confirma en vez de preguntar.                              |
+| `sentTo`       | `string`                                                          | `""`            | `forgot-password` — la dirección que nombra la confirmación y que reenvía «Send it again».                    |
+| `token`        | `string`                                                          | `""`            | `reset-password` — el token del enlace del correo, enviado desde un input oculto.                             |
+| `requirements` | `PasswordRequirement[]`                                           | tres sin marcar | `reset-password` — las reglas bajo la contraseña nueva (`{ id, label, met }`). `[]` vuelve al texto de ayuda. |
+| `error`        | `string`                                                          | —               | Mensaje de error de formulario; muestra la alerta y, en `sign-in`, invalida ambos campos.                     |
+| `errors`       | `Record<string, string>`                                          | —               | En todos los modos menos `sign-in`: mensajes por campo, por el `name` del campo.                              |
+| `loading`      | `boolean`                                                         | `false`         | El envío está en curso: controles inertes, botón ocupado.                                                     |
+| `disabled`     | `boolean`                                                         | `false`         | El formulario no está disponible (espacio solo con SSO, cuenta bloqueada, enlace gastado).                    |
+| `onSubmit`     | manejador de envío                                                | —               | El evento nativo de envío. React y Solid reciben `onSubmit`, Svelte `onsubmit`, Vue emite `submit`.           |
+| `forgotHref`   | `string`                                                          | `"#"`           | `sign-in` — a dónde apunta «¿Olvidaste tu contraseña?».                                                       |
+| `signUpHref`   | `string`                                                          | `"#"`           | `sign-in` — a dónde apunta «Crear una cuenta».                                                                |
+| `signInHref`   | `string`                                                          | `"#"`           | En todos los modos menos `sign-in` — a dónde apunta «Sign in».                                                |
+| `termsHref`    | `string`                                                          | `"#"`           | `sign-up` — a dónde apunta el enlace de términos bajo la casilla.                                             |
+| `privacyHref`  | `string`                                                          | `"#"`           | `sign-up` — a dónde apunta el enlace de privacidad bajo la casilla.                                           |

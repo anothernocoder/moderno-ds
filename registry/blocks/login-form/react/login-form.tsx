@@ -7,16 +7,19 @@ import { Alert, Button, Card, Checkbox, Field } from "@moderno-ui/react";
  * `moderno add login-form-react` and edit it freely: every visual comes from
  * the token contract, so a theme re-skins it without a diff here.
  *
- * **Three modes, one card.** `mode="sign-in"` (the default) is the returning
+ * **Four modes, one card.** `mode="sign-in"` (the default) is the returning
  * person: email, password, remember-me, the recovery link. `mode="sign-up"` is
  * the new one: full name, email, a new password and the consent that has to be
  * given before an account can exist. `mode="forgot-password"` is the one who
  * cannot get in: the address alone, and — once `sent` — the same card
- * confirming the link is on its way. They are one block rather than three
- * because they are one thing — the same card, the same width, the same rhythm
- * — and a person walking the auth flow should not feel the page change under
- * them. The `sign-in`, `sign-up` and `forgot-password` screens each mount this
- * file in one of its modes.
+ * confirming the link is on its way. `mode="reset-password"` is the end of that
+ * errand: the new password and its confirmation, the rules said out loud as they
+ * are met, and the token from the emailed link riding along in a hidden input.
+ * They are one block rather than four because they are one thing — the same
+ * card, the same width, the same rhythm — and a person walking the auth flow
+ * should not feel the page change under them. The `sign-in`, `sign-up`,
+ * `forgot-password` and `reset-password` screens each mount this file in one of
+ * its modes.
  *
  * **The recovery card confirms in place.** `sent` does not swap the card for a
  * different component: the header rewrites itself, the email field gives way to
@@ -24,6 +27,17 @@ import { Alert, Button, Card, Checkbox, Field } from "@moderno-ui/react";
  * "Send it again" that resubmits the same address — carried in a hidden input,
  * so the resend still works with no JavaScript on the page. Nothing moves, and
  * the reader's eye does not have to find the page again.
+ *
+ * **The reset card says the rules as they are met.** `requirements` is a list of
+ * `{ id, label, met }`, rendered under the new-password field as that field's
+ * own helper text — so Ark points the input's `aria-describedby` at it and a
+ * screen reader reads the rules on focus instead of hunting for them. The list
+ * is a polite live region, so the one line that flips is announced rather than
+ * the whole list, and every line carries the word "met" for a reader who cannot
+ * see the tick. Whether a rule *is* met is not decided here: the block holds no
+ * value, so the page above it recomputes the flags as the reader types — and
+ * with no JavaScript on the page the rules are still printed and the form still
+ * submits, which is why they are helper text rather than a validator.
  *
  * **Presentational.** The block owns no credentials, no request and no
  * navigation: it takes `error` / `errors` / `loading` / `disabled` and hands the
@@ -64,31 +78,84 @@ import { Alert, Button, Card, Checkbox, Field } from "@moderno-ui/react";
  * for a known and an unknown address is an account-enumeration endpoint with a
  * friendly face.
  *
+ * Resetting, both fields may be named — `errors.password` for a password the
+ * rules reject, `errors.confirmPassword` for two that do not match — because
+ * the reader is holding the emailed token and there is nothing left to leak.
+ * `error` stays the form-level failure, and it is where an expired or
+ * already-used link belongs: what went wrong there is the token, not the
+ * password, and no field should be marked for it.
+ *
  * Class strings are written out in full rather than shared through a constant:
  * the docs compile the previews' Tailwind from `class` attributes, so a class
  * assembled in JS would render here and vanish in the preview.
  */
-export type LoginFormMode = "sign-in" | "sign-up" | "forgot-password";
+export type LoginFormMode = "sign-in" | "sign-up" | "forgot-password" | "reset-password";
 
 /**
- * What the card says it is, per mode. The `forgot-password` card rewrites both
- * lines once the link is sent, which is the only copy that is not read straight
- * off this table.
+ * One rule the new password is judged against, and whether it is met yet.
+ * `met` is computed by whatever owns the value — never in here.
  */
-const cardCopy: Record<LoginFormMode, { title: string; description: string }> = {
+export interface PasswordRequirement {
+  /** Stable key for the row. */
+  id: string;
+  /** The rule in words the reader can act on ("At least 12 characters"). */
+  label: string;
+  /** Whether what is currently in the field satisfies it. */
+  met?: boolean;
+}
+
+/**
+ * What the card says it is, what its submit says, and what its footer offers,
+ * per mode. Four modes turn every one of those into a four-way ternary if they
+ * are written at the point of use; the table is the same decision made once.
+ * The `forgot-password` card rewrites its title, its description and its submit
+ * once the link is sent, and that confirmation is the only copy in the file not
+ * read straight off here.
+ */
+const cardCopy: Record<
+  LoginFormMode,
+  { title: string; description: string; submit: string; busy: string; footerPrompt: string }
+> = {
   "sign-in": {
     title: "Sign in",
     description: "Enter your email and password to continue.",
+    submit: "Sign in",
+    busy: "Signing in",
+    footerPrompt: "New here?",
   },
   "sign-up": {
     title: "Create your account",
     description: "Fourteen days of everything, no card and no sales call.",
+    submit: "Create account",
+    busy: "Creating account",
+    footerPrompt: "Already have an account?",
   },
   "forgot-password": {
     title: "Reset your password",
     description: "Enter the address you sign in with and we will email you a link.",
+    submit: "Send reset link",
+    busy: "Sending link",
+    footerPrompt: "Remembered it?",
+  },
+  "reset-password": {
+    title: "Choose a new password",
+    description: "Pick one you have not used here before. It replaces the old one everywhere.",
+    submit: "Set new password",
+    busy: "Saving password",
+    footerPrompt: "Changed your mind?",
   },
 };
+
+/**
+ * The rules shown under the new password when nothing else is handed down.
+ * None of them is ticked, and none of them can be: the card holds no value, so
+ * `met` is only ever true because the page above it said so.
+ */
+const defaultRequirements: PasswordRequirement[] = [
+  { id: "length", label: "At least 12 characters" },
+  { id: "case", label: "An upper and a lower case letter" },
+  { id: "symbol", label: "A number or a symbol" },
+];
 
 export interface LoginFormProps {
   /** Which card this is: the returning person, the new one, or the locked-out one. */
@@ -105,9 +172,13 @@ export interface LoginFormProps {
   sent?: boolean;
   /** `forgot-password` only — the address the link went to: named in the confirmation, and resubmitted by "Send it again". */
   sentTo?: string;
+  /** `reset-password` only — the token out of the emailed link, submitted with the new password from a hidden input. */
+  token?: string;
+  /** `reset-password` only — the rules under the new password and whether each is met yet. `[]` falls back to one line of helper text. */
+  requirements?: PasswordRequirement[];
   /** Form-level failure message. Renders the alert; in `sign-in` it also invalidates both credential fields. */
   error?: string;
-  /** `sign-up` and `forgot-password` — per-field messages keyed by the field's `name`; each marks that field invalid. */
+  /** Every mode but `sign-in` — per-field messages keyed by the field's `name`; each marks that field invalid. */
   errors?: Record<string, string>;
   /** The submit is in flight: every control is inert and the button reads busy. */
   loading?: boolean;
@@ -119,7 +190,7 @@ export interface LoginFormProps {
   forgotHref?: string;
   /** `sign-in` only — where "Create an account" points. */
   signUpHref?: string;
-  /** `sign-up` and `forgot-password` — where "Sign in" points. */
+  /** Every mode but `sign-in` — where "Sign in" points. */
   signInHref?: string;
   /** `sign-up` only — where the terms link under the consent box points. */
   termsHref?: string;
@@ -132,6 +203,8 @@ export function LoginForm({
   titleLevel = 3,
   sent = false,
   sentTo = "",
+  token = "",
+  requirements = defaultRequirements,
   error,
   errors,
   loading = false,
@@ -145,8 +218,13 @@ export function LoginForm({
 }: LoginFormProps) {
   const signUp = mode === "sign-up";
   const forgot = mode === "forgot-password";
+  const reset = mode === "reset-password";
   /** The confirmation: the recovery card after the link has gone out. */
   const confirming = forgot && sent;
+  /** Only the modes that start from an address ask for one. */
+  const asksForEmail = !confirming && !reset;
+  /** A password is being *chosen*, so the field takes the rules and its own error. */
+  const newPassword = signUp || reset;
   const inert = loading || disabled;
   /**
    * Signing in, one failure invalidates both credential fields and names
@@ -159,14 +237,8 @@ export function LoginForm({
   const description = confirming
     ? `If ${sentTo || "that address"} has an account, a link to set a new password is on its way.`
     : cardCopy[mode].description;
-  const submitLabel = confirming
-    ? "Send it again"
-    : forgot
-      ? "Send reset link"
-      : signUp
-        ? "Create account"
-        : "Sign in";
-  const busyLabel = forgot ? "Sending link" : signUp ? "Creating account" : "Signing in";
+  const submitLabel = confirming ? "Send it again" : cardCopy[mode].submit;
+  const busyLabel = cardCopy[mode].busy;
 
   return (
     <section className="@container moderno-block-login text-foreground">
@@ -210,6 +282,16 @@ export function LoginForm({
               <input type="hidden" name="email" value={sentTo} />
             ) : null}
 
+            {reset && token ? (
+              /*
+               * The token from the emailed link rides in the form rather than in
+               * a closure, for the same reason the resend's address does: a
+               * reset that only posts once React has hydrated strands the person
+               * it was written for, who is by definition already locked out.
+               */
+              <input type="hidden" name="token" value={token} />
+            ) : null}
+
             {confirming ? (
               <p className="text-sm text-muted-foreground">
                 The link expires in 30 minutes and can be used once. Nothing in your inbox? Look in
@@ -225,7 +307,7 @@ export function LoginForm({
               </Field.Root>
             ) : null}
 
-            {confirming ? null : (
+            {asksForEmail ? (
               <Field.Root required invalid={invalid("email")} disabled={inert}>
                 <Field.Label>Email</Field.Label>
                 <Field.Input
@@ -236,29 +318,76 @@ export function LoginForm({
                 />
                 {signUp || forgot ? <Field.ErrorText>{errors?.email}</Field.ErrorText> : null}
               </Field.Root>
-            )}
+            ) : null}
 
             {forgot ? null : (
               <Field.Root required invalid={invalid("password")} disabled={inert}>
-                <Field.Label>Password</Field.Label>
+                <Field.Label>{reset ? "New password" : "Password"}</Field.Label>
                 <Field.Input
                   name="password"
                   type="password"
-                  autoComplete={signUp ? "new-password" : "current-password"}
+                  autoComplete={newPassword ? "new-password" : "current-password"}
                   placeholder="••••••••"
                 />
-                {signUp ? (
-                  <>
-                    <Field.HelperText>
-                      At least 12 characters. A passphrase beats a puzzle.
-                    </Field.HelperText>
-                    <Field.ErrorText>{errors?.password}</Field.ErrorText>
-                  </>
+                {reset && requirements.length > 0 ? (
+                  /*
+                   * The rules are the field's *helper text*, not a list beside
+                   * it: Ark gives helper text an id and points the input's
+                   * `aria-describedby` at it, so the rules are read on focus
+                   * rather than found afterwards. Ark renders that part as a
+                   * `<span>`, so the rows are spans carrying list roles — a
+                   * `<ul>` inside phrasing content would be invalid markup. The
+                   * region is polite and not atomic, so a rule turning green
+                   * announces its own line and not the other two, and the tick
+                   * is doubled by a word: colour is never the only carrier.
+                   */
+                  <Field.HelperText className="grid gap-1" role="list" aria-live="polite">
+                    {requirements.map((requirement) => (
+                      <span
+                        key={requirement.id}
+                        role="listitem"
+                        className="flex items-center gap-2"
+                      >
+                        <span aria-hidden="true">{requirement.met ? "✓" : "○"}</span>
+                        <span className={requirement.met ? "text-foreground" : undefined}>
+                          {requirement.label}
+                        </span>
+                        <span className="sr-only">
+                          {requirement.met ? "— met" : "— not met yet"}
+                        </span>
+                      </span>
+                    ))}
+                  </Field.HelperText>
+                ) : newPassword ? (
+                  <Field.HelperText>
+                    At least 12 characters. A passphrase beats a puzzle.
+                  </Field.HelperText>
                 ) : null}
+                {newPassword ? <Field.ErrorText>{errors?.password}</Field.ErrorText> : null}
               </Field.Root>
             )}
 
-            {forgot ? null : signUp ? (
+            {reset ? (
+              /*
+               * The confirmation is a second field rather than a "show password"
+               * toggle because the two answer different questions: a toggle asks
+               * whether you can read what you typed, this asks whether you typed
+               * what you meant twice. Both are `new-password`, so a manager
+               * offers to fill and then to save the same generated value.
+               */
+              <Field.Root required invalid={invalid("confirmPassword")} disabled={inert}>
+                <Field.Label>Confirm new password</Field.Label>
+                <Field.Input
+                  name="confirmPassword"
+                  type="password"
+                  autoComplete="new-password"
+                  placeholder="••••••••"
+                />
+                <Field.ErrorText>{errors?.confirmPassword}</Field.ErrorText>
+              </Field.Root>
+            ) : null}
+
+            {forgot || reset ? null : signUp ? (
               /*
                * Consent is one checkbox with a short label, and the two legal
                * links sit *under* it rather than inside it: Ark's checkbox root
@@ -334,28 +463,22 @@ export function LoginForm({
           </form>
         </Card.Content>
 
+        {/*
+          One footer, and the way out of the card is the same shape in all four
+          modes: a question and the link that answers it. Only `sign-in` sends
+          the reader onward to an account they do not have yet; the other three
+          send them back to the one they do.
+        */}
         <Card.Footer className="justify-center">
-          {signUp || forgot ? (
-            <p className="text-sm text-muted-foreground">
-              {forgot ? "Remembered it?" : "Already have an account?"}{" "}
-              <a
-                className="rounded-sm font-medium text-foreground underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-                href={signInHref}
-              >
-                Sign in
-              </a>
-            </p>
-          ) : (
-            <p className="text-sm text-muted-foreground">
-              New here?{" "}
-              <a
-                className="rounded-sm font-medium text-foreground underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-                href={signUpHref}
-              >
-                Create an account
-              </a>
-            </p>
-          )}
+          <p className="text-sm text-muted-foreground">
+            {cardCopy[mode].footerPrompt}{" "}
+            <a
+              className="rounded-sm font-medium text-foreground underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+              href={mode === "sign-in" ? signUpHref : signInHref}
+            >
+              {mode === "sign-in" ? "Create an account" : "Sign in"}
+            </a>
+          </p>
         </Card.Footer>
       </Card.Root>
     </section>
