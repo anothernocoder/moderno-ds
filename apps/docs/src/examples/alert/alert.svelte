@@ -7,6 +7,10 @@
   The icons are inline SVG rather than an icon package: primitives are
   icon-agnostic by contract, and every glyph strokes `currentColor`, which the
   `icon` part sets from the status slot — so the icons follow the theme too.
+
+  This file is the Example the docs page shows *and* mounts (CONTEXT.md
+  "Example") — the source below the live demo is this file, raw-imported, so
+  it cannot drift from what actually renders.
 -->
 <script lang="ts">
   import { Alert, Button } from "@moderno-ui/svelte";

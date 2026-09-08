@@ -3,6 +3,10 @@
   sizes, over both controls (Input and Textarea) and in the invalid state.
   Hydrated as an island; painted by @moderno-ui/css from the active theme, so it
   re-skins live with the Theme Builder and the color-scheme toggle.
+
+  This file is the Example the docs page shows *and* mounts (CONTEXT.md
+  "Example") — the source below the live demo is this file, raw-imported, so
+  it cannot drift from what actually renders.
 -->
 <script lang="ts">
   import { Field } from "@moderno-ui/svelte";
@@ -41,7 +45,6 @@
 </div>
 
 <style>
-  /* Layout only: the fields themselves carry no styling of their own. */
   .demo-stack {
     display: grid;
     gap: 1.25rem;

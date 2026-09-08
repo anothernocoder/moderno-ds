@@ -106,6 +106,125 @@ pre {
   border: 1px solid var(--border);
   border-radius: var(--radius);
 }
+
+/* Search — ⌘K dialog over pagefind.search(), never PagefindUI. */
+.search-trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.85rem;
+  color: var(--muted-foreground);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: border-color var(--motion-fast) ease;
+}
+.search-trigger:hover,
+.search-trigger:focus-visible {
+  border-color: var(--ring);
+  color: var(--foreground);
+}
+.search-dialog {
+  padding: 0;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--popover);
+  color: var(--popover-foreground);
+  box-shadow: var(--shadow-lg);
+  width: min(36rem, calc(100vw - 2rem));
+  max-height: min(30rem, calc(100vh - 6rem));
+  margin: 6rem auto auto;
+}
+.search-dialog::backdrop {
+  background: color-mix(in oklch, var(--foreground) 45%, transparent);
+}
+.search-dialog-inner {
+  display: flex;
+  flex-direction: column;
+  max-height: inherit;
+}
+.search-input-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0 1rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--muted-foreground);
+}
+.search-input {
+  flex: 1;
+  padding: 0.9rem 0;
+  font-size: 1rem;
+  color: inherit;
+  background: transparent;
+  border: none;
+}
+.search-input:focus {
+  outline: none;
+}
+.search-input::-webkit-search-cancel-button {
+  display: none;
+}
+.search-results {
+  overflow-y: auto;
+  padding: 0.5rem;
+}
+.search-group + .search-group {
+  margin-top: 0.75rem;
+}
+.search-group-title {
+  margin: 0;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.search-result {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.5rem 0.6rem;
+  border-radius: calc(var(--radius) - 2px);
+  color: inherit;
+}
+.search-result:hover,
+.search-result:focus-visible,
+.search-result[aria-selected="true"] {
+  background: var(--accent);
+  color: var(--accent-foreground);
+  text-decoration: none;
+}
+.search-result-title {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+.search-result-excerpt {
+  font-size: 0.8rem;
+  color: var(--muted-foreground);
+}
+.search-result[aria-selected="true"] .search-result-excerpt {
+  color: inherit;
+}
+.search-result-excerpt mark {
+  background: none;
+  color: var(--primary);
+  font-weight: 600;
+}
+.search-result[aria-selected="true"] .search-result-excerpt mark {
+  color: inherit;
+  text-decoration: underline;
+}
+.search-state {
+  margin: 0;
+  padding: 2rem 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--muted-foreground);
+}
 .theme-toggle {
   display: flex;
   align-items: center;
@@ -151,6 +270,30 @@ pre {
   height: calc(100vh - 6rem);
   overflow-y: auto;
   font-size: 0.9rem;
+}
+.sidebar-filter {
+  margin-bottom: 0.75rem;
+}
+.sidebar-filter-input {
+  width: 100%;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.85rem;
+  color: var(--foreground);
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.sidebar-filter-input::placeholder {
+  color: var(--muted-foreground);
+}
+.sidebar-filter-input:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+.sidebar-empty {
+  padding: 0.3rem 0.6rem;
+  font-size: 0.85rem;
+  color: var(--muted-foreground);
 }
 .sidebar-group h2 {
   font-size: 0.72rem;
@@ -242,15 +385,22 @@ main {
   margin: 1.25rem 0 2.25rem;
 }
 
-/* On-this-page rail */
+/*
+  On-this-page rail. h2 items sit flush on the rail (indent 0); h3 items form
+  an indented sub-group (indent 1rem) joined to the rail by a curved
+  connector at each depth change. The rail itself is not one continuous
+  border on the nav — each link draws its own `border-left` segment at its
+  own indent, so a thicker/coloured segment can mark a single active item
+  without touching its neighbours; the connectors bridge the 1rem gap between
+  an h2 segment and the h3 segment above/below it. Adapted from Nimbus's TOC
+  (see the attribution header in TableOfContents.astro).
+*/
 .toc {
   position: sticky;
   top: 4.5rem;
   align-self: start;
   height: calc(100vh - 6rem);
   overflow-y: auto;
-  padding-left: 1.25rem;
-  border-left: 1px solid var(--border);
   font-size: 0.82rem;
 }
 .toc-title {
@@ -266,26 +416,60 @@ main {
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
 }
-.toc-item--3 {
-  padding-left: 0.85rem;
+.toc-item--2 a {
+  margin-left: 0;
+}
+.toc-item--3 a {
+  margin-left: 1rem;
 }
 .toc-list a {
   display: block;
   color: var(--muted-foreground);
-  border-left: 2px solid transparent;
-  margin-left: -1.27rem;
-  padding-left: 1.2rem;
-  transition: color 0.15s ease;
+  border-left: 2px solid var(--border);
+  padding: 0.3rem 0 0.3rem 1rem;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .toc-list a {
+    transition:
+      color 0.15s ease,
+      border-color 0.15s ease,
+      border-left-width 0.15s ease;
+  }
 }
 .toc-list a:hover {
   color: var(--foreground);
   text-decoration: none;
 }
+.toc-list a:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -1px;
+}
 .toc-list a[aria-current="true"] {
   color: var(--foreground);
+  font-weight: 500;
+  border-left-width: 3px;
   border-left-color: var(--primary);
+  padding-left: calc(1rem - 1px);
+}
+/* The S-curve bridging an indent change — a block between two links in the
+   same flex column, spanning the 1rem gap between the h2 segment's x=0 line
+   and the h3 segment's x=1rem line. `--in` (entering an h3 group) curves
+   top-left to bottom-right; `--out` (returning to h2) curves top-right to
+   bottom-left. `currentColor` picks up `--border` so it reads as a
+   continuation of the plain segments either side of it. */
+.toc-connector {
+  display: block;
+  width: 1rem;
+  height: 0.5rem;
+  color: var(--border);
+  overflow: visible;
+}
+.toc-connector path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
 }
 
 @media (max-width: 75rem) {
@@ -310,22 +494,104 @@ main {
     display: block;
     position: static;
     height: auto;
-    border-left: none;
-    border-top: 1px solid var(--border);
-    padding-left: 0;
-    padding-top: 1rem;
     margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
   }
 }
 
-/* Preview + tabs */
+/* Preview: stacked anatomy — demo above, source below, both always visible
+   (CONTEXT.md "Preview"; no Preview/Code tabs). One live island regardless of
+   framework; the source panel below switches which framework's file it shows
+   in step with the page's <FrameworkSelect>, via the `data-framework`
+   attribute BaseLayout's inline script sets on <html> — see
+   FrameworkSelect.astro for the attribution on that mechanism. */
 .preview {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   margin: 1.5rem 0;
   overflow: hidden;
 }
-.preview-tabs,
+.preview-panel--demo {
+  padding: 2rem;
+  /* A dot-grid backdrop separates "this is a rendered demo" from the prose
+     around it without a label — a stage, not a card. Dots are the foreground
+     colour at low opacity over the ordinary background, so the grid re-tints
+     with the theme instead of carrying a colour of its own. */
+  background-color: var(--background);
+  background-image: radial-gradient(
+    color-mix(in oklch, var(--foreground) 18%, transparent) 1px,
+    transparent 1px
+  );
+  background-size: 16px 16px;
+}
+.preview-panel--code {
+  padding: 0;
+  border-top: 1px solid var(--border);
+  /* The source scrolls past this height instead of growing the page — a
+     multi-variant demo's real source can run long. */
+  max-height: 24rem;
+  overflow-y: auto;
+}
+/* Only the source panel for the page's selected framework is shown; the exact
+   framework values a rule reacts to are also declared in FrameworkSelect.astro
+   and Install.astro — keep the four in sync if a framework is ever added. */
+.preview-source[data-fw] {
+  display: none;
+}
+:root:not([data-framework]) .preview-source[data-fw="react"],
+:root[data-framework="react"] .preview-source[data-fw="react"],
+:root[data-framework="vue"] .preview-source[data-fw="vue"],
+:root[data-framework="svelte"] .preview-source[data-fw="svelte"],
+:root[data-framework="solid"] .preview-source[data-fw="solid"] {
+  display: block;
+}
+.preview-source .astro-code {
+  margin: 0;
+  border: none;
+  border-radius: 0;
+}
+
+/* Framework selector — one page-wide control (CONTEXT.md "Framework
+   selector"). Visually a segmented control, the same tab styling the install
+   package-manager tabs use, so the two page-wide switches read as one family. */
+.framework-select {
+  display: inline-flex;
+  gap: 0.25rem;
+  padding: 0.3rem;
+  margin: 0 0 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--muted);
+}
+.framework-radio {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.framework-option {
+  font-size: 0.83rem;
+  font-weight: 500;
+  padding: 0.3rem 0.75rem;
+  border-radius: calc(var(--radius) - 2px);
+  cursor: pointer;
+  color: var(--muted-foreground);
+  transition:
+    color 0.15s ease,
+    background 0.15s ease;
+}
+.framework-option:hover {
+  color: var(--foreground);
+}
+.framework-radio:checked + .framework-option {
+  background: var(--background);
+  color: var(--foreground);
+  box-shadow: 0 1px 2px color-mix(in oklch, var(--foreground) 8%, transparent);
+}
+.framework-radio:focus-visible + .framework-option {
+  outline: 2px solid var(--ring);
+}
+
 .install-tabs {
   display: flex;
   gap: 0.25rem;
@@ -333,13 +599,11 @@ main {
   border-bottom: 1px solid var(--border);
   background: var(--muted);
 }
-.preview-radio,
 .install-radio {
   position: absolute;
   opacity: 0;
   pointer-events: none;
 }
-.preview-tab,
 .install-tab {
   font-size: 0.83rem;
   font-weight: 500;
@@ -351,35 +615,16 @@ main {
     color 0.15s ease,
     background 0.15s ease;
 }
-.preview-tab:hover,
 .install-tab:hover {
   color: var(--foreground);
 }
-.preview-radio:checked + .preview-tab,
 .install-radio:checked + .install-tab {
   background: var(--background);
   color: var(--foreground);
   box-shadow: 0 1px 2px color-mix(in oklch, var(--foreground) 8%, transparent);
 }
-.preview-radio:focus-visible + .preview-tab,
 .install-radio:focus-visible + .install-tab {
   outline: 2px solid var(--ring);
-}
-.preview-panel {
-  display: none;
-}
-.preview-panel--demo {
-  padding: 2rem;
-}
-.preview-panel--code {
-  padding: 0;
-}
-/* First radio → demo panel; second radio → code panel. The radios live inside
-   .preview-tabs, not as direct siblings of the panels, so `~` alone can never
-   reach them — :has() lets the whole .preview block react to a nested radio. */
-.preview:has(.preview-radio:nth-of-type(1):checked) .preview-panel--demo,
-.preview:has(.preview-radio:nth-of-type(2):checked) .preview-panel--code {
-  display: block;
 }
 
 .demo-row {
@@ -472,6 +717,19 @@ main {
 .install:has(.install-radio:nth-of-type(1):checked) .install-panel--bun,
 .install:has(.install-radio:nth-of-type(2):checked) .install-panel--pnpm,
 .install:has(.install-radio:nth-of-type(3):checked) .install-panel--npm {
+  display: block;
+}
+/* Inside the package-manager panel the framework selector picks which package
+   name shows — the same [data-fw] switch Preview's source panel uses, so one
+   attribute on <html> drives every Preview and the install command at once. */
+.install-panel [data-fw] {
+  display: none;
+}
+:root:not([data-framework]) .install-panel [data-fw="react"],
+:root[data-framework="react"] .install-panel [data-fw="react"],
+:root[data-framework="vue"] .install-panel [data-fw="vue"],
+:root[data-framework="svelte"] .install-panel [data-fw="svelte"],
+:root[data-framework="solid"] .install-panel [data-fw="solid"] {
   display: block;
 }
 

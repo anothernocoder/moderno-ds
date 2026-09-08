@@ -11,7 +11,13 @@ import Preview from "../../../components/Preview.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import PropsTable from "../../../components/PropsTable.astro";
 import Install from "../../../components/Install.astro";
-import FieldDemo from "../../../islands/FieldDemo.svelte";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import FieldDemo from "../../../examples/field/field.svelte";
+import reactExample from "../../../examples/field/react.tsx?raw";
+import vueExample from "../../../examples/field/vue.vue?raw";
+import solidExample from "../../../examples/field/solid.tsx?raw";
+import svelteExample from "../../../examples/field/field.svelte?raw";
+import invalidSnippet from "../../../examples/field/invalid-snippet.tsx?raw";
 
 Field resuelve accesibilidad, no apariencia: la máquina Field de Ark asocia
 `label[for]` con el `id` del control y refleja `aria-invalid`/
@@ -23,23 +29,10 @@ Lo único que eliges es `size`. Va en `Field.Root`, y el único `data-size` que
 emite dimensiona todas las partes a la vez: la etiqueta, la altura y el padding
 del control, y el texto de ayuda/error.
 
+<FrameworkSelect locale="es" />
+
 <Preview
-  code={`<Field.Root size="sm">
-  <Field.Label>Email</Field.Label>
-  <Field.Input placeholder="tu@ejemplo.com" />
-  <Field.HelperText>Small — formularios densos y barras de filtros.</Field.HelperText>
-</Field.Root>
-
-<Field.Root size="lg" invalid>
-  <Field.Label>URL del espacio</Field.Label>
-  <Field.Input placeholder="acme" />
-  <Field.ErrorText>Usa minúsculas, números y guiones.</Field.ErrorText>
-</Field.Root>
-
-<Field.Root size="md">
-  <Field.Label>Biografía</Field.Label>
-  <Field.Textarea placeholder="Cuéntanos sobre ti" />
-</Field.Root>`}
+  examples={{ react: reactExample, vue: vueExample, solid: solidExample, svelte: svelteExample }}
 >
   <FieldDemo client:visible />
 </Preview>
@@ -52,13 +45,7 @@ forma: un input es una línea de altura fija, y un textarea tiene una altura
 mínima por tamaño y solo se redimensiona en vertical, de modo que nunca se sale
 de la columna del campo.
 
-<CodeBlock
-  code={`<Field.Root invalid={hasError}>
-  <Field.Label>Email</Field.Label>
-  <Field.Input type="email" />
-  <Field.ErrorText>Ingresa un email válido.</Field.ErrorText>
-</Field.Root>`}
-/>
+<CodeBlock code={invalidSnippet} lang="tsx" />
 
 ## Instalación
 

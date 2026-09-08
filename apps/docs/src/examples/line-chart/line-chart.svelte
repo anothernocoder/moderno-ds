@@ -1,6 +1,10 @@
 <!--
   Live LineChart preview — pure SVG over @moderno-ui/charts-core; colour comes from
   the `--chart-*` token slots via the series index, nothing baked in here.
+
+  This file is the Example the docs page shows *and* mounts (CONTEXT.md
+  "Example") — the source below the live demo is this file, raw-imported, so
+  it cannot drift from what actually renders.
 -->
 <script lang="ts">
   import { LineChart } from "@moderno-ui/svelte";

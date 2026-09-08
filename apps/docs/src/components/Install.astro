@@ -1,10 +1,25 @@
 ---
+/**
+ * Install — the copy-pasteable install command for a primitive. Renders one
+ * command per package manager (as before) and, inside each, one per framework
+ * (CONTEXT.md "Framework selector"): the page's <FrameworkSelect> choice picks
+ * which framework's line shows via the same `data-framework` attribute on
+ * `<html>` that Preview's source panel reacts to (docs.css) — no client script
+ * here either.
+ *
+ * `pkg` names the React package (every primitive page already passes this);
+ * the other three frameworks share its scope, so the framework segment is the
+ * only thing that changes — `@moderno-ui/react` → `@moderno-ui/vue`, etc.
+ */
 import { Code } from "astro:components";
 import shikiConfig from "../../shiki.config.ts";
 import { uid } from "../lib/uid.ts";
 
+type Framework = "react" | "vue" | "svelte" | "solid";
+const FRAMEWORKS: Framework[] = ["react", "vue", "svelte", "solid"];
+
 interface Props {
-  /** Package to install, e.g. `@moderno-ui/react`. */
+  /** The React package, e.g. `@moderno-ui/react`. */
   pkg: string;
   /** `dependency` (default) or `cli` (dlx/bunx/npx execution). */
   mode?: "dependency" | "cli";
@@ -12,18 +27,23 @@ interface Props {
 
 const { pkg, mode = "dependency" } = Astro.props;
 
-const managers =
-  mode === "cli"
-    ? [
-        { id: "bun", label: "bun", cmd: `bunx ${pkg}` },
-        { id: "pnpm", label: "pnpm", cmd: `pnpm dlx ${pkg}` },
-        { id: "npm", label: "npm", cmd: `npx ${pkg}` },
-      ]
-    : [
-        { id: "bun", label: "bun", cmd: `bun add ${pkg}` },
-        { id: "pnpm", label: "pnpm", cmd: `pnpm add ${pkg}` },
-        { id: "npm", label: "npm", cmd: `npm install ${pkg}` },
-      ];
+/** `@moderno-ui/react` → `@moderno-ui/vue` and friends. */
+function pkgFor(framework: Framework): string {
+  return pkg.slice(0, pkg.lastIndexOf("/") + 1) + framework;
+}
+
+function commandFor(framework: Framework): { bun: string; pnpm: string; npm: string } {
+  const p = pkgFor(framework);
+  return mode === "cli"
+    ? { bun: `bunx ${p}`, pnpm: `pnpm dlx ${p}`, npm: `npx ${p}` }
+    : { bun: `bun add ${p}`, pnpm: `pnpm add ${p}`, npm: `npm install ${p}` };
+}
+
+const managers = [
+  { id: "bun" as const, label: "bun" },
+  { id: "pnpm" as const, label: "pnpm" },
+  { id: "npm" as const, label: "npm" },
+];
 
 const name = uid("install");
 ---
@@ -50,7 +70,13 @@ const name = uid("install");
   {
     managers.map((m) => (
       <div class={`install-panel install-panel--${m.id}`} role="tabpanel">
-        <Code code={m.cmd} lang="sh" {...shikiConfig} />
+        {
+          FRAMEWORKS.map((fw) => (
+            <div data-fw={fw}>
+              <Code code={commandFor(fw)[m.id]} lang="sh" {...shikiConfig} />
+            </div>
+          ))
+        }
       </div>
     ))
   }

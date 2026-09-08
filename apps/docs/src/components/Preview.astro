@@ -1,36 +1,49 @@
 ---
+/**
+ * Preview — the docs component that renders a demo live above its example
+ * source, both always visible (CONTEXT.md "Preview"; no Preview/Code tabs).
+ * One live island per demo whatever the framework, because the component
+ * stylesheet is shared: one instance is the proof.
+ *
+ * `examples` holds one real source file's contents per framework (CONTEXT.md
+ * "Example") — raw-imported by the MDX page from `src/examples/<component>/`
+ * or, for a block preview, straight from `registry/blocks/<name>/<framework>/`
+ * — never a string literal. All four always render; CSS shows only the one
+ * matching the page's `<FrameworkSelect>` choice, read off `data-framework` on
+ * `<html>` (docs.css), so switching frameworks needs no client script here.
+ */
 import type { CodeLanguage } from "astro";
-import { uid } from "../lib/uid.ts";
-import { currentLocale, useTranslations } from "../i18n/ui.ts";
 import CodeBlock from "./CodeBlock.astro";
 
+type Framework = "react" | "vue" | "svelte" | "solid";
+
 interface Props {
-  /** Source shown under the Code tab. */
-  code: string;
-  lang?: CodeLanguage;
+  examples: Record<Framework, string>;
 }
 
-const { code, lang = "tsx" } = Astro.props;
-const t = useTranslations(currentLocale(Astro.currentLocale));
-// CSS-only tabs: two radios sharing one name, panels toggled by :checked. Works
-// without JS; the live demo island hydrates independently.
-const name = uid("preview");
-const previewId = `${name}-preview`;
-const codeId = `${name}-code`;
+const { examples } = Astro.props;
+
+/** Order they render in the DOM; kept in sync with FrameworkSelect.astro. */
+const FRAMEWORKS: Framework[] = ["react", "vue", "svelte", "solid"];
+const LANG: Record<Framework, CodeLanguage> = {
+  react: "tsx",
+  solid: "tsx",
+  vue: "vue",
+  svelte: "svelte",
+};
 ---
 
 <div class="preview">
-  <div class="preview-tabs" role="tablist">
-    <input type="radio" name={name} id={previewId} class="preview-radio" checked />
-    <label for={previewId} class="preview-tab">{t("tabs.preview")}</label>
-    <input type="radio" name={name} id={codeId} class="preview-radio" />
-    <label for={codeId} class="preview-tab">{t("tabs.code")}</label>
-  </div>
-
-  <div class="preview-panel preview-panel--demo" role="tabpanel">
+  <div class="preview-panel preview-panel--demo">
     <slot />
   </div>
-  <div class="preview-panel preview-panel--code" role="tabpanel">
-    <CodeBlock code={code} lang={lang} />
+  <div class="preview-panel preview-panel--code">
+    {
+      FRAMEWORKS.map((fw) => (
+        <div class="preview-source" data-fw={fw}>
+          <CodeBlock code={examples[fw]} lang={LANG[fw]} />
+        </div>
+      ))
+    }
   </div>
 </div>

@@ -26,7 +26,12 @@ agent:
 import Preview from "../../../components/Preview.astro";
 import PropsTable from "../../../components/PropsTable.astro";
 import Install from "../../../components/Install.astro";
-import CardDemo from "../../../islands/CardDemo.svelte";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import CardDemo from "../../../examples/card/card.svelte";
+import reactExample from "../../../examples/card/react.tsx?raw";
+import vueExample from "../../../examples/card/vue.vue?raw";
+import solidExample from "../../../examples/card/solid.tsx?raw";
+import svelteExample from "../../../examples/card/card.svelte?raw";
 
 Card is the first compound primitive that is authored rather than re-exported:
 there is no Ark machine for a surface — nothing to open, focus or wire — so
@@ -35,17 +40,10 @@ Button follows, widened across an anatomy: each part emits `data-scope="card"`
 plus its own `data-part`, the root carries `cardRecipe`'s `data-variant` and
 `data-size`, and `components.css` paints all of it from token slots.
 
+<FrameworkSelect locale="en" />
+
 <Preview
-  code={`<Card.Root variant="outline" size="md">
-  <Card.Header>
-    <Card.Title>Monthly report</Card.Title>
-    <Card.Description>Revenue across every channel.</Card.Description>
-  </Card.Header>
-  <Card.Content>Up 12% on last month.</Card.Content>
-  <Card.Footer>
-    <Button variant="outline" size="sm">Export</Button>
-  </Card.Footer>
-</Card.Root>`}
+  examples={{ react: reactExample, vue: vueExample, solid: solidExample, svelte: svelteExample }}
 >
   <CardDemo client:visible />
 </Preview>

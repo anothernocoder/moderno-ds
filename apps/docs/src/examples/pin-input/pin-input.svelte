@@ -6,6 +6,10 @@
 
   The cells are typed and pasted into for real: Ark moves focus, distributes a
   pasted code, and flags the root complete once every cell holds a character.
+
+  This file is the Example the docs page shows *and* mounts (CONTEXT.md
+  "Example") — the source below the live demo is this file, raw-imported, so
+  it cannot drift from what actually renders.
 -->
 <script lang="ts">
   import { PinInput } from "@moderno-ui/svelte";

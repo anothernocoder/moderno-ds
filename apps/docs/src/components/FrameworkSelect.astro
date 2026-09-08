@@ -1,0 +1,66 @@
+---
+/**
+ * Framework selector — one page-wide control (CONTEXT.md "Framework
+ * selector") that picks which framework's Example every <Preview> on the page
+ * shows, and which package name <Install> shows, at once. The choice persists
+ * in localStorage across pages; default React.
+ *
+ * The synced-selection idea — one choice, several panels reacting to it in
+ * step — is Nimbus's `code-group`
+ * (`packages/nimbus-starter-source/src/components/ui/code-group`,
+ * https://github.com/cloudflare/nimbus), MIT License. Nimbus scopes the
+ * choice to one `<CodeGroup>` re-rendered per instance on the page, wired
+ * through a React context. Moderno's choice is page-wide (it also drives
+ * <Install>, a separate component) and the docs have no cross-framework
+ * client runtime to share a context through — Svelte is the only island
+ * runtime (CONTEXT.md "Island runtime") — so the port trades the React
+ * context for a single `data-framework` attribute on `<html>` that every
+ * panel's CSS reacts to (docs.css) and a plain script
+ * (`scripts/framework-select.ts`) that only ever writes that one attribute
+ * plus localStorage. The tab-styled control itself is original CSS (shared
+ * with <Install>'s package-manager tabs), not a Nimbus visual.
+ *
+ * Import and render this once per page, right after the first heading — never
+ * on a page with no Preview/Install (CONTEXT.md: "absent on pages without
+ * examples").
+ */
+import { useTranslations, type Locale } from "../i18n/ui.ts";
+import { uid } from "../lib/uid.ts";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+
+/** Kept in sync with the `data-fw` values Preview.astro and Install.astro emit,
+    and with the `:root[data-framework="…"]` rules in docs.css. */
+const FRAMEWORKS = [
+  { id: "react", label: "React" },
+  { id: "vue", label: "Vue" },
+  { id: "svelte", label: "Svelte" },
+  { id: "solid", label: "Solid" },
+] as const;
+
+const name = uid("framework");
+---
+
+<div class="framework-select" role="radiogroup" aria-label={t("framework.label")} data-framework-select>
+  {
+    FRAMEWORKS.map((fw) => (
+      <label class="framework-option-wrap">
+        <input
+          type="radio"
+          name={name}
+          value={fw.id}
+          class="framework-radio"
+          checked={fw.id === "react"}
+        />
+        <span class="framework-option">{fw.label}</span>
+      </label>
+    ))
+  }
+</div>
+
+<script src="../scripts/framework-select.ts"></script>

@@ -6,5 +6,10 @@
     "jsx": "preserve",
     "jsxImportSource": "vue"
   },
-  "include": ["src/**/*.ts", "tsup.config.ts", "vitest.config.ts"]
+  "include": [
+    "src/**/*.ts",
+    "tsup.config.ts",
+    "vitest.config.ts",
+    "../../apps/docs/src/examples/**/vue.vue"
+  ]
 }

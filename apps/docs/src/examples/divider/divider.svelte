@@ -7,6 +7,10 @@
   @moderno-ui/css from --border, so it re-skins live with the Theme Builder and
   the colour-scheme toggle. The wrappers below only lay the examples out; the
   rules themselves carry no styling of their own.
+
+  This file is the Example the docs page shows *and* mounts (CONTEXT.md
+  "Example") — the source below the live demo is this file, raw-imported, so
+  it cannot drift from what actually renders.
 -->
 <script lang="ts">
   import { Divider } from "@moderno-ui/svelte";
@@ -39,9 +43,6 @@
     align-items: center;
     gap: 0.75rem;
     margin-top: 1.5rem;
-    /* A vertical rule takes the height of its row, so give the row one — tall
-       enough that the captioned rule still has stroke left either side of its
-       caption once the label's margins have opened the gap. */
     min-height: 3rem;
   }
 </style>

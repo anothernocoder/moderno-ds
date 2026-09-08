@@ -3,6 +3,10 @@
   states (unchecked, checked, indeterminate), its sizes and the disabled
   affordance. Hydrated as an island; painted by @moderno-ui/css from the active
   theme, so it re-skins live with the Theme Builder and the color-scheme toggle.
+
+  This file is the Example the docs page shows *and* mounts (CONTEXT.md
+  "Example") — the source below the live demo is this file, raw-imported, so
+  it cannot drift from what actually renders.
 -->
 <script lang="ts">
   import { Checkbox } from "@moderno-ui/svelte";

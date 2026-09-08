@@ -10,7 +10,12 @@ pkg: "@moderno-ui/react"
 import Preview from "../../../components/Preview.astro";
 import PropsTable from "../../../components/PropsTable.astro";
 import Install from "../../../components/Install.astro";
-import DialogDemo from "../../../islands/DialogDemo.svelte";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import DialogDemo from "../../../examples/dialog/dialog.svelte";
+import reactExample from "../../../examples/dialog/react.tsx?raw";
+import vueExample from "../../../examples/dialog/vue.vue?raw";
+import solidExample from "../../../examples/dialog/solid.tsx?raw";
+import svelteExample from "../../../examples/dialog/dialog.svelte?raw";
 
 Dialog se compone como `Root > Trigger + Portal(> Backdrop + Positioner >
 Content)`. Ark maneja el atrapado y restauración de foco, el bloqueo de
@@ -21,19 +26,10 @@ aperturas y Ark lo saca del layout con el atributo `hidden`, que
 superficie viene directo de los slots `--popover` / `--popover-foreground` vía
 `components.css`.
 
+<FrameworkSelect locale="es" />
+
 <Preview
-  code={`<Dialog.Root>
-  <Dialog.Trigger>Abrir</Dialog.Trigger>
-  <Portal>
-    <Dialog.Backdrop />
-    <Dialog.Positioner>
-      <Dialog.Content>
-        <Dialog.Title>Eliminar elemento</Dialog.Title>
-        <Dialog.Description>Esto no se puede deshacer.</Dialog.Description>
-      </Dialog.Content>
-    </Dialog.Positioner>
-  </Portal>
-</Dialog.Root>`}
+  examples={{ react: reactExample, vue: vueExample, solid: solidExample, svelte: svelteExample }}
 >
   <DialogDemo client:visible />
 </Preview>

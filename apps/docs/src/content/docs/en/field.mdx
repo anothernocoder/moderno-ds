@@ -28,7 +28,13 @@ import Preview from "../../../components/Preview.astro";
 import CodeBlock from "../../../components/CodeBlock.astro";
 import PropsTable from "../../../components/PropsTable.astro";
 import Install from "../../../components/Install.astro";
-import FieldDemo from "../../../islands/FieldDemo.svelte";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import FieldDemo from "../../../examples/field/field.svelte";
+import reactExample from "../../../examples/field/react.tsx?raw";
+import vueExample from "../../../examples/field/vue.vue?raw";
+import solidExample from "../../../examples/field/solid.tsx?raw";
+import svelteExample from "../../../examples/field/field.svelte?raw";
+import invalidSnippet from "../../../examples/field/invalid-snippet.tsx?raw";
 
 Field wires accessibility, not appearance: Ark's Field machine associates
 `label[for]` with the control's `id` and mirrors `aria-invalid`/
@@ -40,23 +46,10 @@ The one thing you choose is `size`. It goes on `Field.Root`, and the single
 `data-size` it emits sizes every part at once: the label, the control's height
 and padding, and the helper/error text.
 
+<FrameworkSelect locale="en" />
+
 <Preview
-  code={`<Field.Root size="sm">
-  <Field.Label>Email</Field.Label>
-  <Field.Input placeholder="you@example.com" />
-  <Field.HelperText>Small — dense forms and filter bars.</Field.HelperText>
-</Field.Root>
-
-<Field.Root size="lg" invalid>
-  <Field.Label>Workspace URL</Field.Label>
-  <Field.Input placeholder="acme" />
-  <Field.ErrorText>Use lowercase letters, numbers and dashes.</Field.ErrorText>
-</Field.Root>
-
-<Field.Root size="md">
-  <Field.Label>Bio</Field.Label>
-  <Field.Textarea placeholder="Tell us about yourself" />
-</Field.Root>`}
+  examples={{ react: reactExample, vue: vueExample, solid: solidExample, svelte: svelteExample }}
 >
   <FieldDemo client:visible />
 </Preview>
@@ -68,13 +61,7 @@ focus ring and invalid treatment. They differ where the shape differs: an input
 is one line with a fixed height, a textarea has a minimum height per size and
 resizes vertically only, so it can never break out of the field's column.
 
-<CodeBlock
-  code={`<Field.Root invalid={hasError}>
-  <Field.Label>Email</Field.Label>
-  <Field.Input type="email" />
-  <Field.ErrorText>Enter a valid email.</Field.ErrorText>
-</Field.Root>`}
-/>
+<CodeBlock code={invalidSnippet} lang="tsx" />
 
 ## Installation
 

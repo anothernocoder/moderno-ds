@@ -9,6 +9,10 @@
   portalled and opens on click — it is deliberately not forced open here,
   because a floating panel anchored by floating-ui settles a frame or two after
   hydration and this page is captured pixel-for-pixel by the visual suite.
+
+  This file is the Example the docs page shows *and* mounts (CONTEXT.md
+  "Example") — the source below the live demo is this file, raw-imported, so
+  it cannot drift from what actually renders.
 -->
 <script lang="ts">
   import { Select, Portal, createListCollection } from "@moderno-ui/svelte";

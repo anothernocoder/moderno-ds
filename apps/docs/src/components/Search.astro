@@ -1,4 +1,13 @@
 ---
+/**
+ * ⌘K / Ctrl+K search dialog. Queries the locale's Pagefind bundle directly
+ * through `pagefind.search()` / `pagefind.debouncedSearch()` — Pagefind's
+ * stock `PagefindUI` (its JS and CSS) is never loaded, so the dialog is
+ * styled entirely from the contract tokens and re-themes with the site.
+ * Results are grouped by page, with each page's `sub_results` (its matching
+ * sections) listed underneath.
+ */
+import { Search as SearchIcon } from "@lucide/astro";
 import { useTranslations, type Locale } from "../i18n/ui.ts";
 
 interface Props {
@@ -13,25 +22,32 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 const bundlePath = `${base}/${locale}/pagefind/`;
 ---
 
-<div class="search" data-pagefind-ignore>
-  <div id="search" data-bundle={bundlePath} data-placeholder={t("search.placeholder")}></div>
+<div data-pagefind-ignore>
+  <button type="button" class="search-trigger" data-search-trigger aria-haspopup="dialog">
+    <SearchIcon aria-hidden="true" size={16} />
+    <span>{t("search.trigger")}</span>
+  </button>
+
+  <dialog class="search-dialog" data-search-dialog data-bundle={bundlePath} aria-label={t("search.label")}>
+    <div class="search-dialog-inner">
+      <div class="search-input-row">
+        <SearchIcon aria-hidden="true" size={16} />
+        <input
+          type="search"
+          class="search-input"
+          data-search-input
+          placeholder={t("search.placeholder")}
+          aria-label={t("search.label")}
+          autocomplete="off"
+          spellcheck="false"
+        />
+      </div>
+      <div class="search-results" data-search-results role="listbox" aria-label={t("search.label")} hidden></div>
+      <p class="search-state" data-search-empty>{t("search.empty")}</p>
+      <p class="search-state" data-search-no-results hidden>{t("search.noResults")}</p>
+      <p class="search-state" data-search-missing hidden>{t("search.indexMissing")}</p>
+    </div>
+  </dialog>
 </div>
 
-<link rel="stylesheet" href={`${bundlePath}pagefind-ui.css`} />
-<script>
-  // The Pagefind bundle only exists after the postbuild index step; loading it
-  // lazily keeps `astro dev` from erroring when the bundle is absent.
-  const mount = document.getElementById("search");
-  if (mount) {
-    const bundlePath = mount.dataset.bundle!;
-    const placeholder = mount.dataset.placeholder ?? "Search";
-    import(/* @vite-ignore */ `${bundlePath}pagefind-ui.js`)
-      .then(() => {
-        // @ts-expect-error — PagefindUI is attached to window by the bundle.
-        new window.PagefindUI({ element: "#search", bundlePath, showImages: false, resetStyles: false, placeholder });
-      })
-      .catch(() => {
-        /* index not built yet (dev) */
-      });
-  }
-</script>
+<script src="../scripts/search.ts"></script>

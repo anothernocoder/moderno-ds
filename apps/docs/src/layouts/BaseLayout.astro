@@ -83,6 +83,13 @@ const pageTitle = slug === "index" ? title : `${title} — Moderno`;
       if (stored === "dark" || (!stored && matchMedia("(prefers-color-scheme: dark)").matches)) {
         document.documentElement.classList.add("dark");
       }
+      // Same flash-avoidance for the framework selector: every Preview's
+      // source panel and the Install command key off `[data-framework]` on
+      // <html> (docs.css), so it has to be set before first paint too, on
+      // every page — not only the ones that render <FrameworkSelect> — since
+      // the choice is remembered across pages (CONTEXT.md "Framework
+      // selector"). Default React.
+      document.documentElement.dataset.framework = localStorage.getItem("moderno-framework") || "react";
     </script>
   </head>
   <body>
@@ -104,13 +111,24 @@ const pageTitle = slug === "index" ? title : `${title} — Moderno`;
 
     <div class:list={["layout", tocHeadings.length > 0 && "layout--with-toc"]}>
       <aside class="sidebar" aria-label={t("nav.docs")}>
+        <div class="sidebar-filter">
+          <input
+            type="text"
+            class="sidebar-filter-input"
+            placeholder={t("sidebar.filterPlaceholder")}
+            aria-label={t("sidebar.filterLabel")}
+            autocomplete="off"
+            spellcheck="false"
+            data-sidebar-filter
+          />
+        </div>
         {
           sections.map((section) => (
-            <section class="sidebar-group">
+            <section class="sidebar-group" data-sidebar-group>
               <h2>{section.group}</h2>
               <ul>
                 {section.pages.map((p) => (
-                  <li>
+                  <li data-sidebar-item>
                     <a
                       href={`${base}${locale}/${p.slug}`}
                       aria-current={p.slug === slug ? "page" : undefined}
@@ -123,6 +141,9 @@ const pageTitle = slug === "index" ? title : `${title} — Moderno`;
             </section>
           ))
         }
+        <p class="sidebar-empty" data-sidebar-empty hidden>
+          {t("sidebar.noMatches")}
+        </p>
       </aside>
 
       <main id="main" data-pagefind-body>
@@ -131,6 +152,7 @@ const pageTitle = slug === "index" ? title : `${title} — Moderno`;
       {tocHeadings.length > 0 && <TableOfContents headings={tocHeadings} locale={locale} />}
     </div>
 
+    <script src="../scripts/sidebar-filter.ts"></script>
     <script src="../scripts/clipboard.ts"></script>
   </body>
 </html>

@@ -6,7 +6,20 @@ order: 100
 ---
 
 import Preview from "../../../components/Preview.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
 import BlocksDemo from "../../../islands/BlocksDemo.svelte";
+import loginFormReact from "../../../../../../registry/blocks/login-form/react/login-form.tsx?raw";
+import loginFormVue from "../../../../../../registry/blocks/login-form/vue/LoginForm.vue?raw";
+import loginFormSolid from "../../../../../../registry/blocks/login-form/solid/login-form.tsx?raw";
+import loginFormSvelte from "../../../../../../registry/blocks/login-form/svelte/LoginForm.svelte?raw";
+import pricingReact from "../../../../../../registry/blocks/pricing/react/pricing.tsx?raw";
+import pricingVue from "../../../../../../registry/blocks/pricing/vue/Pricing.vue?raw";
+import pricingSolid from "../../../../../../registry/blocks/pricing/solid/pricing.tsx?raw";
+import pricingSvelte from "../../../../../../registry/blocks/pricing/svelte/Pricing.svelte?raw";
+import emptyStateReact from "../../../../../../registry/blocks/empty-state/react/empty-state.tsx?raw";
+import emptyStateVue from "../../../../../../registry/blocks/empty-state/vue/EmptyState.vue?raw";
+import emptyStateSolid from "../../../../../../registry/blocks/empty-state/solid/empty-state.tsx?raw";
+import emptyStateSvelte from "../../../../../../registry/blocks/empty-state/svelte/EmptyState.svelte?raw";
 
 Un **bloque** es una _sección_ de página compuesta por primitivas — un hero, una
 tabla de precios, un formulario de acceso. Lo copias a tu proyecto con la CLI y
@@ -32,23 +45,24 @@ sección.
 
 ## Lo que existe hoy
 
-Tres bloques, una entrada de registro por framework cada uno. Las vistas previas
-de abajo importan el fuente Svelte directo de `registry/blocks/`, así que lo que
-se renderiza es exactamente lo que copia la CLI — no una maqueta.
+Tres bloques, una entrada de registro por framework cada uno. Cada Preview de
+abajo lee su fuente directo de `registry/blocks/<name>/<framework>/` — para los
+cuatro frameworks, intercambiable con el selector — así que lo que lees es
+exactamente lo que copia la CLI, no una maqueta.
+
+<FrameworkSelect locale="es" />
 
 ### Formulario de acceso
 
 Compone `Field` (etiqueta, texto de ayuda, texto de error) y `Button`.
 
 <Preview
-  code={`<form>
-  <Field.Root>
-    <Field.Label>Email</Field.Label>
-    <Field.Input type="email" placeholder="tu@ejemplo.com" />
-    <Field.HelperText>Nunca lo compartimos.</Field.HelperText>
-  </Field.Root>
-  <Button type="submit">Entrar</Button>
-</form>`}
+  examples={{
+    react: loginFormReact,
+    vue: loginFormVue,
+    solid: loginFormSolid,
+    svelte: loginFormSvelte,
+  }}
 >
   <BlocksDemo block="login-form" client:visible />
 </Preview>
@@ -58,10 +72,7 @@ Compone `Field` (etiqueta, texto de ayuda, texto de error) y `Button`.
 Tres planes desde un arreglo `plans` local — edítalo, el archivo ya es tuyo.
 
 <Preview
-  code={`const plans = [
-  { name: "Starter", price: "$0/mo", features: [/* … */] },
-  // …
-];`}
+  examples={{ react: pricingReact, vue: pricingVue, solid: pricingSolid, svelte: pricingSvelte }}
 >
   <BlocksDemo block="pricing" client:visible />
 </Preview>
@@ -71,11 +82,12 @@ Tres planes desde un arreglo `plans` local — edítalo, el archivo ya es tuyo.
 Un marcador centrado con una sola llamada a la acción.
 
 <Preview
-  code={`<div>
-  <h2>Aún no hay proyectos</h2>
-  <p>Crea tu primer proyecto para empezar.</p>
-  <Button type="button">Nuevo proyecto</Button>
-</div>`}
+  examples={{
+    react: emptyStateReact,
+    vue: emptyStateVue,
+    solid: emptyStateSolid,
+    svelte: emptyStateSvelte,
+  }}
 >
   <BlocksDemo block="empty-state" client:visible />
 </Preview>

@@ -25,14 +25,23 @@ agent:
 import Preview from "../../../components/Preview.astro";
 import PropsTable from "../../../components/PropsTable.astro";
 import Install from "../../../components/Install.astro";
-import BarChartDemo from "../../../islands/BarChartDemo.svelte";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import BarChartDemo from "../../../examples/bar-chart/bar-chart.svelte";
+import reactExample from "../../../examples/bar-chart/react.tsx?raw";
+import vueExample from "../../../examples/bar-chart/vue.vue?raw";
+import solidExample from "../../../examples/bar-chart/solid.tsx?raw";
+import svelteExample from "../../../examples/bar-chart/bar-chart.svelte?raw";
 
 BarChart is a deterministic map from a model built by `@moderno-ui/charts-core` to
 `<rect>` elements — one bar per category per series, positioned on a band
 scale. It bakes in no colour — each series paints from `--chart-1…5` keyed on
 its index, so it re-themes with the rest of the system.
 
-<Preview code={`<BarChart width={520} height={260} categories={categories} series={series} />`}>
+<FrameworkSelect locale="en" />
+
+<Preview
+  examples={{ react: reactExample, vue: vueExample, solid: solidExample, svelte: svelteExample }}
+>
   <BarChartDemo client:visible />
 </Preview>
 

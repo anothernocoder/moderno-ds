@@ -27,13 +27,22 @@ agent:
 import Preview from "../../../components/Preview.astro";
 import PropsTable from "../../../components/PropsTable.astro";
 import Install from "../../../components/Install.astro";
-import LineChartDemo from "../../../islands/LineChartDemo.svelte";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import LineChartDemo from "../../../examples/line-chart/line-chart.svelte";
+import reactExample from "../../../examples/line-chart/react.tsx?raw";
+import vueExample from "../../../examples/line-chart/vue.vue?raw";
+import solidExample from "../../../examples/line-chart/solid.tsx?raw";
+import svelteExample from "../../../examples/line-chart/line-chart.svelte?raw";
 
 LineChart is a deterministic map from a model built by `@moderno-ui/charts-core` to
 `<path>` elements. It bakes in no colour — each series paints from `--chart-1…5`
 keyed on its index, so it re-themes with the rest of the system.
 
-<Preview code={`<LineChart width={520} height={260} series={series} />`}>
+<FrameworkSelect locale="en" />
+
+<Preview
+  examples={{ react: reactExample, vue: vueExample, solid: solidExample, svelte: svelteExample }}
+>
   <LineChartDemo client:visible />
 </Preview>
 

@@ -11,6 +11,8 @@
     "test/**/*.ts",
     "test/**/*.tsx",
     "playground/**/*.tsx",
-    "tsup.config.ts"
+    "tsup.config.ts",
+    "../../apps/docs/src/examples/**/react.tsx",
+    "../../apps/docs/src/examples/field/invalid-snippet.tsx"
   ]
 }
