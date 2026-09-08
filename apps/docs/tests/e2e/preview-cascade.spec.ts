@@ -9,10 +9,9 @@
  * the browser: a test that greps the emitted CSS passes just as happily when
  * every rule it found is being overridden.
  *
- * So this spec asserts computed styles, not pixels. It is a peer of the
- * screenshot baselines rather than a replacement: a baseline says "something
- * moved", this says *which rule lost*, in the one place where a block is shown
- * to a reader as proof the mechanism works.
+ * So this spec asserts computed styles, not pixels. It says *which rule wins*,
+ * in the one place where a block is shown to a reader as proof the mechanism
+ * works.
  */
 import { expect, test, type Page } from "@playwright/test";
 

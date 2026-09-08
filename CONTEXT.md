@@ -161,12 +161,8 @@ Generated at build time by the `tooling/props-doc` script (ts-morph) → JSON pe
 _Avoid_: react-docgen-only, hand-maintained prop tables
 
 **Preview page**:
-A built docs page that hydrates at least one island — where the design system renders for real (the live `<Preview>` demos and the Theme Builder), as opposed to a prose page of code blocks and prop tables. The unit the visual regression seam captures; the list is read from `dist/`, never hand-maintained.
+A built docs page that hydrates at least one island — where the design system renders for real (the live `<Preview>` demos and the Theme Builder), as opposed to a prose page of code blocks and prop tables. The unit the docs e2e seam (`apps/docs/tests/e2e`) reasons about; the list is read from `dist/`, never hand-maintained.
 _Avoid_: Demo page, story (Storybook term)
-
-**Visual baseline**:
-The committed screenshot a preview page is compared against, one per width (375/768/1280) × colour scheme. Rendered in the pinned Playwright container (`.github/workflows/visual-baselines.yml`) because screenshots only reproduce inside the environment that made them; refreshed with `pnpm docs:visual:update` in the same PR as the change that moved them. Local runs write a host-platform directory that `.gitignore` drops.
-_Avoid_: Golden file (unqualified), snapshot (that is Vitest's), laptop-rendered baselines
 
 **Chart render tree**:
 The serializable SVG node tree `@moderno-ui/charts-core` emits per chart

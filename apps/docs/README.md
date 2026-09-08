@@ -6,14 +6,13 @@ and the static registry served under `/r/`.
 
 ## Scripts
 
-| Script                    | What it does                                                       |
-| ------------------------- | ------------------------------------------------------------------ |
-| `pnpm dev`                | Prebuild (props + registry) then `astro dev`.                      |
-| `pnpm build`              | Prebuild → `astro build` → per-locale Pagefind index.              |
-| `pnpm typecheck`          | `astro check`.                                                     |
-| `pnpm check:parity`       | Fail if any docs slug lacks an en/es translation (the CI guard).   |
-| `pnpm test:visual`        | Screenshot every preview page of `dist/` against the baselines.    |
-| `pnpm test:visual:update` | Regenerate those baselines from CI (see `tests/visual/README.md`). |
+| Script              | What it does                                                     |
+| ------------------- | ---------------------------------------------------------------- |
+| `pnpm dev`          | Prebuild (props + registry) then `astro dev`.                    |
+| `pnpm build`        | Prebuild → `astro build` → per-locale Pagefind index.            |
+| `pnpm typecheck`    | `astro check`.                                                   |
+| `pnpm check:parity` | Fail if any docs slug lacks an en/es translation (the CI guard). |
+| `pnpm test:e2e`     | Playwright assertions over the built `dist/` (see below).        |
 
 ## Build pipeline
 
@@ -25,13 +24,19 @@ and the static registry served under `/r/`.
 3. **index** — Pagefind indexes `dist/en` and `dist/es` into separate bundles
    (`dist/<locale>/pagefind`) so search never mixes languages.
 
-## Visual regression
+## End-to-end checks
 
-`tests/visual` screenshots every **preview page** of `dist/` at 375/768/1280 px
-in light and dark and compares it against a committed baseline, so a visual
-regression on any primitive or block fails CI. The baselines are rendered in a
-pinned Playwright container and refreshed with `pnpm docs:visual:update` —
-see `tests/visual/README.md`.
+`tests/e2e` serves the built `dist/` and asserts facts about it: that the
+sidebar lists exactly the locale's docs pages in a stable order with the right
+current row, that every island in `src/islands` hydrates on some **preview
+page**, and — in `preview-cascade.spec.ts` — which CSS rule actually wins inside
+a live `<Preview>` panel. All text and computed styles, no screenshots.
+
+This used to also compare 204 committed pixel baselines per platform. They were
+dropped: almost every PR touches a token, a stylesheet or a page, so the
+baselines needed regenerating through a CI round-trip nearly every time, which
+cost far more than the diffs caught. Check visual changes by looking at the
+docs preview.
 
 ## i18n
 
