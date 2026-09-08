@@ -1,14 +1,12 @@
 /**
  * Non-pixel guards over the built docs.
  *
- * The per-page baselines no longer render the sidebar and the chrome baseline
- * renders a *fixture* sidebar, so nothing in the pixel seam can still answer
- * "did the new page actually reach the navigation, in the right place?". These
- * assertions do, in text rather than pixels — which also means they commit no
- * artifact and can never conflict between parallel branches.
+ * "Did the new page actually reach the navigation, in the right place?" is the
+ * kind of question the docs build can get wrong silently. These assertions ask
+ * it in text rather than pixels — which means they commit no artifact and can
+ * never conflict between parallel branches.
  *
- * They read `dist/`, which the suite already requires, and run under a single
- * project because none of them depends on the width or the colour scheme.
+ * They read `dist/`, which the suite already requires.
  */
 import { readdirSync, readFileSync } from "node:fs";
 import { basename, resolve } from "node:path";
@@ -44,17 +42,8 @@ function contentSlugs(locale: string): string[] {
 }
 
 test.describe("built docs", () => {
-  // Pure text assertions over the build: nothing here depends on the width or
-  // the colour scheme, so one project runs them and the other five skip rather
-  // than reporting the same failure six times.
-  //
-  // Takes no arguments on purpose. Playwright rejects a first parameter that
-  // isn't an object-destructuring pattern (it reads fixture names off the
-  // signature), and an empty `{}` pattern is an eslint error — so read the
-  // project off `test.info()` instead of asking for a fixture nothing here uses.
-  test.beforeEach(() => {
-    test.skip(test.info().project.name !== "1280-light", "width- and scheme-independent");
-  });
+  // Pure text assertions over the build: nothing here touches the rendered
+  // page, only the HTML the build emitted and the sources it came from.
 
   for (const locale of LOCALES) {
     test(`sidebar lists every ${locale} docs page`, () => {
@@ -90,9 +79,9 @@ test.describe("built docs", () => {
     });
   }
 
-  test("every island is on a captured page", () => {
-    // `pages.ts` derives the matrix from `<astro-island` markers in `dist/`, so
-    // a demo whose page fails to hydrate drops out of the seam without a single
+  test("every island is on a preview page", () => {
+    // `pages.ts` derives its list from `<astro-island` markers in `dist/`, so a
+    // demo whose page fails to hydrate drops out of the seam without a single
     // red test. Astro names the island bundle after its source file, which is
     // enough to tie the two ends together.
     const islands = readdirSync(resolve(srcDir, "islands"))
@@ -101,12 +90,12 @@ test.describe("built docs", () => {
       .sort();
     expect(islands.length, "no islands found").toBeGreaterThan(0);
 
-    const captured = previewPages()
+    const rendered = previewPages()
       .map((p) => readFileSync(p.file, "utf8"))
       .join("\n");
     const missing = islands.filter(
-      (name) => !new RegExp(`component-url="[^"]*/${name}\\.[^"]*"`).test(captured),
+      (name) => !new RegExp(`component-url="[^"]*/${name}\\.[^"]*"`).test(rendered),
     );
-    expect(missing, "islands that no captured page hydrates").toEqual([]);
+    expect(missing, "islands that no preview page hydrates").toEqual([]);
   });
 });

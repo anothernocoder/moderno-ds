@@ -90,7 +90,7 @@ describe("the docs Tailwind build compiles what blocks are written with", () => 
   /**
    * Emitting a rule is not the same as that rule winning: this suite reads the
    * stylesheet, so it cannot see the preflight below being overridden wholesale
-   * by an unlayered `main h2`. `tests/visual/preview-cascade.spec.ts` asks a
+   * by an unlayered `main h2`. `tests/e2e/preview-cascade.spec.ts` asks a
    * browser for the computed styles inside a real preview panel — that is the
    * assertion that fails when the cascade moves. Keep the two together.
    */

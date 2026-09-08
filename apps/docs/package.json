@@ -12,8 +12,7 @@
     "index": "pagefind --site dist/en --output-path dist/en/pagefind && pagefind --site dist/es --output-path dist/es/pagefind",
     "preview": "astro preview",
     "typecheck": "astro check",
-    "test:visual": "playwright test",
-    "test:visual:update": "node --experimental-strip-types ./scripts/update-visual-baselines.ts",
+    "test:e2e": "playwright test",
     "check:parity": "node --experimental-strip-types ./scripts/check-parity.ts"
   },
   "dependencies": {

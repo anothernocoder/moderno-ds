@@ -27,12 +27,12 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test
 
-  # Visual regression: build the docs, then compare every preview page against
-  # the committed baselines. Runs in the pinned Playwright image because
-  # screenshots are only reproducible inside the environment that rendered them
-  # — the same image `visual-baselines.yml` regenerates the baselines in. Bump
-  # this tag and `@playwright/test` in apps/docs/package.json together.
-  visual:
+  # Docs end-to-end: build the docs, then assert facts about the build — the
+  # sidebar's contents, that every island hydrates, and which CSS rule wins
+  # inside a live `<Preview>` panel. Text and computed styles only, so nothing
+  # here is host-dependent; the pinned Playwright image is just a browser that
+  # matches `@playwright/test` in apps/docs/package.json (bump them together).
+  e2e:
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.63.0-noble
@@ -47,26 +47,13 @@ jobs:
       - run: pnpm theme:build
       # The suite serves dist/, so the docs (and the packages they render) must
       # be built first — Pagefind index included, since the search UI is part of
-      # every captured page.
+      # every page it loads.
       - run: pnpm --filter @moderno-ui/docs... build
-      - run: pnpm docs:visual
-      # Expected/actual/diff triptych for every page that moved.
+      - run: pnpm docs:e2e
       - if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: visual-diff
+          name: e2e-results
           path: apps/docs/test-results
-          retention-days: 14
-      # A page with no baseline yet (a brand-new docs page) still fails the run,
-      # but Playwright writes the screenshot it would have compared against.
-      # Copying *that page's files* out of this artifact is how it joins the
-      # matrix — never the whole directory, which would revert baselines merged
-      # since this branch's base. A changed page needs `pnpm docs:visual:update`
-      # instead (`--only <name>` to keep it to the pages that actually moved).
-      - if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: visual-baselines
-          path: apps/docs/tests/visual/__screenshots__/linux
           if-no-files-found: ignore
           retention-days: 14
