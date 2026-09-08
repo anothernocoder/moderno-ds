@@ -2,7 +2,7 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { sidebarSections, type NavPage } from "./nav.ts";
+import { byReadingOrder, sidebarSections, type NavPage } from "./nav.ts";
 import { locales, type Locale } from "./ui.ts";
 
 describe("sidebarSections", () => {
@@ -72,5 +72,25 @@ describe("docs navigation — the registry tiers have their own sections", () =>
   it("gives both locales the same number of sidebar sections", () => {
     const counts = locales.map((l) => sidebarSections(readNavPages(l)).length);
     expect(new Set(counts).size).toBe(1);
+  });
+});
+
+describe("docs reading order — a property of the content, not of the loader", () => {
+  for (const locale of locales) {
+    it(`${locale}: every page claims its own \`order\``, () => {
+      const orders = readNavPages(locale).map((p) => p.order);
+      const duplicated = orders.filter((o, i) => orders.indexOf(o) !== i);
+      expect(
+        duplicated,
+        `pages sharing an \`order\` leave their sequence to the content loader`,
+      ).toEqual([]);
+    });
+  }
+
+  it("orders both locales identically — the two llms.txt files list the same sequence", () => {
+    const sequences = locales.map((l) =>
+      [...readNavPages(l)].sort(byReadingOrder).map((p) => p.slug),
+    );
+    expect(sequences[1]).toEqual(sequences[0]);
   });
 });
