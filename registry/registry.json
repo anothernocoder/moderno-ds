@@ -54,9 +54,9 @@
     {
       "name": "login-form-react",
       "type": "registry:block",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "Login Form (React)",
-      "description": "Sign-in card composing the @moderno-ui/react Field and Button primitives.",
+      "description": "Sign-in section composing the @moderno-ui/react Card, Field, Checkbox, Button and Alert primitives; responds to its container (@container) rather than the viewport, and renders its default, disabled, loading and error states from props.",
       "dependencies": ["@moderno-ui/react"],
       "registryDependencies": [],
       "files": [
@@ -70,9 +70,9 @@
     {
       "name": "login-form-vue",
       "type": "registry:block",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "Login Form (Vue)",
-      "description": "Sign-in card composing the @moderno-ui/vue Field and Button primitives.",
+      "description": "Sign-in section composing the @moderno-ui/vue Card, Field, Checkbox, Button and Alert primitives; responds to its container (@container) rather than the viewport, and renders its default, disabled, loading and error states from props.",
       "dependencies": ["@moderno-ui/vue"],
       "registryDependencies": [],
       "files": [
@@ -86,9 +86,9 @@
     {
       "name": "login-form-svelte",
       "type": "registry:block",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "Login Form (Svelte)",
-      "description": "Sign-in card composing the @moderno-ui/svelte Field and Button primitives.",
+      "description": "Sign-in section composing the @moderno-ui/svelte Card, Field, Checkbox, Button and Alert primitives; responds to its container (@container) rather than the viewport, and renders its default, disabled, loading and error states from props.",
       "dependencies": ["@moderno-ui/svelte"],
       "registryDependencies": [],
       "files": [
@@ -102,9 +102,9 @@
     {
       "name": "login-form-solid",
       "type": "registry:block",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "Login Form (Solid)",
-      "description": "Sign-in card composing the @moderno-ui/solid Field and Button primitives.",
+      "description": "Sign-in section composing the @moderno-ui/solid Card, Field, Checkbox, Button and Alert primitives; responds to its container (@container) rather than the viewport, and renders its default, disabled, loading and error states from props.",
       "dependencies": ["@moderno-ui/solid"],
       "registryDependencies": [],
       "files": [

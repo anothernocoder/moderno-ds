@@ -52,7 +52,10 @@ CLI copies, not a mockup of it.
 
 ### Login form
 
-Composes `Field` (label, helper text, error text) and `Button`.
+Composes `Card`, `Field`, `Checkbox`, `Button` and `Alert` into a sign-in
+section that sizes itself from its container. It has a page of its own —
+[Login form](/en/login-form/) — with the install command, the container steps
+and every state it renders.
 
 <Preview
   examples={{
@@ -90,14 +93,15 @@ A centred placeholder with one call to action.
   <BlocksDemo block="empty-state" client:visible />
 </Preview>
 
-## Section layout is not painted yet
+## Section layout, block by block
 
-Those previews look plain, and that is the honest state rather than a rendering
-fault. A block's primitives are fully painted by `components.css`, but the
-block's own wrapper carries a bare `moderno-block-*` class with **no rules on
-`main`** — no grid, no spacing scale, no card surface. Section layout arrives
-with the container-query styling pipeline described in ADR-0005.
+The container-query styling pipeline of ADR-0005 has landed, and the blocks are
+being rewritten onto it one at a time. A rewritten block lays itself out with
+the Tailwind preset's contract-backed utilities and the `@sm` / `@md` / `@lg`
+container variants — `login-form` and `pricing` above are on that footing, and
+each gets its own page as it lands.
 
-Showing the gap is the point: these previews are captured by the visual suite,
-so when the pipeline lands, the baselines move and the change has to be reviewed
-rather than noticed later.
+`empty-state` is not there yet: its wrapper still carries a bare
+`moderno-block-*` class with **no rules on `main`** — no grid, no spacing scale,
+no surface. Showing the gap is the point rather than hiding it behind a mockup;
+it closes when that block is rewritten in turn.

@@ -54,7 +54,10 @@ exactamente lo que copia la CLI, no una maqueta.
 
 ### Formulario de acceso
 
-Compone `Field` (etiqueta, texto de ayuda, texto de error) y `Button`.
+Compone `Card`, `Field`, `Checkbox`, `Button` y `Alert` en una sección de acceso
+que se dimensiona desde su contenedor. Tiene página propia —
+[Formulario de acceso](/es/login-form/) — con el comando de instalación, los
+pasos de contenedor y todos los estados que renderiza.
 
 <Preview
   examples={{
@@ -92,15 +95,15 @@ Un marcador centrado con una sola llamada a la acción.
   <BlocksDemo block="empty-state" client:visible />
 </Preview>
 
-## El layout de sección todavía no se pinta
+## El layout de sección, bloque a bloque
 
-Esas vistas previas se ven planas, y ese es el estado honesto, no una falla de
-renderizado. Las primitivas del bloque sí las pinta `components.css`, pero el
-contenedor propio del bloque lleva una clase `moderno-block-*` **sin reglas en
-`main`**: sin grilla, sin escala de espaciado, sin superficie de tarjeta. El
-layout de sección llega con el pipeline de estilos por container queries que
-describe el ADR-0005.
+El pipeline de estilos por container queries del ADR-0005 ya aterrizó, y los
+bloques se van reescribiendo sobre él de a uno. Un bloque reescrito se maqueta
+con las utilidades del preset de Tailwind respaldadas por el contrato y con las
+variantes de contenedor `@sm` / `@md` / `@lg`: `login-form` y `pricing` arriba
+ya están sobre esa base, y cada uno estrena su propia página al aterrizar.
 
-Mostrar el hueco es el punto: estas vistas previas las captura la suite visual,
-así que cuando el pipeline aterrice las líneas base se mueven y el cambio tiene
-que revisarse, no descubrirse después.
+`empty-state` todavía no llega: su contenedor sigue llevando una clase
+`moderno-block-*` **sin reglas en `main`** — sin grilla, sin escala de
+espaciado, sin superficie. Mostrar el hueco es el punto, en vez de taparlo con
+una maqueta; se cierra cuando le toque la reescritura.

@@ -10,6 +10,11 @@
  * `pkg` names the React package (every primitive page already passes this);
  * the other three frameworks share its scope, so the framework segment is the
  * only thing that changes — `@moderno-ui/react` → `@moderno-ui/vue`, etc.
+ *
+ * A registry item is installed rather than depended on, so a block/screen/flow
+ * page passes `item` instead: the command becomes `<runner> @moderno-ui/cli add
+ * <item>-<framework>`, which is how the catalog names its per-framework entries
+ * (`login-form-react`, `login-form-svelte`, …). Exactly one of `pkg` / `item`.
  */
 import { Code } from "astro:components";
 import shikiConfig from "../../shiki.config.ts";
@@ -19,20 +24,30 @@ type Framework = "react" | "vue" | "svelte" | "solid";
 const FRAMEWORKS: Framework[] = ["react", "vue", "svelte", "solid"];
 
 interface Props {
-  /** The React package, e.g. `@moderno-ui/react`. */
-  pkg: string;
-  /** `dependency` (default) or `cli` (dlx/bunx/npx execution). */
+  /** The React package, e.g. `@moderno-ui/react`. Mutually exclusive with `item`. */
+  pkg?: string;
+  /** Registry item base name, e.g. `login-form`. Mutually exclusive with `pkg`. */
+  item?: string;
+  /** `dependency` (default) or `cli` (dlx/bunx/npx execution). Ignored with `item`. */
   mode?: "dependency" | "cli";
 }
 
-const { pkg, mode = "dependency" } = Astro.props;
+const { pkg, item, mode = "dependency" } = Astro.props;
+
+if ((pkg === undefined) === (item === undefined)) {
+  throw new Error("<Install> takes exactly one of `pkg` (an npm package) or `item` (a registry item)");
+}
 
 /** `@moderno-ui/react` → `@moderno-ui/vue` and friends. */
 function pkgFor(framework: Framework): string {
-  return pkg.slice(0, pkg.lastIndexOf("/") + 1) + framework;
+  return pkg!.slice(0, pkg!.lastIndexOf("/") + 1) + framework;
 }
 
 function commandFor(framework: Framework): { bun: string; pnpm: string; npm: string } {
+  if (item !== undefined) {
+    const add = `@moderno-ui/cli add ${item}-${framework}`;
+    return { bun: `bunx ${add}`, pnpm: `pnpm dlx ${add}`, npm: `npx ${add}` };
+  }
   const p = pkgFor(framework);
   return mode === "cli"
     ? { bun: `bunx ${p}`, pnpm: `pnpm dlx ${p}`, npm: `npx ${p}` }

@@ -1,0 +1,87 @@
+---
+title: Formulario de acceso
+description: La sección de inicio de sesión — email, contraseña, recordarme, envío y los enlaces de recuperación y registro — compuesta con Card, Field, Checkbox, Button y Alert, y dimensionada por su contenedor en vez de por el viewport.
+group: Bloques
+order: 101
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import LoginFormBlockDemo from "../../../islands/LoginFormBlockDemo.svelte";
+import loginFormReact from "../../../../../../registry/blocks/login-form/react/login-form.tsx?raw";
+import loginFormVue from "../../../../../../registry/blocks/login-form/vue/LoginForm.vue?raw";
+import loginFormSolid from "../../../../../../registry/blocks/login-form/solid/login-form.tsx?raw";
+import loginFormSvelte from "../../../../../../registry/blocks/login-form/svelte/LoginForm.svelte?raw";
+
+**Login form** es la sección de inicio de sesión: un campo de email, uno de
+contraseña, recordarme, el botón de envío y los dos enlaces que toda pantalla de
+acceso necesita — recuperar la contraseña y crear una cuenta. Compone `Card`,
+`Field`, `Checkbox`, `Button` y `Alert`, y no pinta nada por su cuenta, así que
+un tema lo reviste sin tocarlo.
+
+Es un _bloque_, no una pantalla: no es dueño del viewport, no guarda estado de
+navegación y no hace ninguna petición. La pantalla `sign-in` lo compone y
+sostiene el estado; este archivo es una sección que también puedes soltar en un
+modal o en un panel de ajustes.
+
+<FrameworkSelect locale="es" />
+
+<Preview
+  examples={{
+    react: loginFormReact,
+    vue: loginFormVue,
+    solid: loginFormSolid,
+    svelte: loginFormSvelte,
+  }}
+>
+  <LoginFormBlockDemo client:visible />
+</Preview>
+
+## Instalación
+
+<Install item="login-form" />
+
+Instalar un bloque copia su archivo dentro de tu proyecto y lo registra en
+`.moderno/manifest.json` con su propia versión, así que `moderno update` y
+`moderno diff` siguen funcionando por ítem. Desde ese momento el archivo es tuyo.
+
+## Dimensionado
+
+El bloque responde a **su contenedor**, nunca a la ventana. La tarjeta se limita
+a `--container-sm` (24rem) — un campo de credenciales más ancho que eso se lee
+peor, no mejor — y la fila secundaria (recordarme más el enlace de recuperación)
+se apila por debajo del paso `@sm` y ocupa una sola línea a partir de él. El
+encabezado sube de tamaño en `@md`, donde la sección tiene aire de sobra.
+
+Por eso el mismo archivo se ve bien en una barra lateral de 320px, dentro de una
+tarjeta y centrado en una página de 1280px, tanto en claro como en oscuro, sin
+una sola media query. Las reglas están en
+[Bloques y contenedores](/es/blocks-and-containers/) y en el ADR-0005.
+
+## Estados
+
+| Estado              | Qué se renderiza                                                                                                                                    |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Por defecto / vacío | El formulario en limpio — placeholders, sin valores. Un formulario de acceso no tiene colección que pueda estar vacía, así que son el mismo render. |
+| Hover               | Las afordancias propias de los controles desde `components.css`; ambos enlaces suben a `--foreground` y se subrayan.                                |
+| Foco visible        | El contorno compartido de 2px con `--ring` en cada control y en los dos enlaces.                                                                    |
+| Deshabilitado       | `disabled` — el acceso no está disponible (un espacio solo con SSO, una cuenta bloqueada).                                                          |
+| Cargando            | `loading` — todos los controles inertes y el envío con `aria-busy` y un spinner que se detiene con `prefers-reduced-motion`.                        |
+| Error               | `error="…"` — una sola alerta a nivel de formulario y ambos campos de credenciales inválidos.                                                       |
+
+El error es deliberadamente de formulario, no de campo. Decirle a alguien que _la
+contraseña_ estaba mal también le dice que el email existe, que es la primera
+mitad de un ataque de credential stuffing; el bloque no lo hace, y el código que
+conectes detrás tampoco debería.
+
+## Propiedades
+
+| Prop         | Tipo               | Por defecto | Qué hace                                                                                            |
+| ------------ | ------------------ | ----------- | --------------------------------------------------------------------------------------------------- |
+| `error`      | `string`           | —           | Mensaje de error de formulario; muestra la alerta e invalida ambos campos de credenciales.          |
+| `loading`    | `boolean`          | `false`     | El envío está en curso: controles inertes, botón ocupado.                                           |
+| `disabled`   | `boolean`          | `false`     | El acceso no está disponible.                                                                       |
+| `onSubmit`   | manejador de envío | —           | El evento nativo de envío. React y Solid reciben `onSubmit`, Svelte `onsubmit`, Vue emite `submit`. |
+| `forgotHref` | `string`           | `"#"`       | A dónde apunta «¿Olvidaste tu contraseña?».                                                         |
+| `signUpHref` | `string`           | `"#"`       | A dónde apunta «Crear una cuenta».                                                                  |

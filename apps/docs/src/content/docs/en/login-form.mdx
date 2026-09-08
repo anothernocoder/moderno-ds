@@ -1,0 +1,105 @@
+---
+title: Login form
+description: The sign-in section — email, password, remember-me, submit and the recovery and sign-up links — composed from Card, Field, Checkbox, Button and Alert, sized by its container rather than the viewport.
+group: Blocks
+order: 101
+agent:
+  intent: The sign-in section of an authentication screen.
+  whenToUse: "A page or panel where a returning user enters an email and a password: a sign-in screen, a re-authentication step, a modal that unlocks a privileged action."
+  whenNotToUse:
+    - case: Collecting a one-time code sent by email or SMS
+      use: PinInput, inside the verify screen
+    - case: A full-viewport page with its own heading, illustration and footer
+      use: the sign-in screen, which composes this block
+    - case: A generic form of your own fields
+      use: Field and Button directly
+  gotchas:
+    - "Presentational: it holds no credentials and issues no request. Pass `error` / `loading` / `disabled` and handle the native submit event yourself."
+    - "`error` is a form-level message, not a field-level one — both credential fields go invalid and neither says which was wrong, so the form never confirms that an email address exists."
+    - "`loading` implies inert: every control is disabled and the submit carries aria-busy, so a second submit cannot be fired mid-request."
+    - "The block responds to its container, never the viewport. Mount it in something narrower than --container-sm and the secondary row stacks on its own."
+    - "It is a block, so you own the copy: the labels, the links and the hrefs are yours to edit after `moderno add`."
+  theming:
+    - "The surface is Card (--card, --border, --radius); the controls are Field and Checkbox; the submit is Button's primary variant. Nothing is painted here."
+    - "The error alert reads --destructive through Alert's error variant, so a destructive action and a failed sign-in speak with one voice."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the card's width cap is --container-sm."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import LoginFormBlockDemo from "../../../islands/LoginFormBlockDemo.svelte";
+import loginFormReact from "../../../../../../registry/blocks/login-form/react/login-form.tsx?raw";
+import loginFormVue from "../../../../../../registry/blocks/login-form/vue/LoginForm.vue?raw";
+import loginFormSolid from "../../../../../../registry/blocks/login-form/solid/login-form.tsx?raw";
+import loginFormSvelte from "../../../../../../registry/blocks/login-form/svelte/LoginForm.svelte?raw";
+
+**Login form** is the sign-in section: an email field, a password field,
+remember-me, the submit, and the two links every sign-in screen needs — password
+recovery and sign-up. It composes `Card`, `Field`, `Checkbox`, `Button` and
+`Alert` and paints nothing of its own, so a theme re-skins it untouched.
+
+It is a _block_, not a screen: it does not own the viewport, holds no navigation
+state and issues no request. The `sign-in` screen composes it and keeps the
+state; this file is a section you can also drop into a modal or a settings panel.
+
+<FrameworkSelect locale="en" />
+
+<Preview
+  examples={{
+    react: loginFormReact,
+    vue: loginFormVue,
+    solid: loginFormSolid,
+    svelte: loginFormSvelte,
+  }}
+>
+  <LoginFormBlockDemo client:visible />
+</Preview>
+
+## Installation
+
+<Install item="login-form" />
+
+Installing a block copies its file into your project and records it in
+`.moderno/manifest.json` under its own version, so `moderno update` and
+`moderno diff` keep working per item. From that moment the file is yours.
+
+## Sizing
+
+The block responds to **its container**, never the window. The card caps itself
+at `--container-sm` (24rem) — a credential field wider than that is harder to
+read, not easier — and the secondary row (remember-me plus the recovery link)
+stacks below the `@sm` step and sits on one line at or above it. The heading
+steps up at `@md`, where the section has room to breathe.
+
+That is why the same file is correct in a 320px sidebar, inside a card and
+centred on a 1280px page, in light and dark alike, without a single media query.
+The rules behind this are in [Blocks and containers](/en/blocks-and-containers/)
+and ADR-0005.
+
+## States
+
+| State           | What renders                                                                                                                |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| Default / empty | The pristine form — placeholders, no values. A sign-in form has no collection to be empty of, so these are the same render. |
+| Hover           | The controls' own affordances from `components.css`; both links raise to `--foreground` and underline.                      |
+| Focus visible   | The shared 2px `--ring` outline on every control, and on the two links.                                                     |
+| Disabled        | `disabled` — sign-in is unavailable (an SSO-only workspace, a locked account).                                              |
+| Loading         | `loading` — every control inert, the submit `aria-busy` with a spinner that stops under `prefers-reduced-motion`.           |
+| Error           | `error="…"` — one form-level `Alert`, both credential fields invalid.                                                       |
+
+The error is deliberately form-level. Telling a visitor that _the password_ was
+wrong also tells them the email exists, which is the first half of a credential
+stuffing run; the block never does that, and neither should the code you wire
+behind it.
+
+## Props
+
+| Prop         | Type           | Default | What it does                                                                                 |
+| ------------ | -------------- | ------- | -------------------------------------------------------------------------------------------- |
+| `error`      | `string`       | —       | Form-level failure message; renders the alert and invalidates both credential fields.        |
+| `loading`    | `boolean`      | `false` | The submit is in flight: controls inert, button busy.                                        |
+| `disabled`   | `boolean`      | `false` | Sign-in is unavailable.                                                                      |
+| `onSubmit`   | submit handler | —       | The native submit event. React/Solid take `onSubmit`, Svelte `onsubmit`, Vue emits `submit`. |
+| `forgotHref` | `string`       | `"#"`   | Where "Forgot your password?" points.                                                        |
+| `signUpHref` | `string`       | `"#"`   | Where "Create an account" points.                                                            |
