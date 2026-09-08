@@ -36,7 +36,7 @@ Do not improvise architecture: the technical decisions are already made (below) 
 - **Cross-framework styling hook:** use the `data-scope` / `data-part` attributes that Ark exposes to write **a single stylesheet** that applies identically across all frameworks. This is the "looks the same" guarantee.
 - **Charts (custom):** **only the D3 math layer** → `d3-scale`, `d3-shape`, `d3-array`, `d3-path` (pure functions, no DOM, SSR-safe). The `<svg>` is rendered with each framework's native templating. The SVG elements read the same theme CSS variables. **Forbidden:** `d3-selection`/`d3-transition`.
 - **Distribution:** **shadcn**-style registry + its CLI. Versioned items.
-- **Docs:** **plain Astro + MDX + Content Collections**. Live previews as **Svelte or Solid islands** (lightweight runtime). **Starlight forbidden.**
+- **Docs:** **plain Astro + MDX + Content Collections**. Live previews as **Svelte or Solid islands** (lightweight runtime). **Starlight forbidden.** Pieces of a docs framework may be harvested as owned source, never adopted as a framework — ADR-0006.
 
 ---
 
@@ -160,7 +160,7 @@ The consumer **never** imports internal paths (`@moderno-ui/tokens/dist/...`, `@
 
 ## Guardrails (mistakes NOT to make)
 
-- Do **NOT** use Starlight or a generic docs framework. Plain Astro + MDX.
+- Do **NOT** adopt Starlight or a generic docs framework. Plain Astro + MDX. Harvesting individual pieces from one (e.g. Nimbus) as owned source is allowed — ADR-0006.
 - Do **NOT** use a charts library (Unovis, Recharts, etc.) for the custom charts. Only d3-math + your own SVG. (Unovis only if a generic, non-custom chart is requested later.)
 - Do **NOT** use `d3-selection`/`d3-transition`.
 - Do **NOT** use Zag.js directly except for a targeted opt-out for bundle reasons in a specific component; use Ark.
