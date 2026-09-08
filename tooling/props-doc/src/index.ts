@@ -127,13 +127,58 @@ function isNativeAttrOrigin(declFilePath: string): boolean {
   );
 }
 
-/** Collapse multi-line type text and drop the implicit optional `| undefined`. */
-function formatType(text: string): string {
-  return text
+/**
+ * Drop a pair of parentheses wrapping the whole type. TypeScript parenthesises
+ * a function type to write it inside a union, so removing the optional's
+ * `| undefined` leaves `((details: Details) => void)` — punctuation that says
+ * nothing about the API and isn't how anyone writes the type down.
+ */
+function unwrapOuterParens(text: string): string {
+  if (!text.startsWith("(") || !text.endsWith(")")) return text;
+  let depth = 0;
+  for (let i = 0; i < text.length; i++) {
+    if (text[i] === "(") depth++;
+    else if (text[i] === ")") {
+      depth--;
+      // The opening paren closed before the end, so it wraps a part, not the whole.
+      if (depth === 0 && i < text.length - 1) return text;
+    }
+  }
+  return unwrapOuterParens(text.slice(1, -1).trim());
+}
+
+/**
+ * Collapse multi-line type text and drop what the printer added rather than the
+ * API declared: the implicit optional `| undefined`, `import("…")` qualifiers,
+ * and the qualifier of a namespace import — TypeScript prints Ark's types
+ * through whatever local alias the binding happened to import them under
+ * (`ArkSelect.ValueChangeDetails`), and that alias is private to our source
+ * file, so it would send a reader looking for an import that doesn't exist.
+ */
+function formatType(text: string, localAliases: readonly string[] = []): string {
+  let out = text
     .replace(/import\("[^"]*"\)\./g, "")
     .replace(/\s+/g, " ")
     .replace(/\s*\|\s*undefined\b/g, "")
     .trim();
+  for (const alias of localAliases) {
+    out = out.replace(new RegExp(`\\b${alias}\\.`, "g"), "");
+  }
+  return unwrapOuterParens(out);
+}
+
+/** The names a source file binds its imports to (`import { X as ArkX }` → `ArkX`). */
+function importAliases(source: SourceFile): string[] {
+  const names: string[] = [];
+  for (const decl of source.getImportDeclarations()) {
+    const defaultImport = decl.getDefaultImport()?.getText();
+    if (defaultImport) names.push(defaultImport);
+    const namespaceImport = decl.getNamespaceImport()?.getText();
+    if (namespaceImport) names.push(namespaceImport);
+    for (const named of decl.getNamedImports())
+      names.push(named.getAliasNode()?.getText() ?? named.getName());
+  }
+  return names.filter((n) => /^[A-Za-z_$][\w$]*$/.test(n));
 }
 
 /**
@@ -145,14 +190,14 @@ function formatType(text: string): string {
  * `ListCollection<T>` or `PositioningOptions` would trade a name the reader can
  * look up for a wall of structure.
  */
-function displayType(type: Type, enclosing: Node): string {
+function displayType(type: Type, enclosing: Node, localAliases: readonly string[]): string {
   if (type.isUnion()) {
     const members = type.getUnionTypes().filter((t) => !t.isUndefined());
     if (members.length > 1 && members.every((t) => t.isStringLiteral() || t.isNumberLiteral())) {
-      return members.map((t) => formatType(t.getText(enclosing))).join(" | ");
+      return members.map((t) => formatType(t.getText(enclosing), localAliases)).join(" | ");
     }
   }
-  return formatType(type.getText(enclosing));
+  return formatType(type.getText(enclosing), localAliases);
 }
 
 /**
@@ -225,6 +270,7 @@ export function extractProps(opts: ExtractOptions): ComponentDoc[] {
       throw new Error(`${entry.file}: no exported type "${entry.type}"`);
     }
 
+    const localAliases = importAliases(source);
     const props: PropDoc[] = [];
     let propsComplete = true;
     for (const sym of decl.getType().getProperties()) {
@@ -236,7 +282,7 @@ export function extractProps(opts: ExtractOptions): ComponentDoc[] {
       }
 
       const required = (sym.getFlags() & SymbolFlags.Optional) === 0;
-      const type = displayType(sym.getTypeAtLocation(decl), decl);
+      const type = displayType(sym.getTypeAtLocation(decl), decl, localAliases);
       const prop: PropDoc = { name: sym.getName(), type, required };
       const defaultValue = jsDocDefault(sym);
       if (defaultValue) prop.default = defaultValue;

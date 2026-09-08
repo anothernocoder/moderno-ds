@@ -22,16 +22,72 @@ interface Props {
 const { component } = Astro.props;
 const t = useTranslations(currentLocale(Astro.currentLocale));
 
+/**
+ * The short form of a type whose spelled-out object shape would swamp its row —
+ * `ids`, the one prop on each machine-backed root whose type is the component's
+ * whole part vocabulary. `Partial<{ … }>` says what it is; the full shape is one
+ * click away rather than a wall of text or a cell that looks cut off. A long
+ * type with no object body (a wide union) is left alone: it reads fine wrapped.
+ */
+function collapseType(type: string): string | null {
+  if (type.length <= 72) return null;
+  const open = type.indexOf("{");
+  const close = type.lastIndexOf("}");
+  if (open === -1 || close < open) return null;
+  return `${type.slice(0, open)}{ … }${type.slice(close + 1)}`;
+}
+
+/**
+ * The same object type as a reader would write it: one member per line. On one
+ * line it wraps mid-identifier and reads as a blob; broken up it reads as the
+ * record of part ids it is. Members are split on the semicolons at brace depth
+ * zero, so a nested function type (`(value?: string) => string`) stays whole.
+ */
+function prettyType(type: string): string {
+  const open = type.indexOf("{");
+  const close = type.lastIndexOf("}");
+  if (open === -1 || close < open) return type;
+
+  const members: string[] = [];
+  let depth = 0;
+  let current = "";
+  let previous = "";
+  for (const char of type.slice(open + 1, close)) {
+    if (char === "{" || char === "(" || char === "<") depth++;
+    // `>` closes a generic — unless it is the arrow of a function type.
+    else if ((char === "}" || char === ")" || (char === ">" && previous !== "=")) && depth > 0)
+      depth--;
+    previous = char;
+    if (char === ";" && depth === 0) {
+      members.push(current.trim());
+      current = "";
+      continue;
+    }
+    current += char;
+  }
+  if (current.trim()) members.push(current.trim());
+
+  const body = members
+    .filter(Boolean)
+    .map((member) => `  ${member};`)
+    .join("\n");
+  return `${type.slice(0, open)}{\n${body}\n}${type.slice(close + 1)}`;
+}
+
 // Generated at build by `moderno-props-doc` (the prebuild step). Loaded eagerly
 // so a missing component surfaces as a clear build-time error, not a 404.
 const modules = import.meta.glob<ComponentDoc>("../generated/props/*.json", { eager: true });
 const entry = Object.entries(modules).find(([path]) => path.endsWith(`/${component}.json`));
 const doc = entry?.[1] as ComponentDoc | undefined;
-const props = doc?.props ?? [];
+const rows = (doc?.props ?? []).map((p) => ({
+  ...p,
+  shortType: collapseType(p.type),
+  prettyType: prettyType(p.type),
+}));
 ---
 
 {
-  props.length === 0 ? (
+  rows.length === 0 ? (
     <p class="props-empty">{t("props.empty")}</p>
   ) : (
     <div class="props-table-wrap">
@@ -45,7 +101,7 @@ const props = doc?.props ?? [];
           </tr>
         </thead>
         <tbody>
-          {props.map((p) => (
+          {rows.map((p) => (
             <tr>
               {/* The summary sits under the name rather than in a fifth column:
                   a machine's Root has dozens of props with a sentence each, and
@@ -56,7 +112,16 @@ const props = doc?.props ?? [];
                 {p.description && <p class="props-desc">{p.description}</p>}
               </td>
               <td>
-                <code class="props-type">{p.type}</code>
+                {p.shortType ? (
+                  <details class="props-type-more">
+                    <summary>
+                      <code class="props-type">{p.shortType}</code>
+                    </summary>
+                    <code class="props-type">{p.prettyType}</code>
+                  </details>
+                ) : (
+                  <code class="props-type">{p.type}</code>
+                )}
               </td>
               <td>{p.required ? t("props.yes") : t("props.no")}</td>
               <td>{p.default ? <code>{p.default}</code> : "—"}</td>

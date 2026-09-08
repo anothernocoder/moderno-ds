@@ -81,11 +81,19 @@ describe("extractProps (react)", () => {
     expect(size.type).toBe('"sm" | "md" | "lg"');
   });
 
+  it("prints a callback the way the consumer writes it", () => {
+    // The printer parenthesises a function type to sit in a union with
+    // `undefined`, and names Ark's types through the binding's private import
+    // alias: `((details: ArkSelect.ValueChangeDetails<T>) => void)`.
+    const onValueChange = selectDoc().props.find((p) => p.name === "onValueChange")!;
+    expect(onValueChange.type).toBe("(details: ValueChangeDetails<T>) => void");
+  });
+
   it("keeps a named non-literal type as its name", () => {
     // Expanding `ListCollection<T>` would trade a name the reader can look up
     // for a wall of structure.
     const collection = selectDoc().props.find((p) => p.name === "collection")!;
-    expect(collection.type).toContain("ListCollection");
+    expect(collection.type).toBe("ListCollection<T>");
   });
 
   it("collapses a multi-line JSDoc summary onto one line", () => {

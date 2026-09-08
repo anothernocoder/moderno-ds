@@ -531,12 +531,21 @@ main {
 }
 .props-type {
   color: var(--muted-foreground);
-  /* An `ids` prop's type is the whole part vocabulary spelled out; without a
-     cap that one row is taller than the ten around it. Capped and scrollable
-     rather than truncated — the full type is still there to read. */
+}
+/* A type whose object shape would swamp its row opens on demand: the summary
+   carries the short form (`Partial<{ … }>`), the body the full shape. */
+.props-type-more summary {
+  cursor: pointer;
+  color: var(--muted-foreground);
+}
+.props-type-more summary::marker {
+  color: var(--muted-foreground);
+}
+.props-type-more > .props-type {
   display: block;
-  max-height: 8em;
-  overflow-y: auto;
+  margin-top: 0.35rem;
+  /* The expanded shape is printed one member per line — keep those lines. */
+  white-space: pre-wrap;
 }
 /* The prop's summary, under its name: a measure narrow enough to read and wide
    enough that Ark's one-sentence descriptions rarely take more than two lines,
