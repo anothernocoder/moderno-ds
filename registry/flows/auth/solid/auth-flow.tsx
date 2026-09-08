@@ -5,40 +5,7 @@ import { SignIn } from "@/components/screens/sign-in";
 import { SignUp } from "@/components/screens/sign-up";
 import { Verify } from "@/components/screens/verify";
 
-/**
- * AuthFlow — the example assembly for the `auth` flow: sign-in → sign-up →
- * forgot-password → reset-password → verify, and the navigation state between
- * them. Copy it into your project with `moderno add auth-solid`; the five
- * screens and the blocks they compose arrive with it, and every file is yours
- * from that moment.
- *
- * **This is the piece you are expected to rewrite.** Every screen under it is
- * presentational on purpose — props in, callbacks out, no step, no router, no
- * timer — which leaves exactly one question open: what comes after what. That
- * question has a different answer in every application, so the design system
- * answers it once, in a file whose whole job is to be replaced by yours.
- *
- * **Navigation is link interception, not callbacks.** Every route between two
- * screens is an `href` a card or a masthead draws, because a link out of a
- * sign-in page has to work on a page whose JavaScript never arrived — precisely
- * the moment someone is locked out. The assembly hands each screen the URLs it
- * should point at (`hrefFor`) and catches the clicks on the way up, the way a
- * client router does: modified and middle clicks are left to the browser, and
- * an `href` that is not one of the flow's own is left alone.
- *
- * **Forward moves are form submissions**, read with
- * `new FormData(form, submitter)` — the submitter matters on `verify`, where
- * the resend is a second submit rather than a callback. **The one edge the
- * assembly cannot own is the email**: `reset-password` is reached in real life
- * by opening a link in an inbox, i.e. by entering the flow at that step with a
- * token out of the URL, which is what `initialStep` and `resetToken` are for.
- *
- * **Where the flow ends.** A finished sign-in, a checked code and a saved
- * password all call `onAuthenticated` with the address and return to the first
- * step. They do not paint a success page: at that point your router is expected
- * to leave, and a flow that drew its own "you are in" screen would be holding a
- * sixth screen nobody can install.
- */
+/** One of the five screens the flow moves between, in the order it moves. */
 export type AuthStep = "sign-in" | "sign-up" | "forgot-password" | "reset-password" | "verify";
 
 /** The flow, in order. Each one is what `hrefFor` is asked about. */
@@ -93,6 +60,45 @@ export interface AuthFlowProps {
   termsHref?: string;
 }
 
+/**
+ * AuthFlow — the example assembly for the `auth` flow: sign-in → sign-up →
+ * forgot-password → reset-password → verify, and the navigation state between
+ * them. Copy it into your project with `moderno add auth-solid`; the five
+ * screens and the blocks they compose arrive with it, and every file is yours
+ * from that moment.
+ *
+ * **This is the piece you are expected to rewrite.** Every screen under it is
+ * presentational on purpose — props in, callbacks out, no step, no router, no
+ * timer — which leaves exactly one question open: what comes after what. That
+ * question has a different answer in every application, so the design system
+ * answers it once, in a file whose whole job is to be replaced by yours.
+ *
+ * **What it owns**, and what the screens deliberately do not: `step`, `email`,
+ * `token`, `resendIn`, the two confirmations a card paints once a recovery link
+ * or a fresh code has gone out (`sent`, `resent`) and `errors`. The last three
+ * belong to the step that produced them, so `go` drops all three on every move.
+ *
+ * **Navigation is link interception, not callbacks.** Every route between two
+ * screens is an `href` a card or a masthead draws, because a link out of a
+ * sign-in page has to work on a page whose JavaScript never arrived — precisely
+ * the moment someone is locked out. The assembly hands each screen the URLs it
+ * should point at (`hrefFor`) and catches the clicks on the way up, the way a
+ * client router does: modified and middle clicks are left to the browser, and
+ * an `href` that is not one of the flow's own is left alone.
+ *
+ * **Forward moves are form submissions**, read with
+ * `new FormData(form, submitter)` — the submitter matters on `verify`, where
+ * the resend is a second submit rather than a callback. **The one edge the
+ * assembly cannot own is the email**: `reset-password` is reached in real life
+ * by opening a link in an inbox, i.e. by entering the flow at that step with a
+ * token out of the URL, which is what `initialStep` and `resetToken` are for.
+ *
+ * **Where the flow ends.** A finished sign-in, a checked code and a saved
+ * password all call `onAuthenticated` with the address and return to the first
+ * step. They do not paint a success page: at that point your router is expected
+ * to leave, and a flow that drew its own "you are in" screen would be holding a
+ * sixth screen nobody can install.
+ */
 export function AuthFlow(props: AuthFlowProps) {
   const merged = mergeProps(
     {
@@ -132,17 +138,23 @@ export function AuthFlow(props: AuthFlowProps) {
   const hrefFor = (target: AuthStep): string =>
     merged.hrefFor ? merged.hrefFor(target) : `#${target}`;
 
+  /**
+   * A move, and the one place the flow's per-step transients are dropped.
+   * `errors` belongs to the submit that was rejected and `sent` / `resent` to
+   * the card that confirmed; none of them outlives the screen that produced it,
+   * or asking for a link for a second address would mean reloading the page.
+   */
   const go = (next: AuthStep) => {
     setStep(next);
     setErrors(undefined);
+    setSent(false);
+    setResent(false);
     merged.onStepChange?.(next);
   };
 
   /** The flow's exit: the address goes up, and the reader goes wherever you send them. */
   const finish = (address: string) => {
-    setSent(false);
     setResendIn(0);
-    setResent(false);
     merged.onAuthenticated?.(address);
     go("sign-in");
   };
@@ -194,7 +206,6 @@ export function AuthFlow(props: AuthFlowProps) {
     if (step() === "sign-up") {
       setEmail(address);
       setResendIn(merged.resendSeconds);
-      setResent(false);
       go("verify");
       return;
     }
@@ -234,7 +245,6 @@ export function AuthFlow(props: AuthFlowProps) {
   const noticeAction = (id: string) => {
     if (id !== openTheLink.id) return;
     setToken(token() || "example-token");
-    setSent(false);
     go("reset-password");
   };
 

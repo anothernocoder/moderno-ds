@@ -124,13 +124,18 @@ que hay que borrar en un proyecto real.
 
 Todo lo que las pantallas se niegan a sostener, y nada más:
 
-| Estado     | Por qué está aquí                                                                                      |
-| ---------- | ------------------------------------------------------------------------------------------------------ |
-| `step`     | Qué pantalla está en la ruta. Una pantalla que supiera esto no podría montarse bajo tu router.         |
-| `email`    | Se lleva desde donde se escribió hasta donde se nombra después — del registro a la tarjeta del código. |
-| `token`    | El secreto del enlace del correo, enviado desde el input oculto de la tarjeta.                         |
-| `resendIn` | Los segundos que quedan del reenvío. El único `setTimeout` de todo el recorrido vive aquí.             |
-| `errors`   | Lo que rechazó el último envío, limpiado en cada cambio de paso.                                       |
+| Estado            | Por qué está aquí                                                                                      |
+| ----------------- | ------------------------------------------------------------------------------------------------------ |
+| `step`            | Qué pantalla está en la ruta. Una pantalla que supiera esto no podría montarse bajo tu router.         |
+| `email`           | Se lleva desde donde se escribió hasta donde se nombra después — del registro a la tarjeta del código. |
+| `token`           | El secreto del enlace del correo, enviado desde el input oculto de la tarjeta.                         |
+| `resendIn`        | Los segundos que quedan del reenvío. El único `setTimeout` de todo el recorrido vive aquí.             |
+| `sent` / `resent` | Las dos confirmaciones que pinta una tarjeta cuando ya salió un enlace o un código nuevo.              |
+| `errors`          | Lo que rechazó el último envío.                                                                        |
+
+Los tres últimos son transitorios del paso que los produjo, y cada movimiento
+los borra: al salir de la confirmación de recuperación y volver, la tarjeta pide
+una dirección otra vez en lugar de confirmar la anterior.
 
 ## Props
 

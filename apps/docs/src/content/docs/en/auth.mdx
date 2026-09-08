@@ -4,7 +4,7 @@ description: sign-in → sign-up → forgot-password → reset-password → veri
 group: Flows
 order: 121
 agent:
-  intent: The five auth screens sequenced by an example assembly that owns the step, the address carried between screens, the reset token and the resend countdown.
+  intent: The five auth screens sequenced by an example assembly that owns the step, the address carried between screens, the reset token, the resend countdown and the confirmations a card paints once a link or a code has gone out.
   whenToUse: "Standing up a whole authentication journey at once: /auth/*, a sign-in route that also has to reach sign-up, recovery and email verification."
   whenNotToUse:
     - case: One state of the journey, mounted under your own router
@@ -144,13 +144,18 @@ the first thing to delete in a real project.
 
 Everything the screens refuse to hold, and nothing else:
 
-| State      | Why it is here                                                                                 |
-| ---------- | ---------------------------------------------------------------------------------------------- |
-| `step`     | Which screen is on the route. A screen that knew this could not be mounted under your router.  |
-| `email`    | Carried from where it was typed to where it is named next — the sign-up form to the code card. |
-| `token`    | The secret out of the emailed reset link, submitted from the card's hidden input.              |
-| `resendIn` | The seconds left on the verify resend. One `setTimeout` in the whole journey lives here.       |
-| `errors`   | Whatever the last submit rejected, cleared on every step change.                               |
+| State             | Why it is here                                                                                 |
+| ----------------- | ---------------------------------------------------------------------------------------------- |
+| `step`            | Which screen is on the route. A screen that knew this could not be mounted under your router.  |
+| `email`           | Carried from where it was typed to where it is named next — the sign-up form to the code card. |
+| `token`           | The secret out of the emailed reset link, submitted from the card's hidden input.              |
+| `resendIn`        | The seconds left on the verify resend. One `setTimeout` in the whole journey lives here.       |
+| `sent` / `resent` | The two confirmations a card paints once a recovery link or a fresh code has gone out.         |
+| `errors`          | Whatever the last submit rejected.                                                             |
+
+The last three are transients of the step that produced them, and every move
+drops all three: walk away from the recovery confirmation and back, and the card
+asks for an address again rather than confirming the previous one.
 
 ## Props
 

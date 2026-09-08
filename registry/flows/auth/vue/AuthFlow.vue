@@ -18,6 +18,11 @@
   way up, the way a client router does — modified and middle clicks are left to
   the browser, and an href that is not one of the flow's own is left alone.
 
+  What it owns, and what the screens deliberately do not: `step`, `email`,
+  `token`, `resendIn`, the two confirmations a card paints once a recovery link
+  or a fresh code has gone out (`sent`, `resent`) and `errors`. The last three
+  belong to the step that produced them, so `go` drops all three on every move.
+
   Forward moves are form submissions, read with `new FormData(form, submitter)`;
   the submitter matters on `verify`, where the resend is a second submit rather
   than a callback. The one edge the assembly cannot own is the email:
@@ -144,17 +149,23 @@ watch(resendIn, (left, _previous, onCleanup) => {
   onCleanup(() => clearTimeout(timer));
 });
 
+/**
+ * A move, and the one place the flow's per-step transients are dropped.
+ * `errors` belongs to the submit that was rejected and `sent` / `resent` to the
+ * card that confirmed; none of them outlives the screen that produced it, or
+ * asking for a link for a second address would mean reloading the page.
+ */
 function go(next: AuthStep) {
   step.value = next;
   errors.value = undefined;
+  sent.value = false;
+  resent.value = false;
   emit("stepChange", next);
 }
 
 /** The flow's exit: the address goes up, and the reader goes wherever you send them. */
 function finish(address: string) {
-  sent.value = false;
   resendIn.value = 0;
-  resent.value = false;
   emit("authenticated", address);
   go("sign-in");
 }
@@ -207,7 +218,6 @@ function submit(event: Event) {
   if (step.value === "sign-up") {
     email.value = address;
     resendIn.value = props.resendSeconds;
-    resent.value = false;
     go("verify");
     return;
   }
@@ -247,7 +257,6 @@ function submit(event: Event) {
 function noticeAction(id: string) {
   if (id !== openTheLink.id) return;
   token.value = token.value || "example-token";
-  sent.value = false;
   go("reset-password");
 }
 </script>

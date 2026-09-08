@@ -265,6 +265,20 @@ test.describe("auth flow", () => {
     expect(await currentScreen(page)).toBe("forgot-password");
     await expect(cardTitle(page)).toHaveText("Check your inbox");
 
+    // The confirmation belongs to the step that produced it: leaving and coming
+    // back has to hand the reader the form again, or a second address could
+    // only be asked for by reloading the page.
+    await walked.getByRole("link", { name: "Sign in" }).click();
+    expect(await currentScreen(page)).toBe("sign-in");
+    await walked.getByRole("link", { name: "Forgot your password?" }).click();
+    expect(await currentScreen(page)).toBe("forgot-password");
+    await expect(cardTitle(page)).toHaveText("Reset your password");
+    await expect(walked.locator('input[name="email"]')).toBeVisible();
+
+    await walked.locator('input[name="email"]').fill("ada@example.com");
+    await walked.getByRole("button", { name: "Send reset link" }).click();
+    await expect(cardTitle(page)).toHaveText("Check your inbox");
+
     await walked.getByRole("button", { name: "Open the reset link" }).click();
     expect(await currentScreen(page)).toBe("reset-password");
 

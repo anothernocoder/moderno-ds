@@ -696,7 +696,7 @@
       "type": "registry:flow",
       "version": "0.1.0",
       "title": "Auth flow (React)",
-      "description": "Example assembly for the auth flow: sign-in → sign-up → forgot-password → reset-password → verify. It owns the navigation state the five screens refuse to hold — which step is on the route, the address carried between them, the reset token and the seconds left on the verify resend — and it moves between them the way a client router does: the screens draw plain hrefs (hrefFor), the assembly intercepts the clicks it owns and leaves modified clicks and every other link to the browser, and each forward step is a form submission read with its submitter. Rewrite it against your own router; the screens under it stay presentational.",
+      "description": "Example assembly for the auth flow: sign-in → sign-up → forgot-password → reset-password → verify. It owns the navigation state the five screens refuse to hold — which step is on the route, the address carried between them, the reset token, the seconds left on the verify resend and the two confirmations a card paints once a recovery link or a fresh code has gone out — and it moves between them the way a client router does: the screens draw plain hrefs (hrefFor), the assembly intercepts the clicks it owns and leaves modified clicks and every other link to the browser, and each forward step is a form submission read with its submitter. Rewrite it against your own router; the screens under it stay presentational.",
       "dependencies": [],
       "registryDependencies": [
         "sign-in-react",
@@ -718,7 +718,7 @@
       "type": "registry:flow",
       "version": "0.1.0",
       "title": "Auth flow (Vue)",
-      "description": "Example assembly for the auth flow: sign-in → sign-up → forgot-password → reset-password → verify. It owns the navigation state the five screens refuse to hold — which step is on the route, the address carried between them, the reset token and the seconds left on the verify resend — and it moves between them the way a client router does: the screens draw plain hrefs (hrefFor), the assembly intercepts the clicks it owns and leaves modified clicks and every other link to the browser, and each forward step is a form submission read with its submitter. Rewrite it against your own router; the screens under it stay presentational.",
+      "description": "Example assembly for the auth flow: sign-in → sign-up → forgot-password → reset-password → verify. It owns the navigation state the five screens refuse to hold — which step is on the route, the address carried between them, the reset token, the seconds left on the verify resend and the two confirmations a card paints once a recovery link or a fresh code has gone out — and it moves between them the way a client router does: the screens draw plain hrefs (hrefFor), the assembly intercepts the clicks it owns and leaves modified clicks and every other link to the browser, and each forward step is a form submission read with its submitter. Rewrite it against your own router; the screens under it stay presentational.",
       "dependencies": [],
       "registryDependencies": [
         "sign-in-vue",
@@ -740,7 +740,7 @@
       "type": "registry:flow",
       "version": "0.1.0",
       "title": "Auth flow (Svelte)",
-      "description": "Example assembly for the auth flow: sign-in → sign-up → forgot-password → reset-password → verify. It owns the navigation state the five screens refuse to hold — which step is on the route, the address carried between them, the reset token and the seconds left on the verify resend — and it moves between them the way a client router does: the screens draw plain hrefs (hrefFor), the assembly intercepts the clicks it owns and leaves modified clicks and every other link to the browser, and each forward step is a form submission read with its submitter. Rewrite it against your own router; the screens under it stay presentational.",
+      "description": "Example assembly for the auth flow: sign-in → sign-up → forgot-password → reset-password → verify. It owns the navigation state the five screens refuse to hold — which step is on the route, the address carried between them, the reset token, the seconds left on the verify resend and the two confirmations a card paints once a recovery link or a fresh code has gone out — and it moves between them the way a client router does: the screens draw plain hrefs (hrefFor), the assembly intercepts the clicks it owns and leaves modified clicks and every other link to the browser, and each forward step is a form submission read with its submitter. Rewrite it against your own router; the screens under it stay presentational.",
       "dependencies": [],
       "registryDependencies": [
         "sign-in-svelte",
@@ -762,7 +762,7 @@
       "type": "registry:flow",
       "version": "0.1.0",
       "title": "Auth flow (Solid)",
-      "description": "Example assembly for the auth flow: sign-in → sign-up → forgot-password → reset-password → verify. It owns the navigation state the five screens refuse to hold — which step is on the route, the address carried between them, the reset token and the seconds left on the verify resend — and it moves between them the way a client router does: the screens draw plain hrefs (hrefFor), the assembly intercepts the clicks it owns and leaves modified clicks and every other link to the browser, and each forward step is a form submission read with its submitter. Rewrite it against your own router; the screens under it stay presentational.",
+      "description": "Example assembly for the auth flow: sign-in → sign-up → forgot-password → reset-password → verify. It owns the navigation state the five screens refuse to hold — which step is on the route, the address carried between them, the reset token, the seconds left on the verify resend and the two confirmations a card paints once a recovery link or a fresh code has gone out — and it moves between them the way a client router does: the screens draw plain hrefs (hrefFor), the assembly intercepts the clicks it owns and leaves modified clicks and every other link to the browser, and each forward step is a form submission read with its submitter. Rewrite it against your own router; the screens under it stay presentational.",
       "dependencies": [],
       "registryDependencies": [
         "sign-in-solid",

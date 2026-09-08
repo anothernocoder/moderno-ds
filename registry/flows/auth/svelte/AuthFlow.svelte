@@ -17,8 +17,12 @@
   it is named next; `token`, the secret out of the emailed reset link;
   `resendIn`, the seconds left on the verify resend, ticked down by the one
   timeout in the whole flow — the card renders that number and never runs a
-  clock, because a block that owned a timer would own state; and `errors`,
-  whatever the last submit rejected, cleared on every step change.
+  clock, because a block that owned a timer would own state; `sent` and
+  `resent`, the two confirmations a card paints once a recovery link or a fresh
+  code has gone out; and `errors`, whatever the last submit rejected. The last
+  three belong to the step that produced them, so `go` drops all three on every
+  move — a reader who walks back to `forgot-password` finds the form there, not
+  the previous address's confirmation.
 
   Navigation is link interception, not callbacks. Every route between two
   screens is an `href` the card or the masthead draws — "Create an account",
@@ -162,17 +166,23 @@
     return () => clearTimeout(timer);
   });
 
+  /**
+   * A move, and the one place the flow's per-step transients are dropped.
+   * `errors` belongs to the submit that was rejected and `sent` / `resent` to
+   * the card that confirmed; none of them outlives the screen that produced it,
+   * or asking for a link for a second address would mean reloading the page.
+   */
   function go(next: AuthStep) {
     step = next;
     errors = undefined;
+    sent = false;
+    resent = false;
     onstepchange?.(next);
   }
 
   /** The flow's exit: the address goes up, and the reader goes wherever you send them. */
   function finish(address: string) {
-    sent = false;
     resendIn = 0;
-    resent = false;
     onauthenticated?.(address);
     go("sign-in");
   }
@@ -224,7 +234,6 @@
     if (step === "sign-up") {
       email = address;
       resendIn = resendSeconds;
-      resent = false;
       go("verify");
       return;
     }
@@ -264,7 +273,6 @@
   function noticeAction(id: string) {
     if (id !== openTheLink.id) return;
     token = token || "example-token";
-    sent = false;
     go("reset-password");
   }
 </script>

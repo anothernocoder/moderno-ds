@@ -48,7 +48,8 @@ describe("registry React components render", () => {
       const module = (await import(/* @vite-ignore */ path)) as Record<string, unknown>;
       const component = componentOf(module);
       expect(component, `${label} exports no single component to mount`).toBeTruthy();
-      expect(renderToStaticMarkup(createElement(component!))).toBeTypeOf("string");
+      const markup = renderToStaticMarkup(createElement(component!));
+      expect(markup.length, `${label} rendered nothing`).toBeGreaterThan(0);
     },
     30_000,
   );
