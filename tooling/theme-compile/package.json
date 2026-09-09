@@ -1,6 +1,6 @@
 {
   "name": "@moderno-ui/theme-compile",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Validates a theme's tokens.dtcg.json and emits theme.css (semantic contract slots, OKLCH ramps) with WCAG AA contrast warnings. Shared by the Theme Builder and CI.",
   "license": "MIT",
   "type": "module",

@@ -1,6 +1,6 @@
 {
   "name": "@moderno-ui/lint-core",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Shared deterministic rule engine behind @moderno-ui/mcp's validate_usage tool and @moderno-ui/lint: moderno.agent.json discovery + the Rule/Finding contract and starter rule set (hardcoded colors/radii, prop validity, raw Ark imports, data-part overrides, reimplemented primitives).",
   "repository": {
     "type": "git",
