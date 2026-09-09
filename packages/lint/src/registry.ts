@@ -73,3 +73,45 @@ export function registrySourceFiles(manifestPath: string): string[] {
   }
   return [...paths].sort();
 }
+
+/** One `@/…` specifier a registry source imports, and the file it stands for. */
+export interface RegistryAlias {
+  /** The specifier as written in the registry source, e.g. `@/components/blocks/LoginForm.vue`. */
+  find: string;
+  /** Absolute path to the registry file the CLI copies there. */
+  replacement: string;
+}
+
+/** The tiers whose files another tier imports through a `@/components/<dir>/…` path. */
+const COMPOSED_DIRS = ["blocks", "screens"] as const;
+
+/**
+ * The `@/components/{blocks,screens}/…` aliases a `framework`'s registry
+ * sources import.
+ *
+ * A screen composes blocks — and a flow composes screens — through the path
+ * `moderno add` will have written them to in the consumer's project, not
+ * through a relative path into the registry, so nothing can import either
+ * without being told what `@/` means. Resolving that from the manifest rather
+ * than from a naming rule is the point: the frameworks do not agree on one
+ * (`LoginForm.vue` and `LoginForm.svelte` sit in `blocks/login-form/`, while
+ * Solid's copy is `login-form.tsx`), and the manifest already knows where every
+ * file actually is.
+ *
+ * Specifiers are matched with and without the extension, which is the only
+ * other thing the frameworks disagree about: Vue and Svelte import
+ * `…/LoginForm.vue`, Solid imports `…/alert-list`.
+ */
+export function registryAliases(manifestPath: string, framework: string): RegistryAlias[] {
+  const aliases: RegistryAlias[] = [];
+  for (const file of registryFiles(manifestPath)) {
+    if (!file.path.includes(`/${framework}/`)) continue;
+    const dir = COMPOSED_DIRS.find((candidate) => file.path.includes(`/${candidate}/`));
+    if (dir === undefined) continue;
+    const name = file.path.slice(file.path.lastIndexOf("/") + 1);
+    const stem = name.slice(0, name.indexOf("."));
+    aliases.push({ find: `@/components/${dir}/${name}`, replacement: file.path });
+    aliases.push({ find: `@/components/${dir}/${stem}`, replacement: file.path });
+  }
+  return aliases;
+}

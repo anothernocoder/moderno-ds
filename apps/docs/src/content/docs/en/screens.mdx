@@ -11,7 +11,7 @@ data and callbacks as props and holds no navigation state of its own, so you can
 mount it under any router.
 
 ```sh
-npx @moderno-ui/cli add sign-in
+npx @moderno-ui/cli add sign-in-react
 ```
 
 Installing a screen pulls in the blocks it composes, and the primitives those
@@ -19,6 +19,30 @@ blocks compose, each recorded under its own version in `.moderno/manifest.json`.
 Installing a screen never pulls in the flow it belongs to — `cart` arrives
 without `checkout`, which is the whole reason screens are their own tier.
 
-Like blocks, screens respond to their container rather than the viewport. The
-catalog is being filled as the predecessor's inventory is absorbed; each
+Like blocks, screens respond to their container rather than the viewport —
+"full-viewport" is a height, not a set of breakpoints, so a screen is still
+right in a pane that is not the window.
+
+## What ships today
+
+Five screens, one registry entry per framework each:
+
+- [Sign in](/en/sign-in/) — the credential form beside the notices a person
+  needs before signing in, composed from `login-form` and `alert-list`.
+- [Sign up](/en/sign-up/) — the same card in its account-creation mode, beside
+  the reasons to create an account, composed from `login-form`.
+- [Forgot password](/en/forgot-password/) — the same card again, asking for an
+  address and then confirming in place, beside the notes that answer "it has not
+  arrived", composed from `login-form` and `alert-list`.
+- [Reset password](/en/reset-password/) — the far end of that link: a new
+  password, its confirmation and the rules ticking off as they are met, composed
+  from `login-form` and `alert-list`.
+- [Verify](/en/verify/) — the one-time code that proves the address is real, a
+  cell per digit, with a resend that is a plain form submission, composed from
+  `login-form` and `alert-list`.
+
+All five are sequenced by the [auth flow](/en/auth/), which is what a screen is
+one _state_ of — and which none of them installs.
+
+The catalog is being filled as the predecessor's inventory is absorbed; each
 published screen gets its own page in this section.

@@ -34,8 +34,11 @@ const require = createRequire(import.meta.url);
  * The slice of Tailwind's preflight a block is written against, scoped to the
  * docs preview panel so it can't reach the surrounding prose. Everything here
  * is a UA default a block assumes away: box sizing, the border-style that makes
- * `border-*` (a width-only utility) paint anything, and the margins/bullets
- * browsers put on headings and lists.
+ * `border-*` (a width-only utility) paint anything, the margins/bullets
+ * browsers put on headings and lists, and the grey fill a UA paints behind a
+ * `<button>` — without that last one a `ghost` Button (whose whole contract is
+ * "no fill of its own") previews as a light-grey pill, unreadable against a
+ * dark scheme, while rendering correctly in every consumer project.
  *
  * `:where()` keeps every selector at the specificity of the panel class alone,
  * so `components.css` (which targets `[data-scope][data-part]`) still paints
@@ -55,6 +58,10 @@ const PREVIEW_PREFLIGHT = `@layer moderno.base {
     margin: 0;
     padding: 0;
     list-style: none;
+  }
+  .preview-panel--demo :where(button, [type="button"], [type="reset"], [type="submit"]) {
+    background-color: transparent;
+    background-image: none;
   }
 }`;
 

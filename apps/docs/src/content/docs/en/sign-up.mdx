@@ -1,0 +1,164 @@
+---
+title: Sign up
+description: The full-viewport account-creation screen — the credential card in its sign-up mode beside the reasons to create an account, composed from login-form.
+group: Screens
+order: 112
+agent:
+  intent: The full-viewport sign-up screen — one state of the auth flow, presentational.
+  whenToUse: "The route a new person lands on: /signup, /register, the destination of a 'Create an account' link or an invite email."
+  whenNotToUse:
+    - case: A sign-up section inside a page you already own (a modal, a marketing page's hero)
+      use: the LoginForm block with mode="sign-up" — a block never owns the viewport
+    - case: The returning person
+      use: the SignIn screen, which mounts the same card in its other mode
+    - case: The whole auth journey, with the navigation between its steps
+      use: the auth flow, which sequences this screen with sign-in, forgot-password, reset-password and verify
+    - case: Profile questions asked after the account exists (role, team size, avatar)
+      use: the profile-setup screen — this screen asks only what an account cannot be created without
+  gotchas:
+    - "Presentational: no credentials, no request, no router. `onSubmit` hands back the native event and `onNavigate` names the destination of every link the screen draws itself and hands back the click event with it, so a router can `preventDefault()`."
+    - "`error` and `errors` are different failures: `error` is the form-level alert (the account could not be created at all, the consent box is unticked), `errors` is keyed by the field's `name` (`fullName`, `email`, `password`) and marks those fields. A sign-up may name the field it rejected; a sign-in may not."
+    - "The card's own links — sign-in, terms, privacy — are `href`s, not callbacks: the legal text a person is being asked to agree to has to be reachable when hydration fails, or the consent is not informed. Pass `signInHref`, `termsHref` and `privacyHref`."
+    - "`highlights={[]}` is the screen's empty state: the aside is not rendered at all and the card sits centred and alone, which is what an invite-only or internal sign-up looks like."
+    - "Full-viewport is a height (`min-h-dvh`). Every width decision is read off the screen's own container, so it is still correct mounted in a pane that is not the window."
+    - "The screen imports its block from `@/components/blocks/…`, where `moderno add` puts it. If your project uses a different path alias, that import line is the only thing to change."
+    - "The root is a `<div>`, not a `<main>` — most app shells already provide the `main` landmark, and two visible ones in a document is invalid. If your route has none, change that one element."
+  theming:
+    - "Nothing is painted here. The card is the LoginForm block; the screen's own chrome is `text-foreground` / `text-muted-foreground` on `bg-background`, and the highlights are ruled off with `border-border`."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg."
+    - "The default highlights are a prop, not a hardcoded pitch: pass your own three, or `[]` to drop the column."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import SignUpScreenDemo from "../../../islands/SignUpScreenDemo.svelte";
+import signUpReact from "../../../../../../registry/screens/sign-up/react/sign-up.tsx?raw";
+import signUpVue from "../../../../../../registry/screens/sign-up/vue/SignUp.vue?raw";
+import signUpSolid from "../../../../../../registry/screens/sign-up/solid/sign-up.tsx?raw";
+import signUpSvelte from "../../../../../../registry/screens/sign-up/svelte/SignUp.svelte?raw";
+
+**Sign up** is the other half of the auth entrance: a full-viewport composition
+of the [login form](/en/login-form/) in its `sign-up` mode — full name, email, a
+new password and the consent box — with the masthead, the footer and the reasons
+to create an account that turn one section into a page someone can land on.
+
+It composes **one** block on purpose. The card here and the card on
+[sign in](/en/sign-in/) are the same file in its two modes, so a person moving
+between the two screens does not feel the page change under them; and the other
+form block, [form layout](/en/form-layout/), is the grouped-settings shape,
+which its own guidance sends a sign-up form away from. Two forms and two submits
+on one screen is not a composition, it is a choice nobody asked the reader to
+make.
+
+Like every screen it is presentational: it owns the viewport and nothing else.
+No credentials, no request, no router. You hand it `error`, `errors`, `loading`
+and the highlights; it hands you back the submit event and the name of whatever
+link was activated.
+
+<FrameworkSelect locale="en" />
+
+<Preview
+  examples={{
+    react: signUpReact,
+    vue: signUpVue,
+    solid: signUpSolid,
+    svelte: signUpSvelte,
+  }}
+>
+  <SignUpScreenDemo client:visible />
+</Preview>
+
+## Installation
+
+<Install item="sign-up" />
+
+Installing a screen installs the blocks it composes — here `login-form`, which
+`sign-in` also uses — and records both under their own version in
+`.moderno/manifest.json`, so `moderno update` and `moderno diff` keep working
+per item. Installing both auth screens therefore lands one copy of the card, not
+two. Nothing is pulled in upward: this screen arrives without the `auth` flow it
+belongs to.
+
+The screen imports its block from `@/components/blocks/…`, which is where
+`moderno add` writes it. If your project maps `@/` somewhere other than `src/`,
+that import line is the only edit.
+
+Its root is a `<div>`, not a `<main>`: most app shells already provide the
+`main` landmark, and a document with two visible ones is invalid. The `<header>`
+and `<footer>` inside are the page's banner and contentinfo as soon as the
+screen is not nested in another landmark; if your route has no `<main>` at all,
+that root element is the one to change.
+
+## Sizing
+
+Full-viewport is a **height** — the root is `min-h-dvh`. Every _width_ decision
+is read off the screen's own container, so it is still right in a pane that is
+not the window: an Electron content area, a preview frame, an embedded console.
+
+| Step  | Slot             | What changes                                                                |
+| ----- | ---------------- | --------------------------------------------------------------------------- |
+| `@sm` | `--container-sm` | The masthead stops stacking: the wordmark and the sign-in link share a row. |
+| `@md` | `--container-md` | The footer stops stacking: the copyright and the legal links share a row.   |
+| `@lg` | `--container-lg` | The highlights leave their place under the card and stand beside it.        |
+
+None of that reads the window, which is why the three frames above disagree
+with each other on one screen. The rules behind this are in
+[Blocks and containers](/en/blocks-and-containers/) and ADR-0005.
+
+The card inside keeps reading _its own_ container, one level down: it caps
+itself at `--container-sm` however much room the screen gives it, because a
+credential field wider than that is harder to read, not easier. That nesting is
+the point of container queries — the block does not need to know it was mounted
+in a screen.
+
+## States
+
+| State         | What renders                                                                                                                                     |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Default       | The card, and beside or under it the reasons to create an account.                                                                               |
+| Error         | `error` — the form-level alert: the account could not be created at all (the service is down, the consent box is unticked).                      |
+| Field errors  | `errors` — keyed by the field's `name`; each key marks that field invalid and prints its own message. A sign-up may say which field it rejected. |
+| Loading       | `loading` — every control inert, the submit marked `aria-busy`, its spinner stopped under `prefers-reduced-motion`.                              |
+| Disabled      | `disabled` — sign-up is unavailable here at all (a closed beta, an invite-only workspace).                                                       |
+| Empty         | `highlights={[]}` — nothing to sell, so the aside is not rendered at all and the card sits centred and alone.                                    |
+| Focus visible | The shared 2px `--ring` outline on every field, control and link, in the reading order of the page: masthead, form, highlights, footer.          |
+
+## Props
+
+| Prop          | Type                     | Default       | What it does                                                                                                                                  |
+| ------------- | ------------------------ | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `error`       | `string`                 | —             | The account could not be created at all: raises the form-level alert.                                                                         |
+| `errors`      | `Record<string, string>` | —             | Per-field messages keyed by the field's `name` (`fullName`, `email`, `password`).                                                             |
+| `loading`     | `boolean`                | `false`       | The submit is in flight: every control inert, the button busy.                                                                                |
+| `disabled`    | `boolean`                | `false`       | Sign-up is unavailable.                                                                                                                       |
+| `highlights`  | `SignUpHighlight[]`      | three samples | The reasons shown beside the form. `[]` renders the card alone.                                                                               |
+| `onSubmit`    | `(event) => void`        | —             | Native submit. React/Solid `onSubmit`, Svelte `onsubmit`, Vue emits `submit`.                                                                 |
+| `onNavigate`  | `(to, event) => void`    | —             | A link the screen draws itself was activated: `home`, `signIn`, `privacy` or `terms`, with the click event that did it. Vue emits `navigate`. |
+| `signInHref`  | `string`                 | `"#"`         | Where "Sign in" points, in the masthead and in the card's footer.                                                                             |
+| `homeHref`    | `string`                 | `"#"`         | Where the wordmark points.                                                                                                                    |
+| `privacyHref` | `string`                 | `"#"`         | Where the privacy links point.                                                                                                                |
+| `termsHref`   | `string`                 | `"#"`         | Where the terms links point.                                                                                                                  |
+
+A `SignUpHighlight` is `{ id, title, description? }` — the id is only a key.
+
+The screen's own links carry an `href` **and** call `onNavigate`, which is
+handed the destination _and_ the click event — so a client router can
+`preventDefault()` on it (after checking `metaKey` / `ctrlKey`, to leave a
+new-tab click to the browser) while the markup keeps meaning something without
+JavaScript:
+
+```tsx
+<SignUp
+  homeHref="/"
+  onNavigate={(to, event) => {
+    if (event.metaKey || event.ctrlKey) return; // let the browser open a new tab
+    event.preventDefault();
+    router.push(routes[to]);
+  }}
+/>
+```
+
+The card's three links are `href`-only on purpose. Two of them are the terms and
+the privacy policy a person is being asked to agree to: consent to a document
+that only opens if the JavaScript loaded is not consent.

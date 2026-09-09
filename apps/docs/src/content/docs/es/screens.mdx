@@ -11,7 +11,7 @@ presentacional: recibe sus datos y callbacks como props y no guarda estado de
 navegación propio, así que puedes montarla bajo cualquier router.
 
 ```sh
-npx @moderno-ui/cli add sign-in
+npx @moderno-ui/cli add sign-in-react
 ```
 
 Instalar una pantalla arrastra los bloques que compone, y las primitivas que
@@ -20,6 +20,31 @@ esos bloques componen, cada uno registrado con su propia versión en
 pertenece — `cart` llega sin `checkout`, que es justamente la razón de que las
 pantallas sean su propio nivel.
 
-Igual que los bloques, las pantallas responden a su contenedor y no al viewport.
+Igual que los bloques, las pantallas responden a su contenedor y no al viewport:
+«a viewport completo» es una altura, no un juego de breakpoints, así que una
+pantalla sigue siendo correcta en un panel que no es la ventana.
+
+## Qué se publica hoy
+
+Cinco pantallas, cada una con una entrada de registro por framework:
+
+- [Iniciar sesión](/es/sign-in/) — el formulario de credenciales junto a los
+  avisos que alguien necesita antes de entrar, compuesta con `login-form` y
+  `alert-list`.
+- [Crear cuenta](/es/sign-up/) — la misma tarjeta en su modo de registro, junto
+  a las razones para crear una cuenta, compuesta con `login-form`.
+- [Recuperar contraseña](/es/forgot-password/) — la misma tarjeta otra vez,
+  pidiendo una dirección y confirmando en el sitio, junto a las notas que
+  responden a «no me ha llegado», compuesta con `login-form` y `alert-list`.
+- [Nueva contraseña](/es/reset-password/) — el otro extremo de ese enlace: una
+  contraseña nueva, su confirmación y las reglas marcándose a medida que se
+  cumplen, compuesta con `login-form` y `alert-list`.
+- [Verificación](/es/verify/) — el código de un solo uso que demuestra que la
+  dirección existe, una celda por dígito, con un reenvío que es un submit
+  normal, compuesta con `login-form` y `alert-list`.
+
+Las cinco las secuencia el [flujo de autenticación](/es/auth/), que es de lo que
+una pantalla es un _estado_ — y que ninguna de ellas instala.
+
 El catálogo se va llenando a medida que se absorbe el inventario del predecesor;
 cada pantalla publicada tendrá su propia página en esta sección.

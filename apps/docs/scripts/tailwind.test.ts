@@ -107,6 +107,20 @@ describe("the docs Tailwind build compiles what blocks are written with", () => 
   });
 
   /**
+   * The one preflight rule a *painted* primitive depends on. `ghost` (and, in
+   * dark, `outline` before its own fill lands) is defined as "no fill of its
+   * own", which only reads as transparent because preflight clears the UA's
+   * grey button background. Without it the docs preview a ghost Button as a
+   * light-grey pill that no consumer will ever see — and, in the dark scheme,
+   * as light text on a light fill.
+   */
+  it("clears the UA button background inside the preview panel", () => {
+    expect(css).toMatch(
+      /\.preview-panel--demo :where\(button[^)]*\)\s*\{[^}]*background-color:\s*transparent/s,
+    );
+  });
+
+  /**
    * `@theme inline` re-declares contract slots as `--font-sans: var(--font-sans)`.
    * That is a cycle — and therefore an invalid value — unless something outside
    * `@layer theme` defines the same name. `tokens.css`'s unlayered `:root` is

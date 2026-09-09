@@ -12,7 +12,7 @@ presentacionales; el ensamblaje es la única pieza que sabe qué va después de
 qué, y es código de ejemplo que se espera que reconectes a tu propio router.
 
 ```sh
-npx @moderno-ui/cli add auth
+npx @moderno-ui/cli add auth-react
 ```
 
 Instalar un flujo es transitivo: sus pantallas, los bloques de esas pantallas y
@@ -21,6 +21,16 @@ propia versión en `.moderno/manifest.json`. `moderno update` y `moderno diff`
 funcionan entonces por ítem, así que una pantalla que editaste sigue editada
 mientras el resto del flujo avanza.
 
-Un flujo compone solo pantallas. El catálogo se va llenando a medida que se
-absorbe el inventario del predecesor; cada flujo publicado tendrá su propia
-página en esta sección.
+Un flujo compone solo pantallas.
+
+## Qué se publica hoy
+
+Un flujo, una entrada de registro por framework:
+
+- [Auth](/es/auth/) — sign-in → sign-up → forgot-password → reset-password →
+  verify, con un ensamblaje que navega interceptando los enlaces que las
+  pantallas ya dibujan, avanza con envíos de formulario normales y posee la
+  única cuenta atrás del recorrido.
+
+El catálogo se va llenando a medida que se absorbe el inventario del predecesor;
+cada flujo publicado tendrá su propia página en esta sección.

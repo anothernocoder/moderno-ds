@@ -1,27 +1,610 @@
+<!--
+  LoginForm — the credential card, composed from @moderno-ui/svelte primitives
+  (Card, Field, PinInput, Checkbox, Button, Alert). Copy it into your project with
+  `moderno add login-form-svelte` and edit it freely: every visual comes from
+  the token contract, so a theme re-skins it without a diff here.
+
+  Five modes, one card. `mode="sign-in"` (the default) is the returning person:
+  email, password, remember-me, the recovery link. `mode="sign-up"` is the new
+  one: full name, email, a new password and the consent that has to be given
+  before an account can exist. `mode="forgot-password"` is the one who cannot
+  get in: the address alone, and — once `sent` — the same card confirming the
+  link is on its way. `mode="reset-password"` is the end of that errand: the new
+  password and its confirmation, the rules said out loud as they are met, and
+  the token from the emailed link riding along in a hidden input.
+  `mode="verify"` is the code that proves the address is real: one cell per
+  digit and a second submit that asks for a new code. They are one block rather
+  than five because they are one thing — the same card, the same width, the same
+  rhythm — and a person walking the auth flow should not feel the page change
+  under them. The `sign-in`, `sign-up`, `forgot-password`, `reset-password` and
+  `verify` screens each mount this file in one of its modes.
+
+  The verify card asks for a code, and can ask again. `mode="verify"` swaps the
+  credential fields for PinInput — Ark advances the focus as digits land,
+  distributes a pasted code across the cells, and marks them
+  autocomplete="one-time-code", so the platform offers the code straight out of
+  the SMS or the mail app. The whole code posts under one name (`code`), from
+  the hidden input Ark keeps in step with the cells.
+
+  The resend is a second submit button, named `intent` and valued "resend",
+  rather than a callback: it is then a plain form submission that still works
+  with no JavaScript, and one handler serves both buttons — read
+  `new FormData(form, event.submitter)` and branch on `intent`. The address
+  rides along in a hidden input for the same reason, so the resend knows where
+  to send. `resendIn` counts the seconds until the button unlocks (the page
+  above owns that timer — the card holds no state), and `resent` rewrites the
+  header rather than adding a line, so the confirmation lands in the live region
+  that is already there.
+
+  The recovery card confirms in place. `sent` does not swap the card for a
+  different component: the header rewrites itself, the email field gives way to
+  the sentence explaining what was sent, and the submit becomes a secondary
+  "Send it again" that resubmits the same address — carried in a hidden input,
+  so the resend still works with no JavaScript on the page.
+
+  The reset card says the rules as they are met. `requirements` is a list of
+  `{ id, label, met }`, rendered under the new-password field as that field's
+  own helper text — so Ark points the input's aria-describedby at it and a
+  screen reader reads the rules on focus instead of hunting for them. The list
+  is a polite live region, so the one line that flips is announced rather than
+  the whole list, and every line carries the word "met" for a reader who cannot
+  see the tick. Whether a rule is met is not decided here: the block holds no
+  value, so the page above it recomputes the flags as the reader types — and
+  with no JavaScript on the page the rules are still printed and the form still
+  submits, which is why they are helper text rather than a validator.
+
+  Presentational. The block owns no credentials, no request and no navigation:
+  it takes `error` / `errors` / `loading` / `disabled` and hands the native
+  submit event back, so the screen above it holds the state while this file
+  stays a section you can drop anywhere.
+
+  Responsive to its container, not the viewport (ADR-0005). The root declares
+  `@container`; the secondary row (remember-me + the recovery link) stacks below
+  `@sm` (--container-sm, 24rem) and sits on one line at or above it, and the
+  heading steps up at `@md` (--container-md, 36rem) where the section has room
+  to breathe. The card itself never exceeds --container-sm, because a credential
+  field wider than that is harder to read, not easier — so the same file is
+  correct in a narrow sidebar, inside a card, and centred on a full-width page,
+  with no media query anywhere.
+
+  States. Default and empty are the same pristine render (placeholders, no
+  values) — a credential form has no collection to be empty of. Hover and
+  focus-visible come from the primitives' own rules in components.css; the links
+  here carry the matching pair. Disabled stops the form (an SSO-only workspace,
+  a locked account, a closed beta), and loading makes it inert and marks the
+  button aria-busy.
+
+  Error is the one place the modes deliberately disagree. Signing in, `error`
+  raises one form-level Alert and marks both credential fields invalid — never
+  "the password is wrong", which would confirm to an attacker that the email
+  exists. Signing up, there is nothing to leak yet and a form that will not say
+  which field it rejected is merely rude, so `errors` names them: keyed by the
+  field's `name` (fullName, email, password), each key marking that field
+  invalid and printing its own message. `error` stays the form-level failure —
+  the account could not be created at all, the consent box is unticked, the
+  service is down.
+
+  Recovering, `errors.email` marks a malformed address, which leaks nothing; but
+  whether the address has an account is never told, in this card or in the code
+  behind it. The confirmation is deliberately conditional — "if that address has
+  an account" — because a recovery form that answers differently for a known and
+  an unknown address is an account-enumeration endpoint with a friendly face.
+
+  Resetting, both fields may be named — `errors.password` for a password the
+  rules reject, `errors.confirmPassword` for two that do not match — because the
+  reader is holding the emailed token and there is nothing left to leak. `error`
+  stays the form-level failure, and it is where an expired or already-used link
+  belongs: what went wrong there is the token, not the password.
+
+  Verifying, `errors.code` is the wrong or expired code: the cells go
+  aria-invalid and the message is printed under them as an alert, so it is
+  announced when it arrives. It is an alert rather than the input's described
+  text because a pin input is n controls and one value — there is no single
+  field to describe — and the message always arrives after a submit, which is
+  exactly when an alert is the right instrument. `error` stays the form-level
+  failure: too many attempts, or the address itself already verified.
+
+  Class strings are written out in full rather than shared through a variable:
+  the docs compile the previews' Tailwind from `class` attributes, so a class
+  assembled in JS would render here and vanish in the preview.
+-->
 <script lang="ts">
-  // LoginForm — an ejected block that composes @moderno-ui/svelte primitives
-  // (Field, Button) into a sign-in card. Copy it into your project and edit
-  // freely. Themed via CSS variables from the design system; no hardcoded
-  // colors, radii, or fonts live here.
-  import { Button, Field } from "@moderno-ui/svelte";
+  import { Alert, Button, Card, Checkbox, Field, PinInput } from "@moderno-ui/svelte";
+
+  type Mode = "sign-in" | "sign-up" | "forgot-password" | "reset-password" | "verify";
+
+  /**
+   * One rule the new password is judged against, and whether it is met yet.
+   * `met` is computed by whatever owns the value — never in here.
+   */
+  interface PasswordRequirement {
+    /** Stable key for the row. */
+    id: string;
+    /** The rule in words the reader can act on ("At least 12 characters"). */
+    label: string;
+    /** Whether what is currently in the field satisfies it. */
+    met?: boolean;
+  }
+
+  /**
+   * What the card says it is, what its submit says, and what its footer offers,
+   * per mode. Five modes turn every one of those into a five-way ternary if
+   * they are written at the point of use; the table is the same decision made
+   * once. Two sentences are not read straight off here: the `forgot-password`
+   * card rewrites its title, its description and its submit once the link is
+   * sent, and the `verify` card names the address and the number of digits as
+   * soon as it is told them — a description that says "six" while `codeLength`
+   * says four is a lie the table cannot see.
+   */
+  const cardCopy: Record<
+    Mode,
+    { title: string; description: string; submit: string; busy: string; footerPrompt: string }
+  > = {
+    "sign-in": {
+      title: "Sign in",
+      description: "Enter your email and password to continue.",
+      submit: "Sign in",
+      busy: "Signing in",
+      footerPrompt: "New here?",
+    },
+    "sign-up": {
+      title: "Create your account",
+      description: "Fourteen days of everything, no card and no sales call.",
+      submit: "Create account",
+      busy: "Creating account",
+      footerPrompt: "Already have an account?",
+    },
+    "forgot-password": {
+      title: "Reset your password",
+      description: "Enter the address you sign in with and we will email you a link.",
+      submit: "Send reset link",
+      busy: "Sending link",
+      footerPrompt: "Remembered it?",
+    },
+    "reset-password": {
+      title: "Choose a new password",
+      description: "Pick one you have not used here before. It replaces the old one everywhere.",
+      submit: "Set new password",
+      busy: "Saving password",
+      footerPrompt: "Changed your mind?",
+    },
+    verify: {
+      title: "Enter your code",
+      description: "Type the code we sent, so we know the address is yours.",
+      submit: "Verify email",
+      busy: "Verifying",
+      footerPrompt: "Wrong account?",
+    },
+  };
+
+  /**
+   * The rules shown under the new password when nothing else is handed down.
+   * None of them is ticked, and none of them can be: the card holds no value,
+   * so `met` is only ever true because the page above it said so.
+   */
+  const defaultRequirements: PasswordRequirement[] = [
+    { id: "length", label: "At least 12 characters" },
+    { id: "case", label: "An upper and a lower case letter" },
+    { id: "symbol", label: "A number or a symbol" },
+  ];
+
+  interface Props {
+    /** Which card this is: the returning person, the new one, or the locked-out one. */
+    mode?: Mode;
+    /**
+     * The rank `Card.Title` carries in the page's heading outline. `3` is the
+     * card's own default and leaves the element exactly as it was — a card is a
+     * section of a page, not its heading. A *screen* that mounts this card as
+     * the whole route passes `1`, so the document has a top-level heading and
+     * the headings after it do not skip a rank.
+     */
+    titleLevel?: 1 | 2 | 3;
+    /** `forgot-password` only — the link has gone out: the card confirms instead of asking. */
+    sent?: boolean;
+    /** `forgot-password` and `verify` — the address the link or the code went to: named in the card, and resubmitted from a hidden input by "Send it again" and by the resend. */
+    sentTo?: string;
+    /** `verify` only — how many cells the code has, and the number the description names. */
+    codeLength?: number;
+    /** `verify` only — seconds until another code can be asked for; above zero the resend is locked and counts down. The timer is the page's, not the card's. */
+    resendIn?: number;
+    /** `verify` only — a new code has just gone out: the header says so, in the live region it already has. */
+    resent?: boolean;
+    /** `reset-password` only — the token out of the emailed link, submitted with the new password from a hidden input. */
+    token?: string;
+    /** `reset-password` only — the rules under the new password and whether each is met yet. `[]` falls back to one line of helper text. */
+    requirements?: PasswordRequirement[];
+    /** Form-level failure message. Renders the alert; in `sign-in` it also invalidates both credential fields. */
+    error?: string;
+    /** Every mode but `sign-in` — per-field messages keyed by the field's `name` (`code` in `verify`); each marks that field invalid. */
+    errors?: Record<string, string>;
+    /** The submit is in flight: every control is inert and the button reads busy. */
+    loading?: boolean;
+    /** The form is unavailable (SSO-only workspace, locked account, closed beta). */
+    disabled?: boolean;
+    /** Native submit; call `event.preventDefault()` and read the form yourself. */
+    onsubmit?: (event: SubmitEvent) => void;
+    /** `sign-in` only — where "Forgot your password?" points. */
+    forgotHref?: string;
+    /** `sign-in` only — where "Create an account" points. */
+    signUpHref?: string;
+    /** Every mode but `sign-in` — where "Sign in" points. */
+    signInHref?: string;
+    /** `sign-up` only — where the terms link under the consent box points. */
+    termsHref?: string;
+    /** `sign-up` only — where the privacy link under the consent box points. */
+    privacyHref?: string;
+  }
+
+  let {
+    mode = "sign-in",
+    titleLevel = 3,
+    sent = false,
+    sentTo = "",
+    codeLength = 6,
+    resendIn = 0,
+    resent = false,
+    token = "",
+    requirements = defaultRequirements,
+    error,
+    errors,
+    loading = false,
+    disabled = false,
+    onsubmit,
+    forgotHref = "#",
+    signUpHref = "#",
+    signInHref = "#",
+    termsHref = "#",
+    privacyHref = "#",
+  }: Props = $props();
+
+  const signUp = $derived(mode === "sign-up");
+  const forgot = $derived(mode === "forgot-password");
+  const reset = $derived(mode === "reset-password");
+  const verify = $derived(mode === "verify");
+  /** The confirmation: the recovery card after the link has gone out. */
+  const confirming = $derived(forgot && sent);
+  /** Only the modes that start from an address ask for one. */
+  const asksForEmail = $derived(!confirming && !reset && !verify);
+  /** A password is being *chosen*, so the field takes the rules and its own error. */
+  const newPassword = $derived(signUp || reset);
+  const inert = $derived(loading || disabled);
+  /** One cell per digit; the count is a prop because a code is not always six long. */
+  const cells = $derived(
+    Array.from({ length: Math.max(1, Math.trunc(codeLength)) }, (_, index) => index),
+  );
+  /** Another code cannot be asked for yet: the page above is still counting down. */
+  const waiting = $derived(verify && resendIn > 0);
+  /**
+   * Signing in, one failure invalidates both credential fields and names
+   * neither. In the other two modes only the field that was actually rejected
+   * is marked, because there is nothing to leak by saying which one it was.
+   */
+  const invalid = (field: string) =>
+    mode === "sign-in" ? Boolean(error) : Boolean(errors?.[field]);
+  const title = $derived(confirming ? "Check your inbox" : cardCopy[mode].title);
+  /**
+   * Verifying, the description is where the card says what happened: which
+   * address the code went to, how many digits to expect, and — after a resend —
+   * that a fresh code is on its way and the one before it is dead. It goes here
+   * rather than in a line of its own because the header is already the card's
+   * live region, so a screen reader hears the change without a second one.
+   */
+  const verifyDescription = $derived(
+    resent
+      ? `A new code is on its way to ${sentTo || "your inbox"}. The one before it has stopped working.`
+      : sentTo
+        ? `Enter the ${cells.length}-digit code we sent to ${sentTo}.`
+        : cardCopy.verify.description,
+  );
+  const description = $derived(
+    confirming
+      ? `If ${sentTo || "that address"} has an account, a link to set a new password is on its way.`
+      : verify
+        ? verifyDescription
+        : cardCopy[mode].description,
+  );
+  const submitLabel = $derived(confirming ? "Send it again" : cardCopy[mode].submit);
+  const busyLabel = $derived(cardCopy[mode].busy);
 </script>
 
-<form class="moderno-block-login">
-  <h2>Sign in</h2>
+<section class="@container moderno-block-login text-foreground">
+  <Card.Root class="mx-auto w-full max-w-sm">
+    <!--
+      Recovering, the header is a live region from the moment the card mounts —
+      `sent` rewrites the title and the description in place, and a card whose
+      whole content changed with no announcement leaves a screen reader user with
+      one clue that anything happened: the button they just pressed renamed
+      itself. The region has to exist *before* the change, which is why it hangs
+      off `forgot` and not off `confirming` — and the verify card borrows it,
+      because `resent` rewrites the description the same way and for the same
+      reason.
+    -->
+    <Card.Header role={forgot || verify ? "status" : undefined}>
+      <Card.Title class="text-lg @md:text-xl" aria-level={titleLevel === 3 ? undefined : titleLevel}>
+        {title}
+      </Card.Title>
+      <Card.Description>{description}</Card.Description>
+    </Card.Header>
 
-  <Field.Root>
-    <Field.Label>Email</Field.Label>
-    <Field.Input type="email" placeholder="you@example.com" />
-    <Field.HelperText>We never share it.</Field.HelperText>
-  </Field.Root>
+    <Card.Content>
+      <form class="grid gap-5" {onsubmit} novalidate>
+        {#if error}
+          <Alert.Root variant="error" size="sm">
+            <Alert.Content>
+              <Alert.Title>{error}</Alert.Title>
+            </Alert.Content>
+          </Alert.Root>
+        {/if}
 
-  <Field.Root>
-    <Field.Label>Password</Field.Label>
-    <Field.Input type="password" placeholder="••••••••" />
-    <Field.ErrorText>Password is required.</Field.ErrorText>
-  </Field.Root>
+        {#if reset && token}
+          <!--
+            The token from the emailed link rides in the form rather than in a
+            closure, for the same reason the resend's address does: a reset that
+            only posts once the island has hydrated strands the person it was
+            written for, who is by definition already locked out.
+          -->
+          <input type="hidden" name="token" value={token} />
+        {/if}
 
-  <Button type="submit">Sign in</Button>
+        {#if confirming}
+          <!--
+            The address travels with the resend in a hidden input rather than in
+            a closure: "Send it again" is then a plain form submission, which
+            still works on a page whose JavaScript never arrived — the same
+            reason the recovery link itself is an href.
+          -->
+          <input type="hidden" name="email" value={sentTo} />
+          <p class="text-sm text-muted-foreground">
+            The link expires in 30 minutes and can be used once. Nothing in your inbox? Look in
+            spam, then send it again.
+          </p>
+        {/if}
 
-  <p>Don't have an account? <a href="#">Create one</a>.</p>
-</form>
+        {#if verify && sentTo}
+          <!--
+            The address rides with the code, so both submits — the check and the
+            resend — post everything the server needs from a page that never
+            hydrated. Same argument as the resend's address above and the reset's
+            token beside it.
+          -->
+          <input type="hidden" name="email" value={sentTo} />
+        {/if}
+
+        {#if verify}
+          <!--
+            One cell per digit, and one name for the whole code: Ark keeps a
+            hidden input in step with the cells, so `code` is what the form
+            submits. `otp` is what asks the platform for
+            autocomplete="one-time-code" — the reason a code can be tapped
+            straight out of the notification instead of memorised.
+          -->
+          <div class="grid gap-2">
+            <PinInput.Root
+              name="code"
+              count={cells.length}
+              otp
+              required
+              disabled={inert}
+              invalid={invalid("code")}
+            >
+              <PinInput.Label>Verification code</PinInput.Label>
+              <PinInput.Control>
+                {#each cells as index (index)}
+                  <PinInput.Input {index} />
+                {/each}
+              </PinInput.Control>
+              <PinInput.HiddenInput />
+            </PinInput.Root>
+            <!--
+              An alert rather than the input's described text: a pin input is n
+              controls and one value, so there is no single field to describe —
+              and this message only ever arrives after a submit, which is when an
+              alert is the right instrument.
+            -->
+            {#if errors?.code}
+              <p class="text-sm text-destructive" role="alert">{errors.code}</p>
+            {/if}
+          </div>
+        {/if}
+
+        {#if signUp}
+          <Field.Root required invalid={invalid("fullName")} disabled={inert}>
+            <Field.Label>Full name</Field.Label>
+            <Field.Input name="fullName" autocomplete="name" placeholder="Ada Lovelace" />
+            <Field.ErrorText>{errors?.fullName}</Field.ErrorText>
+          </Field.Root>
+        {/if}
+
+        {#if asksForEmail}
+          <Field.Root required invalid={invalid("email")} disabled={inert}>
+            <Field.Label>Email</Field.Label>
+            <Field.Input
+              name="email"
+              type="email"
+              autocomplete="email"
+              placeholder="you@example.com"
+            />
+            {#if signUp || forgot}
+              <Field.ErrorText>{errors?.email}</Field.ErrorText>
+            {/if}
+          </Field.Root>
+        {/if}
+
+        {#if !forgot && !verify}
+          <Field.Root required invalid={invalid("password")} disabled={inert}>
+            <Field.Label>{reset ? "New password" : "Password"}</Field.Label>
+            <Field.Input
+              name="password"
+              type="password"
+              autocomplete={newPassword ? "new-password" : "current-password"}
+              placeholder="••••••••"
+            />
+            <!--
+              The rules are the field's helper text, not a list beside it: Ark
+              gives helper text an id and points the input's aria-describedby at
+              it, so the rules are read on focus rather than found afterwards.
+              Ark renders that part as a <span>, so the rows are spans carrying
+              list roles — a <ul> inside phrasing content would be invalid
+              markup. The region is polite and not atomic, so a rule turning
+              green announces its own line and not the other two, and the tick
+              is doubled by a word: colour is never the only carrier.
+            -->
+            {#if reset && requirements.length > 0}
+              <Field.HelperText class="grid gap-1" role="list" aria-live="polite">
+                {#each requirements as requirement (requirement.id)}
+                  <span role="listitem" class="flex items-center gap-2">
+                    <span aria-hidden="true">{requirement.met ? "✓" : "○"}</span>
+                    <span class={requirement.met ? "text-foreground" : undefined}>
+                      {requirement.label}
+                    </span>
+                    <span class="sr-only">{requirement.met ? "— met" : "— not met yet"}</span>
+                  </span>
+                {/each}
+              </Field.HelperText>
+            {:else if newPassword}
+              <Field.HelperText>
+                At least 12 characters. A passphrase beats a puzzle.
+              </Field.HelperText>
+            {/if}
+            {#if newPassword}
+              <Field.ErrorText>{errors?.password}</Field.ErrorText>
+            {/if}
+          </Field.Root>
+        {/if}
+
+        <!--
+          The confirmation is a second field rather than a "show password"
+          toggle because the two answer different questions: a toggle asks
+          whether you can read what you typed, this asks whether you typed what
+          you meant twice. Both are `new-password`, so a manager offers to fill
+          and then to save the same generated value.
+        -->
+        {#if reset}
+          <Field.Root required invalid={invalid("confirmPassword")} disabled={inert}>
+            <Field.Label>Confirm new password</Field.Label>
+            <Field.Input
+              name="confirmPassword"
+              type="password"
+              autocomplete="new-password"
+              placeholder="••••••••"
+            />
+            <Field.ErrorText>{errors?.confirmPassword}</Field.ErrorText>
+          </Field.Root>
+        {/if}
+
+        <!-- Recovery and reset carry no secondary row: nothing to remember, nowhere else to go. -->
+        {#if signUp}
+          <!--
+            Consent is one checkbox with a short label, and the two legal links
+            sit under it rather than inside it: Ark's checkbox root is a
+            <label>, so an anchor in the label text is a link inside a control —
+            a click either follows it or ticks the box depending on the browser,
+            and neither answer is the one the reader meant.
+          -->
+          <div class="grid gap-2">
+            <Checkbox.Root name="terms" size="sm" required disabled={inert}>
+              <Checkbox.Control>
+                <Checkbox.Indicator>✓</Checkbox.Indicator>
+              </Checkbox.Control>
+              <Checkbox.Label>I agree to the terms and the privacy policy</Checkbox.Label>
+              <Checkbox.HiddenInput />
+            </Checkbox.Root>
+            <p class="text-sm text-muted-foreground">
+              Read the
+              <a
+                class="rounded-sm font-medium text-foreground underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                href={termsHref}
+              >
+                terms of service
+              </a>
+              and the
+              <a
+                class="rounded-sm font-medium text-foreground underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                href={privacyHref}
+              >
+                privacy policy
+              </a>.
+            </p>
+          </div>
+        {:else if !forgot && !reset && !verify}
+          <div class="grid gap-3 @sm:flex @sm:items-center @sm:justify-between">
+            <Checkbox.Root name="remember" size="sm" disabled={inert}>
+              <Checkbox.Control>
+                <Checkbox.Indicator>✓</Checkbox.Indicator>
+              </Checkbox.Control>
+              <Checkbox.Label>Remember me</Checkbox.Label>
+              <Checkbox.HiddenInput />
+            </Checkbox.Root>
+
+            <a
+              class="rounded-sm text-sm font-medium text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline focus-visible:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+              href={forgotHref}
+            >
+              Forgot your password?
+            </a>
+          </div>
+        {/if}
+
+        <Button
+          type="submit"
+          variant={confirming ? "secondary" : "primary"}
+          class="w-full"
+          disabled={inert}
+          aria-busy={loading}
+        >
+          {#if loading}
+            <span
+              aria-hidden="true"
+              class="size-4 animate-spin rounded-full border-2 border-current border-t-transparent motion-reduce:animate-none"
+            ></span>
+            {busyLabel}
+          {:else}
+            {submitLabel}
+          {/if}
+        </Button>
+
+        {#if verify}
+          <!--
+            The resend is a second submit, not a callback: named `intent` and
+            valued "resend", it posts the form the browser already has — the code
+            cells, the address, everything — with no JavaScript needed, and the
+            one submit handler tells the two buttons apart by reading the
+            submitter. It sits after the primary so the Enter key still verifies.
+
+            While the countdown runs the button is disabled and says how long: a
+            control that looks pressable and quietly does nothing is worse than
+            one that says why it cannot.
+          -->
+          <Button
+            type="submit"
+            name="intent"
+            value="resend"
+            variant="ghost"
+            class="w-full"
+            disabled={inert || waiting}
+          >
+            {waiting ? `Send a new code in ${resendIn}s` : "Send a new code"}
+          </Button>
+        {/if}
+      </form>
+    </Card.Content>
+
+    <!--
+      One footer, and the way out of the card is the same shape in all five
+      modes: a question and the link that answers it. Only `sign-in` sends the
+      reader onward to an account they do not have yet; the other four send
+      them back to the one they do.
+    -->
+    <Card.Footer class="justify-center">
+      <p class="text-sm text-muted-foreground">
+        {cardCopy[mode].footerPrompt}
+        <a
+          class="rounded-sm font-medium text-foreground underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          href={mode === "sign-in" ? signUpHref : signInHref}
+        >
+          {mode === "sign-in" ? "Create an account" : "Sign in"}
+        </a>
+      </p>
+    </Card.Footer>
+  </Card.Root>
+</section>

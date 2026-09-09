@@ -693,10 +693,18 @@
     line-height: 1.25rem;
     color: var(--foreground);
   }
+  /* Muted, but not straight `--muted-foreground`: an alert never sits on
+     `--card` itself, it sits on a status tint (8% of a status slot mixed into
+     it, below), and that tint eats the slot's whole AA margin — measured on
+     theme-moderno's light scheme, `--muted-foreground` lands at 4.24–4.46:1 on
+     the four tints, under WCAG AA's 4.5. Mixing a sixth of `--foreground` back
+     in clears 5.5:1 on every tint in both schemes while staying visibly
+     quieter than the title, and it is still two contract slots rather than a
+     literal, so a theme re-maps it like everything else. */
   [data-scope="alert"][data-part="description"] {
     font-size: 0.875rem;
     line-height: 1.5;
-    color: var(--muted-foreground);
+    color: color-mix(in oklab, var(--muted-foreground) 85%, var(--foreground));
   }
   [data-scope="alert"][data-part="action"] {
     display: flex;

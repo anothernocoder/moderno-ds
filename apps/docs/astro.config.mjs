@@ -50,6 +50,43 @@ export default defineConfig({
         "@moderno-ui/svelte": fileURLToPath(
           new URL("./node_modules/@moderno-ui/svelte", import.meta.url),
         ),
+        // A screen composes blocks the CLI has already installed alongside it,
+        // so its source imports them from where they land in a consumer
+        // project (`@/components/blocks/…`, the shadcn-style alias every
+        // registry target is written against). Mounting that source here means
+        // resolving those two specifiers to the registry files the CLI would
+        // have copied — same reason as the alias above: the preview must be the
+        // shipped file, not a copy that can drift from it.
+        "@/components/blocks/LoginForm.svelte": fileURLToPath(
+          new URL("../../registry/blocks/login-form/svelte/LoginForm.svelte", import.meta.url),
+        ),
+        "@/components/blocks/AlertList.svelte": fileURLToPath(
+          new URL("../../registry/blocks/alert-list/svelte/AlertList.svelte", import.meta.url),
+        ),
+        // And one tier up again: a flow's example assembly composes the five
+        // screens through the path `moderno add` writes them to, for exactly
+        // the same reason — the preview has to be the shipped file.
+        "@/components/screens/SignIn.svelte": fileURLToPath(
+          new URL("../../registry/screens/sign-in/svelte/SignIn.svelte", import.meta.url),
+        ),
+        "@/components/screens/SignUp.svelte": fileURLToPath(
+          new URL("../../registry/screens/sign-up/svelte/SignUp.svelte", import.meta.url),
+        ),
+        "@/components/screens/ForgotPassword.svelte": fileURLToPath(
+          new URL(
+            "../../registry/screens/forgot-password/svelte/ForgotPassword.svelte",
+            import.meta.url,
+          ),
+        ),
+        "@/components/screens/ResetPassword.svelte": fileURLToPath(
+          new URL(
+            "../../registry/screens/reset-password/svelte/ResetPassword.svelte",
+            import.meta.url,
+          ),
+        ),
+        "@/components/screens/Verify.svelte": fileURLToPath(
+          new URL("../../registry/screens/verify/svelte/Verify.svelte", import.meta.url),
+        ),
       },
     },
   },

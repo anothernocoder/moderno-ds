@@ -1,0 +1,144 @@
+---
+title: Iniciar sesión
+description: La pantalla de inicio de sesión a viewport completo — el formulario de credenciales junto a los avisos que alguien necesita antes de entrar, compuesta con login-form y alert-list.
+group: Pantallas
+order: 111
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import SignInScreenDemo from "../../../islands/SignInScreenDemo.svelte";
+import signInReact from "../../../../../../registry/screens/sign-in/react/sign-in.tsx?raw";
+import signInVue from "../../../../../../registry/screens/sign-in/vue/SignIn.vue?raw";
+import signInSolid from "../../../../../../registry/screens/sign-in/solid/sign-in.tsx?raw";
+import signInSvelte from "../../../../../../registry/screens/sign-in/svelte/SignIn.svelte?raw";
+
+**Iniciar sesión** es la primera [pantalla](/es/screens/) del catálogo: una
+composición a viewport completo del [formulario de acceso](/es/login-form/) y de
+la [lista de alertas](/es/alert-list/), con la cabecera, el pie y la disposición
+que convierten dos secciones en una página a la que se puede llegar.
+
+Es presentacional, y en una pantalla eso significa algo concreto: posee el
+viewport y nada más. Ni credenciales, ni petición, ni router. Le pasas `error`,
+`loading` y los avisos; te devuelve el evento de envío y el nombre del enlace que
+se activó. Eso es lo que permite montar el mismo archivo bajo el router de Next,
+SvelteKit o una SPA sin bifurcarlo.
+
+<FrameworkSelect locale="es" />
+
+<Preview
+  examples={{
+    react: signInReact,
+    vue: signInVue,
+    solid: signInSolid,
+    svelte: signInSvelte,
+  }}
+>
+  <SignInScreenDemo client:visible />
+</Preview>
+
+## Instalación
+
+<Install item="sign-in" />
+
+Instalar una pantalla instala los bloques que compone — `login-form` y
+`alert-list` — y registra cada uno de los tres con su propia versión en
+`.moderno/manifest.json`, de modo que `moderno update` y `moderno diff` siguen
+funcionando por ítem. Nada se arrastra hacia arriba: esta pantalla llega sin el
+flujo `auth` al que pertenece.
+
+La pantalla importa sus dos bloques desde `@/components/blocks/…`, que es donde
+`moderno add` los escribe. Si tu proyecto mapea `@/` a otro sitio que no sea
+`src/`, esas dos líneas de import son la única edición.
+
+Su raíz es un `<div>`, no un `<main>`: casi todos los layouts de aplicación ya
+aportan el landmark `main`, y un documento con dos visibles es inválido. El
+`<header>` y el `<footer>` de dentro son el banner y el contentinfo de la página
+en cuanto la pantalla no está anidada en otro landmark; si tu ruta no tiene
+`<main>`, ese elemento raíz es el que hay que cambiar.
+
+## Tamaños
+
+«A viewport completo» es una **altura** — la raíz es `min-h-dvh`. Cada decisión
+de _ancho_ se lee del contenedor de la propia pantalla, así que sigue siendo
+correcta en un panel que no es la ventana: el área de contenido de una app
+Electron, un marco de vista previa, una consola embebida.
+
+| Paso  | Slot             | Qué cambia                                                                       |
+| ----- | ---------------- | -------------------------------------------------------------------------------- |
+| `@sm` | `--container-sm` | La cabecera deja de apilarse: el logotipo y el enlace de soporte comparten fila. |
+| `@md` | `--container-md` | El pie deja de apilarse: el copyright y los enlaces legales comparten fila.      |
+| `@lg` | `--container-lg` | Los avisos dejan su sitio bajo la tarjeta y se colocan a su lado.                |
+
+Nada de eso lee la ventana, y por eso los tres marcos de arriba se contradicen
+entre sí en una misma pantalla. Las reglas están en
+[Bloques y contenedores](/es/blocks-and-containers/) y en el ADR-0005.
+
+Los dos bloques de dentro siguen leyendo _su propio_ contenedor, un nivel más
+abajo: en `@lg` la tarjeta y los avisos reciben media fila cada uno, así que las
+filas de aviso pueden estar en su modo de descarte solo con glifo mientras la
+pantalla que las rodea está en su paso más ancho. Ese anidamiento es justo la
+razón de ser de las container queries: el bloque no necesita saber que lo
+montaron dentro de una pantalla.
+
+## Estados
+
+El inicio de sesión y los avisos se cargan por separado, así que fallan por
+separado: las tres primeras props son del formulario, las dos siguientes de los
+avisos.
+
+| Estado          | Qué se renderiza                                                                                                                       |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| Por defecto     | La tarjeta y, al lado o debajo, los avisos de servicio.                                                                                |
+| Error           | `error` — la alerta a nivel de formulario y los dos campos inválidos, sin nombrar cuál falló: eso confirmaría que el correo existe.    |
+| Cargando        | `loading` — todos los controles inertes, el envío con `aria-busy` y su spinner detenido bajo `prefers-reduced-motion`.                 |
+| Deshabilitado   | `disabled` — aquí no se puede iniciar sesión (un espacio solo con SSO, una cuenta bloqueada).                                          |
+| Avisos cargando | `noticesLoading` — una región ocupada sustituye a la lista mientras el formulario sigue usable.                                        |
+| Error de avisos | `noticesError` — una alerta con reintento sustituye a la lista, porque «no pasa nada» y «no pudimos comprobarlo» son hechos distintos. |
+| Vacío           | `notices={[]}` — hoy no pasa nada, así que el aparte no se renderiza y la tarjeta queda centrada y sola.                               |
+| Foco visible    | El contorno compartido de 2px de `--ring` en cada campo, control y enlace, en el orden de lectura: cabecera, formulario, avisos, pie.  |
+
+## Props
+
+| Prop               | Tipo                  | Por defecto    | Qué hace                                                                                                                                         |
+| ------------------ | --------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `error`            | `string`              | —              | Falló el inicio de sesión: levanta la alerta y marca inválidos ambos campos.                                                                     |
+| `loading`          | `boolean`             | `false`        | El envío está en curso: controles inertes y botón ocupado.                                                                                       |
+| `disabled`         | `boolean`             | `false`        | Iniciar sesión no está disponible.                                                                                                               |
+| `notices`          | `AlertListItem[]`     | dos de ejemplo | Avisos de servicio junto al formulario. `[]` deja solo la tarjeta.                                                                               |
+| `noticesError`     | `string`              | —              | No se pudieron cargar los avisos; ese mensaje sustituye a la lista.                                                                              |
+| `noticesLoading`   | `boolean`             | `false`        | Una región ocupada sustituye a los avisos.                                                                                                       |
+| `onSubmit`         | `(event) => void`     | —              | Envío nativo. React/Solid `onSubmit`, Svelte `onsubmit`, Vue emite `submit`.                                                                     |
+| `onNavigate`       | `(to, event) => void` | —              | Se activó un enlace que dibuja la pantalla: `home`, `support`, `privacy` o `terms`, junto al evento de clic que lo activó. Vue emite `navigate`. |
+| `onNoticeAction`   | `(id) => void`        | —              | La acción propia de un aviso, con su id. Svelte `onnoticeaction`, Vue emite `noticeAction`.                                                      |
+| `onDismissNotice`  | `(id) => void`        | —              | Se descartó un aviso. Svelte `ondismissnotice`, Vue emite `dismissNotice`.                                                                       |
+| `onDismissNotices` | `() => void`          | —              | Se descartaron todos. Svelte `ondismissnotices`, Vue emite `dismissNotices`.                                                                     |
+| `onRetryNotices`   | `() => void`          | —              | Reintentar tras `noticesError`. Svelte `onretrynotices`, Vue emite `retryNotices`.                                                               |
+| `forgotHref`       | `string`              | `"#"`          | A dónde apunta «Forgot your password?».                                                                                                          |
+| `signUpHref`       | `string`              | `"#"`          | A dónde apunta «Create an account».                                                                                                              |
+| `homeHref`         | `string`              | `"#"`          | A dónde apunta el logotipo.                                                                                                                      |
+| `supportHref`      | `string`              | `"#"`          | A dónde apunta «Contact support».                                                                                                                |
+| `privacyHref`      | `string`              | `"#"`          | A dónde apunta el enlace de privacidad.                                                                                                          |
+| `termsHref`        | `string`              | `"#"`          | A dónde apunta el enlace de términos.                                                                                                            |
+
+Los enlaces de la propia pantalla llevan `href` **y** llaman a `onNavigate`, que
+recibe el destino _y_ el evento de clic: así un router de cliente puede hacer
+`preventDefault()` sobre él (tras mirar `metaKey` / `ctrlKey`, para dejarle al
+navegador el clic que abre una pestaña nueva) mientras el marcado sigue
+significando algo sin JavaScript:
+
+```tsx
+<SignIn
+  homeHref="/"
+  onNavigate={(to, event) => {
+    if (event.metaKey || event.ctrlKey) return; // que el navegador abra la pestaña
+    event.preventDefault();
+    router.push(routes[to]);
+  }}
+/>
+```
+
+Los dos enlaces del formulario son solo `href` a propósito: quien sigue «Forgot
+your password?» ya está teniendo un mal día, y ese enlace no debería depender de
+que la hidratación haya funcionado.

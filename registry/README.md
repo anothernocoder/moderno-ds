@@ -30,7 +30,7 @@ and never in a cycle. `checkTiers` (`@moderno-ui/cli`) enforces it in the
 registry integrity test and again in the docs copy step, so a registry that
 would make `moderno add login-form` install a router never reaches `/r/`.
 
-Installing is transitive and per item: `moderno add auth` copies the flow, its
+Installing is transitive and per item: `moderno add auth-react` copies the flow, its
 screens, their blocks and the primitives underneath, recording **each one under
 its own version** in the manifest. Nothing is pulled in upward — `moderno add
 cart` installs a screen without the flow it belongs to.
@@ -68,7 +68,7 @@ moderno init                       # scaffold components.json + src/styles/moder
 moderno add theme-moderno          # copy theme.css + append its @import to moderno.css
 moderno add button                 # eject a primitive (escape hatch)
 moderno add login-form-react       # copy a block, pulling registryDependencies first
-moderno add sign-in                # copy a screen + the blocks it composes
+moderno add sign-in-react          # copy a screen + the blocks it composes
 moderno add auth                   # copy a flow + its screens + their blocks
 moderno update [item...]           # re-apply unedited items; never clobbers local edits
 moderno diff <item>                # show what changed vs the registry version
@@ -127,6 +127,26 @@ One gap worth knowing while it lasts: as _CSS_, `no-hardcoded-dimension` still
 only reads `border-radius` (spacing and motion were deferred from #43), so a
 `width: 320px` in an SFC's `<style>` block passes the linter today. Write the
 dimensions as utilities and the gate has the whole surface.
+
+## Authoring a screen
+
+A screen is a block's rules plus two of its own (`sign-in` is the worked
+example).
+
+1. **Full-viewport is a _height_.** The root carries `min-h-dvh`; every _width_
+   decision is still read off the screen's own `@container`, so the screen is
+   correct in a pane that is not the window. `md:` is as wrong here as it is in
+   a block.
+2. **Compose blocks by their installed path.** A screen's
+   `registryDependencies` are the blocks it composes, so `moderno add` writes
+   those next to it; the source imports them from where they land —
+   `@/components/blocks/<file>` — not from a path inside this repo. The docs
+   resolve those two specifiers back to the registry sources
+   (`apps/docs/astro.config.mjs`), which is what lets a preview mount the shipped
+   file rather than a copy of it.
+
+The root is a `<div>`, not a `<main>`: a document may have only one visible
+`main`, and most app shells already provide it.
 
 ## Themes & the multi-brand switch
 

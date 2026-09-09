@@ -12,6 +12,14 @@ import loginFormReact from "../../../../../../registry/blocks/login-form/react/l
 import loginFormVue from "../../../../../../registry/blocks/login-form/vue/LoginForm.vue?raw";
 import loginFormSolid from "../../../../../../registry/blocks/login-form/solid/login-form.tsx?raw";
 import loginFormSvelte from "../../../../../../registry/blocks/login-form/svelte/LoginForm.svelte?raw";
+import formLayoutReact from "../../../../../../registry/blocks/form-layout/react/form-layout.tsx?raw";
+import formLayoutVue from "../../../../../../registry/blocks/form-layout/vue/FormLayout.vue?raw";
+import formLayoutSolid from "../../../../../../registry/blocks/form-layout/solid/form-layout.tsx?raw";
+import formLayoutSvelte from "../../../../../../registry/blocks/form-layout/svelte/FormLayout.svelte?raw";
+import alertListReact from "../../../../../../registry/blocks/alert-list/react/alert-list.tsx?raw";
+import alertListVue from "../../../../../../registry/blocks/alert-list/vue/AlertList.vue?raw";
+import alertListSolid from "../../../../../../registry/blocks/alert-list/solid/alert-list.tsx?raw";
+import alertListSvelte from "../../../../../../registry/blocks/alert-list/svelte/AlertList.svelte?raw";
 import pricingReact from "../../../../../../registry/blocks/pricing/react/pricing.tsx?raw";
 import pricingVue from "../../../../../../registry/blocks/pricing/vue/Pricing.vue?raw";
 import pricingSolid from "../../../../../../registry/blocks/pricing/solid/pricing.tsx?raw";
@@ -43,7 +51,7 @@ inventory is absorbed; each published block gets its own page in this section.
 
 ## What ships today
 
-Three blocks, one registry entry per framework each. Every Preview below reads
+Five blocks, one registry entry per framework each. Every Preview below reads
 its source straight out of `registry/blocks/<name>/<framework>/` — for all four
 frameworks, switchable with the selector — so what you read is exactly what the
 CLI copies, not a mockup of it.
@@ -52,7 +60,10 @@ CLI copies, not a mockup of it.
 
 ### Login form
 
-Composes `Field` (label, helper text, error text) and `Button`.
+Composes `Card`, `Field`, `Checkbox`, `Button` and `Alert` into a sign-in
+section that sizes itself from its container. It has a page of its own —
+[Login form](/en/login-form/) — with the install command, the container steps
+and every state it renders.
 
 <Preview
   examples={{
@@ -63,6 +74,42 @@ Composes `Field` (label, helper text, error text) and `Button`.
   }}
 >
   <BlocksDemo block="login-form" client:visible />
+</Preview>
+
+### Form layout
+
+Groups related fields under a heading, pairs them off when the container is wide
+enough and commits them from one actions row. It has a page of its own —
+[Form layout](/en/form-layout/) — with the three container steps and every state
+it renders.
+
+<Preview
+  examples={{
+    react: formLayoutReact,
+    vue: formLayoutVue,
+    solid: formLayoutSolid,
+    svelte: formLayoutSvelte,
+  }}
+>
+  <BlocksDemo block="form-layout" client:visible />
+</Preview>
+
+### Alert list
+
+Stacks status alerts — all four variants — each dismissible on its own, with its
+own empty, loading and error renders. It has a page of its own —
+[Alert list](/en/alert-list/) — with the three container steps and every state it
+renders.
+
+<Preview
+  examples={{
+    react: alertListReact,
+    vue: alertListVue,
+    solid: alertListSolid,
+    svelte: alertListSvelte,
+  }}
+>
+  <BlocksDemo block="alert-list" client:visible />
 </Preview>
 
 ### Pricing
@@ -90,14 +137,16 @@ A centred placeholder with one call to action.
   <BlocksDemo block="empty-state" client:visible />
 </Preview>
 
-## Section layout is not painted yet
+## Section layout, block by block
 
-Those previews look plain, and that is the honest state rather than a rendering
-fault. A block's primitives are fully painted by `components.css`, but the
-block's own wrapper carries a bare `moderno-block-*` class with **no rules on
-`main`** — no grid, no spacing scale, no card surface. Section layout arrives
-with the container-query styling pipeline described in ADR-0005.
+The container-query styling pipeline of ADR-0005 has landed, and the blocks are
+being rewritten onto it one at a time. A rewritten block lays itself out with
+the Tailwind preset's contract-backed utilities and the `@sm` / `@md` / `@lg`
+container variants — `login-form`, `form-layout`, `alert-list` and `pricing`
+above are on that footing, and each gets its own page as it lands. `form-layout`
+and `alert-list` are the two that use all three steps, one layout decision each.
 
-Showing the gap is the point: these previews are captured by the visual suite,
-so when the pipeline lands, the baselines move and the change has to be reviewed
-rather than noticed later.
+`empty-state` is not there yet: its wrapper still carries a bare
+`moderno-block-*` class with **no rules on `main`** — no grid, no spacing scale,
+no surface. Showing the gap is the point rather than hiding it behind a mockup;
+it closes when that block is rewritten in turn.

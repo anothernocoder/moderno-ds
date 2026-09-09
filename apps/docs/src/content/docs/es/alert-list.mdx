@@ -1,0 +1,103 @@
+---
+title: Lista de alertas
+description: El centro de notificaciones — una pila de alertas de estado descartables en las cuatro variantes, con sus propios estados vacío, cargando y de error, compuesta con Alert, Button y Card.
+group: Bloques
+order: 103
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import AlertListBlockDemo from "../../../islands/AlertListBlockDemo.svelte";
+import alertListReact from "../../../../../../registry/blocks/alert-list/react/alert-list.tsx?raw";
+import alertListVue from "../../../../../../registry/blocks/alert-list/vue/AlertList.vue?raw";
+import alertListSolid from "../../../../../../registry/blocks/alert-list/solid/alert-list.tsx?raw";
+import alertListSvelte from "../../../../../../registry/blocks/alert-list/svelte/AlertList.svelte?raw";
+
+**Alert list** es en lo que se convierte una [Alert](/es/alert/) suelta cuando hay
+más de una: una pila de estados, del más reciente al más antiguo, cada uno
+descartable por su cuenta y bajo un encabezado capaz de limpiarlos todos. Compone
+`Alert`, `Button` y `Card`, y no pinta nada por su cuenta, así que un tema lo
+reviste sin tocarlo.
+
+Es un _bloque_, no una pantalla: no es dueño del viewport y tampoco de las
+notificaciones. Renderiza las `alerts` que le pasas e informa de lo que la
+persona descartó — tú quitas el elemento de tu propio estado, que es lo que deja
+en tus manos un borrado optimista, un deshacer o una llamada al servidor.
+
+<FrameworkSelect locale="es" />
+
+<Preview
+  examples={{
+    react: alertListReact,
+    vue: alertListVue,
+    solid: alertListSolid,
+    svelte: alertListSvelte,
+  }}
+>
+  <AlertListBlockDemo client:visible />
+</Preview>
+
+## Instalación
+
+<Install item="alert-list" />
+
+Instalar un bloque copia su archivo dentro de tu proyecto y lo registra en
+`.moderno/manifest.json` con su propia versión, así que `moderno update` y
+`moderno diff` siguen funcionando por ítem. Desde ese momento el archivo es tuyo.
+
+## Dimensionado
+
+Un centro de notificaciones es el bloque que más probablemente se monta dos veces
+en la misma aplicación — una en un cajón de 320px y otra a lo ancho de una página
+de actividad — así que sus tres decisiones de maquetación se leen de su
+contenedor:
+
+| Paso  | Slot             | Qué cambia                                                                        |
+| ----- | ---------------- | --------------------------------------------------------------------------------- |
+| `@sm` | `--container-sm` | El encabezado deja de apilarse: el título y «Dismiss all» comparten fila.         |
+| `@md` | `--container-md` | El control de descarte de cada fila gana su etiqueta en vez de quedarse en glifo. |
+| `@lg` | `--container-lg` | Cada marca de tiempo deja de estar debajo del título y se alinea al borde final.  |
+
+Nada de eso lee la ventana. El mismo archivo se ve bien en un cajón de 288px, en
+un panel de 480px, en la columna de la página y en un escenario de 50rem, tanto
+en claro como en oscuro, sin una sola media query — por eso la vista previa de
+arriba lo monta a cuatro anchos a la vez y no coinciden entre sí en una misma
+pantalla. Las reglas están en [Bloques y contenedores](/es/blocks-and-containers/)
+y en el ADR-0005.
+
+## Estados
+
+| Estado        | Qué se renderiza                                                                                                                                                                |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Por defecto   | La lista: una `Alert` por notificación, en la variante de estado en la que habla — `info`, `success`, `warning` o `error`.                                                      |
+| Hover         | Las afordancias propias de los controles desde `components.css`: los botones de descarte y de acción toman el relleno de su variante.                                           |
+| Foco visible  | El contorno compartido de 2px con `--ring` en cada descarte, en cada acción de fila y en «Dismiss all», en el orden de lectura de la lista.                                     |
+| Deshabilitado | `disabled` — las alertas siguen legibles y todos los controles quedan inertes. Una vista de solo lectura o de auditoría, no una lista escondida.                                |
+| Cargando      | `loading` — una región ocupada sustituye a la lista, con un spinner que se detiene con `prefers-reduced-motion`, para que nadie actúe sobre filas que están a punto de cambiar. |
+| Vacío         | `alerts={[]}` — la lista cargó y no hay nada en ella, y eso es un render propio: «You are all caught up», dentro de un `Card`.                                                  |
+| Error         | `error` — la lista no se pudo cargar, así que una `Alert` lo dice y ofrece reintentar. Una lista vacía y una lista que falló son hechos distintos.                              |
+
+Las cuatro variantes de estado aparecen en el ejemplo de arriba, en el orden en
+que se necesitan: lo que está roto, lo que va a romperse, lo que cambió y lo que
+salió bien.
+
+## Propiedades
+
+| Prop           | Tipo              | Por defecto         | Qué hace                                                                                                    |
+| -------------- | ----------------- | ------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `alerts`       | `AlertListItem[]` | un ejemplo incluido | Las notificaciones a renderizar, de la más reciente a la más antigua. `[]` muestra el estado vacío.         |
+| `heading`      | `string`          | `"Notifications"`   | El encabezado sobre la pila — qué _es_ esta colección.                                                      |
+| `description`  | `string`          | una frase           | La línea bajo el encabezado; pasa `""` para dejar solo el encabezado.                                       |
+| `error`        | `string`          | —                   | La lista no se pudo cargar; este mensaje la sustituye.                                                      |
+| `loading`      | `boolean`         | `false`             | La lista se está cargando o refrescando: una región ocupada la sustituye.                                   |
+| `disabled`     | `boolean`         | `false`             | Solo lectura: las alertas siguen en pantalla y todos los controles quedan inertes.                          |
+| `onDismiss`    | `(id) => void`    | —                   | El descarte de una fila. React y Solid reciben `onDismiss`, Svelte `ondismiss`, Vue emite `dismiss`.        |
+| `onDismissAll` | `() => void`      | —                   | Limpiar la lista entera. Svelte `ondismissall`, Vue emite `dismissAll`.                                     |
+| `onAction`     | `(id) => void`    | —                   | La acción propia de una fila (`actionLabel`), con el id de esa fila. Svelte `onaction`, Vue emite `action`. |
+| `onRetry`      | `() => void`      | —                   | Reintentar tras `error`. Svelte `onretry`, Vue emite `retry`.                                               |
+
+Un `AlertListItem` es `{ id, variant, title, description?, meta?, actionLabel? }`
+— `variant` es uno de los cuatro estados de Alert, `meta` es la marca de tiempo
+ya redactada para quien lee, y una fila sin `actionLabel` es una noticia, no una
+tarea.

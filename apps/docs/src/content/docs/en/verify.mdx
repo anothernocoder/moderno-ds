@@ -1,0 +1,221 @@
+---
+title: Verify
+description: The full-viewport screen that takes the code emailed after sign-up — one cell per digit, a resend that is a plain form submission, and the notes that answer "it has not arrived", composed from login-form and alert-list.
+group: Screens
+order: 115
+agent:
+  intent: The full-viewport screen that checks a one-time code — one state of the auth flow, presentational, with a resend that works without JavaScript.
+  whenToUse: "The route an account lands on straight after sign-up: /verify, /confirm-email, /auth/otp."
+  whenNotToUse:
+    - case: Asking for the address so a code or a link can be sent
+      use: the sign-up screen, or forgot-password — this one is what comes after
+    - case: A code field inside a page you already own (a re-auth step, a 2FA dialog)
+      use: the LoginForm block with mode="verify" — a block never owns the viewport
+    - case: A secret of unknown length the person chose themselves
+      use: the reset-password screen, or Field with a password input
+    - case: The whole auth journey, with the navigation between its steps
+      use: the auth flow, which sequences this screen with sign-in, sign-up, forgot-password and reset-password
+  gotchas:
+    - 'Both buttons submit the same form. Read it with the submitter — `new FormData(form, event.nativeEvent.submitter)` — and branch on `intent`: `"resend"` is the second button, anything else is the check.'
+    - "The address rides in a hidden input beside the code, so a resend posted from a page that never hydrated still knows where to send. Pass `sentTo`."
+    - "The whole code posts under one name, `code`, from the hidden input Ark keeps in step with the cells. The cells themselves are unnamed."
+    - "`resendIn` is a number the screen renders, not a countdown it runs. You own the timer — the screen holds no state, which is what presentational means."
+    - "`resent` rewrites the card's header rather than adding a line: the header is already the card's live region, so the confirmation is announced without a second one."
+    - "`errors.code` is the wrong or expired code — the cells go `aria-invalid` and the reason prints under them as an `alert`. `error` is the form-level failure: too many attempts, an address already verified."
+    - "`codeLength` changes the number of cells *and* the number the description names, so the two can never disagree."
+    - "`notices={[]}` is the screen's empty state: the aside is not rendered at all and the card sits centred and alone."
+    - "Full-viewport is a height (`min-h-dvh`). Every width decision is read off the screen's own container, so it is still correct mounted in a pane that is not the window."
+    - "The root is a `<div>`, not a `<main>` — most app shells already provide the `main` landmark, and two visible ones in a document is invalid."
+    - "The page's `h1` is the card's own title: the screen hands the block `titleLevel={1}` rather than printing a heading of its own above it."
+  theming:
+    - "Nothing is painted here. The card is the LoginForm block and the notes are the AlertList block; the screen's own chrome is `text-foreground` / `text-muted-foreground` on `bg-background`."
+    - "The code cells paint from --input / --background, turn --primary as they fill and --destructive when invalid; their density is PinInput's `size` recipe."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import VerifyScreenDemo from "../../../islands/VerifyScreenDemo.svelte";
+import verifyReact from "../../../../../../registry/screens/verify/react/verify.tsx?raw";
+import verifyVue from "../../../../../../registry/screens/verify/vue/Verify.vue?raw";
+import verifySolid from "../../../../../../registry/screens/verify/solid/verify.tsx?raw";
+import verifySvelte from "../../../../../../registry/screens/verify/svelte/Verify.svelte?raw";
+
+**Verify** is the step between an address that was typed and an address that is
+known to exist. It is a full-viewport composition of the
+[login form](/en/login-form/) in its `verify` mode — one cell per digit of the
+code, and a second button that asks for a new one — and the
+[alert list](/en/alert-list/) carrying the three answers to "it has not
+arrived".
+
+It asks for the code and nothing else. Whoever is here has already given their
+address and already chosen a password; a second copy of either would be a
+question they have answered once.
+
+Like every screen it is presentational: it owns the viewport and nothing else.
+No value, no request, no router — and no timer. `resendIn` is a number it prints,
+not a countdown it runs.
+
+<FrameworkSelect locale="en" />
+
+<Preview
+  examples={{
+    react: verifyReact,
+    vue: verifyVue,
+    solid: verifySolid,
+    svelte: verifySvelte,
+  }}
+>
+  <VerifyScreenDemo client:visible />
+</Preview>
+
+## Installation
+
+<Install item="verify" />
+
+Installing a screen installs the blocks it composes — here `login-form` and
+`alert-list`, the same two `sign-in`, `forgot-password` and `reset-password` use
+— and records each under its own version in `.moderno/manifest.json`, so
+`moderno update` and `moderno diff` keep working per item. Installing all five
+auth screens therefore lands one copy of the card, not five. Nothing is pulled
+in upward: this screen arrives without the `auth` flow it belongs to.
+
+The screen imports its blocks from `@/components/blocks/…`, which is where
+`moderno add` writes them. If your project maps `@/` somewhere other than `src/`,
+those import lines are the only edit.
+
+## One form, two buttons
+
+The primary submit checks the code. The ghost button under it asks for a new
+one. Both are `type="submit"` on the same `<form>`, and the second carries
+`name="intent" value="resend"` — so telling them apart is reading the submitter,
+and neither needs JavaScript to work at all:
+
+```tsx
+<Verify
+  sentTo={email}
+  resendIn={secondsLeft}
+  resent={justResent}
+  onSubmit={async (event) => {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget, event.nativeEvent.submitter);
+    if (form.get("intent") === "resend") {
+      await sendNewCode(String(form.get("email")));
+      return;
+    }
+    await checkCode(String(form.get("code")));
+  }}
+/>
+```
+
+`new FormData(form, submitter)` is the standard second argument: it adds the
+button that was actually pressed, and only that button. Without it the payload
+is the same either way and there is no way to tell a check from a resend.
+
+The address is in that payload because the card puts it in a hidden input beside
+the code — the same argument as the reset screen's token. A verify page that
+only resends once a bundle has hydrated strands someone who is, by definition,
+one step away from an account they cannot use yet.
+
+## The code
+
+One cell per digit, `count` and the description both read off `codeLength`, and
+every cell marked `autocomplete="one-time-code"`, which is what lets a phone
+offer the code straight from the notification. Ark moves the focus as digits
+land, steps back on backspace, and distributes a pasted string across the cells
+rather than dropping it into the first one. The whole code posts under one name,
+`code`, from the hidden input Ark keeps in step with them — the cells themselves
+carry no name at all.
+
+A wrong code is `errors.code`: the cells go `aria-invalid` and the reason prints
+under them as an `alert`, announced as it arrives. It is an alert rather than the
+input's described text because a pin input is _n_ controls and one value — there
+is no single field to describe — and the message only ever arrives after a
+submit, which is exactly when an alert is the right instrument.
+
+## The resend, and the wait
+
+`resendIn` is seconds. Above zero the second button is disabled and says how long
+is left; at zero it says "Send a new code". A control that looks pressable and
+quietly does nothing is worse than one that says why it cannot.
+
+The countdown is yours to run. The screen holds no state — that is what
+presentational means — so a page mounting it ticks the number down and hands it
+back down on every render. When the new code goes out, pass `resent`: the card
+rewrites its own header to say so, inside the live region it already has, rather
+than stacking another line under the form.
+
+## Sizing
+
+Full-viewport is a **height** — the root is `min-h-dvh`. Every _width_ decision
+is read off the screen's own container, so it is still right in a pane that is
+not the window: an Electron content area, a preview frame, an embedded console.
+
+| Step  | Slot             | What changes                                                                |
+| ----- | ---------------- | --------------------------------------------------------------------------- |
+| `@sm` | `--container-sm` | The masthead stops stacking: the wordmark and the support link share a row. |
+| `@md` | `--container-md` | The footer stops stacking: the copyright and the legal links share a row.   |
+| `@lg` | `--container-lg` | The notes leave their place under the card and stand beside it.             |
+
+None of that reads the window, which is why the three frames above disagree with
+each other on one screen. The rules behind this are in
+[Blocks and containers](/en/blocks-and-containers/) and ADR-0005.
+
+Both blocks inside go on reading _their own_ containers, one level down: the card
+caps itself at `--container-sm` however much room the screen gives it, and at
+`@lg` the notes get half the row. Neither block knows it was mounted in a screen.
+
+## The outline
+
+The screen is the whole route, so it carries the page's `h1` — and the `h1` is
+the card's own title, handed down as `titleLevel={1}`, because "Enter your code"
+is what the page is called. The notes beside it print the `h2`. There is no
+second heading stacked above the card to satisfy an outline.
+
+## States
+
+| State         | What renders                                                                                                                      |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| Default       | The card asking for the code, the resend ready, the notes beside or under it.                                                     |
+| Field error   | `errors={{ code: "…" }}` — every cell goes invalid and the reason prints under them as an `alert`.                                |
+| Error         | `error` — the form-level alert. Too many attempts, or an address already verified; pair it with `disabled`.                       |
+| Resend locked | `resendIn` — the second button is disabled and counts down instead of pretending it can send another code.                        |
+| Resent        | `resent` — the card's header says a new code is on its way and that the one before it has stopped working.                        |
+| Loading       | `loading` — every control inert, the submit marked `aria-busy`, its spinner stopped under `prefers-reduced-motion`.               |
+| Disabled      | `disabled` — no code can be checked here at all; pair it with `error` so the screen says why.                                     |
+| Notes loading | `noticesLoading` — a busy region stands in for the list rather than a stale one under a spinner.                                  |
+| Notes error   | `noticesError` — the notes could not be loaded, said out loud rather than shown as an empty column.                               |
+| Empty         | `notices={[]}` — nothing to say about the code, so the aside is not rendered at all and the card sits centred and alone.          |
+| Focus visible | The shared 2px `--ring` outline on every cell, control and link, in the reading order of the page: masthead, card, notes, footer. |
+
+## Props
+
+| Prop             | Type                     | Default       | What it does                                                                                                                       |
+| ---------------- | ------------------------ | ------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `sentTo`         | `string`                 | `""`          | The address the code went to: named in the card and submitted from a hidden input, so a resend knows where to send.                |
+| `codeLength`     | `number`                 | `6`           | How many cells the code has, and the number the card's description names.                                                          |
+| `resendIn`       | `number`                 | `0`           | Seconds until another code can be asked for. Above zero the resend is locked and says how long; you own the timer.                 |
+| `resent`         | `boolean`                | `false`       | A new code has just gone out: the card's header says so, in its own live region.                                                   |
+| `error`          | `string`                 | —             | Form-level failure: too many attempts, or an address that is already verified.                                                     |
+| `errors`         | `Record<string, string>` | —             | Per-field messages keyed by the field's `name` (`code`).                                                                           |
+| `loading`        | `boolean`                | `false`       | A submit is in flight: every control inert, the button busy.                                                                       |
+| `disabled`       | `boolean`                | `false`       | No code can be checked here; pair it with `error`.                                                                                 |
+| `notices`        | `AlertListItem[]`        | three samples | The notes shown beside the card. `[]` renders the card alone.                                                                      |
+| `noticesError`   | `string`                 | —             | The notes could not be loaded; that message replaces the list.                                                                     |
+| `noticesLoading` | `boolean`                | `false`       | A busy region stands in for the notes.                                                                                             |
+| `onSubmit`       | `(event) => void`        | —             | Native submit, from either button. React/Solid `onSubmit`, Svelte `onsubmit`, Vue emits `submit`.                                  |
+| `onNavigate`     | `(to, event) => void`    | —             | A link the screen draws itself was activated: `home`, `support`, `privacy` or `terms`, with the click event. Vue emits `navigate`. |
+| `signInHref`     | `string`                 | `"#"`         | Where "Sign in" points, in the card's footer.                                                                                      |
+| `homeHref`       | `string`                 | `"#"`         | Where the wordmark points.                                                                                                         |
+| `supportHref`    | `string`                 | `"#"`         | Where "Contact support" points.                                                                                                    |
+| `privacyHref`    | `string`                 | `"#"`         | Where the privacy link points.                                                                                                     |
+| `termsHref`      | `string`                 | `"#"`         | Where the terms link points.                                                                                                       |
+
+The notes also report themselves: `onNoticeAction`, `onDismissNotice`,
+`onDismissNotices` and `onRetryNotices` are forwarded straight to the block, the
+same four the [sign-in screen](/en/sign-in/) passes.
+
+The card's "Sign in" link is an `href`, not a callback — someone who verified on
+a different device should be able to walk to the sign-in page whether or not the
+bundle loaded. Pass `signInHref`.
