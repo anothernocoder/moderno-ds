@@ -1,6 +1,6 @@
 {
   "name": "@moderno-ui/css",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Single public CSS entrypoint for Moderno. Re-exports the token contract; hides internal package paths.",
   "repository": {
     "type": "git",

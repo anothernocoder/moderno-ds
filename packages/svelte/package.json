@@ -1,6 +1,6 @@
 {
   "name": "@moderno-ui/svelte",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Svelte 5 bindings for Moderno (and the docs island runtime): Ark UI headless behaviour + @moderno-ui/core CVA (props → data-attributes), styled entirely by the shared components.css.",
   "repository": {
     "type": "git",

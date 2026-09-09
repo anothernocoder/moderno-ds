@@ -1,6 +1,6 @@
 {
   "name": "@moderno-ui/mcp",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Local stdio MCP server exposing Moderno's component knowledge to coding agents: search_components, get_component_api, get_examples, get_contract. Aggregates moderno.agent.json from the consumer's node_modules at startup, so answers are pinned to the installed @moderno-ui/* versions.",
   "repository": {
     "type": "git",
