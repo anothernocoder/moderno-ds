@@ -8,6 +8,7 @@ import {
   CONTRACT,
   CONTRAST_PAIRS,
   EXTENDED_SLOTS,
+  FONT_WEIGHTS,
   OTHER_SLOTS,
   TYPE_STEPS,
   slotType,
@@ -85,6 +86,7 @@ describe("@moderno-ui/tokens — contract data", () => {
     expect(slotType("overlay")).toBe("color");
     expect(slotType("text-ui-md")).toBe("dimension");
     expect(slotType("leading-body")).toBe("dimension");
+    expect(slotType("font-weight-semibold")).toBe("fontWeight");
   });
 
   it("carries the display face, elevation and container slots as extended", () => {
@@ -116,6 +118,13 @@ describe("@moderno-ui/tokens — contract data", () => {
     for (const step of TYPE_STEPS) {
       expect(EXTENDED_SLOTS, `--text-${step}`).toContain(`text-${step}`);
       expect(EXTENDED_SLOTS, `--leading-${step}`).toContain(`leading-${step}`);
+    }
+  });
+
+  it("carries the font weights as extended slots, under Tailwind's own key names", () => {
+    expect([...FONT_WEIGHTS]).toEqual(["normal", "medium", "semibold", "bold"]);
+    for (const weight of FONT_WEIGHTS) {
+      expect(EXTENDED_SLOTS, `--font-weight-${weight}`).toContain(`font-weight-${weight}`);
     }
   });
 });
@@ -232,6 +241,14 @@ describe("@moderno-ui/tokens — Tailwind v4 preset", () => {
       expect(inlineTheme.get(`leading-${step}`), `--leading-${step}`).toBe(
         `var(--leading-${step})`,
       );
+    }
+  });
+
+  it("maps every font weight onto Tailwind's weight key of the same name", () => {
+    const inlineTheme = themeBlockDecls(presetCss, "inline");
+    for (const weight of FONT_WEIGHTS) {
+      const slot = `font-weight-${weight}`;
+      expect(inlineTheme.get(slot), `--${slot}`).toBe(`var(--${slot})`);
     }
   });
 

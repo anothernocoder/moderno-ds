@@ -109,7 +109,7 @@ export function createServer(opts: CreateServerOptions = {}): McpServer {
     {
       title: "Get the Moderno theming contract",
       description:
-        "Shared, framework-agnostic theming rules: token slots (color/radius/font/spacing/motion/shadow/container/type), dark-mode/multi-brand model, and the data-part convention. Consult before writing any color, radius, spacing, elevation, container-width, or font-size value.",
+        "Shared, framework-agnostic theming rules: token slots (color/radius/font/spacing/motion/shadow/container/type), dark-mode/multi-brand model, and the data-part convention. Consult before writing any color, radius, spacing, elevation, container-width, font-size, or font-weight value.",
       inputSchema: {},
     },
     () => {

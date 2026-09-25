@@ -12,7 +12,13 @@
  */
 
 /** DTCG `$type` a slot serialises to in a theme's `tokens.dtcg.json`. */
-export type ContractSlotType = "color" | "dimension" | "fontFamily" | "duration" | "shadow";
+export type ContractSlotType =
+  | "color"
+  | "dimension"
+  | "fontFamily"
+  | "fontWeight"
+  | "duration"
+  | "shadow";
 
 /**
  * Where a slot lives in the Theme Builder editor. `extended` slots ship a
@@ -53,6 +59,14 @@ export const TYPE_STEPS = [
   "heading",
   "heading-lg",
 ] as const;
+
+/**
+ * Font weights, lightest first: `--font-weight-<weight>`. Unlike the type steps,
+ * these deliberately *are* Tailwind's own keys, at its values: the unlayered
+ * `:root` in tokens.css beats Tailwind's `@layer theme` defaults, so a stock
+ * `font-medium` follows a theme's override and, by default, changes nothing.
+ */
+export const FONT_WEIGHTS = ["normal", "medium", "semibold", "bold"] as const;
 
 /** The full contract, in editor display order. */
 export const CONTRACT: readonly ContractSlot[] = [
@@ -135,6 +149,14 @@ export const CONTRACT: readonly ContractSlot[] = [
     { name: `text-${step}`, type: "dimension", group: "extended" },
     { name: `leading-${step}`, type: "dimension", group: "extended" },
   ]),
+  // Font weights: 400/500/600/700, the ramp components and blocks set text in.
+  ...FONT_WEIGHTS.map(
+    (weight): ContractSlot => ({
+      name: `font-weight-${weight}`,
+      type: "fontWeight",
+      group: "extended",
+    }),
+  ),
 ];
 
 /**

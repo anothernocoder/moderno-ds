@@ -95,10 +95,15 @@ Beyond color, the contract also standardizes:
   `sm`/`md`/`lg` sizes read `ui-sm`/`ui-md`/`ui-lg`. Content steps: `body`
   16/24, `body-lg` 18/28, `heading-sm` 20/28, `heading` 24/32, `heading-lg`
   36/40. The names stay clear of Tailwind's own `text-*` keys, so the tokens
-  never resize a stock `text-sm`.
+  never resize a stock `text-sm`. Weights: `--font-weight-normal` (400),
+  `--font-weight-medium` (500), `--font-weight-semibold` (600),
+  `--font-weight-bold` (700). These names, unlike the size steps, _are_
+  Tailwind's own keys at Tailwind's own values: the tokens' unlayered `:root`
+  beats Tailwind's defaults, so a stock `font-medium` follows a theme that
+  overrides a weight and changes nothing when none does.
 
-No hardcoded spacing, durations, radii, shadows, widths, or font sizes in
-components — reference the slot.
+No hardcoded spacing, durations, radii, shadows, widths, font sizes, or font
+weights in components — reference the slot.
 
 Extended slots are **optional in a theme**: `@moderno-ui/tokens` ships a neutral
 default for each, and a theme overrides only what its brand actually changes.

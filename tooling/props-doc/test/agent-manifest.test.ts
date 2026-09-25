@@ -244,10 +244,16 @@ describe("buildContractManifest", () => {
     ]);
   });
 
-  it("carries the type scale: a size and a line height per step", () => {
+  it("carries the type scale (a size and a line height per step) and the weights", () => {
     expect(manifest.slots.type).toContain("--text-ui-md");
     expect(manifest.slots.type).toContain("--leading-ui-md");
-    expect(manifest.slots.type).toHaveLength(18);
+    expect(manifest.slots.type.filter((s) => s.startsWith("--font-weight-"))).toEqual([
+      "--font-weight-normal",
+      "--font-weight-medium",
+      "--font-weight-semibold",
+      "--font-weight-bold",
+    ]);
+    expect(manifest.slots.type).toHaveLength(22);
   });
 
   it("lists the extended modal scrim among the colour slots an agent may reference", () => {

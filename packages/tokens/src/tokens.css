@@ -132,6 +132,18 @@
   --leading-heading: 2rem;
   --text-heading-lg: 2.25rem;
   --leading-heading-lg: 2.5rem;
+
+  /*
+   * — Extended: font weights —
+   * Tailwind's own `--font-weight-*` keys at its own values, on purpose: this
+   * unlayered :root beats Tailwind's `@layer theme` defaults, so stock
+   * `font-medium` / `font-semibold` follow a theme that overrides a weight,
+   * and change nothing when none does.
+   */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
 }
 
 .dark {

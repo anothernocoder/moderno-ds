@@ -57,6 +57,16 @@
   --font-serif: var(--font-serif);
   --font-mono: var(--font-mono);
 
+  /*
+   * Font weights → font-normal / font-medium / font-semibold / font-bold.
+   * The same keys Tailwind ships, so this only points the utilities at the
+   * runtime var; Tailwind's other weights (font-light, font-black…) stay.
+   */
+  --font-weight-normal: var(--font-weight-normal);
+  --font-weight-medium: var(--font-weight-medium);
+  --font-weight-semibold: var(--font-weight-semibold);
+  --font-weight-bold: var(--font-weight-bold);
+
   /* Radius → rounded-* utilities */
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);

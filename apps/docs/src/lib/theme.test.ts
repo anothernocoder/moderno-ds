@@ -55,10 +55,12 @@ describe("tokensToState / stateToTokens — round trip", () => {
   it("exports the extended slots with their DTCG types", () => {
     const state = tokensToState(modernoTokens);
     state.light["container-sm"] = "30rem";
+    state.light["font-weight-semibold"] = "650";
     const doc = stateToTokens(state);
     expect(doc.light["font-serif"].$type).toBe("fontFamily");
     expect(doc.light["shadow-lg"].$type).toBe("shadow");
     expect(doc.light["container-sm"].$type).toBe("dimension");
+    expect(doc.light["font-weight-semibold"].$type).toBe("fontWeight");
   });
 
   it("edits the extended modal scrim as an optional colour field", () => {

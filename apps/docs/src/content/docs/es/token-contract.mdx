@@ -65,16 +65,17 @@ Valores OKLCH, definidos en `:root` y en `.dark`. Cada slot `*-foreground` debe 
 
 Opcionales en un tema: omite un slot para heredar el valor por defecto. El Editor de temas los muestra bajo **Extendidos (opcionales)**.
 
-| Slot                                                     | Por defecto                 | Rol                                                                 |
-| -------------------------------------------------------- | --------------------------- | ------------------------------------------------------------------- |
-| `--radius-full`                                          | `9999px`                    | Píldoras, puntos, avatares.                                         |
-| `--spacing-1` … `--spacing-8`                            | `0.25rem` … `2rem`          | Escala de espaciado, en pasos de `0.25rem`.                         |
-| `--motion-instant` / `--motion-fast` / `--motion-normal` | `150ms` / `200ms` / `300ms` | Duraciones de transición.                                           |
-| `--font-serif`                                           | `ui-serif, Georgia, …`      | Tipografía de display para títulos y citas.                         |
-| `--shadow-sm` / `--shadow-md` / `--shadow-lg`            | Tres pasos neutros          | Elevación de popovers, menús y drawers. Valores propios en `.dark`. |
-| `--overlay`                                              | Negro, 32% / 60% en `.dark` | Capa modal detrás de un diálogo. Se pinta sobre un desenfoque.      |
-| `--container-sm` / `--container-md` / `--container-lg`   | `24rem` / `36rem` / `48rem` | Breakpoints de contenedor a los que responden blocks y screens.     |
-| `--text-<paso>` / `--leading-<paso>`                     | Ver la escala tipográfica   | Tamaño de fuente e interlineado de cada paso de la escala.          |
+| Slot                                                     | Por defecto                   | Rol                                                                 |
+| -------------------------------------------------------- | ----------------------------- | ------------------------------------------------------------------- |
+| `--radius-full`                                          | `9999px`                      | Píldoras, puntos, avatares.                                         |
+| `--spacing-1` … `--spacing-8`                            | `0.25rem` … `2rem`            | Escala de espaciado, en pasos de `0.25rem`.                         |
+| `--motion-instant` / `--motion-fast` / `--motion-normal` | `150ms` / `200ms` / `300ms`   | Duraciones de transición.                                           |
+| `--font-serif`                                           | `ui-serif, Georgia, …`        | Tipografía de display para títulos y citas.                         |
+| `--shadow-sm` / `--shadow-md` / `--shadow-lg`            | Tres pasos neutros            | Elevación de popovers, menús y drawers. Valores propios en `.dark`. |
+| `--overlay`                                              | Negro, 32% / 60% en `.dark`   | Capa modal detrás de un diálogo. Se pinta sobre un desenfoque.      |
+| `--container-sm` / `--container-md` / `--container-lg`   | `24rem` / `36rem` / `48rem`   | Breakpoints de contenedor a los que responden blocks y screens.     |
+| `--text-<paso>` / `--leading-<paso>`                     | Ver la escala tipográfica     | Tamaño de fuente e interlineado de cada paso de la escala.          |
+| `--font-weight-normal` … `--font-weight-bold`            | `400` / `500` / `600` / `700` | Pesos: texto corrido, etiquetas y controles, títulos, display.      |
 
 ### Escala tipográfica
 
@@ -109,11 +110,13 @@ Importa el preset para registrar los slots como claves de tema de Tailwind.
 | `--shadow-*`                                   | `shadow-sm`, `shadow-md`, `shadow-lg`                                       |
 | `--container-*`                                | `max-w-sm`, `max-w-md`, `max-w-lg`, `w-*`, `@sm:` / `@md:` / `@lg:`         |
 | `--text-*` / `--leading-*`                     | `text-ui-sm`, `text-body`, … (tamaño e interlineado), `leading-body`, …     |
+| `--font-weight-*`                              | `font-normal`, `font-medium`, `font-semibold`, `font-bold`                  |
 | `--spacing-*`, `--motion-*`                    | Sin mapear. Usa `var(--spacing-4)` y similares.                             |
 
 ### Notas
 
 - Los pasos tipográficos conviven con los `text-xs` … `text-9xl` de Tailwind, sin pisarlos: `text-sm` conserva su tamaño.
+- Los pesos usan las mismas claves y valores que Tailwind: un `font-semibold` de serie ya lee el slot, incluso sin el preset, y se ve igual hasta que un tema lo sobrescribe.
 - Las utilidades de color, radio, tipografía y sombra apuntan a `var(--slot)` (`@theme inline`), así que un override en tiempo de ejecución las re-tematiza sin recompilar.
 - `@sm:` / `@md:` / `@lg:` se disparan en 24rem / 36rem / 48rem fijos, porque una container query no puede leer `var()`.
 - `max-w-*` y `w-*` siguen resolviendo a `var(--container-*)` y respetan el override del tema.

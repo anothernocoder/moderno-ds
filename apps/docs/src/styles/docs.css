@@ -141,7 +141,7 @@ kbd {
 }
 .brand a {
   font-size: var(--text-body);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   letter-spacing: -0.02em;
 }
 .brand a:hover {
@@ -164,7 +164,7 @@ kbd {
 }
 .site-nav a[aria-current="true"] {
   color: var(--docs-fg);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
 }
 .header-tools {
   margin-left: auto;
@@ -189,7 +189,7 @@ kbd {
   color: var(--docs-fg-muted);
   font: inherit;
   font-size: var(--text-ui-sm);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   cursor: pointer;
   transition:
     color var(--docs-ease),
@@ -339,7 +339,7 @@ kbd {
   margin: 0;
   padding: 0.3rem 0.6rem;
   font-size: var(--text-ui-xs);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   color: var(--docs-fg-muted);
 }
 .search-result {
@@ -359,7 +359,7 @@ kbd {
 }
 .search-result-title {
   font-size: var(--text-ui-md);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
 }
 .search-result-excerpt {
   font-size: var(--text-ui-sm);
@@ -368,7 +368,7 @@ kbd {
 .search-result-excerpt mark {
   background: none;
   color: var(--docs-fg);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
 }
 .search-result[aria-selected="true"] .search-result-excerpt mark {
   text-decoration: underline;
@@ -401,7 +401,7 @@ kbd {
   color: var(--docs-fg);
   font: inherit;
   font-size: var(--text-ui-sm);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   appearance: none;
   cursor: pointer;
   transition:
@@ -538,7 +538,7 @@ kbd {
   margin: 1.5rem 0 0.25rem;
   padding: 0 0.625rem;
   font-size: var(--text-ui-sm);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   line-height: 1.5rem;
   color: var(--docs-fg-muted);
 }
@@ -569,7 +569,7 @@ kbd {
 .sidebar-group a[aria-current="page"] {
   color: var(--docs-fg);
   background: var(--docs-surface-strong);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
 }
 
 main {
@@ -610,7 +610,7 @@ main.main--wide {
   main h1 {
     font-size: var(--text-heading-lg);
     line-height: var(--leading-heading-lg);
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     letter-spacing: -0.025em;
     margin: 0 0 0.5rem;
   }
@@ -618,20 +618,20 @@ main.main--wide {
     margin: 3.5rem 0 1rem;
     font-size: var(--text-heading);
     line-height: var(--leading-heading);
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     letter-spacing: -0.02em;
   }
   main h3 {
     margin: 2.25rem 0 0.75rem;
     font-size: var(--text-body-lg);
     line-height: var(--leading-body-lg);
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     letter-spacing: -0.01em;
   }
   main h4 {
     margin: 1.75rem 0 0.5rem;
     font-size: var(--text-body);
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
   }
   main p {
     margin: 0.75rem 0;
@@ -642,7 +642,7 @@ main.main--wide {
   }
   main :where(strong, b):not(.preview-panel--demo *) {
     color: var(--docs-fg);
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
   }
   main :where(h1, h2, h3, h4) {
     scroll-margin-top: calc(var(--docs-header-h) + 1.5rem);
@@ -694,7 +694,7 @@ main.main--wide {
 
   main :where(a):not(.preview-panel--demo *, .page-actions *, .pager *, .home *) {
     color: var(--docs-fg);
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
     text-decoration: underline;
     text-decoration-color: color-mix(in oklch, var(--foreground) 30%, transparent);
     text-decoration-thickness: 1px;
@@ -728,7 +728,7 @@ main.main--wide {
     border-bottom-color: var(--docs-border);
     color: var(--docs-fg-muted);
     font-size: var(--text-ui-xs);
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
     white-space: nowrap;
   }
   main :where(table):not(.preview-panel--demo *) :where(td) {
@@ -753,7 +753,7 @@ main.main--wide {
   main :where(table):not(.preview-panel--demo *) :where(td:first-child code) {
     background: none;
     padding: 0;
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
   }
 
   main :where(blockquote):not(.preview-panel--demo *) {
@@ -810,7 +810,7 @@ main.main--wide {
   padding: 0 0.7rem 0 0.6rem;
   font: inherit;
   font-size: var(--text-ui-xs);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   line-height: 1;
   color: var(--docs-fg-muted);
   background: var(--background);
@@ -887,7 +887,7 @@ main.main--wide {
   text-overflow: ellipsis;
   white-space: nowrap;
   font-size: var(--text-ui-lg);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   color: var(--docs-fg);
 }
 @media (max-width: 30rem) {
@@ -922,7 +922,7 @@ main.main--wide {
 .toc-title {
   margin: 0 0 0.75rem;
   font-size: var(--text-ui-sm);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   color: var(--docs-fg);
 }
 .toc-list {
@@ -962,7 +962,7 @@ main.main--wide {
 }
 .toc-list a[aria-current="true"] {
   color: var(--docs-fg);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   border-left: 2px solid var(--docs-fg);
   padding-left: calc(0.875rem - 1px);
 }
@@ -1236,7 +1236,7 @@ main.main--wide {
   height: 1.625rem;
   padding: 0 0.7rem;
   font-size: var(--text-ui-sm);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   border-radius: var(--docs-radius-sm);
   cursor: pointer;
   color: var(--docs-fg-muted);
@@ -1275,7 +1275,7 @@ main.main--wide {
   height: 1.5rem;
   padding: 0 0.55rem;
   font-size: var(--text-ui-xs);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   border-radius: var(--docs-radius-sm);
   cursor: pointer;
   color: var(--docs-fg-muted);
@@ -1345,7 +1345,7 @@ main.main--wide {
   height: 1.625rem;
   font-family: var(--docs-font-sans);
   font-size: var(--text-ui-sm);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   padding: 0 0.7rem;
   border: 0;
   border-radius: var(--docs-radius-sm);
@@ -1575,7 +1575,7 @@ main.main--wide {
   height: 1.75rem;
   padding: 0 0.6rem 0 0.8rem;
   font-size: var(--text-ui-xs);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   white-space: nowrap;
   color: var(--docs-fg);
   background: var(--docs-surface-strong);
@@ -1703,14 +1703,14 @@ main .props-table:not(:has(.props-description)) {
   min-width: min(100%, 28rem);
 }
 .props-table tbody th {
-  font-weight: normal;
+  font-weight: var(--font-weight-normal);
   white-space: nowrap;
 }
 .props-name code {
   padding: 0;
   background: none;
   font-size: var(--text-ui-sm);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   color: var(--docs-fg);
 }
 .props-required {
@@ -1718,7 +1718,7 @@ main .props-table:not(:has(.props-description)) {
   margin-left: 0.4rem;
   padding: 0 0.35rem;
   font-size: var(--text-ui-xs);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   line-height: 1.1rem;
   vertical-align: 0.05rem;
   color: var(--docs-fg-muted);
@@ -1756,7 +1756,7 @@ main:has(.home) {
 .home-hero h1 {
   margin: 0 0 0.75rem;
   font-size: clamp(2.5rem, 5vw, 3.5rem);
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
   line-height: 1.05;
   letter-spacing: -0.04em;
 }
@@ -1776,7 +1776,7 @@ main:has(.home) {
   height: 2.25rem;
   padding: 0 1rem;
   font-size: var(--text-ui-md);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--card);
@@ -1806,7 +1806,7 @@ main:has(.home) {
 }
 .home-count {
   font-size: var(--text-ui-sm);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   color: var(--muted-foreground);
   font-variant-numeric: tabular-nums;
 }
@@ -1845,7 +1845,7 @@ main:has(.home) {
 .card h3 {
   margin: 0 0 0.2rem;
   font-size: var(--text-ui-lg);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   letter-spacing: -0.01em;
 }
 .card p {
@@ -2168,7 +2168,7 @@ main:has(.home) {
   height: 1rem;
   border: 1.5px solid var(--art-ink-strong);
   border-radius: 999px;
-  font: 700 0.6rem/1 var(--docs-font-sans);
+  font: var(--font-weight-bold) 0.6rem/1 var(--docs-font-sans);
   color: var(--muted-foreground);
 }
 .art-icon--sm {
@@ -2316,7 +2316,7 @@ main:has(.home) {
 }
 .art-glyph {
   flex: none;
-  font: 600 0.75rem/1 var(--docs-font-mono);
+  font: var(--font-weight-semibold) 0.75rem/1 var(--docs-font-mono);
   color: var(--muted-foreground);
 }
 .art-tick {

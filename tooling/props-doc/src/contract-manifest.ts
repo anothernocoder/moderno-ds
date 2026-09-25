@@ -52,7 +52,9 @@ export function buildContractManifest(version: string): ContractManifest {
       motion: CONTRACT.filter((s) => s.name.startsWith("motion-")).map((s) => slot(s.name)),
       shadow: CONTRACT.filter((s) => s.type === "shadow").map((s) => slot(s.name)),
       container: CONTRACT.filter((s) => s.name.startsWith("container-")).map((s) => slot(s.name)),
-      type: CONTRACT.filter((s) => /^(text|leading)-/.test(s.name)).map((s) => slot(s.name)),
+      type: CONTRACT.filter((s) => /^(text|leading|font-weight)-/.test(s.name)).map((s) =>
+        slot(s.name),
+      ),
     },
     theming: {
       darkMode:
