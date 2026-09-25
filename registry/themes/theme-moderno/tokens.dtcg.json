@@ -1,6 +1,6 @@
 {
   "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
-  "$description": "Moderno default theme — monochrome workspace, light and dark. Source of truth for theme-moderno: edit this file only. `pnpm theme:build` derives theme.css beside it and the DESIGN.md front matter from it.",
+  "$description": "Moderno's default brand: a near-black monochrome workspace with sharp corners, in light and dark.",
   "$extensions": {
     "style.moderno.theme": {
       "name": "theme-moderno",

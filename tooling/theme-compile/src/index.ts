@@ -7,6 +7,16 @@ import {
 } from "@moderno-ui/tokens/contract";
 import { contrastRatio, parseOklch } from "./color.ts";
 
+export {
+  BRAND_NOTES_END,
+  BRAND_NOTES_START,
+  defaultsFrom,
+  draftBrandNotes,
+  readBrandNotes,
+  renderDesignMd,
+  type Defaults,
+} from "./design-md.ts";
+
 export type CompileResult = {
   css: string;
   warnings: string[];

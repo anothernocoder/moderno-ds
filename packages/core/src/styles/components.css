@@ -138,7 +138,7 @@
    * description, content, footer).
    *
    * Depth comes from a surface step and a 1px border, never a shadow
-   * (DESIGN.md, "Elevation & Depth"); the corner follows --radius, which
+   * (every theme's DESIGN.md, "Elevation & Depth"); the corner follows --radius, which
    * theme-moderno pins to 0 — so "no shadow, no radius" is the theme's
    * decision, not a value baked in here. */
   [data-scope="card"][data-part="root"] {
@@ -153,7 +153,7 @@
     inline-size: 100%;
   }
 
-  /* Variants — the surface treatment. `outline` is the DESIGN.md card: the
+  /* Variants — the surface treatment. `outline` is the DESIGN.md Card: the
      card fill with a 1px border. `muted` is the recessed well. `ghost` keeps
      the anatomy's rhythm with no surface of its own. */
   [data-scope="card"][data-part="root"][data-variant="muted"] {

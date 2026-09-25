@@ -1,22 +1,19 @@
 #!/usr/bin/env node
 /**
  * `pnpm theme:build` — compile every theme under registry/themes/ (or the dirs
- * passed as args). Reads tokens.dtcg.json, writes theme.css beside it, prints
- * WCAG AA contrast warnings, and exits non-zero on any validation error so CI
- * fails on an invalid schema.
+ * passed as args). Reads tokens.dtcg.json, writes theme.css and DESIGN.md
+ * beside it, prints WCAG AA contrast warnings, and exits non-zero on any
+ * validation error so CI fails on an invalid schema.
  *
- * Compiling the default theme also re-renders DESIGN.md's front matter from its
- * tokens.dtcg.json, since DESIGN.md describes that theme. Nothing downstream of
- * a tokens.dtcg.json is edited by hand.
+ * DESIGN.md is regenerated whole except for its brand notes, which are read
+ * back from the current file and kept verbatim. Nothing else downstream of a
+ * tokens.dtcg.json is edited by hand.
  */
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
-import { basename, join, resolve } from "node:path";
-import { defaultsFrom, readMeta, renderFrontMatter, withFrontMatter } from "./design-md.ts";
+import { join, resolve } from "node:path";
+import { defaultsFrom, readBrandNotes, renderDesignMd } from "./design-md.ts";
 import { compileTheme, ThemeValidationError } from "./index.ts";
 
-/** The theme DESIGN.md describes. */
-const DEFAULT_THEME = "theme-moderno";
-const DESIGN_MD = resolve("DESIGN.md");
 const TOKENS_CSS = resolve("packages/tokens/src/tokens.css");
 
 function themeDirs(args: string[]): string[] {
@@ -35,6 +32,7 @@ function main(): number {
     return 1;
   }
 
+  const defaults = defaultsFrom(readFileSync(TOKENS_CSS, "utf8"));
   let failed = 0;
   for (const dir of dirs) {
     const input = join(dir, "tokens.dtcg.json");
@@ -50,13 +48,13 @@ function main(): number {
       writeFileSync(out, banner(input) + css);
       console.log(`✓ ${rel(out)}`);
       for (const w of warnings) console.warn(`  ⚠ ${w}`);
-      if (basename(dir) === DEFAULT_THEME) {
-        const markdown = readFileSync(DESIGN_MD, "utf8");
-        const defaults = defaultsFrom(readFileSync(TOKENS_CSS, "utf8"));
-        const frontMatter = renderFrontMatter(doc, defaults, readMeta(markdown));
-        writeFileSync(DESIGN_MD, withFrontMatter(markdown, frontMatter));
-        console.log(`✓ ${rel(DESIGN_MD)} front matter`);
-      }
+
+      const designMd = join(dir, "DESIGN.md");
+      const brandNotes = existsSync(designMd)
+        ? readBrandNotes(readFileSync(designMd, "utf8"))
+        : null;
+      writeFileSync(designMd, renderDesignMd(doc, defaults, { brandNotes }));
+      console.log(`✓ ${rel(designMd)}${brandNotes === null ? " (drafted brand notes)" : ""}`);
     } catch (err) {
       failed++;
       if (err instanceof ThemeValidationError) {

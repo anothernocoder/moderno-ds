@@ -4,13 +4,13 @@ import { describe, expect, it } from "vitest";
 import postcss, { type Declaration, type Rule } from "postcss";
 import { CONTRAST_PAIRS, EXTENDED_SLOTS } from "@moderno-ui/tokens/contract";
 import { contrastRatio } from "../src/color.ts";
-import { defaultsFrom, readMeta, renderFrontMatter, withFrontMatter } from "../src/design-md.ts";
+import { defaultsFrom, readBrandNotes, renderDesignMd } from "../src/design-md.ts";
 import { compileTheme } from "../src/index.ts";
 
 /**
  * Guards the real registry themes: each must validate, and its committed
- * theme.css must be exactly what theme-compile regenerates (no drift). Mirrors
- * the banner the bin writes so the comparison is byte-for-byte.
+ * theme.css and DESIGN.md must be exactly what theme-compile regenerates (no
+ * drift). Mirrors the banner the bin writes so the comparison is byte-for-byte.
  */
 const themesRoot = fileURLToPath(new URL("../../../registry/themes", import.meta.url));
 const repoRoot = fileURLToPath(new URL("../../../", import.meta.url));
@@ -44,12 +44,25 @@ const defaults = {
   dark: new Map([...declsFor(":root"), ...declsFor(".dark")]),
 };
 
-describe("DESIGN.md describes the default theme", () => {
-  it("its front matter is exactly what theme-moderno's tokens.dtcg.json renders", () => {
-    const doc = JSON.parse(readFileSync(`${themesRoot}/theme-moderno/tokens.dtcg.json`, "utf8"));
-    const markdown = readFileSync(`${repoRoot}DESIGN.md`, "utf8");
-    const fresh = renderFrontMatter(doc, defaultsFrom(tokensCss), readMeta(markdown));
-    expect(withFrontMatter(markdown, fresh), "run `pnpm theme:build`").toBe(markdown);
+/**
+ * Every theme ships a DESIGN.md beside its theme.css. Only its brand notes are
+ * hand-written; the rest must be exactly what `pnpm theme:build` renders from
+ * the theme's tokens.dtcg.json and the contract.
+ */
+describe("each theme's DESIGN.md", () => {
+  it.each(themeNames)("%s: has a DESIGN.md with brand notes", (name) => {
+    const file = `${themesRoot}/${name}/DESIGN.md`;
+    expect(existsSync(file), "run `pnpm theme:build`").toBe(true);
+    expect(readBrandNotes(readFileSync(file, "utf8"))).not.toBeNull();
+  });
+
+  it.each(themeNames)("%s: committed DESIGN.md matches a fresh render", (name) => {
+    const doc = JSON.parse(readFileSync(`${themesRoot}/${name}/tokens.dtcg.json`, "utf8"));
+    const committed = readFileSync(`${themesRoot}/${name}/DESIGN.md`, "utf8");
+    const fresh = renderDesignMd(doc, defaultsFrom(tokensCss), {
+      brandNotes: readBrandNotes(committed),
+    });
+    expect(committed, "run `pnpm theme:build`").toBe(fresh);
   });
 });
 

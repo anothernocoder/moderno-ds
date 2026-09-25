@@ -7,9 +7,10 @@ import postcss, { type Declaration, type Rule } from "postcss";
  * Card's own contract, on top of the stylesheet-wide guards in
  * `components-css.test.ts`.
  *
- * DESIGN.md ("Elevation & Depth", "Shapes") specifies the card as a surface
- * step plus a 1px border — no shadow — with a sharp corner. The sharpness is
- * the *theme's* to decide (`theme-moderno` pins `--radius` to 0), so what has
+ * Every theme's DESIGN.md ("Elevation & Depth", "Shapes") specifies the card
+ * as a surface step plus a border — no shadow — with its corner on `--radius`.
+ * The sharpness is the *theme's* to decide (`theme-moderno`'s brand notes call
+ * for square corners and it pins `--radius` to 0), so what has
  * to hold here is that the rules never bake a radius or reach for a shadow to
  * fake depth, and that every padding step comes off the spacing scale.
  */
