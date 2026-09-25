@@ -156,7 +156,31 @@ describe("buildTheme — export bundle", () => {
 
 describe("cliSnippet", () => {
   it("references the theme by a slugified name", () => {
-    expect(cliSnippet("My Brand")).toContain("my-brand");
+    expect(cliSnippet("My Brand")).toContain("add theme-my-brand");
+  });
+
+  // A registry base imports under its item name, `theme-moderno`.
+  it("does not repeat the theme- prefix of a registry item name", () => {
+    expect(cliSnippet("theme-moderno")).toMatch(/ add theme-moderno$/);
+  });
+});
+
+describe("the exported brand", () => {
+  const branded = { ...defaultThemeState(), brand: "contrast" };
+
+  it("follows the theme's name, not the base it started from", () => {
+    const doc = stateToTokens({ ...branded, name: "Ocean" });
+    expect(doc.$extensions?.["style.moderno.theme"]?.brand).toBe("ocean");
+  });
+
+  it("keeps a registry base's own brand when its name is unchanged", () => {
+    const doc = stateToTokens({ ...branded, name: "theme-contrast" });
+    expect(doc.$extensions?.["style.moderno.theme"]?.brand).toBe("contrast");
+  });
+
+  it("keeps a brand-less theme on :root", () => {
+    const doc = stateToTokens({ ...defaultThemeState(), name: "Ocean" });
+    expect(doc.$extensions?.["style.moderno.theme"]?.brand).toBe(null);
   });
 });
 

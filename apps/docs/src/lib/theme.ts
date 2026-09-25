@@ -88,12 +88,18 @@ export function previewStyle(scope: Scope): string {
     .join("; ");
 }
 
-/** Emit a DTCG document from the editor state (the downloadable tokens file). */
+/**
+ * Emit a DTCG document from the editor state (the downloadable tokens file).
+ * The base theme decides whether the export is branded; its brand id follows
+ * the name. Copied as-is, a theme started from Contrast would claim
+ * `data-brand="contrast"` and collide with it.
+ */
 export function stateToTokens(state: ThemeState): ThemeDoc {
+  const brand = state.brand === null ? null : themeSlug(state.name);
   return {
     $schema: "https://www.designtokens.org/schemas/2025.10/format.json",
     $extensions: {
-      "style.moderno.theme": { name: state.name, brand: state.brand },
+      "style.moderno.theme": { name: state.name, brand },
     },
     light: stateToScope(state.light),
     dark: stateToScope(state.dark),
@@ -108,9 +114,18 @@ export function slugify(name: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
+/**
+ * A theme's short name, the part after `theme-`: `theme-ocean`, `Ocean` and
+ * `ocean` all give `ocean`. A registry base imports under its item name
+ * (`theme-moderno`), so the prefix has to come off before anything adds it back.
+ */
+export function themeSlug(name: string): string {
+  return slugify(name).replace(/^theme-/, "") || "custom";
+}
+
 /** CLI one-liner that applies the theme via the registry-aware `@moderno-ui/cli`. */
 export function cliSnippet(name: string): string {
-  return `npx @moderno-ui/cli@latest add theme-${slugify(name) || "custom"}`;
+  return `npx @moderno-ui/cli@latest add theme-${themeSlug(name)}`;
 }
 
 export interface ThemeBundle {
