@@ -97,9 +97,11 @@ migration. That window closes with the first real consumer.
 - The neutral defaults and the themes share one authoring path and one
   validation path: `theme-compile` checks the neutral file the way it checks a
   theme, instead of the neutral defaults relying on tests written for them
-  alone. This ADR does not change what `theme-compile` enforces: a missing slot
-  stops the compile, and a failing contrast pair is reported as a warning, for
-  the neutral file as for every theme.
+  alone. The rules stay those `theme-compile` applies today, with one addition
+  for the neutral file: a missing required slot stops the compile, a theme may
+  omit an extended slot and inherit its neutral default, and a failing contrast
+  pair is reported as a warning. The neutral file is where those defaults come
+  from, so it must define every slot, the extended ones included.
 - One package for consumers, the CLI's `init` and the MCP server to name.
   Everything that names `@moderno-ui/tokens` (the component stylesheet, the MCP
   server, the lint rules, the tooling, the docs site) moves to
