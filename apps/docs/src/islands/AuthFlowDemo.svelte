@@ -60,8 +60,8 @@
       label: "Auth flow frames",
       frames: { desktop: "desktop", phone: "phone" },
       tabs: [
-        { id: "desktop", label: "Desktop", caption: "Past --container-lg every screen stands its notes beside its card — walk it: the links move the flow, the submits advance it, and any six digits pass the code check, because there is no server behind an example." },
-        { id: "phone", label: "Phone", caption: "Under --container-sm the same flow, walkable on its own, with every screen stacked; neither frame reads the window." },
+        { id: "desktop", icon: "desktop", label: "Desktop", caption: "Past --container-lg every screen stands its notes beside its card — walk it: the links move the flow, the submits advance it, and any six digits pass the code check, because there is no server behind an example." },
+        { id: "phone", icon: "phone", label: "Phone", caption: "Under --container-sm the same flow, walkable on its own, with every screen stacked; neither frame reads the window." },
       ],
       readout: "What the assembly reported",
       empty: "Nothing yet — move the flow above.",
@@ -71,8 +71,8 @@
       label: "Marcos del flujo de acceso",
       frames: { desktop: "escritorio", phone: "teléfono" },
       tabs: [
-        { id: "desktop", label: "Escritorio", caption: "Por encima de --container-lg cada pantalla pone sus notas junto a la tarjeta — recórrelo: los enlaces mueven el flujo, los envíos lo hacen avanzar y seis dígitos cualesquiera pasan la comprobación del código, porque detrás de un ejemplo no hay servidor." },
-        { id: "phone", label: "Teléfono", caption: "Por debajo de --container-sm el mismo flujo, recorrible por sí solo, con cada pantalla apilada; ningún marco lee la ventana." },
+        { id: "desktop", icon: "desktop", label: "Escritorio", caption: "Por encima de --container-lg cada pantalla pone sus notas junto a la tarjeta — recórrelo: los enlaces mueven el flujo, los envíos lo hacen avanzar y seis dígitos cualesquiera pasan la comprobación del código, porque detrás de un ejemplo no hay servidor." },
+        { id: "phone", icon: "phone", label: "Teléfono", caption: "Por debajo de --container-sm el mismo flujo, recorrible por sí solo, con cada pantalla apilada; ningún marco lee la ventana." },
       ],
       readout: "Lo que informó el ensamblaje",
       empty: "Nada todavía — mueve el flujo de arriba.",
