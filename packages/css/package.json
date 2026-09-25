@@ -1,6 +1,6 @@
 {
   "name": "@moderno-ui/css",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Moderno's CSS package: the shadcn-style semantic token contract with neutral OKLCH defaults, the shared component stylesheet, a Tailwind v4 preset, the contract as data and the agent manifest. Contains no brand identity.",
   "repository": {
     "type": "git",

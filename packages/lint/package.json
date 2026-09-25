@@ -1,6 +1,6 @@
 {
   "name": "@moderno-ui/lint",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "ESLint plugin + CLI over @moderno-ui/lint-core's shared rule engine — the same hardcoded-color/prop-validity/raw-Ark/data-part/reimplemented-primitive checks validate_usage runs, for human contributors and CI.",
   "repository": {
     "type": "git",
