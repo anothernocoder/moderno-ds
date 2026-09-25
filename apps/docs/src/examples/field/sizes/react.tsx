@@ -1,7 +1,3 @@
-/**
- * Field at its three sizes, side by side — one size on Field.Root sizes
- * every part — @moderno-ui/react.
- */
 import { Field } from "@moderno-ui/react";
 
 export function FieldSizesDemo() {

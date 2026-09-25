@@ -1,7 +1,3 @@
-<!--
-  A labelled Select at the default size; the menu is portalled and opens
-  on click — @moderno-ui/vue.
--->
 <script setup lang="ts">
 import { Select, Portal, createListCollection } from "@moderno-ui/vue";
 

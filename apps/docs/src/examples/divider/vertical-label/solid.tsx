@@ -1,11 +1,4 @@
 /** @jsxImportSource solid-js */
-/**
- * A captioned vertical Divider between two alternative fields — the
- * caption turns sideways and the rule runs the height of the row —
- * @moderno-ui/solid.
- *
- * See examples/button/solid.tsx for why the pragma above is required.
- */
 import { Divider, Field } from "@moderno-ui/solid";
 
 export function DividerVerticalLabelDemo() {

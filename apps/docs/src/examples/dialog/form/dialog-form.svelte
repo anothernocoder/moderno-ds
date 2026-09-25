@@ -1,11 +1,3 @@
-<!--
-  A Dialog holding a short form. With no role override Ark focuses the first
-  focusable element in the content on open — here the input — @moderno-
-  ui/svelte.
-
-  This file is the Example the docs page shows *and* mounts (CONTEXT.md
-  "Example"), so the source under the live demo cannot drift from it.
--->
 <script lang="ts">
   import { Button, Dialog, Field, Portal } from "@moderno-ui/svelte";
 </script>

@@ -1,7 +1,3 @@
-<!--
-  Checkbox in its three states — unchecked, checked and indeterminate —
-  side by side — @moderno-ui/vue.
--->
 <script setup lang="ts">
 import { Checkbox } from "@moderno-ui/vue";
 </script>

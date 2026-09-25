@@ -1,7 +1,3 @@
-<!--
-  Card at its three sizes side by side — size on Card.Root sets the
-  padding of every part — @moderno-ui/vue.
--->
 <script setup lang="ts">
 import { Card } from "@moderno-ui/vue";
 </script>

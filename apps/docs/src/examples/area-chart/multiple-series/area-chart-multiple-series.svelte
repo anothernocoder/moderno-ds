@@ -1,10 +1,3 @@
-<!--
-  Two overlapping series; each fills from `--chart-1…5` by its index at
-  a low opacity, so the one behind stays readable — @moderno-ui/svelte.
-
-  This file is the Example the docs page shows *and* mounts (CONTEXT.md
-  "Example"), so the source under the live demo cannot drift from it.
--->
 <script lang="ts">
   import { AreaChart } from "@moderno-ui/svelte";
 

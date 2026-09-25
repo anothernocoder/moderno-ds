@@ -1,7 +1,3 @@
-<!--
-  An alphanumeric PinInput — letters and digits are both accepted, and the
-  cells use a text keyboard — @moderno-ui/vue.
--->
 <script setup lang="ts">
 import { PinInput } from "@moderno-ui/vue";
 

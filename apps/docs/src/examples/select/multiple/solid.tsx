@@ -1,10 +1,4 @@
 /** @jsxImportSource solid-js */
-/**
- * A multiple Select — the menu stays open between picks and the trigger
- * lists every chosen label — @moderno-ui/solid.
- *
- * See examples/button/solid.tsx for why the pragma above is required.
- */
 import { For } from "solid-js";
 import { Select, Portal, createListCollection } from "@moderno-ui/solid";
 

@@ -1,10 +1,4 @@
 /** @jsxImportSource solid-js */
-/**
- * Wider band padding: half of each category's step is gap, so the
- * bars read as slimmer columns — @moderno-ui/solid.
- *
- * See examples/button/solid.tsx for why the pragma above is required.
- */
 import { BarChart } from "@moderno-ui/solid";
 
 const categories = ["Q1", "Q2", "Q3", "Q4"];

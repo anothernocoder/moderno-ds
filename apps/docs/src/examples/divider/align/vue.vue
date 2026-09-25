@@ -1,7 +1,3 @@
-<!--
-  A labelled Divider at each of its three label alignments —
-  @moderno-ui/vue.
--->
 <script setup lang="ts">
 import { Divider } from "@moderno-ui/vue";
 </script>

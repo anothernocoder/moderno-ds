@@ -1,6 +1,3 @@
-/**
- * Two series on one frame; each paints from `--chart-1…5` by its index — @moderno-ui/react.
- */
 import { LineChart } from "@moderno-ui/react";
 
 const series = [

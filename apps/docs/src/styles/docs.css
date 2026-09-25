@@ -1578,16 +1578,15 @@ main.main--wide {
   font-weight: 500;
   white-space: nowrap;
   color: var(--docs-fg);
-  background: var(--background);
-  border: 1px solid var(--docs-border);
+  background: var(--docs-surface-strong);
+  border: 0;
   border-radius: var(--docs-radius-pill);
-  box-shadow: 0 1px 2px color-mix(in oklch, var(--foreground) 8%, transparent);
   cursor: pointer;
   user-select: none;
   transition: background var(--docs-ease);
 }
 .code-expand:hover {
-  background: var(--docs-surface);
+  background: color-mix(in oklch, var(--foreground) 10%, var(--background));
 }
 .code-expand svg {
   color: var(--docs-fg-muted);
@@ -1600,12 +1599,11 @@ main.main--wide {
 .code-expand-toggle:checked ~ .code-expand .code-expand-less {
   display: inline;
 }
-.code-expand-toggle:checked ~ .code-expand {
-  position: static;
-  translate: none;
-  display: flex;
-  width: fit-content;
-  margin: 0 auto 0.875rem;
+/* Expanded, the pill keeps floating over the code's own bottom padding rather
+   than dropping into flow below it — below the <pre> is the frame's background,
+   not the code surface, and would read as a dark strip. */
+.code-expand-toggle:checked ~ .code-block-body .astro-code {
+  padding-bottom: 3.25rem;
 }
 .code-expand-toggle:checked ~ .code-expand svg {
   rotate: 180deg;

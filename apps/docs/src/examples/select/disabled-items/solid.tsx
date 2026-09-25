@@ -1,10 +1,4 @@
 /** @jsxImportSource solid-js */
-/**
- * A Select with an option that cannot be picked — disabled: true on the
- * item skips it in keyboard navigation and dims it — @moderno-ui/solid.
- *
- * See examples/button/solid.tsx for why the pragma above is required.
- */
 import { For } from "solid-js";
 import { Select, Portal, createListCollection } from "@moderno-ui/solid";
 

@@ -1,7 +1,3 @@
-/**
- * Larger markers: `radius` sets the size of every point in the chart,
- * in pixels — @moderno-ui/react.
- */
 import { ScatterChart } from "@moderno-ui/react";
 
 const series = [

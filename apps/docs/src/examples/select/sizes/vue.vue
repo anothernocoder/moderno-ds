@@ -1,7 +1,3 @@
-<!--
-  Select at its three sizes, side by side — size on Select.Root sets the
-  trigger's height and type — @moderno-ui/vue.
--->
 <script setup lang="ts">
 import { Select, Portal, createListCollection } from "@moderno-ui/vue";
 

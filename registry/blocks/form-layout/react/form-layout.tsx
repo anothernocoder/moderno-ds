@@ -1,65 +1,12 @@
 import type { FormEvent } from "react";
 import { Alert, Button, Checkbox, Divider, Field } from "@moderno-ui/react";
 
-/**
- * FormLayout — the grouped settings form: a titled section per group of
- * related fields, a field grid that goes one-up → two-up, and one actions row
- * for the whole form. Copy it into your project with
- * `moderno add form-layout-react` and edit it freely: the groups, the fields
- * and the copy are yours from that moment, and every visual comes from the
- * token contract, so a theme re-skins it without a diff here.
- *
- * **Presentational.** The block holds no values and issues no request: it takes
- * `error` / `errors` / `loading` / `disabled` and hands the native submit event
- * back. Controls are uncontrolled — read the form in your submit handler (or
- * swap in your form library's bindings, since the file is yours).
- *
- * **Responsive to its container, not the viewport** (ADR-0005). The root
- * declares `@container` and the block uses all three contract steps, each for a
- * different decision:
- *
- * - `@sm` (`--container-sm`, 24rem) — the actions row stops stacking and lines
- *   up to the trailing edge, where a form's confirmation belongs once there is
- *   room for it.
- * - `@md` (`--container-md`, 36rem) — the field grid goes one-up → two-up, so
- *   short fields pair off instead of running a column of half-empty rows.
- * - `@lg` (`--container-lg`, 48rem) — each group's heading leaves the top of
- *   its fields and sits beside them, which is what turns a long scroll into a
- *   scannable index of the form.
- *
- * The same file is therefore right in a 320px settings sidebar, in a dialog and
- * on a full-width page, with no media query anywhere.
- *
- * **States.** *Default* and *empty* are the same render: a form is the input
- * surface, so "nothing entered yet" is its resting state — placeholders and
- * helper text carry the format, and there is no collection here to be empty of.
- * *Hover* and *focus-visible* come from the primitives' own rules in
- * `components.css`. *Disabled* makes the whole form read-only (a viewer-role
- * member, a locked account), *loading* makes it inert and marks the submit
- * `aria-busy`, and *error* renders a form-level `Alert` plus, for every key in
- * `errors`, that field's own `Field.ErrorText`.
- *
- * Unlike a sign-in form — which must never say *which* credential was wrong —
- * a settings form should name the field: the person editing it already owns the
- * account, and "Enter a valid email address" next to the box is the only
- * message they can act on.
- *
- * Class strings are written out in full rather than shared through a constant:
- * the docs compile the previews' Tailwind from `class` attributes, so a class
- * assembled in JS would render here and vanish in the preview.
- */
 export interface FormLayoutProps {
-  /** Form-level failure message — what went wrong with the save as a whole. */
   error?: string;
-  /** Per-field messages keyed by the field's `name`; each marks that field invalid. */
   errors?: Record<string, string>;
-  /** The save is in flight: every control is inert and the submit reads busy. */
   loading?: boolean;
-  /** The form is read-only (a viewer-role member, a locked account). */
   disabled?: boolean;
-  /** Native submit; call `event.preventDefault()` and read the form yourself. */
   onSubmit?: (event: FormEvent<HTMLFormElement>) => void;
-  /** Discard: the trailing "Cancel" in the actions row. */
   onCancel?: () => void;
 }
 

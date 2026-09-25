@@ -1,10 +1,4 @@
 /** @jsxImportSource solid-js */
-/**
- * Every Card part is optional — a header and footer with no content, and a
- * content-only card — @moderno-ui/solid.
- *
- * See examples/button/solid.tsx for why the pragma above is required.
- */
 import { Button, Card } from "@moderno-ui/solid";
 
 export function CardPartsDemo() {

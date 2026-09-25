@@ -1,7 +1,3 @@
-<!--
-  A single series on a continuous x axis; its colour comes from the
-  `--chart-1` token slot, nothing baked in here — @moderno-ui/vue.
--->
 <script setup lang="ts">
 import { LineChart } from "@moderno-ui/vue";
 

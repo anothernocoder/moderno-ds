@@ -1,10 +1,3 @@
-<!--
-  One marker per (x, y) sample, no connecting line; its colour comes
-  from the `--chart-1` token slot, nothing baked in here — @moderno-ui/svelte.
-
-  This file is the Example the docs page shows *and* mounts (CONTEXT.md
-  "Example"), so the source under the live demo cannot drift from it.
--->
 <script lang="ts">
   import { ScatterChart } from "@moderno-ui/svelte";
 

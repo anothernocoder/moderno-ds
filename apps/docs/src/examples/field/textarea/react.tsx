@@ -1,7 +1,3 @@
-/**
- * A Field with a Textarea — same wiring, a minimum height, vertical resize
- * only — @moderno-ui/react.
- */
 import { Field } from "@moderno-ui/react";
 
 export function FieldTextareaDemo() {

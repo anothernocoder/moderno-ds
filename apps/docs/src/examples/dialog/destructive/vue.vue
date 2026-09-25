@@ -1,8 +1,3 @@
-<!--
-  A destructive confirmation: role="alertdialog" tells assistive tech the
-  dialog demands a response, and Ark moves initial focus to the first close
-  trigger — Cancel — so Enter never deletes by accident — @moderno-ui/vue.
--->
 <script setup lang="ts">
 import { Button, Dialog, Portal } from "@moderno-ui/vue";
 </script>

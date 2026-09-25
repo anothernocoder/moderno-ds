@@ -1,7 +1,3 @@
-<!--
-  An invalid Checkbox — the box border re-colours from --destructive —
-  @moderno-ui/vue.
--->
 <script setup lang="ts">
 import { Checkbox } from "@moderno-ui/vue";
 </script>

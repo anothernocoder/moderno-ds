@@ -1,10 +1,4 @@
 /** @jsxImportSource solid-js */
-/**
- * A disabled Field — every part dims, the control is inert — @moderno-
- * ui/solid.
- *
- * See examples/button/solid.tsx for why the pragma above is required.
- */
 import { Field } from "@moderno-ui/solid";
 
 export function FieldDisabledDemo() {

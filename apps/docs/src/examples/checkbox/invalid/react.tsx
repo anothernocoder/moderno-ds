@@ -1,7 +1,3 @@
-/**
- * An invalid Checkbox — the box border re-colours from --destructive —
- * @moderno-ui/react.
- */
 import { Checkbox } from "@moderno-ui/react";
 
 export function CheckboxInvalidDemo() {

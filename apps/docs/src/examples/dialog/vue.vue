@@ -1,9 +1,3 @@
-<!--
-  A Dialog opened from its trigger: Ark portals the content, traps focus, locks
-  scroll and restores focus to the trigger on close. Triggers render through
-  `as-child`, so each button is the design system's own Button — @moderno-
-  ui/vue.
--->
 <script setup lang="ts">
 import { Button, Dialog, Portal } from "@moderno-ui/vue";
 </script>

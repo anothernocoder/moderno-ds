@@ -1,9 +1,3 @@
-/**
- * One info Alert with an icon, a title and a description —
- * @moderno-ui/react. The icon is inline SVG: primitives stay
- * icon-agnostic, and the glyph strokes `currentColor`, which the `icon`
- * part sets from the status hue.
- */
 import { Alert } from "@moderno-ui/react";
 
 export function AlertDemo() {

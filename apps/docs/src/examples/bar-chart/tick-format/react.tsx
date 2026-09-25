@@ -1,7 +1,3 @@
-/**
- * A `format` function turns each value-axis tick into a label with its
- * unit — @moderno-ui/react.
- */
 import { BarChart } from "@moderno-ui/react";
 
 const categories = ["Q1", "Q2", "Q3", "Q4"];

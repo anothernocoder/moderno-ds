@@ -1,10 +1,4 @@
 /** @jsxImportSource solid-js */
-/**
- * A single series filled from the value-0 baseline; its colour comes
- * from the `--chart-1` token slot, nothing baked in here — @moderno-ui/solid.
- *
- * See examples/button/solid.tsx for why the pragma above is required.
- */
 import { AreaChart } from "@moderno-ui/solid";
 
 const series = [

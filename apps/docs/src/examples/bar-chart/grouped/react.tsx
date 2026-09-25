@@ -1,7 +1,3 @@
-/**
- * Two series grouped side by side inside each category; each paints
- * from `--chart-1…5` by its index — @moderno-ui/react.
- */
 import { BarChart } from "@moderno-ui/react";
 
 const categories = ["Q1", "Q2", "Q3", "Q4"];

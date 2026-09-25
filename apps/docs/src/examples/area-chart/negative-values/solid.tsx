@@ -1,10 +1,4 @@
 /** @jsxImportSource solid-js */
-/**
- * A series that crosses zero; the area fills from the value-0
- * baseline, so negative values fill downward with no extra prop — @moderno-ui/solid.
- *
- * See examples/button/solid.tsx for why the pragma above is required.
- */
 import { AreaChart } from "@moderno-ui/solid";
 
 const series = [

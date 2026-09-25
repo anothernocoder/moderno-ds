@@ -1,7 +1,3 @@
-/**
- * Two overlapping series; each fills from `--chart-1…5` by its index at
- * a low opacity, so the one behind stays readable — @moderno-ui/react.
- */
 import { AreaChart } from "@moderno-ui/react";
 
 const series = [

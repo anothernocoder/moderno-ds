@@ -1,7 +1,3 @@
-/**
- * Every Card part is optional — a header and footer with no content, and a
- * content-only card — @moderno-ui/react.
- */
 import { Button, Card } from "@moderno-ui/react";
 
 export function CardPartsDemo() {

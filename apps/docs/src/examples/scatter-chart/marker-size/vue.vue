@@ -1,7 +1,3 @@
-<!--
-  Larger markers: `radius` sets the size of every point in the chart,
-  in pixels — @moderno-ui/vue.
--->
 <script setup lang="ts">
 import { ScatterChart } from "@moderno-ui/vue";
 

@@ -1,7 +1,3 @@
-<!--
-  Wider band padding: half of each category's step is gap, so the
-  bars read as slimmer columns — @moderno-ui/vue.
--->
 <script setup lang="ts">
 import { BarChart } from "@moderno-ui/vue";
 

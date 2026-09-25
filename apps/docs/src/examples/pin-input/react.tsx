@@ -1,7 +1,3 @@
-/**
- * A six-digit one-time code at the default size; the hidden input carries
- * the joined code into a form — @moderno-ui/react.
- */
 import { PinInput } from "@moderno-ui/react";
 
 const cells = [0, 1, 2, 3, 4, 5];

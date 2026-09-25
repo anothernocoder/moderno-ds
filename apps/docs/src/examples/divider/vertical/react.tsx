@@ -1,7 +1,3 @@
-/**
- * Bare vertical Dividers between inline items — each rule takes its length
- * from the row — @moderno-ui/react.
- */
 import { Divider } from "@moderno-ui/react";
 
 export function DividerVerticalDemo() {

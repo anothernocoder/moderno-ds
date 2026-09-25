@@ -1,6 +1,3 @@
-<!--
-  Button at its three sizes, side by side — @moderno-ui/vue.
--->
 <script setup lang="ts">
 import { Button } from "@moderno-ui/vue";
 </script>

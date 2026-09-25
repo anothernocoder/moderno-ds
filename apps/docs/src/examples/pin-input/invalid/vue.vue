@@ -1,7 +1,3 @@
-<!--
-  An invalid PinInput — every cell switches to the destructive border —
-  @moderno-ui/vue.
--->
 <script setup lang="ts">
 import { PinInput } from "@moderno-ui/vue";
 

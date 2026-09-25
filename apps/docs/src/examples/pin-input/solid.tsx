@@ -1,10 +1,4 @@
 /** @jsxImportSource solid-js */
-/**
- * A six-digit one-time code at the default size; the hidden input carries
- * the joined code into a form — @moderno-ui/solid.
- *
- * See examples/button/solid.tsx for why the pragma above is required.
- */
 import { For } from "solid-js";
 import { PinInput } from "@moderno-ui/solid";
 

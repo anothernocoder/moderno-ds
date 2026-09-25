@@ -1,8 +1,3 @@
-/**
- * A destructive confirmation: role="alertdialog" tells assistive tech the
- * dialog demands a response, and Ark moves initial focus to the first close
- * trigger — Cancel — so Enter never deletes by accident — @moderno-ui/react.
- */
 import { Button, Dialog, Portal } from "@moderno-ui/react";
 
 export function DialogDestructiveDemo() {

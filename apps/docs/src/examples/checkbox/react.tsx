@@ -1,7 +1,3 @@
-/**
- * One labelled Checkbox, unchecked, at the default size —
- * @moderno-ui/react.
- */
 import { Checkbox } from "@moderno-ui/react";
 
 export function CheckboxDemo() {

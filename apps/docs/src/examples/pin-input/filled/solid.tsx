@@ -1,10 +1,4 @@
 /** @jsxImportSource solid-js */
-/**
- * Filled cells tint toward the primary colour; once every cell holds a
- * character the whole code turns primary — @moderno-ui/solid.
- *
- * See examples/button/solid.tsx for why the pragma above is required.
- */
 import { For } from "solid-js";
 import { PinInput } from "@moderno-ui/solid";
 

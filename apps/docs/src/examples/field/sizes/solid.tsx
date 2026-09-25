@@ -1,10 +1,4 @@
 /** @jsxImportSource solid-js */
-/**
- * Field at its three sizes, side by side — one size on Field.Root sizes
- * every part — @moderno-ui/solid.
- *
- * See examples/button/solid.tsx for why the pragma above is required.
- */
 import { Field } from "@moderno-ui/solid";
 
 export function FieldSizesDemo() {

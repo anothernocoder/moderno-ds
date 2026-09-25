@@ -1,10 +1,4 @@
 /** @jsxImportSource solid-js */
-/**
- * An alphanumeric PinInput — letters and digits are both accepted, and the
- * cells use a text keyboard — @moderno-ui/solid.
- *
- * See examples/button/solid.tsx for why the pragma above is required.
- */
 import { For } from "solid-js";
 import { PinInput } from "@moderno-ui/solid";
 

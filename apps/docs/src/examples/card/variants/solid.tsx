@@ -1,10 +1,4 @@
 /** @jsxImportSource solid-js */
-/**
- * Card's three surface variants side by side — variant on Card.Root
- * repaints the surface, never the anatomy — @moderno-ui/solid.
- *
- * See examples/button/solid.tsx for why the pragma above is required.
- */
 import { Button, Card } from "@moderno-ui/solid";
 
 export function CardVariantsDemo() {

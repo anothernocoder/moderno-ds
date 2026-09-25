@@ -1,7 +1,3 @@
-<!--
-  Every Card part is optional — a header and footer with no content, and a
-  content-only card — @moderno-ui/vue.
--->
 <script setup lang="ts">
 import { Button, Card } from "@moderno-ui/vue";
 </script>

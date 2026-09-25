@@ -1,10 +1,4 @@
 /** @jsxImportSource solid-js */
-/**
- * A single series on a continuous x axis; its colour comes from the
- * `--chart-1` token slot, nothing baked in here — @moderno-ui/solid.
- *
- * See examples/button/solid.tsx for why the pragma above is required.
- */
 import { LineChart } from "@moderno-ui/solid";
 
 const series = [

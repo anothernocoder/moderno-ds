@@ -1,7 +1,3 @@
-/**
- * A single series filled from the value-0 baseline; its colour comes
- * from the `--chart-1` token slot, nothing baked in here — @moderno-ui/react.
- */
 import { AreaChart } from "@moderno-ui/react";
 
 const series = [

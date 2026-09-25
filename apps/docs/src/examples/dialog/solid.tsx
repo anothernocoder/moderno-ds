@@ -1,12 +1,4 @@
 /** @jsxImportSource solid-js */
-/**
- * A Dialog opened from its trigger: Ark portals the content, traps focus,
- * locks scroll and restores focus to the trigger on close. Triggers render
- * through `asChild`, so each button is the design system's own Button —
- * @moderno-ui/solid.
- *
- * See examples/button/solid.tsx for why the pragma above is required.
- */
 import { Button, Dialog, Portal } from "@moderno-ui/solid";
 
 export function DialogDemo() {

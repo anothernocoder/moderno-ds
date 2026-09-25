@@ -1,12 +1,4 @@
 /** @jsxImportSource solid-js */
-/**
- * One info Alert with an icon, a title and a description —
- * @moderno-ui/solid. The icon is inline SVG: primitives stay
- * icon-agnostic, and the glyph strokes `currentColor`, which the `icon`
- * part sets from the status hue.
- *
- * See examples/button/solid.tsx for why the pragma above is required.
- */
 import { Alert } from "@moderno-ui/solid";
 
 export function AlertDemo() {

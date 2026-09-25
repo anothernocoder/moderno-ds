@@ -1,7 +1,3 @@
-/**
- * Filled cells tint toward the primary colour; once every cell holds a
- * character the whole code turns primary — @moderno-ui/react.
- */
 import { PinInput } from "@moderno-ui/react";
 
 const cells = [0, 1, 2, 3];

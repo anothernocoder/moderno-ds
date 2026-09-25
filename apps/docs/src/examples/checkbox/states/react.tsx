@@ -1,7 +1,3 @@
-/**
- * Checkbox in its three states — unchecked, checked and indeterminate —
- * side by side — @moderno-ui/react.
- */
 import { Checkbox } from "@moderno-ui/react";
 
 export function CheckboxStatesDemo() {

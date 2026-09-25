@@ -1,7 +1,3 @@
-/**
- * The same series drawn through a monotone curve instead of straight
- * segments; the curve factory comes from charts-core — @moderno-ui/react.
- */
 import { LineChart } from "@moderno-ui/react";
 import { curveMonotoneX } from "@moderno-ui/charts-core";
 

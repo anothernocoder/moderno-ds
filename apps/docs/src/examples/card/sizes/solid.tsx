@@ -1,10 +1,4 @@
 /** @jsxImportSource solid-js */
-/**
- * Card at its three sizes side by side — size on Card.Root sets the
- * padding of every part — @moderno-ui/solid.
- *
- * See examples/button/solid.tsx for why the pragma above is required.
- */
 import { Card } from "@moderno-ui/solid";
 
 export function CardSizesDemo() {

@@ -1,10 +1,4 @@
 /** @jsxImportSource solid-js */
-/**
- * An invalid PinInput — every cell switches to the destructive border —
- * @moderno-ui/solid.
- *
- * See examples/button/solid.tsx for why the pragma above is required.
- */
 import { For } from "solid-js";
 import { PinInput } from "@moderno-ui/solid";
 

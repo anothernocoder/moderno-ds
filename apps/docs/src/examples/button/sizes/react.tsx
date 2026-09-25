@@ -1,6 +1,3 @@
-/**
- * Button at its three sizes, side by side — @moderno-ui/react.
- */
 import { Button } from "@moderno-ui/react";
 
 export function ButtonSizesDemo() {

@@ -1,7 +1,3 @@
-<!--
-  A labelled input with helper text, at the default size — @moderno-
-  ui/vue.
--->
 <script setup lang="ts">
 import { Field } from "@moderno-ui/vue";
 </script>

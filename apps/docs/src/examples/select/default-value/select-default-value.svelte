@@ -1,10 +1,3 @@
-<!--
-  A Select that starts with a value — defaultValue is an array of item
-  values, even for a single pick — @moderno-ui/svelte.
-
-  This file is the Example the docs page shows *and* mounts (CONTEXT.md
-  "Example"), so the source under the live demo cannot drift from it.
--->
 <script lang="ts">
   import { Select, Portal, createListCollection } from "@moderno-ui/svelte";
 

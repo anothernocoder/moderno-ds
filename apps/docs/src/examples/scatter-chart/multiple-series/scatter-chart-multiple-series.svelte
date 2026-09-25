@@ -1,10 +1,3 @@
-<!--
-  Two groups of samples on one frame; each paints from `--chart-1…5`
-  by its series index — @moderno-ui/svelte.
-
-  This file is the Example the docs page shows *and* mounts (CONTEXT.md
-  "Example"), so the source under the live demo cannot drift from it.
--->
 <script lang="ts">
   import { ScatterChart } from "@moderno-ui/svelte";
 

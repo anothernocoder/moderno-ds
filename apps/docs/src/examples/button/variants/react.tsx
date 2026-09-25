@@ -1,6 +1,3 @@
-/**
- * Button's four everyday variants, side by side — @moderno-ui/react.
- */
 import { Button } from "@moderno-ui/react";
 
 export function ButtonVariantsDemo() {

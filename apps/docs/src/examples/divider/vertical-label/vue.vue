@@ -1,8 +1,3 @@
-<!--
-  A captioned vertical Divider between two alternative fields — the
-  caption turns sideways and the rule runs the height of the row —
-  @moderno-ui/vue.
--->
 <script setup lang="ts">
 import { Divider, Field } from "@moderno-ui/vue";
 </script>

@@ -1,9 +1,3 @@
-/**
- * A Dialog opened from its trigger: Ark portals the content, traps focus,
- * locks scroll and restores focus to the trigger on close. Triggers render
- * through `asChild`, so each button is the design system's own Button —
- * @moderno-ui/react.
- */
 import { Button, Dialog, Portal } from "@moderno-ui/react";
 
 export function DialogDemo() {

@@ -1,10 +1,4 @@
 /** @jsxImportSource solid-js */
-/**
- * The same series drawn through a monotone curve instead of straight
- * segments; the curve factory comes from charts-core — @moderno-ui/solid.
- *
- * See examples/button/solid.tsx for why the pragma above is required.
- */
 import { LineChart } from "@moderno-ui/solid";
 import { curveMonotoneX } from "@moderno-ui/charts-core";
 

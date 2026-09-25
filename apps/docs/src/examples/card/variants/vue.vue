@@ -1,7 +1,3 @@
-<!--
-  Card's three surface variants side by side — variant on Card.Root
-  repaints the surface, never the anatomy — @moderno-ui/vue.
--->
 <script setup lang="ts">
 import { Button, Card } from "@moderno-ui/vue";
 </script>

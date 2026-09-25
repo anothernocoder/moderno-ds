@@ -1,11 +1,4 @@
 /** @jsxImportSource solid-js */
-/**
- * Alert in its four statuses, stacked — @moderno-ui/solid. The icon is
- * inline SVG: primitives stay icon-agnostic, and every glyph strokes
- * `currentColor`, which the `icon` part sets from the status hue.
- *
- * See examples/button/solid.tsx for why the pragma above is required.
- */
 import { Alert } from "@moderno-ui/solid";
 
 function CircleIcon(props: { path: string }) {

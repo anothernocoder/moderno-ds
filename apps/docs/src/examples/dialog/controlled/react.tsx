@@ -1,8 +1,3 @@
-/**
- * A controlled Dialog: the open state is yours, passed as `open` and updated
- * from `onOpenChange`, so any code can open or close it — here a plain Button
- * outside the dialog, and one inside that closes it — @moderno-ui/react.
- */
 import { useState } from "react";
 import { Button, Dialog, Portal } from "@moderno-ui/react";
 

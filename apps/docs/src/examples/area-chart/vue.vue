@@ -1,7 +1,3 @@
-<!--
-  A single series filled from the value-0 baseline; its colour comes
-  from the `--chart-1` token slot, nothing baked in here — @moderno-ui/vue.
--->
 <script setup lang="ts">
 import { AreaChart } from "@moderno-ui/vue";
 

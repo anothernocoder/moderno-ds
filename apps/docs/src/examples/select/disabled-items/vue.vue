@@ -1,7 +1,3 @@
-<!--
-  A Select with an option that cannot be picked — disabled: true on the
-  item skips it in keyboard navigation and dims it — @moderno-ui/vue.
--->
 <script setup lang="ts">
 import { Select, Portal, createListCollection } from "@moderno-ui/vue";
 

@@ -1,10 +1,4 @@
 /** @jsxImportSource solid-js */
-/**
- * A Select that starts with a value — defaultValue is an array of item
- * values, even for a single pick — @moderno-ui/solid.
- *
- * See examples/button/solid.tsx for why the pragma above is required.
- */
 import { For } from "solid-js";
 import { Select, Portal, createListCollection } from "@moderno-ui/solid";
 
