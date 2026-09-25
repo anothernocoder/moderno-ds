@@ -6,10 +6,11 @@ status: accepted
 
 > Amended by [ADR-0008](0008-token-system-one-source-per-concept.md).
 > `@moderno-ui/tokens` merges into `@moderno-ui/css` and leaves the list of
-> published packages; the npm package is deprecated, not unpublished. A schema
-> change is now one edit to the contract data (`@moderno-ui/css/contract`),
-> which the Theme Builder and `theme-compile` derive from, not three kept in
-> step by hand.
+> published packages; the npm package is deprecated, not unpublished. The
+> CONTRACT.md slot table goes away: the contract data
+> (`@moderno-ui/css/contract`), which the Theme Builder and `theme-compile`
+> already derive from, is the one list of slots, so a schema change no longer
+> updates CONTRACT.md. ADR-0008 lists the edits a new slot still needs.
 
 Moderno is a solo-maintainer, shadcn-style design system. These decisions lock in the monorepo toolchain, how packages and registry items reach consumers, where docs and the registry JSON are hosted, docs i18n, and the Theme Builder shipped in v1.
 

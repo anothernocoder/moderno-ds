@@ -29,13 +29,18 @@ hand-edited home:
   source every other slot list derives from, had none.
 - **Values had two authoring paths.** Every registry theme is a DTCG file that
   `theme-compile` validates and compiles. The neutral defaults were hand-written
-  CSS in `@moderno-ui/tokens`, checked against the contract by a test but never
-  validated like a theme (required slots, WCAG AA pairs), and `design-md.ts`
-  had to parse that CSS to learn what a theme inherits.
-- **`@moderno-ui/css` was a two-file re-export.** Its `index.css` and
-  `preset.css` only `@import`ed `@moderno-ui/tokens`, which owned the
-  variables, the preset, the contract and the agent manifest. Two published
-  packages, one of them a pointer to the other, and consumers told to use the
+  CSS in `@moderno-ui/tokens`, with the reasons for a value kept in CSS
+  comments. They were checked, but by tests written for them alone: one in
+  `@moderno-ui/tokens` that every contract slot is defined, and ones in
+  `theme-compile` that they clear WCAG AA on every contract pair. A failure in
+  either already failed CI; what they lacked was the validation path every
+  theme goes through.
+- **`@moderno-ui/css` was a thin re-export.** Its `index.css` imported the
+  variables from `@moderno-ui/tokens` and the component stylesheet from
+  `@moderno-ui/core`, and its `preset.css` only re-exported
+  `@moderno-ui/tokens/preset`. `@moderno-ui/tokens` owned the variables, the
+  preset, the contract and the agent manifest. Two published packages for the
+  tokens, one of them pointing at the other, and consumers told to use the
   pointer.
 
 Nobody consumes the published packages yet, so merging them costs no one a
@@ -44,11 +49,12 @@ migration. That window closes with the first real consumer.
 ## Decision
 
 1. **`@moderno-ui/tokens` merges into `@moderno-ui/css`.** One package ships the
-   variables, the Tailwind preset, the contract as data
-   (`@moderno-ui/css/contract`) and the agent manifest
-   (`@moderno-ui/css/moderno.agent.json`). `@moderno-ui/css` stays the only
-   public CSS specifier, as it already was for consumers. `@moderno-ui/core`
-   does not depend on it, so the merge adds no cycle. The published
+   variables and the component stylesheet (`@moderno-ui/css`, as today), the
+   Tailwind preset, the contract as data (`@moderno-ui/css/contract`) and the
+   agent manifest (`@moderno-ui/css/moderno.agent.json`). `@moderno-ui/css`
+   stays the only public CSS specifier, as it already was for consumers. It
+   depends on `@moderno-ui/core` for the component stylesheet, and
+   `@moderno-ui/core` does not depend on it, so the merge adds no cycle. The published
    `@moderno-ui/tokens` (0.1.0, 0.3.0) is **deprecated on npm, not
    unpublished**, once `@moderno-ui/css` publishes with the merged contents:
    deprecation points anyone who installed it at the new package, and
@@ -67,10 +73,10 @@ migration. That window closes with the first real consumer.
    `@moderno-ui/css`, with a light and a dark scope and every slot of the
    contract (the extended ones included, since this is where their defaults
    come from), is compiled by `theme-compile` into the neutral stylesheet. A
-   drift test fails when the stylesheet is stale, and the compiler validates
-   the file as it does a theme: required slots and WCAG AA pairs. The comments
-   that explain a neutral value move into the file as `$description`. There is
-   one way to author values.
+   drift test fails when the stylesheet is stale, and `theme-compile` validates
+   the file as it does a theme: every slot required and the WCAG AA pairs
+   checked. The comments that explain a neutral value move into the file as
+   `$description`. There is one way to author values.
 4. **Not done: generating `preset.css`.** The Tailwind preset stays
    hand-written. It is stable, about 150 lines, and already guarded by tests
    that compare it with the contract. The `--container-*` block is the reason a
@@ -88,11 +94,15 @@ migration. That window closes with the first real consumer.
   `DESIGN.md` and the agent manifest are generated, and a stale one fails CI.
 - A role is written once. `CONTRACT.md`, the themes' `DESIGN.md` and the agent
   manifest can no longer describe a slot three different ways.
-- The neutral defaults get the checks a theme gets: a missing slot or a failing
-  contrast pair is a build error, not a review comment.
+- The neutral defaults and the themes share one authoring path and one
+  validation path: `theme-compile` checks the neutral file the way it checks a
+  theme, instead of the neutral defaults relying on tests written for them
+  alone. This ADR does not change what `theme-compile` enforces: a missing slot
+  stops the compile, and a failing contrast pair is reported as a warning, for
+  the neutral file as for every theme.
 - One package for consumers, the CLI's `init` and the MCP server to name.
-  Everything that imported `@moderno-ui/tokens` (the component stylesheet, the
-  MCP server, the lint rules, the tooling, the docs site) moves to
+  Everything that names `@moderno-ui/tokens` (the component stylesheet, the MCP
+  server, the lint rules, the tooling, the docs site) moves to
   `@moderno-ui/css` in the same change.
 - `npm deprecate @moderno-ui/tokens` is a human step after the first publish of
   the merged `@moderno-ui/css`, not part of the code change.
