@@ -4,10 +4,10 @@
  * The one hand-edited source of the contract's slots: their names, DTCG types,
  * groups, contrast pairs and roles (ADR-0008). CONTRACT.md holds the rules and
  * points here for the slots. Every other slot list in the repo derives from
- * this one: `tokens.css` is asserted against it in tests,
- * `@moderno-ui/theme-compile` derives its required slots, its WCAG contrast
- * pairs and each theme's DESIGN.md, the agent manifest carries the roles, and
- * the docs Theme Builder derives its editor groups.
+ * this one: `@moderno-ui/theme-compile` holds the neutral defaults
+ * (`tokens.dtcg.json`) to every slot and derives a theme's required slots, its
+ * WCAG contrast pairs and each theme's DESIGN.md, the agent manifest carries
+ * the roles, and the docs Theme Builder derives its editor groups.
  *
  * Shipped as source (no bundler step), consistent with the CSS-first toolchain
  * decision in ADR-0001.

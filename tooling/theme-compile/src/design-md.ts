@@ -41,23 +41,22 @@ export type Defaults = { light: Map<string, string>; dark: Map<string, string> }
 export const BRAND_NOTES_START = "<!-- brand-notes:start -->";
 export const BRAND_NOTES_END = "<!-- brand-notes:end -->";
 
-/** Custom properties declared directly in `selector { … }` of a stylesheet. */
-export function declsFor(css: string, selector: string): Map<string, string> {
-  const out = new Map<string, string>();
-  const withoutComments = css.replace(/\/\*[\s\S]*?\*\//g, "");
-  const blocks = withoutComments.matchAll(/([^{}]+)\{([^{}]*)\}/g);
-  for (const [, sel, body] of blocks) {
-    if (sel!.trim() !== selector) continue;
-    for (const [, name, value] of body!.matchAll(/--([\w-]+)\s*:\s*([^;]+);/g)) {
-      out.set(name!, value!.trim());
+/**
+ * The neutral defaults a theme inherits, from `@moderno-ui/css`'s
+ * `tokens.dtcg.json` (the file tokens.css is compiled from, never tokens.css
+ * itself, so building the defaults never reads its own output).
+ */
+export function defaultsFrom(neutral: unknown): Defaults {
+  const values = (scope: unknown): Map<string, string> => {
+    const out = new Map<string, string>();
+    if (typeof scope !== "object" || scope === null) return out;
+    for (const [slot, token] of Object.entries(scope as Record<string, Partial<Token>>)) {
+      if (typeof token?.$value === "string") out.set(slot, token.$value);
     }
-  }
-  return out;
-}
-
-/** The neutral defaults a theme inherits, read from @moderno-ui/css's tokens.css. */
-export function defaultsFrom(tokensCss: string): Defaults {
-  return { light: declsFor(tokensCss, ":root"), dark: declsFor(tokensCss, ".dark") };
+    return out;
+  };
+  const doc = neutral as { light?: unknown; dark?: unknown } | null;
+  return { light: values(doc?.light), dark: values(doc?.dark) };
 }
 
 function asThemeDoc(doc: unknown): ThemeDoc {

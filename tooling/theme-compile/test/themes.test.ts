@@ -1,8 +1,7 @@
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import postcss, { type Declaration, type Rule } from "postcss";
-import { CONTRAST_PAIRS, EXTENDED_SLOTS } from "@moderno-ui/css/contract";
+import { EXTENDED_SLOTS } from "@moderno-ui/css/contract";
 import { contrastRatio } from "../src/color.ts";
 import { defaultsFrom, readBrandNotes, renderDesignMd } from "../src/design-md.ts";
 import { compileTheme } from "../src/index.ts";
@@ -22,26 +21,18 @@ const themeNames = existsSync(themesRoot)
   : [];
 
 /** Neutral defaults every theme inherits when it does not express a slot. */
-const tokensCss = readFileSync(
-  fileURLToPath(new URL("../../../packages/css/src/tokens.css", import.meta.url)),
-  "utf8",
+const neutral = JSON.parse(
+  readFileSync(
+    fileURLToPath(new URL("../../../packages/css/src/tokens.dtcg.json", import.meta.url)),
+    "utf8",
+  ),
 );
-
-function declsFor(selector: string): Map<string, string> {
-  const out = new Map<string, string>();
-  postcss.parse(tokensCss).walkRules((rule: Rule) => {
-    if (rule.selector !== selector) return;
-    rule.walkDecls((decl: Declaration) => {
-      if (decl.prop.startsWith("--")) out.set(decl.prop.slice(2), decl.value);
-    });
-  });
-  return out;
-}
+const neutralDefaults = defaultsFrom(neutral);
 
 const defaults = {
-  light: declsFor(":root"),
+  light: neutralDefaults.light,
   // `.dark` only overrides what changes there; the rest falls back to `:root`.
-  dark: new Map([...declsFor(":root"), ...declsFor(".dark")]),
+  dark: new Map([...neutralDefaults.light, ...neutralDefaults.dark]),
 };
 
 /**
@@ -59,7 +50,7 @@ describe("each theme's DESIGN.md", () => {
   it.each(themeNames)("%s: committed DESIGN.md matches a fresh render", (name) => {
     const doc = JSON.parse(readFileSync(`${themesRoot}/${name}/tokens.dtcg.json`, "utf8"));
     const committed = readFileSync(`${themesRoot}/${name}/DESIGN.md`, "utf8");
-    const fresh = renderDesignMd(doc, defaultsFrom(tokensCss), {
+    const fresh = renderDesignMd(doc, neutralDefaults, {
       brandNotes: readBrandNotes(committed),
     });
     expect(committed, "run `pnpm theme:build`").toBe(fresh);
@@ -80,17 +71,6 @@ describe("registry themes compile and stay in sync", () => {
   it.each(themeNames)("%s: clears WCAG AA on every contract pair", (name) => {
     const doc = JSON.parse(readFileSync(`${themesRoot}/${name}/tokens.dtcg.json`, "utf8"));
     expect(compileTheme(doc).warnings).toEqual([]);
-  });
-
-  it("the neutral defaults clear WCAG AA on every contract pair, in both scopes", () => {
-    const failing: string[] = [];
-    for (const scope of ["light", "dark"] as const) {
-      for (const [fg, bg] of CONTRAST_PAIRS) {
-        const ratio = contrastRatio(defaults[scope].get(fg)!, defaults[scope].get(bg)!);
-        if (ratio < 4.5) failing.push(`${scope}: --${fg} on --${bg} is ${ratio.toFixed(2)}:1`);
-      }
-    }
-    expect(failing).toEqual([]);
   });
 
   /**
@@ -172,8 +152,8 @@ describe("registry themes compile and stay in sync", () => {
    * Extended slots are optional — a theme overrides only what its brand
    * actually changes (CONTRACT.md). A theme that pins one to the value it would
    * have inherited opts silently out of the default: move `--container-md` in
-   * tokens.css and every consumer who installed that theme keeps the old width,
-   * with nothing to flag the disagreement. Redundant is therefore wrong, not
+   * the neutral tokens.dtcg.json and every consumer who installed that theme
+   * keeps the old width, with nothing to flag the disagreement. Redundant is therefore wrong, not
    * merely verbose.
    */
   it.each(themeNames)("%s: expresses no extended slot it would inherit anyway", (name) => {

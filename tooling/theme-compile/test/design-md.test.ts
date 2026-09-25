@@ -6,38 +6,32 @@ import { CONTRACT, CONTRAST_PAIRS, FONT_WEIGHTS, TYPE_STEPS } from "@moderno-ui/
 import {
   BRAND_NOTES_END,
   BRAND_NOTES_START,
-  declsFor,
   defaultsFrom,
   draftBrandNotes,
   readBrandNotes,
   renderDesignMd,
 } from "../src/design-md.ts";
 
-const tokensCss = `
-/* a comment with a { brace } */
-:root {
-  --radius: 0.625rem;
-  --overlay: oklch(0 0 0 / 0.32);
-}
-.dark {
-  --overlay: oklch(0 0 0 / 0.6);
-}
-`;
-
-describe("declsFor", () => {
-  it("reads one selector's custom properties, ignoring comments", () => {
-    expect(declsFor(tokensCss, ":root").get("overlay")).toBe("oklch(0 0 0 / 0.32)");
-    expect(declsFor(tokensCss, ".dark").get("overlay")).toBe("oklch(0 0 0 / 0.6)");
-    expect(declsFor(tokensCss, ".dark").has("radius")).toBe(false);
-  });
-});
-
 const defaults = defaultsFrom(
-  readFileSync(
-    fileURLToPath(new URL("../../../packages/css/src/tokens.css", import.meta.url)),
-    "utf8",
+  JSON.parse(
+    readFileSync(
+      fileURLToPath(new URL("../../../packages/css/src/tokens.dtcg.json", import.meta.url)),
+      "utf8",
+    ),
   ),
 );
+
+describe("defaultsFrom", () => {
+  it("reads each scope's values from the neutral DTCG file, dark holding only its own", () => {
+    const d = defaultsFrom({
+      light: { radius: { $value: "0.625rem" }, overlay: { $value: "oklch(0 0 0 / 0.32)" } },
+      dark: { overlay: { $value: "oklch(0 0 0 / 0.6)", $description: "denser" } },
+    });
+    expect(d.light.get("overlay")).toBe("oklch(0 0 0 / 0.32)");
+    expect(d.dark.get("overlay")).toBe("oklch(0 0 0 / 0.6)");
+    expect(d.dark.has("radius")).toBe(false);
+  });
+});
 const token = ($value: string) => ({ $value });
 
 /** A branded theme that expresses a few slots and inherits the rest. */

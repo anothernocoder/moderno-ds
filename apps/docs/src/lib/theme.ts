@@ -13,9 +13,10 @@ import {
   ThemeValidationError,
 } from "@moderno-ui/theme-compile";
 import { COLOR_SLOTS, EXTENDED_SLOTS, OTHER_SLOTS, slotType } from "@moderno-ui/css/contract";
-// The neutral defaults a theme inherits, as the site ships them: DESIGN.md's
-// front matter lists every slot a theme leaves out at this value.
-import tokensCss from "@moderno-ui/css/tokens.css?raw";
+// The neutral defaults a theme inherits, from the DTCG file tokens.css is
+// compiled from: DESIGN.md's front matter lists every slot a theme leaves out
+// at this value.
+import neutralTokens from "@moderno-ui/css/tokens.dtcg.json";
 import modernoTokens from "../../../../registry/themes/theme-moderno/tokens.dtcg.json";
 
 export { readBrandNotes };
@@ -207,7 +208,7 @@ export function decodeState(encoded: string): ThemeState | null {
   }
 }
 
-const TOKEN_DEFAULTS = defaultsFrom(tokensCss);
+const TOKEN_DEFAULTS = defaultsFrom(neutralTokens);
 
 /**
  * The brand notes a DESIGN.md export keeps: the imported base's own, only

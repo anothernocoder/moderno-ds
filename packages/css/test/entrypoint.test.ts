@@ -30,7 +30,7 @@ describe("@moderno-ui/css — public entrypoint", () => {
 });
 
 describe("@moderno-ui/css — package surface", () => {
-  it("exports the stylesheet, the variables alone, the preset, the contract and the agent manifest", () => {
+  it("exports the stylesheet, the variables alone and their DTCG source, the preset, the contract and the agent manifest", () => {
     expect(Object.keys(pkg.exports).sort()).toEqual(
       [
         ".",
@@ -39,6 +39,7 @@ describe("@moderno-ui/css — package surface", () => {
         "./package.json",
         "./preset",
         "./tokens.css",
+        "./tokens.dtcg.json",
       ].sort(),
     );
   });

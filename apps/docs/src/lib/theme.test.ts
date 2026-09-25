@@ -215,9 +215,11 @@ describe("the description", () => {
 });
 
 describe("DESIGN.md export", () => {
-  const tokensCss = readFileSync(
-    fileURLToPath(new URL("../../../../packages/css/src/tokens.css", import.meta.url)),
-    "utf8",
+  const neutral = JSON.parse(
+    readFileSync(
+      fileURLToPath(new URL("../../../../packages/css/src/tokens.dtcg.json", import.meta.url)),
+      "utf8",
+    ),
   );
   const committed = readFileSync(
     fileURLToPath(new URL("../../../../registry/themes/theme-moderno/DESIGN.md", import.meta.url)),
@@ -226,11 +228,11 @@ describe("DESIGN.md export", () => {
   const modernoNotes = readBrandNotes(committed)!;
   const imported = () => tokensToState(modernoTokens, "theme-moderno");
 
-  it("is renderDesignMd of the exact tokens the builder exports, over the tokens.css defaults", () => {
+  it("is renderDesignMd of the exact tokens the builder exports, over the neutral defaults", () => {
     const state = { ...imported(), name: "Ocean" };
     state.light.primary = "oklch(0.45 0.12 250)";
     expect(buildTheme(state, modernoNotes).designMd).toBe(
-      renderDesignMd(stateToTokens(state), defaultsFrom(tokensCss), { brandNotes: null }),
+      renderDesignMd(stateToTokens(state), defaultsFrom(neutral), { brandNotes: null }),
     );
   });
 

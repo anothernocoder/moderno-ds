@@ -9,8 +9,8 @@ role are defined once in
 [`packages/css/src/contract.ts`](packages/css/src/contract.ts), published as
 `@moderno-ui/css/contract`. This file never lists the slots or restates a value,
 so it cannot fall behind them: read the contract for the slots, and the neutral
-defaults ([`packages/css/src/tokens.css`](packages/css/src/tokens.css)) or a
-theme's `DESIGN.md` for the values.
+defaults ([`packages/css/src/tokens.dtcg.json`](packages/css/src/tokens.dtcg.json))
+or a theme's `DESIGN.md` for the values.
 
 This is **not a brand guide**. Values shipped in `@moderno-ui/css` are neutral
 (OKLCH grays + a system font stack). A brand is a _theme_ layered on top: a
@@ -31,15 +31,23 @@ escape hatch, not the path.
 
 ## The three layers
 
-| Layer            | Lives in                                              | Brand?  |
-| ---------------- | ----------------------------------------------------- | ------- |
-| Contract (names) | `@moderno-ui/css/contract` (slots, roles) + this file | neutral |
-| Default values   | `@moderno-ui/css` (OKLCH gray, `:root`/`.dark`)       | neutral |
-| Brand values     | a theme (`theme-moderno`, …)                          | branded |
+| Layer            | Lives in                                                              | Brand?  |
+| ---------------- | --------------------------------------------------------------------- | ------- |
+| Contract (names) | `@moderno-ui/css/contract` (slots, roles) + this file                 | neutral |
+| Default values   | `@moderno-ui/css`'s `tokens.dtcg.json` (OKLCH gray, `light` / `dark`) | neutral |
+| Brand values     | a theme's `tokens.dtcg.json` (`theme-moderno`, …)                     | branded |
 
 Neutrality is a property of the **values in `@moderno-ui/css`**, not of any
 document. A theme re-maps the same slot names to brand values; the contract
 never changes.
+
+Both value layers are authored the same way. The neutral defaults are a DTCG
+file with a `light` and a `dark` scope,
+[`packages/css/src/tokens.dtcg.json`](packages/css/src/tokens.dtcg.json), the
+one hand-edited source of every default; `pnpm theme:build` validates it like a
+theme and compiles it into `tokens.css` (`:root` and `.dark`), which is never
+edited by hand. Its light scope defines every slot, the extended ones included,
+because a theme that leaves an extended slot out inherits it from there.
 
 ## Minimum contract
 
@@ -200,8 +208,11 @@ import only this:
 - `@moderno-ui/css/moderno.agent.json` → the contract manifest that
   `@moderno-ui/mcp`'s `get_contract` answers from.
 - `@moderno-ui/css/tokens.css` → the variables alone, without the component
-  stylesheet. For tooling (the docs' Theme Builder reads it as text); an app
-  imports `@moderno-ui/css`.
+  stylesheet, compiled from `tokens.dtcg.json`. For tooling; an app imports
+  `@moderno-ui/css`.
+- `@moderno-ui/css/tokens.dtcg.json` → the neutral defaults as DTCG, the source
+  `tokens.css` is compiled from. The docs' Theme Builder reads it for the values
+  a theme inherits.
 
 Internal paths (`dist/`, `src/`) are never exposed to consumers.
 `@moderno-ui/core` does not depend on `@moderno-ui/css`.

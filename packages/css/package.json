@@ -19,6 +19,7 @@
   "exports": {
     ".": "./src/index.css",
     "./tokens.css": "./src/tokens.css",
+    "./tokens.dtcg.json": "./src/tokens.dtcg.json",
     "./preset": "./src/preset.css",
     "./contract": "./src/contract.ts",
     "./moderno.agent.json": "./dist/moderno.agent.json",
