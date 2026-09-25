@@ -56,7 +56,15 @@
     groups: Record<string, string>;
   }
 
-  let { strings }: { strings: Strings } = $props();
+  /** A registry theme to start from; `item` is its directory under `/r/themes/`. */
+  interface Base {
+    item: string;
+    label: string;
+  }
+
+  // The bases come from the registry (siteThemes.ts), so a new theme under
+  // registry/themes/ is offered here without touching the island.
+  let { strings, bases }: { strings: Strings; bases: Base[] } = $props();
 
   // Where the panel docks beside the gallery rather than over it. Kept in step
   // with the `@media` rule that reserves the panel's width on `.layout`.
@@ -269,12 +277,11 @@
           <button type="button" class="tb-link" onclick={reset}>{strings.reset}</button>
         </div>
         <div class="tb-start-row">
-          <button type="button" class="tb-btn" onclick={() => importBase("theme-moderno")}>
-            Moderno
-          </button>
-          <button type="button" class="tb-btn" onclick={() => importBase("theme-contrast")}>
-            Contrast
-          </button>
+          {#each bases as base (base.item)}
+            <button type="button" class="tb-btn" onclick={() => importBase(base.item)}>
+              {base.label}
+            </button>
+          {/each}
           <button
             type="button"
             class="tb-btn"

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { scopeThemeCss, siteThemeIds, siteThemesCss } from "./siteThemes.ts";
+import { registryThemes, scopeThemeCss, siteThemeIds, siteThemesCss } from "./siteThemes.ts";
 
 describe("scopeThemeCss", () => {
   it("moves a brand-less theme off :root/.dark onto its data-brand", () => {
@@ -24,6 +24,15 @@ describe("registry themes", () => {
     expect(siteThemeIds[0]).toBe("moderno");
     expect(siteThemeIds).toContain("contrast");
     expect(siteThemeIds.at(-1)).toBe("neutral");
+  });
+
+  it("names each theme's registry item, which the Theme Builder imports", () => {
+    expect(registryThemes[0]).toEqual({ item: "theme-moderno", id: "moderno", label: "Moderno" });
+    expect(registryThemes).toContainEqual({
+      item: "theme-contrast",
+      id: "contrast",
+      label: "Contrast",
+    });
   });
 
   it("scopes every theme under its own data-brand", () => {
