@@ -4,10 +4,27 @@
  * passed as args). Reads tokens.dtcg.json, writes theme.css beside it, prints
  * WCAG AA contrast warnings, and exits non-zero on any validation error so CI
  * fails on an invalid schema.
+ *
+ * The default theme is authored at the repo root instead: `tokens.json` is its
+ * one source. Its registry dir gets a byte-for-byte copy (what the registry
+ * publishes and the Theme Builder imports), and DESIGN.md's front matter is
+ * re-rendered from it. Nothing downstream of tokens.json is edited by hand.
  */
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { basename, join, resolve } from "node:path";
+import { defaultsFrom, readMeta, renderFrontMatter, withFrontMatter } from "./design-md.ts";
 import { compileTheme, ThemeValidationError } from "./index.ts";
+
+const ROOT_TOKENS = resolve("tokens.json");
+const DESIGN_MD = resolve("DESIGN.md");
+const TOKENS_CSS = resolve("packages/tokens/src/tokens.css");
+
+/** The theme the root tokens.json authors, named by its `style.moderno.theme` extension. */
+function rootThemeName(): string | null {
+  if (!existsSync(ROOT_TOKENS)) return null;
+  const doc = JSON.parse(readFileSync(ROOT_TOKENS, "utf8"));
+  return doc.$extensions?.["style.moderno.theme"]?.name ?? null;
+}
 
 function themeDirs(args: string[]): string[] {
   if (args.length > 0) return args.map((a) => resolve(a));
@@ -25,9 +42,15 @@ function main(): number {
     return 1;
   }
 
+  const rootTheme = rootThemeName();
   let failed = 0;
   for (const dir of dirs) {
     const input = join(dir, "tokens.dtcg.json");
+    const authoredAtRoot = basename(dir) === rootTheme;
+    if (authoredAtRoot) {
+      writeFileSync(input, readFileSync(ROOT_TOKENS, "utf8"));
+      console.log(`✓ ${rel(input)} (from tokens.json)`);
+    }
     if (!existsSync(input)) {
       console.error(`✗ ${dir}: missing tokens.dtcg.json`);
       failed++;
@@ -37,9 +60,16 @@ function main(): number {
       const doc = JSON.parse(readFileSync(input, "utf8"));
       const { css, warnings } = compileTheme(doc);
       const out = join(dir, "theme.css");
-      writeFileSync(out, banner(input) + css);
+      writeFileSync(out, banner(authoredAtRoot ? ROOT_TOKENS : input) + css);
       console.log(`✓ ${rel(out)}`);
       for (const w of warnings) console.warn(`  ⚠ ${w}`);
+      if (authoredAtRoot) {
+        const markdown = readFileSync(DESIGN_MD, "utf8");
+        const defaults = defaultsFrom(readFileSync(TOKENS_CSS, "utf8"));
+        const frontMatter = renderFrontMatter(doc, defaults, readMeta(markdown));
+        writeFileSync(DESIGN_MD, withFrontMatter(markdown, frontMatter));
+        console.log(`✓ ${rel(DESIGN_MD)} front matter`);
+      }
     } catch (err) {
       failed++;
       if (err instanceof ThemeValidationError) {

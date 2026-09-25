@@ -1,118 +1,120 @@
 ---
+# Generated from tokens.json by `pnpm theme:build`. Edit tokens.json, not this block.
 version: alpha
-name: Moderno Design System
-description: Implementation-ready, token-driven UI guidance for Moderno — the ui design stack for modern founders — optimized for consistency, accessibility, and fast delivery products.
+name: "Moderno Design System"
+description: "Implementation-ready, token-driven UI guidance for Moderno — the ui design stack for modern founders — optimized for consistency, accessibility, and fast delivery products."
 colors:
-  primary: "#fafafa"
-  on-primary: "#18181b"
-  text-primary: "#fafafa"
-  text-secondary: "#616161"
-  text-tertiary: "#121212"
-  text-inverse: "#18181b"
-  surface-base: "#0d0d0d"
-  surface-muted: "#000000"
-  border-default: "#1c1c1c"
+  background: "oklch(1 0 0)"
+  foreground: "oklch(0.205 0 0)"
+  card: "oklch(1 0 0)"
+  card-foreground: "oklch(0.205 0 0)"
+  popover: "oklch(1 0 0)"
+  popover-foreground: "oklch(0.205 0 0)"
+  primary: "oklch(0.205 0 0)"
+  primary-foreground: "oklch(0.985 0 0)"
+  secondary: "oklch(0.97 0 0)"
+  secondary-foreground: "oklch(0.205 0 0)"
+  accent: "oklch(0.97 0 0)"
+  accent-foreground: "oklch(0.205 0 0)"
+  muted: "oklch(0.97 0 0)"
+  muted-foreground: "oklch(0.505 0 0)"
+  destructive: "oklch(0.577 0.245 27.325)"
+  destructive-foreground: "oklch(0.985 0 0)"
+  info: "oklch(0.52 0.16 255)"
+  info-foreground: "oklch(0.985 0 0)"
+  success: "oklch(0.5 0.13 152)"
+  success-foreground: "oklch(0.985 0 0)"
+  warning: "oklch(0.75 0.15 75)"
+  warning-foreground: "oklch(0.145 0 0)"
+  border: "oklch(0.922 0 0)"
+  input: "oklch(0.922 0 0)"
+  ring: "oklch(0.205 0 0)"
+  chart-1: "oklch(0.646 0.222 41.116)"
+  chart-2: "oklch(0.6 0.118 184.704)"
+  chart-3: "oklch(0.398 0.07 227.392)"
+  chart-4: "oklch(0.828 0.189 84.429)"
+  chart-5: "oklch(0.769 0.188 70.08)"
+  overlay: "oklch(0 0 0 / 0.32)"
+  dark-background: "oklch(0.16 0 0)"
+  dark-foreground: "oklch(0.985 0 0)"
+  dark-card: "oklch(0.205 0 0)"
+  dark-card-foreground: "oklch(0.985 0 0)"
+  dark-popover: "oklch(0.205 0 0)"
+  dark-popover-foreground: "oklch(0.985 0 0)"
+  dark-primary: "oklch(0.985 0 0)"
+  dark-primary-foreground: "oklch(0.205 0 0)"
+  dark-secondary: "oklch(0.269 0 0)"
+  dark-secondary-foreground: "oklch(0.985 0 0)"
+  dark-accent: "oklch(0.269 0 0)"
+  dark-accent-foreground: "oklch(0.985 0 0)"
+  dark-muted: "oklch(0.269 0 0)"
+  dark-muted-foreground: "oklch(0.708 0 0)"
+  dark-destructive: "oklch(0.704 0.191 22.216)"
+  dark-destructive-foreground: "oklch(0.985 0 0)"
+  dark-info: "oklch(0.72 0.13 255)"
+  dark-info-foreground: "oklch(0.145 0 0)"
+  dark-success: "oklch(0.72 0.15 152)"
+  dark-success-foreground: "oklch(0.145 0 0)"
+  dark-warning: "oklch(0.8 0.15 75)"
+  dark-warning-foreground: "oklch(0.145 0 0)"
+  dark-border: "oklch(0.27 0 0)"
+  dark-input: "oklch(0.27 0 0)"
+  dark-ring: "oklch(0.985 0 0)"
+  dark-chart-1: "oklch(0.488 0.243 264.376)"
+  dark-chart-2: "oklch(0.696 0.17 162.48)"
+  dark-chart-3: "oklch(0.769 0.188 70.08)"
+  dark-chart-4: "oklch(0.627 0.265 303.9)"
+  dark-chart-5: "oklch(0.645 0.246 16.439)"
+  dark-overlay: "oklch(0 0 0 / 0.6)"
 typography:
-  display:
-    fontFamily: Hedvig Letters Sans
-    fontSize: 96px
-    fontWeight: 400
-    lineHeight: 104px
-    letterSpacing: -0.02em
-  headline-lg:
-    fontFamily: Hedvig Letters Sans
-    fontSize: 24px
-    fontWeight: 400
-    lineHeight: 32px
-  headline-md:
-    fontFamily: Hedvig Letters Sans
-    fontSize: 20px
-    fontWeight: 400
-    lineHeight: 28px
+  ui-xs:
+    fontFamily: "Hedvig Letters Sans"
+    fontSize: 0.75rem
+    lineHeight: 1rem
+  ui-sm:
+    fontFamily: "Hedvig Letters Sans"
+    fontSize: 0.8125rem
+    lineHeight: 1.125rem
+  ui-md:
+    fontFamily: "Hedvig Letters Sans"
+    fontSize: 0.875rem
+    lineHeight: 1.25rem
+  ui-lg:
+    fontFamily: "Hedvig Letters Sans"
+    fontSize: 0.9375rem
+    lineHeight: 1.375rem
+  body:
+    fontFamily: "Hedvig Letters Sans"
+    fontSize: 1rem
+    lineHeight: 1.5rem
   body-lg:
-    fontFamily: Hedvig Letters Sans
-    fontSize: 18px
-    fontWeight: 400
-    lineHeight: 28px
-  body-md:
-    fontFamily: Hedvig Letters Sans
-    fontSize: 16px
-    fontWeight: 400
-    lineHeight: 24px
-  body-sm:
-    fontFamily: Hedvig Letters Sans
-    fontSize: 14px
-    fontWeight: 400
-    lineHeight: 20px
-  label-md:
-    fontFamily: Hedvig Letters Sans
-    fontSize: 12px
-    fontWeight: 400
-    lineHeight: 16px
-  label-sm:
-    fontFamily: Hedvig Letters Sans
-    fontSize: 10px
-    fontWeight: 400
-    lineHeight: 14px
+    fontFamily: "Hedvig Letters Sans"
+    fontSize: 1.125rem
+    lineHeight: 1.75rem
+  heading-sm:
+    fontFamily: "Hedvig Letters Sans"
+    fontSize: 1.25rem
+    lineHeight: 1.75rem
+  heading:
+    fontFamily: "Hedvig Letters Sans"
+    fontSize: 1.5rem
+    lineHeight: 2rem
+  heading-lg:
+    fontFamily: "Hedvig Letters Sans"
+    fontSize: 2.25rem
+    lineHeight: 2.5rem
 rounded:
-  none: 0px
+  base: 0rem
   full: 9999px
 spacing:
-  "1": 4px
-  "2": 6px
-  "3": 8px
-  "4": 12px
-  "5": 14px
-  "6": 16px
-  "7": 20px
-  "8": 24px
-components:
-  button-primary:
-    backgroundColor: "{colors.primary}"
-    textColor: "{colors.on-primary}"
-    typography: "{typography.body-sm}"
-    rounded: "{rounded.none}"
-    padding: 12px
-    height: 40px
-  button-primary-hover:
-    backgroundColor: "#e5e5e5"
-  button-secondary:
-    backgroundColor: "transparent"
-    textColor: "{colors.text-primary}"
-    typography: "{typography.body-sm}"
-    rounded: "{rounded.none}"
-    padding: 12px
-    height: 40px
-  button-secondary-hover:
-    backgroundColor: "{colors.border-default}"
-  card:
-    backgroundColor: "{colors.surface-base}"
-    textColor: "{colors.text-primary}"
-    typography: "{typography.body-md}"
-    rounded: "{rounded.none}"
-    padding: 24px
-  input-field:
-    backgroundColor: "{colors.surface-muted}"
-    textColor: "{colors.text-primary}"
-    typography: "{typography.body-sm}"
-    rounded: "{rounded.none}"
-    padding: 12px
-    height: 40px
-  text-muted:
-    textColor: "{colors.text-secondary}"
-    typography: "{typography.body-sm}"
-  badge-inverse:
-    backgroundColor: "{colors.text-primary}"
-    textColor: "{colors.text-tertiary}"
-    typography: "{typography.label-md}"
-    rounded: "{rounded.full}"
-    padding: 4px
-  tooltip:
-    backgroundColor: "{colors.text-primary}"
-    textColor: "{colors.text-inverse}"
-    typography: "{typography.label-md}"
-    rounded: "{rounded.none}"
-    padding: 8px
+  "1": 0.25rem
+  "2": 0.5rem
+  "3": 0.75rem
+  "4": 1rem
+  "5": 1.25rem
+  "6": 1.5rem
+  "7": 1.75rem
+  "8": 2rem
 ---
 
 ## Overview
@@ -122,68 +124,48 @@ components:
 - Product surface: dashboard web app, landing pages
 - Visual style: clean, functional, implementation-oriented
 
-This file is the **source of truth for Moderno's default theme** (`theme-moderno`): its token values and the rationale for applying them. The neutral, brand-agnostic technical contract every component obeys — semantic slots, theming rules, `data-scope`/`data-part`, guardrails — lives in [`CONTRACT.md`](CONTRACT.md). This document supplies the _values_; `CONTRACT.md` defines the _names and rules_.
+This file describes **Moderno's default theme** (`theme-moderno`): the rationale for its values and how to apply them. The values themselves live in one place, [`tokens.json`](tokens.json). The front matter above is rendered from it by `pnpm theme:build` and is never edited by hand. The prose below explains the values and doesn't repeat them. The names every theme fills in, and the rules every component obeys, live in [`CONTRACT.md`](CONTRACT.md).
 
 **Mission:** Create implementation-ready, token-driven UI guidance for Moderno that is optimized for consistency, accessibility, and fast delivery across the dashboard web app.
 
-The aesthetic is a near-black, monochrome workspace: dense data surfaces, sharp corners, and a single high-contrast off-white that serves both as primary text and as the primary action color. There is no decorative accent hue — hierarchy is built entirely from contrast, spacing, and weight.
+The aesthetic is a monochrome workspace with sharp corners. A near-black ink carries both the text and the primary action on a white page. The dark scope inverts that into an off-white on a near-black canvas. There is no decorative accent hue: hierarchy comes from contrast, spacing, and weight.
 
 ## Colors
 
-The palette is monochrome and dark-first. Token mapping from the extracted source:
+The palette is monochrome in both scopes. The front matter lists the light scope under the contract names (`primary`, `muted-foreground`, …) and the dark scope as `dark-*`.
 
-| Source token           | DESIGN.md token                    | Value     |
-| ---------------------- | ---------------------------------- | --------- |
-| `color.text.primary`   | `text-primary` (also `primary`)    | `#fafafa` |
-| `color.text.secondary` | `text-secondary`                   | `#616161` |
-| `color.text.tertiary`  | `text-tertiary`                    | `#121212` |
-| `color.text.inverse`   | `text-inverse` (also `on-primary`) | `#18181b` |
-| `color.surface.base`   | `surface-base`                     | `#0d0d0d` |
-| `color.surface.muted`  | `surface-muted`                    | `#000000` |
-| `color.border.default` | `border-default`                   | `#1c1c1c` |
-
-- `primary` (#fafafa) is the brand/action color: primary button fills, emphasized text, and inverse surfaces (tooltips, badges).
-- `text-tertiary` (#121212) and `text-inverse` (#18181b) are dark values intended **only on light/inverse surfaces** (e.g. on a `#fafafa` button or tooltip). Never place them on `surface-base` or `surface-muted`.
-- `text-secondary` (#616161) fails WCAG AA (≈3.1:1) against `surface-base`; restrict it to large text (≥24px / 19px bold) or non-essential decorative metadata, and prefer it on light surfaces (≈5.9:1 on #fafafa).
-- Use semantic tokens, not raw hex values, in component guidance.
+- `primary` is the brand and action color: primary button fills, emphasized text, and the focus ring. `primary-foreground` is the only text that sits on it.
+- Every `*-foreground` slot is paired with the surface of the same name and is checked for WCAG AA against it by `theme-compile`. Put a foreground only on its own surface.
+- `muted-foreground` is for secondary text on `background`, `card`, or `muted`, never on a filled `primary` or `secondary` surface.
+- Status hues (`info`, `success`, `warning`, `destructive`) and `chart-*` are the only chroma in the theme. Use them for meaning, never for decoration.
+- Reference slots, never raw color values, in component guidance and code.
 
 ## Typography
 
-Single-family system: **Hedvig Letters Sans**, with stack `Hedvig Letters Sans, system-ui, arial`. Base: 16px / 24px line-height / weight 400.
+Single-family system: **Hedvig Letters Sans** (`--font-sans`), with Hedvig Letters Serif (`--font-serif`) available for display moments. The scale is the contract's type scale, and its steps split into two ramps:
 
-Scale mapping from the extracted source (line-heights other than `body-md` are derived defaults):
+- **`ui-*`** is the interface ramp. A component's `sm`/`md`/`lg` sizes read `ui-sm`/`ui-md`/`ui-lg`, so controls grow one step at a time. `ui-md` is the default text of the interface, and `ui-xs` carries ticks and small helper text.
+- **`body`, `body-lg`, `heading-*`** set content: running text, lead paragraphs, and titles.
 
-| Source token    | DESIGN.md token  | Size |
-| --------------- | ---------------- | ---- |
-| `font.size.4xl` | `display`        | 96px |
-| `font.size.3xl` | `headline-lg`    | 24px |
-| `font.size.2xl` | `headline-md`    | 20px |
-| `font.size.xl`  | `body-lg`        | 18px |
-| `font.size.lg`  | `body-md` (base) | 16px |
-| `font.size.md`  | `body-sm`        | 14px |
-| `font.size.sm`  | `label-md`       | 12px |
-| `font.size.xs`  | `label-sm`       | 10px |
-
-Note the deliberate gap between 24px and 96px: `display` is reserved for hero/marketing moments; everything inside the dashboard lives at 24px and below.
+Use a step, never a raw size. A size the scale lacks is a change to the scale, not a local exception.
 
 ## Layout
 
-Spacing scale (4–24px, dense dashboard rhythm): `1=4px, 2=6px, 3=8px, 4=12px, 5=14px, 6=16px, 7=20px, 8=24px`.
+Spacing uses the contract's `--spacing-1` … `--spacing-8`, in 0.25rem steps. Component heights compose from the same steps.
 
 - Do not introduce one-off spacing or typography exceptions.
 - Component spacing references the scale by step, never raw pixel values.
+- Blocks and screens respond to the width of their container, not the viewport (`--container-sm|md|lg`).
 
 ## Elevation & Depth
 
-Depth on the near-black canvas comes from **surface steps and 1px borders, not shadows**: `surface-muted` (#000000) sits lowest (inputs, wells), `surface-base` (#0d0d0d) is the page/card level, and `border-default` (#1c1c1c) draws the edges between them.
+Resting surfaces separate by fill and a 1px `border`, not by shadow: `muted` recesses, `card` sits at page level. Shadows are for overlays only (popover, menu, drawer, toast). Each step pairs a hairline ring with a soft drop, so an overlay still reads against a near-black canvas.
 
-Motion tokens: `motion.duration.instant=150ms`, `motion.duration.fast=200ms`, `motion.duration.normal=300ms`. Use `instant` for hover/focus feedback, `fast` for reveals (menus, tooltips), `normal` for panels and sheets.
+Motion: `--motion-instant` for hover and focus feedback, `--motion-fast` for reveals (menus, tooltips), `--motion-normal` for panels and sheets.
 
 ## Shapes
 
-The shape language is sharp: `rounded.none` (0px) for buttons, inputs, cards, and surfaces. The single exception is `rounded.full` (9999px) for pills, badges, and status dots.
-
-> Note: the extracted source labeled this token `radius.xs=9999px`; the value is a full/pill radius and is exposed here as `rounded.full`.
+The shape language is sharp: `rounded.base` is zero, for buttons, inputs, cards, and surfaces. The single exception is `rounded.full`, for pills, badges, avatars, and status dots.
 
 ## Components
 
@@ -191,27 +173,26 @@ The shape language is sharp: `rounded.none` (0px) for buttons, inputs, cards, an
 - Interactive components must document keyboard, pointer, and touch behavior.
 - Include long-content, overflow, and empty-state handling.
 - Component behavior should specify responsive and edge-case handling.
-- Known page component density: links (236), buttons (20), cards (4), inputs (2), tables (2), navigation (1).
 
 Key patterns:
 
-- **button-primary** — inverse fill: `primary` background with `on-primary` text, square corners, 40px height. Hover dims the fill slightly (#e5e5e5); focus-visible draws a 2px `primary` outline offset 2px from the edge.
-- **button-secondary** — transparent fill with `text-primary` label and a 1px `border-default` outline; hover fills with `border-default`.
-- **card** — `surface-base` fill with a 1px `border-default` outline; no shadow, no radius.
-- **input-field** — sits on `surface-muted` with a 1px `border-default` stroke; focus-visible switches the stroke to `primary`.
-- **badge-inverse / tooltip** — light surfaces (`text-primary` fill) carrying dark text (`text-tertiary` / `text-inverse`); the only places dark text tokens appear.
+- **Button**: `primary` is the ink fill with `primary-foreground` text. `secondary` and `outline` are the quieter actions, and `destructive` is reserved for irreversible ones. Sizes step through `ui-sm`/`ui-md`/`ui-lg`.
+- **Card**: a `card` fill with a 1px `border`. `muted` is the recessed well, and `ghost` keeps the anatomy with no surface of its own.
+- **Field**: a 1px `input` stroke that turns to `ring` on hover and to `destructive` when invalid, with a 2px `ring` outline on focus. Label and helper text follow the field's size step.
+- **Dialog**: an overlay over the `overlay` scrim, titled in `body-lg`.
 
 ## Do's and Don'ts
 
-- **Do** use semantic tokens, not raw hex values, in component guidance.
+- **Do** use semantic tokens, not raw color values, in component guidance.
 - **Do** define states for default, hover, focus-visible, active, disabled, loading, and error on every component.
 - **Do** document keyboard, pointer, and touch behavior for interactive components.
 - **Do** make accessibility acceptance criteria testable in implementation.
+- **Do** change a value in `tokens.json` and run `pnpm theme:build`. Never edit the front matter, `theme.css`, or the registry copy.
 - **Don't** allow low-contrast text or hidden focus indicators.
 - **Don't** introduce one-off spacing or typography exceptions.
 - **Don't** use ambiguous labels or non-descriptive actions.
 - **Don't** ship component guidance without explicit state rules.
-- **Don't** place `text-tertiary`, `text-inverse`, or `on-primary` on dark surfaces.
+- **Don't** put a `*-foreground` on any surface but its own.
 
 ## Accessibility
 
