@@ -112,6 +112,15 @@ export type {
 } from "@moderno-ui/core";
 
 /**
+ * Skeleton and Spinner — CSS-only loading states (no Ark machine). Same
+ * recipes and `components.css` rules as every other binding: a muted
+ * placeholder in a content shape, and a ring with a screen-reader label.
+ */
+export { default as Skeleton } from "./Skeleton.svelte";
+export { default as Spinner } from "./Spinner.svelte";
+export type { SkeletonShape, SpinnerSize } from "@moderno-ui/core";
+
+/**
  * Charts (Phase 4) — pure SVG maps over `@moderno-ui/charts-core` models. Each
  * renders the identical scaffold across frameworks; they carry zero colour and
  * paint from `--chart-*` via the data-series index in components.css.

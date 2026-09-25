@@ -21,6 +21,8 @@ export const ENTRIES: ComponentEntry[] = [
   { name: "Badge", file: "src/badge.tsx", type: "BadgeProps" },
   { name: "Chip", file: "src/chip.tsx", type: "ChipProps" },
   { name: "Indicator", file: "src/indicator.tsx", type: "IndicatorProps" },
+  { name: "Skeleton", file: "src/skeleton.tsx", type: "SkeletonProps" },
+  { name: "Spinner", file: "src/spinner.tsx", type: "SpinnerProps" },
   { name: "Select", file: "src/select.tsx", type: "ModernoSelectRootProps" },
   { name: "PinInput", file: "src/pin-input.tsx", type: "ModernoPinInputRootProps" },
   { name: "LineChart", file: "src/charts.tsx", type: "LineChartProps" },

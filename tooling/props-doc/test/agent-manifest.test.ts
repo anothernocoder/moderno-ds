@@ -19,6 +19,8 @@ describe("AGENT_COMPONENTS", () => {
       "Badge",
       "Chip",
       "Indicator",
+      "Skeleton",
+      "Spinner",
       "Field",
       "Checkbox",
       "Dialog",
@@ -120,6 +122,8 @@ describe("buildComponentsManifest", () => {
       "Badge",
       "Chip",
       "Indicator",
+      "Skeleton",
+      "Spinner",
       "LineChart",
       "AreaChart",
       "BarChart",
@@ -171,6 +175,20 @@ describe("buildComponentsManifest", () => {
       size: ["sm", "md"],
     });
     expect(indicator.parts.map((p) => p.name)).toEqual(["root", "dot", "label"]);
+  });
+
+  it("carries Skeleton and Spinner props — what validate_usage checks against", () => {
+    const skeleton = manifest.components.find((c) => c.name === "Skeleton")!;
+    expect(skeleton.scope).toBe("skeleton");
+    expect(skeleton.props.map((p) => p.name)).toEqual(["shape"]);
+    expect(skeleton.variants).toEqual({ shape: ["text", "rect", "circle"] });
+    expect(skeleton.parts.map((p) => p.name)).toEqual(["root"]);
+
+    const spinner = manifest.components.find((c) => c.name === "Spinner")!;
+    expect(spinner.scope).toBe("spinner");
+    expect(spinner.props.map((p) => p.name).sort()).toEqual(["label", "size"]);
+    expect(spinner.variants).toEqual({ size: ["sm", "md", "lg"] });
+    expect(spinner.parts.map((p) => p.name)).toEqual(["root", "circle", "label"]);
   });
 
   it("reads variants straight off the shared @moderno-ui/core recipes", () => {

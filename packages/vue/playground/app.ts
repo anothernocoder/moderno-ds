@@ -15,6 +15,8 @@ import { Divider } from "../src/divider.js";
 import { Badge } from "../src/badge.js";
 import { Chip } from "../src/chip.js";
 import { Indicator } from "../src/indicator.js";
+import { Skeleton } from "../src/skeleton.js";
+import { Spinner } from "../src/spinner.js";
 import { Card } from "../src/card.js";
 import { Field } from "../src/field.js";
 import { Checkbox } from "../src/checkbox.js";
@@ -103,6 +105,14 @@ export const App = defineComponent({
         h("section", { "aria-label": "indicators" }, [
           h(Indicator, { variant: "success", pulse: true }, () => "Online"),
           h(Indicator, { variant: "error", size: "sm", "aria-label": "Offline" }),
+        ]),
+
+        h("section", { "aria-label": "loading" }, [
+          h(Skeleton),
+          h(Skeleton, { shape: "rect" }),
+          h(Skeleton, { shape: "circle" }),
+          h(Spinner),
+          h(Spinner, { size: "lg", label: "Saving changes" }),
         ]),
 
         h("section", { "aria-label": "alerts" }, [

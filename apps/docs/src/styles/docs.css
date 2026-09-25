@@ -1321,6 +1321,23 @@ main.main--wide {
 .demo-stack:has(> :is([data-scope="alert"], [data-scope="divider"])) {
   max-width: 32rem;
 }
+/* Skeleton lines stand in for lines of text, so they sit as close as text
+   does; a row of spinners has no text baseline, so it centres instead. */
+.demo-stack:has(> [data-scope="skeleton"]) {
+  gap: 0.75rem;
+}
+.demo-row:has(> [data-scope="spinner"]) {
+  align-items: center;
+}
+/* A media object: a fixed item (an avatar) beside text that takes the rest of
+   the width. */
+.demo-media {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  max-width: 22rem;
+}
 /* A row of actions inside a dialog is its footer: it sits at the end. */
 [data-scope="dialog"] .demo-row {
   justify-content: flex-end;

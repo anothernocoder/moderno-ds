@@ -149,6 +149,30 @@ export const indicatorRecipe = cva({
   defaultVariants: { variant: "neutral", size: "md" },
 });
 
+/**
+ * Skeleton: the placeholder's `shape` — a line of `text`, a `rect` block or a
+ * `circle` (an avatar). There is no size: a skeleton stands in for content the
+ * consumer is about to render, so the consumer sizes it like that content.
+ */
+export const skeletonRecipe = cva({
+  variants: {
+    shape: ["text", "rect", "circle"],
+  },
+  defaultVariants: { shape: "text" },
+});
+
+/**
+ * Spinner: ring `size`. An indeterminate spinner has no progress value, so
+ * the size is the only choice a consumer makes; the colour follows the text
+ * around it.
+ */
+export const spinnerRecipe = cva({
+  variants: {
+    size: ["sm", "md", "lg"],
+  },
+  defaultVariants: { size: "md" },
+});
+
 /*
  * The variant unions, derived once beside the recipes. Bindings import these
  * names instead of re-deriving them from the recipe tables — a recipe change
@@ -273,3 +297,9 @@ export function indicatorRole(hasLabel: boolean, attrs: IndicatorNameAttrs): "im
   const named = Boolean(attrs["aria-label"] || attrs["aria-labelledby"]);
   return !hasLabel && named ? "img" : undefined;
 }
+
+/** Skeleton's placeholder shape (`text`, `rect`, `circle`). */
+export type SkeletonShape = NonNullable<VariantProps<typeof skeletonRecipe.variants>["shape"]>;
+
+/** Spinner's ring size. */
+export type SpinnerSize = NonNullable<VariantProps<typeof spinnerRecipe.variants>["size"]>;

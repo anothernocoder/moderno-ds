@@ -91,3 +91,24 @@ describe("moderno/valid-props over the real Badge, Chip and Indicator manifest",
     ]);
   });
 });
+
+describe("moderno/valid-props over the real Skeleton and Spinner manifest", () => {
+  const manifests = manifestsFor("react");
+  const check = (code: string) =>
+    validProps.check({ code, framework: "react", manifests }).map((f) => f.message);
+
+  it("accepts every prop the two bindings declare", { timeout: 30_000 }, () => {
+    expect(check('<Skeleton shape="circle" style={{ width: "3rem" }} />')).toEqual([]);
+    expect(check('<Spinner size="lg" label="Loading invoices" />')).toEqual([]);
+  });
+
+  it("rejects an invented prop and a value outside the recipe", () => {
+    expect(check('<Skeleton shape="square" />')).toEqual([
+      expect.stringContaining('Invalid value "square"'),
+    ]);
+    expect(check('<Spinner size="xl" />')).toEqual([expect.stringContaining('Invalid value "xl"')]);
+    expect(check("<Spinner speed={2} />")).toEqual([
+      expect.stringContaining('Unknown prop "speed"'),
+    ]);
+  });
+});

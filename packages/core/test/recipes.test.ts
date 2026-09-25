@@ -14,6 +14,8 @@ import {
   indicatorRole,
   pinInputRecipe,
   selectRecipe,
+  skeletonRecipe,
+  spinnerRecipe,
 } from "../src/recipes.js";
 
 describe("buttonRecipe", () => {
@@ -250,5 +252,37 @@ describe("indicatorRole", () => {
   it("leaves an unnamed bare dot decorative", () => {
     expect(indicatorRole(false, {})).toBeUndefined();
     expect(indicatorRole(false, { "aria-label": "" })).toBeUndefined();
+  });
+});
+
+describe("skeletonRecipe", () => {
+  it("defaults to a text line", () => {
+    expect(skeletonRecipe()).toEqual({ "data-shape": "text" });
+  });
+
+  it("maps shape to data-shape and carries no size", () => {
+    expect(skeletonRecipe({ shape: "circle" })).toEqual({ "data-shape": "circle" });
+    expect(Object.keys(skeletonRecipe.variants)).toEqual(["shape"]);
+  });
+
+  it("rejects values outside the schema", () => {
+    // @ts-expect-error — "square" is not a skeleton shape ("rect" is)
+    expect(() => skeletonRecipe({ shape: "square" })).toThrow(/invalid value/);
+  });
+});
+
+describe("spinnerRecipe", () => {
+  it("defaults to an md ring", () => {
+    expect(spinnerRecipe()).toEqual({ "data-size": "md" });
+  });
+
+  it("maps size to data-size", () => {
+    expect(spinnerRecipe({ size: "lg" })).toEqual({ "data-size": "lg" });
+    expect(Object.keys(spinnerRecipe.variants)).toEqual(["size"]);
+  });
+
+  it("rejects values outside the schema", () => {
+    // @ts-expect-error — "xl" is not a spinner size
+    expect(() => spinnerRecipe({ size: "xl" })).toThrow(/invalid value/);
   });
 });

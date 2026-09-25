@@ -9,6 +9,8 @@ import { Divider } from "../src/divider.js";
 import { Badge } from "../src/badge.js";
 import { Chip } from "../src/chip.js";
 import { Indicator } from "../src/indicator.js";
+import { Skeleton } from "../src/skeleton.js";
+import { Spinner } from "../src/spinner.js";
 import { Field } from "../src/field.js";
 import { Checkbox } from "../src/checkbox.js";
 import { partAttrs, partTags } from "../../core/test/ssr-parts.ts";
@@ -61,6 +63,15 @@ describe("SSR (Vue)", () => {
     expect(pulsing).toEqual([true, false]);
     expect(partTags(html, "indicator", "dot")).toHaveLength(2);
     expect(partTags(html, "indicator", "label")).toHaveLength(1);
+    // Skeleton and Spinner: the CSS-only loading states. Every shape reaches the
+    // server, and the spinner's status role, hidden ring and label serialise
+    // on the right elements.
+    expect(partAttrs(html, "skeleton", "root", "data-shape")).toEqual(["text", "rect", "circle"]);
+    expect(partAttrs(html, "skeleton", "root", "aria-hidden")).toEqual(["true", "true", "true"]);
+    expect(partAttrs(html, "spinner", "root", "role")).toEqual(["status", "status"]);
+    expect(partAttrs(html, "spinner", "root", "data-size")).toEqual(["md", "lg"]);
+    expect(partAttrs(html, "spinner", "circle", "aria-hidden")).toEqual(["true", "true"]);
+    expect(html).toMatch(/data-part="label"[^>]*>Saving changes</);
     expect(html).toContain('data-scope="pin-input"');
     // Every code cell is on the server, and `count` makes the server's aria
     // labels agree with the client's — the PinInput-specific SSR hazard.
@@ -136,6 +147,8 @@ const HydrationApp = defineComponent({
         h(Badge, { variant: "success", dot: true }, () => "Paid"),
         h(Chip, { removable: true, removeLabel: "Remove React" }, () => "React"),
         h(Indicator, { variant: "success", pulse: true }, () => "Online"),
+        h(Skeleton, { shape: "circle" }),
+        h(Spinner, { size: "sm" }),
         h(Field.Root, {}, () => [
           h(Field.Label, {}, () => "Email"),
           h(Field.Input, { placeholder: "you@example.com" }),

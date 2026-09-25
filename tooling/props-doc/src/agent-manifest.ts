@@ -38,6 +38,8 @@ import {
   indicatorRecipe,
   pinInputRecipe,
   selectRecipe,
+  skeletonRecipe,
+  spinnerRecipe,
 } from "@moderno-ui/core";
 import { extractProps, type ComponentDoc, type ComponentEntry, type PropDoc } from "./index.ts";
 import { ENTRIES } from "./manifest.ts";
@@ -177,6 +179,26 @@ export const AGENT_COMPONENTS: AgentComponentSpec[] = [
     // `data-pulse` on the root, so it is absent from `variants`.
     parts: [{ name: "root" }, { name: "dot" }, { name: "label" }],
     variants: indicatorRecipe.variants,
+  },
+  {
+    name: "Skeleton",
+    slug: "skeleton",
+    scope: "skeleton",
+    propsEntry: findEntry("Skeleton"),
+    parts: [{ name: "root" }],
+    variants: skeletonRecipe.variants,
+  },
+  {
+    name: "Spinner",
+    slug: "spinner",
+    scope: "spinner",
+    propsEntry: findEntry("Spinner"),
+    parts: [
+      { name: "root" },
+      { name: "circle", description: "The spinning ring; `aria-hidden`." },
+      { name: "label", description: "Visually hidden text read by screen readers." },
+    ],
+    variants: spinnerRecipe.variants,
   },
   {
     name: "Field",

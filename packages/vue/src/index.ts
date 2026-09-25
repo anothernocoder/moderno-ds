@@ -23,6 +23,10 @@ export { Chip } from "./chip.js";
 export type { ChipVariant, ChipSize } from "./chip.js";
 export { Indicator } from "./indicator.js";
 export type { IndicatorVariant, IndicatorSize } from "./indicator.js";
+export { Skeleton } from "./skeleton.js";
+export type { SkeletonShape } from "./skeleton.js";
+export { Spinner } from "./spinner.js";
+export type { SpinnerSize } from "./spinner.js";
 
 export { Field } from "./field.js";
 export type {

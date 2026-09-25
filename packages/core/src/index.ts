@@ -26,6 +26,8 @@ export {
   indicatorRecipe,
   indicatorAttrs,
   indicatorRole,
+  skeletonRecipe,
+  spinnerRecipe,
 } from "./recipes.js";
 export type {
   ButtonVariant,
@@ -48,4 +50,6 @@ export type {
   IndicatorSize,
   IndicatorAttrsProps,
   IndicatorNameAttrs,
+  SkeletonShape,
+  SpinnerSize,
 } from "./recipes.js";

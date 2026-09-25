@@ -990,6 +990,101 @@
     }
   }
 
+  /* ────────────────────────── Skeleton ────────────────────────── *
+   * `skeletonRecipe` shape on the root; one part. A muted block that stands
+   * in for content while it loads. Each shape has a default size on the
+   * spacing scale, and the consumer resizes it like the content it replaces
+   * (a width on a line, a width on a circle — its height follows).        */
+  [data-scope="skeleton"][data-part="root"] {
+    display: block;
+    border-radius: var(--radius);
+    background-color: var(--muted);
+    animation: moderno-skeleton-pulse calc(var(--motion-normal) * 3) ease-in-out infinite alternate;
+  }
+  [data-scope="skeleton"][data-shape="text"] {
+    width: 100%;
+    height: var(--spacing-4);
+  }
+  [data-scope="skeleton"][data-shape="rect"] {
+    width: 100%;
+    height: calc(var(--spacing-8) * 3);
+  }
+  /* A circle is as tall as it is wide, so a consumer sets only the width. */
+  [data-scope="skeleton"][data-shape="circle"] {
+    flex: none;
+    width: var(--spacing-8);
+    aspect-ratio: 1;
+    border-radius: var(--radius-full);
+  }
+  /* Fades out and back (`alternate`): one slow breath every six
+     --motion-normal steps. */
+  @keyframes moderno-skeleton-pulse {
+    to {
+      opacity: 0.5;
+    }
+  }
+
+  /* ────────────────────────── Spinner ─────────────────────────── *
+   * `spinnerRecipe` size on the root; parts root > circle + label. The
+   * circle is a ring: a faint full track with one solid quarter that spins.
+   * Both paint with currentColor, and the scope inherits its colour, so a
+   * spinner takes the text colour around it (a primary button, a muted
+   * line) with no prop. The label is text for screen readers only.       */
+  [data-scope="spinner"] {
+    color: inherit;
+  }
+  [data-scope="spinner"][data-part="root"] {
+    position: relative;
+    display: inline-flex;
+    flex: none;
+    vertical-align: middle;
+  }
+  [data-scope="spinner"][data-part="circle"] {
+    width: var(--spacing-6);
+    height: var(--spacing-6);
+    border: calc(var(--spacing-1) / 2) solid color-mix(in oklab, currentColor 20%, transparent);
+    border-top-color: currentColor;
+    border-radius: var(--radius-full);
+    animation: moderno-spinner-spin calc(var(--motion-normal) * 2.5) linear infinite;
+  }
+  [data-scope="spinner"][data-size="sm"] [data-part="circle"] {
+    width: var(--spacing-4);
+    height: var(--spacing-4);
+  }
+  [data-scope="spinner"][data-size="lg"] [data-part="circle"] {
+    width: var(--spacing-8);
+    height: var(--spacing-8);
+    border-width: calc(var(--spacing-1) * 0.75);
+  }
+  /* Visually hidden, still read. The 1px box is a rendering primitive (like
+     a 1px border), not a size on the spacing scale: a zero-size box is
+     skipped by some screen readers. */
+  [data-scope="spinner"][data-part="label"] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  @keyframes moderno-spinner-spin {
+    to {
+      transform: rotate(1turn);
+    }
+  }
+
+  /* Less motion: the skeleton holds still (the shape alone says "loading"),
+     and the spinner turns four times slower instead of stopping, because a
+     still ring would no longer say that work is going on. */
+  @media (prefers-reduced-motion: reduce) {
+    [data-scope="skeleton"][data-part="root"] {
+      animation: none;
+    }
+    [data-scope="spinner"][data-part="circle"] {
+      animation-duration: calc(var(--motion-normal) * 10);
+    }
+  }
+
   /* ────────────────────────── Pin Input ───────────────────────── *
    * `pinInputRecipe` size on root; Ark drives focus movement, paste
    * distribution, masking and the invalid/complete flags. Scope "pin-input",

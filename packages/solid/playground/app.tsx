@@ -13,6 +13,8 @@ import { Divider } from "../src/divider.jsx";
 import { Badge } from "../src/badge.jsx";
 import { Chip } from "../src/chip.jsx";
 import { Indicator } from "../src/indicator.jsx";
+import { Skeleton } from "../src/skeleton.jsx";
+import { Spinner } from "../src/spinner.jsx";
 import { Field } from "../src/field.jsx";
 import { Card } from "../src/card.jsx";
 import { Checkbox } from "../src/checkbox.jsx";
@@ -104,6 +106,14 @@ export function App(props: { open?: boolean }) {
           Online
         </Indicator>
         <Indicator variant="error" size="sm" aria-label="Offline" />
+      </section>
+
+      <section aria-label="loading">
+        <Skeleton />
+        <Skeleton shape="rect" />
+        <Skeleton shape="circle" />
+        <Spinner />
+        <Spinner size="lg" label="Saving changes" />
       </section>
 
       <section aria-label="alerts">

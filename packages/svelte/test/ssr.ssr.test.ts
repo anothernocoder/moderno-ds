@@ -52,6 +52,15 @@ describe("SSR (Svelte, server-only island)", () => {
     expect(pulsing).toEqual([true, false]);
     expect(partTags(html, "indicator", "dot")).toHaveLength(2);
     expect(partTags(html, "indicator", "label")).toHaveLength(1);
+    // Skeleton and Spinner: the CSS-only loading states. Every shape reaches the
+    // server, and the spinner's status role, hidden ring and label serialise
+    // on the right elements.
+    expect(partAttrs(html, "skeleton", "root", "data-shape")).toEqual(["text", "rect", "circle"]);
+    expect(partAttrs(html, "skeleton", "root", "aria-hidden")).toEqual(["true", "true", "true"]);
+    expect(partAttrs(html, "spinner", "root", "role")).toEqual(["status", "status"]);
+    expect(partAttrs(html, "spinner", "root", "data-size")).toEqual(["md", "lg"]);
+    expect(partAttrs(html, "spinner", "circle", "aria-hidden")).toEqual(["true", "true"]);
+    expect(html).toMatch(/data-part="label"[^>]*>Saving changes</);
     expect(html).toContain('data-scope="pin-input"');
     // Every code cell is on the server, and `count` makes the server's aria
     // labels agree with the client's — the PinInput-specific SSR hazard.

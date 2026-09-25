@@ -17,6 +17,8 @@
  *   - Badge / Chip / Indicator — CSS-only; prove the optional parts (the
  *                badge dot, the chip's remove button, the indicator label) and
  *                the bare `data-pulse` attribute serialise identically both ways.
+ *   - Skeleton / Spinner — CSS-only loading states; every shape, and the
+ *                spinner's status role, ring and label, match both ways.
  *   - Checkbox — a label bound to a visually hidden native input by `useId`,
  *                plus indicators the machine hides via the `hidden` attribute.
  *   - Dialog   — a Portal + focus-trap machine that must emit a stable,
@@ -38,6 +40,8 @@ import { Divider } from "../src/divider.js";
 import { Badge } from "../src/badge.js";
 import { Chip } from "../src/chip.js";
 import { Indicator } from "../src/indicator.js";
+import { Skeleton } from "../src/skeleton.js";
+import { Spinner } from "../src/spinner.js";
 import { Card } from "../src/card.js";
 import { Field } from "../src/field.js";
 import { Checkbox } from "../src/checkbox.js";
@@ -134,6 +138,14 @@ export function App({ open = false }: AppProps) {
           Online
         </Indicator>
         <Indicator variant="error" size="sm" aria-label="Offline" />
+      </section>
+
+      <section aria-label="loading">
+        <Skeleton />
+        <Skeleton shape="rect" />
+        <Skeleton shape="circle" />
+        <Spinner />
+        <Spinner size="lg" label="Saving changes" />
       </section>
 
       <section aria-label="alerts">

@@ -494,6 +494,124 @@ export const AGENT_EXAMPLES: Record<string, Partial<Record<Framework, AgentExamp
     ],
   },
 
+  Skeleton: {
+    react: [
+      {
+        title: "A profile row while it loads",
+        code: [
+          'import { Skeleton } from "@moderno-ui/react";',
+          "",
+          '<div aria-busy="true">',
+          '  <Skeleton shape="circle" />',
+          "  <Skeleton />",
+          '  <Skeleton style={{ width: "60%" }} />',
+          "</div>",
+        ].join("\n"),
+      },
+    ],
+    vue: [
+      {
+        title: "A profile row while it loads",
+        code: [
+          '<script setup lang="ts">',
+          'import { Skeleton } from "@moderno-ui/vue";',
+          "</script>",
+          "",
+          "<template>",
+          '  <div aria-busy="true">',
+          '    <Skeleton shape="circle" />',
+          "    <Skeleton />",
+          '    <Skeleton style="width: 60%" />',
+          "  </div>",
+          "</template>",
+        ].join("\n"),
+      },
+    ],
+    svelte: [
+      {
+        title: "A profile row while it loads",
+        code: [
+          '<script lang="ts">',
+          '  import { Skeleton } from "@moderno-ui/svelte";',
+          "</script>",
+          "",
+          '<div aria-busy="true">',
+          '  <Skeleton shape="circle" />',
+          "  <Skeleton />",
+          '  <Skeleton style="width: 60%" />',
+          "</div>",
+        ].join("\n"),
+      },
+    ],
+    solid: [
+      {
+        title: "A profile row while it loads",
+        code: [
+          'import { Skeleton } from "@moderno-ui/solid";',
+          "",
+          '<div aria-busy="true">',
+          '  <Skeleton shape="circle" />',
+          "  <Skeleton />",
+          '  <Skeleton style={{ width: "60%" }} />',
+          "</div>",
+        ].join("\n"),
+      },
+    ],
+  },
+
+  Spinner: {
+    react: [
+      {
+        title: "A spinner that says what is loading",
+        code: [
+          'import { Spinner } from "@moderno-ui/react";',
+          "",
+          "<Spinner />",
+          '<Spinner size="lg" label="Loading invoices" />',
+        ].join("\n"),
+      },
+    ],
+    vue: [
+      {
+        title: "A spinner that says what is loading",
+        code: [
+          '<script setup lang="ts">',
+          'import { Spinner } from "@moderno-ui/vue";',
+          "</script>",
+          "",
+          "<template>",
+          "  <Spinner />",
+          '  <Spinner size="lg" label="Loading invoices" />',
+          "</template>",
+        ].join("\n"),
+      },
+    ],
+    svelte: [
+      {
+        title: "A spinner that says what is loading",
+        code: [
+          '<script lang="ts">',
+          '  import { Spinner } from "@moderno-ui/svelte";',
+          "</script>",
+          "",
+          "<Spinner />",
+          '<Spinner size="lg" label="Loading invoices" />',
+        ].join("\n"),
+      },
+    ],
+    solid: [
+      {
+        title: "A spinner that says what is loading",
+        code: [
+          'import { Spinner } from "@moderno-ui/solid";',
+          "",
+          "<Spinner />",
+          '<Spinner size="lg" label="Loading invoices" />',
+        ].join("\n"),
+      },
+    ],
+  },
+
   Field: {
     react: [
       {

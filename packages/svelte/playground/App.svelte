@@ -9,6 +9,7 @@
   import { Button } from "../src/index.js";
   import { Divider } from "../src/index.js";
   import { Badge, Chip, Indicator } from "../src/index.js";
+  import { Skeleton, Spinner } from "../src/index.js";
   import { Card } from "../src/index.js";
   import { Field } from "../src/index.js";
   import { Checkbox } from "../src/index.js";
@@ -75,6 +76,14 @@
   <section aria-label="indicators">
     <Indicator variant="success" pulse>Online</Indicator>
     <Indicator variant="error" size="sm" aria-label="Offline" />
+  </section>
+
+  <section aria-label="loading">
+    <Skeleton />
+    <Skeleton shape="rect" />
+    <Skeleton shape="circle" />
+    <Spinner />
+    <Spinner size="lg" label="Saving changes" />
   </section>
 
   <section aria-label="alerts">

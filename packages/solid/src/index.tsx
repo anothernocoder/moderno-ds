@@ -20,6 +20,10 @@ export { Chip } from "./chip.jsx";
 export type { ChipProps, ChipVariant, ChipSize } from "./chip.jsx";
 export { Indicator } from "./indicator.jsx";
 export type { IndicatorProps, IndicatorVariant, IndicatorSize } from "./indicator.jsx";
+export { Skeleton } from "./skeleton.jsx";
+export type { SkeletonProps, SkeletonShape } from "./skeleton.jsx";
+export { Spinner } from "./spinner.jsx";
+export type { SpinnerProps, SpinnerSize } from "./spinner.jsx";
 
 export { Card } from "./card.jsx";
 export type {

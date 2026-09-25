@@ -32,6 +32,10 @@ export { Chip } from "./chip.js";
 export type { ChipProps, ChipVariant, ChipSize } from "./chip.js";
 export { Indicator } from "./indicator.js";
 export type { IndicatorProps, IndicatorVariant, IndicatorSize } from "./indicator.js";
+export { Skeleton } from "./skeleton.js";
+export type { SkeletonProps, SkeletonShape } from "./skeleton.js";
+export { Spinner } from "./spinner.js";
+export type { SpinnerProps, SpinnerSize } from "./spinner.js";
 
 export { Field } from "./field.js";
 export type {
