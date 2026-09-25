@@ -53,6 +53,9 @@
     gap: var(--spacing-2);
     border: 1px solid transparent;
     border-radius: var(--radius);
+    /* Clears the UA `buttonface` grey: every variant but ghost paints its own
+       fill, and ghost relies on this rather than on a consumer's preflight. */
+    background-color: transparent;
     font-family: var(--font-sans);
     font-weight: 500;
     line-height: 1;
@@ -103,7 +106,7 @@
     border-color: var(--border);
     color: var(--foreground);
   }
-  /* Ghost has no fill of its own — the button root is transparent by default. */
+  /* Ghost has no fill of its own — the root rule above sets it transparent. */
   [data-scope="button"][data-part="root"][data-variant="ghost"] {
     color: var(--foreground);
   }
@@ -118,6 +121,14 @@
   [data-scope="button"][data-part="root"][data-variant="ghost"]:hover {
     background-color: var(--accent);
     color: var(--accent-foreground);
+  }
+
+  /* Disabled — the base layer's affordance keys off `[data-disabled]`, which an
+     Ark machine stamps; Button has no machine, so a native `disabled` needs the
+     same dimmed, inert look spelled out on `:disabled`. */
+  [data-scope="button"][data-part="root"]:disabled {
+    pointer-events: none;
+    opacity: 0.5;
   }
 
   /* ──────────────────────────── Card ──────────────────────────── *

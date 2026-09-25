@@ -121,3 +121,36 @@ describe("@moderno-ui/core components.css — Divider label gap opens along the 
     }
   });
 });
+
+/*
+ * Button is a plain native <button> in every binding — no Ark machine — so two
+ * browser defaults leak through unless the sheet overrides them: the UA grey
+ * `buttonface` fill (visible on `ghost`, the one variant with no fill of its
+ * own), and a native `disabled` that no one turns into `data-disabled`, so the
+ * shared base affordance (`[data-disabled]` → dimmed, inert) never reaches it.
+ */
+describe("@moderno-ui/core components.css — Button overrides the native defaults", () => {
+  /** Declarations of the rules whose selector is exactly `selector`. */
+  const ruleDecls = (selector: string): Declaration[] => {
+    const found: Declaration[] = [];
+    root.walkRules((r: Rule) => {
+      if (!r.selectors.map((s) => s.trim()).includes(selector)) return;
+      r.walkDecls((d: Declaration) => {
+        found.push(d);
+      });
+    });
+    return found;
+  };
+  const prop = (decls: Declaration[], name: string) => decls.find((d) => d.prop === name)?.value;
+  const BUTTON = `[data-scope="button"][data-part="root"]`;
+
+  it("clears the UA button fill on the root, so ghost is transparent anywhere", () => {
+    expect(prop(ruleDecls(BUTTON), "background-color")).toBe("transparent");
+  });
+
+  it("dims and disables a native :disabled button like [data-disabled]", () => {
+    const decls = ruleDecls(`${BUTTON}:disabled`);
+    expect(prop(decls, "opacity")).toBe("0.5");
+    expect(prop(decls, "pointer-events")).toBe("none");
+  });
+});
