@@ -28,11 +28,14 @@
 import { createHash } from "node:crypto";
 import {
   alertRecipe,
+  badgeRecipe,
   buttonRecipe,
   cardRecipe,
   checkboxRecipe,
+  chipRecipe,
   dividerRecipe,
   fieldRecipe,
+  indicatorRecipe,
   pinInputRecipe,
   selectRecipe,
 } from "@moderno-ui/core";
@@ -144,6 +147,36 @@ export const AGENT_COMPONENTS: AgentComponentSpec[] = [
     // the only part `components.css` targets besides the root.
     parts: [{ name: "root" }, { name: "label" }],
     variants: dividerRecipe.variants,
+  },
+  {
+    name: "Badge",
+    slug: "badge",
+    scope: "badge",
+    propsEntry: findEntry("Badge"),
+    parts: [{ name: "root" }, { name: "dot", description: "Rendered only with `dot`." }],
+    variants: badgeRecipe.variants,
+  },
+  {
+    name: "Chip",
+    slug: "chip",
+    scope: "chip",
+    propsEntry: findEntry("Chip"),
+    parts: [
+      { name: "root" },
+      { name: "label" },
+      { name: "remove-trigger", description: "Rendered only with `removable`." },
+    ],
+    variants: chipRecipe.variants,
+  },
+  {
+    name: "Indicator",
+    slug: "indicator",
+    scope: "indicator",
+    propsEntry: findEntry("Indicator"),
+    // `pulse` is a boolean prop, not a recipe variant: it lands as a bare
+    // `data-pulse` on the root, so it is absent from `variants`.
+    parts: [{ name: "root" }, { name: "dot" }, { name: "label" }],
+    variants: indicatorRecipe.variants,
   },
   {
     name: "Field",

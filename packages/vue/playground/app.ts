@@ -12,6 +12,9 @@ import { defineComponent, h, type Component } from "vue";
 import { Alert } from "../src/alert.js";
 import { Button } from "../src/button.js";
 import { Divider } from "../src/divider.js";
+import { Badge } from "../src/badge.js";
+import { Chip } from "../src/chip.js";
+import { Indicator } from "../src/indicator.js";
 import { Card } from "../src/card.js";
 import { Field } from "../src/field.js";
 import { Checkbox } from "../src/checkbox.js";
@@ -80,6 +83,26 @@ export const App = defineComponent({
           h(Divider, { align: "start" }, () => "Or"),
           h(Divider, { orientation: "vertical" }),
           h(Divider, { orientation: "vertical" }, () => "Or"),
+        ]),
+
+        h("section", { "aria-label": "badges" }, [
+          h(Badge, {}, () => "Draft"),
+          h(Badge, { variant: "success", dot: true }, () => "Paid"),
+          h(Badge, { variant: "error", size: "sm" }, () => "Overdue"),
+        ]),
+
+        h("section", { "aria-label": "chips" }, [
+          h(Chip, {}, () => "Design"),
+          h(
+            Chip,
+            { variant: "muted", size: "sm", removable: true, removeLabel: "Remove React" },
+            () => "React",
+          ),
+        ]),
+
+        h("section", { "aria-label": "indicators" }, [
+          h(Indicator, { variant: "success", pulse: true }, () => "Online"),
+          h(Indicator, { variant: "error", size: "sm", "aria-label": "Offline" }),
         ]),
 
         h("section", { "aria-label": "alerts" }, [

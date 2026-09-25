@@ -14,6 +14,13 @@ export type { ButtonProps, ButtonVariant, ButtonSize } from "./button.jsx";
 export { Divider } from "./divider.jsx";
 export type { DividerProps, DividerAlign, DividerOrientation } from "./divider.jsx";
 
+export { Badge } from "./badge.jsx";
+export type { BadgeProps, BadgeVariant, BadgeSize } from "./badge.jsx";
+export { Chip } from "./chip.jsx";
+export type { ChipProps, ChipVariant, ChipSize } from "./chip.jsx";
+export { Indicator } from "./indicator.jsx";
+export type { IndicatorProps, IndicatorVariant, IndicatorSize } from "./indicator.jsx";
+
 export { Card } from "./card.jsx";
 export type {
   CardRootProps,

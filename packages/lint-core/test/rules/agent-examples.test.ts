@@ -66,3 +66,28 @@ describe("moderno/valid-props over the shipped examples", () => {
     expect(reported).toEqual([]);
   });
 });
+
+describe("moderno/valid-props over the real Badge, Chip and Indicator manifest", () => {
+  const manifests = manifestsFor("react");
+  const check = (code: string) =>
+    validProps.check({ code, framework: "react", manifests }).map((f) => f.message);
+
+  it("accepts every prop the three bindings declare", { timeout: 30_000 }, () => {
+    expect(check('<Badge variant="warning" size="sm" dot>Pending</Badge>')).toEqual([]);
+    expect(
+      check(
+        '<Chip variant="muted" removable removeLabel="Remove React" onRemove={drop}>React</Chip>',
+      ),
+    ).toEqual([]);
+    expect(check('<Indicator variant="success" size="sm" pulse>Online</Indicator>')).toEqual([]);
+  });
+
+  it("rejects an invented prop and a value outside the recipe", () => {
+    expect(check('<Badge variant="danger">Failed</Badge>')).toEqual([
+      expect.stringContaining('Invalid value "danger"'),
+    ]);
+    expect(check("<Indicator blink>Online</Indicator>")).toEqual([
+      expect.stringContaining('Unknown prop "blink"'),
+    ]);
+  });
+});

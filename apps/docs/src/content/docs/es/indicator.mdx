@@ -1,0 +1,181 @@
+---
+title: Indicador
+description: Un pequeño punto de estado con una etiqueta opcional y un pulso opcional.
+group: Componentes
+order: 19
+component: Indicator
+pkg: "@moderno-ui/react"
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import IndicatorDemo from "../../../examples/indicator/indicator.svelte";
+import baseReact from "../../../examples/indicator/react.tsx?raw";
+import baseVue from "../../../examples/indicator/vue.vue?raw";
+import baseSolid from "../../../examples/indicator/solid.tsx?raw";
+import baseSvelte from "../../../examples/indicator/indicator.svelte?raw";
+import IndicatorStatusesDemo from "../../../examples/indicator/statuses/indicator-statuses.svelte";
+import statusesReact from "../../../examples/indicator/statuses/react.tsx?raw";
+import statusesVue from "../../../examples/indicator/statuses/vue.vue?raw";
+import statusesSolid from "../../../examples/indicator/statuses/solid.tsx?raw";
+import statusesSvelte from "../../../examples/indicator/statuses/indicator-statuses.svelte?raw";
+import IndicatorPulseDemo from "../../../examples/indicator/pulse/indicator-pulse.svelte";
+import pulseReact from "../../../examples/indicator/pulse/react.tsx?raw";
+import pulseVue from "../../../examples/indicator/pulse/vue.vue?raw";
+import pulseSolid from "../../../examples/indicator/pulse/solid.tsx?raw";
+import pulseSvelte from "../../../examples/indicator/pulse/indicator-pulse.svelte?raw";
+import IndicatorDotOnlyDemo from "../../../examples/indicator/dot-only/indicator-dot-only.svelte";
+import dotOnlyReact from "../../../examples/indicator/dot-only/react.tsx?raw";
+import dotOnlyVue from "../../../examples/indicator/dot-only/vue.vue?raw";
+import dotOnlySolid from "../../../examples/indicator/dot-only/solid.tsx?raw";
+import dotOnlySvelte from "../../../examples/indicator/dot-only/indicator-dot-only.svelte?raw";
+import IndicatorSizesDemo from "../../../examples/indicator/sizes/indicator-sizes.svelte";
+import sizesReact from "../../../examples/indicator/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/indicator/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/indicator/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/indicator/sizes/indicator-sizes.svelte?raw";
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
+  <IndicatorDemo client:visible />
+</Preview>
+
+## Instalación
+
+<Install pkg="@moderno-ui/react" />
+
+## Uso
+
+Usa un indicador para mostrar un estado en vivo con un solo punto: alguien está en línea, un servicio está caído, una grabación está en curso.
+
+<ForFramework fw="react">
+
+```tsx
+import { Indicator } from "@moderno-ui/react";
+```
+
+```tsx
+<Indicator variant="success">En línea</Indicator>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Indicator } from "@moderno-ui/vue";
+```
+
+```vue
+<Indicator variant="success">En línea</Indicator>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Indicator } from "@moderno-ui/svelte";
+```
+
+```svelte
+<Indicator variant="success">En línea</Indicator>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Indicator } from "@moderno-ui/solid";
+```
+
+```tsx
+<Indicator variant="success">En línea</Indicator>
+```
+
+</ForFramework>
+
+## Referencia de API
+
+### Indicator
+
+Renderiza un `<span>`; sus hijos son la etiqueta. `variant` vale `neutral` por defecto, `size`, `md` y `pulse`, `false`.
+
+<PropsTable component="Indicator" />
+
+### Partes
+
+| Parte   | Elemento | Descripción                                                     |
+| ------- | -------- | --------------------------------------------------------------- |
+| `root`  | `<span>` | Lleva `data-variant`, `data-size` y, con `pulse`, `data-pulse`. |
+| `dot`   | `<span>` | El punto de color. Siempre se renderiza; `aria-hidden`.         |
+| `label` | `<span>` | Solo se renderiza cuando hay hijos.                             |
+
+## Ejemplos
+
+### Estados
+
+<Preview
+  examples={{
+    react: statusesReact,
+    vue: statusesVue,
+    solid: statusesSolid,
+    svelte: statusesSvelte,
+  }}
+>
+  <IndicatorStatusesDemo client:visible />
+</Preview>
+
+### Pulso
+
+Un anillo lento crece desde el punto. Se detiene cuando el usuario pide menos movimiento.
+
+<Preview
+  examples={{
+    react: pulseReact,
+    vue: pulseVue,
+    solid: pulseSolid,
+    svelte: pulseSvelte,
+  }}
+>
+  <IndicatorPulseDemo client:visible />
+</Preview>
+
+### Sin etiqueta
+
+Dale un `aria-label` a un punto solo, para que el estado no dependa solo del color.
+
+<Preview
+  examples={{
+    react: dotOnlyReact,
+    vue: dotOnlyVue,
+    solid: dotOnlySolid,
+    svelte: dotOnlySvelte,
+  }}
+>
+  <IndicatorDotOnlyDemo client:visible />
+</Preview>
+
+### Tamaños
+
+<Preview
+  examples={{
+    react: sizesReact,
+    vue: sizesVue,
+    solid: sizesSolid,
+    svelte: sizesSvelte,
+  }}
+>
+  <IndicatorSizesDemo client:visible />
+</Preview>
+
+## Notas
+
+- Indicator es solo CSS: un `<span>` con `data-scope="indicator"`, sin máquina de Ark.
+- Acompaña siempre el color con texto: una etiqueta, o un `aria-label` en un punto solo.
+- Reserva `pulse` para el único estado que está ocurriendo ahora mismo.

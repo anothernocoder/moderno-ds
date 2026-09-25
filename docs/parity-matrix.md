@@ -54,6 +54,49 @@ shared stylesheet keys on.
 | no baked class/style             |  ✅   | ✅  |   ✅   |  ✅   |
 | native props forwarded           |  ✅   | ✅  |   ✅   |  ✅   |
 
+### Badge (`badgeRecipe`: `data-variant` × `data-size`; CSS-only, no Ark machine)
+
+| State / prop                | React | Vue | Svelte | Solid |
+| --------------------------- | :---: | :-: | :----: | :---: |
+| scope/part + defaults       |  ✅   | ✅  |   ✅   |  ✅   |
+| variant → `data-variant`    |  ✅   | ✅  |   ✅   |  ✅   |
+| size → `data-size`          |  ✅   | ✅  |   ✅   |  ✅   |
+| `dot` → `[data-part="dot"]` |  ✅   | ✅  |   ✅   |  ✅   |
+| dot part `aria-hidden`      |  ✅   | ✅  |   ✅   |  ✅   |
+| no baked class/style        |  ✅   | ✅  |   ✅   |  ✅   |
+| native props forwarded      |  ✅   | ✅  |   ✅   |  ✅   |
+| SSR string (playground)     |  ✅   | ✅  |   ✅   |  ✅   |
+
+### Chip (`chipRecipe`: `data-variant` × `data-size`; CSS-only, no Ark machine)
+
+| State / prop                              | React | Vue | Svelte | Solid |
+| ----------------------------------------- | :---: | :-: | :----: | :---: |
+| scope/part + defaults                     |  ✅   | ✅  |   ✅   |  ✅   |
+| variant → `data-variant`                  |  ✅   | ✅  |   ✅   |  ✅   |
+| size → `data-size`                        |  ✅   | ✅  |   ✅   |  ✅   |
+| children → `[data-part="label"]`          |  ✅   | ✅  |   ✅   |  ✅   |
+| no remove button unless `removable`       |  ✅   | ✅  |   ✅   |  ✅   |
+| `removable` → `remove-trigger` `<button>` |  ✅   | ✅  |   ✅   |  ✅   |
+| `removeLabel` names it (default "Remove") |  ✅   | ✅  |   ✅   |  ✅   |
+| press → `onRemove` (Vue: `remove` event)  |  ✅   | ✅  |   ✅   |  ✅   |
+| no baked class/style                      |  ✅   | ✅  |   ✅   |  ✅   |
+| native props forwarded                    |  ✅   | ✅  |   ✅   |  ✅   |
+| SSR string (playground)                   |  ✅   | ✅  |   ✅   |  ✅   |
+
+### Indicator (`indicatorAttrs`: `data-variant` × `data-size` + bare `data-pulse`; CSS-only)
+
+| State / prop                       | React | Vue | Svelte | Solid |
+| ---------------------------------- | :---: | :-: | :----: | :---: |
+| scope/part + defaults, no pulse    |  ✅   | ✅  |   ✅   |  ✅   |
+| variant → `data-variant`           |  ✅   | ✅  |   ✅   |  ✅   |
+| size → `data-size`                 |  ✅   | ✅  |   ✅   |  ✅   |
+| `pulse` → `data-pulse`             |  ✅   | ✅  |   ✅   |  ✅   |
+| dot always rendered, `aria-hidden` |  ✅   | ✅  |   ✅   |  ✅   |
+| children → `[data-part="label"]`   |  ✅   | ✅  |   ✅   |  ✅   |
+| no baked class/style               |  ✅   | ✅  |   ✅   |  ✅   |
+| native props forwarded             |  ✅   | ✅  |   ✅   |  ✅   |
+| SSR string (playground)            |  ✅   | ✅  |   ✅   |  ✅   |
+
 ### Field (Ark `data-invalid` / `data-disabled`, no recipe)
 
 | State / prop                           | React | Vue | Svelte | Solid |

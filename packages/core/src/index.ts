@@ -21,6 +21,10 @@ export {
   alertRecipe,
   alertRole,
   pinInputRecipe,
+  badgeRecipe,
+  chipRecipe,
+  indicatorRecipe,
+  indicatorAttrs,
 } from "./recipes.js";
 export type {
   ButtonVariant,
@@ -35,4 +39,11 @@ export type {
   AlertVariant,
   AlertSize,
   PinInputSize,
+  BadgeVariant,
+  BadgeSize,
+  ChipVariant,
+  ChipSize,
+  IndicatorVariant,
+  IndicatorSize,
+  IndicatorAttrsProps,
 } from "./recipes.js";

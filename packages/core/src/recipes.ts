@@ -109,6 +109,46 @@ export const alertRecipe = cva({
   defaultVariants: { variant: "info", size: "md" },
 });
 
+/**
+ * Badge: visual `variant` × `size`. A static label with no Ark machine, so
+ * every attribute it carries comes from this recipe. The four statuses tint
+ * from the same contract slots as Alert (`--info`/`--success`/`--warning`, and
+ * `--destructive` for `error`).
+ */
+export const badgeRecipe = cva({
+  variants: {
+    variant: ["neutral", "solid", "outline", "info", "success", "warning", "error"],
+    size: ["sm", "md"],
+  },
+  defaultVariants: { variant: "neutral", size: "md" },
+});
+
+/**
+ * Chip: surface `variant` × `size`. A compact token that may be removed; the
+ * remove button is a plain `<button>`, so there is no machine state to style —
+ * only the consumer's choices below.
+ */
+export const chipRecipe = cva({
+  variants: {
+    variant: ["outline", "muted", "solid"],
+    size: ["sm", "md"],
+  },
+  defaultVariants: { variant: "outline", size: "md" },
+});
+
+/**
+ * Indicator: status `variant` × dot `size`. The optional pulse is a boolean,
+ * which `cva` does not model (it resolves string enums), so `indicatorAttrs`
+ * adds it beside the recipe's attributes.
+ */
+export const indicatorRecipe = cva({
+  variants: {
+    variant: ["neutral", "info", "success", "warning", "error"],
+    size: ["sm", "md"],
+  },
+  defaultVariants: { variant: "neutral", size: "md" },
+});
+
 /*
  * The variant unions, derived once beside the recipes. Bindings import these
  * names instead of re-deriving them from the recipe tables — a recipe change
@@ -164,3 +204,46 @@ export type DividerOrientation = NonNullable<
 export type DividerAlign = NonNullable<VariantProps<typeof dividerRecipe.variants>["align"]>;
 /** PinInput's cell density. Filled/complete/invalid stay Ark's. */
 export type PinInputSize = NonNullable<VariantProps<typeof pinInputRecipe.variants>["size"]>;
+
+/** Badge's visual style (`neutral`, `solid`, `outline`, or a status). */
+export type BadgeVariant = NonNullable<VariantProps<typeof badgeRecipe.variants>["variant"]>;
+
+/** Badge's density. */
+export type BadgeSize = NonNullable<VariantProps<typeof badgeRecipe.variants>["size"]>;
+
+/** Chip's surface treatment (`outline`, `muted`, `solid`). */
+export type ChipVariant = NonNullable<VariantProps<typeof chipRecipe.variants>["variant"]>;
+
+/** Chip's density. */
+export type ChipSize = NonNullable<VariantProps<typeof chipRecipe.variants>["size"]>;
+
+/** Indicator's status (`neutral`, `info`, `success`, `warning`, `error`). */
+export type IndicatorVariant = NonNullable<
+  VariantProps<typeof indicatorRecipe.variants>["variant"]
+>;
+
+/** Indicator's dot size. */
+export type IndicatorSize = NonNullable<VariantProps<typeof indicatorRecipe.variants>["size"]>;
+
+/** What an Indicator's root is styled from: the recipe's props plus `pulse`. */
+export interface IndicatorAttrsProps {
+  variant?: IndicatorVariant;
+  size?: IndicatorSize;
+  /** Animate a ring around the dot. */
+  pulse?: boolean;
+}
+
+/**
+ * The `data-*` attributes of an Indicator's root: `indicatorRecipe`'s
+ * `data-variant`/`data-size`, plus a bare `data-pulse` when `pulse` is on.
+ *
+ * Lives beside the recipe (like `alertRole`) so all four bindings express the
+ * boolean identically — a present-or-absent attribute, never `"false"`.
+ */
+export function indicatorAttrs({ variant, size, pulse }: IndicatorAttrsProps = {}): Record<
+  string,
+  string
+> {
+  const attrs = indicatorRecipe({ variant, size });
+  return pulse ? { ...attrs, "data-pulse": "" } : attrs;
+}

@@ -16,6 +16,9 @@ describe("AGENT_COMPONENTS", () => {
       "Alert",
       "Card",
       "Divider",
+      "Badge",
+      "Chip",
+      "Indicator",
       "Field",
       "Checkbox",
       "Dialog",
@@ -114,6 +117,9 @@ describe("buildComponentsManifest", () => {
       "Alert",
       "Card",
       "Divider",
+      "Badge",
+      "Chip",
+      "Indicator",
       "LineChart",
       "AreaChart",
       "BarChart",
@@ -135,6 +141,36 @@ describe("buildComponentsManifest", () => {
     const doc = manifest.components.find((c) => c.name === "Dialog")!;
     expect(doc.props).toEqual([]);
     expect(doc.variants).toBeUndefined();
+  });
+
+  it("carries Badge, Chip and Indicator props — what validate_usage checks against", () => {
+    const badge = manifest.components.find((c) => c.name === "Badge")!;
+    expect(badge.scope).toBe("badge");
+    expect(badge.props.map((p) => p.name).sort()).toEqual(["dot", "size", "variant"]);
+    expect(badge.variants?.variant).toContain("warning");
+    expect(badge.parts.map((p) => p.name)).toEqual(["root", "dot"]);
+
+    const chip = manifest.components.find((c) => c.name === "Chip")!;
+    expect(chip.scope).toBe("chip");
+    expect(chip.props.map((p) => p.name).sort()).toEqual([
+      "onRemove",
+      "removable",
+      "removeLabel",
+      "size",
+      "variant",
+    ]);
+    expect(chip.parts.map((p) => p.name)).toEqual(["root", "label", "remove-trigger"]);
+
+    // `pulse` is a real prop but not a recipe variant, so it is in `props` and
+    // absent from `variants`: the enum check has nothing to gate it against.
+    const indicator = manifest.components.find((c) => c.name === "Indicator")!;
+    expect(indicator.scope).toBe("indicator");
+    expect(indicator.props.map((p) => p.name).sort()).toEqual(["pulse", "size", "variant"]);
+    expect(indicator.variants).toEqual({
+      variant: ["neutral", "info", "success", "warning", "error"],
+      size: ["sm", "md"],
+    });
+    expect(indicator.parts.map((p) => p.name)).toEqual(["root", "dot", "label"]);
   });
 
   it("reads variants straight off the shared @moderno-ui/core recipes", () => {

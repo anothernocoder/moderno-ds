@@ -8,6 +8,7 @@
   import { Alert } from "../src/index.js";
   import { Button } from "../src/index.js";
   import { Divider } from "../src/index.js";
+  import { Badge, Chip, Indicator } from "../src/index.js";
   import { Card } from "../src/index.js";
   import { Field } from "../src/index.js";
   import { Checkbox } from "../src/index.js";
@@ -58,6 +59,22 @@
     <Divider align="start">Or</Divider>
     <Divider orientation="vertical" />
     <Divider orientation="vertical">Or</Divider>
+  </section>
+
+  <section aria-label="badges">
+    <Badge>Draft</Badge>
+    <Badge variant="success" dot>Paid</Badge>
+    <Badge variant="error" size="sm">Overdue</Badge>
+  </section>
+
+  <section aria-label="chips">
+    <Chip>Design</Chip>
+    <Chip variant="muted" size="sm" removable removeLabel="Remove React">React</Chip>
+  </section>
+
+  <section aria-label="indicators">
+    <Indicator variant="success" pulse>Online</Indicator>
+    <Indicator variant="error" size="sm" aria-label="Offline" />
   </section>
 
   <section aria-label="alerts">

@@ -106,6 +106,9 @@ function resolveAttr(framework: Framework, raw: string): ResolvedAttr {
     // Drop modifiers (`:series.sync`); a dynamic key (`:[name]`) is unknowable.
     name = name.split(".")[0]!;
     if (!name || name.startsWith("[")) return NOT_A_PROP;
+    // `aria-*`/`data-*` are attributes, not props Vue folds to camelCase:
+    // camelizing `aria-label` to `ariaLabel` would hide it from the passthrough.
+    if (name.startsWith("aria-") || name.startsWith("data-")) return { prop: name, literal };
     return { prop: camelize(name), literal };
   }
 

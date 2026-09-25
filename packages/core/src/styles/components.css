@@ -771,6 +771,225 @@
     color: var(--destructive);
   }
 
+  /* ─────────────────────────── Badge ──────────────────────────── *
+   * `badgeRecipe` variant × size on the root. A static label, no Ark
+   * machine: root + an optional leading dot. Heights and padding step on
+   * the spacing scale; the pill shape is --radius-full, so it stays a pill
+   * even under a theme that squares every other corner.                */
+  [data-scope="badge"][data-part="root"] {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-1);
+    height: var(--spacing-5);
+    padding-inline: var(--spacing-2);
+    border: 1px solid transparent;
+    border-radius: var(--radius-full);
+    background-color: var(--muted);
+    color: var(--foreground);
+    font-size: var(--text-ui-xs);
+    font-weight: var(--font-weight-medium);
+    line-height: 1;
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+  /* Parts carry data-scope too, so the base layer's --foreground default would
+     land on each of them; restore inheritance so they take the root's colour. */
+  [data-scope="badge"] :where([data-part]) {
+    color: inherit;
+  }
+  [data-scope="badge"][data-part="root"][data-size="sm"] {
+    height: var(--spacing-4);
+    padding-inline: calc(var(--spacing-1) * 1.5);
+  }
+  /* The dot takes the badge's text colour, so every variant tints it. */
+  [data-scope="badge"][data-part="dot"] {
+    flex: none;
+    width: calc(var(--spacing-1) * 1.5);
+    height: calc(var(--spacing-1) * 1.5);
+    border-radius: var(--radius-full);
+    background-color: currentColor;
+  }
+
+  [data-scope="badge"][data-part="root"][data-variant="solid"] {
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+  }
+  [data-scope="badge"][data-part="root"][data-variant="outline"] {
+    border-color: var(--border);
+    background-color: transparent;
+    color: var(--foreground);
+  }
+  /* Status tints, written per variant so every colour traces to a slot by
+     name (the Alert pattern). The text is the status slot pulled toward
+     --foreground: a pure --warning on its own 14% tint is far under AA in
+     light mode, and the mix keeps the hue while clearing 4.5:1 in both
+     schemes. */
+  [data-scope="badge"][data-part="root"][data-variant="info"] {
+    background-color: color-mix(in oklab, var(--info) 14%, var(--background));
+    color: color-mix(in oklab, var(--info) 55%, var(--foreground));
+  }
+  [data-scope="badge"][data-part="root"][data-variant="success"] {
+    background-color: color-mix(in oklab, var(--success) 14%, var(--background));
+    color: color-mix(in oklab, var(--success) 55%, var(--foreground));
+  }
+  [data-scope="badge"][data-part="root"][data-variant="warning"] {
+    background-color: color-mix(in oklab, var(--warning) 14%, var(--background));
+    color: color-mix(in oklab, var(--warning) 55%, var(--foreground));
+  }
+  [data-scope="badge"][data-part="root"][data-variant="error"] {
+    background-color: color-mix(in oklab, var(--destructive) 14%, var(--background));
+    color: color-mix(in oklab, var(--destructive) 55%, var(--foreground));
+  }
+
+  /* ──────────────────────────── Chip ──────────────────────────── *
+   * `chipRecipe` variant × size on the root; parts root > label +
+   * remove-trigger. The remove trigger is a native <button>, so it gets its
+   * own focus ring (the shared one keys off the root only). The corner is
+   * --radius: a chip follows the theme's shape, unlike the pill Badge.    */
+  [data-scope="chip"][data-part="root"] {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-1);
+    max-width: 100%;
+    height: var(--spacing-7);
+    padding-inline: var(--spacing-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--background);
+    color: var(--foreground);
+    font-size: var(--text-ui-sm);
+    line-height: 1;
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+  /* Parts inherit the root's colour instead of the base layer's --foreground,
+     so a solid chip's label and × read on the --primary fill. */
+  [data-scope="chip"] :where([data-part]) {
+    color: inherit;
+  }
+  [data-scope="chip"][data-part="root"][data-size="sm"] {
+    height: var(--spacing-6);
+    padding-inline: var(--spacing-2);
+    font-size: var(--text-ui-xs);
+  }
+  [data-scope="chip"][data-part="root"][data-variant="muted"] {
+    border-color: transparent;
+    background-color: var(--muted);
+  }
+  [data-scope="chip"][data-part="root"][data-variant="solid"] {
+    border-color: transparent;
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+  }
+  /* A long label truncates instead of pushing the remove button out. */
+  [data-scope="chip"][data-part="label"] {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  /* The trigger pulls into the end padding so the × sits optically centred
+     in the gap it closes. The glyph is text in the chip's own colour. */
+  [data-scope="chip"][data-part="remove-trigger"] {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: var(--spacing-4);
+    height: var(--spacing-4);
+    margin-inline-end: calc(var(--spacing-1) * -1);
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-full);
+    background-color: transparent;
+    font-size: var(--text-ui-md);
+    line-height: 1;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity var(--motion-fast);
+  }
+  [data-scope="chip"][data-part="remove-trigger"]:hover {
+    opacity: 1;
+  }
+  [data-scope="chip"][data-part="remove-trigger"]:focus-visible {
+    opacity: 1;
+    outline: 2px solid var(--ring);
+    outline-offset: 1px;
+  }
+
+  /* ───────────────────────── Indicator ────────────────────────── *
+   * `indicatorAttrs` on the root: `data-variant` × `data-size`, plus a bare
+   * `data-pulse`. Parts root > dot + label. The dot sets its own `color` from
+   * the status slot and paints with currentColor, so the pulse ring (its
+   * ::after) inherits the same hue with no second rule per status.        */
+  [data-scope="indicator"][data-part="root"] {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    color: var(--muted-foreground);
+    font-size: var(--text-ui-sm);
+    line-height: 1;
+    vertical-align: middle;
+  }
+  /* The label takes the root's muted colour rather than the base layer's
+     --foreground; the dot re-pins its own below. */
+  [data-scope="indicator"] :where([data-part]) {
+    color: inherit;
+  }
+  [data-scope="indicator"][data-part="dot"] {
+    position: relative;
+    flex: none;
+    width: var(--spacing-2);
+    height: var(--spacing-2);
+    border-radius: var(--radius-full);
+    background-color: currentColor;
+    color: var(--muted-foreground);
+  }
+  [data-scope="indicator"][data-size="sm"] [data-part="dot"] {
+    width: calc(var(--spacing-1) * 1.5);
+    height: calc(var(--spacing-1) * 1.5);
+  }
+  [data-scope="indicator"][data-size="sm"] [data-part="label"] {
+    font-size: var(--text-ui-xs);
+  }
+  [data-scope="indicator"][data-variant="info"] [data-part="dot"] {
+    color: var(--info);
+  }
+  [data-scope="indicator"][data-variant="success"] [data-part="dot"] {
+    color: var(--success);
+  }
+  [data-scope="indicator"][data-variant="warning"] [data-part="dot"] {
+    color: var(--warning);
+  }
+  [data-scope="indicator"][data-variant="error"] [data-part="dot"] {
+    color: var(--destructive);
+  }
+  /* The pulse: a copy of the dot that grows and fades. Five --motion-normal
+     steps make one slow, calm beat rather than a flicker. */
+  [data-scope="indicator"][data-pulse] [data-part="dot"]::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-full);
+    background-color: currentColor;
+    animation: moderno-indicator-pulse calc(var(--motion-normal) * 5) ease-out infinite;
+  }
+  @keyframes moderno-indicator-pulse {
+    from {
+      transform: scale(1);
+      opacity: 0.6;
+    }
+    to {
+      transform: scale(2.5);
+      opacity: 0;
+    }
+  }
+  /* A user who asked for less motion keeps the status, loses the beat. */
+  @media (prefers-reduced-motion: reduce) {
+    [data-scope="indicator"][data-pulse] [data-part="dot"]::after {
+      display: none;
+    }
+  }
+
   /* ────────────────────────── Pin Input ───────────────────────── *
    * `pinInputRecipe` size on root; Ark drives focus movement, paste
    * distribution, masking and the invalid/complete flags. Scope "pin-input",

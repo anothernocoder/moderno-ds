@@ -95,6 +95,23 @@ export type { CardVariant, CardSize } from "@moderno-ui/core";
 export { default as Divider } from "./Divider.svelte";
 
 /**
+ * Badge, Chip and Indicator — CSS-only (no Ark machine). Same recipes and
+ * `components.css` rules as every other binding: a status label, a removable
+ * token (it reports the press through `onRemove`) and a status dot.
+ */
+export { default as Badge } from "./Badge.svelte";
+export { default as Chip } from "./Chip.svelte";
+export { default as Indicator } from "./Indicator.svelte";
+export type {
+  BadgeVariant,
+  BadgeSize,
+  ChipVariant,
+  ChipSize,
+  IndicatorVariant,
+  IndicatorSize,
+} from "@moderno-ui/core";
+
+/**
  * Charts (Phase 4) — pure SVG maps over `@moderno-ui/charts-core` models. Each
  * renders the identical scaffold across frameworks; they carry zero colour and
  * paint from `--chart-*` via the data-series index in components.css.

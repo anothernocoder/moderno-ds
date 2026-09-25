@@ -1,0 +1,197 @@
+---
+title: Indicator
+description: A small status dot with an optional label and an optional pulse.
+group: Components
+order: 19
+component: Indicator
+pkg: "@moderno-ui/react"
+agentPropsHash: "sha256:7fe7115e5feda40fe91f3316d68f1c0099d9e3268efe3d35e83f95bd62c613bd"
+agent:
+  intent: A small coloured dot that shows a live status.
+  whenToUse: "Presence (online / away), service health, or a recording in progress — a status that fits in one dot, usually beside a name."
+  whenNotToUse:
+    - case: A status that needs a word on a surface of its own
+      use: Badge
+    - case: Progress toward a goal
+      use: Progress
+  gotchas:
+    - "Colour alone says nothing to a screen reader: give the indicator a label (children) or an aria-label."
+    - "pulse is for a status that is happening now; use it on one indicator per view, not on every row."
+    - "The pulse stops for users who ask for reduced motion; the dot stays."
+  theming:
+    - "The dot is --info / --success / --warning / --destructive, or --muted-foreground for neutral. The label is --muted-foreground."
+    - "The pulse speed comes from --motion-normal; do not set an animation inline."
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import IndicatorDemo from "../../../examples/indicator/indicator.svelte";
+import baseReact from "../../../examples/indicator/react.tsx?raw";
+import baseVue from "../../../examples/indicator/vue.vue?raw";
+import baseSolid from "../../../examples/indicator/solid.tsx?raw";
+import baseSvelte from "../../../examples/indicator/indicator.svelte?raw";
+import IndicatorStatusesDemo from "../../../examples/indicator/statuses/indicator-statuses.svelte";
+import statusesReact from "../../../examples/indicator/statuses/react.tsx?raw";
+import statusesVue from "../../../examples/indicator/statuses/vue.vue?raw";
+import statusesSolid from "../../../examples/indicator/statuses/solid.tsx?raw";
+import statusesSvelte from "../../../examples/indicator/statuses/indicator-statuses.svelte?raw";
+import IndicatorPulseDemo from "../../../examples/indicator/pulse/indicator-pulse.svelte";
+import pulseReact from "../../../examples/indicator/pulse/react.tsx?raw";
+import pulseVue from "../../../examples/indicator/pulse/vue.vue?raw";
+import pulseSolid from "../../../examples/indicator/pulse/solid.tsx?raw";
+import pulseSvelte from "../../../examples/indicator/pulse/indicator-pulse.svelte?raw";
+import IndicatorDotOnlyDemo from "../../../examples/indicator/dot-only/indicator-dot-only.svelte";
+import dotOnlyReact from "../../../examples/indicator/dot-only/react.tsx?raw";
+import dotOnlyVue from "../../../examples/indicator/dot-only/vue.vue?raw";
+import dotOnlySolid from "../../../examples/indicator/dot-only/solid.tsx?raw";
+import dotOnlySvelte from "../../../examples/indicator/dot-only/indicator-dot-only.svelte?raw";
+import IndicatorSizesDemo from "../../../examples/indicator/sizes/indicator-sizes.svelte";
+import sizesReact from "../../../examples/indicator/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/indicator/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/indicator/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/indicator/sizes/indicator-sizes.svelte?raw";
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
+  <IndicatorDemo client:visible />
+</Preview>
+
+## Installation
+
+<Install pkg="@moderno-ui/react" />
+
+## Usage
+
+Use an indicator to show a live status in one small dot: someone is online, a service is down, a recording is running.
+
+<ForFramework fw="react">
+
+```tsx
+import { Indicator } from "@moderno-ui/react";
+```
+
+```tsx
+<Indicator variant="success">Online</Indicator>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Indicator } from "@moderno-ui/vue";
+```
+
+```vue
+<Indicator variant="success">Online</Indicator>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Indicator } from "@moderno-ui/svelte";
+```
+
+```svelte
+<Indicator variant="success">Online</Indicator>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Indicator } from "@moderno-ui/solid";
+```
+
+```tsx
+<Indicator variant="success">Online</Indicator>
+```
+
+</ForFramework>
+
+## API Reference
+
+### Indicator
+
+Renders a `<span>`; its children become the label. `variant` defaults to `neutral`, `size` to `md` and `pulse` to `false`.
+
+<PropsTable component="Indicator" />
+
+### Parts
+
+| Part    | Element  | Description                                                          |
+| ------- | -------- | -------------------------------------------------------------------- |
+| `root`  | `<span>` | Carries `data-variant`, `data-size` and, with `pulse`, `data-pulse`. |
+| `dot`   | `<span>` | The coloured dot. Always rendered; `aria-hidden`.                    |
+| `label` | `<span>` | Rendered only when there are children.                               |
+
+## Examples
+
+### Statuses
+
+<Preview
+  examples={{
+    react: statusesReact,
+    vue: statusesVue,
+    solid: statusesSolid,
+    svelte: statusesSvelte,
+  }}
+>
+  <IndicatorStatusesDemo client:visible />
+</Preview>
+
+### Pulse
+
+A slow ring grows from the dot. It stops when the user asks for reduced motion.
+
+<Preview
+  examples={{
+    react: pulseReact,
+    vue: pulseVue,
+    solid: pulseSolid,
+    svelte: pulseSvelte,
+  }}
+>
+  <IndicatorPulseDemo client:visible />
+</Preview>
+
+### Without a label
+
+Give a bare dot an `aria-label`, so the status is not colour alone.
+
+<Preview
+  examples={{
+    react: dotOnlyReact,
+    vue: dotOnlyVue,
+    solid: dotOnlySolid,
+    svelte: dotOnlySvelte,
+  }}
+>
+  <IndicatorDotOnlyDemo client:visible />
+</Preview>
+
+### Sizes
+
+<Preview
+  examples={{
+    react: sizesReact,
+    vue: sizesVue,
+    solid: sizesSolid,
+    svelte: sizesSvelte,
+  }}
+>
+  <IndicatorSizesDemo client:visible />
+</Preview>
+
+## Notes
+
+- Indicator is CSS-only: a `<span>` with `data-scope="indicator"`, no Ark machine.
+- Always pair the colour with text: a label, or an `aria-label` on a bare dot.
+- Keep `pulse` for the one status that is happening right now.

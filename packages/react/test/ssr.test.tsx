@@ -36,6 +36,24 @@ describe("SSR + hydration (React 19)", () => {
     // whose gap depends on the label's rotated writing mode, so orientation and
     // label have to serialise onto the same root.
     expect(html).toMatch(/data-orientation="vertical"(?:(?!<\/div>)[\s\S])*?data-part="label"/);
+    // Badge, Chip and Indicator: the CSS-only status trio. Each optional part
+    // and the bare data-pulse attribute have to serialise on the right element.
+    expect(partAttrs(html, "badge", "root", "data-variant")).toEqual([
+      "neutral",
+      "success",
+      "error",
+    ]);
+    expect(partTags(html, "badge", "dot")).toHaveLength(1);
+    expect(partAttrs(html, "chip", "root", "data-size")).toEqual(["md", "sm"]);
+    expect(partAttrs(html, "chip", "remove-trigger", "aria-label")).toEqual(["Remove React"]);
+    // data-pulse is a bare flag: some renderers write `data-pulse=""`, Vue writes
+    // `data-pulse`; both are the same attribute to the `[data-pulse]` selector.
+    const pulsing = partTags(html, "indicator", "root").map((tag) =>
+      /\sdata-pulse(?:=""|[\s>])/.test(tag),
+    );
+    expect(pulsing).toEqual([true, false]);
+    expect(partTags(html, "indicator", "dot")).toHaveLength(2);
+    expect(partTags(html, "indicator", "label")).toHaveLength(1);
     expect(html).toContain('data-scope="pin-input"');
     // Every code cell is on the server, and `count` makes the server's aria
     // labels agree with the client's — the PinInput-specific SSR hazard.

@@ -1,0 +1,167 @@
+---
+title: Chip
+description: Un token compacto para un filtro, una etiqueta o un destinatario, con un botón opcional para quitarlo.
+group: Componentes
+order: 18
+component: Chip
+pkg: "@moderno-ui/react"
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ChipDemo from "../../../examples/chip/chip.svelte";
+import baseReact from "../../../examples/chip/react.tsx?raw";
+import baseVue from "../../../examples/chip/vue.vue?raw";
+import baseSolid from "../../../examples/chip/solid.tsx?raw";
+import baseSvelte from "../../../examples/chip/chip.svelte?raw";
+import ChipVariantsDemo from "../../../examples/chip/variants/chip-variants.svelte";
+import variantsReact from "../../../examples/chip/variants/react.tsx?raw";
+import variantsVue from "../../../examples/chip/variants/vue.vue?raw";
+import variantsSolid from "../../../examples/chip/variants/solid.tsx?raw";
+import variantsSvelte from "../../../examples/chip/variants/chip-variants.svelte?raw";
+import ChipRemovableDemo from "../../../examples/chip/removable/chip-removable.svelte";
+import removableReact from "../../../examples/chip/removable/react.tsx?raw";
+import removableVue from "../../../examples/chip/removable/vue.vue?raw";
+import removableSolid from "../../../examples/chip/removable/solid.tsx?raw";
+import removableSvelte from "../../../examples/chip/removable/chip-removable.svelte?raw";
+import ChipSizesDemo from "../../../examples/chip/sizes/chip-sizes.svelte";
+import sizesReact from "../../../examples/chip/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/chip/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/chip/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/chip/sizes/chip-sizes.svelte?raw";
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
+  <ChipDemo client:visible />
+</Preview>
+
+## Instalación
+
+<Install pkg="@moderno-ui/react" />
+
+## Uso
+
+Usa un chip para un token pequeño que el usuario eligió, como un filtro o una etiqueta, y que quizá quiera quitar.
+
+<ForFramework fw="react">
+
+```tsx
+import { Chip } from "@moderno-ui/react";
+```
+
+```tsx
+<Chip removable removeLabel="Quitar React">
+  React
+</Chip>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Chip } from "@moderno-ui/vue";
+```
+
+```vue
+<Chip removable removeLabel="Quitar React">React</Chip>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Chip } from "@moderno-ui/svelte";
+```
+
+```svelte
+<Chip removable removeLabel="Quitar React">React</Chip>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Chip } from "@moderno-ui/solid";
+```
+
+```tsx
+<Chip removable removeLabel="Quitar React">
+  React
+</Chip>
+```
+
+</ForFramework>
+
+## Referencia de API
+
+### Chip
+
+Renderiza un `<span>`; sus hijos son la etiqueta. `variant` vale `outline` por defecto y `size`, `md`.
+
+<PropsTable component="Chip" />
+
+En Vue, escucha `@remove` en lugar de pasar `onRemove`.
+
+### Partes
+
+| Parte            | Elemento   | Descripción                                                    |
+| ---------------- | ---------- | -------------------------------------------------------------- |
+| `root`           | `<span>`   | El token. Lleva `data-variant` y `data-size`.                  |
+| `label`          | `<span>`   | Los hijos. Una etiqueta larga se corta con puntos suspensivos. |
+| `remove-trigger` | `<button>` | Solo con `removable`. Su nombre viene de `removeLabel`.        |
+
+## Ejemplos
+
+### Variantes
+
+<Preview
+  examples={{
+    react: variantsReact,
+    vue: variantsVue,
+    solid: variantsSolid,
+    svelte: variantsSvelte,
+  }}
+>
+  <ChipVariantsDemo client:visible />
+</Preview>
+
+### Removible
+
+El chip solo avisa del clic. Tu código quita el elemento de la lista.
+
+<Preview
+  examples={{
+    react: removableReact,
+    vue: removableVue,
+    solid: removableSolid,
+    svelte: removableSvelte,
+  }}
+>
+  <ChipRemovableDemo client:visible />
+</Preview>
+
+### Tamaños
+
+<Preview
+  examples={{
+    react: sizesReact,
+    vue: sizesVue,
+    solid: sizesSolid,
+    svelte: sizesSvelte,
+  }}
+>
+  <ChipSizesDemo client:visible />
+</Preview>
+
+## Notas
+
+- Chip es solo CSS: un `<span>` con `data-scope="chip"` y un `<button>` nativo para quitarlo.
+- Da a cada botón de quitar su propio nombre con `removeLabel`.
+- Para una etiqueta de solo lectura, usa Badge.

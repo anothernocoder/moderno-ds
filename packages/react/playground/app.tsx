@@ -14,7 +14,9 @@
  *                conditional separator role serialise identically both ways.
  *                Mounted in every recipe cell the props table advertises,
  *                captioned × vertical included.
- *   - Field    — `useId`-generated label/control ids must match across render.
+ *   - Badge / Chip / Indicator — CSS-only; prove the optional parts (the
+ *                badge dot, the chip's remove button, the indicator label) and
+ *                the bare `data-pulse` attribute serialise identically both ways.
  *   - Checkbox — a label bound to a visually hidden native input by `useId`,
  *                plus indicators the machine hides via the `hidden` attribute.
  *   - Dialog   — a Portal + focus-trap machine that must emit a stable,
@@ -33,6 +35,9 @@
 import { Alert } from "../src/alert.js";
 import { Button } from "../src/button.js";
 import { Divider } from "../src/divider.js";
+import { Badge } from "../src/badge.js";
+import { Chip } from "../src/chip.js";
+import { Indicator } from "../src/indicator.js";
 import { Card } from "../src/card.js";
 import { Field } from "../src/field.js";
 import { Checkbox } from "../src/checkbox.js";
@@ -105,6 +110,30 @@ export function App({ open = false }: AppProps) {
         <Divider align="start">Or</Divider>
         <Divider orientation="vertical" />
         <Divider orientation="vertical">Or</Divider>
+      </section>
+
+      <section aria-label="badges">
+        <Badge>Draft</Badge>
+        <Badge variant="success" dot>
+          Paid
+        </Badge>
+        <Badge variant="error" size="sm">
+          Overdue
+        </Badge>
+      </section>
+
+      <section aria-label="chips">
+        <Chip>Design</Chip>
+        <Chip variant="muted" size="sm" removable removeLabel="Remove React">
+          React
+        </Chip>
+      </section>
+
+      <section aria-label="indicators">
+        <Indicator variant="success" pulse>
+          Online
+        </Indicator>
+        <Indicator variant="error" size="sm" aria-label="Offline" />
       </section>
 
       <section aria-label="alerts">

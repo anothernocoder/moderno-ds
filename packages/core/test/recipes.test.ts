@@ -2,11 +2,15 @@ import { describe, expect, it } from "vitest";
 import {
   alertRecipe,
   alertRole,
+  badgeRecipe,
   buttonRecipe,
   cardRecipe,
   checkboxRecipe,
+  chipRecipe,
   dividerRecipe,
   fieldRecipe,
+  indicatorAttrs,
+  indicatorRecipe,
   pinInputRecipe,
   selectRecipe,
 } from "../src/recipes.js";
@@ -162,5 +166,71 @@ describe("pinInputRecipe", () => {
     // filled / complete / invalid / disabled arrive as Ark data-attributes, so
     // the recipe must not grow a parallel (and divergible) variant for them.
     expect(Object.keys(pinInputRecipe.variants)).toEqual(["size"]);
+  });
+});
+
+describe("badgeRecipe", () => {
+  it("defaults to a neutral md badge", () => {
+    expect(badgeRecipe()).toEqual({ "data-size": "md", "data-variant": "neutral" });
+  });
+
+  it("carries the four statuses beside the three plain styles", () => {
+    expect(badgeRecipe.variants.variant).toEqual([
+      "neutral",
+      "solid",
+      "outline",
+      "info",
+      "success",
+      "warning",
+      "error",
+    ]);
+    expect(badgeRecipe({ variant: "error", size: "sm" })).toEqual({
+      "data-size": "sm",
+      "data-variant": "error",
+    });
+  });
+
+  it("rejects values outside the schema", () => {
+    // @ts-expect-error — "danger" is not a badge variant ("error" is)
+    expect(() => badgeRecipe({ variant: "danger" })).toThrow(/invalid value/);
+  });
+});
+
+describe("chipRecipe", () => {
+  it("defaults to an outline md chip", () => {
+    expect(chipRecipe()).toEqual({ "data-size": "md", "data-variant": "outline" });
+  });
+
+  it("maps variant/size to data-attributes", () => {
+    expect(chipRecipe({ variant: "solid", size: "sm" })).toEqual({
+      "data-size": "sm",
+      "data-variant": "solid",
+    });
+  });
+
+  it("rejects values outside the schema", () => {
+    // @ts-expect-error — "lg" is not a chip size
+    expect(() => chipRecipe({ size: "lg" })).toThrow(/invalid value/);
+  });
+});
+
+describe("indicatorRecipe / indicatorAttrs", () => {
+  it("defaults to a neutral md dot with no pulse", () => {
+    expect(indicatorRecipe()).toEqual({ "data-size": "md", "data-variant": "neutral" });
+    expect(indicatorAttrs()).toEqual({ "data-size": "md", "data-variant": "neutral" });
+  });
+
+  it("adds a bare data-pulse only when pulse is on", () => {
+    expect(indicatorAttrs({ variant: "success", pulse: true })).toEqual({
+      "data-size": "md",
+      "data-variant": "success",
+      "data-pulse": "",
+    });
+    expect(indicatorAttrs({ pulse: false })).not.toHaveProperty("data-pulse");
+  });
+
+  it("rejects values outside the schema", () => {
+    // @ts-expect-error — "solid" is a badge variant, not an indicator status
+    expect(() => indicatorAttrs({ variant: "solid" })).toThrow(/invalid value/);
   });
 });

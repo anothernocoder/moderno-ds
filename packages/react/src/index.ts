@@ -26,6 +26,12 @@ export type {
 } from "./card.js";
 export { Divider } from "./divider.js";
 export type { DividerProps } from "./divider.js";
+export { Badge } from "./badge.js";
+export type { BadgeProps, BadgeVariant, BadgeSize } from "./badge.js";
+export { Chip } from "./chip.js";
+export type { ChipProps, ChipVariant, ChipSize } from "./chip.js";
+export { Indicator } from "./indicator.js";
+export type { IndicatorProps, IndicatorVariant, IndicatorSize } from "./indicator.js";
 
 export { Field } from "./field.js";
 export type {

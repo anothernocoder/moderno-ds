@@ -314,6 +314,186 @@ export const AGENT_EXAMPLES: Record<string, Partial<Record<Framework, AgentExamp
     ],
   },
 
+  Badge: {
+    react: [
+      {
+        title: "Status badges, one with a dot",
+        code: [
+          'import { Badge } from "@moderno-ui/react";',
+          "",
+          "<Badge>Draft</Badge>",
+          '<Badge variant="success" dot>Paid</Badge>',
+          '<Badge variant="error" size="sm">Overdue</Badge>',
+        ].join("\n"),
+      },
+    ],
+    vue: [
+      {
+        title: "Status badges, one with a dot",
+        code: [
+          '<script setup lang="ts">',
+          'import { Badge } from "@moderno-ui/vue";',
+          "</script>",
+          "",
+          "<template>",
+          "  <Badge>Draft</Badge>",
+          '  <Badge variant="success" dot>Paid</Badge>',
+          '  <Badge variant="error" size="sm">Overdue</Badge>',
+          "</template>",
+        ].join("\n"),
+      },
+    ],
+    svelte: [
+      {
+        title: "Status badges, one with a dot",
+        code: [
+          '<script lang="ts">',
+          '  import { Badge } from "@moderno-ui/svelte";',
+          "</script>",
+          "",
+          "<Badge>Draft</Badge>",
+          '<Badge variant="success" dot>Paid</Badge>',
+          '<Badge variant="error" size="sm">Overdue</Badge>',
+        ].join("\n"),
+      },
+    ],
+    solid: [
+      {
+        title: "Status badges, one with a dot",
+        code: [
+          'import { Badge } from "@moderno-ui/solid";',
+          "",
+          "<Badge>Draft</Badge>",
+          '<Badge variant="success" dot>Paid</Badge>',
+          '<Badge variant="error" size="sm">Overdue</Badge>',
+        ].join("\n"),
+      },
+    ],
+  },
+
+  Chip: {
+    react: [
+      {
+        title: "A removable chip that leaves the list",
+        code: [
+          'import { Chip } from "@moderno-ui/react";',
+          "",
+          "{tags.map((tag) => (",
+          "  <Chip key={tag} removable removeLabel={`Remove ${tag}`} onRemove={() => remove(tag)}>",
+          "    {tag}",
+          "  </Chip>",
+          "))}",
+        ].join("\n"),
+      },
+    ],
+    vue: [
+      {
+        title: "A removable chip that leaves the list",
+        code: [
+          '<script setup lang="ts">',
+          'import { Chip } from "@moderno-ui/vue";',
+          "</script>",
+          "",
+          "<template>",
+          "  <Chip",
+          '    v-for="tag in tags"',
+          '    :key="tag"',
+          "    removable",
+          '    :remove-label="`Remove ${tag}`"',
+          '    @remove="remove(tag)"',
+          "  >",
+          "    {{ tag }}",
+          "  </Chip>",
+          "</template>",
+        ].join("\n"),
+      },
+    ],
+    svelte: [
+      {
+        title: "A removable chip that leaves the list",
+        code: [
+          '<script lang="ts">',
+          '  import { Chip } from "@moderno-ui/svelte";',
+          "</script>",
+          "",
+          "{#each tags as tag (tag)}",
+          "  <Chip removable removeLabel={`Remove ${tag}`} onRemove={() => remove(tag)}>{tag}</Chip>",
+          "{/each}",
+        ].join("\n"),
+      },
+    ],
+    solid: [
+      {
+        title: "A removable chip that leaves the list",
+        code: [
+          'import { For } from "solid-js";',
+          'import { Chip } from "@moderno-ui/solid";',
+          "",
+          "<For each={tags()}>",
+          "  {(tag) => (",
+          "    <Chip removable removeLabel={`Remove ${tag}`} onRemove={() => remove(tag)}>",
+          "      {tag}",
+          "    </Chip>",
+          "  )}",
+          "</For>",
+        ].join("\n"),
+      },
+    ],
+  },
+
+  Indicator: {
+    react: [
+      {
+        title: "A live status with a label, and a bare dot",
+        code: [
+          'import { Indicator } from "@moderno-ui/react";',
+          "",
+          '<Indicator variant="success" pulse>Online</Indicator>',
+          '<Indicator variant="error" aria-label="Offline" />',
+        ].join("\n"),
+      },
+    ],
+    vue: [
+      {
+        title: "A live status with a label, and a bare dot",
+        code: [
+          '<script setup lang="ts">',
+          'import { Indicator } from "@moderno-ui/vue";',
+          "</script>",
+          "",
+          "<template>",
+          '  <Indicator variant="success" pulse>Online</Indicator>',
+          '  <Indicator variant="error" aria-label="Offline" />',
+          "</template>",
+        ].join("\n"),
+      },
+    ],
+    svelte: [
+      {
+        title: "A live status with a label, and a bare dot",
+        code: [
+          '<script lang="ts">',
+          '  import { Indicator } from "@moderno-ui/svelte";',
+          "</script>",
+          "",
+          '<Indicator variant="success" pulse>Online</Indicator>',
+          '<Indicator variant="error" aria-label="Offline" />',
+        ].join("\n"),
+      },
+    ],
+    solid: [
+      {
+        title: "A live status with a label, and a bare dot",
+        code: [
+          'import { Indicator } from "@moderno-ui/solid";',
+          "",
+          '<Indicator variant="success" pulse>Online</Indicator>',
+          '<Indicator variant="error" aria-label="Offline" />',
+        ].join("\n"),
+      },
+    ],
+  },
+
   Field: {
     react: [
       {

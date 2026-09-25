@@ -17,6 +17,12 @@ export { Card } from "./card.js";
 export type { CardVariant, CardSize } from "./card.js";
 export { Divider } from "./divider.js";
 export type { DividerAlign, DividerOrientation } from "./divider.js";
+export { Badge } from "./badge.js";
+export type { BadgeVariant, BadgeSize } from "./badge.js";
+export { Chip } from "./chip.js";
+export type { ChipVariant, ChipSize } from "./chip.js";
+export { Indicator } from "./indicator.js";
+export type { IndicatorVariant, IndicatorSize } from "./indicator.js";
 
 export { Field } from "./field.js";
 export type {
