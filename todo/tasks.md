@@ -1,9 +1,9 @@
 # Tasks
 - [ ] Migrar los componentes de moderno (legacy)
 - [ ] Fixes Moderno-DS
-  - [ ] Tamaño de texto de los parrafos de 17px a 15px, y headings de bold a semibold o 500
+  - [x] Tamaño de texto de los parrafos de 17px a 15px, y headings de bold a semibold o 500
   - [ ] Animacion fluida de linea en On this page menu
-  - [ ] Corregir focus de los inputs
+  - [x] Corregir focus de los inputs
   - [ ] Componentes del Doc Site deben ser componentes de la libreria o blocks
   - [ ] Los blocks o estilo de codigo debe ser escrito clean code como los de schadcn, legibles
   - [ ] Los blocks, screens y flows pueden tener varios archivos, asi que el preview debe mostrar el arbol de archivos y el codigo de cada archivo como schadcn. Usar la libreria de pieter computer o desde 0
@@ -50,3 +50,9 @@
 - [ ] Convert cada imagen o layout de Inspo Vault y Websites en new blocks, screens y flows
 - [ ] Add slides for decks a inspo vault.
 - [ ] Skill para motion graphics + remotion + hyperframes
+- [ ] Crear template de emails con primitivas de moderno y aplicar Design Systems. Usar react-email, mjml o html puro
+  - [ ] Crear un minitool para ello
+- [ ] Meter jev + json render para generative UI + code blocks
+- [ ] Crear bloques de shells como cossui layout y lines kumo-ui
+- [ ] Meter componentes de librerias, como tremor, elevenlabs, referentes,etc
+- [x] Corrige el borde de 2 pixeles en los modales.
