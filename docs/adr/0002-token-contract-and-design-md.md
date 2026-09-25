@@ -5,8 +5,9 @@ status: accepted
 # Token contract (CONTRACT.md), neutral defaults, and the default theme (DESIGN.md)
 
 > Amended by [ADR-0007](0007-default-theme-single-source-and-type-scale.md):
-> `tokens.json` is now the one hand-edited source of `theme-moderno`'s values;
-> `DESIGN.md`'s front matter, the registry theme and `theme.css` derive from it.
+> `registry/themes/theme-moderno/tokens.dtcg.json` is now the one hand-edited
+> source of `theme-moderno`'s values; `theme.css` and `DESIGN.md`'s front matter
+> derive from it. The root `tokens.json` is gone.
 
 Phase 0 establishes the styling single-source-of-truth. This ADR records where
 the technical contract, the neutral package defaults, and the brand each live,

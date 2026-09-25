@@ -152,8 +152,9 @@ The root is a `<div>`, not a `<main>`: a document may have only one visible
 
 Themes are authored as `tokens.dtcg.json` and compiled to `theme.css` by
 `@moderno-ui/theme-compile` (`pnpm theme:build`, with WCAG AA contrast warnings).
-The default theme is the exception: it is authored in the repo-root `tokens.json`,
-and `theme-moderno/tokens.dtcg.json` is a generated copy. Don't edit it.
+Each theme's `tokens.dtcg.json` is its one hand-edited source; `theme.css` is
+generated. The default theme works the same way, and `pnpm theme:build` also
+renders the root `DESIGN.md`'s front matter from `theme-moderno/tokens.dtcg.json`.
 
 - `theme-moderno` → `:root` (light) + `.dark` (dark): the **default brand**.
 - `theme-contrast` → `[data-brand="contrast"]` + `.dark [data-brand="contrast"], [data-brand="contrast"].dark`: an alternate brand.

@@ -28,18 +28,19 @@ literals: a 13/14/15px control ramp, Tailwind's stock scale, and one-off sizes.
 
 ## Decision
 
-- **`tokens.json` at the repo root is the one hand-edited source of
-  `theme-moderno`'s values.** It is a DTCG file in the contract's slot names,
-  with a `light` and a `dark` scope: the shape `theme-compile` already consumes.
-  Its `style.moderno.theme` extension names the theme it authors.
+- **`registry/themes/theme-moderno/tokens.dtcg.json` is the one hand-edited
+  source of `theme-moderno`'s values**, exactly as every other theme's
+  `tokens.dtcg.json` is for that theme. It is a DTCG file in the contract's slot
+  names, with a `light` and a `dark` scope. The Phase 0 root `tokens.json` is
+  deleted, not kept as a second copy: nothing read it, and a root file would
+  make the default theme the one theme authored somewhere else.
 - **Everything else is derived by `pnpm theme:build`, and a test fails on
   drift:**
-  - `registry/themes/theme-moderno/tokens.dtcg.json`, a byte-for-byte copy (what
-    the registry publishes and the Theme Builder imports);
   - `registry/themes/theme-moderno/theme.css`, compiled as for every theme;
-  - `DESIGN.md`'s front matter, rendered from `tokens.json` plus the neutral
-    defaults it inherits. The google-labs format has no dark mode, so the light
-    scope uses the contract names and the dark scope is listed as `dark-*`.
+  - `DESIGN.md`'s front matter, rendered from the theme's `tokens.dtcg.json`
+    plus the neutral defaults it inherits. The google-labs format has no dark
+    mode, so the light scope uses the contract names and the dark scope is
+    listed as `dark-*`.
 - **`DESIGN.md`'s body is rationale only.** It names slots and explains them, and
   does not restate values, so it cannot drift from them. Its `version`, `name`
   and `description` stay hand-written, because they describe the document rather
@@ -51,17 +52,20 @@ literals: a 13/14/15px control ramp, Tailwind's stock scale, and one-off sizes.
   `text-*` keys, not over them. `moderno/no-hardcoded-dimension` flags stock
   Tailwind sizes and literal `font-size` values.
 
-Other registry themes are unchanged: each is still authored as the
-`tokens.dtcg.json` in its own directory. Only the default theme is authored at
-the root, beside the `DESIGN.md` that explains it.
+The default theme is authored like every other registry theme: the
+`tokens.dtcg.json` in its own directory. What sets it apart is only that the
+root `DESIGN.md` explains it, so `theme:build` renders that file's front matter
+when it compiles `theme-moderno`.
 
 ## Consequences
 
-- Changing a brand value is one edit and one command. A stale `DESIGN.md`, theme
-  file or registry copy fails CI instead of shipping.
+- Changing a brand value is one edit and one command. A stale `DESIGN.md` or
+  `theme.css` fails CI instead of shipping.
+- There is one place to author any theme and no copy to keep in sync. The
+  registry publishes, and the Theme Builder imports, the file maintainers edit.
 - `DESIGN.md` loses its Phase 0 values: the hex palette, the `display` 96px and
   `label-sm` 10px styles, and the 6px spacing step. None of them reached the
   code, and a style comes back as a contract step once a surface needs it.
-- The registry copy duplicates `tokens.json` on disk. That is accepted because
-  the registry publishes theme files from the theme's directory, and the copy is
-  generated and guarded, never edited.
+- The DTCG source of the default theme now sits under `registry/`, not beside
+  `DESIGN.md` at the root. `DESIGN.md` links to it, and its generated front
+  matter names it.

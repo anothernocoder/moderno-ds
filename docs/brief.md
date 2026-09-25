@@ -94,7 +94,6 @@ moderno-ds/
 ├── CONTEXT.md             # glosario del dominio
 ├── CONTRACT.md            # contrato técnico: slots + reglas + data-part (neutro, no marca)
 ├── DESIGN.md              # fuente de verdad del theme default (formato google-labs DESIGN.md)
-├── tokens.json            # DTCG del theme default (par de DESIGN.md)
 ├── pnpm-workspace.yaml
 └── package.json
 ```
