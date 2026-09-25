@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { CONTRACT, EXTENDED_SLOTS } from "@moderno-ui/css/contract";
+import { CONTRACT, EXTENDED_SLOTS, OTHER_SLOTS } from "@moderno-ui/css/contract";
 import { compileTheme, ThemeValidationError } from "../src/index.ts";
 
 /**
@@ -79,6 +79,18 @@ describe("compileTheme — neutral mode", () => {
     const doc = neutral();
     delete doc.dark.radius;
     expect(() => compileTheme(doc, { neutral: true })).toThrow(/dark.*radius/);
+  });
+
+  it.each(["light", "dark"] as const)("rejects a blank required slot in the %s scope", (scope) => {
+    for (const slot of OTHER_SLOTS) {
+      for (const blank of ["", "  "]) {
+        const doc = neutral();
+        doc[scope][slot].$value = blank;
+        expect(() => compileTheme(doc, { neutral: true })).toThrow(
+          `${scope} scope slot "--${slot}" is required but empty`,
+        );
+      }
+    }
   });
 
   it("warns on a failing contrast pair, as for a theme", () => {

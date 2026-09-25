@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { EXTENDED_SLOTS } from "@moderno-ui/css/contract";
+import { EXTENDED_SLOTS, OTHER_SLOTS } from "@moderno-ui/css/contract";
 import { contrastRatio } from "../src/color.ts";
 import { defaultsFrom, readBrandNotes, renderDesignMd } from "../src/design-md.ts";
 import { compileTheme } from "../src/index.ts";
@@ -108,6 +108,22 @@ describe("registry themes compile and stay in sync", () => {
         (scope === "dark" ? doc.light?.[slot]?.$value : undefined) ??
         defaults[scope].get(slot)!;
       expect(mutedForegroundFailures(resolve)).toEqual([]);
+    },
+  );
+
+  it.each(["light", "dark"] as const)(
+    "theme-moderno: a blank required slot in the %s scope stops the compile",
+    (scope) => {
+      const file = `${themesRoot}/theme-moderno/tokens.dtcg.json`;
+      for (const slot of OTHER_SLOTS) {
+        for (const blank of ["", "  "]) {
+          const doc = JSON.parse(readFileSync(file, "utf8"));
+          doc[scope][slot].$value = blank;
+          expect(() => compileTheme(doc)).toThrow(
+            `${scope} scope slot "--${slot}" is required but empty`,
+          );
+        }
+      }
     },
   );
 

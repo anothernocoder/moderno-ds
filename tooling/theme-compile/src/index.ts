@@ -44,6 +44,14 @@ export class ThemeValidationError extends Error {
  */
 export type CompileOptions = { neutral?: boolean };
 
+/**
+ * A blank `$value` would emit `--slot: ;`, which blanks the slot instead of
+ * setting it, so no slot a scope expresses, required or extended, may be blank.
+ */
+function isBlank(token: Token): boolean {
+  return typeof token.$value !== "string" || token.$value.trim() === "";
+}
+
 function validateScope(
   name: string,
   scope: unknown,
@@ -61,6 +69,9 @@ function validateScope(
     if (!token || typeof token.$value !== "string") {
       throw new ThemeValidationError(`${name} scope is missing required slot "--${slot}"`);
     }
+    if (isBlank(token)) {
+      throw new ThemeValidationError(`${name} scope slot "--${slot}" is required but empty`);
+    }
   }
   for (const slot of COLOR_SLOTS) {
     const value = s[slot]!.$value;
@@ -73,13 +84,13 @@ function validateScope(
   // Extended slots (display face, elevation, modal scrim, container breakpoints,
   // spacing, motion, type scale, font weights) are optional in a theme —
   // `@moderno-ui/css` already ships a neutral default for each. A theme that
-  // *does* express one must give it a real value, or the emitted `--slot: ;`
-  // would silently blank the default instead of overriding it. An extended
-  // colour (`--overlay`) is held to the same OKLCH rule as the required colours.
+  // *does* express one must give it a real value, as for a required slot. An
+  // extended colour (`--overlay`) is held to the same OKLCH rule as the
+  // required colours.
   for (const slot of EXTENDED_SLOTS) {
     const token = s[slot];
     if (token === undefined) continue;
-    if (typeof token.$value !== "string" || token.$value.trim() === "") {
+    if (isBlank(token)) {
       throw new ThemeValidationError(
         `${name} scope slot "--${slot}" is present but empty — drop it to inherit the default`,
       );

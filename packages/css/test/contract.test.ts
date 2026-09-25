@@ -148,17 +148,6 @@ describe("@moderno-ui/css — contract data", () => {
   });
 });
 
-describe("@moderno-ui/css — tokens.css satisfies the contract", () => {
-  // theme-compile's neutral mode owns the rest: every slot present in :root,
-  // colours in OKLCH, extended slots non-empty (and neutral.test.ts ties this
-  // file to that compile). It accepts an empty `$value` for these three.
-  it("gives --radius and the font stacks a non-empty value in :root", () => {
-    for (const slot of OTHER_SLOTS) {
-      expect(root.get(slot)?.trim(), `--${slot} is empty in :root`).toBeTruthy();
-    }
-  });
-});
-
 describe("@moderno-ui/css — dark variant", () => {
   it("redefines the core slots in .dark", () => {
     expect(tokenRules.has(".dark")).toBe(true);
