@@ -2,11 +2,23 @@
  * Theme Builder model — the bridge between the editor's flat, editable scopes
  * and the DTCG document `@moderno-ui/theme-compile` validates and compiles. The
  * island edits `ThemeState`; export runs it back through the *same* compiler CI
- * uses, so a theme that exports clean here is a theme that passes CI.
+ * uses, so a theme that exports clean here is a theme that passes CI. Its
+ * DESIGN.md comes from the same renderer `pnpm theme:build` uses, too.
  */
-import { compileTheme, ThemeValidationError } from "@moderno-ui/theme-compile";
+import {
+  compileTheme,
+  defaultsFrom,
+  readBrandNotes,
+  renderDesignMd,
+  ThemeValidationError,
+} from "@moderno-ui/theme-compile";
 import { COLOR_SLOTS, EXTENDED_SLOTS, OTHER_SLOTS, slotType } from "@moderno-ui/tokens/contract";
+// The neutral defaults a theme inherits, as the site ships them: DESIGN.md's
+// front matter lists every slot a theme leaves out at this value.
+import tokensCss from "@moderno-ui/tokens/css?raw";
 import modernoTokens from "../../../../registry/themes/theme-moderno/tokens.dtcg.json";
+
+export { readBrandNotes };
 
 // The slot lists come from the contract data in @moderno-ui/tokens — the same
 // source theme-compile validates against, so editor and compiler can't drift.
@@ -19,7 +31,16 @@ export type Scope = Record<string, string>;
 
 export interface ThemeState {
   name: string;
+  /** A sentence on the theme, exported as `$description` (DESIGN.md's description); "" for none. */
+  description: string;
   brand: string | null;
+  /**
+   * The registry item the theme was imported from (`theme-moderno`), or null
+   * for the default, a pasted theme and a reset. Only the item id is kept, not
+   * its brand notes: a few bytes in the `?t=` link, and the notes are fetched
+   * again from `/r/themes/<base>/DESIGN.md` when the link is opened.
+   */
+  base: string | null;
   light: Scope;
   dark: Scope;
 }
@@ -28,6 +49,7 @@ type Token = { $type: string; $value: string };
 type TokenScope = Record<string, Token>;
 export interface ThemeDoc {
   $schema?: string;
+  $description?: string;
   $extensions?: { "style.moderno.theme"?: { name?: string; brand?: string | null } };
   light: TokenScope;
   dark: TokenScope;
@@ -43,13 +65,18 @@ function scopeToState(scope: unknown): Scope {
   return out;
 }
 
-/** Read a DTCG document into the editor's flat scopes. */
-export function tokensToState(doc: unknown): ThemeState {
+/**
+ * Read a DTCG document into the editor's flat scopes. `base` is the registry
+ * item it came from, when it did; a pasted document has none.
+ */
+export function tokensToState(doc: unknown, base: string | null = null): ThemeState {
   const d = (doc ?? {}) as ThemeDoc;
   const meta = d.$extensions?.["style.moderno.theme"];
   return {
     name: meta?.name ?? "custom",
+    description: typeof d.$description === "string" ? d.$description : "",
     brand: meta?.brand ?? null,
+    base,
     light: scopeToState(d.light),
     dark: scopeToState(d.dark),
   };
@@ -96,8 +123,10 @@ export function previewStyle(scope: Scope): string {
  */
 export function stateToTokens(state: ThemeState): ThemeDoc {
   const brand = state.brand === null ? null : themeSlug(state.name);
+  const description = (state.description ?? "").trim();
   return {
     $schema: "https://www.designtokens.org/schemas/2025.10/format.json",
+    ...(description === "" ? {} : { $description: description }),
     $extensions: {
       "style.moderno.theme": { name: state.name, brand },
     },
@@ -131,6 +160,8 @@ export function cliSnippet(name: string): string {
 export interface ThemeBundle {
   tokens: ThemeDoc;
   css: string;
+  /** The theme's DESIGN.md, rendered from `tokens`; "" when the theme is invalid. */
+  designMd: string;
   warnings: string[];
   cli: string;
   valid: boolean;
@@ -143,7 +174,7 @@ export interface ThemeBundle {
  * authority for the default theme's values; only the name resets to `custom`.
  */
 export function defaultThemeState(): ThemeState {
-  return { ...tokensToState(modernoTokens), name: "custom" };
+  return { ...tokensToState(modernoTokens), name: "custom", description: "" };
 }
 
 /** Compact, URL-safe encoding of a state (for shareable `?t=` links). */
@@ -163,21 +194,58 @@ export function decodeState(encoded: string): ThemeState | null {
     const bytes = Uint8Array.from(binary, (c) => c.charCodeAt(0));
     const parsed = JSON.parse(new TextDecoder().decode(bytes));
     if (!parsed?.light || !parsed?.dark) return null;
-    return parsed as ThemeState;
+    // A link from before a field existed still opens, with that field empty.
+    return {
+      ...parsed,
+      name: typeof parsed.name === "string" ? parsed.name : "custom",
+      description: typeof parsed.description === "string" ? parsed.description : "",
+      brand: typeof parsed.brand === "string" ? parsed.brand : null,
+      base: typeof parsed.base === "string" ? parsed.base : null,
+    } as ThemeState;
   } catch {
     return null;
   }
 }
 
-/** The full export bundle, run through the real compiler so it matches CI. */
-export function buildTheme(state: ThemeState): ThemeBundle {
+const TOKEN_DEFAULTS = defaultsFrom(tokensCss);
+
+/**
+ * The brand notes a DESIGN.md export keeps: the imported base's own, only
+ * while the theme is still that base. It is the test the exported brand
+ * follows: the base's brand survives exactly while the name's slug is the
+ * base's (`theme-contrast` or `Contrast`, not `Ocean`). Renamed, pasted or
+ * started from the default, this is null, and the renderer drafts notes from
+ * the theme's values instead.
+ */
+export function keptBrandNotes(
+  state: ThemeState,
+  baseNotes: string | null | undefined,
+): string | null {
+  return isStillBase(state) && baseNotes != null ? baseNotes : null;
+}
+
+/** Is the theme still the registry base it was imported from? (See `keptBrandNotes`.) */
+export function isStillBase(state: ThemeState): boolean {
+  return state.base !== null && themeSlug(state.name) === themeSlug(state.base);
+}
+
+/**
+ * The full export bundle, run through the real compiler so it matches CI.
+ * `baseNotes` are the brand notes of the registry base the theme was imported
+ * from (`readBrandNotes` of its DESIGN.md); `keptBrandNotes` decides whether
+ * the DESIGN.md keeps them.
+ */
+export function buildTheme(state: ThemeState, baseNotes?: string | null): ThemeBundle {
   const tokens = stateToTokens(state);
   const cli = cliSnippet(state.name);
   try {
     const { css, warnings } = compileTheme(tokens);
-    return { tokens, css, warnings, cli, valid: true };
+    const designMd = renderDesignMd(tokens, TOKEN_DEFAULTS, {
+      brandNotes: keptBrandNotes(state, baseNotes),
+    });
+    return { tokens, css, designMd, warnings, cli, valid: true };
   } catch (err) {
     const error = err instanceof ThemeValidationError ? err.message : (err as Error).message;
-    return { tokens, css: "", warnings: [], cli, valid: false, error };
+    return { tokens, css: "", designMd: "", warnings: [], cli, valid: false, error };
   }
 }

@@ -1,10 +1,12 @@
 <!--
   Theme Builder — edits the contract slots in both scopes (`:root` + `.dark`)
   with a live preview over the *real* @moderno components, then exports a
-  theme.css + tokens.dtcg.json + CLI snippet. Export runs through the same
-  `@moderno-ui/theme-compile` CI uses (via `buildTheme`), so a clean export here is
-  a theme that passes CI; the inline WCAG AA checker surfaces its warnings.
-  State persists to the URL (`?t=`) and localStorage.
+  theme.css + tokens.dtcg.json + DESIGN.md + CLI snippet. Export runs through the
+  same `@moderno-ui/theme-compile` CI uses (via `buildTheme`), so a clean export
+  here is a theme that passes CI; the inline WCAG AA checker surfaces its warnings.
+  State persists to the URL (`?t=`) and localStorage. A registry base's brand
+  notes do not: they are fetched with the base, and again on reload, from its
+  published DESIGN.md.
 
   The preview owns the page: a masonry gallery of components fills the main
   column, and the editor — slots, contrast report and export — lives in a
@@ -19,7 +21,9 @@
   import {
     buildTheme,
     defaultThemeState,
+    isStillBase,
     previewStyle,
+    readBrandNotes,
     slugify,
     tokensToState,
     EXTENDED_SLOTS,
@@ -33,6 +37,11 @@
     light: string;
     dark: string;
     name: string;
+    description: string;
+    descriptionHint: string;
+    notesKept: string;
+    notesDraft: string;
+    notesLoading: string;
     startFrom: string;
     import: string;
     paste: string;
@@ -110,7 +119,15 @@
     if (e.key === "Escape" && panelOpen && !matchMedia(DOCKED).matches) setPanel(false);
   }
 
-  const bundle = $derived(buildTheme(state));
+  // Brand notes of the registry bases fetched so far, by item: null when the
+  // base has none (or its DESIGN.md failed to load), so the export drafts them.
+  let baseNotes = $state<Record<string, string | null>>({});
+  // Only while the theme is still its base (the name test keptBrandNotes
+  // applies) does a missing entry mean "not loaded yet" rather than "draft".
+  const stillBase = $derived(isStillBase(state));
+  const notesLoading = $derived(stillBase && !(state.base! in baseNotes));
+  const notesKept = $derived(stillBase && baseNotes[state.base!] != null);
+  const bundle = $derived(buildTheme(state, state.base === null ? null : baseNotes[state.base]));
   const activeScope = $derived(state[scope]);
   // Built by the same helper the export uses, so a cleared optional field
   // previews the inherited default instead of a blanked slot (`--slot: ` makes
@@ -132,9 +149,9 @@
   const tokensJson = $derived(JSON.stringify(bundle.tokens, null, 2));
   const tokensFile = $derived(`${slugify(state.name) || "theme"}.tokens.dtcg.json`);
 
-  function loadDoc(doc: unknown) {
+  function loadDoc(doc: unknown, base: string | null) {
     try {
-      state = tokensToState(doc);
+      state = tokensToState(doc, base);
       pasteError = "";
       pasteOpen = false;
     } catch (err) {
@@ -142,15 +159,32 @@
     }
   }
 
-  async function importBase(name: string) {
-    const base = import.meta.env.BASE_URL.replace(/\/$/, "");
-    const res = await fetch(`${base}/r/themes/${name}/tokens.dtcg.json`);
-    if (res.ok) loadDoc(await res.json());
+  const registryUrl = (item: string, file: string) =>
+    `${import.meta.env.BASE_URL.replace(/\/$/, "")}/r/themes/${item}/${file}`;
+
+  async function loadBaseNotes(item: string) {
+    if (item in baseNotes) return;
+    let notes: string | null = null;
+    try {
+      const res = await fetch(registryUrl(item, "DESIGN.md"));
+      if (res.ok) notes = readBrandNotes(await res.text());
+    } catch {
+      /* offline: the export drafts the notes instead */
+    }
+    baseNotes[item] = notes;
+  }
+
+  async function importBase(item: string) {
+    const [res] = await Promise.all([
+      fetch(registryUrl(item, "tokens.dtcg.json")),
+      loadBaseNotes(item),
+    ]);
+    if (res.ok) loadDoc(await res.json(), item);
   }
 
   function applyPaste() {
     try {
-      loadDoc(JSON.parse(pasteText));
+      loadDoc(JSON.parse(pasteText), null);
     } catch {
       pasteError = strings.invalid;
     }
@@ -191,6 +225,8 @@
 
   onMount(() => {
     state = store().hydrate();
+    // A reload or a shared link restores the base, not its notes: fetch them.
+    if (state.base !== null) void loadBaseNotes(state.base);
   });
 
   $effect(() => {
@@ -270,6 +306,16 @@
         </label>
         {@render scopeToggle()}
       </div>
+
+      <label class="tb-desc">
+        <span class="tb-label">{strings.description}</span>
+        <input
+          type="text"
+          bind:value={state.description}
+          placeholder={strings.descriptionHint}
+          maxlength="200"
+        />
+      </label>
 
       <div class="tb-start">
         <div class="tb-start-head">
@@ -429,6 +475,36 @@
             class="tb-btn"
             aria-label={`${strings.download} tokens.dtcg.json`}
             onclick={() => download(tokensFile, tokensJson, "application/json")}
+          >
+            {strings.download}
+          </button>
+        </div>
+        <div class="tb-file">
+          <span class="tb-file-name">
+            <code>DESIGN.md</code>
+            <small>
+              {notesLoading
+                ? strings.notesLoading
+                : notesKept
+                  ? strings.notesKept
+                  : strings.notesDraft}
+            </small>
+          </span>
+          <button
+            type="button"
+            class="tb-btn"
+            disabled={!bundle.valid || notesLoading}
+            aria-label={`${strings.copy} DESIGN.md`}
+            onclick={(e) => copy(bundle.designMd, e.currentTarget)}
+          >
+            {strings.copy}
+          </button>
+          <button
+            type="button"
+            class="tb-btn"
+            disabled={!bundle.valid || notesLoading}
+            aria-label={`${strings.download} DESIGN.md`}
+            onclick={() => download("DESIGN.md", bundle.designMd, "text/markdown")}
           >
             {strings.download}
           </button>
@@ -947,6 +1023,29 @@
     font-size: 0.8125rem;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+  .tb-file-name {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 0.125rem;
+    min-width: 0;
+  }
+  .tb-file-name code {
+    flex: none;
+  }
+  /* Wraps rather than truncates: the panel is narrow, and the note is the only
+     place that says whether the export carries the base's notes or a draft. */
+  .tb-file-name small {
+    font-size: 0.6875rem;
+    line-height: 1.25;
+    color: var(--muted-foreground);
+  }
+  .tb-desc {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 0 1rem 1rem;
   }
   .tb-file--cli code {
     color: var(--muted-foreground);
