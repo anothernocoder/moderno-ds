@@ -1,7 +1,3 @@
-/**
- * An invalid Field — the error text replaces the helper and is announced —
- * @moderno-ui/react.
- */
 import { Field } from "@moderno-ui/react";
 
 export function FieldInvalidDemo() {

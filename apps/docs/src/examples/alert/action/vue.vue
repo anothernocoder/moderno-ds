@@ -1,9 +1,3 @@
-<!--
-  An Alert with an action — a Button in Alert.Action, under the
-  description — @moderno-ui/vue. The icon is inline SVG: primitives stay
-  icon-agnostic, and the glyph strokes `currentColor`, which the `icon`
-  part sets from the status hue.
--->
 <script setup lang="ts">
 import { Alert, Button } from "@moderno-ui/vue";
 </script>

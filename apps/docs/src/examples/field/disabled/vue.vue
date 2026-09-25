@@ -1,7 +1,3 @@
-<!--
-  A disabled Field — every part dims, the control is inert — @moderno-
-  ui/vue.
--->
 <script setup lang="ts">
 import { Field } from "@moderno-ui/vue";
 </script>

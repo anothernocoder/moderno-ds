@@ -1,6 +1,3 @@
-<!--
-  Button's four everyday variants, side by side — @moderno-ui/vue.
--->
 <script setup lang="ts">
 import { Button } from "@moderno-ui/vue";
 </script>

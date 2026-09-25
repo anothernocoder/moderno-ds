@@ -1,7 +1,3 @@
-/**
- * Card's three surface variants side by side — variant on Card.Root
- * repaints the surface, never the anatomy — @moderno-ui/react.
- */
 import { Button, Card } from "@moderno-ui/react";
 
 export function CardVariantsDemo() {

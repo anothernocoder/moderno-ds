@@ -1,7 +1,3 @@
-<!--
-  Filled cells tint toward the primary colour; once every cell holds a
-  character the whole code turns primary — @moderno-ui/vue.
--->
 <script setup lang="ts">
 import { PinInput } from "@moderno-ui/vue";
 

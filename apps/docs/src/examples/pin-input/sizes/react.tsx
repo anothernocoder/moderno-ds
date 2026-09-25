@@ -1,7 +1,3 @@
-/**
- * PinInput at its three sizes, side by side — size on PinInput.Root sizes
- * every cell — @moderno-ui/react.
- */
 import { PinInput } from "@moderno-ui/react";
 
 const cells = [0, 1, 2, 3];

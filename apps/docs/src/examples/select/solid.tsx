@@ -1,10 +1,4 @@
 /** @jsxImportSource solid-js */
-/**
- * A labelled Select at the default size; the menu is portalled and opens
- * on click — @moderno-ui/solid.
- *
- * See examples/button/solid.tsx for why the pragma above is required.
- */
 import { For } from "solid-js";
 import { Select, Portal, createListCollection } from "@moderno-ui/solid";
 

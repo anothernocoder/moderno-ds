@@ -1,7 +1,3 @@
-<!--
-  PinInput at its three sizes, side by side — size on PinInput.Root sizes
-  every cell — @moderno-ui/vue.
--->
 <script setup lang="ts">
 import { PinInput } from "@moderno-ui/vue";
 

@@ -1,7 +1,3 @@
-<!--
-  A masked PinInput — the cells render as password inputs — @moderno-
-  ui/vue.
--->
 <script setup lang="ts">
 import { PinInput } from "@moderno-ui/vue";
 

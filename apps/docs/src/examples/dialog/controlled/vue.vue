@@ -1,8 +1,3 @@
-<!--
-  A controlled Dialog: the open state is yours, bound with `v-model:open`, so
-  any code can open or close it — here a plain Button outside the dialog, and
-  one inside that closes it — @moderno-ui/vue.
--->
 <script setup lang="ts">
 import { ref } from "vue";
 import { Button, Dialog, Portal } from "@moderno-ui/vue";

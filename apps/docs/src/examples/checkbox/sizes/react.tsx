@@ -1,6 +1,3 @@
-/**
- * Checkbox at its three sizes, side by side — @moderno-ui/react.
- */
 import { Checkbox } from "@moderno-ui/react";
 
 export function CheckboxSizesDemo() {

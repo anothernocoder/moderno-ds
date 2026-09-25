@@ -1,10 +1,3 @@
-<!--
-  Card's three surface variants side by side — variant on Card.Root
-  repaints the surface, never the anatomy — @moderno-ui/svelte.
-
-  This file is the Example the docs page shows *and* mounts (CONTEXT.md
-  "Example"), so the source under the live demo cannot drift from it.
--->
 <script lang="ts">
   import { Button, Card } from "@moderno-ui/svelte";
 </script>

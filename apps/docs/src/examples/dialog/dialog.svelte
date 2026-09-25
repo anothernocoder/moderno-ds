@@ -1,12 +1,3 @@
-<!--
-  A Dialog opened from its trigger: Ark portals the content, traps focus, locks
-  scroll and restores focus to the trigger on close. Triggers render through
-  `asChild`, so each button is the design system's own Button — @moderno-
-  ui/svelte.
-
-  This file is the Example the docs page shows *and* mounts (CONTEXT.md
-  "Example"), so the source under the live demo cannot drift from it.
--->
 <script lang="ts">
   import { Button, Dialog, Portal } from "@moderno-ui/svelte";
 </script>

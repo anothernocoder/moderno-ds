@@ -1,7 +1,3 @@
-/**
- * An alphanumeric PinInput — letters and digits are both accepted, and the
- * cells use a text keyboard — @moderno-ui/react.
- */
 import { PinInput } from "@moderno-ui/react";
 
 const cells = [0, 1, 2, 3, 4, 5];

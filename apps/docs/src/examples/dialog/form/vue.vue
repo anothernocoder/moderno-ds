@@ -1,8 +1,3 @@
-<!--
-  A Dialog holding a short form. With no role override Ark focuses the first
-  focusable element in the content on open — here the input — @moderno-
-  ui/vue.
--->
 <script setup lang="ts">
 import { Button, Dialog, Field, Portal } from "@moderno-ui/vue";
 </script>

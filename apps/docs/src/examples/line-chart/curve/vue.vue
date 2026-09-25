@@ -1,7 +1,3 @@
-<!--
-  The same series drawn through a monotone curve instead of straight
-  segments; the curve factory comes from charts-core — @moderno-ui/vue.
--->
 <script setup lang="ts">
 import { LineChart } from "@moderno-ui/vue";
 import { curveMonotoneX } from "@moderno-ui/charts-core";

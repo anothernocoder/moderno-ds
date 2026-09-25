@@ -1,7 +1,3 @@
-/**
- * A labelled Select at the default size; the menu is portalled and opens
- * on click — @moderno-ui/react.
- */
 import { Select, Portal, createListCollection } from "@moderno-ui/react";
 
 const frameworks = createListCollection({

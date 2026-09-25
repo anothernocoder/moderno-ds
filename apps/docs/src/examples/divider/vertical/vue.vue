@@ -1,7 +1,3 @@
-<!--
-  Bare vertical Dividers between inline items — each rule takes its length
-  from the row — @moderno-ui/vue.
--->
 <script setup lang="ts">
 import { Divider } from "@moderno-ui/vue";
 </script>

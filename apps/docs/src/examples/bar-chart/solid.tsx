@@ -1,10 +1,4 @@
 /** @jsxImportSource solid-js */
-/**
- * One bar per category on a band scale; its colour comes from the
- * `--chart-1` token slot, nothing baked in here — @moderno-ui/solid.
- *
- * See examples/button/solid.tsx for why the pragma above is required.
- */
 import { BarChart } from "@moderno-ui/solid";
 
 const categories = ["Q1", "Q2", "Q3", "Q4"];

@@ -1,10 +1,4 @@
 /** @jsxImportSource solid-js */
-/**
- * One marker per (x, y) sample, no connecting line; its colour comes
- * from the `--chart-1` token slot, nothing baked in here — @moderno-ui/solid.
- *
- * See examples/button/solid.tsx for why the pragma above is required.
- */
 import { ScatterChart } from "@moderno-ui/solid";
 
 const series = [

@@ -1,7 +1,3 @@
-<!--
-  A Select that starts with a value — defaultValue is an array of item
-  values, even for a single pick — @moderno-ui/vue.
--->
 <script setup lang="ts">
 import { Select, Portal, createListCollection } from "@moderno-ui/vue";
 

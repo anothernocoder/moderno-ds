@@ -1,7 +1,3 @@
-/**
- * A disabled Field — every part dims, the control is inert — @moderno-
- * ui/react.
- */
 import { Field } from "@moderno-ui/react";
 
 export function FieldDisabledDemo() {

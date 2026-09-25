@@ -1,11 +1,4 @@
 /** @jsxImportSource solid-js */
-/**
- * A destructive confirmation: role="alertdialog" tells assistive tech the
- * dialog demands a response, and Ark moves initial focus to the first close
- * trigger — Cancel — so Enter never deletes by accident — @moderno-ui/solid.
- *
- * See examples/button/solid.tsx for why the pragma above is required.
- */
 import { Button, Dialog, Portal } from "@moderno-ui/solid";
 
 export function DialogDestructiveDemo() {

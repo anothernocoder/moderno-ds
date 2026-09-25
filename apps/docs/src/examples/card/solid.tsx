@@ -1,10 +1,4 @@
 /** @jsxImportSource solid-js */
-/**
- * A card with every part, at the default outline variant and size —
- * @moderno-ui/solid.
- *
- * See examples/button/solid.tsx for why the pragma above is required.
- */
 import { Button, Card } from "@moderno-ui/solid";
 
 export function CardDemo() {

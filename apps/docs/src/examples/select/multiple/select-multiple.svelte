@@ -1,10 +1,3 @@
-<!--
-  A multiple Select — the menu stays open between picks and the trigger
-  lists every chosen label — @moderno-ui/svelte.
-
-  This file is the Example the docs page shows *and* mounts (CONTEXT.md
-  "Example"), so the source under the live demo cannot drift from it.
--->
 <script lang="ts">
   import { Select, Portal, createListCollection } from "@moderno-ui/svelte";
 

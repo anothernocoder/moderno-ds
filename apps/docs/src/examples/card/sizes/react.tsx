@@ -1,7 +1,3 @@
-/**
- * Card at its three sizes side by side — size on Card.Root sets the
- * padding of every part — @moderno-ui/react.
- */
 import { Card } from "@moderno-ui/react";
 
 export function CardSizesDemo() {

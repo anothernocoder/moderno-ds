@@ -1,10 +1,4 @@
 /** @jsxImportSource solid-js */
-/**
- * A masked PinInput — the cells render as password inputs — @moderno-
- * ui/solid.
- *
- * See examples/button/solid.tsx for why the pragma above is required.
- */
 import { For } from "solid-js";
 import { PinInput } from "@moderno-ui/solid";
 

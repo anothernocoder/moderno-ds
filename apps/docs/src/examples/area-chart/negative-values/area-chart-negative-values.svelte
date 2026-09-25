@@ -1,10 +1,3 @@
-<!--
-  A series that crosses zero; the area fills from the value-0
-  baseline, so negative values fill downward with no extra prop — @moderno-ui/svelte.
-
-  This file is the Example the docs page shows *and* mounts (CONTEXT.md
-  "Example"), so the source under the live demo cannot drift from it.
--->
 <script lang="ts">
   import { AreaChart } from "@moderno-ui/svelte";
 

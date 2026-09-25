@@ -1,10 +1,3 @@
-<!--
-  The same series drawn through a monotone curve instead of straight
-  segments; the curve factory comes from charts-core — @moderno-ui/svelte.
-
-  This file is the Example the docs page shows *and* mounts (CONTEXT.md
-  "Example"), so the source under the live demo cannot drift from it.
--->
 <script lang="ts">
   import { LineChart } from "@moderno-ui/svelte";
   import { curveMonotoneX } from "@moderno-ui/charts-core";

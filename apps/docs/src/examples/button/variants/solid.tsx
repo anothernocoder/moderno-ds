@@ -1,9 +1,4 @@
 /** @jsxImportSource solid-js */
-/**
- * Button's four everyday variants, side by side — @moderno-ui/solid.
- *
- * See examples/button/solid.tsx for why the pragma above is required.
- */
 import { Button } from "@moderno-ui/solid";
 
 export function ButtonVariantsDemo() {

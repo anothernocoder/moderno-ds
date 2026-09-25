@@ -1,10 +1,3 @@
-<!--
-  PinInput at its three sizes, side by side — size on PinInput.Root sizes
-  every cell — @moderno-ui/svelte.
-
-  This file is the Example the docs page shows *and* mounts (CONTEXT.md
-  "Example"), so the source under the live demo cannot drift from it.
--->
 <script lang="ts">
   import { PinInput } from "@moderno-ui/svelte";
 

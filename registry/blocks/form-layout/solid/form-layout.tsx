@@ -1,48 +1,12 @@
 import { Show } from "solid-js";
 import { Alert, Button, Checkbox, Divider, Field } from "@moderno-ui/solid";
 
-/**
- * FormLayout — the grouped settings form: a titled section per group of related
- * fields, a field grid that goes one-up → two-up, and one actions row for the
- * whole form. Copy it into your project with `moderno add form-layout-solid`
- * and edit it freely: the groups, the fields and the copy are yours from that
- * moment, and every visual comes from the token contract, so a theme re-skins
- * it without a diff here.
- *
- * Presentational: the block holds no values, issues no request and hands the
- * native submit event back.
- *
- * Responsive to its container, not the viewport (ADR-0005) — the root declares
- * `@container` and uses all three contract steps: at `@sm` (--container-sm) the
- * actions row stops stacking and lines up to the trailing edge; at `@md`
- * (--container-md) the field grid goes one-up → two-up; at `@lg`
- * (--container-lg) each group's heading leaves the top of its fields and sits
- * beside them, turning a long scroll into a scannable index of the form.
- *
- * States: default and empty are the same render (a form is the input surface,
- * and there is no collection here to be empty of); hover and focus-visible come
- * from the primitives' own rules; disabled makes the form read-only; loading
- * makes it inert and marks the submit aria-busy; error renders a form-level
- * Alert plus, per key in `errors`, that field's own Field.ErrorText. Unlike a
- * sign-in form, a settings form names the field that failed — the person
- * editing it already owns the account.
- *
- * Class strings are written out in full rather than shared through a constant:
- * the docs compile the previews' Tailwind from `class` attributes, so a class
- * assembled in JS would render here and vanish in the preview.
- */
 export interface FormLayoutProps {
-  /** Form-level failure message — what went wrong with the save as a whole. */
   error?: string;
-  /** Per-field messages keyed by the field's `name`; each marks that field invalid. */
   errors?: Record<string, string>;
-  /** The save is in flight: every control is inert and the submit reads busy. */
   loading?: boolean;
-  /** The form is read-only (a viewer-role member, a locked account). */
   disabled?: boolean;
-  /** Native submit; call `event.preventDefault()` and read the form yourself. */
   onSubmit?: (event: SubmitEvent) => void;
-  /** Discard: the trailing "Cancel" in the actions row. */
   onCancel?: () => void;
 }
 

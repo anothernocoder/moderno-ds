@@ -1,109 +1,30 @@
-<!--
-  AlertList — the notification centre: a stack of status alerts, newest first,
-  each dismissible on its own, under a heading that can clear the lot. Copy it
-  into your project with `moderno add alert-list-svelte` and edit it freely: the
-  copy, the sample notifications and the order are yours from that moment, and
-  every visual comes from the token contract, so a theme re-skins it without a
-  diff here.
-
-  Presentational. The block owns no notifications and removes nothing: it
-  renders the `alerts` it is handed and reports the id of whatever the reader
-  dismissed or acted on. Keep the array in your own state and drop the item
-  there — that way an optimistic removal and an undo are both yours to decide.
-
-  Responsive to its container, not the viewport (ADR-0005). The root declares
-  `@container` and the block makes one decision at each contract step: at `@sm`
-  (--container-sm, 24rem) the header stops stacking and the heading shares a row
-  with "Dismiss all"; at `@md` (--container-md, 36rem) each alert's dismiss
-  control grows its label, a glyph in a drawer and a word once there is room;
-  at `@lg` (--container-lg, 48rem) each alert's timestamp leaves the stack under
-  its title and moves to the trailing edge on the title's baseline, which turns
-  the list into a scannable timeline. The same file is therefore right in a
-  320px notification drawer, in a panel and on a full-width activity page, with
-  no media query anywhere.
-
-  States. Default is the list. Empty is a state of its own — the collection
-  loaded and there is nothing in it — so it renders the "all caught up" card
-  rather than an empty box; pass `alerts={[]}` to see it. Loading replaces the
-  list with a polite busy region (the spinner stops under
-  prefers-reduced-motion), because a stale list under a spinner invites the
-  reader to act on rows that are about to change. Error means the list itself
-  could not be loaded, so it renders one Alert with a retry rather than
-  pretending the collection is empty. Disabled keeps the alerts on screen and
-  makes every control inert — an audit or read-only view. Hover and
-  focus-visible are the primitives' own rules from components.css.
-
-  Each row keeps Alert's live-region role (`alert` for warning and error,
-  `status` otherwise), so an alert appended to a mounted list is announced; a
-  list rendered with the page is not, which is the behaviour a notification
-  centre wants.
-
-  Icons are inline SVG stroking `currentColor`, not an icon package: the `icon`
-  part hands down the status hue, so a glyph follows the theme, and the block
-  stays installable without pulling an icon set into your dependencies.
-
-  The heading and its sentence are props with the notification-centre wording as
-  defaults, because the same stack is a service-status panel on a sign-in screen
-  and an audit trail on a settings page: a block that hardcodes "your workspace
-  while you were away" can only be composed into one of them.
-
-  The timestamp is an Alert.Description too, sized down, rather than a muted
-  span of the block's own: secondary text on a status tint has to come from the
-  primitive, because the tint eats --muted-foreground's AA margin and a block
-  may not invent a colour to make up the difference.
-
-  Class strings are written out in full rather than shared through a variable:
-  the docs compile the previews' Tailwind from `class` attributes, so a class
-  assembled in JS would render here and vanish in the preview.
--->
 <script lang="ts">
   import { Alert, Button, Card } from "@moderno-ui/svelte";
 
   type AlertListVariant = "info" | "success" | "warning" | "error";
 
   interface AlertListItem {
-    /** Stable identity — what `ondismiss` and `onaction` report back. */
     id: string;
-    /** Which status the row speaks in; picks the tint, the glyph and the role. */
     variant: AlertListVariant;
-    /** The one line a reader scans. */
     title: string;
-    /** The sentence under it, when the title is not the whole story. */
     description?: string;
-    /** When it happened, already phrased for a reader ("2 min ago"). */
     meta?: string;
-    /** Label of the row's own action; omit for an alert that is only news. */
     actionLabel?: string;
   }
 
   interface Props {
-    /** The notifications to render, newest first. `[]` renders the empty state. */
     alerts?: AlertListItem[];
-    /** The heading over the stack — what this collection *is*. */
     heading?: string;
-    /** The sentence under the heading; pass `""` for a heading on its own. */
     description?: string;
-    /** The list itself could not be loaded; this message replaces it. */
     error?: string;
-    /** The list is being loaded or refreshed: a busy region stands in for it. */
     loading?: boolean;
-    /** Read-only: the alerts stay on screen and every control is inert. */
     disabled?: boolean;
-    /** A row's dismiss control; you remove the item from your own state. */
     ondismiss?: (id: string) => void;
-    /** Clear the whole list. */
     ondismissall?: () => void;
-    /** A row's own action (`actionLabel`), reported with that row's id. */
     onaction?: (id: string) => void;
-    /** Retry after `error`. */
     onretry?: () => void;
   }
 
-  /**
-   * The sample feed. A block has to be something concrete, so this is a real
-   * workspace's morning: one of each status, most urgent first. Delete it and
-   * pass your own `alerts` — or rewrite it in place, the file is yours.
-   */
   const sampleAlerts: AlertListItem[] = [
     {
       id: "payment",
@@ -139,7 +60,6 @@
     },
   ];
 
-  /** The glyph inside each status circle — the same four shapes the Alert docs use. */
   const statusPath: Record<AlertListVariant, string> = {
     info: "M12 16v-4M12 8h.01",
     success: "m8 12 2.5 2.5L16 9",

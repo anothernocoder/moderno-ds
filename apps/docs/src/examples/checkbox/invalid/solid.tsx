@@ -1,10 +1,4 @@
 /** @jsxImportSource solid-js */
-/**
- * An invalid Checkbox — the box border re-colours from --destructive —
- * @moderno-ui/solid.
- *
- * See examples/button/solid.tsx for why the pragma above is required.
- */
 import { Checkbox } from "@moderno-ui/solid";
 
 export function CheckboxInvalidDemo() {

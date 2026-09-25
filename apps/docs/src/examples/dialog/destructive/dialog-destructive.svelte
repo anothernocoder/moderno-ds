@@ -1,11 +1,3 @@
-<!--
-  A destructive confirmation: role="alertdialog" tells assistive tech the
-  dialog demands a response, and Ark moves initial focus to the first close
-  trigger — Cancel — so Enter never deletes by accident — @moderno-ui/svelte.
-
-  This file is the Example the docs page shows *and* mounts (CONTEXT.md
-  "Example"), so the source under the live demo cannot drift from it.
--->
 <script lang="ts">
   import { Button, Dialog, Portal } from "@moderno-ui/svelte";
 </script>

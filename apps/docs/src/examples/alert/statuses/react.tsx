@@ -1,8 +1,3 @@
-/**
- * Alert in its four statuses, stacked — @moderno-ui/react. The icon is
- * inline SVG: primitives stay icon-agnostic, and every glyph strokes
- * `currentColor`, which the `icon` part sets from the status hue.
- */
 import { Alert } from "@moderno-ui/react";
 
 function CircleIcon({ path }: { path: string }) {

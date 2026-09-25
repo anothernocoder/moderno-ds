@@ -1,17 +1,5 @@
 import { Button } from "@moderno-ui/react";
 
-/**
- * Pricing — an ejected block that composes @moderno-ui/react primitives
- * (Button) into a three-plan pricing section. Copy it into your project and
- * edit the plans array freely. Themed via CSS variables from the design
- * system; no hardcoded colors, radii, or fonts live here.
- *
- * Responsive to its *container*, not the viewport (ADR-0005): the root declares
- * `@container`, and the plan grid goes one-up → three-up at `@md`, the
- * `--container-md` step of the token contract. Drop this block in a sidebar and
- * it stacks; drop it in a page and it spreads — with no viewport media query,
- * so it never has to know where it was mounted.
- */
 const plans = [
   { name: "Starter", price: "$0/mo", features: ["1 project", "Community support", "1 GB storage"] },
   {

@@ -1,7 +1,3 @@
-/**
- * An invalid PinInput — every cell switches to the destructive border —
- * @moderno-ui/react.
- */
 import { PinInput } from "@moderno-ui/react";
 
 const cells = [0, 1, 2, 3];

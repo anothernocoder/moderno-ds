@@ -1,6 +1,3 @@
-<!--
-  Two series on one frame; each paints from `--chart-1…5` by its index — @moderno-ui/vue.
--->
 <script setup lang="ts">
 import { LineChart } from "@moderno-ui/vue";
 

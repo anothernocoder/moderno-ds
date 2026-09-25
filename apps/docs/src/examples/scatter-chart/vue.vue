@@ -1,7 +1,3 @@
-<!--
-  One marker per (x, y) sample, no connecting line; its colour comes
-  from the `--chart-1` token slot, nothing baked in here — @moderno-ui/vue.
--->
 <script setup lang="ts">
 import { ScatterChart } from "@moderno-ui/vue";
 

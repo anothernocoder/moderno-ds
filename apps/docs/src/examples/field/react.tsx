@@ -1,7 +1,3 @@
-/**
- * A labelled input with helper text, at the default size — @moderno-
- * ui/react.
- */
 import { Field } from "@moderno-ui/react";
 
 export function FieldDemo() {

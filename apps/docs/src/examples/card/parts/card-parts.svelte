@@ -1,10 +1,3 @@
-<!--
-  Every Card part is optional — a header and footer with no content, and a
-  content-only card — @moderno-ui/svelte.
-
-  This file is the Example the docs page shows *and* mounts (CONTEXT.md
-  "Example"), so the source under the live demo cannot drift from it.
--->
 <script lang="ts">
   import { Button, Card } from "@moderno-ui/svelte";
 </script>

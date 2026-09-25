@@ -1,10 +1,4 @@
 /** @jsxImportSource solid-js */
-/**
- * Larger markers: `radius` sets the size of every point in the chart,
- * in pixels — @moderno-ui/solid.
- *
- * See examples/button/solid.tsx for why the pragma above is required.
- */
 import { ScatterChart } from "@moderno-ui/solid";
 
 const series = [

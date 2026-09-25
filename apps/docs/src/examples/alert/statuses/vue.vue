@@ -1,8 +1,3 @@
-<!--
-  Alert in its four statuses, stacked — @moderno-ui/vue. The icon is
-  inline SVG: primitives stay icon-agnostic, and every glyph strokes
-  `currentColor`, which the `icon` part sets from the status hue.
--->
 <script setup lang="ts">
 import { Alert } from "@moderno-ui/vue";
 </script>

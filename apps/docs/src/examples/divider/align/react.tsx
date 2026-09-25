@@ -1,7 +1,3 @@
-/**
- * A labelled Divider at each of its three label alignments —
- * @moderno-ui/react.
- */
 import { Divider } from "@moderno-ui/react";
 
 export function DividerAlignDemo() {

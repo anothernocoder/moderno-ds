@@ -1,10 +1,4 @@
 /** @jsxImportSource solid-js */
-/**
- * Select at its three sizes, side by side — size on Select.Root sets the
- * trigger's height and type — @moderno-ui/solid.
- *
- * See examples/button/solid.tsx for why the pragma above is required.
- */
 import { For } from "solid-js";
 import { Select, Portal, createListCollection } from "@moderno-ui/solid";
 

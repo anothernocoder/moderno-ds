@@ -1,10 +1,4 @@
 /** @jsxImportSource solid-js */
-/**
- * A `format` function turns each value-axis tick into a label with its
- * unit — @moderno-ui/solid.
- *
- * See examples/button/solid.tsx for why the pragma above is required.
- */
 import { BarChart } from "@moderno-ui/solid";
 
 const categories = ["Q1", "Q2", "Q3", "Q4"];

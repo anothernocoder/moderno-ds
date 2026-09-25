@@ -1,7 +1,3 @@
-/**
- * A masked PinInput — the cells render as password inputs — @moderno-
- * ui/react.
- */
 import { PinInput } from "@moderno-ui/react";
 
 const cells = [0, 1, 2, 3];

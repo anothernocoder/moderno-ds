@@ -1,10 +1,3 @@
-<!--
-  Filled cells tint toward the primary colour; once every cell holds a
-  character the whole code turns primary — @moderno-ui/svelte.
-
-  This file is the Example the docs page shows *and* mounts (CONTEXT.md
-  "Example"), so the source under the live demo cannot drift from it.
--->
 <script lang="ts">
   import { PinInput } from "@moderno-ui/svelte";
 

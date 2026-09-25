@@ -1,7 +1,3 @@
-<!--
-  One bar per category on a band scale; its colour comes from the
-  `--chart-1` token slot, nothing baked in here — @moderno-ui/vue.
--->
 <script setup lang="ts">
 import { BarChart } from "@moderno-ui/vue";
 

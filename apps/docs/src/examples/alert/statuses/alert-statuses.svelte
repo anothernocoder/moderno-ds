@@ -1,11 +1,3 @@
-<!--
-  Alert in its four statuses, stacked — @moderno-ui/svelte. The icon is
-  inline SVG: primitives stay icon-agnostic, and every glyph strokes
-  `currentColor`, which the `icon` part sets from the status hue.
-
-  This file is the Example the docs page shows *and* mounts (CONTEXT.md
-  "Example"), so the source under the live demo cannot drift from it.
--->
 <script lang="ts">
   import { Alert } from "@moderno-ui/svelte";
 </script>

@@ -1,7 +1,3 @@
-<!--
-  Field at its three sizes, side by side — one size on Field.Root sizes
-  every part — @moderno-ui/vue.
--->
 <script setup lang="ts">
 import { Field } from "@moderno-ui/vue";
 </script>

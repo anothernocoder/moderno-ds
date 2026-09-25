@@ -1,11 +1,3 @@
-<!--
-  A captioned vertical Divider between two alternative fields — the
-  caption turns sideways and the rule runs the height of the row —
-  @moderno-ui/svelte.
-
-  This file is the Example the docs page shows *and* mounts (CONTEXT.md
-  "Example"), so the source under the live demo cannot drift from it.
--->
 <script lang="ts">
   import { Divider, Field } from "@moderno-ui/svelte";
 </script>

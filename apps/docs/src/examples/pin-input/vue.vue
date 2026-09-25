@@ -1,7 +1,3 @@
-<!--
-  A six-digit one-time code at the default size; the hidden input carries
-  the joined code into a form — @moderno-ui/vue.
--->
 <script setup lang="ts">
 import { PinInput } from "@moderno-ui/vue";
 

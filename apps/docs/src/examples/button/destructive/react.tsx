@@ -1,7 +1,3 @@
-/**
- * A destructive Button beside the outline escape hatch it is usually
- * paired with — @moderno-ui/react.
- */
 import { Button } from "@moderno-ui/react";
 
 export function ButtonDestructiveDemo() {

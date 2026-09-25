@@ -1,7 +1,3 @@
-<!--
-  An invalid Field — the error text replaces the helper and is announced —
-  @moderno-ui/vue.
--->
 <script setup lang="ts">
 import { Field } from "@moderno-ui/vue";
 </script>

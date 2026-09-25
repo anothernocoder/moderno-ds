@@ -1,7 +1,3 @@
-<!--
-  A multiple Select — the menu stays open between picks and the trigger
-  lists every chosen label — @moderno-ui/vue.
--->
 <script setup lang="ts">
 import { Select, Portal, createListCollection } from "@moderno-ui/vue";
 

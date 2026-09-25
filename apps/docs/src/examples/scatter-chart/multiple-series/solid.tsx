@@ -1,10 +1,4 @@
 /** @jsxImportSource solid-js */
-/**
- * Two groups of samples on one frame; each paints from `--chart-1…5`
- * by its series index — @moderno-ui/solid.
- *
- * See examples/button/solid.tsx for why the pragma above is required.
- */
 import { ScatterChart } from "@moderno-ui/solid";
 
 const series = [

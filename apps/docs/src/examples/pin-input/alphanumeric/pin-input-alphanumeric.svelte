@@ -1,10 +1,3 @@
-<!--
-  An alphanumeric PinInput — letters and digits are both accepted, and the
-  cells use a text keyboard — @moderno-ui/svelte.
-
-  This file is the Example the docs page shows *and* mounts (CONTEXT.md
-  "Example"), so the source under the live demo cannot drift from it.
--->
 <script lang="ts">
   import { PinInput } from "@moderno-ui/svelte";
 

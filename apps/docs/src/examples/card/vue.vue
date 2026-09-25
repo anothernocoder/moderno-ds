@@ -1,7 +1,3 @@
-<!--
-  A card with every part, at the default outline variant and size —
-  @moderno-ui/vue.
--->
 <script setup lang="ts">
 import { Button, Card } from "@moderno-ui/vue";
 </script>

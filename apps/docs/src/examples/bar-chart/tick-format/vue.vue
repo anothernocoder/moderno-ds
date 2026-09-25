@@ -1,7 +1,3 @@
-<!--
-  A `format` function turns each value-axis tick into a label with its
-  unit — @moderno-ui/vue.
--->
 <script setup lang="ts">
 import { BarChart } from "@moderno-ui/vue";
 

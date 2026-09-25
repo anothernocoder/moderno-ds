@@ -1,7 +1,3 @@
-<!--
-  Two groups of samples on one frame; each paints from `--chart-1…5`
-  by its series index — @moderno-ui/vue.
--->
 <script setup lang="ts">
 import { ScatterChart } from "@moderno-ui/vue";
 

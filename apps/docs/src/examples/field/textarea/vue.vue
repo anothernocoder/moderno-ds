@@ -1,7 +1,3 @@
-<!--
-  A Field with a Textarea — same wiring, a minimum height, vertical resize
-  only — @moderno-ui/vue.
--->
 <script setup lang="ts">
 import { Field } from "@moderno-ui/vue";
 </script>

@@ -1,9 +1,4 @@
 /** @jsxImportSource solid-js */
-/**
- * Two series on one frame; each paints from `--chart-1…5` by its index — @moderno-ui/solid.
- *
- * See examples/button/solid.tsx for why the pragma above is required.
- */
 import { LineChart } from "@moderno-ui/solid";
 
 const series = [

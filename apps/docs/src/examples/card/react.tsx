@@ -1,7 +1,3 @@
-/**
- * A card with every part, at the default outline variant and size —
- * @moderno-ui/react.
- */
 import { Button, Card } from "@moderno-ui/react";
 
 export function CardDemo() {

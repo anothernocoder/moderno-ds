@@ -1,12 +1,4 @@
 /** @jsxImportSource solid-js */
-/**
- * An Alert with an action — a Button in Alert.Action, under the
- * description — @moderno-ui/solid. The icon is inline SVG: primitives stay
- * icon-agnostic, and the glyph strokes `currentColor`, which the `icon`
- * part sets from the status hue.
- *
- * See examples/button/solid.tsx for why the pragma above is required.
- */
 import { Alert, Button } from "@moderno-ui/solid";
 
 export function AlertActionDemo() {

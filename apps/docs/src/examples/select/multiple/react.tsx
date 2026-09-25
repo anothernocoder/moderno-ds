@@ -1,7 +1,3 @@
-/**
- * A multiple Select — the menu stays open between picks and the trigger
- * lists every chosen label — @moderno-ui/react.
- */
 import { Select, Portal, createListCollection } from "@moderno-ui/react";
 
 const frameworks = createListCollection({
