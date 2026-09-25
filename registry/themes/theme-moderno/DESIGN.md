@@ -143,7 +143,7 @@ A monochrome workspace with sharp corners. A near-black ink carries both the tex
 - **Color.** `primary` is the ink, and it also draws the focus `ring`. Status hues and `chart-*` are the only chroma in the theme.
 - **Type.** Hedvig Letters Sans carries the whole interface, with Hedvig Letters Serif for display moments. Hedvig Letters Sans ships a single 400 face, so the heavier weights are synthesized by the browser.
 - **Shape.** Sharp: buttons, inputs, cards, and surfaces are square-cornered. Only `rounded.full` rounds, for pills, badges, avatars, and status dots.
-- **Depth.** Each shadow step pairs a hairline ring with a soft drop, so an overlay still reads against the near-black canvas.
+- **Depth.** Overlays lift on a soft drop shadow and the surface's own 1px `border`, with no extra ring stacked on it, so an overlay still reads against the near-black canvas.
 - **Button.** The primary button is the ink fill with `primary-foreground` text.
 
 ### Writing tone
