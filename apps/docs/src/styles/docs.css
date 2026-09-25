@@ -781,8 +781,8 @@ main.main--wide {
 /* The theme builder's lead (and any other bare lead). */
 .page-lead {
   color: var(--docs-fg-muted);
-  font-size: var(--text-body-lg);
-  line-height: var(--leading-body-lg);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
 }
 
 /* Page header — H1, a one-line lead, then quiet pill actions; tight inside,
