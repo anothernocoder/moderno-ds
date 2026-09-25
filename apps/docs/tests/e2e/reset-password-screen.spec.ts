@@ -124,8 +124,10 @@ async function screenMetrics(page: Page, tab: Tab): Promise<ScreenMetrics[]> {
           )
         : [];
       return {
-        containerWidth: root.getBoundingClientRect().width,
-        rootHeight: root.getBoundingClientRect().height,
+        // Layout size, not the painted box: the docs scale the device to fit the
+        // column, and that transform never changes what the container reads.
+        containerWidth: (root as HTMLElement).offsetWidth,
+        rootHeight: (root as HTMLElement).offsetHeight,
         frameHeight: (root.parentElement as HTMLElement).clientHeight,
         mastheadDisplay: getComputedStyle(masthead).display,
         footerDisplay: getComputedStyle(footer).display,

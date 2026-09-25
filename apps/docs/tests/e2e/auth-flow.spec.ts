@@ -133,8 +133,10 @@ async function flowMetrics(page: Page): Promise<FlowMetrics[]> {
       const footer = root.querySelector("footer");
       if (!masthead || !footer) throw new Error("the screen lost its own markup");
       return {
-        containerWidth: root.getBoundingClientRect().width,
-        rootHeight: root.getBoundingClientRect().height,
+        // Layout size, not the painted box: the docs scale the device to fit the
+        // column, and that transform never changes what the container reads.
+        containerWidth: (root as HTMLElement).offsetWidth,
+        rootHeight: (root as HTMLElement).offsetHeight,
         frameHeight: (wrapper.parentElement as HTMLElement).clientHeight,
         mastheadDisplay: getComputedStyle(masthead).display,
         footerDisplay: getComputedStyle(footer).display,
