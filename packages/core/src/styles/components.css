@@ -554,6 +554,121 @@
     font-size: var(--text-ui-lg);
   }
 
+  /* ─────────────────────────── Switch ─────────────────────────── *
+   * `switchRecipe` size on the root part; every visual state is Ark's own
+   * attribute — data-state="checked|unchecked" plus data-disabled /
+   * data-invalid / data-readonly / data-focus-visible. Parts root > control
+   * (the track) > thumb, plus label and the hidden native input, which carries
+   * focus, so the ring is drawn on the track. The track is always one spacing
+   * step taller than the thumb, so the thumb sits half a step from the edge
+   * and travels (track width − track height) when on.                      */
+  [data-scope="switch"][data-part="root"] {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    cursor: pointer;
+  }
+  /*
+   * Ark stamps data-disabled on EVERY part, and the base layer dims anything
+   * carrying it — nesting would multiply the opacity. Dim the root once and
+   * leave its parts opaque.
+   */
+  [data-scope="switch"][data-part="root"][data-disabled] :where([data-part]) {
+    opacity: 1;
+  }
+  [data-scope="switch"][data-part="root"][data-readonly] {
+    cursor: default;
+  }
+  [data-scope="switch"][data-part="control"] {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    width: calc(var(--spacing-8) + var(--spacing-1));
+    height: var(--spacing-5);
+    padding: calc(var(--spacing-1) / 2);
+    border-radius: var(--radius-full);
+    background-color: var(--input);
+    transition: background-color var(--motion-fast);
+  }
+  [data-scope="switch"][data-part="control"][data-state="checked"] {
+    background-color: var(--primary);
+  }
+  /* Invalid rings the track from --destructive, inside its edge, so the ring
+     never collides with the focus outline. */
+  [data-scope="switch"][data-part="control"][data-invalid] {
+    box-shadow: inset 0 0 0 1px var(--destructive);
+  }
+  /* Focus lives on the visually hidden input, so the ring is drawn here. */
+  [data-scope="switch"][data-part="control"][data-focus-visible] {
+    outline-color: var(--ring);
+    outline-style: solid;
+    outline-width: 2px;
+    outline-offset: 2px;
+  }
+  [data-scope="switch"][data-part="thumb"] {
+    display: block;
+    flex: none;
+    width: var(--spacing-4);
+    height: var(--spacing-4);
+    border-radius: var(--radius-full);
+    /* Off, the knob is --muted-foreground: it reads against the --input track
+       in light and dark themes alike, where a --background knob would all but
+       vanish into a dark track. */
+    background-color: var(--muted-foreground);
+    transition:
+      margin-inline-start var(--motion-fast),
+      background-color var(--motion-fast);
+  }
+  /* On: the thumb slides to the far (inline-end) edge — mirrored in RTL — and
+     takes the foreground that the contract pairs with --primary. */
+  [data-scope="switch"][data-part="thumb"][data-state="checked"] {
+    margin-inline-start: calc(var(--spacing-8) + var(--spacing-1) - var(--spacing-5));
+    background-color: var(--primary-foreground);
+  }
+  [data-scope="switch"][data-part="label"] {
+    font-size: var(--text-ui-md);
+    line-height: var(--leading-ui-md);
+    color: var(--foreground);
+    user-select: none;
+  }
+  /* Density driven by the recipe's data-size on the root part. */
+  [data-scope="switch"][data-size="sm"] [data-part="control"] {
+    width: var(--spacing-7);
+    height: var(--spacing-4);
+  }
+  [data-scope="switch"][data-size="sm"] [data-part="thumb"] {
+    width: var(--spacing-3);
+    height: var(--spacing-3);
+  }
+  [data-scope="switch"][data-size="sm"] [data-part="thumb"][data-state="checked"] {
+    margin-inline-start: calc(var(--spacing-7) - var(--spacing-4));
+  }
+  [data-scope="switch"][data-size="sm"] [data-part="label"] {
+    font-size: var(--text-ui-sm);
+    line-height: var(--leading-ui-sm);
+  }
+  [data-scope="switch"][data-size="lg"] [data-part="control"] {
+    width: calc(var(--spacing-8) + var(--spacing-3));
+    height: var(--spacing-6);
+  }
+  [data-scope="switch"][data-size="lg"] [data-part="thumb"] {
+    width: var(--spacing-5);
+    height: var(--spacing-5);
+  }
+  [data-scope="switch"][data-size="lg"] [data-part="thumb"][data-state="checked"] {
+    margin-inline-start: calc(var(--spacing-8) + var(--spacing-3) - var(--spacing-6));
+  }
+  [data-scope="switch"][data-size="lg"] [data-part="label"] {
+    font-size: var(--text-ui-lg);
+    line-height: var(--leading-ui-lg);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-scope="switch"][data-part="control"],
+    [data-scope="switch"][data-part="thumb"] {
+      transition: none;
+    }
+  }
+
   /* ─────────────────────────── Dialog ─────────────────────────── *
    * Ark owns portal + focus trap + ids. Scope "dialog".               */
   /* The scrim is its own slot, not a mix of --foreground: that slot is

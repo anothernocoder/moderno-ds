@@ -152,3 +152,21 @@ describe("moderno/valid-props over the real Callout manifest", () => {
     ]);
   });
 });
+
+describe("moderno/valid-props over the real Switch manifest", () => {
+  const manifests = manifestsFor("react");
+  const check = (code: string) =>
+    validProps.check({ code, framework: "react", manifests }).map((f) => f.message);
+
+  it("accepts the recipe prop and Ark's own props on the root", { timeout: 30_000 }, () => {
+    expect(
+      check('<Switch.Root size="lg" checked={on} onCheckedChange={save} name="alerts" />'),
+    ).toEqual([]);
+  });
+
+  it("rejects a size outside the recipe", () => {
+    expect(check('<Switch.Root size="xl" />')).toEqual([
+      expect.stringContaining('Invalid value "xl"'),
+    ]);
+  });
+});

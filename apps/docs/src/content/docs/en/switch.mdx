@@ -1,0 +1,229 @@
+---
+title: Switch
+description: An on/off control with a label, for a setting that takes effect at once.
+group: Components
+order: 26
+component: Switch
+pkg: "@moderno-ui/react"
+agentPropsHash: "sha256:2d025bf6027702d5524baeb72dda7e0a06bf50898ddb86fc73bf215db536fb84"
+agent:
+  intent: Turn one setting on or off, with the change applied at once.
+  whenToUse: A preference in a settings list — notifications, dark mode, auto-save — that takes effect without a submit button.
+  whenNotToUse:
+    - case: A choice that only applies when the user submits a form, like accepting terms
+      use: Checkbox
+    - case: A mixed (indeterminate) state, like a "select all" row
+      use: Checkbox
+    - case: One choice out of 2–5 mutually exclusive options
+      use: Radio Group
+  gotchas:
+    - 'Render Switch.HiddenInput — it is the real form control that carries name/value and focus, and Moderno gives it role="switch".'
+    - "Switch.Thumb goes inside Switch.Control; the label sits beside the control, not inside it."
+    - "size is the only visual knob; on/off, disabled, invalid and read-only are Ark's data-state and data-* attributes, not props to style around."
+  theming:
+    - "The track is --input when off and --primary when on; the thumb is --background, then --primary-foreground."
+    - "Invalid rings the track from --destructive; do not pass a hex."
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import SwitchDemo from "../../../examples/switch/switch.svelte";
+import baseReact from "../../../examples/switch/react.tsx?raw";
+import baseVue from "../../../examples/switch/vue.vue?raw";
+import baseSolid from "../../../examples/switch/solid.tsx?raw";
+import baseSvelte from "../../../examples/switch/switch.svelte?raw";
+import SwitchStatesDemo from "../../../examples/switch/states/switch-states.svelte";
+import statesReact from "../../../examples/switch/states/react.tsx?raw";
+import statesVue from "../../../examples/switch/states/vue.vue?raw";
+import statesSolid from "../../../examples/switch/states/solid.tsx?raw";
+import statesSvelte from "../../../examples/switch/states/switch-states.svelte?raw";
+import SwitchSizesDemo from "../../../examples/switch/sizes/switch-sizes.svelte";
+import sizesReact from "../../../examples/switch/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/switch/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/switch/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/switch/sizes/switch-sizes.svelte?raw";
+import SwitchDisabledDemo from "../../../examples/switch/disabled/switch-disabled.svelte";
+import disabledReact from "../../../examples/switch/disabled/react.tsx?raw";
+import disabledVue from "../../../examples/switch/disabled/vue.vue?raw";
+import disabledSolid from "../../../examples/switch/disabled/solid.tsx?raw";
+import disabledSvelte from "../../../examples/switch/disabled/switch-disabled.svelte?raw";
+import SwitchInvalidDemo from "../../../examples/switch/invalid/switch-invalid.svelte";
+import invalidReact from "../../../examples/switch/invalid/react.tsx?raw";
+import invalidVue from "../../../examples/switch/invalid/vue.vue?raw";
+import invalidSolid from "../../../examples/switch/invalid/solid.tsx?raw";
+import invalidSvelte from "../../../examples/switch/invalid/switch-invalid.svelte?raw";
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
+  <SwitchDemo client:visible />
+</Preview>
+
+## Installation
+
+<Install pkg="@moderno-ui/react" />
+
+## Usage
+
+A switch turns one setting on or off, and the change applies right away. Use it for preferences, not for answers the user submits with a form.
+
+<ForFramework fw="react">
+
+```tsx
+import { Switch } from "@moderno-ui/react";
+```
+
+```tsx
+<Switch.Root>
+  <Switch.Control>
+    <Switch.Thumb />
+  </Switch.Control>
+  <Switch.Label>Email notifications</Switch.Label>
+  <Switch.HiddenInput />
+</Switch.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Switch } from "@moderno-ui/vue";
+```
+
+```vue
+<Switch.Root>
+  <Switch.Control>
+    <Switch.Thumb />
+  </Switch.Control>
+  <Switch.Label>Email notifications</Switch.Label>
+  <Switch.HiddenInput />
+</Switch.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Switch } from "@moderno-ui/svelte";
+```
+
+```svelte
+<Switch.Root>
+  <Switch.Control>
+    <Switch.Thumb />
+  </Switch.Control>
+  <Switch.Label>Email notifications</Switch.Label>
+  <Switch.HiddenInput />
+</Switch.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Switch } from "@moderno-ui/solid";
+```
+
+```tsx
+<Switch.Root>
+  <Switch.Control>
+    <Switch.Thumb />
+  </Switch.Control>
+  <Switch.Label>Email notifications</Switch.Label>
+  <Switch.HiddenInput />
+</Switch.Root>
+```
+
+</ForFramework>
+
+## API Reference
+
+### Switch.Root
+
+`size` is the Moderno addition and defaults to `md`; the other props come from Ark's Switch.
+
+<PropsTable component="Switch" />
+
+| Prop              | Type                             | Default | Description                                                 |
+| ----------------- | -------------------------------- | ------- | ----------------------------------------------------------- |
+| `checked`         | `boolean`                        | —       | Controlled state. Pair with `onCheckedChange`.              |
+| `defaultChecked`  | `boolean`                        | `false` | Initial state when uncontrolled.                            |
+| `onCheckedChange` | `(details: { checked }) => void` | —       | Called when the switch turns on or off.                     |
+| `disabled`        | `boolean`                        | `false` | Disables the hidden input and dims every part.              |
+| `invalid`         | `boolean`                        | `false` | Sets `aria-invalid` and rings the track in `--destructive`. |
+| `readOnly`        | `boolean`                        | `false` | Shows the state but ignores clicks.                         |
+| `required`        | `boolean`                        | `false` | Marks the input as required.                                |
+| `name`            | `string`                         | —       | Form field name.                                            |
+| `value`           | `string`                         | `"on"`  | Value submitted with the form when on.                      |
+
+### Parts
+
+| Part                 | Element                   | Description                                                                                                |
+| -------------------- | ------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `Switch.Root`        | `<label>`                 | Carries `data-size`; clicking anywhere on it toggles the switch.                                           |
+| `Switch.Control`     | `<span>`                  | The track.                                                                                                 |
+| `Switch.Thumb`       | `<span>`                  | The knob inside the track; it slides to the far end when on.                                               |
+| `Switch.Label`       | `<span>`                  | The text beside the track.                                                                                 |
+| `Switch.HiddenInput` | `<input type="checkbox">` | Visually hidden native input with `role="switch"`; it carries focus, `name` and `value`. Always render it. |
+
+### Data attributes
+
+| Attribute       | Values                                      |
+| --------------- | ------------------------------------------- |
+| `data-state`    | `"checked"` or `"unchecked"`, on every part |
+| `data-disabled` | Present while `disabled`                    |
+| `data-invalid`  | Present while `invalid`                     |
+| `data-readonly` | Present while `readOnly`                    |
+| `data-size`     | On the root: `"sm"`, `"md"` or `"lg"`       |
+
+## Examples
+
+### States
+
+<Preview
+  examples={{ react: statesReact, vue: statesVue, solid: statesSolid, svelte: statesSvelte }}
+>
+  <SwitchStatesDemo client:visible />
+</Preview>
+
+### Sizes
+
+<Preview examples={{ react: sizesReact, vue: sizesVue, solid: sizesSolid, svelte: sizesSvelte }}>
+  <SwitchSizesDemo client:visible />
+</Preview>
+
+### Disabled
+
+<Preview
+  examples={{
+    react: disabledReact,
+    vue: disabledVue,
+    solid: disabledSolid,
+    svelte: disabledSvelte,
+  }}
+>
+  <SwitchDisabledDemo client:visible />
+</Preview>
+
+### Invalid
+
+Switch has no error-text part, so put the message beside it in your form.
+
+<Preview
+  examples={{ react: invalidReact, vue: invalidVue, solid: invalidSolid, svelte: invalidSvelte }}
+>
+  <SwitchInvalidDemo client:visible />
+</Preview>
+
+## Notes
+
+- `Switch.Root` is wrapped to add `size`, and `Switch.HiddenInput` to add `role="switch"`; every other part is Ark's unchanged.
+- Style state from `data-state` and the `data-*` flags; `size` is the only visual prop.
+- The thumb slides with `margin-inline-start`, so it moves the other way in right-to-left pages.
+- Switch replaces the predecessor's Toggle.

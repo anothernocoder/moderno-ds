@@ -200,6 +200,18 @@ export const avatarRecipe = cva({
   defaultVariants: { size: "md", shape: "circle" },
 });
 
+/**
+ * Switch: control `size` (the track, thumb and label density). On/off,
+ * disabled, invalid and read-only are Ark's own `data-state`/`data-*`, not
+ * variants.
+ */
+export const switchRecipe = cva({
+  variants: {
+    size: ["sm", "md", "lg"],
+  },
+  defaultVariants: { size: "md" },
+});
+
 /*
  * The variant unions, derived once beside the recipes. Bindings import these
  * names instead of re-deriving them from the recipe tables — a recipe change
@@ -339,3 +351,6 @@ export type AvatarSize = NonNullable<VariantProps<typeof avatarRecipe.variants>[
 
 /** Avatar's outline (`circle`, `square`). */
 export type AvatarShape = NonNullable<VariantProps<typeof avatarRecipe.variants>["shape"]>;
+
+/** Switch's density (track, thumb and label). */
+export type SwitchSize = NonNullable<VariantProps<typeof switchRecipe.variants>["size"]>;

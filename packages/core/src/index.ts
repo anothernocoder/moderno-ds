@@ -30,6 +30,7 @@ export {
   skeletonRecipe,
   spinnerRecipe,
   avatarRecipe,
+  switchRecipe,
 } from "./recipes.js";
 export type {
   ButtonVariant,
@@ -57,4 +58,5 @@ export type {
   SpinnerSize,
   AvatarSize,
   AvatarShape,
+  SwitchSize,
 } from "./recipes.js";

@@ -22,6 +22,7 @@ import { Card } from "../src/card.js";
 import { Field } from "../src/field.js";
 import { Avatar } from "../src/avatar.js";
 import { Checkbox } from "../src/checkbox.js";
+import { Switch } from "../src/switch.js";
 import { Dialog, Portal } from "../src/dialog.js";
 import { Select, createListCollection } from "../src/select.js";
 import { PinInput } from "../src/pin-input.js";
@@ -211,6 +212,19 @@ export const App = defineComponent({
             h(Checkbox.Control, {}, () => h(Checkbox.Indicator, {}, () => "✓")),
             h(Checkbox.Label, {}, () => "Unavailable"),
             h(Checkbox.HiddenInput),
+          ]),
+        ]),
+
+        h("section", { "aria-label": "switches" }, [
+          h(Switch.Root, { defaultChecked: true }, () => [
+            h(Switch.Control, {}, () => h(Switch.Thumb)),
+            h(Switch.Label, {}, () => "Airplane mode"),
+            h(Switch.HiddenInput),
+          ]),
+          h(Switch.Root, { size: "sm", disabled: true }, () => [
+            h(Switch.Control, {}, () => h(Switch.Thumb)),
+            h(Switch.Label, {}, () => "Bluetooth"),
+            h(Switch.HiddenInput),
           ]),
         ]),
 

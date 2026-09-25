@@ -28,6 +28,7 @@ describe("AGENT_COMPONENTS", () => {
       "Select",
       "PinInput",
       "Avatar",
+      "Switch",
       "LineChart",
       "AreaChart",
       "BarChart",
@@ -217,6 +218,16 @@ describe("buildComponentsManifest", () => {
     expect(avatar.parts.map((p) => p.name)).toEqual(["root", "image", "fallback"]);
     // Ark's own Root props (onStatusChange, ids) live under node_modules.
     expect(avatar.propsComplete).toBe(false);
+  });
+
+  it("carries Switch's recipe prop, variants and Ark parts — what validate_usage checks against", () => {
+    const sw = manifest.components.find((c) => c.name === "Switch")!;
+    expect(sw.scope).toBe("switch");
+    expect(sw.props.map((p) => p.name)).toEqual(["size"]);
+    expect(sw.variants).toEqual({ size: ["sm", "md", "lg"] });
+    expect(sw.parts.map((p) => p.name)).toEqual(["root", "control", "thumb", "label"]);
+    // Ark's own Root props (checked, onCheckedChange, …) live under node_modules.
+    expect(sw.propsComplete).toBe(false);
   });
 
   it("reads variants straight off the shared @moderno-ui/core recipes", () => {

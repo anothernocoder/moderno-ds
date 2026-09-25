@@ -25,6 +25,8 @@
  *                fallback shown / image hidden while loading must match both ways.
  *   - Checkbox — a label bound to a visually hidden native input by `useId`,
  *                plus indicators the machine hides via the `hidden` attribute.
+ *   - Switch   — the same label ↔ hidden-input pairing by `useId`, with the
+ *                on/off state and the switch role on the server string.
  *   - Dialog   — a Portal + focus-trap machine that must emit a stable,
  *                hydration-safe trigger while its content stays unmounted-visible.
  *   - Select   — a collection + popover whose hidden native <select> and ids
@@ -51,6 +53,7 @@ import { Card } from "../src/card.js";
 import { Field } from "../src/field.js";
 import { Avatar } from "../src/avatar.js";
 import { Checkbox } from "../src/checkbox.js";
+import { Switch } from "../src/switch.js";
 import { Dialog, Portal } from "../src/dialog.js";
 import { Select, createListCollection } from "../src/select.js";
 import { PinInput } from "../src/pin-input.js";
@@ -253,6 +256,23 @@ export function App({ open = false }: AppProps) {
           <Checkbox.Label>Unavailable</Checkbox.Label>
           <Checkbox.HiddenInput />
         </Checkbox.Root>
+      </section>
+
+      <section aria-label="switches">
+        <Switch.Root defaultChecked>
+          <Switch.Control>
+            <Switch.Thumb />
+          </Switch.Control>
+          <Switch.Label>Airplane mode</Switch.Label>
+          <Switch.HiddenInput />
+        </Switch.Root>
+        <Switch.Root size="sm" disabled>
+          <Switch.Control>
+            <Switch.Thumb />
+          </Switch.Control>
+          <Switch.Label>Bluetooth</Switch.Label>
+          <Switch.HiddenInput />
+        </Switch.Root>
       </section>
 
       <Dialog.Root defaultOpen={open}>

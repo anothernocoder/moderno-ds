@@ -15,6 +15,7 @@
   import { Field } from "../src/index.js";
   import { Avatar } from "../src/index.js";
   import { Checkbox } from "../src/index.js";
+  import { Switch } from "../src/index.js";
   import { Dialog, Portal } from "../src/index.js";
   import { Select, createListCollection } from "../src/index.js";
   import { PinInput } from "../src/index.js";
@@ -184,6 +185,23 @@
       <Checkbox.Label>Unavailable</Checkbox.Label>
       <Checkbox.HiddenInput />
     </Checkbox.Root>
+  </section>
+
+  <section aria-label="switches">
+    <Switch.Root defaultChecked>
+      <Switch.Control>
+        <Switch.Thumb />
+      </Switch.Control>
+      <Switch.Label>Airplane mode</Switch.Label>
+      <Switch.HiddenInput />
+    </Switch.Root>
+    <Switch.Root size="sm" disabled>
+      <Switch.Control>
+        <Switch.Thumb />
+      </Switch.Control>
+      <Switch.Label>Bluetooth</Switch.Label>
+      <Switch.HiddenInput />
+    </Switch.Root>
   </section>
 
   <Dialog.Root defaultOpen={open}>

@@ -20,6 +20,7 @@ import { Field } from "../src/field.jsx";
 import { Card } from "../src/card.jsx";
 import { Avatar } from "../src/avatar.jsx";
 import { Checkbox } from "../src/checkbox.jsx";
+import { Switch } from "../src/switch.jsx";
 import { Dialog, Portal } from "../src/dialog.js";
 import { Select, createListCollection } from "../src/select.jsx";
 import { PinInput } from "../src/pin-input.jsx";
@@ -217,6 +218,23 @@ export function App(props: { open?: boolean }) {
           <Checkbox.Label>Unavailable</Checkbox.Label>
           <Checkbox.HiddenInput />
         </Checkbox.Root>
+      </section>
+
+      <section aria-label="switches">
+        <Switch.Root defaultChecked>
+          <Switch.Control>
+            <Switch.Thumb />
+          </Switch.Control>
+          <Switch.Label>Airplane mode</Switch.Label>
+          <Switch.HiddenInput />
+        </Switch.Root>
+        <Switch.Root size="sm" disabled>
+          <Switch.Control>
+            <Switch.Thumb />
+          </Switch.Control>
+          <Switch.Label>Bluetooth</Switch.Label>
+          <Switch.HiddenInput />
+        </Switch.Root>
       </section>
 
       <Dialog.Root defaultOpen={props.open}>

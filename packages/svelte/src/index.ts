@@ -14,12 +14,15 @@ import {
   Field as ArkField,
   PinInput as ArkPinInput,
   Select as ArkSelect,
+  Switch as ArkSwitch,
 } from "@ark-ui/svelte";
 import AvatarRoot from "./AvatarRoot.svelte";
 import CheckboxRoot from "./CheckboxRoot.svelte";
 import FieldRoot from "./FieldRoot.svelte";
 import PinInputRoot from "./PinInputRoot.svelte";
 import SelectRoot from "./SelectRoot.svelte";
+import SwitchRoot from "./SwitchRoot.svelte";
+import SwitchHiddenInput from "./SwitchHiddenInput.svelte";
 import type { AlertPartProps, AlertRootProps } from "./alert-props.js";
 import AlertRoot from "./AlertRoot.svelte";
 import AlertIcon from "./AlertIcon.svelte";
@@ -226,6 +229,24 @@ export const Avatar: Omit<typeof ArkAvatar, "Root"> & { Root: typeof AvatarRoot 
 };
 export type { AvatarSize, AvatarShape } from "@moderno-ui/core";
 
+/**
+ * Switch — an on/off control with a label, for a setting that applies at once.
+ * Ark binds the root `<label>` to a visually hidden native input and stamps
+ * `data-state` / `data-disabled` / `data-invalid` on every part. `Root` is
+ * wrapped to inject the `size` recipe and `HiddenInput` to add its switch
+ * role; every other part is Ark's verbatim. Annotated so the emitted `.d.ts`
+ * doesn't inline an un-nameable `@zag-js` type (TS2742).
+ */
+export const Switch: Omit<typeof ArkSwitch, "Root" | "HiddenInput"> & {
+  Root: typeof SwitchRoot;
+  HiddenInput: typeof SwitchHiddenInput;
+} = {
+  ...ArkSwitch,
+  Root: SwitchRoot,
+  HiddenInput: SwitchHiddenInput,
+};
+export type { SwitchSize } from "@moderno-ui/core";
+
 export { createListCollection } from "@ark-ui/svelte";
 
 export type {
@@ -235,4 +256,5 @@ export type {
   PinInputValueChangeDetails,
   PinInputValueInvalidDetails,
   AvatarStatusChangeDetails,
+  SwitchCheckedChangeDetails,
 } from "@ark-ui/svelte";

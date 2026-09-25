@@ -66,6 +66,18 @@ export type {
   DialogCloseTriggerProps,
 } from "./dialog.js";
 
+export { Switch } from "./switch.js";
+export type {
+  SwitchSize,
+  ModernoSwitchRootProps,
+  SwitchRootProps,
+  SwitchControlProps,
+  SwitchThumbProps,
+  SwitchLabelProps,
+  SwitchHiddenInputProps,
+  SwitchCheckedChangeDetails,
+} from "./switch.js";
+
 export { Avatar } from "./avatar.js";
 export type {
   AvatarSize,

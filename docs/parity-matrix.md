@@ -184,6 +184,20 @@ shared stylesheet keys on.
 | indeterminate → `data-state`      |  ✅   | ✅  |   ✅   |  ✅   |
 | disabled → `data-disabled`, inert |  ✅   | ✅  |   ✅   |  ✅   |
 
+### Switch (`switchRecipe`: `data-size`; Ark on/off machine)
+
+| State                                     | React | Vue | Svelte | Solid |
+| ----------------------------------------- | :---: | :-: | :----: | :---: |
+| size → root `data-size` (+ `md`)          |  ✅   | ✅  |   ✅   |  ✅   |
+| every Ark part exposed                    |  ✅   | ✅  |   ✅   |  ✅   |
+| label ↔ hidden input, `role="switch"`     |  ✅   | ✅  |   ✅   |  ✅   |
+| consumer `role` on the input wins         |  ✅   | ✅  |   ✅   |  ✅   |
+| click turns on → `data-state` on parts    |  ✅   | ✅  |   ✅   |  ✅   |
+| hidden input takes keyboard focus         |  ✅   | ✅  |   ✅   |  ✅   |
+| disabled → `data-disabled`, inert         |  ✅   | ✅  |   ✅   |  ✅   |
+| invalid → `data-invalid` + `aria-invalid` |  ✅   | ✅  |   ✅   |  ✅   |
+| native props forwarded, no baked style    |  ✅   | ✅  |   ✅   |  ✅   |
+
 ### Dialog (Ark portal + focus trap + ids)
 
 | State                    | React | Vue | Svelte | Solid |
@@ -236,6 +250,7 @@ shared stylesheet keys on.
 | `defaultOpen` survives SSR                  |  ✅   | ✅  |   ✅   |  ✅   |
 | PinInput `count` → correct server aria      |  ✅   | ✅  |   ✅   |  ✅   |
 | Avatar fallback shown / image hidden on SSR |  ✅   | ✅  |   ✅   |  ✅   |
+| Switch on/off state + switch role on SSR    |  ✅   | ✅  |   ✅   |  ✅   |
 
 ¹ Vue hydration is verified on the portal-free primitives (Button, Card, Field
 and Checkbox), the deterministic `useId` hazard; Ark's portaled popovers

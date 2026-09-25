@@ -42,6 +42,7 @@ import {
   selectRecipe,
   skeletonRecipe,
   spinnerRecipe,
+  switchRecipe,
 } from "@moderno-ui/core";
 import { extractProps, type ComponentDoc, type ComponentEntry, type PropDoc } from "./index.ts";
 import { ENTRIES } from "./manifest.ts";
@@ -288,6 +289,19 @@ export const AGENT_COMPONENTS: AgentComponentSpec[] = [
       },
     ],
     variants: avatarRecipe.variants,
+  },
+  {
+    name: "Switch",
+    slug: "switch",
+    scope: "switch",
+    propsEntry: findEntry("Switch"),
+    parts: [
+      { name: "root" },
+      { name: "control", description: "The track." },
+      { name: "thumb", description: "The knob; slides to the far end when on." },
+      { name: "label" },
+    ],
+    variants: switchRecipe.variants,
   },
   {
     name: "LineChart",

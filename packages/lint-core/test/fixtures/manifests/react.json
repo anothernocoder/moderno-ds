@@ -132,6 +132,25 @@
       }
     },
     {
+      "name": "Switch",
+      "scope": "switch",
+      "import": "import { Switch } from \"@moderno-ui/react\"",
+      "propsHash": "sha256:fixture-switch",
+      "props": [{ "name": "size", "type": "\"sm\" | \"md\" | \"lg\"", "required": false }],
+      "propsComplete": false,
+      "parts": [
+        { "name": "root" },
+        { "name": "control" },
+        { "name": "thumb" },
+        { "name": "label" }
+      ],
+      "variants": { "size": ["sm", "md", "lg"] },
+      "guidance": {
+        "intent": "Turn one setting on or off, with the change applied at once.",
+        "whenToUse": "A preference in a settings list: notifications, dark mode, auto-save."
+      }
+    },
+    {
       "name": "Callout",
       "scope": "callout",
       "import": "import { Callout } from \"@moderno-ui/react\"",

@@ -27,6 +27,7 @@ export const ENTRIES: ComponentEntry[] = [
   { name: "Select", file: "src/select.tsx", type: "ModernoSelectRootProps" },
   { name: "PinInput", file: "src/pin-input.tsx", type: "ModernoPinInputRootProps" },
   { name: "Avatar", file: "src/avatar.tsx", type: "ModernoAvatarRootProps" },
+  { name: "Switch", file: "src/switch.tsx", type: "ModernoSwitchRootProps" },
   { name: "LineChart", file: "src/charts.tsx", type: "LineChartProps" },
   { name: "AreaChart", file: "src/charts.tsx", type: "AreaChartProps" },
   { name: "BarChart", file: "src/charts.tsx", type: "BarChartProps" },
