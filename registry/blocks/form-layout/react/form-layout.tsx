@@ -24,8 +24,8 @@ export function FormLayout({
     <section className="@container moderno-block-form-layout text-foreground">
       <form className="grid gap-8" onSubmit={onSubmit} noValidate>
         <header className="grid gap-1">
-          <h2 className="text-lg font-semibold @md:text-xl">Account settings</h2>
-          <p className="text-sm text-muted-foreground">
+          <h2 className="text-body-lg font-semibold @md:text-heading-sm">Account settings</h2>
+          <p className="text-ui-md text-muted-foreground">
             Update how you appear to your workspace and choose what we email you about.
           </p>
         </header>
@@ -40,8 +40,8 @@ export function FormLayout({
 
         <div className="grid gap-6 @lg:grid-cols-3">
           <header className="grid gap-1">
-            <h3 className="text-sm font-medium">Profile</h3>
-            <p className="text-sm text-muted-foreground">
+            <h3 className="text-ui-md font-medium">Profile</h3>
+            <p className="text-ui-md text-muted-foreground">
               How you appear to the rest of your workspace.
             </p>
           </header>
@@ -83,8 +83,8 @@ export function FormLayout({
 
         <div className="grid gap-6 @lg:grid-cols-3">
           <header className="grid gap-1">
-            <h3 className="text-sm font-medium">Notifications</h3>
-            <p className="text-sm text-muted-foreground">
+            <h3 className="text-ui-md font-medium">Notifications</h3>
+            <p className="text-ui-md text-muted-foreground">
               We only email you about the things you keep switched on here.
             </p>
           </header>

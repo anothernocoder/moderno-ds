@@ -95,6 +95,11 @@ export const ui = {
     "theme.closePanel": "Close panel",
     "theme.contrast": "Contrast",
     "theme.preview": "Preview",
+    "theme.description": "Description",
+    "theme.descriptionHint": "Optional: one sentence on the brand, for DESIGN.md",
+    "theme.notesKept": "Brand notes from the base theme",
+    "theme.notesDraft": "Brand notes drafted from the values",
+    "theme.notesLoading": "Loading the brand notes…",
   },
   es: {
     "nav.docs": "Documentación",
@@ -166,6 +171,11 @@ export const ui = {
     "theme.closePanel": "Cerrar panel",
     "theme.contrast": "Contraste",
     "theme.preview": "Vista previa",
+    "theme.description": "Descripción",
+    "theme.descriptionHint": "Opcional: una frase sobre la marca, para el DESIGN.md",
+    "theme.notesKept": "Notas de marca del tema base",
+    "theme.notesDraft": "Notas de marca en borrador, según los valores",
+    "theme.notesLoading": "Cargando las notas de marca…",
   },
 } as const;
 

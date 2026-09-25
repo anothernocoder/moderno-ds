@@ -2,8 +2,10 @@ import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import postcss from "postcss";
 import { compile } from "tailwindcss";
 import { beforeAll, describe, expect, it } from "vitest";
+import { FONT_WEIGHTS } from "../src/contract.ts";
 
 /**
  * Integration test for F0.5: the Tailwind v4 preset must make utilities resolve
@@ -17,12 +19,13 @@ const presetCss = readFileSync(
   fileURLToPath(new URL("../src/preset.css", import.meta.url)),
   "utf8",
 );
+const tokensCss = readFileSync(
+  fileURLToPath(new URL("../src/tokens.css", import.meta.url)),
+  "utf8",
+);
 
-let utilities: string;
-
-beforeAll(async () => {
-  const input = `@import "tailwindcss";\n${presetCss}`;
-  const compiled = await compile(input, {
+function compileCss(input: string) {
+  return compile(input, {
     base: process.cwd(),
     loadStylesheet: async () => {
       const path = require.resolve("tailwindcss/index.css");
@@ -32,7 +35,28 @@ beforeAll(async () => {
       throw new Error("preset must not require JS modules");
     },
   });
+}
+
+/** The value a stylesheet gives `--<name>`, or undefined. */
+function customProp(css: string, name: string): string | undefined {
+  return css.match(new RegExp(`--${name}:\\s*([^;]+);`))?.[1]?.trim();
+}
+
+/** `.font-<weight> { … font-weight: var(--font-weight-<weight>) … }` */
+const weightRule = (weight: string) =>
+  new RegExp(`\\.font-${weight}\\s*\\{[^}]*font-weight:\\s*var\\(--font-weight-${weight}\\)`, "s");
+
+const WEIGHT_UTILITIES = [...FONT_WEIGHTS.map((w) => `font-${w}`), "font-light"];
+
+let utilities: string;
+/** Stock Tailwind with no preset: what a registry block's `font-medium` compiles to. */
+let stock: string;
+
+beforeAll(async () => {
+  stock = (await compileCss(`@import "tailwindcss";`)).build(WEIGHT_UTILITIES);
+  const compiled = await compileCss(`@import "tailwindcss";\n${presetCss}`);
   utilities = compiled.build([
+    ...WEIGHT_UTILITIES,
     "bg-primary",
     "text-foreground",
     "border-border",
@@ -52,6 +76,10 @@ beforeAll(async () => {
     "@sm:flex",
     "@md:grid",
     "@lg:block",
+    "text-ui-sm",
+    "text-heading",
+    "leading-body",
+    "text-sm",
     // Keys the contract does not define: Tailwind ships them, the reset drops
     // them. Asked for here so their absence from the output is a real assertion.
     "max-w-xl",
@@ -91,6 +119,29 @@ describe("@moderno-ui/tokens preset — generated utilities resolve to contract 
         new RegExp(`\\.shadow-${step}\\s*\\{[^}]*var\\(--shadow-${step}\\)`, "s"),
       );
     }
+  });
+
+  it("emits type utilities backed by the scale slots, size and line height together", () => {
+    expect(utilities).toMatch(
+      /\.text-ui-sm\s*\{[^}]*font-size:\s*var\(--text-ui-sm\)[^}]*var\(--leading-ui-sm\)/s,
+    );
+    expect(utilities).toMatch(
+      /\.text-heading\s*\{[^}]*font-size:\s*var\(--text-heading\)[^}]*var\(--leading-heading\)/s,
+    );
+    expect(utilities).toMatch(/\.leading-body\s*\{[^}]*var\(--leading-body\)/s);
+  });
+
+  it("leaves Tailwind's stock text sizes alone", () => {
+    expect(utilities).toMatch(/\.text-sm\s*\{[^}]*font-size:\s*var\(--text-sm\)/s);
+    expect(utilities).not.toMatch(/\.text-sm\s*\{[^}]*--text-ui/s);
+  });
+
+  it("emits weight utilities backed by the weight slots", () => {
+    for (const weight of FONT_WEIGHTS) {
+      expect(utilities, `.font-${weight}`).toMatch(weightRule(weight));
+    }
+    // A weight the contract does not name keeps Tailwind's own value.
+    expect(customProp(utilities, "font-weight-light")).toBe("300");
   });
 
   /**
@@ -135,5 +186,39 @@ describe("@moderno-ui/tokens preset — generated utilities resolve to contract 
     );
     expect(thresholds.length).toBeGreaterThan(0);
     expect([...new Set(thresholds)].sort((a, b) => a - b)).toEqual([24, 36, 48]);
+  });
+});
+
+/**
+ * The weight slots reuse Tailwind's own `--font-weight-*` keys on purpose. A
+ * stock `font-semibold` already reads `var(--font-weight-semibold)`, and the
+ * unlayered `:root` in tokens.css beats the default Tailwind puts in
+ * `@layer theme`. So a registry block written with stock classes follows a
+ * theme's weights with no preset and no migration, and renders exactly as
+ * before when no theme overrides them: the neutral defaults are Tailwind's.
+ */
+describe("@moderno-ui/tokens — weight slots take over stock Tailwind weights", () => {
+  it("stock font-* utilities already read the contract's slot names", () => {
+    for (const weight of FONT_WEIGHTS) {
+      expect(stock, `.font-${weight}`).toMatch(weightRule(weight));
+    }
+  });
+
+  it("Tailwind declares its defaults in @layer theme, which tokens.css (unlayered) beats", () => {
+    const themeLayer = stock.match(/@layer theme\s*\{[\s\S]*?\n\}/)?.[0] ?? "";
+    for (const weight of FONT_WEIGHTS) {
+      expect(themeLayer, `--font-weight-${weight}`).toContain(`--font-weight-${weight}:`);
+    }
+    const layered: string[] = [];
+    postcss.parse(tokensCss).walkAtRules("layer", (rule) => void layered.push(rule.params));
+    expect(layered, "tokens.css must stay unlayered to beat @layer theme").toEqual([]);
+  });
+
+  it("the tokens.css defaults are Tailwind's own values, so nothing changes visually", () => {
+    for (const weight of FONT_WEIGHTS) {
+      const slot = `font-weight-${weight}`;
+      expect(customProp(stock, slot), `Tailwind's --${slot}`).toBeTruthy();
+      expect(customProp(tokensCss, slot), `tokens.css --${slot}`).toBe(customProp(stock, slot));
+    }
   });
 });

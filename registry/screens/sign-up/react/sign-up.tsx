@@ -154,13 +154,13 @@ export function SignUp({
       <div className="grid min-h-dvh grid-rows-[auto_1fr_auto] gap-8 p-6">
         <header className="grid gap-2 @sm:flex @sm:items-center @sm:justify-between">
           <a
-            className="rounded-sm text-base font-semibold tracking-tight underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            className="rounded-sm text-body font-semibold tracking-tight underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
             href={homeHref}
             onClick={(event) => onNavigate?.("home", event)}
           >
             Moderno
           </a>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-ui-md text-muted-foreground">
             Already registered?{" "}
             <a
               className="rounded-sm font-medium text-foreground underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
@@ -190,13 +190,13 @@ export function SignUp({
 
           {highlights.length > 0 ? (
             <aside className="mx-auto grid w-full max-w-md gap-4">
-              <h2 className="text-base font-semibold tracking-tight">What you get on day one</h2>
+              <h2 className="text-body font-semibold tracking-tight">What you get on day one</h2>
               <ul className="grid gap-4">
                 {highlights.map((highlight) => (
                   <li key={highlight.id} className="grid gap-1 border-l-2 border-border pl-4">
-                    <p className="text-sm font-medium">{highlight.title}</p>
+                    <p className="text-ui-md font-medium">{highlight.title}</p>
                     {highlight.description ? (
-                      <p className="text-sm text-muted-foreground">{highlight.description}</p>
+                      <p className="text-ui-md text-muted-foreground">{highlight.description}</p>
                     ) : null}
                   </li>
                 ))}
@@ -205,7 +205,7 @@ export function SignUp({
           ) : null}
         </div>
 
-        <footer className="grid gap-2 text-sm text-muted-foreground @md:flex @md:items-center @md:justify-between">
+        <footer className="grid gap-2 text-ui-md text-muted-foreground @md:flex @md:items-center @md:justify-between">
           <p>© Moderno</p>
           <nav className="flex gap-4" aria-label="Legal">
             <a

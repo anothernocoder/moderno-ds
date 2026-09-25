@@ -5,10 +5,11 @@ component references, the rules for theming them, the `data-scope`/`data-part`
 styling convention, and the implementation guardrails.
 
 This is **not a brand guide**. Values shipped in `@moderno-ui/tokens` are neutral
-(OKLCH grays + a system font stack). A brand is a _theme_ layered on top — the
-Moderno **default theme** is authored in [`DESIGN.md`](DESIGN.md) (the source of
-truth for its tokens and rationale) and shipped as the `theme-moderno` registry
-item in Phase 5.
+(OKLCH grays + a system font stack). A brand is a _theme_ layered on top: a
+registry item authored in `registry/themes/<name>/tokens.dtcg.json`, from which
+`pnpm theme:build` generates its `theme.css` and its `DESIGN.md` (the brand's
+values, these rules applied, and its hand-written brand notes). The Moderno
+default brand is one such theme, `theme-moderno`.
 
 ## Golden rule
 
@@ -89,9 +90,21 @@ Beyond color, the contract also standardizes:
   _container_, never the viewport (ADR-0005). These three are the whole scale a
   block may use: in Tailwind they replace the container namespace rather than
   extend it (see below).
+- **Type scale** — a size and a line height per step: `--text-<step>` and
+  `--leading-<step>`. The `ui-*` steps are the control ramp — `ui-xs` 12/16,
+  `ui-sm` 13/18, `ui-md` 14/20, `ui-lg` 15/22 — and a component's
+  `sm`/`md`/`lg` sizes read `ui-sm`/`ui-md`/`ui-lg`. Content steps: `body`
+  16/24, `body-lg` 18/28, `heading-sm` 20/28, `heading` 24/32, `heading-lg`
+  36/40. The names stay clear of Tailwind's own `text-*` keys, so the tokens
+  never resize a stock `text-sm`. Weights: `--font-weight-normal` (400),
+  `--font-weight-medium` (500), `--font-weight-semibold` (600),
+  `--font-weight-bold` (700). These names, unlike the size steps, _are_
+  Tailwind's own keys at Tailwind's own values: the tokens' unlayered `:root`
+  beats Tailwind's defaults, so a stock `font-medium` follows a theme that
+  overrides a weight and changes nothing when none does.
 
-No hardcoded spacing, durations, radii, shadows, or widths in components —
-reference the slot.
+No hardcoded spacing, durations, radii, shadows, widths, font sizes, or font
+weights in components — reference the slot.
 
 Extended slots are **optional in a theme**: `@moderno-ui/tokens` ships a neutral
 default for each, and a theme overrides only what its brand actually changes.

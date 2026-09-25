@@ -47,7 +47,7 @@ describe("moderno/no-hardcoded-dimension — Tailwind arbitrary lengths", () => 
   });
 
   it("leaves preset utilities backed by the contract alone", () => {
-    const code = '<div class="max-w-md @md:grid-cols-3 gap-4 rounded-lg p-6 text-body-md">';
+    const code = '<div class="max-w-md @md:grid-cols-3 gap-4 rounded-lg p-6 text-body">';
     expect(check(code)).toHaveLength(0);
   });
 
@@ -111,5 +111,36 @@ describe("moderno/no-hardcoded-dimension — Tailwind arbitrary lengths", () => 
     expect(new Set(findings.map((f) => f.ruleId))).toEqual(
       new Set(["moderno/no-hardcoded-dimension"]),
     );
+  });
+});
+
+/**
+ * Tailwind's stock `text-sm` resolves to Tailwind's 14px, not to the contract:
+ * a theme that re-maps `--text-ui-md` never reaches it. Same breach as a
+ * literal length, so the same rule id.
+ */
+describe("moderno/no-hardcoded-dimension — type sizes", () => {
+  it("flags Tailwind's stock type sizes and names the matching contract step", () => {
+    const findings = check('<h2 class="text-lg font-semibold @md:text-xl">');
+    expect(findings).toHaveLength(2);
+    expect(findings[0]!.message).toContain("text-lg");
+    expect(findings[0]!.suggestion).toContain("text-body-lg");
+    expect(findings[1]!.suggestion).toContain("text-heading-sm");
+  });
+
+  it("flags a stock size with a line-height modifier", () => {
+    expect(check('<p class="text-sm/6">')).toHaveLength(1);
+  });
+
+  it("leaves the contract steps and colour utilities alone", () => {
+    const code =
+      '<p class="text-ui-md text-body-lg @md:text-heading-sm text-muted-foreground text-left">';
+    expect(check(code)).toHaveLength(0);
+  });
+
+  it("flags a hardcoded font-size in CSS, not a var() reference", () => {
+    expect(check("p { font-size: 14px; }")).toHaveLength(1);
+    expect(check("p { font-size: 0.875rem; }")).toHaveLength(1);
+    expect(check("p { font-size: var(--text-ui-md); }")).toHaveLength(0);
   });
 });

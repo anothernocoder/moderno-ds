@@ -7,6 +7,16 @@ import {
 } from "@moderno-ui/tokens/contract";
 import { contrastRatio, parseOklch } from "./color.ts";
 
+export {
+  BRAND_NOTES_END,
+  BRAND_NOTES_START,
+  defaultsFrom,
+  draftBrandNotes,
+  readBrandNotes,
+  renderDesignMd,
+  type Defaults,
+} from "./design-md.ts";
+
 export type CompileResult = {
   css: string;
   warnings: string[];
@@ -45,7 +55,7 @@ function validateScope(name: string, scope: unknown): asserts scope is Scope {
     }
   }
   // Extended slots (display face, elevation, modal scrim, container breakpoints,
-  // spacing, motion) are optional — `@moderno-ui/tokens` already ships a neutral
+  // spacing, motion, type scale, font weights) are optional — `@moderno-ui/tokens` already ships a neutral
   // default for each. A theme that *does* express one must give it a real value,
   // or the emitted `--slot: ;` would silently blank the default instead of
   // overriding it. An extended colour (`--overlay`) is held to the same OKLCH

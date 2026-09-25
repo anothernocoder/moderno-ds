@@ -12,7 +12,13 @@
  */
 
 /** DTCG `$type` a slot serialises to in a theme's `tokens.dtcg.json`. */
-export type ContractSlotType = "color" | "dimension" | "fontFamily" | "duration" | "shadow";
+export type ContractSlotType =
+  | "color"
+  | "dimension"
+  | "fontFamily"
+  | "fontWeight"
+  | "duration"
+  | "shadow";
 
 /**
  * Where a slot lives in the Theme Builder editor. `extended` slots ship a
@@ -35,6 +41,32 @@ const color = (name: string, group: ContractGroup, contrastAgainst?: string): Co
   contrastAgainst
     ? { name, type: "color", group, contrastAgainst }
     : { name, type: "color", group };
+
+/**
+ * Steps of the type scale, smallest first. Each step is two slots:
+ * `--text-<step>` (font size) and `--leading-<step>` (line height). The names
+ * stay clear of Tailwind's own `--text-*` keys (`xs`, `sm`, `base`, `lg`…), so
+ * the unlayered `:root` in tokens.css never resizes a stock `text-sm`.
+ */
+export const TYPE_STEPS = [
+  "ui-xs",
+  "ui-sm",
+  "ui-md",
+  "ui-lg",
+  "body",
+  "body-lg",
+  "heading-sm",
+  "heading",
+  "heading-lg",
+] as const;
+
+/**
+ * Font weights, lightest first: `--font-weight-<weight>`. Unlike the type steps,
+ * these deliberately *are* Tailwind's own keys, at its values: the unlayered
+ * `:root` in tokens.css beats Tailwind's `@layer theme` defaults, so a stock
+ * `font-medium` follows a theme's override and, by default, changes nothing.
+ */
+export const FONT_WEIGHTS = ["normal", "medium", "semibold", "bold"] as const;
 
 /** The full contract, in editor display order. */
 export const CONTRACT: readonly ContractSlot[] = [
@@ -111,6 +143,20 @@ export const CONTRACT: readonly ContractSlot[] = [
   { name: "container-sm", type: "dimension", group: "extended" },
   { name: "container-md", type: "dimension", group: "extended" },
   { name: "container-lg", type: "dimension", group: "extended" },
+  // Type scale: a font size and its line height per step. The ui-* ramp is what
+  // controls size with (sm/md/lg → 13/14/15); body and heading steps set content.
+  ...TYPE_STEPS.flatMap((step): ContractSlot[] => [
+    { name: `text-${step}`, type: "dimension", group: "extended" },
+    { name: `leading-${step}`, type: "dimension", group: "extended" },
+  ]),
+  // Font weights: 400/500/600/700, the ramp components and blocks set text in.
+  ...FONT_WEIGHTS.map(
+    (weight): ContractSlot => ({
+      name: `font-weight-${weight}`,
+      type: "fontWeight",
+      group: "extended",
+    }),
+  ),
 ];
 
 /**

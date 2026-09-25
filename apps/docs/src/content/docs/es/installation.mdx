@@ -125,21 +125,57 @@ Consulta [Contrato de tokens](/es/token-contract#tailwind-v4) para ver cada slot
 
 ### Comandos
 
-| Comando                    | Qué hace                                                                             |
-| -------------------------- | ------------------------------------------------------------------------------------ |
-| `moderno init`             | Escribe `components.json`, `src/styles/moderno.css` y el stanza de `AGENTS.md`.      |
-| `moderno init --claude`    | Lo mismo, más un `CLAUDE.md` gemelo del stanza.                                      |
-| `moderno add <item...>`    | Copia items del registro y sus dependencias. Un tema se `@import`a en `moderno.css`. |
-| `moderno update [item...]` | Actualiza los items instalados. Los archivos que editaste localmente se conservan.   |
-| `moderno diff <item>`      | Muestra el diff entre tu copia y la versión del registro.                            |
-| `moderno list`             | Lista los items instalados con su versión instalada y la más reciente.               |
+| Comando                    | Qué hace                                                                                                   |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `moderno init`             | Escribe `components.json`, `src/styles/moderno.css` y el stanza de `AGENTS.md`.                            |
+| `moderno init --claude`    | Lo mismo, más un `CLAUDE.md` gemelo del stanza.                                                            |
+| `moderno add <item...>`    | Copia items del registro y sus dependencias. La hoja de estilos de un tema se `@import`a en `moderno.css`. |
+| `moderno update [item...]` | Actualiza los items instalados. Los archivos que editaste localmente se conservan.                         |
+| `moderno diff <item>`      | Muestra el diff entre tu copia y la versión del registro.                                                  |
+| `moderno list`             | Lista los items instalados con su versión instalada y la más reciente.                                     |
 
 ### Notas
 
 - Todos los comandos aceptan `--registry <url|path>`.
 - Orden de búsqueda del registro: `--registry`, luego `components.json`, luego `MODERNO_REGISTRY_URL`, luego `https://moderno.style/r/registry.json`.
 - Volver a ejecutar `init` actualiza el stanza de `AGENTS.md` en el sitio y conserva el resto del archivo.
+- Un tema instala también su `DESIGN.md`, las reglas de la marca para personas y agentes: en la raíz del proyecto si el tema reemplaza al de por defecto, como `theme-moderno`, o en `design/<theme>/DESIGN.md` si es un tema de marca, como `theme-contrast`.
+- `add` nunca sobrescribe un archivo que no escribió él. Si ya tienes tu propio `DESIGN.md`, se conserva y se avisa, y `update` también lo conserva; `moderno diff <theme>` muestra la versión del tema.
 - La CLI y el servidor MCP necesitan Node 22 o superior.
+
+## Cambiar la fuente
+
+Un tema nombra sus tipografías en `--font-sans`, `--font-serif` y `--font-mono`, pero no incluye los archivos de fuente. Cárgala tú: `theme-moderno` nombra Hedvig Letters y usa la fuente del sistema hasta que lo hagas.
+
+1. Instala la fuente, o cárgala desde Google Fonts o tu propio servidor.
+
+   ```sh
+   npm install @fontsource/inter
+   ```
+
+2. Sobrescribe el slot en una hoja de estilos propia. No edites el archivo del tema copiado: volver a ejecutar `moderno add` lo sobrescribe y `moderno update` deja de actualizarlo en cuanto lo editas.
+
+   ```css
+   /* src/styles/fonts.css */
+   :root,
+   .dark {
+     --font-sans: "Inter", system-ui, sans-serif;
+   }
+   ```
+
+3. Importa la fuente y la sobrescritura, esta después de `moderno.css` (o de `@moderno-ui/css` si no usas la CLI).
+
+   ```ts
+   import "@fontsource/inter";
+   import "@/styles/moderno.css";
+   import "@/styles/fonts.css";
+   ```
+
+Todos los componentes y la utilidad `font-sans` de Tailwind leen el slot, así que no cambia nada más.
+
+- Mantén `.dark` en el selector: el tema vuelve a definir las fuentes ahí.
+- `@fontsource/inter` solo carga el peso 400. Importa cada peso que uses, como `@fontsource/inter/600.css`.
+- Un tema de marca necesita su propio scope, p. ej. `[data-brand="contrast"], .dark [data-brand="contrast"], [data-brand="contrast"].dark` para `theme-contrast`.
 
 ## Siguientes pasos
 

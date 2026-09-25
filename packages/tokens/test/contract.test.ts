@@ -8,7 +8,9 @@ import {
   CONTRACT,
   CONTRAST_PAIRS,
   EXTENDED_SLOTS,
+  FONT_WEIGHTS,
   OTHER_SLOTS,
+  TYPE_STEPS,
   slotType,
 } from "../src/contract.ts";
 
@@ -82,6 +84,9 @@ describe("@moderno-ui/tokens — contract data", () => {
     expect(slotType("shadow-md")).toBe("shadow");
     expect(slotType("container-lg")).toBe("dimension");
     expect(slotType("overlay")).toBe("color");
+    expect(slotType("text-ui-md")).toBe("dimension");
+    expect(slotType("leading-body")).toBe("dimension");
+    expect(slotType("font-weight-semibold")).toBe("fontWeight");
   });
 
   it("carries the display face, elevation and container slots as extended", () => {
@@ -107,6 +112,20 @@ describe("@moderno-ui/tokens — contract data", () => {
     expect(EXTENDED_SLOTS).toContain("overlay");
     expect(COLOR_SLOTS).not.toContain("overlay");
     expect(COLOR_GROUPS.flatMap((g) => g.slots)).not.toContain("overlay");
+  });
+
+  it("carries a size and a line height per type step, as extended slots", () => {
+    for (const step of TYPE_STEPS) {
+      expect(EXTENDED_SLOTS, `--text-${step}`).toContain(`text-${step}`);
+      expect(EXTENDED_SLOTS, `--leading-${step}`).toContain(`leading-${step}`);
+    }
+  });
+
+  it("carries the font weights as extended slots, under Tailwind's own key names", () => {
+    expect([...FONT_WEIGHTS]).toEqual(["normal", "medium", "semibold", "bold"]);
+    for (const weight of FONT_WEIGHTS) {
+      expect(EXTENDED_SLOTS, `--font-weight-${weight}`).toContain(`font-weight-${weight}`);
+    }
   });
 });
 
@@ -212,6 +231,35 @@ describe("@moderno-ui/tokens — Tailwind v4 preset", () => {
       const re = new RegExp(`--shadow-${step}:\\s*var\\(--shadow-${step}\\)`);
       expect(presetCss, `--shadow-${step} not mapped`).toMatch(re);
     }
+  });
+
+  it("maps every type step to a Tailwind text size with its line height", () => {
+    for (const step of TYPE_STEPS) {
+      const inlineTheme = themeBlockDecls(presetCss, "inline");
+      expect(inlineTheme.get(`text-${step}`), `--text-${step}`).toBe(`var(--text-${step})`);
+      expect(inlineTheme.get(`text-${step}--line-height`)).toBe(`var(--leading-${step})`);
+      expect(inlineTheme.get(`leading-${step}`), `--leading-${step}`).toBe(
+        `var(--leading-${step})`,
+      );
+    }
+  });
+
+  it("maps every font weight onto Tailwind's weight key of the same name", () => {
+    const inlineTheme = themeBlockDecls(presetCss, "inline");
+    for (const weight of FONT_WEIGHTS) {
+      const slot = `font-weight-${weight}`;
+      expect(inlineTheme.get(slot), `--${slot}`).toBe(`var(--${slot})`);
+    }
+  });
+
+  /**
+   * The unlayered :root in tokens.css beats Tailwind's `@layer theme` defaults,
+   * so a step named like a stock key (`sm`, `lg`, `base`…) would silently
+   * resize every `text-sm` in a consumer app.
+   */
+  it("keeps the type steps clear of Tailwind's own text keys", () => {
+    const stock = ["xs", "sm", "base", "lg", "xl", "2xl", "3xl", "4xl", "5xl", "6xl", "7xl"];
+    for (const step of TYPE_STEPS) expect(stock).not.toContain(step);
   });
 
   /**

@@ -230,8 +230,17 @@ describe("runCli --registry", () => {
 
   it("skips theme items — a theme's whole job is to carry literal brand values", () => {
     const path = writeItemFile("themes/brand/theme.css", ":root { --primary: oklch(0.2 0 0); }");
+    // …and its DESIGN.md, which lists those values in front matter as prose for agents.
+    const guide = writeItemFile("themes/brand/DESIGN.md", '---\nprimary: "#000000"\n---\n');
     const manifest = writeRegistry([
-      { name: "theme-brand", type: "registry:theme", files: [{ path, type: "registry:theme" }] },
+      {
+        name: "theme-brand",
+        type: "registry:theme",
+        files: [
+          { path, type: "registry:theme" },
+          { path: guide, type: "registry:file" },
+        ],
+      },
     ]);
     const { stdout, stderr, err } = capture();
 

@@ -166,7 +166,8 @@
             "spacing": { "type": "array", "items": { "type": "string" } },
             "motion": { "type": "array", "items": { "type": "string" } },
             "shadow": { "type": "array", "items": { "type": "string" } },
-            "container": { "type": "array", "items": { "type": "string" } }
+            "container": { "type": "array", "items": { "type": "string" } },
+            "type": { "type": "array", "items": { "type": "string" } }
           }
         },
         "theming": {

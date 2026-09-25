@@ -1,6 +1,6 @@
 {
   "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
-  "$description": "theme-contrast — a synthetic maximum-contrast brand used to demonstrate the multi-brand switch. Scoped under [data-brand=\"contrast\"], composed with .dark. Pure black/white pairs (21:1) by design.",
+  "$description": "A synthetic maximum-contrast brand of pure black and white, square-cornered and outlined, that demonstrates the multi-brand switch.",
   "$extensions": {
     "style.moderno.theme": {
       "name": "theme-contrast",

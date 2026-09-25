@@ -32,6 +32,10 @@ order: 4
 - It reads `moderno.agent.json` from `node_modules/@moderno-ui/*` once, at startup.
 - Answers match the installed versions, not the latest release.
 
+## The theme's DESIGN.md
+
+A theme added with the CLI brings its `DESIGN.md`: at the project root for a theme that replaces the default, or at `design/<theme>/DESIGN.md` for a brand theme. It holds the brand's values, the rules every Moderno theme follows and the brand's own notes. Mention it in `AGENTS.md` so the agent reads it before styling; the tools below cover the components and the contract.
+
 ## Tools
 
 The tools read and verify; the agent writes the code itself.

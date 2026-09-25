@@ -130,7 +130,7 @@ export function LoginForm({
       <Card.Root className="mx-auto w-full max-w-sm">
         <Card.Header role={forgot || verify ? "status" : undefined}>
           <Card.Title
-            className="text-lg @md:text-xl"
+            className="text-body-lg @md:text-heading-sm"
             aria-level={titleLevel === 3 ? undefined : titleLevel}
           >
             {title}
@@ -153,7 +153,7 @@ export function LoginForm({
             {reset && token ? <input type="hidden" name="token" value={token} /> : null}
 
             {confirming ? (
-              <p className="text-sm text-muted-foreground">
+              <p className="text-ui-md text-muted-foreground">
                 The link expires in 30 minutes and can be used once. Nothing in your inbox? Look in
                 spam, then send it again.
               </p>
@@ -180,7 +180,7 @@ export function LoginForm({
                   <PinInput.HiddenInput />
                 </PinInput.Root>
                 {errors?.code ? (
-                  <p className="text-sm text-destructive" role="alert">
+                  <p className="text-ui-md text-destructive" role="alert">
                     {errors.code}
                   </p>
                 ) : null}
@@ -266,7 +266,7 @@ export function LoginForm({
                   <Checkbox.Label>I agree to the terms and the privacy policy</Checkbox.Label>
                   <Checkbox.HiddenInput />
                 </Checkbox.Root>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-ui-md text-muted-foreground">
                   Read the{" "}
                   <a
                     className="rounded-sm font-medium text-foreground underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
@@ -295,7 +295,7 @@ export function LoginForm({
                 </Checkbox.Root>
 
                 <a
-                  className="rounded-sm text-sm font-medium text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline focus-visible:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                  className="rounded-sm text-ui-md font-medium text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline focus-visible:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                   href={forgotHref}
                 >
                   Forgot your password?
@@ -339,7 +339,7 @@ export function LoginForm({
         </Card.Content>
 
         <Card.Footer className="justify-center">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-ui-md text-muted-foreground">
             {cardCopy[mode].footerPrompt}{" "}
             <a
               className="rounded-sm font-medium text-foreground underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"

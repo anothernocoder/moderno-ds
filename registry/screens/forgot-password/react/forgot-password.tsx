@@ -185,13 +185,13 @@ export function ForgotPassword({
       <div className="grid min-h-dvh grid-rows-[auto_1fr_auto] gap-8 p-6">
         <header className="grid gap-2 @sm:flex @sm:items-center @sm:justify-between">
           <a
-            className="rounded-sm text-base font-semibold tracking-tight underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            className="rounded-sm text-body font-semibold tracking-tight underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
             href={homeHref}
             onClick={(event) => onNavigate?.("home", event)}
           >
             Moderno
           </a>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-ui-md text-muted-foreground">
             Still stuck?{" "}
             <a
               className="rounded-sm font-medium text-foreground underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
@@ -236,7 +236,7 @@ export function ForgotPassword({
           ) : null}
         </div>
 
-        <footer className="grid gap-2 text-sm text-muted-foreground @md:flex @md:items-center @md:justify-between">
+        <footer className="grid gap-2 text-ui-md text-muted-foreground @md:flex @md:items-center @md:justify-between">
           <p>© Moderno</p>
           <nav className="flex gap-4" aria-label="Legal">
             <a

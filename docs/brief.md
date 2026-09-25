@@ -85,16 +85,15 @@ moderno-ds/
 │   └── solid/             # @moderno-ui/solid
 ├── registry/
 │   ├── blocks/            # composiciones (copy items), una variante por framework
-│   ├── themes/            # theme-*.css (registry items)
+│   ├── themes/            # un directorio por theme: tokens.dtcg.json, theme.css, DESIGN.md
 │   └── registry.json      # items versionados + registryDependencies
 ├── apps/
 │   └── docs/              # Astro plano + MDX (component library)
 ├── tooling/
-│   └── cli/               # @moderno-ui/cli — init / add / update / diff + manifest
+│   ├── cli/               # @moderno-ui/cli — init / add / update / diff + manifest
+│   └── theme-compile/     # pnpm theme:build — valida tokens.dtcg.json, genera theme.css + DESIGN.md
 ├── CONTEXT.md             # glosario del dominio
 ├── CONTRACT.md            # contrato técnico: slots + reglas + data-part (neutro, no marca)
-├── DESIGN.md              # fuente de verdad del theme default (formato google-labs DESIGN.md)
-├── tokens.json            # DTCG del theme default (par de DESIGN.md)
 ├── pnpm-workspace.yaml
 └── package.json
 ```
@@ -174,7 +173,7 @@ The consumer **never** imports internal paths (`@moderno-ui/tokens/dist/...`, `@
 
 ## Phased plan (proceed in order, confirm at the end of each one)
 
-- **Phase 0 — Foundation:** monorepo (pnpm workspaces), `@moderno-ui/tokens` + `@moderno-ui/css` (entrypoint), DTCG tokens in OKLCH → CSS vars + preset Tailwind v4, and **CONTRACT.md** with the token contract and the rules (the Moderno default theme is authored in `DESIGN.md`). _Confirm the token contract with me before continuing._
+- **Phase 0 — Foundation:** monorepo (pnpm workspaces), `@moderno-ui/tokens` + `@moderno-ui/css` (entrypoint), DTCG tokens in OKLCH → CSS vars + preset Tailwind v4, and **CONTRACT.md** with the token contract and the rules (the Moderno default theme is a registry theme, `theme-moderno`, with its own generated `DESIGN.md`). _Confirm the token contract with me before continuing._
 - **Phase 1 — Core:** `@moderno-ui/core` (utils, CVA, helpers, components.css) and `@moderno-ui/charts-core` (pure d3-math).
 - **Phase 2 — Reference implementation (React 19):** Button, Field, Dialog and Select end-to-end, with the single `data-part`-based stylesheet. Validate SSR and theming via variables.
 - **Phase 3 — Port:** Vue, Svelte, Solid of those same components, reusing the stylesheet. Demonstrate look and behavior parity.

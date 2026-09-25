@@ -2,6 +2,7 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import ThemeBuilder from "../../islands/ThemeBuilder.svelte";
 import { locales, useTranslations, type Locale } from "../../i18n/ui.ts";
+import { registryThemes } from "../../lib/siteThemes.ts";
 
 export function getStaticPaths() {
   return locales.map((lang) => ({ params: { lang } }));
@@ -14,6 +15,11 @@ const strings = {
   light: t("theme.light"),
   dark: t("theme.dark"),
   name: t("theme.name"),
+  description: t("theme.description"),
+  descriptionHint: t("theme.descriptionHint"),
+  notesKept: t("theme.notesKept"),
+  notesDraft: t("theme.notesDraft"),
+  notesLoading: t("theme.notesLoading"),
   startFrom: t("theme.startFrom"),
   import: t("theme.import"),
   paste: t("theme.paste"),
@@ -46,5 +52,5 @@ const strings = {
 <BaseLayout locale={lang} title={t("theme.title")} description={t("theme.lead")} slug="theme-builder" wide>
   <h1>{t("theme.title")}</h1>
   <p class="page-lead">{t("theme.lead")}</p>
-  <ThemeBuilder strings={strings} client:only="svelte" />
+  <ThemeBuilder strings={strings} bases={registryThemes} client:only="svelte" />
 </BaseLayout>

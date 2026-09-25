@@ -119,8 +119,8 @@ export function AlertList({
       <div className="grid gap-4">
         <div className="grid gap-3 @sm:flex @sm:items-center @sm:justify-between">
           <div className="grid gap-1">
-            <h2 className="text-lg font-semibold @md:text-xl">{heading}</h2>
-            {description ? <p className="text-sm text-muted-foreground">{description}</p> : null}
+            <h2 className="text-body-lg font-semibold @md:text-heading-sm">{heading}</h2>
+            {description ? <p className="text-ui-md text-muted-foreground">{description}</p> : null}
           </div>
           <Button
             type="button"
@@ -174,7 +174,7 @@ export function AlertList({
                 aria-hidden="true"
                 className="size-5 animate-spin rounded-full border-2 border-current border-t-transparent motion-reduce:animate-none"
               />
-              <p className="text-sm text-muted-foreground">Checking for new notifications…</p>
+              <p className="text-ui-md text-muted-foreground">Checking for new notifications…</p>
             </Card.Content>
           </Card.Root>
         ) : null}
@@ -202,7 +202,7 @@ export function AlertList({
                     <div className="grid gap-1 @lg:flex @lg:items-baseline @lg:justify-between @lg:gap-4">
                       <Alert.Title>{item.title}</Alert.Title>
                       {item.meta ? (
-                        <Alert.Description className="text-xs">{item.meta}</Alert.Description>
+                        <Alert.Description className="text-ui-xs">{item.meta}</Alert.Description>
                       ) : null}
                     </div>
                     {item.description ? (

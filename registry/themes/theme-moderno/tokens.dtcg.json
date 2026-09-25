@@ -1,6 +1,6 @@
 {
   "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
-  "$description": "Moderno default theme — near-black monochrome workspace. Brand lives in CSS variables; components reference the contract slots only. Authored from DESIGN.md; compiled by @moderno-ui/theme-compile.",
+  "$description": "Moderno's default brand: a near-black monochrome workspace with sharp corners, in light and dark.",
   "$extensions": {
     "style.moderno.theme": {
       "name": "theme-moderno",
@@ -80,7 +80,7 @@
     "accent": { "$type": "color", "$value": "oklch(0.269 0 0)" },
     "accent-foreground": { "$type": "color", "$value": "oklch(0.985 0 0)" },
     "destructive": { "$type": "color", "$value": "oklch(0.704 0.191 22.216)" },
-    "destructive-foreground": { "$type": "color", "$value": "oklch(0.985 0 0)" },
+    "destructive-foreground": { "$type": "color", "$value": "oklch(0.145 0 0)" },
     "info": { "$type": "color", "$value": "oklch(0.72 0.13 255)" },
     "info-foreground": { "$type": "color", "$value": "oklch(0.145 0 0)" },
     "success": { "$type": "color", "$value": "oklch(0.72 0.15 152)" },

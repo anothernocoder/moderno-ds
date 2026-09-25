@@ -2,13 +2,15 @@ import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import postcss, { type Declaration, type Rule } from "postcss";
-import { EXTENDED_SLOTS } from "@moderno-ui/tokens/contract";
+import { CONTRAST_PAIRS, EXTENDED_SLOTS } from "@moderno-ui/tokens/contract";
+import { contrastRatio } from "../src/color.ts";
+import { defaultsFrom, readBrandNotes, renderDesignMd } from "../src/design-md.ts";
 import { compileTheme } from "../src/index.ts";
 
 /**
  * Guards the real registry themes: each must validate, and its committed
- * theme.css must be exactly what theme-compile regenerates (no drift). Mirrors
- * the banner the bin writes so the comparison is byte-for-byte.
+ * theme.css and DESIGN.md must be exactly what theme-compile regenerates (no
+ * drift). Mirrors the banner the bin writes so the comparison is byte-for-byte.
  */
 const themesRoot = fileURLToPath(new URL("../../../registry/themes", import.meta.url));
 const repoRoot = fileURLToPath(new URL("../../../", import.meta.url));
@@ -42,9 +44,116 @@ const defaults = {
   dark: new Map([...declsFor(":root"), ...declsFor(".dark")]),
 };
 
+/**
+ * Every theme ships a DESIGN.md beside its theme.css. Only its brand notes are
+ * hand-written; the rest must be exactly what `pnpm theme:build` renders from
+ * the theme's tokens.dtcg.json and the contract.
+ */
+describe("each theme's DESIGN.md", () => {
+  it.each(themeNames)("%s: has a DESIGN.md with brand notes", (name) => {
+    const file = `${themesRoot}/${name}/DESIGN.md`;
+    expect(existsSync(file), "run `pnpm theme:build`").toBe(true);
+    expect(readBrandNotes(readFileSync(file, "utf8"))).not.toBeNull();
+  });
+
+  it.each(themeNames)("%s: committed DESIGN.md matches a fresh render", (name) => {
+    const doc = JSON.parse(readFileSync(`${themesRoot}/${name}/tokens.dtcg.json`, "utf8"));
+    const committed = readFileSync(`${themesRoot}/${name}/DESIGN.md`, "utf8");
+    const fresh = renderDesignMd(doc, defaultsFrom(tokensCss), {
+      brandNotes: readBrandNotes(committed),
+    });
+    expect(committed, "run `pnpm theme:build`").toBe(fresh);
+  });
+});
+
 describe("registry themes compile and stay in sync", () => {
   it("ships at least theme-moderno and theme-contrast", () => {
     expect(themeNames).toEqual(expect.arrayContaining(["theme-moderno", "theme-contrast"]));
+  });
+
+  /**
+   * A theme folder alone already shows up in the docs switcher and the Theme
+   * Builder, so a missing registry.json entry would pass unnoticed while
+   * `moderno add` cannot install the theme.
+   */
+  // theme-compile only warns, so without this a failing pair ships with a warning in the log.
+  it.each(themeNames)("%s: clears WCAG AA on every contract pair", (name) => {
+    const doc = JSON.parse(readFileSync(`${themesRoot}/${name}/tokens.dtcg.json`, "utf8"));
+    expect(compileTheme(doc).warnings).toEqual([]);
+  });
+
+  it("the neutral defaults clear WCAG AA on every contract pair, in both scopes", () => {
+    const failing: string[] = [];
+    for (const scope of ["light", "dark"] as const) {
+      for (const [fg, bg] of CONTRAST_PAIRS) {
+        const ratio = contrastRatio(defaults[scope].get(fg)!, defaults[scope].get(bg)!);
+        if (ratio < 4.5) failing.push(`${scope}: --${fg} on --${bg} is ${ratio.toFixed(2)}:1`);
+      }
+    }
+    expect(failing).toEqual([]);
+  });
+
+  /**
+   * `muted-foreground` is the one foreground the rules let onto several
+   * surfaces (DESIGN.md: subdued text on `background`, `card` or `muted`), but
+   * the contract pairs it with `muted` alone, so theme-compile never checks the
+   * other two. Hold every theme, and the defaults it falls back to, to AA on all
+   * three, resolved the way the cascade resolves them.
+   */
+  const MUTED_SURFACES = ["background", "card", "muted"] as const;
+
+  function mutedForegroundFailures(resolve: (scope: "light" | "dark", slot: string) => string) {
+    const failing: string[] = [];
+    for (const scope of ["light", "dark"] as const) {
+      for (const bg of MUTED_SURFACES) {
+        const ratio = contrastRatio(resolve(scope, "muted-foreground"), resolve(scope, bg));
+        if (!(ratio >= 4.5)) {
+          failing.push(`${scope}: --muted-foreground on --${bg} is ${ratio.toFixed(2)}:1`);
+        }
+      }
+    }
+    return failing;
+  }
+
+  it("the neutral defaults clear WCAG AA for muted-foreground on background, card and muted", () => {
+    expect(mutedForegroundFailures((scope, slot) => defaults[scope].get(slot)!)).toEqual([]);
+  });
+
+  it.each(themeNames)(
+    "%s: clears WCAG AA for muted-foreground on background, card and muted",
+    (name) => {
+      const doc = JSON.parse(readFileSync(`${themesRoot}/${name}/tokens.dtcg.json`, "utf8"));
+      const resolve = (scope: "light" | "dark", slot: string): string =>
+        doc[scope]?.[slot]?.$value ??
+        (scope === "dark" ? doc.light?.[slot]?.$value : undefined) ??
+        defaults[scope].get(slot)!;
+      expect(mutedForegroundFailures(resolve)).toEqual([]);
+    },
+  );
+
+  it.each(themeNames)("%s: is listed in registry.json with its theme.css and DESIGN.md", (name) => {
+    const manifest = JSON.parse(readFileSync(`${repoRoot}registry/registry.json`, "utf8"));
+    const item = manifest.items.find((i: { name: string }) => i.name === name);
+    expect(item, `add a "${name}" item to registry/registry.json`).toBeDefined();
+    expect(item.type).toBe("registry:theme");
+    const paths = item.files.map((f: { path: string }) => f.path);
+    expect(paths).toContain(`themes/${name}/theme.css`);
+    expect(paths).toContain(`themes/${name}/DESIGN.md`);
+  });
+
+  /**
+   * A brand-less theme replaces the default and a project installs one, so its
+   * guide is the project's DESIGN.md. A branded theme sits beside the default,
+   * so its guide goes under design/<name>/, where two brands cannot collide.
+   */
+  it.each(themeNames)("%s: installs its DESIGN.md where its scope says", (name) => {
+    const doc = JSON.parse(readFileSync(`${themesRoot}/${name}/tokens.dtcg.json`, "utf8"));
+    const manifest = JSON.parse(readFileSync(`${repoRoot}registry/registry.json`, "utf8"));
+    const item = manifest.items.find((i: { name: string }) => i.name === name);
+    const file = item.files.find((f: { path: string }) => f.path === `themes/${name}/DESIGN.md`);
+    const brand = doc.$extensions?.["style.moderno.theme"]?.brand ?? null;
+    expect(file.type).toBe("registry:file");
+    expect(file.target).toBe(brand === null ? "DESIGN.md" : `design/${name}/DESIGN.md`);
   });
 
   it.each(themeNames)("%s: committed theme.css matches a fresh compile", (name) => {

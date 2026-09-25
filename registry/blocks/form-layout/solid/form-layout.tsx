@@ -17,8 +17,8 @@ export function FormLayout(props: FormLayoutProps) {
     <section class="@container moderno-block-form-layout text-foreground">
       <form class="grid gap-8" onSubmit={props.onSubmit} noValidate>
         <header class="grid gap-1">
-          <h2 class="text-lg font-semibold @md:text-xl">Account settings</h2>
-          <p class="text-sm text-muted-foreground">
+          <h2 class="text-body-lg font-semibold @md:text-heading-sm">Account settings</h2>
+          <p class="text-ui-md text-muted-foreground">
             Update how you appear to your workspace and choose what we email you about.
           </p>
         </header>
@@ -35,8 +35,8 @@ export function FormLayout(props: FormLayoutProps) {
 
         <div class="grid gap-6 @lg:grid-cols-3">
           <header class="grid gap-1">
-            <h3 class="text-sm font-medium">Profile</h3>
-            <p class="text-sm text-muted-foreground">
+            <h3 class="text-ui-md font-medium">Profile</h3>
+            <p class="text-ui-md text-muted-foreground">
               How you appear to the rest of your workspace.
             </p>
           </header>
@@ -78,8 +78,8 @@ export function FormLayout(props: FormLayoutProps) {
 
         <div class="grid gap-6 @lg:grid-cols-3">
           <header class="grid gap-1">
-            <h3 class="text-sm font-medium">Notifications</h3>
-            <p class="text-sm text-muted-foreground">
+            <h3 class="text-ui-md font-medium">Notifications</h3>
+            <p class="text-ui-md text-muted-foreground">
               We only email you about the things you keep switched on here.
             </p>
           </header>

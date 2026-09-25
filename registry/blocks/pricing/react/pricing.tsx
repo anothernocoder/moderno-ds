@@ -17,16 +17,16 @@ const plans = [
 export function Pricing() {
   return (
     <section className="@container moderno-block-pricing text-foreground">
-      <h2 className="text-lg font-semibold @md:text-xl">Pricing</h2>
+      <h2 className="text-body-lg font-semibold @md:text-heading-sm">Pricing</h2>
       <ul className="mt-6 grid gap-4 @md:grid-cols-3">
         {plans.map((plan) => (
           <li
             key={plan.name}
             className="flex flex-col rounded-lg bg-card p-6 text-card-foreground shadow-sm"
           >
-            <h3 className="text-sm font-medium">{plan.name}</h3>
-            <p className="mt-1 text-2xl font-semibold">{plan.price}</p>
-            <ul className="mt-4 grid grow gap-2 text-sm text-muted-foreground">
+            <h3 className="text-ui-md font-medium">{plan.name}</h3>
+            <p className="mt-1 text-heading font-semibold">{plan.price}</p>
+            <ul className="mt-4 grid grow gap-2 text-ui-md text-muted-foreground">
               {plan.features.map((feature) => (
                 <li key={feature}>{feature}</li>
               ))}

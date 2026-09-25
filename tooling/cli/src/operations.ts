@@ -108,16 +108,33 @@ export type AddResult = {
   installed: string[];
   /** npm packages the installed items need, deduped across the whole tree. */
   dependencies: string[];
+  /**
+   * Targets left alone because a different file the CLI never wrote was
+   * already there (a project's own DESIGN.md, say). `diff` shows the registry
+   * version.
+   */
+  kept: string[];
 };
+
+/** Whether any installed item records `target`: a file the CLI wrote, not the consumer. */
+function writtenByCli(manifest: Manifest, target: string): boolean {
+  return Object.values(manifest.items).some((entry) =>
+    entry.files.some((f) => f.target === target),
+  );
+}
 
 /**
  * Install a registry item (and its registryDependencies) into the project:
  * copy each file to its target, record version + a pristine content hash in the
- * manifest, and wire theme imports into the styles entry.
+ * manifest, and wire theme stylesheets into the styles entry.
  *
  * The walk is what makes the tiers useful: `add auth` (a flow) installs the
  * screens it composes and the blocks those screens compose, each recorded under
  * its own version, so `update` and `diff` stay per item afterwards.
+ *
+ * `add` reinstalls over its own files, but never over one it did not write: a
+ * theme ships a DESIGN.md to the project root, where the consumer may already
+ * keep their own.
  */
 export async function addItem(opts: AddOptions): Promise<AddResult> {
   const { registry, projectDir, name, manifest } = opts;
@@ -125,15 +142,23 @@ export async function addItem(opts: AddOptions): Promise<AddResult> {
   const items = resolveInstallOrder(registry, name);
   const installed: string[] = [];
   const dependencies = new Set<string>();
+  const kept: string[] = [];
 
   for (const item of items) {
     for (const dep of item.dependencies ?? []) dependencies.add(dep);
     const files: ManifestFile[] = [];
     for (const file of item.files) {
       const content = await registry.readFile(file.path);
-      await writeFileEnsuringDir(join(projectDir, file.target), content);
+      const dest = join(projectDir, file.target);
+      const onDisk = await readFileOrNull(dest);
+      if (onDisk !== null && onDisk !== content && !writtenByCli(manifest, file.target)) {
+        kept.push(file.target);
+        continue;
+      }
+      await writeFileEnsuringDir(dest, content);
       files.push({ target: file.target, hash: hashContent(content) });
-      if (item.type === "registry:theme") {
+      // Only the stylesheet is imported: a theme's DESIGN.md ships as a registry:file.
+      if (item.type === "registry:theme" && file.type === "registry:theme") {
         await appendThemeImport(projectDir, stylesEntry, file.target);
       }
     }
@@ -141,7 +166,7 @@ export async function addItem(opts: AddOptions): Promise<AddResult> {
     installed.push(item.name);
   }
   await writeManifest(projectDir, manifest);
-  return { installed, dependencies: [...dependencies] };
+  return { installed, dependencies: [...dependencies], kept };
 }
 
 type ItemOptions = {
@@ -198,6 +223,14 @@ export async function updateItem(opts: ItemOptions): Promise<UpdateResult> {
       anyEdited = true;
       files.push({ target: file.target, status: "skipped-edited" });
       newManifestFiles.push({ target: file.target, hash: pristine });
+      continue;
+    }
+    // A file the CLI never wrote (one `add` kept, or one a new version of the
+    // item introduces over an existing file) is the consumer's own: preserved
+    // like an edit.
+    if (onDisk !== null && onDisk !== registryContent && !writtenByCli(manifest, file.target)) {
+      anyEdited = true;
+      files.push({ target: file.target, status: "skipped-edited" });
       continue;
     }
     if (onDisk === registryContent) {

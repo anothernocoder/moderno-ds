@@ -28,6 +28,11 @@ export interface SiteTheme {
   label: string;
 }
 
+export interface RegistryTheme extends SiteTheme {
+  /** The registry item, and its directory under `registry/themes/`: `theme-contrast`. */
+  item: string;
+}
+
 /** Rewrite compiled theme CSS onto `:root[data-brand="<id>"]`. */
 export function scopeThemeCss(css: string, id: string): string {
   const root = `:root[data-brand="${id}"]`;
@@ -37,12 +42,9 @@ export function scopeThemeCss(css: string, id: string): string {
     .join("\n");
 }
 
-/** `registry/themes/theme-contrast/tokens.dtcg.json` → `contrast`. */
-function idFromPath(path: string): string {
-  return path
-    .split("/")
-    .at(-2)!
-    .replace(/^theme-/, "");
+/** `registry/themes/theme-contrast/tokens.dtcg.json` → `theme-contrast`. */
+function itemFromPath(path: string): string {
+  return path.split("/").at(-2)!;
 }
 
 const sources = import.meta.glob<unknown>("../../../../registry/themes/*/tokens.dtcg.json", {
@@ -50,11 +52,34 @@ const sources = import.meta.glob<unknown>("../../../../registry/themes/*/tokens.
   eager: true,
 });
 
+/**
+ * The `data-brand` a theme switches under: its own `brand`, the one its
+ * installed CSS paints under too. The brand-less default theme (`brand: null`,
+ * `:root`) needs an id of its own here, so it takes its directory name.
+ */
+export function siteThemeId(item: string, doc: unknown): string {
+  const brand = (doc as ThemeMeta)?.$extensions?.["style.moderno.theme"]?.brand;
+  return brand ?? item.replace(/^theme-/, "");
+}
+
+type ThemeMeta = { $extensions?: { "style.moderno.theme"?: { brand?: string | null } } };
+
 const registry = Object.entries(sources)
-  .map(([path, doc]) => ({ id: idFromPath(path), css: compileTheme(doc).css }))
+  .map(([path, doc]) => {
+    const item = itemFromPath(path);
+    return { item, id: siteThemeId(item, doc), css: compileTheme(doc).css };
+  })
   .sort((a, b) =>
     a.id === DEFAULT_SITE_THEME ? -1 : b.id === DEFAULT_SITE_THEME ? 1 : a.id.localeCompare(b.id),
   );
+
+// Two themes on one id would paint over each other in the switcher.
+const duplicate = registry.find((t, i) => registry.findIndex((u) => u.id === t.id) !== i);
+if (duplicate) {
+  throw new Error(
+    `Two registry themes share data-brand="${duplicate.id}"; give each its own brand.`,
+  );
+}
 
 /** Every registry theme, re-scoped, as one stylesheet for the <head>. */
 export const siteThemesCss = registry.map(({ id, css }) => scopeThemeCss(css, id)).join("\n");
@@ -62,10 +87,20 @@ export const siteThemesCss = registry.map(({ id, css }) => scopeThemeCss(css, id
 /** Ids the select offers and the pre-paint script accepts. */
 export const siteThemeIds = [...registry.map((t) => t.id), NEUTRAL_THEME];
 
+/**
+ * Every registry theme, the default first: what the header offers and the Theme
+ * Builder can start from. A brand name reads the same in every locale.
+ */
+export const registryThemes: RegistryTheme[] = registry.map(({ item, id }) => ({
+  item,
+  id,
+  label: id.charAt(0).toUpperCase() + id.slice(1),
+}));
+
 /** Registry themes first (default leading), the neutral contract last. */
 export function siteThemes(neutralLabel: string): SiteTheme[] {
   return [
-    ...registry.map(({ id }) => ({ id, label: id.charAt(0).toUpperCase() + id.slice(1) })),
+    ...registryThemes.map(({ id, label }) => ({ id, label })),
     { id: NEUTRAL_THEME, label: neutralLabel },
   ];
 }

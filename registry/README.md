@@ -45,15 +45,20 @@ they take icons as children.
   "name": "theme-moderno",
   // registry:theme | registry:component | registry:block | registry:screen | registry:flow
   "type": "registry:theme",
-  "version": "0.1.0", // semver per item — drives `update` / `diff`
+  "version": "0.3.0", // semver per item — drives `update` / `diff`
   "dependencies": [], // npm packages the item needs
   "registryDependencies": [], // other registry items installed first (recursively)
   "files": [
     {
       "path": "themes/theme-moderno/theme.css", // content, relative to this dir
-      "type": "registry:theme",
-      "target": "src/styles/theme-moderno.css",
-    }, // destination in the consumer
+      "type": "registry:theme", // a theme's stylesheet: @import-ed into moderno.css
+      "target": "src/styles/theme-moderno.css", // destination in the consumer
+    },
+    {
+      "path": "themes/theme-moderno/DESIGN.md",
+      "type": "registry:file", // copied as is, never imported
+      "target": "DESIGN.md",
+    },
   ],
 }
 ```
@@ -65,7 +70,7 @@ works served from disk (dev) or from `/r/` on the docs site (prod).
 
 ```sh
 moderno init                       # scaffold components.json + src/styles/moderno.css
-moderno add theme-moderno          # copy theme.css + append its @import to moderno.css
+moderno add theme-moderno          # copy theme.css + DESIGN.md, append the CSS @import to moderno.css
 moderno add button                 # eject a primitive (escape hatch)
 moderno add login-form-react       # copy a block, pulling registryDependencies first
 moderno add sign-in-react          # copy a screen + the blocks it composes
@@ -98,6 +103,11 @@ and whether a file was edited locally:
 recorded pristine hash (i.e. unedited). Edited files are preserved and reported
 as conflicts — this is what makes `update` safe and is why primitives are
 **themed, not edited**.
+
+`add` never overwrites a file it did not write. If a different file is already
+at a target (a project's own `DESIGN.md`, say), `add` keeps it, reports it, and
+leaves it out of the manifest; `update` then preserves it like a local edit, and
+`diff` shows the registry version beside it.
 
 ## Authoring a block
 
@@ -150,8 +160,21 @@ The root is a `<div>`, not a `<main>`: a document may have only one visible
 
 ## Themes & the multi-brand switch
 
-Themes are authored as `tokens.dtcg.json` and compiled to `theme.css` by
-`@moderno-ui/theme-compile` (`pnpm theme:build`, with WCAG AA contrast warnings).
+Each theme lives in `themes/<name>/` as three files. `tokens.dtcg.json` is its one
+hand-edited source; `@moderno-ui/theme-compile` (`pnpm theme:build`, with WCAG
+AA contrast warnings) generates the other two from it, for every theme alike:
+
+- `theme.css`, the compiled stylesheet.
+- `DESIGN.md`, the theme's guide in the google-labs format, for people and
+  coding agents: front matter with the theme's values, the system rules every
+  theme shares (derived from the token contract), and the theme's **brand
+  notes**. The brand notes, between `<!-- brand-notes:start -->` and
+  `<!-- brand-notes:end -->`, are the only hand-written part; a rebuild keeps
+  them and regenerates the rest. Its `name` and `description` come from the
+  theme (`name` and `$description` in `tokens.dtcg.json`).
+
+`themes.test.ts` fails if either file drifts from a fresh build. The registry
+ships both with the theme.
 
 - `theme-moderno` → `:root` (light) + `.dark` (dark): the **default brand**.
 - `theme-contrast` → `[data-brand="contrast"]` + `.dark [data-brand="contrast"], [data-brand="contrast"].dark`: an alternate brand.
@@ -176,3 +199,85 @@ Install both and switch brand by toggling `data-brand`, composed with `.dark`:
 No component is touched — only the contract variables are re-mapped. A runnable
 demo of the switch lives at [`demo/multi-brand.html`](../demo/multi-brand.html)
 (open it directly in a browser).
+
+### Adding a theme
+
+1. **Get a token file.** Build the theme in the docs' Theme Builder
+   (`/en/theme-builder`) and download its `tokens.dtcg.json`, or copy an
+   existing theme's `tokens.dtcg.json` and change the values.
+2. **Save it as `registry/themes/theme-<name>/tokens.dtcg.json`.** Give it a
+   `$description` (one sentence on the brand; it becomes the `DESIGN.md`
+   description), and set the two fields under
+   `$extensions["style.moderno.theme"]`:
+   - `name`: the directory name, `theme-<name>`.
+   - `brand`: where the theme applies. `null` compiles to `:root` and `.dark`,
+     so the theme replaces the default one; a project installs only one such
+     theme. A brand id such as `"ocean"` compiles to `[data-brand="ocean"]` and
+     its `.dark` pairs, so the theme sits beside the default and paints only
+     under an element with `data-brand="ocean"`. The docs site switches to the
+     theme under that same brand, and fails to build if two themes share one.
+     The Theme Builder keeps the base theme's choice (branded or not) and
+     derives the brand id from the name you give it.
+3. **Run `pnpm theme:build`.** It writes `theme.css` and `DESIGN.md` beside the
+   tokens, prints WCAG AA contrast warnings, and fails on an invalid file.
+   `themes.test.ts` then fails if either file goes stale, or if the theme sets
+   an extended slot (spacing, motion, the type scale…) to the value it would
+   inherit anyway. Drop those slots.
+4. **Write the brand notes.** On the first build the theme has none, so
+   `DESIGN.md` gets a draft read off its values (the build log says "drafted
+   brand notes"). Review it and rewrite it in the brand's own words, between
+   `<!-- brand-notes:start -->` and `<!-- brand-notes:end -->`, using `###`
+   headings or smaller. Everything outside the markers is regenerated, so edit
+   nothing else, then run `pnpm theme:build` again.
+5. **Add the item to [`registry.json`](registry.json)**, next to the other
+   themes, with both files. Without it the docs still show the theme but
+   `moderno add` can't find it, so `themes.test.ts` fails until the entry
+   exists. The `DESIGN.md` target follows the brand: a brand-less theme
+   (`brand: null`) replaces the default, so its guide is the project's own
+   `DESIGN.md`; a branded theme sits beside the default, so its guide goes to
+   `design/theme-<name>/DESIGN.md`. `themes.test.ts` checks the target.
+
+   ```json
+   {
+     "name": "theme-ocean",
+     "type": "registry:theme",
+     "version": "0.1.0",
+     "title": "Theme Ocean",
+     "description": "One sentence on the brand and the selector it paints.",
+     "dependencies": [],
+     "registryDependencies": [],
+     "files": [
+       {
+         "path": "themes/theme-ocean/theme.css",
+         "type": "registry:theme",
+         "target": "src/styles/theme-ocean.css"
+       },
+       {
+         "path": "themes/theme-ocean/DESIGN.md",
+         "type": "registry:file",
+         "target": "design/theme-ocean/DESIGN.md"
+       }
+     ]
+   }
+   ```
+
+   For a brand-less theme, the second target is `"DESIGN.md"`.
+
+After that, nothing else needs registering:
+
+- The docs header's theme switcher and the Theme Builder's "Start from" row read
+  `registry/themes/*/tokens.dtcg.json` (`apps/docs/src/lib/siteThemes.ts`) and
+  list the new theme as `<Name>`, after the default in alphabetical order.
+- The docs build copies `registry/` to `/r/`, so consumers install it with
+  `npx @moderno-ui/cli add theme-<name>`. That writes
+  `src/styles/theme-<name>.css`, appends its `@import` to
+  `src/styles/moderno.css`, and writes the theme's `DESIGN.md` to its target,
+  unless the project already has a different file there (see
+  [Manifest](#manifest--modernomanifestjson)).
+
+**Fonts.** A theme names its typefaces in `font-sans` and `font-serif`, but the
+registry ships no font files. The docs site loads them itself: add the
+`@fontsource/<family>` package to `apps/docs/package.json` and import it in
+`apps/docs/src/layouts/BaseLayout.astro`, next to the Hedvig Letters imports.
+Without that, the docs fall back to the next family in the stack. Consumers load
+the font files themselves, for example from the same `@fontsource` package.

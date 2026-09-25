@@ -57,7 +57,7 @@
        fill, and ghost relies on this rather than on a consumer's preflight. */
     background-color: transparent;
     font-family: var(--font-sans);
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
     line-height: 1;
     white-space: nowrap;
     cursor: pointer;
@@ -75,17 +75,17 @@
   [data-scope="button"][data-part="root"][data-size="sm"] {
     height: var(--spacing-7);
     padding-inline: var(--spacing-3);
-    font-size: 0.8125rem;
+    font-size: var(--text-ui-sm);
   }
   [data-scope="button"][data-part="root"][data-size="md"] {
     height: var(--spacing-8);
     padding-inline: var(--spacing-4);
-    font-size: 0.875rem;
+    font-size: var(--text-ui-md);
   }
   [data-scope="button"][data-part="root"][data-size="lg"] {
     height: calc(var(--spacing-8) + var(--spacing-2));
     padding-inline: var(--spacing-5);
-    font-size: 0.9375rem;
+    font-size: var(--text-ui-lg);
   }
 
   /* Variants — colour pairs come from the contract's semantic slots. */
@@ -138,7 +138,7 @@
    * description, content, footer).
    *
    * Depth comes from a surface step and a 1px border, never a shadow
-   * (DESIGN.md, "Elevation & Depth"); the corner follows --radius, which
+   * (every theme's DESIGN.md, "Elevation & Depth"); the corner follows --radius, which
    * theme-moderno pins to 0 — so "no shadow, no radius" is the theme's
    * decision, not a value baked in here. */
   [data-scope="card"][data-part="root"] {
@@ -153,7 +153,7 @@
     inline-size: 100%;
   }
 
-  /* Variants — the surface treatment. `outline` is the DESIGN.md card: the
+  /* Variants — the surface treatment. `outline` is the DESIGN.md Card: the
      card fill with a 1px border. `muted` is the recessed well. `ghost` keeps
      the anatomy's rhythm with no surface of its own. */
   [data-scope="card"][data-part="root"][data-variant="muted"] {
@@ -206,18 +206,18 @@
   }
 
   [data-scope="card"][data-part="title"] {
-    font-size: 1rem;
-    font-weight: 600;
+    font-size: var(--text-body);
+    font-weight: var(--font-weight-semibold);
     line-height: 1.4;
   }
   /* Only `lg` promotes the title: a bigger card is usually a bigger claim on
      the page. `sm` tightens the padding but keeps the same voice. */
   [data-scope="card"][data-size="lg"] > [data-part="header"] > [data-part="title"] {
-    font-size: 1.125rem;
+    font-size: var(--text-body-lg);
   }
 
   [data-scope="card"][data-part="description"] {
-    font-size: 0.875rem;
+    font-size: var(--text-ui-md);
     line-height: 1.5;
     color: var(--muted-foreground);
   }
@@ -229,7 +229,7 @@
     flex: 1;
     flex-direction: column;
     gap: var(--spacing-3);
-    font-size: 0.875rem;
+    font-size: var(--text-ui-md);
     line-height: 1.5;
   }
 
@@ -297,7 +297,7 @@
   [data-scope="divider"][data-part="label"] {
     flex: 0 0 auto;
     color: var(--muted-foreground);
-    font-size: 0.8125rem;
+    font-size: var(--text-ui-sm);
     line-height: 1;
     white-space: nowrap;
   }
@@ -322,8 +322,8 @@
     gap: var(--spacing-2);
   }
   [data-scope="field"][data-part="label"] {
-    font-size: 0.875rem;
-    font-weight: 500;
+    font-size: var(--text-ui-md);
+    font-weight: var(--font-weight-medium);
     line-height: 1.4;
     color: var(--foreground);
   }
@@ -336,7 +336,7 @@
     background-color: var(--background);
     color: var(--foreground);
     font-family: var(--font-sans);
-    font-size: 0.875rem;
+    font-size: var(--text-ui-md);
     /* A control announces focus and validity by moving colour, not geometry;
        transitioning both keeps the change legible instead of instant. */
     transition:
@@ -402,7 +402,7 @@
   }
   [data-scope="field"][data-part="helper-text"],
   [data-scope="field"][data-part="error-text"] {
-    font-size: 0.8125rem;
+    font-size: var(--text-ui-sm);
     line-height: 1.4;
   }
   [data-scope="field"][data-part="helper-text"] {
@@ -422,12 +422,12 @@
     gap: var(--spacing-1);
   }
   [data-scope="field"][data-size="sm"] [data-part="label"] {
-    font-size: 0.8125rem;
+    font-size: var(--text-ui-sm);
   }
   [data-scope="field"][data-size="sm"] [data-part="input"],
   [data-scope="field"][data-size="sm"] [data-part="textarea"] {
     padding-inline: var(--spacing-2);
-    font-size: 0.8125rem;
+    font-size: var(--text-ui-sm);
   }
   [data-scope="field"][data-size="sm"] [data-part="input"] {
     height: var(--spacing-7);
@@ -438,16 +438,16 @@
   }
   [data-scope="field"][data-size="sm"] [data-part="helper-text"],
   [data-scope="field"][data-size="sm"] [data-part="error-text"] {
-    font-size: 0.75rem;
+    font-size: var(--text-ui-xs);
   }
 
   [data-scope="field"][data-size="lg"] [data-part="label"] {
-    font-size: 0.9375rem;
+    font-size: var(--text-ui-lg);
   }
   [data-scope="field"][data-size="lg"] [data-part="input"],
   [data-scope="field"][data-size="lg"] [data-part="textarea"] {
     padding-inline: var(--spacing-4);
-    font-size: 0.9375rem;
+    font-size: var(--text-ui-lg);
   }
   [data-scope="field"][data-size="lg"] [data-part="input"] {
     height: calc(var(--spacing-8) + var(--spacing-2));
@@ -458,7 +458,7 @@
   }
   [data-scope="field"][data-size="lg"] [data-part="helper-text"],
   [data-scope="field"][data-size="lg"] [data-part="error-text"] {
-    font-size: 0.875rem;
+    font-size: var(--text-ui-md);
   }
 
   /* ────────────────────────── Checkbox ────────────────────────── *
@@ -511,6 +511,7 @@
     outline-width: 2px;
     outline-offset: 2px;
   }
+  /* The check is a glyph sized to its box, not text: it stays off the type scale. */
   [data-scope="checkbox"][data-part="indicator"] {
     display: inline-flex;
     align-items: center;
@@ -522,7 +523,7 @@
     color: currentColor;
   }
   [data-scope="checkbox"][data-part="label"] {
-    font-size: 0.875rem;
+    font-size: var(--text-ui-md);
     line-height: var(--spacing-5);
     color: var(--foreground);
     user-select: none;
@@ -536,7 +537,7 @@
     font-size: 0.5625rem;
   }
   [data-scope="checkbox"][data-size="sm"] [data-part="label"] {
-    font-size: 0.8125rem;
+    font-size: var(--text-ui-sm);
   }
   [data-scope="checkbox"][data-size="lg"] [data-part="control"] {
     width: var(--spacing-5);
@@ -546,7 +547,7 @@
     font-size: 0.8125rem;
   }
   [data-scope="checkbox"][data-size="lg"] [data-part="label"] {
-    font-size: 0.9375rem;
+    font-size: var(--text-ui-lg);
   }
 
   /* ─────────────────────────── Dialog ─────────────────────────── *
@@ -589,12 +590,12 @@
     box-shadow: var(--shadow-lg);
   }
   [data-scope="dialog"][data-part="title"] {
-    font-size: 1.125rem;
-    font-weight: 600;
+    font-size: var(--text-body-lg);
+    font-weight: var(--font-weight-semibold);
     color: var(--foreground);
   }
   [data-scope="dialog"][data-part="description"] {
-    font-size: 0.875rem;
+    font-size: var(--text-ui-md);
     color: var(--muted-foreground);
   }
 
@@ -606,8 +607,8 @@
     gap: var(--spacing-2);
   }
   [data-scope="select"][data-part="label"] {
-    font-size: 0.875rem;
-    font-weight: 500;
+    font-size: var(--text-ui-md);
+    font-weight: var(--font-weight-medium);
     color: var(--foreground);
   }
   [data-scope="select"][data-part="trigger"] {
@@ -622,7 +623,7 @@
     background-color: var(--background);
     color: var(--foreground);
     font-family: var(--font-sans);
-    font-size: 0.875rem;
+    font-size: var(--text-ui-md);
     cursor: pointer;
   }
   [data-scope="select"][data-part="trigger"]:focus-visible {
@@ -632,11 +633,11 @@
   /* Density driven by the recipe's data-size on the root part. */
   [data-scope="select"][data-size="sm"] [data-part="trigger"] {
     height: var(--spacing-7);
-    font-size: 0.8125rem;
+    font-size: var(--text-ui-sm);
   }
   [data-scope="select"][data-size="lg"] [data-part="trigger"] {
     height: calc(var(--spacing-8) + var(--spacing-2));
-    font-size: 0.9375rem;
+    font-size: var(--text-ui-lg);
   }
   [data-scope="select"][data-part="content"] {
     display: flex;
@@ -657,7 +658,7 @@
     gap: var(--spacing-2);
     padding: var(--spacing-2) var(--spacing-3);
     border-radius: var(--radius);
-    font-size: 0.875rem;
+    font-size: var(--text-ui-md);
     cursor: pointer;
   }
   [data-scope="select"][data-part="item"][data-highlighted] {
@@ -665,7 +666,7 @@
     color: var(--accent-foreground);
   }
   [data-scope="select"][data-part="item"][data-state="checked"] {
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
   }
 
   /* ─────────────────────────── Alert ──────────────────────────── *
@@ -710,9 +711,9 @@
     flex: 1;
   }
   [data-scope="alert"][data-part="title"] {
-    font-size: 0.875rem;
-    font-weight: 600;
-    line-height: 1.25rem;
+    font-size: var(--text-ui-md);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--leading-ui-md);
     color: var(--foreground);
   }
   /* Muted, but not straight `--muted-foreground`: an alert never sits on
@@ -724,7 +725,7 @@
      quieter than the title, and it is still two contract slots rather than a
      literal, so a theme re-maps it like everything else. */
   [data-scope="alert"][data-part="description"] {
-    font-size: 0.875rem;
+    font-size: var(--text-ui-md);
     line-height: 1.5;
     color: color-mix(in oklab, var(--muted-foreground) 85%, var(--foreground));
   }
@@ -736,7 +737,7 @@
   }
   [data-scope="alert"][data-size="sm"] [data-part="title"],
   [data-scope="alert"][data-size="sm"] [data-part="description"] {
-    font-size: 0.8125rem;
+    font-size: var(--text-ui-sm);
   }
 
   /* Status tints. Written per variant rather than through one shared custom
@@ -780,8 +781,8 @@
     gap: var(--spacing-2);
   }
   [data-scope="pin-input"][data-part="label"] {
-    font-size: 0.875rem;
-    font-weight: 500;
+    font-size: var(--text-ui-md);
+    font-weight: var(--font-weight-medium);
     color: var(--foreground);
   }
   [data-scope="pin-input"][data-part="control"] {
@@ -802,7 +803,7 @@
     background-color: var(--background);
     color: var(--foreground);
     font-family: var(--font-mono);
-    font-size: 0.875rem;
+    font-size: var(--text-ui-md);
     text-align: center;
     caret-color: var(--ring);
     transition: border-color var(--motion-fast);
@@ -821,12 +822,12 @@
   [data-scope="pin-input"][data-size="sm"] [data-part="input"] {
     width: var(--spacing-7);
     height: var(--spacing-7);
-    font-size: 0.8125rem;
+    font-size: var(--text-ui-sm);
   }
   [data-scope="pin-input"][data-size="lg"] [data-part="input"] {
     width: calc(var(--spacing-8) + var(--spacing-2));
     height: calc(var(--spacing-8) + var(--spacing-2));
-    font-size: 0.9375rem;
+    font-size: var(--text-ui-lg);
   }
   /* Ark flags each cell that holds a character, and the root once every cell
      does. The three state rules below share one specificity (0,3,0), so their
@@ -911,7 +912,7 @@
   }
   [data-scope="chart"][data-part="tick-label"] {
     fill: var(--muted-foreground);
-    font-size: 0.75rem;
+    font-size: var(--text-ui-xs);
   }
   [data-scope="chart"][data-part="tick-label"][data-orientation="x"] {
     text-anchor: middle;

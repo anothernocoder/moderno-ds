@@ -1,15 +1,18 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
+import { defaultsFrom, readBrandNotes, renderDesignMd } from "@moderno-ui/theme-compile";
 import {
   buildTheme,
   cliSnippet,
   decodeState,
   defaultThemeState,
   encodeState,
+  keptBrandNotes,
   previewStyle,
   stateToTokens,
   tokensToState,
+  type ThemeState,
 } from "./theme.ts";
 
 const modernoTokens = JSON.parse(
@@ -55,10 +58,12 @@ describe("tokensToState / stateToTokens — round trip", () => {
   it("exports the extended slots with their DTCG types", () => {
     const state = tokensToState(modernoTokens);
     state.light["container-sm"] = "30rem";
+    state.light["font-weight-semibold"] = "650";
     const doc = stateToTokens(state);
     expect(doc.light["font-serif"].$type).toBe("fontFamily");
     expect(doc.light["shadow-lg"].$type).toBe("shadow");
     expect(doc.light["container-sm"].$type).toBe("dimension");
+    expect(doc.light["font-weight-semibold"].$type).toBe("fontWeight");
   });
 
   it("edits the extended modal scrim as an optional colour field", () => {
@@ -154,7 +159,112 @@ describe("buildTheme — export bundle", () => {
 
 describe("cliSnippet", () => {
   it("references the theme by a slugified name", () => {
-    expect(cliSnippet("My Brand")).toContain("my-brand");
+    expect(cliSnippet("My Brand")).toContain("add theme-my-brand");
+  });
+
+  // A registry base imports under its item name, `theme-moderno`.
+  it("does not repeat the theme- prefix of a registry item name", () => {
+    expect(cliSnippet("theme-moderno")).toMatch(/ add theme-moderno$/);
+  });
+});
+
+describe("the exported brand", () => {
+  const branded = { ...defaultThemeState(), brand: "contrast" };
+
+  it("follows the theme's name, not the base it started from", () => {
+    const doc = stateToTokens({ ...branded, name: "Ocean" });
+    expect(doc.$extensions?.["style.moderno.theme"]?.brand).toBe("ocean");
+  });
+
+  it("keeps a registry base's own brand when its name is unchanged", () => {
+    const doc = stateToTokens({ ...branded, name: "theme-contrast" });
+    expect(doc.$extensions?.["style.moderno.theme"]?.brand).toBe("contrast");
+  });
+
+  it("keeps a brand-less theme on :root", () => {
+    const doc = stateToTokens({ ...defaultThemeState(), name: "Ocean" });
+    expect(doc.$extensions?.["style.moderno.theme"]?.brand).toBe(null);
+  });
+});
+
+describe("the description", () => {
+  it("reads an imported theme's $description", () => {
+    expect(tokensToState(modernoTokens).description).toBe(modernoTokens.$description);
+  });
+
+  it("round-trips through the exported tokens, trimmed", () => {
+    const state = { ...defaultThemeState(), name: "Ocean", description: "  A calm blue brand. " };
+    const doc = stateToTokens(state);
+    expect(doc.$description).toBe("A calm blue brand.");
+    expect(tokensToState(doc).description).toBe("A calm blue brand.");
+  });
+
+  it("writes no $description when the field is blank", () => {
+    const doc = stateToTokens({ ...defaultThemeState(), description: "   " });
+    expect("$description" in doc).toBe(false);
+  });
+
+  it("starts blank on the default theme, which is not Moderno", () => {
+    expect(defaultThemeState().description).toBe("");
+  });
+
+  it("carries into DESIGN.md's description", () => {
+    const state = { ...defaultThemeState(), name: "Ocean", description: "A calm blue brand." };
+    expect(buildTheme(state).designMd).toContain('description: "A calm blue brand."');
+  });
+});
+
+describe("DESIGN.md export", () => {
+  const tokensCss = readFileSync(
+    fileURLToPath(new URL("../../../../packages/tokens/src/tokens.css", import.meta.url)),
+    "utf8",
+  );
+  const committed = readFileSync(
+    fileURLToPath(new URL("../../../../registry/themes/theme-moderno/DESIGN.md", import.meta.url)),
+    "utf8",
+  );
+  const modernoNotes = readBrandNotes(committed)!;
+  const imported = () => tokensToState(modernoTokens, "theme-moderno");
+
+  it("is renderDesignMd of the exact tokens the builder exports, over the tokens.css defaults", () => {
+    const state = { ...imported(), name: "Ocean" };
+    state.light.primary = "oklch(0.45 0.12 250)";
+    expect(buildTheme(state, modernoNotes).designMd).toBe(
+      renderDesignMd(stateToTokens(state), defaultsFrom(tokensCss), { brandNotes: null }),
+    );
+  });
+
+  it("reproduces the registry's DESIGN.md byte for byte for an unchanged import", () => {
+    expect(buildTheme(imported(), modernoNotes).designMd).toBe(committed);
+  });
+
+  it("keeps the base's brand notes while the theme is still that base", () => {
+    expect(keptBrandNotes(imported(), modernoNotes)).toBe(modernoNotes);
+    // the same slug is the same theme: the brand and the CLI item agree
+    expect(keptBrandNotes({ ...imported(), name: "Moderno" }, modernoNotes)).toBe(modernoNotes);
+    // values are the theme's to edit; only the name says which theme it is
+    const edited = imported();
+    edited.light.primary = "oklch(0.45 0.12 250)";
+    expect(keptBrandNotes(edited, modernoNotes)).toBe(modernoNotes);
+  });
+
+  it("drafts notes once the theme is renamed, pasted or started from the default", () => {
+    expect(keptBrandNotes({ ...imported(), name: "Ocean" }, modernoNotes)).toBeNull();
+    expect(keptBrandNotes(tokensToState(modernoTokens), modernoNotes)).toBeNull();
+    expect(keptBrandNotes(defaultThemeState(), modernoNotes)).toBeNull();
+    const renamed = buildTheme({ ...imported(), name: "Ocean" }, modernoNotes).designMd;
+    expect(readBrandNotes(renamed)).toMatch(/^_Draft/);
+  });
+
+  it("drafts notes while the base's notes are not loaded yet", () => {
+    expect(keptBrandNotes(imported(), undefined)).toBeNull();
+    expect(buildTheme(imported()).valid).toBe(true);
+  });
+
+  it("is empty when the theme is invalid", () => {
+    const state = imported();
+    delete (state.light as Record<string, string>).ring;
+    expect(buildTheme(state, modernoNotes).designMd).toBe("");
   });
 });
 
@@ -186,6 +296,26 @@ describe("default + URL persistence", () => {
     const decoded = decodeState(encodeState(state))!;
     expect(decoded.name).toBe("acme");
     expect(decoded.light.primary).toBe("oklch(0.5 0.2 250)");
+  });
+
+  it("round-trips the description and the base, but never the base's notes", () => {
+    const state = { ...tokensToState(modernoTokens, "theme-moderno"), description: "Mine." };
+    const encoded = encodeState(state);
+    const decoded = decodeState(encoded)!;
+    expect(decoded.description).toBe("Mine.");
+    expect(decoded.base).toBe("theme-moderno");
+    expect(atob(encoded.replace(/-/g, "+").replace(/_/g, "/"))).not.toContain("brand-notes");
+  });
+
+  it("opens a link from before the description and base existed", () => {
+    const legacy: Partial<ThemeState> = defaultThemeState();
+    delete legacy.description;
+    delete legacy.base;
+    const decoded = decodeState(encodeState(legacy as ThemeState))!;
+    expect(decoded.description).toBe("");
+    expect(decoded.base).toBe(null);
+    expect(buildTheme(decoded).valid).toBe(true);
+    expect(buildTheme(decoded).designMd).toContain("brand-notes:start");
   });
 
   it("returns null on malformed input", () => {

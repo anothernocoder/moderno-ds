@@ -57,6 +57,16 @@
   --font-serif: var(--font-serif);
   --font-mono: var(--font-mono);
 
+  /*
+   * Font weights → font-normal / font-medium / font-semibold / font-bold.
+   * The same keys Tailwind ships, so this only points the utilities at the
+   * runtime var; Tailwind's other weights (font-light, font-black…) stay.
+   */
+  --font-weight-normal: var(--font-weight-normal);
+  --font-weight-medium: var(--font-weight-medium);
+  --font-weight-semibold: var(--font-weight-semibold);
+  --font-weight-bold: var(--font-weight-bold);
+
   /* Radius → rounded-* utilities */
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -68,6 +78,40 @@
   --shadow-sm: var(--shadow-sm);
   --shadow-md: var(--shadow-md);
   --shadow-lg: var(--shadow-lg);
+
+  /*
+   * Type scale → text-ui-sm, text-body… (size + its line height in one class)
+   * and leading-ui-sm, leading-body… Added beside Tailwind's own text keys, not
+   * over them: a stock `text-sm` keeps its size.
+   */
+  --text-ui-xs: var(--text-ui-xs);
+  --text-ui-xs--line-height: var(--leading-ui-xs);
+  --text-ui-sm: var(--text-ui-sm);
+  --text-ui-sm--line-height: var(--leading-ui-sm);
+  --text-ui-md: var(--text-ui-md);
+  --text-ui-md--line-height: var(--leading-ui-md);
+  --text-ui-lg: var(--text-ui-lg);
+  --text-ui-lg--line-height: var(--leading-ui-lg);
+  --text-body: var(--text-body);
+  --text-body--line-height: var(--leading-body);
+  --text-body-lg: var(--text-body-lg);
+  --text-body-lg--line-height: var(--leading-body-lg);
+  --text-heading-sm: var(--text-heading-sm);
+  --text-heading-sm--line-height: var(--leading-heading-sm);
+  --text-heading: var(--text-heading);
+  --text-heading--line-height: var(--leading-heading);
+  --text-heading-lg: var(--text-heading-lg);
+  --text-heading-lg--line-height: var(--leading-heading-lg);
+
+  --leading-ui-xs: var(--leading-ui-xs);
+  --leading-ui-sm: var(--leading-ui-sm);
+  --leading-ui-md: var(--leading-ui-md);
+  --leading-ui-lg: var(--leading-ui-lg);
+  --leading-body: var(--leading-body);
+  --leading-body-lg: var(--leading-body-lg);
+  --leading-heading-sm: var(--leading-heading-sm);
+  --leading-heading: var(--leading-heading);
+  --leading-heading-lg: var(--leading-heading-lg);
 }
 
 /*

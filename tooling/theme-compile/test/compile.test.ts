@@ -137,11 +137,13 @@ describe("compileTheme — extended slots are optional overrides", () => {
     doc.light["shadow-md"] = { $type: "shadow", $value: "0 0 0 1px oklch(0 0 0 / 0.1)" };
     doc.light["container-lg"] = { $type: "dimension", $value: "48rem" };
     doc.light["overlay"] = { $type: "color", $value: "oklch(0.2 0.05 260 / 0.4)" };
+    doc.light["font-weight-semibold"] = { $type: "fontWeight", $value: "650" };
     const { css } = compileTheme(doc);
     expect(css).toContain("--font-serif: ui-serif, Georgia, serif;");
     expect(css).toContain("--shadow-md: 0 0 0 1px oklch(0 0 0 / 0.1);");
     expect(css).toContain("--container-lg: 48rem;");
     expect(css).toContain("--overlay: oklch(0.2 0.05 260 / 0.4);");
+    expect(css).toContain("--font-weight-semibold: 650;");
     // The dark scope declared none, so it inherits the neutral defaults.
     expect(css.slice(css.indexOf(".dark"))).not.toContain("--font-serif");
   });
