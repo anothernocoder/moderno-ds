@@ -34,7 +34,7 @@
     "@moderno-ui/core": "workspace:*"
   },
   "peerDependencies": {
-    "@moderno-ui/css": "workspace:*",
+    "@moderno-ui/css": "workspace:>=0.3.0 <1.0.0",
     "svelte": "^5.0.0"
   },
   "devDependencies": {
