@@ -193,10 +193,10 @@ demo of the switch lives at [`demo/multi-brand.html`](../demo/multi-brand.html)
      so the theme replaces the default one; a project installs only one such
      theme. A brand id such as `"ocean"` compiles to `[data-brand="ocean"]` and
      its `.dark` pairs, so the theme sits beside the default and paints only
-     under an element with `data-brand="ocean"`. Use `<name>` as the id: the
-     docs site switches to the theme with `data-brand="<name>"` whatever the
-     field says. The Theme Builder copies `brand` from the theme you started
-     from, so check it after exporting.
+     under an element with `data-brand="ocean"`. The docs site switches to the
+     theme under that same brand, and fails to build if two themes share one.
+     The Theme Builder keeps the base theme's choice (branded or not) and
+     derives the brand id from the name you give it.
 3. **Run `pnpm theme:build`.** It writes `theme.css` beside the tokens, prints
    WCAG AA contrast warnings, and fails on an invalid file. `themes.test.ts`
    then fails if `theme.css` goes stale, or if the theme sets an extended slot

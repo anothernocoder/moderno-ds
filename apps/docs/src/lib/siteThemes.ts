@@ -52,14 +52,34 @@ const sources = import.meta.glob<unknown>("../../../../registry/themes/*/tokens.
   eager: true,
 });
 
+/**
+ * The `data-brand` a theme switches under: its own `brand`, the one its
+ * installed CSS paints under too. The brand-less default theme (`brand: null`,
+ * `:root`) needs an id of its own here, so it takes its directory name.
+ */
+export function siteThemeId(item: string, doc: unknown): string {
+  const brand = (doc as ThemeMeta)?.$extensions?.["style.moderno.theme"]?.brand;
+  return brand ?? item.replace(/^theme-/, "");
+}
+
+type ThemeMeta = { $extensions?: { "style.moderno.theme"?: { brand?: string | null } } };
+
 const registry = Object.entries(sources)
   .map(([path, doc]) => {
     const item = itemFromPath(path);
-    return { item, id: item.replace(/^theme-/, ""), css: compileTheme(doc).css };
+    return { item, id: siteThemeId(item, doc), css: compileTheme(doc).css };
   })
   .sort((a, b) =>
     a.id === DEFAULT_SITE_THEME ? -1 : b.id === DEFAULT_SITE_THEME ? 1 : a.id.localeCompare(b.id),
   );
+
+// Two themes on one id would paint over each other in the switcher.
+const duplicate = registry.find((t, i) => registry.findIndex((u) => u.id === t.id) !== i);
+if (duplicate) {
+  throw new Error(
+    `Two registry themes share data-brand="${duplicate.id}"; give each its own brand.`,
+  );
+}
 
 /** Every registry theme, re-scoped, as one stylesheet for the <head>. */
 export const siteThemesCss = registry.map(({ id, css }) => scopeThemeCss(css, id)).join("\n");
