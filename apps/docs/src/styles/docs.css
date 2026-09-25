@@ -330,6 +330,9 @@ main {
   min-width: 0;
   max-width: 44rem;
 }
+main.main--wide {
+  max-width: none;
+}
 
 /*
   Prose typography, in a cascade layer — and that layer, not the specificity,
