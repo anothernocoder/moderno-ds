@@ -13,13 +13,15 @@ import ForFramework from "../../../components/ForFramework.astro";
 
 ## Packages
 
-| Package                                          | Role                                                        |
-| ------------------------------------------------ | ----------------------------------------------------------- |
-| `@moderno-ui/react` · `vue` · `svelte` · `solid` | The components for your framework.                          |
-| `@moderno-ui/core`                               | Shared recipes. Installed with every binding.               |
-| `@moderno-ui/css`                                | The shared stylesheet and default theme. Peer dependency.   |
-| `@moderno-ui/cli`                                | Optional. Copies blocks, screens and themes into your code. |
-| `@moderno-ui/mcp`                                | Optional. Answers coding agents with your installed API.    |
+| Package                                          | Role                                                           |
+| ------------------------------------------------ | -------------------------------------------------------------- |
+| `@moderno-ui/react` · `vue` · `svelte` · `solid` | The components for your framework.                             |
+| `@moderno-ui/core`                               | Shared recipes. Installed with every binding.                  |
+| `@moderno-ui/css`                                | The token variables and the component styles. Peer dependency. |
+| `@moderno-ui/cli`                                | Optional. Copies blocks, screens and themes into your code.    |
+| `@moderno-ui/mcp`                                | Optional. Answers coding agents with your installed API.       |
+
+`@moderno-ui/css` is the only CSS package. It also ships the Tailwind preset (`@moderno-ui/css/preset`) and the token contract as data (`@moderno-ui/css/contract`).
 
 Peer requirements: React 19, Vue 3.5, Svelte 5 or Solid 1.9.
 

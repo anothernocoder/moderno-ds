@@ -127,6 +127,17 @@ describe("pageMarkdown — docs components become Markdown, never raw JSX", () =
   });
 });
 
+describe("pageMarkdown — ContractTable", () => {
+  it("renders a ContractTable through its resolver, and drops it without one", () => {
+    const body = 'Slots.\n\n<ContractTable table="color" />\n';
+    const resolve = { contractTable: (t: string) => `| table ${t} |` };
+    expect(pageMarkdown({ title: "T", description: "D", body, resolve })).toContain(
+      "| table color |",
+    );
+    expect(pageMarkdown({ title: "T", description: "D", body })).not.toContain("ContractTable");
+  });
+});
+
 describe("llmsIndex — per-locale llms.txt", () => {
   it("lists every page as an absolute link with its description", () => {
     const txt = llmsIndex({

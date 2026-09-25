@@ -6,7 +6,7 @@ Platform decisions already made live in [ADR-0001](../adr/0001-platform-distribu
 
 | Phase | PRD                                                      | Summary                                                                               | Gate                                       |
 | ----- | -------------------------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------ |
-| 0     | [phase-0-foundation.md](phase-0-foundation.md)           | Monorepo, `@moderno-ui/tokens`, `@moderno-ui/css`, CONTRACT.md + DESIGN.md            | Token contract confirmed                   |
+| 0     | [phase-0-foundation.md](phase-0-foundation.md)           | Monorepo, `@moderno-ui/css` (tokens + entrypoint), CONTRACT.md + DESIGN.md            | Token contract confirmed                   |
 | 1     | [phase-1-core.md](phase-1-core.md)                       | `@moderno-ui/core` (CVA, utils, components.css) + `@moderno-ui/charts-core` (d3-math) | Pure helpers + math with tests             |
 | 2     | [phase-2-react-reference.md](phase-2-react-reference.md) | Button, Field, Dialog, Select in React 19 end-to-end                                  | SSR + theming validated                    |
 | 3     | [phase-3-port.md](phase-3-port.md)                       | Port of those 4 to Vue, Svelte, Solid                                                 | Look + behavior parity                     |

@@ -6,7 +6,7 @@
  * for every framework. Per-component rules grow in Phase 2+.
  *
  * Contract: zero baked brand values — only references to semantic tokens
- * (var(--…)) from @moderno-ui/tokens. Never hardcode colour, radius, or font.
+ * (var(--…)) from @moderno-ui/css. Never hardcode colour, radius, or font.
  */
 
 @layer moderno.base, moderno.components;

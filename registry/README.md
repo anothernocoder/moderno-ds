@@ -1,7 +1,7 @@
 # Moderno registry
 
 Versioned, shadcn-style **copy items** installed with `@moderno-ui/cli`. Unlike the
-`@moderno-ui/*` npm packages (primitives, tokens, css), registry items are copied
+`@moderno-ui/*` npm packages (primitives, core, css), registry items are copied
 into the consumer project and owned by them: **themes**, **blocks**, **screens**,
 **flows**, and **ejected primitives**.
 

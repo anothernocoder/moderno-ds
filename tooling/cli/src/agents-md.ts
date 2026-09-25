@@ -27,7 +27,7 @@ design system. Follow these rules when writing UI code.
   via props — never fork component markup or write per-component CSS.
 - Reference contract slots (\`--background\`, \`--primary\`, \`--radius\`, …) —
   never hardcode hex colors, px spacing, or ms durations.
-- Put brand values in a theme, not in \`@moderno-ui/tokens\`.
+- Put brand values in a theme, not in \`@moderno-ui/css\`.
 - Keep \`:root\` light / \`.dark\` dark — don't invent a third theming mechanism.
 - \`@moderno-ui/css\` is the only public CSS specifier — never import internal paths.
 

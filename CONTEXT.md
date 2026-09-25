@@ -49,7 +49,7 @@ Documentation of the visual identity of a specific brand (typography, tone, aest
 _Avoid_: CONTRACT.md (for brand content)
 
 **Token contract**:
-The minimal set of shadcn-style semantic variables (`--primary`, `--background`, …) that every component references. Defined in CONTRACT.md, implemented in CSS by each theme.
+The minimal set of shadcn-style semantic variables (`--primary`, `--background`, …) that every component references. The slots, each with its role, are defined in `contract.ts` (`@moderno-ui/css/contract`); the rules for theming them are in CONTRACT.md. Implemented in CSS by each theme.
 _Avoid_: Token spec, design tokens file
 
 **Brand token (brand primitive)**:
@@ -60,20 +60,16 @@ _Avoid_: Raw token, primitive (unqualified — collides with Primitive)
 A mapping in the theme from a contract slot to a brand token (`--background: var(--mod-surface-base)`). The bridge between the shadcn contract and the brand aesthetic.
 _Avoid_: Semantic token (use only in technical docs; in CONTEXT prefer "semantic alias")
 
-**@moderno-ui/tokens**:
-The npm package that generates the shadcn slot contract, neutral OKLCH defaults, the Tailwind v4 preset and CSS vars. Contains no brand identity.
-_Avoid_: Theme package, tokens.json (as a product name)
-
 **@moderno-ui/css**:
-A single CSS entrypoint that re-exports tokens + the component stylesheet. The consumer's public API; hides internal paths to `dist/`.
-_Avoid_: globals bundle, styles entry (unqualified)
+The one CSS package and the consumer's public API. `@import "@moderno-ui/css"` brings the token contract's CSS vars with their neutral OKLCH defaults and the component stylesheet; the package also ships the Tailwind v4 preset (`/preset`), the contract as data (`/contract`) and the contract's agent manifest. The neutral defaults are authored as DTCG in `packages/css/src/tokens.dtcg.json` (light and dark scopes, every slot of the contract) and compiled into its `tokens.css` by **Theme compile**, like any theme. Contains no brand identity; hides internal paths to `dist/`. The former `@moderno-ui/tokens` merged into it (ADR-0008) and is deprecated on npm once the merged package publishes.
+_Avoid_: globals bundle, styles entry (unqualified), tokens package, theme package, tokens.json (as a product name)
 
 **Init**:
 The CLI command (`@moderno-ui/cli init`) that scaffolds `src/styles/moderno.css` in the consumer project with the correct imports. The user does not configure CSS manually.
 _Avoid_: Setup, bootstrap (as a domain term)
 
 **Neutral default**:
-Placeholder values in `@moderno-ui/tokens` (OKLCH grays, system font stack) that allow developing and previewing components without installing a brand theme.
+Placeholder values in `@moderno-ui/css` (OKLCH grays, system font stack) that allow developing and previewing components without installing a brand theme. Authored in `packages/css/src/tokens.dtcg.json` and compiled into `tokens.css` (ADR-0008).
 _Avoid_: Base theme, fallback theme
 
 **Island runtime**:
@@ -101,11 +97,11 @@ The ability to scope themes by `[data-brand="…"]` composed with `.dark`. Archi
 _Avoid_: Multi-tenant theming, white-label mode
 
 **npm namespace**:
-The prefix of published packages: `@moderno-ui/*` (`@moderno-ui/tokens`, `@moderno-ui/react`, `@moderno-ui/core`, …). CLI: `@moderno-ui/cli`. All public on npmjs.com; semver via Changesets + GitHub Actions.
+The prefix of published packages: `@moderno-ui/*` (`@moderno-ui/css`, `@moderno-ui/react`, `@moderno-ui/core`, …). CLI: `@moderno-ui/cli`. All public on npmjs.com; semver via Changesets + GitHub Actions.
 _Avoid_: @ds/_, moderno-ds/_ (as an npm scope), private registry (v1)
 
 **Extended contract**:
-Beyond shadcn color slots, the contract includes spacing (`--spacing-1…8`), motion (`--motion-instant|fast|normal`), radius (`--radius`, `--radius-full`), a display face (`--font-serif`), elevation (`--shadow-sm|md|lg`), a modal scrim (`--overlay`), container breakpoints (`--container-sm|md|lg`), a type scale (`--text-*` / `--leading-*`) and font weights (`--font-weight-*`). Defined in CONTRACT.md, defaults in `@moderno-ui/tokens`, overrides in themes.
+Beyond shadcn color slots, the contract includes spacing (`--spacing-1…8`), motion (`--motion-instant|fast|normal`), radius (`--radius`, `--radius-full`), a display face (`--font-serif`), elevation (`--shadow-sm|md|lg`), a modal scrim (`--overlay`), container breakpoints (`--container-sm|md|lg`), a type scale (`--text-*` / `--leading-*`) and font weights (`--font-weight-*`). The slots are defined in `contract.ts` and the rules in CONTRACT.md; defaults in `@moderno-ui/css`, overrides in themes.
 _Avoid_: Hardcoded spacing, magic numbers in CSS, viewport breakpoints as tokens
 
 **Theme Moderno v1**:
@@ -113,7 +109,7 @@ Includes complete OKLCH ramps for light (`:root`) and dark (`.dark`), with seman
 _Avoid_: Dark-only theme, WIP light mode
 
 **Type scale**:
-Sizes and line-heights as contract slots (`--text-<step>` / `--leading-<step>`), defaults in `@moderno-ui/tokens`; exposed as Tailwind v4 utilities via `@theme inline` (`text-display`, `text-body-md`, …). No parallel custom CSS classes.
+Sizes and line-heights as contract slots (`--text-<step>` / `--leading-<step>`), defaults in `@moderno-ui/css`; exposed as Tailwind v4 utilities via `@theme inline` (`text-display`, `text-body-md`, …). No parallel custom CSS classes.
 _Avoid_: Typography component, custom .text-\* classes in core
 
 **Component variant**:
@@ -174,7 +170,7 @@ against.
 _Avoid_: per-framework chart markup, ChartFrame (retired)
 
 **Theme compile**:
-The `pnpm theme:build` script (`tooling/theme-compile`) validates a theme's `tokens.dtcg.json` and emits its `theme.css` and `DESIGN.md` (keeping the `DESIGN.md`'s brand notes). Used by CI, maintainers and the Theme Builder export. Includes WCAG AA warnings.
+The `pnpm theme:build` script (`tooling/theme-compile`) validates a theme's `tokens.dtcg.json` and emits its `theme.css` and `DESIGN.md` (keeping the `DESIGN.md`'s brand notes). It first compiles the neutral defaults the same way: `packages/css/src/tokens.dtcg.json`, the source of every default a theme inherits, into `@moderno-ui/css`'s `tokens.css`, with one extra rule: that file must define every slot, the extended ones included. Used by CI, maintainers and the Theme Builder export. Includes WCAG AA warnings.
 _Avoid_: themes as npm packages, hand-written CSS without a schema
 
 **Preview**:

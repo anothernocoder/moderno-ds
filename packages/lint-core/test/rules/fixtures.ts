@@ -16,7 +16,7 @@ import type { AggregatedManifests } from "../../src/manifests.ts";
 export const manifests: AggregatedManifests = {
   scopeDir: "/fake/node_modules/@moderno-ui",
   contract: {
-    package: "@moderno-ui/tokens",
+    package: "@moderno-ui/css",
     version: "0.5.0",
     kind: "contract",
     goldenRule: "Components are never edited. They are themed via variables and varied via props.",
@@ -30,6 +30,7 @@ export const manifests: AggregatedManifests = {
       container: ["--container-sm", "--container-md", "--container-lg"],
       type: ["--text-ui-md", "--leading-ui-md", "--text-body", "--leading-body"],
     },
+    roles: { "--primary": "the main action" },
     theming: {
       darkMode: ":root is the light scope, .dark overrides it.",
       multiBrand: '[data-brand="…"] scopes overrides and composes with .dark.',

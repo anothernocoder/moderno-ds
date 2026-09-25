@@ -72,7 +72,7 @@ Hazlo antes de escribir cualquier color, radio, espaciado, elevación o ancho de
 
 ```
 get_contract()
-→ { package: "@moderno-ui/tokens", slots: { color: ["--background", "--foreground", …] }, rules: […] }
+→ { package: "@moderno-ui/css", slots: { color: ["--background", "--foreground", …] }, rules: […] }
 ```
 
 ### 4. Obtener un ejemplo nativo
@@ -139,7 +139,7 @@ validate_usage({ code: "…", framework: "react" })
 
 - Nunca edites los componentes: tematízalos con variables CSS y varíalos con props.
 - Referencia slots del contrato (`--background`, `--primary`, `--radius`, …), nunca colores hex, espaciados en px ni duraciones en ms.
-- Pon los valores de marca en un tema, no en `@moderno-ui/tokens`.
+- Pon los valores de marca en un tema, no en `@moderno-ui/css`.
 - Mantén `:root` claro y `.dark` oscuro. No añadas un tercer mecanismo de tematización.
 - Importa CSS solo desde `@moderno-ui/css`, nunca desde rutas internas.
 

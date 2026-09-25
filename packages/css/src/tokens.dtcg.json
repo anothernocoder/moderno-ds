@@ -1,0 +1,188 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+  "$description": "Moderno's neutral defaults: the value of every token contract slot before a theme is applied. Intentionally neutral (OKLCH greys and a system font stack), so components can be developed and previewed without a brand; a brand is a registry theme that re-maps these same slots, and the contract names never change. This is the one hand-edited source of the defaults (ADR-0008): `pnpm theme:build` validates it like a theme and compiles it into tokens.css. `light` compiles to `:root` and `dark` to `.dark` (the shadcn convention). The light scope defines every slot of the contract, the extended ones included, because a theme that omits an extended slot inherits it from here. The dark scope defines the slots every theme defines in both scopes and overrides an extended slot only where dark mode changes it; the rest resolves from `:root`.",
+  "$extensions": { "style.moderno.theme": { "name": "neutral", "brand": null } },
+  "light": {
+    "background": { "$type": "color", "$value": "oklch(1 0 0)" },
+    "foreground": { "$type": "color", "$value": "oklch(0.145 0 0)" },
+    "card": { "$type": "color", "$value": "oklch(1 0 0)" },
+    "card-foreground": { "$type": "color", "$value": "oklch(0.145 0 0)" },
+    "popover": { "$type": "color", "$value": "oklch(1 0 0)" },
+    "popover-foreground": { "$type": "color", "$value": "oklch(0.145 0 0)" },
+    "primary": { "$type": "color", "$value": "oklch(0.205 0 0)" },
+    "primary-foreground": { "$type": "color", "$value": "oklch(0.985 0 0)" },
+    "secondary": { "$type": "color", "$value": "oklch(0.97 0 0)" },
+    "secondary-foreground": { "$type": "color", "$value": "oklch(0.205 0 0)" },
+    "accent": { "$type": "color", "$value": "oklch(0.97 0 0)" },
+    "accent-foreground": { "$type": "color", "$value": "oklch(0.205 0 0)" },
+    "muted": { "$type": "color", "$value": "oklch(0.97 0 0)" },
+    "muted-foreground": {
+      "$type": "color",
+      "$value": "oklch(0.505 0 0)",
+      "$description": "0.505, not 0.556: the lighter grey reads 4.34:1 on --muted, under AA."
+    },
+    "destructive": { "$type": "color", "$value": "oklch(0.577 0.245 27.325)" },
+    "destructive-foreground": { "$type": "color", "$value": "oklch(0.985 0 0)" },
+    "info": {
+      "$type": "color",
+      "$value": "oklch(0.52 0.16 255)",
+      "$description": "Status surfaces: info, success and warning. The error state reuses --destructive."
+    },
+    "info-foreground": { "$type": "color", "$value": "oklch(0.985 0 0)" },
+    "success": { "$type": "color", "$value": "oklch(0.5 0.13 152)" },
+    "success-foreground": { "$type": "color", "$value": "oklch(0.985 0 0)" },
+    "warning": { "$type": "color", "$value": "oklch(0.75 0.15 75)" },
+    "warning-foreground": { "$type": "color", "$value": "oklch(0.145 0 0)" },
+    "border": { "$type": "color", "$value": "oklch(0.922 0 0)" },
+    "input": { "$type": "color", "$value": "oklch(0.922 0 0)" },
+    "ring": { "$type": "color", "$value": "oklch(0.708 0 0)" },
+    "chart-1": { "$type": "color", "$value": "oklch(0.646 0.222 41.116)" },
+    "chart-2": { "$type": "color", "$value": "oklch(0.6 0.118 184.704)" },
+    "chart-3": { "$type": "color", "$value": "oklch(0.398 0.07 227.392)" },
+    "chart-4": { "$type": "color", "$value": "oklch(0.828 0.189 84.429)" },
+    "chart-5": { "$type": "color", "$value": "oklch(0.769 0.188 70.08)" },
+    "radius": { "$type": "dimension", "$value": "0.625rem" },
+    "font-sans": {
+      "$type": "fontFamily",
+      "$value": "ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif"
+    },
+    "font-mono": {
+      "$type": "fontFamily",
+      "$value": "ui-monospace, \"SFMono-Regular\", \"Menlo\", \"Consolas\", monospace"
+    },
+    "spacing-1": { "$type": "dimension", "$value": "0.25rem" },
+    "spacing-2": { "$type": "dimension", "$value": "0.5rem" },
+    "spacing-3": { "$type": "dimension", "$value": "0.75rem" },
+    "spacing-4": { "$type": "dimension", "$value": "1rem" },
+    "spacing-5": { "$type": "dimension", "$value": "1.25rem" },
+    "spacing-6": { "$type": "dimension", "$value": "1.5rem" },
+    "spacing-7": { "$type": "dimension", "$value": "1.75rem" },
+    "spacing-8": { "$type": "dimension", "$value": "2rem" },
+    "motion-instant": { "$type": "duration", "$value": "150ms" },
+    "motion-fast": { "$type": "duration", "$value": "200ms" },
+    "motion-normal": { "$type": "duration", "$value": "300ms" },
+    "radius-full": { "$type": "dimension", "$value": "9999px" },
+    "font-serif": {
+      "$type": "fontFamily",
+      "$value": "ui-serif, Georgia, Cambria, \"Times New Roman\", serif"
+    },
+    "shadow-sm": {
+      "$type": "shadow",
+      "$value": "0 1px 2px 0 oklch(0 0 0 / 0.06)",
+      "$description": "Elevation (--shadow-sm, -md, -lg): three steps for overlays, neutral and low-contrast."
+    },
+    "shadow-md": {
+      "$type": "shadow",
+      "$value": "0 2px 4px -1px oklch(0 0 0 / 0.06), 0 4px 10px -2px oklch(0 0 0 / 0.08)"
+    },
+    "shadow-lg": {
+      "$type": "shadow",
+      "$value": "0 4px 8px -2px oklch(0 0 0 / 0.08), 0 12px 28px -6px oklch(0 0 0 / 0.12)"
+    },
+    "overlay": {
+      "$type": "color",
+      "$value": "oklch(0 0 0 / 0.32)",
+      "$description": "The modal scrim: the wash behind a dialog or command palette. Always a translucent black, never a mix of --foreground: in dark mode that slot is near-white and would turn the scrim milky grey. Paired with a backdrop blur where it is painted, so the page underneath recedes."
+    },
+    "container-sm": {
+      "$type": "dimension",
+      "$value": "24rem",
+      "$description": "Container breakpoints (--container-sm, -md, -lg): what blocks and screens respond to (ADR-0005). A block reads the width of its container, never the viewport. The Tailwind preset mirrors these three lengths so `@sm:`/`@md:`/`@lg:` container-query variants fire at the same widths: a CSS container query condition cannot read a custom property, so the threshold has to be a literal there. These three names are also Tailwind's own container-scale keys, and :root in tokens.css is unlayered, so it beats Tailwind's `@layer theme` defaults: in a Tailwind app, importing tokens.css alone already gives `max-w-md` 36rem and `max-w-lg` 48rem while `max-w-xl` stays 36rem. Import `@moderno-ui/css/preset` too: it resets the namespace to exactly these three ordered steps."
+    },
+    "container-md": { "$type": "dimension", "$value": "36rem" },
+    "container-lg": { "$type": "dimension", "$value": "48rem" },
+    "text-ui-xs": {
+      "$type": "dimension",
+      "$value": "0.75rem",
+      "$description": "The type scale (--text-<step> / --leading-<step>): a size and a line height per step. ui-* is the control ramp: a component's sm/md/lg sizes read ui-sm/md/lg (13/14/15px), and ui-xs carries the smallest text (ticks, helper text). body and heading-* set running text and titles. Names avoid Tailwind's own text keys, so the unlayered :root in tokens.css never resizes a stock `text-sm`."
+    },
+    "leading-ui-xs": { "$type": "dimension", "$value": "1rem" },
+    "text-ui-sm": { "$type": "dimension", "$value": "0.8125rem" },
+    "leading-ui-sm": { "$type": "dimension", "$value": "1.125rem" },
+    "text-ui-md": { "$type": "dimension", "$value": "0.875rem" },
+    "leading-ui-md": { "$type": "dimension", "$value": "1.25rem" },
+    "text-ui-lg": { "$type": "dimension", "$value": "0.9375rem" },
+    "leading-ui-lg": { "$type": "dimension", "$value": "1.375rem" },
+    "text-body": { "$type": "dimension", "$value": "1rem" },
+    "leading-body": { "$type": "dimension", "$value": "1.5rem" },
+    "text-body-lg": { "$type": "dimension", "$value": "1.125rem" },
+    "leading-body-lg": { "$type": "dimension", "$value": "1.75rem" },
+    "text-heading-sm": { "$type": "dimension", "$value": "1.25rem" },
+    "leading-heading-sm": { "$type": "dimension", "$value": "1.75rem" },
+    "text-heading": { "$type": "dimension", "$value": "1.5rem" },
+    "leading-heading": { "$type": "dimension", "$value": "2rem" },
+    "text-heading-lg": { "$type": "dimension", "$value": "2.25rem" },
+    "leading-heading-lg": { "$type": "dimension", "$value": "2.5rem" },
+    "font-weight-normal": {
+      "$type": "fontWeight",
+      "$value": "400",
+      "$description": "Font weights (--font-weight-*): Tailwind's own keys at its own values, on purpose. The unlayered :root in tokens.css beats Tailwind's `@layer theme` defaults, so stock `font-medium` / `font-semibold` follow a theme that overrides a weight, and change nothing when none does."
+    },
+    "font-weight-medium": { "$type": "fontWeight", "$value": "500" },
+    "font-weight-semibold": { "$type": "fontWeight", "$value": "600" },
+    "font-weight-bold": { "$type": "fontWeight", "$value": "700" }
+  },
+  "dark": {
+    "background": { "$type": "color", "$value": "oklch(0.145 0 0)" },
+    "foreground": { "$type": "color", "$value": "oklch(0.985 0 0)" },
+    "card": { "$type": "color", "$value": "oklch(0.205 0 0)" },
+    "card-foreground": { "$type": "color", "$value": "oklch(0.985 0 0)" },
+    "popover": { "$type": "color", "$value": "oklch(0.205 0 0)" },
+    "popover-foreground": { "$type": "color", "$value": "oklch(0.985 0 0)" },
+    "primary": { "$type": "color", "$value": "oklch(0.922 0 0)" },
+    "primary-foreground": { "$type": "color", "$value": "oklch(0.205 0 0)" },
+    "secondary": { "$type": "color", "$value": "oklch(0.269 0 0)" },
+    "secondary-foreground": { "$type": "color", "$value": "oklch(0.985 0 0)" },
+    "accent": { "$type": "color", "$value": "oklch(0.269 0 0)" },
+    "accent-foreground": { "$type": "color", "$value": "oklch(0.985 0 0)" },
+    "muted": { "$type": "color", "$value": "oklch(0.269 0 0)" },
+    "muted-foreground": { "$type": "color", "$value": "oklch(0.708 0 0)" },
+    "destructive": { "$type": "color", "$value": "oklch(0.704 0.191 22.216)" },
+    "destructive-foreground": {
+      "$type": "color",
+      "$value": "oklch(0.145 0 0)",
+      "$description": "Ink, not white, on the light dark-mode red: like the other status fills."
+    },
+    "info": { "$type": "color", "$value": "oklch(0.72 0.13 255)" },
+    "info-foreground": { "$type": "color", "$value": "oklch(0.145 0 0)" },
+    "success": { "$type": "color", "$value": "oklch(0.72 0.15 152)" },
+    "success-foreground": { "$type": "color", "$value": "oklch(0.145 0 0)" },
+    "warning": { "$type": "color", "$value": "oklch(0.8 0.15 75)" },
+    "warning-foreground": { "$type": "color", "$value": "oklch(0.145 0 0)" },
+    "border": { "$type": "color", "$value": "oklch(1 0 0 / 10%)" },
+    "input": { "$type": "color", "$value": "oklch(1 0 0 / 15%)" },
+    "ring": { "$type": "color", "$value": "oklch(0.556 0 0)" },
+    "chart-1": { "$type": "color", "$value": "oklch(0.488 0.243 264.376)" },
+    "chart-2": { "$type": "color", "$value": "oklch(0.696 0.17 162.48)" },
+    "chart-3": { "$type": "color", "$value": "oklch(0.769 0.188 70.08)" },
+    "chart-4": { "$type": "color", "$value": "oklch(0.627 0.265 303.9)" },
+    "chart-5": { "$type": "color", "$value": "oklch(0.645 0.246 16.439)" },
+    "radius": { "$type": "dimension", "$value": "0.625rem" },
+    "font-sans": {
+      "$type": "fontFamily",
+      "$value": "ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", sans-serif"
+    },
+    "font-mono": {
+      "$type": "fontFamily",
+      "$value": "ui-monospace, \"SFMono-Regular\", \"Menlo\", \"Consolas\", monospace"
+    },
+    "shadow-sm": {
+      "$type": "shadow",
+      "$value": "0 1px 2px 0 oklch(0 0 0 / 0.5)",
+      "$description": "A dark canvas swallows a light-mode shadow: the same three steps (--shadow-sm, -md, -lg), opaque."
+    },
+    "shadow-md": {
+      "$type": "shadow",
+      "$value": "0 2px 4px -1px oklch(0 0 0 / 0.5), 0 4px 10px -2px oklch(0 0 0 / 0.55)"
+    },
+    "shadow-lg": {
+      "$type": "shadow",
+      "$value": "0 4px 8px -2px oklch(0 0 0 / 0.55), 0 12px 28px -6px oklch(0 0 0 / 0.6)"
+    },
+    "overlay": {
+      "$type": "color",
+      "$value": "oklch(0 0 0 / 0.6)",
+      "$description": "A dark page needs a denser wash to read as dimmed at all."
+    }
+  }
+}

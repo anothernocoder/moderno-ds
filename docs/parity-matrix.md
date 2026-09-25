@@ -11,7 +11,7 @@
 | Behaviour        | Ark UI (`@ark-ui/{react,vue,svelte,solid}`)    | one Zag machine each  |
 | Props → `data-*` | `@moderno-ui/core` recipes (`buttonRecipe`, …) | identical resolver    |
 | Styling          | `@moderno-ui/core/styles/components.css`       | one stylesheet, all 5 |
-| Tokens / brand   | `@moderno-ui/tokens` → contract slots          | one theme re-themes 5 |
+| Tokens / brand   | `@moderno-ui/css` → contract slots             | one theme re-themes 5 |
 
 Each binding's only job is to spread `data-scope`/`data-part` + the recipe's
 `data-*` onto markup. Button, Alert and Card are the authored elements — none

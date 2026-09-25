@@ -12,15 +12,16 @@ import {
   renderDesignMd,
   ThemeValidationError,
 } from "@moderno-ui/theme-compile";
-import { COLOR_SLOTS, EXTENDED_SLOTS, OTHER_SLOTS, slotType } from "@moderno-ui/tokens/contract";
-// The neutral defaults a theme inherits, as the site ships them: DESIGN.md's
-// front matter lists every slot a theme leaves out at this value.
-import tokensCss from "@moderno-ui/tokens/css?raw";
+import { COLOR_SLOTS, EXTENDED_SLOTS, OTHER_SLOTS, slotType } from "@moderno-ui/css/contract";
+// The neutral defaults a theme inherits, from the DTCG file tokens.css is
+// compiled from: DESIGN.md's front matter lists every slot a theme leaves out
+// at this value.
+import neutralTokens from "@moderno-ui/css/tokens.dtcg.json";
 import modernoTokens from "../../../../registry/themes/theme-moderno/tokens.dtcg.json";
 
 export { readBrandNotes };
 
-// The slot lists come from the contract data in @moderno-ui/tokens — the same
+// The slot lists come from the contract data in @moderno-ui/css — the same
 // source theme-compile validates against, so editor and compiler can't drift.
 export { COLOR_SLOTS, EXTENDED_SLOTS, OTHER_SLOTS };
 
@@ -85,7 +86,7 @@ export function tokensToState(doc: unknown, base: string | null = null): ThemeSt
 /**
  * Is this field a value the theme expresses? An editor field left blank is an
  * *unexpressed* extended slot: the theme inherits the neutral default from
- * `@moderno-ui/tokens`. Emitting it anyway would blank the slot instead of
+ * `@moderno-ui/css`. Emitting it anyway would blank the slot instead of
  * overriding it — theme-compile rejects that in the export, and in the preview
  * `--slot: ` is a valid *empty* custom property whose `var(--slot)` substitutes
  * to nothing. Export and preview must therefore agree on this one predicate.
@@ -207,7 +208,7 @@ export function decodeState(encoded: string): ThemeState | null {
   }
 }
 
-const TOKEN_DEFAULTS = defaultsFrom(tokensCss);
+const TOKEN_DEFAULTS = defaultsFrom(neutralTokens);
 
 /**
  * The brand notes a DESIGN.md export keeps: the imported base's own, only

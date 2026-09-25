@@ -4,6 +4,12 @@ status: accepted
 
 # Agentic-first surface: a local MCP server with a shared validation engine
 
+> Amended by [ADR-0008](0008-token-system-one-source-per-concept.md). The
+> shared cross-cutting data (contract slots, their roles) now ships in
+> `@moderno-ui/css`'s manifest, since `@moderno-ui/tokens` merged into it, and
+> it is generated from the contract data (`@moderno-ui/css/contract`), not
+> from `CONTRACT.md`, which keeps only rules.
+
 Moderno already ships LLM-friendly _artifacts_ (per-component `.md`, `llms.txt`,
 copy-as-markdown; ADR-0001, Phase 6). This ADR records the decision to go a step
 further and make the DS **agentic-first**: a surface designed for coding agents

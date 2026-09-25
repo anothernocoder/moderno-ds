@@ -24,7 +24,7 @@ import { fileURLToPath } from "node:url";
 const manifestFixturesDir = fileURLToPath(new URL("../fixtures/manifests", import.meta.url));
 
 /** Packages with a real, installed `dist/moderno.agent.json` in the fixture. */
-const INSTALLED_WITH_MANIFEST = ["react", "vue", "tokens"] as const;
+const INSTALLED_WITH_MANIFEST = ["react", "vue", "css"] as const;
 
 /** An installed package that hasn't been built yet: no `dist` at all. */
 const INSTALLED_WITHOUT_MANIFEST = "@moderno-ui/solid";
@@ -43,7 +43,7 @@ function installPackage(nodeModulesDir: string, name: string, version: string): 
 }
 
 /**
- * Builds `<tmp>/node_modules/@moderno-ui/{react,vue,tokens}/dist/moderno.agent.json`
+ * Builds `<tmp>/node_modules/@moderno-ui/{react,vue,css}/dist/moderno.agent.json`
  * from the fixture JSON, plus a `solid` package directory with no `dist` yet
  * (an installed `@moderno-ui/*` package that hasn't been built) so discovery's
  * "skip what isn't there" path has something real to skip.

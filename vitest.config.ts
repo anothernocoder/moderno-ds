@@ -47,11 +47,6 @@ export default defineConfig({
     name: "react-core",
     environment: "node",
     setupFiles: ["./vitest.setup.ts"],
-    // Vitest blanks every CSS import by default, `?raw` included. The Theme
-    // Builder reads tokens.css as text (its DESIGN.md export lists the neutral
-    // defaults), so a raw import has to reach the test as the file's text, as
-    // it does in the Vite build.
-    css: { include: [/\.css\?raw$/] },
     // The props-doc suites build ts-morph projects over the framework
     // packages; under the full parallel run on a CI runner they exceed the
     // 5s default (observed 5-10s). A ceiling, not a target.

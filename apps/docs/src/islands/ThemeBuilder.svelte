@@ -16,7 +16,7 @@
 -->
 <script lang="ts">
   import { onMount } from "svelte";
-  import { COLOR_GROUPS } from "@moderno-ui/tokens/contract";
+  import { COLOR_GROUPS } from "@moderno-ui/css/contract";
   import ThemePreviewGallery from "./ThemePreviewGallery.svelte";
   import {
     buildTheme,
@@ -135,7 +135,7 @@
   const previewVars = $derived(previewStyle(state[scope]));
 
   // The editor groups derive from the contract data — a slot added to
-  // @moderno-ui/tokens shows up here without touching the island. Labels come
+  // @moderno-ui/css shows up here without touching the island. Labels come
   // from the docs i18n; an unmapped group falls back to its id.
   const GROUPS = COLOR_GROUPS.map(({ group, slots }) => ({
     label: strings.groups[group] ?? group,
@@ -394,7 +394,7 @@
 
       <!--
         Extended slots (display face, elevation, modal scrim, container
-        breakpoints, spacing, motion) are optional: @moderno-ui/tokens ships a
+        breakpoints, spacing, motion) are optional: @moderno-ui/css ships a
         neutral default for each, so a blank field means "inherit it" and exports
         nothing for that slot. The scrim is a colour, but a translucent one, so
         it gets a text field only: the native picker has no alpha channel.

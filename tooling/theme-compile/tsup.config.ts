@@ -6,7 +6,7 @@ export default defineConfig({
   dts: true,
   clean: true,
   treeshake: true,
-  // @moderno-ui/tokens ships the contract as TS source; bundle it so dist stays
+  // @moderno-ui/css ships the contract as TS source; bundle it so dist stays
   // runnable by plain Node (the CLI) without a transpile step for deps.
-  noExternal: ["@moderno-ui/tokens"],
+  noExternal: ["@moderno-ui/css"],
 });

@@ -1,5 +1,5 @@
 ---
-"@moderno-ui/tokens": minor
+"@moderno-ui/css": minor
 "@moderno-ui/core": patch
 "@moderno-ui/mcp": patch
 ---

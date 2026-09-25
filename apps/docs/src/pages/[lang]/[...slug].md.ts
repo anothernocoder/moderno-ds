@@ -2,8 +2,9 @@ import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import type { APIRoute } from "astro";
 import { getCollection } from "astro:content";
+import { contractTableMarkdown, isContractTableName } from "../../lib/contractTable.ts";
 import { pageMarkdown, type PropRow } from "../../lib/markdown.ts";
-import { splitId } from "../../i18n/ui.ts";
+import { splitId, useTranslations } from "../../i18n/ui.ts";
 
 // One `.md` twin per docs page per locale — the copy-as-markdown source and the
 // per-component `.md` the registry/LLMs consume. Built statically alongside HTML.
@@ -26,6 +27,7 @@ function propsFor(component: string): PropRow[] | undefined {
 }
 
 interface Entry {
+  id: string;
   data: { title: string; description: string };
   body?: string;
   /** Relative to the Astro root (apps/docs), from the glob loader. */
@@ -35,6 +37,7 @@ interface Entry {
 export const GET: APIRoute = ({ props }) => {
   const entry = (props as { entry: Entry }).entry;
   const dir = entry.filePath ? dirname(resolve(process.cwd(), entry.filePath)) : undefined;
+  const t = useTranslations(splitId(entry.id).locale);
   const body = pageMarkdown({
     title: entry.data.title,
     description: entry.data.description,
@@ -51,6 +54,10 @@ export const GET: APIRoute = ({ props }) => {
         }
       },
       props: propsFor,
+      // The same rows <ContractTable> renders, from the contract and the
+      // neutral defaults.
+      contractTable: (table) =>
+        isContractTableName(table) ? contractTableMarkdown(table, t) : undefined,
     },
   });
   return new Response(body, { headers: { "content-type": "text/markdown; charset=utf-8" } });

@@ -1,0 +1,70 @@
+---
+import { currentLocale, useTranslations } from "../i18n/ui.ts";
+import { contractTable, type ContractTableName } from "../lib/contractTable.ts";
+
+interface Props {
+  /** Which slots to list (see `contractTable`). */
+  table: ContractTableName;
+}
+
+const { table: name } = Astro.props;
+const t = useTranslations(currentLocale(Astro.currentLocale));
+const table = contractTable(name);
+
+// Two columns, so the table fits a phone: the default sits under the slot name.
+const first =
+  table.key === "slot"
+    ? t(table.hasValue ? "contract.slotAndValue" : "contract.slot")
+    : t("contract.stepAndSize");
+
+/** A contract role marks code with backticks: odd segments are code. */
+const segments = (text: string) => text.split("`");
+---
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">{first}</th>
+      <th scope="col">{t("contract.role")}</th>
+    </tr>
+  </thead>
+  <tbody>
+    {
+      table.rows.map((row) => (
+        <tr>
+          <td>
+            <code>{row.name}</code>
+            {row.value && (
+              <div class="contract-value">
+                <code>{row.value}</code>
+              </div>
+            )}
+            {row.darkValue && (
+              <div class="contract-value">
+                <code class="contract-scope">.dark</code> <code>{row.darkValue}</code>
+              </div>
+            )}
+          </td>
+          <td>{segments(row.role).map((part, i) => (i % 2 === 1 ? <code>{part}</code> : part))}</td>
+        </tr>
+      ))
+    }
+  </tbody>
+</table>
+
+<style>
+  /* A default reads as a quiet line under its slot name, and a long one (a
+     shadow, a font stack) wraps at its spaces. */
+  .contract-value {
+    margin-top: 0.25rem;
+  }
+  .contract-value code {
+    color: var(--docs-fg-muted);
+    font-weight: var(--font-weight-normal);
+    white-space: normal;
+  }
+  .contract-value .contract-scope {
+    color: inherit;
+    font-weight: var(--font-weight-medium);
+  }
+</style>

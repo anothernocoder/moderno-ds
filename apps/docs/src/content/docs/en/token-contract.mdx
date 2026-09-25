@@ -5,8 +5,10 @@ group: Start
 order: 2
 ---
 
+import ContractTable from "../../../components/ContractTable.astro";
+
 Components reference slots, never values: overriding a slot is the only way to re-theme.
-`@moderno-ui/tokens` ships a neutral default for every slot on this page.
+`@moderno-ui/css` ships a neutral default for every slot on this page.
 
 ## Scopes
 
@@ -35,61 +37,23 @@ A theme must define every slot in this section. Build one visually in the [Theme
 
 OKLCH values, defined in both `:root` and `.dark`. Each `*-foreground` slot must reach WCAG AA (4.5:1) on its surface when the theme compiles.
 
-| Slot                                         | Role                                    |
-| -------------------------------------------- | --------------------------------------- |
-| `--background` / `--foreground`              | Page surface and text.                  |
-| `--card` / `--card-foreground`               | Raised surface.                         |
-| `--popover` / `--popover-foreground`         | Floating surface.                       |
-| `--primary` / `--primary-foreground`         | Primary action.                         |
-| `--secondary` / `--secondary-foreground`     | Secondary action.                       |
-| `--accent` / `--accent-foreground`           | Accent surface.                         |
-| `--muted` / `--muted-foreground`             | Muted surface and subdued text.         |
-| `--destructive` / `--destructive-foreground` | Destructive action. Also the error hue. |
-| `--info` / `--info-foreground`               | Informational status.                   |
-| `--success` / `--success-foreground`         | Positive status.                        |
-| `--warning` / `--warning-foreground`         | Cautionary status.                      |
-| `--border`                                   | Borders and separators.                 |
-| `--input`                                    | Form control borders.                   |
-| `--ring`                                     | Focus ring.                             |
-| `--chart-1` … `--chart-5`                    | Data-viz series.                        |
+<ContractTable table="color" />
 
 ### Non-colour
 
-| Slot          | Role                   |
-| ------------- | ---------------------- |
-| `--radius`    | Base corner radius.    |
-| `--font-sans` | UI and body face.      |
-| `--font-mono` | Code, tabular figures. |
+<ContractTable table="other" />
 
 ## Extended slots
 
 Optional in a theme: leave a slot out to inherit the default. The Theme Builder lists them under **Extended (optional)**.
 
-| Slot                                                     | Default                       | Role                                                        |
-| -------------------------------------------------------- | ----------------------------- | ----------------------------------------------------------- |
-| `--radius-full`                                          | `9999px`                      | Pills, dots, avatars.                                       |
-| `--spacing-1` … `--spacing-8`                            | `0.25rem` … `2rem`            | Spacing scale, in `0.25rem` steps.                          |
-| `--motion-instant` / `--motion-fast` / `--motion-normal` | `150ms` / `200ms` / `300ms`   | Transition durations.                                       |
-| `--font-serif`                                           | `ui-serif, Georgia, …`        | Display face for headings and pull quotes.                  |
-| `--shadow-sm` / `--shadow-md` / `--shadow-lg`            | Three neutral steps           | Elevation for popovers, menus, drawers. Own `.dark` values. |
-| `--overlay`                                              | Black, 32% / 60% in `.dark`   | Modal scrim behind a dialog. Painted over a backdrop blur.  |
-| `--container-sm` / `--container-md` / `--container-lg`   | `24rem` / `36rem` / `48rem`   | Container breakpoints that blocks and screens respond to.   |
-| `--text-<step>` / `--leading-<step>`                     | See the type scale below      | Font size and line height per step of the type scale.       |
-| `--font-weight-normal` … `--font-weight-bold`            | `400` / `500` / `600` / `700` | Weights: body, labels and controls, titles, display.        |
+<ContractTable table="extended" />
 
 ### Type scale
 
-| Step         | Size / line height | Role                                           |
-| ------------ | ------------------ | ---------------------------------------------- |
-| `ui-xs`      | 12px / 16px        | Smallest text: chart ticks, small helper text. |
-| `ui-sm`      | 13px / 18px        | `sm` controls, helper and error text.          |
-| `ui-md`      | 14px / 20px        | Default UI text, `md` controls, labels.        |
-| `ui-lg`      | 15px / 22px        | `lg` controls.                                 |
-| `body`       | 16px / 24px        | Running text, card titles.                     |
-| `body-lg`    | 18px / 28px        | Dialog titles, lead paragraphs.                |
-| `heading-sm` | 20px / 28px        | Section titles in blocks.                      |
-| `heading`    | 24px / 32px        | Page section headings.                         |
-| `heading-lg` | 36px / 40px        | Page titles.                                   |
+Each step is two extended slots: `--text-<step>` (font size) and `--leading-<step>` (line height).
+
+<ContractTable table="type-scale" />
 
 ## Tailwind v4
 
@@ -126,11 +90,11 @@ Import the preset to register the slots as Tailwind theme keys.
 
 ## Reading it as data
 
-| Source                             | Returns                                                            |
-| ---------------------------------- | ------------------------------------------------------------------ |
-| `@moderno-ui/tokens/contract`      | `CONTRACT`: every slot with its DTCG type and Theme Builder group. |
-| `get_contract` (`@moderno-ui/mcp`) | The same slots, plus the theming rules, for coding agents.         |
+| Source                             | Returns                                                                  |
+| ---------------------------------- | ------------------------------------------------------------------------ |
+| `@moderno-ui/css/contract`         | `CONTRACT`: every slot with its DTCG type, Theme Builder group and role. |
+| `get_contract` (`@moderno-ui/mcp`) | The same slots, plus the theming rules, for coding agents.               |
 
 ```ts
-import { CONTRACT, COLOR_SLOTS, EXTENDED_SLOTS } from "@moderno-ui/tokens/contract";
+import { CONTRACT, COLOR_SLOTS, EXTENDED_SLOTS } from "@moderno-ui/css/contract";
 ```

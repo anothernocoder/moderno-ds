@@ -9,7 +9,9 @@ import {
   CONTRAST_PAIRS,
   EXTENDED_SLOTS,
   FONT_WEIGHTS,
+  GROUP_ROLES,
   OTHER_SLOTS,
+  TYPE_STEP_ROLES,
   TYPE_STEPS,
   slotType,
 } from "../src/contract.ts";
@@ -53,11 +55,44 @@ const tokenRules = declsBySelector(tokensCss);
 const root = tokenRules.get(":root") ?? new Map<string, string>();
 const dark = tokenRules.get(".dark") ?? new Map<string, string>();
 
-describe("@moderno-ui/tokens — contract data", () => {
+describe("@moderno-ui/css — contract data", () => {
   it("splits every slot into exactly one derived list", () => {
     const derived = [...COLOR_SLOTS, ...OTHER_SLOTS, ...EXTENDED_SLOTS];
     expect(new Set(derived).size).toBe(derived.length);
     expect(derived.sort()).toEqual(CONTRACT.map((s) => s.name).sort());
+  });
+
+  it("gives every slot a one-line role", () => {
+    for (const slot of CONTRACT) {
+      expect(slot.role.trim(), `--${slot.name} has no role`).not.toBe("");
+      expect(slot.role, `--${slot.name}'s role spans lines`).not.toMatch(/\n/);
+    }
+  });
+
+  it("describes every group and every type step in one line", () => {
+    for (const role of [...Object.values(GROUP_ROLES), ...Object.values(TYPE_STEP_ROLES)]) {
+      expect(role.trim()).not.toBe("");
+      expect(role).not.toMatch(/\n/);
+    }
+    expect(Object.keys(GROUP_ROLES).sort()).toEqual(
+      [...new Set(CONTRACT.map((s) => s.group))].sort(),
+    );
+  });
+
+  // DESIGN.md prints a role after `slot:` and adds its own period, so a role
+  // that ends in a period prints `..` and a colon in its prose stacks colons.
+  it("writes every role as a lowercase phrase with no final period and no colon", () => {
+    const roles: Array<[label: string, role: string]> = [
+      ...CONTRACT.map((s): [string, string] => [`--${s.name}`, s.role]),
+      ...Object.entries(GROUP_ROLES).map(([g, r]): [string, string] => [`group ${g}`, r]),
+      ...Object.entries(TYPE_STEP_ROLES).map(([t, r]): [string, string] => [`step ${t}`, r]),
+    ];
+    for (const [label, role] of roles) {
+      expect(role, `${label}'s role must start lowercase`).toMatch(/^[a-z`]/);
+      expect(role, `${label}'s role ends in a period`).not.toMatch(/\.$/);
+      const prose = role.replace(/`[^`]*`/g, "");
+      expect(prose, `${label}'s role has a colon outside code`).not.toMatch(/:/);
+    }
   });
 
   it("groups every colour slot for the editor, in contract order", () => {
@@ -129,28 +164,7 @@ describe("@moderno-ui/tokens — contract data", () => {
   });
 });
 
-describe("@moderno-ui/tokens — tokens.css satisfies the contract", () => {
-  it("defines every contract slot in :root with a non-empty value", () => {
-    for (const slot of CONTRACT) {
-      expect(root.get(slot.name), `--${slot.name} missing in :root`).toBeTruthy();
-    }
-  });
-
-  it("expresses all colour slots in OKLCH", () => {
-    for (const slot of COLOR_SLOTS) {
-      expect(root.get(slot), `--${slot}`).toMatch(/^oklch\(/);
-    }
-  });
-
-  it("declares no colour custom property outside the contract", () => {
-    for (const name of root.keys()) {
-      const declared = CONTRACT.some((s) => s.name === name);
-      expect(declared, `--${name} in tokens.css is not in the contract`).toBe(true);
-    }
-  });
-});
-
-describe("@moderno-ui/tokens — dark variant", () => {
+describe("@moderno-ui/css — dark variant", () => {
   it("redefines the core slots in .dark", () => {
     expect(tokenRules.has(".dark")).toBe(true);
     for (const slot of ["background", "foreground", "primary"]) {
@@ -175,36 +189,15 @@ describe("@moderno-ui/tokens — dark variant", () => {
   });
 });
 
-describe("@moderno-ui/tokens — multi-brand", () => {
-  it("ships a [data-brand] scope that remaps at least one contract slot", () => {
-    const brandSelectors = [...tokenRules.keys()].filter((s) => s.includes("[data-brand"));
-    expect(brandSelectors.length).toBeGreaterThan(0);
-    const remapsContractSlot = brandSelectors.some((sel) => {
-      const decls = tokenRules.get(sel)!;
-      return COLOR_SLOTS.some((slot) => decls.has(slot));
-    });
-    expect(remapsContractSlot, "no [data-brand] scope overrides a contract slot").toBe(true);
-  });
-
-  it("re-maps WITHOUT touching the base tokens (override lives in its own scope)", () => {
-    let realRemap = false;
-    for (const [selector, decls] of tokenRules) {
-      if (!selector.includes("[data-brand")) continue;
-      // The brand scope must be distinct from the base :root.
-      expect(selector).not.toBe(":root");
-      for (const slot of COLOR_SLOTS) {
-        if (!decls.has(slot)) continue;
-        // Base :root still defines the slot — the brand overrides, never deletes.
-        expect(root.get(slot), `base :root lost --${slot}`).toBeTruthy();
-        if (decls.get(slot) !== root.get(slot)) realRemap = true;
-      }
-    }
-    // At least one slot genuinely changes — proving the remap is effective.
-    expect(realRemap, "no [data-brand] slot actually differs from the base").toBe(true);
+describe("@moderno-ui/css — multi-brand", () => {
+  // A brand is a registry theme (theme-contrast); the [data-brand] switch is
+  // covered by theme-compile's branded-theme tests, not by a demo scope here.
+  it("ships only :root and .dark, with no [data-brand] scope", () => {
+    expect([...tokenRules.keys()].sort()).toEqual([".dark", ":root"]);
   });
 });
 
-describe("@moderno-ui/tokens — Tailwind v4 preset", () => {
+describe("@moderno-ui/css — Tailwind v4 preset", () => {
   it("maps every colour slot to a utility variable via @theme inline", () => {
     expect(presetCss).toMatch(/@theme\s+inline/);
     for (const slot of COLOR_SLOTS) {

@@ -22,7 +22,7 @@
     "build": "tsup"
   },
   "dependencies": {
-    "@moderno-ui/tokens": "workspace:*"
+    "@moderno-ui/css": "workspace:*"
   },
   "devDependencies": {
     "tsup": "^8.3.5"

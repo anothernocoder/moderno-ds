@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "@moderno-ui/core": "workspace:*",
-    "@moderno-ui/tokens": "workspace:*",
+    "@moderno-ui/css": "workspace:*",
     "ts-morph": "^24.0.0",
     "yaml": "^2.9.0"
   },

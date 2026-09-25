@@ -1,5 +1,5 @@
 ---
-"@moderno-ui/tokens": patch
+"@moderno-ui/css": patch
 ---
 
 The neutral defaults now clear WCAG AA on every contract pair:

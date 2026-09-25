@@ -30,7 +30,7 @@ verification out (deterministic lint).
 - **Per-package manifest** — each `@moderno-ui/*` package emits `moderno.agent.json`
   in `dist` at build (from `props-doc` + the MDX `agent:` block). The MCP aggregates
   them from the consumer's `node_modules` at startup. Shared contract data rides in
-  `@moderno-ui/tokens`.
+  `@moderno-ui/css`.
 - **`@moderno-ui/lint`** — ESLint plugin + CLI over the same rule engine that powers
   `validate_usage`. Same rules for humans, CI, and agents.
 - **Curated guidance** — an `agent:` block in each component's docs MDX front-matter
@@ -48,7 +48,7 @@ verification out (deterministic lint).
 | F7.1 | `npx @moderno-ui/mcp` (and `bunx`) starts a stdio MCP server exposing the five tools with valid schemas.                                                         |
 | F7.2 | Every tool accepts and honors a `framework` argument; examples/validation returned are correct for that framework.                                               |
 | F7.3 | The server reads `moderno.agent.json` from the consumer's `node_modules`; answers reflect the **installed** version of each `@moderno-ui/*` package.             |
-| F7.4 | Each shipped `@moderno-ui/*` package contains a generated `moderno.agent.json` in `dist`; `@moderno-ui/tokens` carries the shared contract/theming data.         |
+| F7.4 | Each shipped `@moderno-ui/*` package contains a generated `moderno.agent.json` in `dist`; `@moderno-ui/css` carries the shared contract/theming data.            |
 | F7.5 | `validate_usage` flags, deterministically: hardcoded colors/radii, invalid props vs manifest, re-implemented primitives, bad `data-part` targets, raw Ark usage. |
 | F7.6 | The same rules run via `@moderno-ui/lint` as an ESLint plugin and a CLI; results match `validate_usage`.                                                         |
 | F7.7 | Every primitive's docs MDX has an `agent:` front-matter block; the manifest exposes its guidance.                                                                |

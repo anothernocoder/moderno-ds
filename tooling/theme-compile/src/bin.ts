@@ -1,7 +1,15 @@
 #!/usr/bin/env node
 /**
- * `pnpm theme:build` — compile every theme under registry/themes/ (or the dirs
- * passed as args). Reads tokens.dtcg.json, writes theme.css and DESIGN.md
+ * `pnpm theme:build` — compile the neutral defaults, then every theme under
+ * registry/themes/ (or the dirs passed as args).
+ *
+ * The neutral defaults come first: packages/css/src/tokens.dtcg.json compiles
+ * into packages/css/src/tokens.css, validated like a theme plus every extended
+ * slot required (a theme inherits those from here). Each theme's DESIGN.md
+ * reads the defaults from that same DTCG file, never from the generated
+ * tokens.css, so nothing here reads its own output.
+ *
+ * For each theme: reads tokens.dtcg.json, writes theme.css and DESIGN.md
  * beside it, prints WCAG AA contrast warnings, and exits non-zero on any
  * validation error so CI fails on an invalid schema.
  *
@@ -14,7 +22,8 @@ import { join, resolve } from "node:path";
 import { defaultsFrom, readBrandNotes, renderDesignMd } from "./design-md.ts";
 import { compileTheme, ThemeValidationError } from "./index.ts";
 
-const TOKENS_CSS = resolve("packages/tokens/src/tokens.css");
+const NEUTRAL_DTCG = resolve("packages/css/src/tokens.dtcg.json");
+const NEUTRAL_CSS = resolve("packages/css/src/tokens.css");
 
 function themeDirs(args: string[]): string[] {
   if (args.length > 0) return args.map((a) => resolve(a));
@@ -32,7 +41,20 @@ function main(): number {
     return 1;
   }
 
-  const defaults = defaultsFrom(readFileSync(TOKENS_CSS, "utf8"));
+  let neutral: unknown;
+  try {
+    neutral = JSON.parse(readFileSync(NEUTRAL_DTCG, "utf8"));
+    const { css, warnings } = compileTheme(neutral, { neutral: true });
+    writeFileSync(NEUTRAL_CSS, banner(NEUTRAL_DTCG) + css);
+    console.log(`✓ ${rel(NEUTRAL_CSS)}`);
+    for (const w of warnings) console.warn(`  ⚠ ${w}`);
+  } catch (err) {
+    // Every theme inherits from the neutral defaults: without them, stop.
+    console.error(`✗ ${rel(NEUTRAL_DTCG)}: ${(err as Error).message}`);
+    return 1;
+  }
+
+  const defaults = defaultsFrom(neutral);
   let failed = 0;
   for (const dir of dirs) {
     const input = join(dir, "tokens.dtcg.json");

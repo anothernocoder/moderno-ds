@@ -23,7 +23,7 @@ const blockSources = [
 ].map((path) => fileURLToPath(new URL(path, import.meta.url)));
 
 const tokensCss = readFileSync(
-  fileURLToPath(new URL("../../../packages/tokens/src/tokens.css", import.meta.url)),
+  fileURLToPath(new URL("../../../packages/css/src/tokens.css", import.meta.url)),
   "utf8",
 );
 

@@ -27,8 +27,7 @@
     "@moderno-ui/core": "workspace:*",
     "@moderno-ui/css": "workspace:*",
     "@moderno-ui/svelte": "workspace:*",
-    "@moderno-ui/theme-compile": "workspace:*",
-    "@moderno-ui/tokens": "workspace:*"
+    "@moderno-ui/theme-compile": "workspace:*"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",

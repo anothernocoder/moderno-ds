@@ -123,7 +123,7 @@ spacing:
 
 `theme-contrast` is a branded theme: it paints under `[data-brand="contrast"]`, composed with `.dark`, beside the project's default theme. Everything inside an element with `data-brand="contrast"` takes this brand.
 
-The front matter holds the theme's values, and every slot the theme leaves out appears at the neutral default it inherits. The sections after this one are the rules every Moderno theme shares, derived from the token contract (`CONTRACT.md`): they name slots and never restate values. What sets this theme apart is in its brand notes, below.
+The front matter holds the theme's values, and every slot the theme leaves out appears at the neutral default it inherits. The sections after this one are the rules every Moderno theme shares: the slots and their roles come from the token contract (`@moderno-ui/css/contract`), the rules from `CONTRACT.md`, and they name slots without restating values. What sets this theme apart is in its brand notes, below.
 
 <!-- brand-notes:start -->
 
@@ -147,11 +147,42 @@ Pure black and pure white, nothing in between on any surface. Light is black ink
 
 Paint from contract slots, never from a raw color value. The front matter lists the light scope under the slot names and the dark scope as `dark-*`; code names the slot once and the scope follows `.dark`.
 
-- **Surfaces** (the page, raised surfaces and floating surfaces): `background`, `foreground`, `card`, `card-foreground`, `popover`, `popover-foreground`.
-- **Brand** (actions, from the primary fill to the quieter ones): `primary`, `primary-foreground`, `secondary`, `secondary-foreground`, `accent`, `accent-foreground`.
-- **Support** (recessed wells, the destructive action, status, lines and focus): `muted`, `muted-foreground`, `destructive`, `destructive-foreground`, `info`, `info-foreground`, `success`, `success-foreground`, `warning`, `warning-foreground`, `border`, `input`, `ring`.
-- **Charts** (data-viz series, in order): `chart-1`, `chart-2`, `chart-3`, `chart-4`, `chart-5`.
-- **Extended** (optional in a theme, with a neutral default): `overlay`.
+- **Surfaces** (the page, raised surfaces and floating surfaces):
+  - `background`: the page surface.
+  - `foreground`: text and icons on `background`.
+  - `card`: a raised surface, for cards and panels.
+  - `card-foreground`: text and icons on `card`.
+  - `popover`: a floating surface, for popovers, menus and select lists.
+  - `popover-foreground`: text and icons on `popover`.
+- **Brand** (actions, from the primary fill to the quieter ones):
+  - `primary`: the main action, for primary button fills and emphasized controls.
+  - `primary-foreground`: text and icons on `primary`.
+  - `secondary`: a quieter action than `primary`.
+  - `secondary-foreground`: text and icons on `secondary`.
+  - `accent`: the hover and highlight surface of quiet controls and list items.
+  - `accent-foreground`: text and icons on `accent`.
+- **Support** (recessed wells, the destructive action, status, lines and focus):
+  - `muted`: a recessed surface, for wells and quiet backgrounds.
+  - `muted-foreground`: subdued text on `background`, `card` or `muted`.
+  - `destructive`: irreversible actions, and the error state.
+  - `destructive-foreground`: text and icons on `destructive`.
+  - `info`: the hue of an informational status.
+  - `info-foreground`: text and icons on `info`.
+  - `success`: the hue of a positive status.
+  - `success-foreground`: text and icons on `success`.
+  - `warning`: the hue of a cautionary status.
+  - `warning-foreground`: text and icons on `warning`.
+  - `border`: borders and separators.
+  - `input`: the stroke of form controls.
+  - `ring`: the focus indicator.
+- **Charts** (data-viz series, in order):
+  - `chart-1`: data-viz series 1.
+  - `chart-2`: data-viz series 2.
+  - `chart-3`: data-viz series 3.
+  - `chart-4`: data-viz series 4.
+  - `chart-5`: data-viz series 5.
+- **Extended** (optional in a theme, with a neutral default):
+  - `overlay`: the scrim behind a dialog or command palette.
 
 Every `*-foreground` is paired with one surface and sits on that surface only, with one exception: `muted-foreground` is the subdued text of the whole page, meant for `background`, `card` and `muted` alike. `theme-compile` checks each pair for WCAG AA (4.5:1) in both scopes:
 
@@ -167,23 +198,35 @@ Every `*-foreground` is paired with one surface and sits on that surface only, w
 - `success-foreground` on `success`
 - `warning-foreground` on `warning`
 
-Roles:
+Rules:
 
-- `primary` is the main action: primary button fills and emphasized controls. `destructive` is reserved for irreversible actions, and error states reuse it so an error and a destructive action speak with one voice.
-- `muted-foreground` is subdued text on `background`, `card` or `muted`, never on a filled `primary` or `secondary`.
+- `destructive` is reserved for irreversible actions, and error states reuse it so an error and a destructive action speak with one voice.
+- `muted-foreground` never sits on a filled `primary` or `secondary`.
 - `info`, `success` and `warning` carry the hue of a state, not of an action: a status surface tints itself with them against `card`.
 - Status hues and `chart-1`, `chart-2`, `chart-3`, `chart-4`, `chart-5` carry meaning. Never use them for decoration.
-- `border` separates, `input` strokes form controls, and `ring` is the focus indicator.
-- `overlay` is the scrim behind a dialog or command palette, painted over a blur of the page. Never mix it from `foreground`.
+- `overlay` is painted over a blur of the page. Never mix it from `foreground`.
 
 ## Typography
 
-`font-sans` sets the interface and running text, and is the `fontFamily` of every style in the front matter. `font-serif` is the display face for headings and pull quotes when the brand has one. `font-mono` sets code.
+- `font-sans`: the interface and running text.
+- `font-serif`: the display face for headings and pull quotes, when the brand has one.
+- `font-mono`: code.
+
+`font-sans` is the `fontFamily` of every style in the front matter.
 
 The type scale is a size and a line height per step (`--text-<step>`, `--leading-<step>`), in two ramps:
 
-- **Interface** (`ui-xs`, `ui-sm`, `ui-md`, `ui-lg`): a component's `sm`/`md`/`lg` sizes read `ui-sm`, `ui-md`, `ui-lg`, so controls grow one step at a time. `ui-md` is the default text of the interface, and `ui-xs` carries ticks and helper text.
+- **Interface** (`ui-xs`, `ui-sm`, `ui-md`, `ui-lg`): a component's `sm`/`md`/`lg` sizes read `ui-sm`/`ui-md`/`ui-lg`, so controls grow one step at a time.
+  - `ui-xs`: the smallest interface text, for ticks and helper text.
+  - `ui-sm`: a component's `sm` size.
+  - `ui-md`: a component's `md` size, and the default text of the interface.
+  - `ui-lg`: a component's `lg` size.
 - **Content** (`body`, `body-lg`, `heading-sm`, `heading`, `heading-lg`): running text, lead paragraphs and titles.
+  - `body`: running text.
+  - `body-lg`: lead paragraphs and dialog titles.
+  - `heading-sm`: small titles.
+  - `heading`: section titles.
+  - `heading-lg`: page titles.
 
 Weights (`--font-weight-*`):
 
@@ -205,17 +248,24 @@ Spacing uses the contract's scale, `spacing-1` to `spacing-8` (the front matter'
 
 ## Elevation & Depth
 
-Resting surfaces separate by fill and a `border`, not by shadow: `muted` recesses, `card` sits at page level. Shadows (`shadow-sm`, `shadow-md`, `shadow-lg`) are for overlays only (popover, menu, drawer, toast), one step per layer of float. The dark scope carries its own shadows, since a light-mode shadow disappears on a dark surface.
+Resting surfaces separate by fill and a `border`, not by shadow: `muted` recesses, `card` sits at page level. Shadows are for overlays only, one step per layer of float. The dark scope carries its own shadows, since a light-mode shadow disappears on a dark surface.
+
+- `shadow-sm`: the lowest float, for small overlays.
+- `shadow-md`: menus, select lists and popovers.
+- `shadow-lg`: the highest float, for dialogs, drawers and toasts.
 
 Motion durations:
 
 - `motion-instant`: hover and focus feedback.
-- `motion-fast`: reveals (menus, tooltips).
+- `motion-fast`: reveals, such as menus and select lists.
 - `motion-normal`: panels and sheets.
 
 ## Shapes
 
-`rounded.base` (`radius`) shapes buttons, inputs, cards and surfaces. `rounded.full` (`radius-full`) is for pills, badges, avatars and status dots. Never set a corner radius by hand.
+- `rounded.base` (`radius`): the base corner radius of buttons, inputs, cards and surfaces.
+- `rounded.full` (`radius-full`): fully rounded ends, for pills, badges, avatars and status dots.
+
+Never set a corner radius by hand.
 
 ## Components
 

@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://moderno.style/schema/moderno.agent.json",
   "title": "Moderno agent manifest",
-  "description": "Per-package manifest emitted to dist as moderno.agent.json. @moderno-ui/mcp aggregates these from the consumer's node_modules at startup so answers are pinned to the installed version. Component packages emit kind='components'; @moderno-ui/tokens emits kind='contract' (shared, framework-agnostic).",
+  "description": "Per-package manifest emitted to dist as moderno.agent.json. @moderno-ui/mcp aggregates these from the consumer's node_modules at startup so answers are pinned to the installed version. Component packages emit kind='components'; @moderno-ui/css emits kind='contract' (shared, framework-agnostic).",
   "type": "object",
   "oneOf": [
     { "$ref": "#/definitions/componentsManifest" },
@@ -147,11 +147,11 @@
     },
     "contractManifest": {
       "type": "object",
-      "description": "Shared, framework-agnostic contract. Ships in @moderno-ui/tokens. Backs get_contract and feeds the token-related validate rules.",
-      "required": ["package", "version", "kind", "goldenRule", "slots", "rules"],
+      "description": "Shared, framework-agnostic contract. Ships in @moderno-ui/css. Backs get_contract and feeds the token-related validate rules.",
+      "required": ["package", "version", "kind", "goldenRule", "slots", "roles", "rules"],
       "additionalProperties": false,
       "properties": {
-        "package": { "const": "@moderno-ui/tokens" },
+        "package": { "const": "@moderno-ui/css" },
         "version": { "type": "string" },
         "kind": { "const": "contract" },
         "goldenRule": { "type": "string" },
@@ -169,6 +169,11 @@
             "container": { "type": "array", "items": { "type": "string" } },
             "type": { "type": "array", "items": { "type": "string" } }
           }
+        },
+        "roles": {
+          "type": "object",
+          "description": "What each slot is for, in one line, keyed by custom-property name (\"--primary\"). Taken from the contract data in @moderno-ui/css/contract.",
+          "additionalProperties": { "type": "string", "minLength": 1 }
         },
         "theming": {
           "type": "object",

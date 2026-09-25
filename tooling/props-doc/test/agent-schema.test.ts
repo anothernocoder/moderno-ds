@@ -50,7 +50,7 @@ describe("moderno.agent.schema.json", () => {
     expect(valid).toBe(true);
   });
 
-  it("validates a real contract manifest built from @moderno-ui/tokens", () => {
+  it("validates a real contract manifest built from @moderno-ui/css", () => {
     const manifest = buildContractManifest("0.1.0");
     const valid = validate(manifest);
     expect(validate.errors, JSON.stringify(validate.errors)).toBeNull();

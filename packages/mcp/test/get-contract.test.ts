@@ -24,12 +24,12 @@ describe("getContract", () => {
   it("returns the shared contract, identical regardless of which framework is being written", () => {
     const manifests = discoverManifests(fixture.dir);
     const contract = getContract(manifests);
-    expect(contract.package).toBe("@moderno-ui/tokens");
+    expect(contract.package).toBe("@moderno-ui/css");
     expect(contract.slots.color).toContain("--primary");
     expect(contract.rules.length).toBeGreaterThan(0);
   });
 
-  describe("when @moderno-ui/tokens isn't installed", () => {
+  describe("when @moderno-ui/css isn't installed", () => {
     let emptyDir: string;
 
     afterEach(() => {
@@ -37,7 +37,7 @@ describe("getContract", () => {
     });
 
     it("throws a ModernoMcpError", () => {
-      emptyDir = mkdtempSync(join(tmpdir(), "moderno-mcp-no-tokens-"));
+      emptyDir = mkdtempSync(join(tmpdir(), "moderno-mcp-no-css-"));
       const manifests = discoverManifests(emptyDir);
       expect(() => getContract(manifests)).toThrow(ModernoMcpError);
     });

@@ -4,7 +4,7 @@
  * `src/generated/tailwind.css`, which `BaseLayout.astro` imports.
  *
  * Generated, not committed (`src/generated/` is gitignored) — the file is a
- * function of the sources below plus `@moderno-ui/tokens/preset`, and a stale
+ * function of the sources below plus `@moderno-ui/css/preset`, and a stale
  * committed copy would silently drop a utility a block started using.
  */
 import { mkdirSync, readdirSync, writeFileSync } from "node:fs";
