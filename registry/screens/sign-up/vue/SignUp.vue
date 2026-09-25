@@ -148,13 +148,13 @@ const resolvedHighlights = computed(() => props.highlights ?? trialHighlights);
     <div class="grid min-h-dvh grid-rows-[auto_1fr_auto] gap-8 p-6">
       <header class="grid gap-2 @sm:flex @sm:items-center @sm:justify-between">
         <a
-          class="rounded-sm text-base font-semibold tracking-tight underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          class="rounded-sm text-body font-semibold tracking-tight underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
           :href="homeHref"
           @click="emit('navigate', 'home', $event)"
         >
           Moderno
         </a>
-        <p class="text-sm text-muted-foreground">
+        <p class="text-ui-md text-muted-foreground">
           Already registered?
           <a
             class="rounded-sm font-medium text-foreground underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
@@ -183,15 +183,15 @@ const resolvedHighlights = computed(() => props.highlights ?? trialHighlights);
         </div>
 
         <aside v-if="resolvedHighlights.length > 0" class="mx-auto grid w-full max-w-md gap-4">
-          <h2 class="text-base font-semibold tracking-tight">What you get on day one</h2>
+          <h2 class="text-body font-semibold tracking-tight">What you get on day one</h2>
           <ul class="grid gap-4">
             <li
               v-for="highlight in resolvedHighlights"
               :key="highlight.id"
               class="grid gap-1 border-l-2 border-border pl-4"
             >
-              <p class="text-sm font-medium">{{ highlight.title }}</p>
-              <p v-if="highlight.description" class="text-sm text-muted-foreground">
+              <p class="text-ui-md font-medium">{{ highlight.title }}</p>
+              <p v-if="highlight.description" class="text-ui-md text-muted-foreground">
                 {{ highlight.description }}
               </p>
             </li>
@@ -200,7 +200,7 @@ const resolvedHighlights = computed(() => props.highlights ?? trialHighlights);
       </div>
 
       <footer
-        class="grid gap-2 text-sm text-muted-foreground @md:flex @md:items-center @md:justify-between"
+        class="grid gap-2 text-ui-md text-muted-foreground @md:flex @md:items-center @md:justify-between"
       >
         <p>© Moderno</p>
         <nav class="flex gap-4" aria-label="Legal">

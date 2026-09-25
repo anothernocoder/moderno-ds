@@ -136,7 +136,7 @@
 <section class="@container moderno-block-login text-foreground">
   <Card.Root class="mx-auto w-full max-w-sm">
     <Card.Header role={forgot || verify ? "status" : undefined}>
-      <Card.Title class="text-lg @md:text-xl" aria-level={titleLevel === 3 ? undefined : titleLevel}>
+      <Card.Title class="text-body-lg @md:text-heading-sm" aria-level={titleLevel === 3 ? undefined : titleLevel}>
         {title}
       </Card.Title>
       <Card.Description>{description}</Card.Description>
@@ -158,7 +158,7 @@
 
         {#if confirming}
           <input type="hidden" name="email" value={sentTo} />
-          <p class="text-sm text-muted-foreground">
+          <p class="text-ui-md text-muted-foreground">
             The link expires in 30 minutes and can be used once. Nothing in your inbox? Look in
             spam, then send it again.
           </p>
@@ -187,7 +187,7 @@
               <PinInput.HiddenInput />
             </PinInput.Root>
             {#if errors?.code}
-              <p class="text-sm text-destructive" role="alert">{errors.code}</p>
+              <p class="text-ui-md text-destructive" role="alert">{errors.code}</p>
             {/if}
           </div>
         {/if}
@@ -269,7 +269,7 @@
               <Checkbox.Label>I agree to the terms and the privacy policy</Checkbox.Label>
               <Checkbox.HiddenInput />
             </Checkbox.Root>
-            <p class="text-sm text-muted-foreground">
+            <p class="text-ui-md text-muted-foreground">
               Read the
               <a
                 class="rounded-sm font-medium text-foreground underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
@@ -297,7 +297,7 @@
             </Checkbox.Root>
 
             <a
-              class="rounded-sm text-sm font-medium text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline focus-visible:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+              class="rounded-sm text-ui-md font-medium text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline focus-visible:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
               href={forgotHref}
             >
               Forgot your password?
@@ -339,7 +339,7 @@
     </Card.Content>
 
     <Card.Footer class="justify-center">
-      <p class="text-sm text-muted-foreground">
+      <p class="text-ui-md text-muted-foreground">
         {cardCopy[mode].footerPrompt}
         <a
           class="rounded-sm font-medium text-foreground underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"

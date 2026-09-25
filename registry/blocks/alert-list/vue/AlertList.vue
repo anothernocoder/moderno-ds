@@ -92,8 +92,8 @@ const showList = computed(() => !props.error && !props.loading && resolvedAlerts
     <div class="grid gap-4">
       <div class="grid gap-3 @sm:flex @sm:items-center @sm:justify-between">
         <div class="grid gap-1">
-          <h2 class="text-lg font-semibold @md:text-xl">{{ heading }}</h2>
-          <p v-if="description" class="text-sm text-muted-foreground">{{ description }}</p>
+          <h2 class="text-body-lg font-semibold @md:text-heading-sm">{{ heading }}</h2>
+          <p v-if="description" class="text-ui-md text-muted-foreground">{{ description }}</p>
         </div>
         <Button
           type="button"
@@ -152,7 +152,7 @@ const showList = computed(() => !props.error && !props.loading && resolvedAlerts
             aria-hidden="true"
             class="size-5 animate-spin rounded-full border-2 border-current border-t-transparent motion-reduce:animate-none"
           />
-          <p class="text-sm text-muted-foreground">Checking for new notifications…</p>
+          <p class="text-ui-md text-muted-foreground">Checking for new notifications…</p>
         </Card.Content>
       </Card.Root>
 
@@ -185,7 +185,7 @@ const showList = computed(() => !props.error && !props.loading && resolvedAlerts
             <Alert.Content>
               <div class="grid gap-1 @lg:flex @lg:items-baseline @lg:justify-between @lg:gap-4">
                 <Alert.Title>{{ item.title }}</Alert.Title>
-                <Alert.Description v-if="item.meta" class="text-xs">{{
+                <Alert.Description v-if="item.meta" class="text-ui-xs">{{
                   item.meta
                 }}</Alert.Description>
               </div>

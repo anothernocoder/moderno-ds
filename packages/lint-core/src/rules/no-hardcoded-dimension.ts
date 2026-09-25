@@ -115,6 +115,23 @@ const DIMENSION_UTILITY_VALUE = new RegExp(
   "g",
 );
 
+/**
+ * Tailwind's stock type sizes. The preset keeps them (so a consumer's own
+ * `text-sm` still works), but their values are Tailwind's, not the contract's:
+ * a block written with them ignores a theme that re-maps `--text-ui-md`. Each
+ * maps to the contract step with the same size, so the fix is a rename.
+ */
+const STOCK_TYPE_STEP: Record<string, string> = {
+  xs: "ui-xs",
+  sm: "ui-md",
+  base: "body",
+  lg: "body-lg",
+  xl: "heading-sm",
+  "2xl": "heading",
+};
+const STOCK_TYPE_UTILITY = /(?<=^|[\s"'`:])text-(xs|sm|base|lg|[2-9]?xl)(?=$|[\s"'`/])/g;
+const HARDCODED_FONT_SIZE = /\bfont-size\s*:\s*([\d.]+)(px|rem)\b/g;
+
 /** Whether an arbitrary value hardcodes a length anywhere inside it. */
 function hasRawLength(value: string): boolean {
   return RAW_LENGTH.test(value);
@@ -146,6 +163,27 @@ export const noHardcodedDimension: Rule = {
         message: `Hardcoded dimension "${match[0]}" bypasses the token contract — a Tailwind arbitrary value is a literal length.`,
         suggestion:
           "Use a preset utility backed by the contract (spacing/radius scales, max-w-sm|md|lg from --container-*), or a var() reference.",
+      });
+    }
+    for (const match of ctx.code.matchAll(STOCK_TYPE_UTILITY)) {
+      const step = STOCK_TYPE_STEP[match[1]!];
+      findings.push({
+        ruleId: "moderno/no-hardcoded-dimension",
+        severity: "error",
+        loc: offsetToLoc(ctx.code, match.index),
+        message: `"${match[0]}" is Tailwind's stock type size, not a contract step — a theme cannot re-map it.`,
+        suggestion: step
+          ? `Use text-${step} (var(--text-${step})), the contract step with the same size.`
+          : "Use a contract type step: text-ui-xs…text-ui-lg, text-body, text-body-lg, text-heading-sm, text-heading or text-heading-lg.",
+      });
+    }
+    for (const match of ctx.code.matchAll(HARDCODED_FONT_SIZE)) {
+      findings.push({
+        ruleId: "moderno/no-hardcoded-dimension",
+        severity: "error",
+        loc: offsetToLoc(ctx.code, match.index),
+        message: `Hardcoded font-size "${match[1]}${match[2]}" bypasses the token contract.`,
+        suggestion: "Reference a type step instead, e.g. font-size: var(--text-ui-md).",
       });
     }
     return findings.sort((a, b) => a.loc.line - b.loc.line || a.loc.col - b.loc.col);

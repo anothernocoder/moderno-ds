@@ -135,13 +135,13 @@ export function SignIn(props: SignInProps) {
       <div class="grid min-h-dvh grid-rows-[auto_1fr_auto] gap-8 p-6">
         <header class="grid gap-2 @sm:flex @sm:items-center @sm:justify-between">
           <a
-            class="rounded-sm text-base font-semibold tracking-tight underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            class="rounded-sm text-body font-semibold tracking-tight underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
             href={props.homeHref ?? "#"}
             onClick={(event) => props.onNavigate?.("home", event)}
           >
             Moderno
           </a>
-          <p class="text-sm text-muted-foreground">
+          <p class="text-ui-md text-muted-foreground">
             Cannot get in?{" "}
             <a
               class="rounded-sm font-medium text-foreground underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
@@ -183,7 +183,7 @@ export function SignIn(props: SignInProps) {
           </Show>
         </div>
 
-        <footer class="grid gap-2 text-sm text-muted-foreground @md:flex @md:items-center @md:justify-between">
+        <footer class="grid gap-2 text-ui-md text-muted-foreground @md:flex @md:items-center @md:justify-between">
           <p>© Moderno</p>
           <nav class="flex gap-4" aria-label="Legal">
             <a

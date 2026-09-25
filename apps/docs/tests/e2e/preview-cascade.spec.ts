@@ -18,10 +18,10 @@ import { expect, test, type Page } from "@playwright/test";
 /** `--container-md`, the block's `@md` step, in px at the default root size. */
 const CONTAINER_MD = 576;
 
-/** The type scale the pricing block asks for, resolved from the preset. */
-const TEXT_LG = "18px";
-const TEXT_XL = "20px";
-const TEXT_SM = "14px";
+/** The type steps the pricing block asks for, resolved from the contract. */
+const TEXT_BODY_LG = "18px";
+const TEXT_HEADING_SM = "20px";
+const TEXT_UI_MD = "14px";
 /** `p-6` — what a plan card's padding alone should put above its title. */
 const CARD_PADDING = 24;
 
@@ -117,12 +117,12 @@ test.describe("the preview panel renders a block the way a consumer would see it
         const where = `${path} figure ${index + 1} (${figure.containerWidth}px)`;
 
         // The block's own type step, and nothing inherited from the prose.
-        // `@md:text-xl` fires from the *container's* width, so which of the two
+        // `@md:text-heading-sm` fires from the *container's* width, so which of the two
         // sizes is correct depends on the tab, not on the viewport — that
         // asymmetry is what the page exists to demonstrate.
-        const expected = figure.containerWidth >= CONTAINER_MD ? TEXT_XL : TEXT_LG;
+        const expected = figure.containerWidth >= CONTAINER_MD ? TEXT_HEADING_SM : TEXT_BODY_LG;
         expect(figure.headingFontSize, `${where}: heading size`).toBe(expected);
-        expect(figure.planNameFontSize, `${where}: plan name size`).toBe(TEXT_SM);
+        expect(figure.planNameFontSize, `${where}: plan name size`).toBe(TEXT_UI_MD);
 
         // Preflight is scoped to this panel precisely so the prose margins
         // (`main h2` 3.5rem, `main h3` 2.25rem, `main p` 0.75rem) stop at its edge.
@@ -149,13 +149,13 @@ test.describe("the preview panel renders a block the way a consumer would see it
     const [narrow, wide] = await figureMetrics(page);
     // The 24rem frame caps the narrow tab below `--container-md` at every viewport.
     expect(narrow!.containerWidth).toBeLessThan(CONTAINER_MD);
-    expect(narrow!.headingFontSize).toBe(TEXT_LG);
+    expect(narrow!.headingFontSize).toBe(TEXT_BODY_LG);
     // Above the step the wide tab must differ; below it, both stack and
-    // both read `text-lg` — the demo is width-honest either way.
+    // both read `text-body-lg` — the demo is width-honest either way.
     if (wide!.containerWidth >= CONTAINER_MD) {
-      expect(wide!.headingFontSize).toBe(TEXT_XL);
+      expect(wide!.headingFontSize).toBe(TEXT_HEADING_SM);
     } else {
-      expect(wide!.headingFontSize).toBe(TEXT_LG);
+      expect(wide!.headingFontSize).toBe(TEXT_BODY_LG);
     }
   });
 

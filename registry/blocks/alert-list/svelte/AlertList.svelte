@@ -118,9 +118,9 @@
   <div class="grid gap-4">
     <div class="grid gap-3 @sm:flex @sm:items-center @sm:justify-between">
       <div class="grid gap-1">
-        <h2 class="text-lg font-semibold @md:text-xl">{heading}</h2>
+        <h2 class="text-body-lg font-semibold @md:text-heading-sm">{heading}</h2>
         {#if description}
-          <p class="text-sm text-muted-foreground">{description}</p>
+          <p class="text-ui-md text-muted-foreground">{description}</p>
         {/if}
       </div>
       <Button
@@ -165,7 +165,7 @@
             aria-hidden="true"
             class="size-5 animate-spin rounded-full border-2 border-current border-t-transparent motion-reduce:animate-none"
           ></span>
-          <p class="text-sm text-muted-foreground">Checking for new notifications…</p>
+          <p class="text-ui-md text-muted-foreground">Checking for new notifications…</p>
         </Card.Content>
       </Card.Root>
     {/if}
@@ -191,7 +191,7 @@
                 <div class="grid gap-1 @lg:flex @lg:items-baseline @lg:justify-between @lg:gap-4">
                   <Alert.Title>{item.title}</Alert.Title>
                   {#if item.meta}
-                    <Alert.Description class="text-xs">{item.meta}</Alert.Description>
+                    <Alert.Description class="text-ui-xs">{item.meta}</Alert.Description>
                   {/if}
                 </div>
                 {#if item.description}

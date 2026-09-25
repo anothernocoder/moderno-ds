@@ -163,13 +163,13 @@
   <div class="grid min-h-dvh grid-rows-[auto_1fr_auto] gap-8 p-6">
     <header class="grid gap-2 @sm:flex @sm:items-center @sm:justify-between">
       <a
-        class="rounded-sm text-base font-semibold tracking-tight underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+        class="rounded-sm text-body font-semibold tracking-tight underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
         href={homeHref}
         onclick={(event) => onnavigate?.("home", event)}
       >
         Moderno
       </a>
-      <p class="text-sm text-muted-foreground">
+      <p class="text-ui-md text-muted-foreground">
         Cannot get in?
         <a
           class="rounded-sm font-medium text-foreground underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
@@ -212,7 +212,7 @@
     </div>
 
     <footer
-      class="grid gap-2 text-sm text-muted-foreground @md:flex @md:items-center @md:justify-between"
+      class="grid gap-2 text-ui-md text-muted-foreground @md:flex @md:items-center @md:justify-between"
     >
       <p>© Moderno</p>
       <nav class="flex gap-4" aria-label="Legal">

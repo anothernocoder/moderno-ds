@@ -116,7 +116,7 @@ export function LoginForm(props: LoginFormProps) {
       <Card.Root class="mx-auto w-full max-w-sm">
         <Card.Header role={forgot() || verify() ? "status" : undefined}>
           <Card.Title
-            class="text-lg @md:text-xl"
+            class="text-body-lg @md:text-heading-sm"
             aria-level={titleLevel() === 3 ? undefined : titleLevel()}
           >
             {title()}
@@ -142,7 +142,7 @@ export function LoginForm(props: LoginFormProps) {
 
             <Show when={confirming()}>
               <input type="hidden" name="email" value={props.sentTo ?? ""} />
-              <p class="text-sm text-muted-foreground">
+              <p class="text-ui-md text-muted-foreground">
                 The link expires in 30 minutes and can be used once. Nothing in your inbox? Look in
                 spam, then send it again.
               </p>
@@ -170,7 +170,7 @@ export function LoginForm(props: LoginFormProps) {
                 </PinInput.Root>
                 <Show when={props.errors?.code}>
                   {(message) => (
-                    <p class="text-sm text-destructive" role="alert">
+                    <p class="text-ui-md text-destructive" role="alert">
                       {message()}
                     </p>
                   )}
@@ -267,7 +267,7 @@ export function LoginForm(props: LoginFormProps) {
                     </Checkbox.Root>
 
                     <a
-                      class="rounded-sm text-sm font-medium text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline focus-visible:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                      class="rounded-sm text-ui-md font-medium text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline focus-visible:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                       href={props.forgotHref ?? "#"}
                     >
                       Forgot your password?
@@ -284,7 +284,7 @@ export function LoginForm(props: LoginFormProps) {
                   <Checkbox.Label>I agree to the terms and the privacy policy</Checkbox.Label>
                   <Checkbox.HiddenInput />
                 </Checkbox.Root>
-                <p class="text-sm text-muted-foreground">
+                <p class="text-ui-md text-muted-foreground">
                   Read the{" "}
                   <a
                     class="rounded-sm font-medium text-foreground underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
@@ -336,7 +336,7 @@ export function LoginForm(props: LoginFormProps) {
         </Card.Content>
 
         <Card.Footer class="justify-center">
-          <p class="text-sm text-muted-foreground">
+          <p class="text-ui-md text-muted-foreground">
             {cardCopy[mode()].footerPrompt}{" "}
             <a
               class="rounded-sm font-medium text-foreground underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
