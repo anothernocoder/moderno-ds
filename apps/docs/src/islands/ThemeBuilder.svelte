@@ -5,11 +5,17 @@
   `@moderno-ui/theme-compile` CI uses (via `buildTheme`), so a clean export here is
   a theme that passes CI; the inline WCAG AA checker surfaces its warnings.
   State persists to the URL (`?t=`) and localStorage.
+
+  The preview owns the page: a masonry gallery of components fills the main
+  column, and the editor — slots, contrast report and export — lives in a
+  panel that slides in from the right edge. Open, the panel reserves its width
+  on a wide screen (the gallery reflows beside it); on a narrow one it lays
+  over the gallery instead, and Escape or the scrim closes it.
 -->
 <script lang="ts">
   import { onMount } from "svelte";
-  import { Button, LineChart } from "@moderno-ui/svelte";
   import { COLOR_GROUPS } from "@moderno-ui/tokens/contract";
+  import ThemePreviewGallery from "./ThemePreviewGallery.svelte";
   import {
     buildTheme,
     defaultThemeState,
@@ -42,17 +48,59 @@
     copied: string;
     /** Placeholder on an optional (extended) slot left blank. */
     inherited: string;
+    customize: string;
+    closePanel: string;
+    contrast: string;
+    preview: string;
     /** Editor group labels, keyed by the contract group id. */
     groups: Record<string, string>;
   }
 
   let { strings }: { strings: Strings } = $props();
 
+  // Where the panel docks beside the gallery rather than over it. Kept in step
+  // with the `@media` rule that reserves the panel's width on `.layout`.
+  const DOCKED = "(min-width: 64rem)";
+  const PANEL_KEY = "moderno-theme-builder-panel";
+
+  // The island is `client:only`, so the browser globals are there at init: the
+  // first paint already has the panel where it will stay, with no slide-in.
+  // A remembered choice wins; otherwise it starts open only where it docks.
+  function initialPanel(): boolean {
+    try {
+      const saved = localStorage.getItem(PANEL_KEY);
+      if (saved === "open" || saved === "closed") return saved === "open";
+    } catch {
+      /* storage blocked */
+    }
+    return matchMedia(DOCKED).matches;
+  }
+
   let state = $state<ThemeState>(defaultThemeState());
   let scope = $state<"light" | "dark">("light");
+  let panelOpen = $state(initialPanel());
   let pasteOpen = $state(false);
   let pasteText = $state("");
   let pasteError = $state("");
+  let panelToggle = $state<HTMLButtonElement>();
+
+  function setPanel(open: boolean) {
+    panelOpen = open;
+    try {
+      localStorage.setItem(PANEL_KEY, open ? "open" : "closed");
+    } catch {
+      /* storage blocked */
+    }
+    // Closing hides the panel's contents (inert), so focus inside it would be
+    // stranded: hand it back to the control that reopens it.
+    if (!open) panelToggle?.focus();
+  }
+
+  function onKeydown(e: KeyboardEvent) {
+    // Escape only dismisses the overlay form; docked, the panel is part of the
+    // page and Escape inside a field shouldn't yank it away.
+    if (e.key === "Escape" && panelOpen && !matchMedia(DOCKED).matches) setPanel(false);
+  }
 
   const bundle = $derived(buildTheme(state));
   const activeScope = $derived(state[scope]);
@@ -60,11 +108,6 @@
   // previews the inherited default instead of a blanked slot (`--slot: ` makes
   // var(--slot) substitute to nothing, and the stage loses that padding/radius).
   const previewVars = $derived(previewStyle(state[scope]));
-
-  const chartSeries = [
-    { name: "A", points: [{ x: 0, y: 8 }, { x: 1, y: 22 }, { x: 2, y: 16 }, { x: 3, y: 34 }] },
-    { name: "B", points: [{ x: 0, y: 4 }, { x: 1, y: 12 }, { x: 2, y: 24 }, { x: 3, y: 20 }] },
-  ];
 
   // The editor groups derive from the contract data — a slot added to
   // @moderno-ui/tokens shows up here without touching the island. Labels come
@@ -147,22 +190,77 @@
   });
 </script>
 
-<div class="tb-shell">
-  <div class="tb">
-    <section class="tb-editor" aria-label="Theme editor">
+<svelte:window onkeydown={onKeydown} />
+
+{#snippet scopeToggle()}
+  <div class="tb-seg" role="group" aria-label={`${strings.light} / ${strings.dark}`}>
+    <button type="button" aria-pressed={scope === "light"} onclick={() => (scope = "light")}>
+      {strings.light}
+    </button>
+    <button type="button" aria-pressed={scope === "dark"} onclick={() => (scope = "dark")}>
+      {strings.dark}
+    </button>
+  </div>
+{/snippet}
+
+<div class="tb" data-panel={panelOpen ? "open" : "closed"}>
+  <div class="tb-toolbar">
+    {@render scopeToggle()}
+    <button
+      type="button"
+      class="tb-btn tb-toggle"
+      aria-controls="tb-panel"
+      aria-expanded={panelOpen}
+      bind:this={panelToggle}
+      onclick={() => setPanel(!panelOpen)}
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="3" y="4" width="18" height="16" rx="2" />
+        <path d="M15 4v16" />
+      </svg>
+      {strings.customize}
+      {#if bundle.valid && bundle.warnings.length > 0}
+        <span class="tb-badge" title={strings.contrastFail}>{bundle.warnings.length}</span>
+      {/if}
+    </button>
+  </div>
+
+  <section class="tb-preview" aria-label={strings.preview}>
+    <div class="tb-stage" class:dark={scope === "dark"} style={previewVars}>
+      <ThemePreviewGallery />
+    </div>
+  </section>
+
+  <!-- Overlay form only (hidden where the panel docks): a click outside closes. -->
+  <button
+    type="button"
+    class="tb-scrim"
+    tabindex="-1"
+    aria-hidden="true"
+    onclick={() => setPanel(false)}
+  ></button>
+
+  <aside id="tb-panel" class="tb-panel" aria-label={strings.customize} inert={!panelOpen}>
+    <header class="tb-panel-head">
+      <h2>{strings.customize}</h2>
+      <button
+        type="button"
+        class="tb-icon-btn"
+        aria-label={strings.closePanel}
+        title={strings.closePanel}
+        onclick={() => setPanel(false)}
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12" /></svg>
+      </button>
+    </header>
+
+    <div class="tb-panel-body">
       <div class="tb-head">
         <label class="tb-name">
           <span class="tb-label">{strings.name}</span>
           <input type="text" bind:value={state.name} spellcheck="false" />
         </label>
-        <div class="tb-seg" role="group" aria-label={`${strings.light} / ${strings.dark}`}>
-          <button type="button" aria-pressed={scope === "light"} onclick={() => (scope = "light")}>
-            {strings.light}
-          </button>
-          <button type="button" aria-pressed={scope === "dark"} onclick={() => (scope = "dark")}>
-            {strings.dark}
-          </button>
-        </div>
+        {@render scopeToggle()}
       </div>
 
       <div class="tb-start">
@@ -264,41 +362,26 @@
           {/each}
         </div>
       </details>
-    </section>
+    </div>
 
-    <section class="tb-preview" aria-label="Preview">
-      <div class="tb-stage" class:dark={scope === "dark"} style={previewVars}>
-        <div class="tb-stage-inner">
-          <div class="tb-buttons">
-            <Button variant="primary">Primary</Button>
-            <Button variant="secondary">Secondary</Button>
-            <Button variant="outline">Outline</Button>
-            <Button variant="destructive">Delete</Button>
-          </div>
-          <div class="tb-card">
-            <h4>Card title</h4>
-            <p>Muted body text rendered from the contract slots.</p>
-            <Button size="sm">Action</Button>
-          </div>
-          <div class="tb-chart">
-            <LineChart width={560} height={180} series={chartSeries} xTicks={4} yTicks={4} />
-          </div>
-        </div>
-      </div>
-
+    <!-- Pinned under the scrolling slots: the verdict on the theme and the way
+         out of the builder stay in view whichever group is being edited. -->
+    <footer class="tb-panel-foot">
       {#if !bundle.valid}
         <div class="tb-status tb-status--fail">
           <p>{strings.invalid}: {bundle.error}</p>
         </div>
       {:else if bundle.warnings.length === 0}
-        <div class="tb-status tb-status--ok"><p>✓ {strings.contrastOk}</p></div>
+        <div class="tb-status tb-status--ok">
+          <p>✓ {strings.contrast}: {strings.contrastOk}</p>
+        </div>
       {:else}
-        <div class="tb-status tb-status--fail">
-          <p>⚠ {strings.contrastFail}</p>
+        <details class="tb-status tb-status--fail">
+          <summary>⚠ {strings.contrastFail} ({bundle.warnings.length})</summary>
           <ul>
             {#each bundle.warnings as w (w)}<li>{w}</li>{/each}
           </ul>
-        </div>
+        </details>
       {/if}
 
       <div class="tb-export">
@@ -355,34 +438,71 @@
           </button>
         </div>
       </div>
-    </section>
-  </div>
+    </footer>
+  </aside>
 </div>
 
 <style>
-  /* The builder sizes itself off its own column, not the viewport: the docs
-     sidebar and TOC rail eat a varying share of the page width. */
-  .tb-shell {
-    container-type: inline-size;
-  }
+  /*
+    The panel's width, written out twice: here for the panel itself, and as a
+    literal in the `.layout` rule below, which sits outside this component and
+    can't see a custom property set on `.tb`.
+  */
   .tb {
-    display: grid;
-    grid-template-columns: minmax(0, 22rem) minmax(0, 1fr);
-    gap: 1.5rem;
-    align-items: start;
+    --tb-panel-w: 22rem;
+    --tb-ease: 0.25s cubic-bezier(0.32, 0.72, 0, 1);
   }
-  @container (max-width: 56rem) {
-    .tb {
-      grid-template-columns: minmax(0, 18rem) minmax(0, 1fr);
+
+  /* The page is a tool, not prose: the layout drops its max width so the
+     gallery can use the whole screen, and — where the panel docks — reserves
+     the panel's width on its right, so the gallery reflows beside the panel
+     instead of hiding under it. */
+  :global(.layout:has(.tb)) {
+    max-width: none;
+    transition: padding-right var(--tb-ease);
+  }
+  @media (min-width: 64rem) {
+    :global(.layout:has(.tb[data-panel="open"])) {
+      padding-right: calc(22rem + 1.5rem);
     }
   }
-  @container (max-width: 40rem) {
-    .tb {
-      grid-template-columns: minmax(0, 1fr);
-    }
-    .tb-preview {
-      position: static;
-    }
+
+  .tb-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin: 1.5rem 0 1rem;
+  }
+  .tb-toggle {
+    gap: 0.4rem;
+  }
+  .tb-toggle svg,
+  .tb-icon-btn svg {
+    width: 1rem;
+    height: 1rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .tb-toggle[aria-expanded="true"] {
+    background: var(--muted);
+  }
+  /* Contrast failures, counted on the toggle: visible with the panel shut. */
+  .tb-badge {
+    min-width: 1.125rem;
+    height: 1.125rem;
+    padding: 0 0.3rem;
+    border-radius: 999px;
+    background: var(--destructive);
+    color: var(--destructive-foreground, var(--background));
+    font-size: 0.6875rem;
+    font-weight: 600;
+    line-height: 1.125rem;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
   }
 
   /* Shared controls */
@@ -458,13 +578,126 @@
     opacity: 0.9;
   }
 
-  /* Editor */
-  .tb-editor {
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--card);
-    overflow: hidden;
+  /* Panel */
+  .tb-panel {
+    position: fixed;
+    top: var(--docs-header-h);
+    right: 0;
+    bottom: 0;
+    /* Under the header (50) and the mobile nav drawer (40). */
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    width: min(var(--tb-panel-w), 100vw);
+    border-left: 1px solid var(--border);
+    background: var(--background);
+    color: var(--foreground);
+    transform: translateX(100%);
+    /* Hidden only once the slide-out ends, so it animates out before it goes. */
+    visibility: hidden;
+    transition:
+      transform var(--tb-ease),
+      visibility 0s linear 0.25s;
   }
+  .tb[data-panel="open"] .tb-panel {
+    transform: none;
+    visibility: visible;
+    transition:
+      transform var(--tb-ease),
+      visibility 0s;
+  }
+  .tb-panel-head {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.625rem 0.625rem 0.625rem 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  /* Explicit margins and colour: `main h2` prose rules would otherwise reach in. */
+  .tb-panel-head h2 {
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 600;
+    letter-spacing: 0;
+    color: var(--foreground);
+  }
+  .tb-icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius);
+    background: transparent;
+    color: var(--muted-foreground);
+    cursor: pointer;
+  }
+  .tb-icon-btn:hover {
+    background: var(--muted);
+    color: var(--foreground);
+  }
+  .tb-panel-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .tb-panel-foot {
+    display: flex;
+    flex-shrink: 0;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem 1rem;
+    border-top: 1px solid var(--border);
+    background: var(--card);
+  }
+
+  /* On a short screen a pinned footer would leave the slots a sliver: the
+     panel scrolls as one, with contrast and export after the last group. */
+  @media (max-height: 52rem) {
+    .tb-panel {
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+    .tb-panel-body {
+      flex: none;
+      overflow: visible;
+    }
+  }
+
+  /* Overlay form: below the docking width the panel lays over the gallery,
+     over a scrim that closes it. */
+  .tb-scrim {
+    display: none;
+  }
+  @media (max-width: 63.99rem) {
+    .tb[data-panel="open"] .tb-scrim {
+      display: block;
+      position: fixed;
+      inset: var(--docs-header-h) 0 0 0;
+      z-index: 29;
+      padding: 0;
+      border: 0;
+      background: var(--overlay, color-mix(in oklch, var(--foreground) 35%, transparent));
+      cursor: default;
+    }
+    .tb[data-panel="open"] .tb-panel {
+      box-shadow: -12px 0 32px -12px color-mix(in oklch, var(--foreground) 25%, transparent);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tb-panel,
+    .tb[data-panel="open"] .tb-panel,
+    :global(.layout:has(.tb)) {
+      transition: none;
+    }
+  }
+
   .tb-head {
     display: flex;
     align-items: flex-end;
@@ -629,52 +862,19 @@
     cursor: pointer;
   }
 
-  /* Preview */
-  .tb-preview {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    position: sticky;
-    top: 5rem;
-  }
+  /* Preview — the stage carries the edited theme (its slots + `.dark`), so the
+     gallery inside paints from the theme being built, not the site's. */
   .tb-stage {
+    padding: 1rem;
     border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 1.5rem;
+    border-radius: calc(var(--radius) * 1.5);
     background: var(--background);
     color: var(--foreground);
   }
-  .tb-stage-inner {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-  }
-  .tb-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-  .tb-card {
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--card);
-    color: var(--card-foreground);
-    padding: 1rem;
-  }
-  .tb-card h4 {
-    margin: 0 0 0.3rem;
-  }
-  .tb-card p {
-    margin: 0 0 0.75rem;
-    color: var(--muted-foreground);
-    font-size: 0.9rem;
-  }
-  /* Scale down with the column, never up — upscaling blows up the axis text. */
-  .tb-chart :global(svg) {
-    display: block;
-    width: 100%;
-    max-width: 560px;
-    height: auto;
+  @media (min-width: 40rem) {
+    .tb-stage {
+      padding: 1.5rem;
+    }
   }
 
   .tb-status {
@@ -683,7 +883,8 @@
     border-radius: var(--radius);
     font-size: 0.8125rem;
   }
-  .tb-status p {
+  .tb-status p,
+  .tb-status summary {
     margin: 0;
     font-weight: 500;
   }
@@ -693,13 +894,24 @@
   .tb-status--fail {
     border-color: color-mix(in oklch, var(--destructive) 45%, var(--border));
   }
-  .tb-status--fail p {
+  .tb-status--fail p,
+  .tb-status--fail summary {
     color: var(--destructive);
   }
+  .tb-status summary {
+    cursor: pointer;
+  }
+  /* A theme can fail many pairs; the list scrolls rather than pushing the
+     export off the bottom of the panel. */
   .tb-status ul {
+    max-height: 8rem;
+    overflow-y: auto;
     margin: 0.35rem 0 0;
     padding-left: 1.1rem;
     color: var(--muted-foreground);
+  }
+  .tb-status li {
+    color: inherit;
   }
   .tb-error {
     margin: 0;
@@ -719,7 +931,7 @@
     padding: 0.375rem 0.375rem 0.375rem 0.75rem;
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    background: var(--card);
+    background: var(--background);
   }
   .tb-file code {
     flex: 1;
