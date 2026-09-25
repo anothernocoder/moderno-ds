@@ -16,7 +16,7 @@ import { compileTheme } from "@moderno-ui/theme-compile";
  * still reach dark mode when its dark block leaves them out — the same result
  * as installing the theme after `@moderno-ui/css` in a real app.
  *
- * "neutral" is the contract itself (`@moderno-ui/tokens`): no attribute.
+ * "neutral" is the contract itself (`@moderno-ui/css`): no attribute.
  */
 
 export const NEUTRAL_THEME = "neutral";

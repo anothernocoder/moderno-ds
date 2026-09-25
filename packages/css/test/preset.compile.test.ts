@@ -89,7 +89,7 @@ beforeAll(async () => {
   ]);
 });
 
-describe("@moderno-ui/tokens preset — generated utilities resolve to contract vars", () => {
+describe("@moderno-ui/css preset — generated utilities resolve to contract vars", () => {
   it("emits color utilities that reference var(--slot), enabling runtime override", () => {
     expect(utilities).toContain("var(--primary)");
     expect(utilities).toContain("var(--foreground)");
@@ -197,7 +197,7 @@ describe("@moderno-ui/tokens preset — generated utilities resolve to contract 
  * theme's weights with no preset and no migration, and renders exactly as
  * before when no theme overrides them: the neutral defaults are Tailwind's.
  */
-describe("@moderno-ui/tokens — weight slots take over stock Tailwind weights", () => {
+describe("@moderno-ui/css — weight slots take over stock Tailwind weights", () => {
   it("stock font-* utilities already read the contract's slot names", () => {
     for (const weight of FONT_WEIGHTS) {
       expect(stock, `.font-${weight}`).toMatch(weightRule(weight));

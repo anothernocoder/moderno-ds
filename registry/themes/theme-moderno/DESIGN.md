@@ -121,7 +121,7 @@ spacing:
 
 ## Overview
 
-`theme-moderno` is a brand-less theme: it paints `:root` (light) and `.dark` (dark) and replaces the neutral defaults of `@moderno-ui/tokens`, so a project installs one such theme.
+`theme-moderno` is a brand-less theme: it paints `:root` (light) and `.dark` (dark) and replaces the neutral defaults of `@moderno-ui/css`, so a project installs one such theme.
 
 The front matter holds the theme's values, and every slot the theme leaves out appears at the neutral default it inherits. The sections after this one are the rules every Moderno theme shares, derived from the token contract (`CONTRACT.md`): they name slots and never restate values. What sets this theme apart is in its brand notes, below.
 

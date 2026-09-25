@@ -72,8 +72,8 @@
           </div>
 
           <div class="font-mono text-sm text-slate-600 leading-relaxed">
-            packages/tokens/src/tokens.css · packages/tokens/src/preset.css ·
-            packages/tokens/test/contract.test.ts<br />
+            packages/css/src/tokens.css · packages/css/src/preset.css ·
+            packages/css/test/contract.test.ts<br />
             tooling/theme-compile/src/index.ts (REQUIRED_COLOR_SLOTS, CONTRAST_PAIRS)<br />
             apps/docs/src/lib/theme.ts (COLOR_SLOTS — “mirrored from theme-compile”)<br />
             apps/docs/src/islands/ThemeBuilder.svelte (GROUPS) · CONTRACT.md
@@ -100,7 +100,7 @@ flowchart TB
               <p class="modlabel text-slate-400 mb-2">After — one deep module, five derivations</p>
               <pre class="mermaid">
 flowchart TB
-  T["@moderno-ui/tokens<br/>contract data:<br/>name · type · group · contrast pair"]:::deep
+  T["@moderno-ui/css<br/>contract data:<br/>name · type · group · contrast pair"]:::deep
   T --> D["theme-compile<br/>derives required slots"]
   T --> E["theme.ts<br/>derives slot lists"]
   T --> F["GROUPS<br/>derives from group field"]
@@ -118,9 +118,9 @@ flowchart TB
               renders.
             </p>
             <p>
-              <strong>Solution</strong> — <code class="text-sm">@moderno-ui/tokens</code> exports
-              the contract as data (slot name, type, group, contrast pair); every other list becomes
-              an import-and-derive.
+              <strong>Solution</strong> — <code class="text-sm">@moderno-ui/css</code> exports the
+              contract as data (slot name, type, group, contrast pair); every other list becomes an
+              import-and-derive.
             </p>
           </div>
 

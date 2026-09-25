@@ -7,7 +7,7 @@
  *    neutral defaults it inherits. The format has no dark mode, so the light
  *    scope uses the contract names and the dark scope follows as `dark-*`.
  * 2. **System rules**: how any Moderno theme is applied. They come from the
- *    token contract (@moderno-ui/tokens/contract), are identical for every
+ *    token contract (@moderno-ui/css/contract), are identical for every
  *    theme, and name slots without restating values, so they cannot drift.
  * 3. **Brand notes**: the one hand-written part, between the brand-notes
  *    markers. A rebuild keeps them verbatim; a theme without notes gets a
@@ -22,7 +22,7 @@ import {
   FONT_WEIGHTS,
   TYPE_STEPS,
   type ContractGroup,
-} from "@moderno-ui/tokens/contract";
+} from "@moderno-ui/css/contract";
 import { contrastRatio, parseOklch } from "./color.ts";
 
 type Token = { $value: string };
@@ -53,7 +53,7 @@ export function declsFor(css: string, selector: string): Map<string, string> {
   return out;
 }
 
-/** The neutral defaults a theme inherits, read from @moderno-ui/tokens' tokens.css. */
+/** The neutral defaults a theme inherits, read from @moderno-ui/css's tokens.css. */
 export function defaultsFrom(tokensCss: string): Defaults {
   return { light: declsFor(tokensCss, ":root"), dark: declsFor(tokensCss, ".dark") };
 }
@@ -392,7 +392,7 @@ function overviewIntro(doc: ThemeDoc): string {
   const brand = brandOf(doc);
   const scope =
     brand === null
-      ? `\`${name}\` is a brand-less theme: it paints \`:root\` (light) and \`.dark\` (dark) and replaces the neutral defaults of \`@moderno-ui/tokens\`, so a project installs one such theme.`
+      ? `\`${name}\` is a brand-less theme: it paints \`:root\` (light) and \`.dark\` (dark) and replaces the neutral defaults of \`@moderno-ui/css\`, so a project installs one such theme.`
       : `\`${name}\` is a branded theme: it paints under \`[data-brand="${brand}"]\`, composed with \`.dark\`, beside the project's default theme. Everything inside an element with \`data-brand="${brand}"\` takes this brand.`;
   return [
     "## Overview",

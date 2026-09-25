@@ -4,7 +4,7 @@ import {
   EXTENDED_SLOTS,
   OTHER_SLOTS,
   slotType,
-} from "@moderno-ui/tokens/contract";
+} from "@moderno-ui/css/contract";
 import { contrastRatio, parseOklch } from "./color.ts";
 
 export {
@@ -25,7 +25,7 @@ export type CompileResult = {
 type Token = { $type?: string; $value: string };
 type Scope = Record<string, Token>;
 
-// The slot contract is data in @moderno-ui/tokens: colour slots + non-colour
+// The slot contract is data in @moderno-ui/css: colour slots + non-colour
 // slots required in both scopes, and the WCAG AA foreground/background pairs.
 
 export class ThemeValidationError extends Error {
@@ -55,7 +55,7 @@ function validateScope(name: string, scope: unknown): asserts scope is Scope {
     }
   }
   // Extended slots (display face, elevation, modal scrim, container breakpoints,
-  // spacing, motion, type scale, font weights) are optional — `@moderno-ui/tokens` already ships a neutral
+  // spacing, motion, type scale, font weights) are optional — `@moderno-ui/css` already ships a neutral
   // default for each. A theme that *does* express one must give it a real value,
   // or the emitted `--slot: ;` would silently blank the default instead of
   // overriding it. An extended colour (`--overlay`) is held to the same OKLCH

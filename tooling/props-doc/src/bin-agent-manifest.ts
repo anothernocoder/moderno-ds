@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * `moderno-agent-manifest <react|vue|svelte|solid|tokens> [outDir]` — emit
+ * `moderno-agent-manifest <react|vue|svelte|solid|css> [outDir]` — emit
  * `<outDir>/moderno.agent.json` for one package, run as a package's own build
  * step (cwd = that package's root, so `package.json` next door gives the
  * `version`; `outDir` defaults to `dist`, matching every package's own build
@@ -10,12 +10,10 @@
  * and reused verbatim across every framework's manifest — see
  * `mdx-frontmatter.ts`.
  *
- * The `tokens` target dynamically imports `contract-manifest.ts` instead of
- * `agent-manifest.ts` — a static top-level import would pull in
- * `agent-manifest.ts`'s `@moderno-ui/core` dependency even on this branch, and
- * `@moderno-ui/tokens`'s build has no reason to require `@moderno-ui/core`'s `dist`
- * to exist first (nor a package.json edge telling `pnpm -r build` to build it
- * first).
+ * The `css` target dynamically imports `contract-manifest.ts` instead of
+ * `agent-manifest.ts` — the contract manifest is built from the contract data
+ * alone, and a static top-level import would load `agent-manifest.ts`'s
+ * ts-morph toolchain and `@moderno-ui/core`'s `dist` on this branch for nothing.
  */
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -52,8 +50,8 @@ function readAllGuidance(
 
 async function main(): Promise<number> {
   const [target, outDirArg] = process.argv.slice(2);
-  if (!target || !(target === "tokens" || target in FRAMEWORK_PACKAGES)) {
-    console.error("usage: moderno-agent-manifest <react|vue|svelte|solid|tokens> [outDir]");
+  if (!target || !(target === "css" || target in FRAMEWORK_PACKAGES)) {
+    console.error("usage: moderno-agent-manifest <react|vue|svelte|solid|css> [outDir]");
     return 1;
   }
 
@@ -62,7 +60,7 @@ async function main(): Promise<number> {
   mkdirSync(outDir, { recursive: true });
 
   const manifest =
-    target === "tokens"
+    target === "css"
       ? (await import("./contract-manifest.ts")).buildContractManifest(readVersion(packageDir))
       : await (async () => {
           const { AGENT_COMPONENTS, buildComponentsManifest } = await import("./agent-manifest.ts");

@@ -12,12 +12,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>@moderno-ui/css — contract smoke</title>
     <!--
-      Build-free equivalent of `@import "@moderno-ui/css"`: that entrypoint is just
-      `@import "@moderno-ui/tokens/css"`, but bare package specifiers need a bundler
-      to resolve. Opening this file straight from disk, we link the same stylesheet
-      by relative path so the fixture works with zero tooling.
+      Build-free stand-in for `@import "@moderno-ui/css"`: this fixture needs only
+      the variables, which that entrypoint imports from `./tokens.css`. Opening
+      this file straight from disk, we link that stylesheet by relative path so
+      the fixture works with zero tooling.
     -->
-    <link rel="stylesheet" href="../../tokens/src/tokens.css" />
+    <link rel="stylesheet" href="../src/tokens.css" />
     <link rel="stylesheet" href="../../../registry/themes/theme-contrast/theme.css" />
     <style>
       body {

@@ -50,7 +50,7 @@ describe("tokensToState / stateToTokens — round trip", () => {
   it("leaves an extended slot the theme inherits blank, so the field shows its placeholder", () => {
     const state = tokensToState(modernoTokens);
     // theme-moderno's brand changes the serif face and the elevation steps; the
-    // container breakpoints it takes from @moderno-ui/tokens unchanged.
+    // container breakpoints it takes from @moderno-ui/css unchanged.
     expect(state.light["container-lg"]).toBeUndefined();
     expect(state.dark["container-lg"]).toBeUndefined();
   });
@@ -216,7 +216,7 @@ describe("the description", () => {
 
 describe("DESIGN.md export", () => {
   const tokensCss = readFileSync(
-    fileURLToPath(new URL("../../../../packages/tokens/src/tokens.css", import.meta.url)),
+    fileURLToPath(new URL("../../../../packages/css/src/tokens.css", import.meta.url)),
     "utf8",
   );
   const committed = readFileSync(

@@ -53,7 +53,7 @@ const tokenRules = declsBySelector(tokensCss);
 const root = tokenRules.get(":root") ?? new Map<string, string>();
 const dark = tokenRules.get(".dark") ?? new Map<string, string>();
 
-describe("@moderno-ui/tokens — contract data", () => {
+describe("@moderno-ui/css — contract data", () => {
   it("splits every slot into exactly one derived list", () => {
     const derived = [...COLOR_SLOTS, ...OTHER_SLOTS, ...EXTENDED_SLOTS];
     expect(new Set(derived).size).toBe(derived.length);
@@ -129,7 +129,7 @@ describe("@moderno-ui/tokens — contract data", () => {
   });
 });
 
-describe("@moderno-ui/tokens — tokens.css satisfies the contract", () => {
+describe("@moderno-ui/css — tokens.css satisfies the contract", () => {
   it("defines every contract slot in :root with a non-empty value", () => {
     for (const slot of CONTRACT) {
       expect(root.get(slot.name), `--${slot.name} missing in :root`).toBeTruthy();
@@ -150,7 +150,7 @@ describe("@moderno-ui/tokens — tokens.css satisfies the contract", () => {
   });
 });
 
-describe("@moderno-ui/tokens — dark variant", () => {
+describe("@moderno-ui/css — dark variant", () => {
   it("redefines the core slots in .dark", () => {
     expect(tokenRules.has(".dark")).toBe(true);
     for (const slot of ["background", "foreground", "primary"]) {
@@ -175,7 +175,7 @@ describe("@moderno-ui/tokens — dark variant", () => {
   });
 });
 
-describe("@moderno-ui/tokens — multi-brand", () => {
+describe("@moderno-ui/css — multi-brand", () => {
   // A brand is a registry theme (theme-contrast); the [data-brand] switch is
   // covered by theme-compile's branded-theme tests, not by a demo scope here.
   it("ships only :root and .dark, with no [data-brand] scope", () => {
@@ -183,7 +183,7 @@ describe("@moderno-ui/tokens — multi-brand", () => {
   });
 });
 
-describe("@moderno-ui/tokens — Tailwind v4 preset", () => {
+describe("@moderno-ui/css — Tailwind v4 preset", () => {
   it("maps every colour slot to a utility variable via @theme inline", () => {
     expect(presetCss).toMatch(/@theme\s+inline/);
     for (const slot of COLOR_SLOTS) {

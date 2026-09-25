@@ -1,6 +1,5 @@
 ---
-"@moderno-ui/tokens": minor
-"@moderno-ui/css": patch
+"@moderno-ui/css": minor
 ---
 
 The neutral token stylesheet no longer ships the `[data-brand="contrast"]` demo

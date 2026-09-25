@@ -1,5 +1,5 @@
 /**
- * @moderno-ui/tokens/contract — the token contract as data.
+ * @moderno-ui/css/contract — the token contract as data.
  *
  * The single machine-readable source of the CONTRACT.md slot contract. Every
  * other slot list in the repo derives from this one: `tokens.css` is asserted
@@ -22,7 +22,7 @@ export type ContractSlotType =
 
 /**
  * Where a slot lives in the Theme Builder editor. `extended` slots ship a
- * neutral default in `@moderno-ui/tokens`: a theme *may* override them but is
+ * neutral default in `@moderno-ui/css`: a theme *may* override them but is
  * not required to, so the editor surfaces them as optional fields (blank =
  * inherit the neutral default) while `other` slots are mandatory.
  */
@@ -172,7 +172,7 @@ export const OTHER_SLOTS: readonly string[] = CONTRACT.filter((s) => s.group ===
   (s) => s.name,
 );
 
-/** Slots `@moderno-ui/tokens` gives a default; a theme overrides them or not. */
+/** Slots `@moderno-ui/css` gives a default; a theme overrides them or not. */
 export const EXTENDED_SLOTS: readonly string[] = CONTRACT.filter((s) => s.group === "extended").map(
   (s) => s.name,
 );

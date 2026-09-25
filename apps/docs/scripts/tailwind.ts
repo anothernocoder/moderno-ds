@@ -87,7 +87,7 @@ const PREVIEW_PREFLIGHT = `@layer moderno.base {
  */
 export const DOCS_TAILWIND_ENTRY = `@layer theme, docs.prose, moderno.base, moderno.components, utilities;
 @import "tailwindcss/theme.css" layer(theme);
-@import "@moderno-ui/tokens/preset";
+@import "@moderno-ui/css/preset";
 @import "tailwindcss/utilities.css" layer(utilities);
 
 ${PREVIEW_PREFLIGHT}
@@ -164,7 +164,7 @@ export function extractCandidates(source: string): string[] {
 /**
  * Resolves the two bare specifiers `DOCS_TAILWIND_ENTRY` imports against this
  * file's own resolution, so the docs pick up the workspace's `tailwindcss` and
- * the live `@moderno-ui/tokens/preset` rather than a copied snapshot.
+ * the live `@moderno-ui/css/preset` rather than a copied snapshot.
  */
 async function loadStylesheet(id: string, base: string) {
   const path = id.startsWith(".") ? resolve(base, id) : require.resolve(id);

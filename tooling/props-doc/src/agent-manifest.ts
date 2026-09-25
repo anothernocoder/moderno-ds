@@ -1,7 +1,7 @@
 /**
  * @moderno-ui/props-doc — the `components` flavor of moderno.agent.json.
  *
- * (`@moderno-ui/tokens`'s `contract` flavor lives in `contract-manifest.ts`,
+ * (`@moderno-ui/css`'s `contract` flavor lives in `contract-manifest.ts`,
  * deliberately separate — see that file's header.)
  *
  * Assembles the per-package agent manifest (schema:

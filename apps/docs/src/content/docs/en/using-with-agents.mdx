@@ -72,7 +72,7 @@ Do this before writing any colour, radius, spacing, elevation or container width
 
 ```
 get_contract()
-→ { package: "@moderno-ui/tokens", slots: { color: ["--background", "--foreground", …] }, rules: […] }
+→ { package: "@moderno-ui/css", slots: { color: ["--background", "--foreground", …] }, rules: […] }
 ```
 
 ### 4. Get a native example
@@ -139,7 +139,7 @@ validate_usage({ code: "…", framework: "react" })
 
 - Never edit components: theme them with CSS variables and vary them with props.
 - Reference contract slots (`--background`, `--primary`, `--radius`, …), never hex colours, px spacing or ms durations.
-- Put brand values in a theme, not in `@moderno-ui/tokens`.
+- Put brand values in a theme, not in `@moderno-ui/css`.
 - Keep `:root` light and `.dark` dark. Don't add a third theming mechanism.
 - Import CSS only from `@moderno-ui/css`, never from internal paths.
 

@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import * as prettier from "prettier";
 import { describe, expect, it } from "vitest";
-import { CONTRACT, CONTRAST_PAIRS, FONT_WEIGHTS, TYPE_STEPS } from "@moderno-ui/tokens/contract";
+import { CONTRACT, CONTRAST_PAIRS, FONT_WEIGHTS, TYPE_STEPS } from "@moderno-ui/css/contract";
 import {
   BRAND_NOTES_END,
   BRAND_NOTES_START,
@@ -34,7 +34,7 @@ describe("declsFor", () => {
 
 const defaults = defaultsFrom(
   readFileSync(
-    fileURLToPath(new URL("../../../packages/tokens/src/tokens.css", import.meta.url)),
+    fileURLToPath(new URL("../../../packages/css/src/tokens.css", import.meta.url)),
     "utf8",
   ),
 );

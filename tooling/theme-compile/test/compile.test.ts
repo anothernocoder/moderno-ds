@@ -119,7 +119,7 @@ describe("compileTheme — validation rejects an incomplete contract", () => {
 
 /**
  * The display face, elevation steps and container breakpoints are extended
- * slots: `@moderno-ui/tokens` already ships a neutral default for each, so a
+ * slots: `@moderno-ui/css` already ships a neutral default for each, so a
  * theme expresses only what its brand actually changes.
  */
 describe("compileTheme — extended slots are optional overrides", () => {

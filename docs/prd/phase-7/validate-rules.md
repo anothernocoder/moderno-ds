@@ -5,7 +5,7 @@ The deterministic AST rule engine authored once and exposed twice: as the
 rules, same verdicts, for agents, humans, and CI. No LLM-judge — every rule is a
 static check so it can gate a build. Rules consult the aggregated
 `moderno.agent.json` (component APIs + parts + variants) and the `contract`
-manifest from `@moderno-ui/tokens` (slots + golden rules).
+manifest from `@moderno-ui/css` (slots + golden rules).
 
 ## Rule shape
 

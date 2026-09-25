@@ -2,7 +2,7 @@ import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import postcss, { type Declaration, type Rule } from "postcss";
-import { CONTRAST_PAIRS, EXTENDED_SLOTS } from "@moderno-ui/tokens/contract";
+import { CONTRAST_PAIRS, EXTENDED_SLOTS } from "@moderno-ui/css/contract";
 import { contrastRatio } from "../src/color.ts";
 import { defaultsFrom, readBrandNotes, renderDesignMd } from "../src/design-md.ts";
 import { compileTheme } from "../src/index.ts";
@@ -23,7 +23,7 @@ const themeNames = existsSync(themesRoot)
 
 /** Neutral defaults every theme inherits when it does not express a slot. */
 const tokensCss = readFileSync(
-  fileURLToPath(new URL("../../../packages/tokens/src/tokens.css", import.meta.url)),
+  fileURLToPath(new URL("../../../packages/css/src/tokens.css", import.meta.url)),
   "utf8",
 );
 

@@ -47,7 +47,7 @@ Do not improvise architecture: the technical decisions are already made (below) 
 - **Primitives → versioned npm packages.** One per framework: `@moderno-ui/react`, `@moderno-ui/vue`, `@moderno-ui/svelte`, `@moderno-ui/solid`. Single source of truth, updates via `npm/pnpm/bun update`. Semver + changelog.
 - **Blocks (compositions) → registry/copy.** Items the consumer copies with the CLI and modifies freely.
 - **Themes → CSS files, distributed as registry items** (e.g.: `theme-moderno`, `theme-contrast`).
-- **Single CSS entrypoint → `@moderno-ui/css`.** Re-exports tokens + component stylesheet. The consumer does not import internal paths (`dist/`, core subpaths).
+- **Single CSS entrypoint → `@moderno-ui/css`.** Ships the token variables + component stylesheet. The consumer does not import internal paths (`dist/`, core subpaths).
 - **Escape hatch:** also expose the primitives in the registry as "eject" for when a project needs to own the markup of a specific component.
 
 ---
@@ -75,9 +75,8 @@ Do not improvise architecture: the technical decisions are already made (below) 
 ```
 moderno-ds/
 ├── packages/
-│   ├── tokens/            # @moderno-ui/tokens — tokens DTCG → CSS vars + preset Tailwind v4
 │   ├── core/              # @moderno-ui/core — CVA, utils, styles/components.css
-│   ├── css/               # @moderno-ui/css — entrypoint único (re-export tokens + components)
+│   ├── css/               # @moderno-ui/css — entrypoint único: CSS vars + components, preset Tailwind v4, contrato como datos
 │   ├── charts-core/       # @moderno-ui/charts-core — d3-math puro
 │   ├── react/             # @moderno-ui/react — primitivas React 19 (Ark) + charts SVG
 │   ├── vue/               # @moderno-ui/vue
@@ -145,7 +144,7 @@ Based on the **shadcn registry + CLI** (do not build a CLI from scratch beyond t
 
 ## Consumer DX (CSS)
 
-The consumer **never** imports internal paths (`@moderno-ui/tokens/dist/...`, `@moderno-ui/core/styles/...`).
+The consumer **never** imports internal paths (`@moderno-ui/css/dist/...`, `@moderno-ui/core/styles/...`).
 
 | Layer                               | Import                 | Who manages it                 |
 | ----------------------------------- | ---------------------- | ------------------------------ |
@@ -153,7 +152,7 @@ The consumer **never** imports internal paths (`@moderno-ui/tokens/dist/...`, `@
 | Brand                               | `./theme-moderno.css`  | CLI `add theme-moderno` (copy) |
 | App                                 | `@/styles/moderno.css` | CLI `init` (scaffold)          |
 
-`@moderno-ui/css` is a thin package whose `index.css` re-exports `@moderno-ui/tokens/css` + `@moderno-ui/core/css` via `package.json` exports.
+`@moderno-ui/css` is the one CSS package: its `index.css` brings the token variables (its own `tokens.css`) and `@moderno-ui/core`'s component stylesheet, and it also exports the Tailwind v4 preset (`/preset`), the contract as data (`/contract`) and the agent manifest (ADR-0008).
 
 ---
 
@@ -173,7 +172,7 @@ The consumer **never** imports internal paths (`@moderno-ui/tokens/dist/...`, `@
 
 ## Phased plan (proceed in order, confirm at the end of each one)
 
-- **Phase 0 — Foundation:** monorepo (pnpm workspaces), `@moderno-ui/tokens` + `@moderno-ui/css` (entrypoint), DTCG tokens in OKLCH → CSS vars + preset Tailwind v4, and **CONTRACT.md** with the token contract and the rules (the Moderno default theme is a registry theme, `theme-moderno`, with its own generated `DESIGN.md`). _Confirm the token contract with me before continuing._
+- **Phase 0 — Foundation:** monorepo (pnpm workspaces), `@moderno-ui/css` (tokens + entrypoint), DTCG tokens in OKLCH → CSS vars + preset Tailwind v4, and **CONTRACT.md** with the token contract and the rules (the Moderno default theme is a registry theme, `theme-moderno`, with its own generated `DESIGN.md`). _Confirm the token contract with me before continuing._
 - **Phase 1 — Core:** `@moderno-ui/core` (utils, CVA, helpers, components.css) and `@moderno-ui/charts-core` (pure d3-math).
 - **Phase 2 — Reference implementation (React 19):** Button, Field, Dialog and Select end-to-end, with the single `data-part`-based stylesheet. Validate SSR and theming via variables.
 - **Phase 3 — Port:** Vue, Svelte, Solid of those same components, reusing the stylesheet. Demonstrate look and behavior parity.

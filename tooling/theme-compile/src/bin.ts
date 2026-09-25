@@ -14,7 +14,7 @@ import { join, resolve } from "node:path";
 import { defaultsFrom, readBrandNotes, renderDesignMd } from "./design-md.ts";
 import { compileTheme, ThemeValidationError } from "./index.ts";
 
-const TOKENS_CSS = resolve("packages/tokens/src/tokens.css");
+const TOKENS_CSS = resolve("packages/css/src/tokens.css");
 
 function themeDirs(args: string[]): string[] {
   if (args.length > 0) return args.map((a) => resolve(a));

@@ -37,7 +37,7 @@ export type AgentManifest = ComponentsManifest | ContractManifest;
 export interface AggregatedManifests {
   /** One components manifest per `@moderno-ui/*` framework package found. */
   components: ComponentsManifest[];
-  /** `@moderno-ui/tokens`'s shared contract manifest, if that package is installed. */
+  /** `@moderno-ui/css`'s shared contract manifest, if that package is installed. */
   contract: ContractManifest | null;
   /** The `node_modules/@moderno` directory these were read from, for diagnostics. */
   scopeDir: string | null;

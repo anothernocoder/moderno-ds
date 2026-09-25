@@ -219,8 +219,8 @@ describe("buildComponentsManifest", () => {
 describe("buildContractManifest", () => {
   const manifest = buildContractManifest("0.1.0");
 
-  it("carries the @moderno-ui/tokens golden rule and version", () => {
-    expect(manifest.package).toBe("@moderno-ui/tokens");
+  it("carries the @moderno-ui/css golden rule and version", () => {
+    expect(manifest.package).toBe("@moderno-ui/css");
     expect(manifest.kind).toBe("contract");
     expect(manifest.version).toBe("0.1.0");
     expect(manifest.goldenRule).toMatch(/never edited/);

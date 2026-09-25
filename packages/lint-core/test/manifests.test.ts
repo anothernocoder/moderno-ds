@@ -35,9 +35,9 @@ describe("discoverManifests", () => {
     expect(result.scopeDir).toBe(join(fixture.dir, "node_modules", "@moderno"));
   });
 
-  it("splits the tokens package into the shared contract manifest", () => {
+  it("splits the css package into the shared contract manifest", () => {
     const result = discoverManifests(fixture.dir);
-    expect(result.contract?.package).toBe("@moderno-ui/tokens");
+    expect(result.contract?.package).toBe("@moderno-ui/css");
     expect(result.contract?.kind).toBe("contract");
   });
 

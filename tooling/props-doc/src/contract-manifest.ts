@@ -1,19 +1,19 @@
 /**
- * @moderno-ui/tokens's moderno.agent.json — the shared, framework-agnostic
+ * @moderno-ui/css's moderno.agent.json — the shared, framework-agnostic
  * `contract` manifest (schema: `docs/prd/phase-7/moderno.agent.schema.json`,
  * `definitions.contractManifest`). CONTRACT.md, as data — see that file for
  * the prose this mirrors.
  *
- * Split out from `agent-manifest.ts` on purpose: `@moderno-ui/tokens` has no
- * dependency on `@moderno-ui/core`, and this module must not gain one either —
- * `@moderno-ui/tokens`'s build has no package.json edge that would make pnpm
- * build `@moderno-ui/core` first, so importing it here (even transitively, even
- * unused on this codepath) breaks `pnpm -r build`'s topological order.
+ * Split out from `agent-manifest.ts` on purpose: the contract manifest is built
+ * from the contract data alone, so this module must not import
+ * `agent-manifest.ts` (or anything that pulls in ts-morph or
+ * `@moderno-ui/core`'s `dist`) — `@moderno-ui/css`'s build runs it and needs
+ * nothing else.
  */
-import { CONTRACT } from "@moderno-ui/tokens/contract";
+import { CONTRACT } from "@moderno-ui/css/contract";
 
 export interface ContractManifest {
-  package: "@moderno-ui/tokens";
+  package: "@moderno-ui/css";
   version: string;
   kind: "contract";
   goldenRule: string;
@@ -38,7 +38,7 @@ export interface ContractManifest {
 export function buildContractManifest(version: string): ContractManifest {
   const slot = (name: string) => `--${name}`;
   return {
-    package: "@moderno-ui/tokens",
+    package: "@moderno-ui/css",
     version,
     kind: "contract",
     goldenRule: "Components are never edited. They are themed via variables and varied via props.",
@@ -66,7 +66,7 @@ export function buildContractManifest(version: string): ContractManifest {
     },
     rules: [
       "Reference contract slots; don't hardcode hex colors, px spacing, or ms durations.",
-      "Put brand values in a theme; don't add brand identity to @moderno-ui/tokens.",
+      "Put brand values in a theme; don't add brand identity to @moderno-ui/css.",
       "Theme via variables and vary via props; don't fork component markup or write per-component CSS in a consumer project.",
       "Keep :root light / .dark dark; don't invent a third theming mechanism (data-theme, dark-first inversion).",
       "Keep @moderno-ui/css the only public CSS specifier.",

@@ -4,7 +4,7 @@ The **technical contract** of the design system: the semantic token slots every
 component references, the rules for theming them, the `data-scope`/`data-part`
 styling convention, and the implementation guardrails.
 
-This is **not a brand guide**. Values shipped in `@moderno-ui/tokens` are neutral
+This is **not a brand guide**. Values shipped in `@moderno-ui/css` are neutral
 (OKLCH grays + a system font stack). A brand is a _theme_ layered on top: a
 registry item authored in `registry/themes/<name>/tokens.dtcg.json`, from which
 `pnpm theme:build` generates its `theme.css` and its `DESIGN.md` (the brand's
@@ -23,13 +23,13 @@ escape hatch, not the path.
 
 ## The three layers
 
-| Layer            | Lives in                          | Brand?  |
-| ---------------- | --------------------------------- | ------- |
-| Contract (names) | this file + `@moderno-ui/tokens`  | neutral |
-| Default values   | `@moderno-ui/tokens` (OKLCH gray) | neutral |
-| Brand values     | a theme (`theme-moderno`, …)      | branded |
+| Layer            | Lives in                                        | Brand?  |
+| ---------------- | ----------------------------------------------- | ------- |
+| Contract (names) | this file + `@moderno-ui/css/contract`          | neutral |
+| Default values   | `@moderno-ui/css` (OKLCH gray, `:root`/`.dark`) | neutral |
+| Brand values     | a theme (`theme-moderno`, …)                    | branded |
 
-Neutrality is a property of the **values in `@moderno-ui/tokens`**, not of any
+Neutrality is a property of the **values in `@moderno-ui/css`**, not of any
 document. A theme re-maps the same slot names to brand values; the contract
 never changes.
 
@@ -106,7 +106,7 @@ Beyond color, the contract also standardizes:
 No hardcoded spacing, durations, radii, shadows, widths, font sizes, or font
 weights in components — reference the slot.
 
-Extended slots are **optional in a theme**: `@moderno-ui/tokens` ships a neutral
+Extended slots are **optional in a theme**: `@moderno-ui/css` ships a neutral
 default for each, and a theme overrides only what its brand actually changes.
 The color and non-color slots above are mandatory; `theme-compile` fails a
 theme that omits one.
@@ -195,23 +195,32 @@ Variants are expressed as data attributes on the root part
 
 ## Package surface
 
-- **`@moderno-ui/tokens`** — the contract.
-  - `@moderno-ui/tokens/css` → the variables (`:root` / `.dark`).
-  - `@moderno-ui/tokens/preset` → the Tailwind v4 `@theme inline` mapping.
-  - `@moderno-ui/tokens/contract` → the contract as data (slot name, DTCG type,
-    editor group, WCAG contrast pair). Every other slot list — theme-compile's
-    required slots, the Theme Builder's editor groups, the docs model — derives
-    from it; adding a slot is a single edit here.
-- **`@moderno-ui/css`** — the public entrypoint. Consumers import only this:
-  - `@import "@moderno-ui/css";` (contract values; Phase 1 also adds components)
-  - `@import "@moderno-ui/css/preset";` (Tailwind preset)
-  - Internal paths (`dist/`, package subpaths) are never exposed to consumers.
+**`@moderno-ui/css`** is the one package for the contract and its styles
+([ADR-0008](docs/adr/0008-token-system-one-source-per-concept.md)). Consumers
+import only this:
+
+- `@import "@moderno-ui/css";` → the variables (`:root` / `.dark`, neutral
+  defaults) and the component stylesheet from `@moderno-ui/core`.
+- `@import "@moderno-ui/css/preset";` → the Tailwind v4 `@theme inline`
+  mapping.
+- `@moderno-ui/css/contract` → the contract as data (slot name, DTCG type,
+  editor group, WCAG contrast pair). Every other slot list — theme-compile's
+  required slots, the Theme Builder's editor groups, the docs model — derives
+  from it; adding a slot is a single edit here.
+- `@moderno-ui/css/moderno.agent.json` → the contract manifest that
+  `@moderno-ui/mcp`'s `get_contract` answers from.
+- `@moderno-ui/css/tokens.css` → the variables alone, without the component
+  stylesheet. For tooling (the docs' Theme Builder reads it as text); an app
+  imports `@moderno-ui/css`.
+
+Internal paths (`dist/`, `src/`) are never exposed to consumers.
+`@moderno-ui/core` does not depend on `@moderno-ui/css`.
 
 ## Guardrails
 
 - **Do** reference contract slots; **don't** hardcode hex, px spacing, or ms.
 - **Do** put brand values in a theme; **don't** add brand identity to
-  `@moderno-ui/tokens`.
+  `@moderno-ui/css`.
 - **Do** theme via variables and vary via props; **don't** edit component
   markup or write per-component CSS in consumer projects.
 - **Do** keep `:root` light / `.dark` dark; **don't** invent a third theming

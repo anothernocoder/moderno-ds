@@ -1,5 +1,5 @@
 ---
-"@moderno-ui/tokens": minor
+"@moderno-ui/css": minor
 "@moderno-ui/core": minor
 "@moderno-ui/react": minor
 "@moderno-ui/vue": minor

@@ -16,7 +16,7 @@ const componentsCss = readFileSync(
   "utf8",
 );
 const tokensCss = readFileSync(
-  fileURLToPath(new URL("../../tokens/src/tokens.css", import.meta.url)),
+  fileURLToPath(new URL("../../css/src/tokens.css", import.meta.url)),
   "utf8",
 );
 
@@ -50,7 +50,7 @@ describe("components.css references only contract token slots", () => {
     expect(referenced.length).toBeGreaterThan(10);
   });
 
-  it("every referenced slot is defined by @moderno-ui/tokens", () => {
+  it("every referenced slot is defined by @moderno-ui/css", () => {
     const undefinedRefs = referenced.filter((v) => !defined.has(v));
     expect(undefinedRefs, `undefined token references: ${undefinedRefs.join(", ")}`).toEqual([]);
   });

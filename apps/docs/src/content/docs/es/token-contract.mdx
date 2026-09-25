@@ -6,7 +6,7 @@ order: 2
 ---
 
 Los componentes referencian slots, nunca valores: sobrescribir un slot es la única forma de re-tematizar.
-`@moderno-ui/tokens` trae un valor neutro por defecto para cada slot de esta página.
+`@moderno-ui/css` trae un valor neutro por defecto para cada slot de esta página.
 
 ## Ámbitos
 
@@ -128,9 +128,9 @@ Importa el preset para registrar los slots como claves de tema de Tailwind.
 
 | Fuente                             | Devuelve                                                               |
 | ---------------------------------- | ---------------------------------------------------------------------- |
-| `@moderno-ui/tokens/contract`      | `CONTRACT`: cada slot con su tipo DTCG y su grupo del Editor de temas. |
+| `@moderno-ui/css/contract`         | `CONTRACT`: cada slot con su tipo DTCG y su grupo del Editor de temas. |
 | `get_contract` (`@moderno-ui/mcp`) | Los mismos slots, más las reglas de tematización, para agentes.        |
 
 ```ts
-import { CONTRACT, COLOR_SLOTS, EXTENDED_SLOTS } from "@moderno-ui/tokens/contract";
+import { CONTRACT, COLOR_SLOTS, EXTENDED_SLOTS } from "@moderno-ui/css/contract";
 ```

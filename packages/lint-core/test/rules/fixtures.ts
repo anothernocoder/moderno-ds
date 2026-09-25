@@ -16,7 +16,7 @@ import type { AggregatedManifests } from "../../src/manifests.ts";
 export const manifests: AggregatedManifests = {
   scopeDir: "/fake/node_modules/@moderno",
   contract: {
-    package: "@moderno-ui/tokens",
+    package: "@moderno-ui/css",
     version: "0.5.0",
     kind: "contract",
     goldenRule: "Components are never edited. They are themed via variables and varied via props.",
