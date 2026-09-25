@@ -78,7 +78,7 @@ async function main(argv: string[]): Promise<number> {
       const manifest = await readManifest(projectDir);
       const deps = new Set<string>();
       for (const name of rest) {
-        const { installed, dependencies } = await addItem({
+        const { installed, dependencies, kept } = await addItem({
           registry,
           projectDir,
           name,
@@ -88,6 +88,9 @@ async function main(argv: string[]): Promise<number> {
         console.log(
           `✓ added ${name}${installed.length > 1 ? ` (+ ${installed.slice(0, -1).join(", ")})` : ""}`,
         );
+        for (const target of kept) {
+          console.log(`  ⚠ kept your existing ${target}; \`moderno diff\` shows the registry's`);
+        }
       }
       printDepHint([...deps], await detectRunner(projectDir));
       return 0;

@@ -93,12 +93,29 @@ describe("registry themes compile and stay in sync", () => {
     expect(failing).toEqual([]);
   });
 
-  it.each(themeNames)("%s: is listed in registry.json with its theme.css", (name) => {
+  it.each(themeNames)("%s: is listed in registry.json with its theme.css and DESIGN.md", (name) => {
     const manifest = JSON.parse(readFileSync(`${repoRoot}registry/registry.json`, "utf8"));
     const item = manifest.items.find((i: { name: string }) => i.name === name);
     expect(item, `add a "${name}" item to registry/registry.json`).toBeDefined();
     expect(item.type).toBe("registry:theme");
-    expect(item.files.map((f: { path: string }) => f.path)).toContain(`themes/${name}/theme.css`);
+    const paths = item.files.map((f: { path: string }) => f.path);
+    expect(paths).toContain(`themes/${name}/theme.css`);
+    expect(paths).toContain(`themes/${name}/DESIGN.md`);
+  });
+
+  /**
+   * A brand-less theme replaces the default and a project installs one, so its
+   * guide is the project's DESIGN.md. A branded theme sits beside the default,
+   * so its guide goes under design/<name>/, where two brands cannot collide.
+   */
+  it.each(themeNames)("%s: installs its DESIGN.md where its scope says", (name) => {
+    const doc = JSON.parse(readFileSync(`${themesRoot}/${name}/tokens.dtcg.json`, "utf8"));
+    const manifest = JSON.parse(readFileSync(`${repoRoot}registry/registry.json`, "utf8"));
+    const item = manifest.items.find((i: { name: string }) => i.name === name);
+    const file = item.files.find((f: { path: string }) => f.path === `themes/${name}/DESIGN.md`);
+    const brand = doc.$extensions?.["style.moderno.theme"]?.brand ?? null;
+    expect(file.type).toBe("registry:file");
+    expect(file.target).toBe(brand === null ? "DESIGN.md" : `design/${name}/DESIGN.md`);
   });
 
   it.each(themeNames)("%s: committed theme.css matches a fresh compile", (name) => {

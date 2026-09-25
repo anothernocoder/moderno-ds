@@ -6,7 +6,7 @@
     {
       "name": "theme-moderno",
       "type": "registry:theme",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "title": "Theme Moderno",
       "description": "The default Moderno brand: near-black monochrome workspace with sharp corners. Defines the contract slots in :root (light) and .dark (dark).",
       "dependencies": [],
@@ -16,13 +16,18 @@
           "path": "themes/theme-moderno/theme.css",
           "type": "registry:theme",
           "target": "src/styles/theme-moderno.css"
+        },
+        {
+          "path": "themes/theme-moderno/DESIGN.md",
+          "type": "registry:file",
+          "target": "DESIGN.md"
         }
       ]
     },
     {
       "name": "theme-contrast",
       "type": "registry:theme",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "title": "Theme Contrast",
       "description": "Synthetic maximum-contrast brand scoped under [data-brand=\"contrast\"], composed with .dark. Demonstrates the multi-brand switch.",
       "dependencies": [],
@@ -32,6 +37,11 @@
           "path": "themes/theme-contrast/theme.css",
           "type": "registry:theme",
           "target": "src/styles/theme-contrast.css"
+        },
+        {
+          "path": "themes/theme-contrast/DESIGN.md",
+          "type": "registry:file",
+          "target": "design/theme-contrast/DESIGN.md"
         }
       ]
     },
