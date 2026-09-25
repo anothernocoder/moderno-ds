@@ -13,6 +13,13 @@ status: accepted
 > hand-written). The registry ships each theme's `DESIGN.md`. `CONTRACT.md`
 > stays the root document, as decided here.
 
+> Amended by [ADR-0008](0008-token-system-one-source-per-concept.md). The
+> neutral values now ship in `@moderno-ui/css`, which absorbed
+> `@moderno-ui/tokens`, and they are no longer hand-written CSS: they are
+> authored as a DTCG file and compiled by `theme-compile`, like every theme.
+> `CONTRACT.md` keeps the rules but no longer enumerates slots: `contract.ts`
+> is the one source of slot names, groups and roles.
+
 Phase 0 establishes the styling single-source-of-truth. This ADR records where
 the technical contract, the neutral package defaults, and the brand each live,
 and how the two root Markdown files are named. It refines, and is consistent

@@ -4,6 +4,13 @@ status: accepted
 
 # Platform, distribution, docs hosting, and theme authoring
 
+> Amended by [ADR-0008](0008-token-system-one-source-per-concept.md).
+> `@moderno-ui/tokens` merges into `@moderno-ui/css` and leaves the list of
+> published packages; the npm package is deprecated, not unpublished. A schema
+> change is now one edit to the contract data (`@moderno-ui/css/contract`),
+> which the Theme Builder and `theme-compile` derive from, not three kept in
+> step by hand.
+
 Moderno is a solo-maintainer, shadcn-style design system. These decisions lock in the monorepo toolchain, how packages and registry items reach consumers, where docs and the registry JSON are hosted, docs i18n, and the Theme Builder shipped in v1.
 
 ## Monorepo toolchain
