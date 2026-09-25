@@ -110,6 +110,20 @@ export const alertRecipe = cva({
 });
 
 /**
+ * Callout: status `variant`. A softer notice than Alert — a note inside the
+ * page's content, not a live status — so it has no size and no live-region
+ * role. `components.css` paints a quiet `--muted` surface with a stripe on the
+ * inline-start edge from the matching contract status slot
+ * (`--info`/`--success`/`--warning`, and `--destructive` for `error`).
+ */
+export const calloutRecipe = cva({
+  variants: {
+    variant: ["info", "success", "warning", "error"],
+  },
+  defaultVariants: { variant: "info" },
+});
+
+/**
  * Badge: visual `variant` × `size`. A static label with no Ark machine, so
  * every attribute it carries comes from this recipe. The four statuses tint
  * from the same contract slots as Alert (`--info`/`--success`/`--warning`, and
@@ -232,6 +246,9 @@ export type AlertSize = NonNullable<VariantProps<typeof alertRecipe.variants>["s
 export function alertRole(variant?: AlertVariant): "alert" | "status" {
   return variant === "warning" || variant === "error" ? "alert" : "status";
 }
+/** Callout's status (`info`, `success`, `warning`, `error`). */
+export type CalloutVariant = NonNullable<VariantProps<typeof calloutRecipe.variants>["variant"]>;
+
 /** Divider's axis (`horizontal`, `vertical`). */
 export type DividerOrientation = NonNullable<
   VariantProps<typeof dividerRecipe.variants>["orientation"]

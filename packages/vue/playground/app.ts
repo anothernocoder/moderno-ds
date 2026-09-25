@@ -10,6 +10,7 @@
  */
 import { defineComponent, h, type Component } from "vue";
 import { Alert } from "../src/alert.js";
+import { Callout } from "../src/callout.js";
 import { Button } from "../src/button.js";
 import { Divider } from "../src/divider.js";
 import { Badge } from "../src/badge.js";
@@ -144,6 +145,21 @@ export const App = defineComponent({
               h(Alert.Description, {}, () => "We could not charge your card."),
             ]),
           ]),
+        ]),
+
+        h("section", { "aria-label": "callouts" }, [
+          h(Callout.Root, {}, () => [
+            h(Callout.Icon, {}, () => "i"),
+            h(Callout.Content, {}, () => [
+              h(Callout.Title, {}, () => "Good to know"),
+              h(Callout.Description, {}, () => "Exports run overnight."),
+            ]),
+          ]),
+          h(Callout.Root, { variant: "warning" }, () =>
+            h(Callout.Content, {}, () =>
+              h(Callout.Description, {}, () => "Renaming a workspace breaks old links."),
+            ),
+          ),
         ]),
 
         h("section", { "aria-label": "fields" }, [

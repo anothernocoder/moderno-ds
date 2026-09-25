@@ -21,6 +21,7 @@ describe("AGENT_COMPONENTS", () => {
       "Indicator",
       "Skeleton",
       "Spinner",
+      "Callout",
       "Field",
       "Checkbox",
       "Dialog",
@@ -125,6 +126,7 @@ describe("buildComponentsManifest", () => {
       "Indicator",
       "Skeleton",
       "Spinner",
+      "Callout",
       "LineChart",
       "AreaChart",
       "BarChart",
@@ -190,6 +192,21 @@ describe("buildComponentsManifest", () => {
     expect(spinner.props.map((p) => p.name).sort()).toEqual(["label", "size"]);
     expect(spinner.variants).toEqual({ size: ["sm", "md", "lg"] });
     expect(spinner.parts.map((p) => p.name)).toEqual(["root", "circle", "label"]);
+  });
+
+  it("carries Callout's variant and anatomy — what validate_usage checks against", () => {
+    const callout = manifest.components.find((c) => c.name === "Callout")!;
+    expect(callout.scope).toBe("callout");
+    expect(callout.props.map((p) => p.name)).toEqual(["variant"]);
+    expect(callout.variants).toEqual({ variant: ["info", "success", "warning", "error"] });
+    expect(callout.parts.map((p) => p.name)).toEqual([
+      "root",
+      "icon",
+      "content",
+      "title",
+      "description",
+    ]);
+    expect(callout.propsComplete).toBe(true);
   });
 
   it("carries Avatar's recipe props, variants and Ark parts — what validate_usage checks against", () => {

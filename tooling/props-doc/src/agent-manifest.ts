@@ -31,6 +31,7 @@ import {
   avatarRecipe,
   badgeRecipe,
   buttonRecipe,
+  calloutRecipe,
   cardRecipe,
   checkboxRecipe,
   chipRecipe,
@@ -200,6 +201,20 @@ export const AGENT_COMPONENTS: AgentComponentSpec[] = [
       { name: "label", description: "Visually hidden text read by screen readers." },
     ],
     variants: spinnerRecipe.variants,
+  },
+  {
+    name: "Callout",
+    slug: "callout",
+    scope: "callout",
+    propsEntry: findEntry("Callout"),
+    parts: [
+      { name: "root", description: 'The note. `role="note"`; carries `data-variant`.' },
+      { name: "icon", description: "Optional glyph slot; `aria-hidden`." },
+      { name: "content" },
+      { name: "title" },
+      { name: "description" },
+    ],
+    variants: calloutRecipe.variants,
   },
   {
     name: "Field",

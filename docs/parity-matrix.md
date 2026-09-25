@@ -147,6 +147,20 @@ shared stylesheet keys on.
 | icon part `aria-hidden`        |  ✅   | ✅  |   ✅   |  ✅   |
 | no baked class/style           |  ✅   | ✅  |   ✅   |  ✅   |
 
+### Callout (`calloutRecipe`: `data-variant`; CSS-only, no Ark machine)
+
+| State / prop                          | React | Vue | Svelte | Solid |
+| ------------------------------------- | :---: | :-: | :----: | :---: |
+| scope/part + default variant, no size |  ✅   | ✅  |   ✅   |  ✅   |
+| variant → `data-variant`              |  ✅   | ✅  |   ✅   |  ✅   |
+| full anatomy renders                  |  ✅   | ✅  |   ✅   |  ✅   |
+| root `role="note"` for every variant  |  ✅   | ✅  |   ✅   |  ✅   |
+| consumer `role` overrides             |  ✅   | ✅  |   ✅   |  ✅   |
+| icon part `aria-hidden`               |  ✅   | ✅  |   ✅   |  ✅   |
+| no baked class/style                  |  ✅   | ✅  |   ✅   |  ✅   |
+| native props forwarded                |  ✅   | ✅  |   ✅   |  ✅   |
+| SSR string (playground)               |  ✅   | ✅  |   ✅   |  ✅   |
+
 ### Field (`fieldRecipe`: `data-size`; state is Ark's `data-invalid` / `data-disabled`)
 
 | State / prop                    | React | Vue | Svelte | Solid |

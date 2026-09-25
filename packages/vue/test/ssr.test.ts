@@ -3,6 +3,7 @@ import { createSSRApp, defineComponent, h, type Component } from "vue";
 import { renderToString } from "@vue/server-renderer";
 import { App } from "../playground/app.js";
 import { Alert } from "../src/alert.js";
+import { Callout } from "../src/callout.js";
 import { Button } from "../src/button.js";
 import { Card } from "../src/card.js";
 import { Divider } from "../src/divider.js";
@@ -64,6 +65,12 @@ describe("SSR (Vue)", () => {
     expect(pulsing).toEqual([true, false]);
     expect(partTags(html, "indicator", "dot")).toHaveLength(2);
     expect(partTags(html, "indicator", "label")).toHaveLength(1);
+    // Callout: a CSS-only note. Every root stays role="note" whatever its
+    // status (nothing is a live region), and the optional icon is hidden.
+    expect(partAttrs(html, "callout", "root", "role")).toEqual(["note", "note"]);
+    expect(partAttrs(html, "callout", "root", "data-variant")).toEqual(["info", "warning"]);
+    expect(partAttrs(html, "callout", "icon", "aria-hidden")).toEqual(["true"]);
+    expect(partTags(html, "callout", "description")).toHaveLength(2);
     // Skeleton and Spinner: the CSS-only loading states. Every shape reaches the
     // server, and the spinner's status role, hidden ring and label serialise
     // on the right elements.
@@ -180,6 +187,10 @@ const HydrationApp = defineComponent({
             h(Alert.Title, {}, () => "Payment failed"),
             h(Alert.Description, {}, () => "We could not charge your card."),
           ]),
+        ]),
+        h(Callout.Root, { variant: "warning" }, () => [
+          h(Callout.Icon, {}, () => "!"),
+          h(Callout.Content, {}, () => h(Callout.Title, {}, () => "Renaming breaks old links")),
         ]),
         h(PinInput.Root, { count: 4, otp: true }, () => [
           h(PinInput.Label, {}, () => "Verification code"),

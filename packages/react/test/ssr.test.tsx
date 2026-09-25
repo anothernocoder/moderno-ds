@@ -54,6 +54,12 @@ describe("SSR + hydration (React 19)", () => {
     expect(pulsing).toEqual([true, false]);
     expect(partTags(html, "indicator", "dot")).toHaveLength(2);
     expect(partTags(html, "indicator", "label")).toHaveLength(1);
+    // Callout: a CSS-only note. Every root stays role="note" whatever its
+    // status (nothing is a live region), and the optional icon is hidden.
+    expect(partAttrs(html, "callout", "root", "role")).toEqual(["note", "note"]);
+    expect(partAttrs(html, "callout", "root", "data-variant")).toEqual(["info", "warning"]);
+    expect(partAttrs(html, "callout", "icon", "aria-hidden")).toEqual(["true"]);
+    expect(partTags(html, "callout", "description")).toHaveLength(2);
     // Skeleton and Spinner: the CSS-only loading states. Every shape reaches the
     // server, and the spinner's status role, hidden ring and label serialise
     // on the right elements.

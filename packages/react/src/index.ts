@@ -13,6 +13,8 @@ export type { ButtonProps } from "./button.js";
 
 export { Alert } from "./alert.js";
 export type { AlertRootProps, AlertPartProps, AlertVariant, AlertSize } from "./alert.js";
+export { Callout } from "./callout.js";
+export type { CalloutRootProps, CalloutPartProps, CalloutVariant } from "./callout.js";
 export { Card } from "./card.js";
 export type {
   CardRootProps,

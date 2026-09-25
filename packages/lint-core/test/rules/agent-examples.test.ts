@@ -133,3 +133,22 @@ describe("moderno/valid-props over the real Avatar manifest", () => {
     ]);
   });
 });
+
+describe("moderno/valid-props over the real Callout manifest", () => {
+  const manifests = manifestsFor("react");
+  const check = (code: string) =>
+    validProps.check({ code, framework: "react", manifests }).map((f) => f.message);
+
+  it("accepts the recipe prop and native attributes on the root", { timeout: 30_000 }, () => {
+    expect(check('<Callout.Root variant="success" id="tip">Saved</Callout.Root>')).toEqual([]);
+  });
+
+  it("rejects a value outside the recipe and an invented prop", () => {
+    expect(check('<Callout.Root variant="tip" />')).toEqual([
+      expect.stringContaining('Invalid value "tip"'),
+    ]);
+    expect(check('<Callout.Root tone="soft" />')).toEqual([
+      expect.stringContaining('Unknown prop "tone"'),
+    ]);
+  });
+});

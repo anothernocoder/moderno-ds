@@ -8,6 +8,7 @@
  */
 import { For } from "solid-js";
 import { Alert } from "../src/alert.jsx";
+import { Callout } from "../src/callout.jsx";
 import { Button } from "../src/button.jsx";
 import { Divider } from "../src/divider.jsx";
 import { Badge } from "../src/badge.jsx";
@@ -147,6 +148,21 @@ export function App(props: { open?: boolean }) {
             <Alert.Description>We could not charge your card.</Alert.Description>
           </Alert.Content>
         </Alert.Root>
+      </section>
+
+      <section aria-label="callouts">
+        <Callout.Root>
+          <Callout.Icon>i</Callout.Icon>
+          <Callout.Content>
+            <Callout.Title>Good to know</Callout.Title>
+            <Callout.Description>Exports run overnight.</Callout.Description>
+          </Callout.Content>
+        </Callout.Root>
+        <Callout.Root variant="warning">
+          <Callout.Content>
+            <Callout.Description>Renaming a workspace breaks old links.</Callout.Description>
+          </Callout.Content>
+        </Callout.Root>
       </section>
 
       <section aria-label="fields">

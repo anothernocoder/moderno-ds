@@ -27,6 +27,12 @@ import AlertContent from "./AlertContent.svelte";
 import AlertTitle from "./AlertTitle.svelte";
 import AlertDescription from "./AlertDescription.svelte";
 import AlertAction from "./AlertAction.svelte";
+import type { CalloutPartProps, CalloutRootProps } from "./callout-props.js";
+import CalloutRoot from "./CalloutRoot.svelte";
+import CalloutIcon from "./CalloutIcon.svelte";
+import CalloutContent from "./CalloutContent.svelte";
+import CalloutTitle from "./CalloutTitle.svelte";
+import CalloutDescription from "./CalloutDescription.svelte";
 import CardRoot from "./CardRoot.svelte";
 import CardHeader from "./CardHeader.svelte";
 import CardTitle from "./CardTitle.svelte";
@@ -65,6 +71,28 @@ export const Alert: {
 
 export type { AlertRootProps, AlertPartProps } from "./alert-props.js";
 export type { AlertVariant, AlertSize } from "@moderno-ui/core";
+
+/**
+ * Callout — a CSS-only soft note (no Ark machine), with the same
+ * `Root > Icon + Content(Title + Description)` anatomy in every framework.
+ * Annotated with the shared prop types from `callout-props.ts`, like `Alert`.
+ */
+export const Callout: {
+  Root: Component<CalloutRootProps>;
+  Icon: Component<CalloutPartProps>;
+  Content: Component<CalloutPartProps>;
+  Title: Component<CalloutPartProps>;
+  Description: Component<CalloutPartProps>;
+} = {
+  Root: CalloutRoot,
+  Icon: CalloutIcon,
+  Content: CalloutContent,
+  Title: CalloutTitle,
+  Description: CalloutDescription,
+};
+
+export type { CalloutRootProps, CalloutPartProps } from "./callout-props.js";
+export type { CalloutVariant } from "@moderno-ui/core";
 
 /**
  * Card — a CSS-only surface with an Ark-style anatomy. No Ark machine exists

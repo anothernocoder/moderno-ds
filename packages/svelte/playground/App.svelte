@@ -6,6 +6,7 @@
 -->
 <script lang="ts">
   import { Alert } from "../src/index.js";
+  import { Callout } from "../src/index.js";
   import { Button } from "../src/index.js";
   import { Divider } from "../src/index.js";
   import { Badge, Chip, Indicator } from "../src/index.js";
@@ -117,6 +118,21 @@
     </Alert.Root>
   </section>
 
+
+  <section aria-label="callouts">
+    <Callout.Root>
+      <Callout.Icon>i</Callout.Icon>
+      <Callout.Content>
+        <Callout.Title>Good to know</Callout.Title>
+        <Callout.Description>Exports run overnight.</Callout.Description>
+      </Callout.Content>
+    </Callout.Root>
+    <Callout.Root variant="warning">
+      <Callout.Content>
+        <Callout.Description>Renaming a workspace breaks old links.</Callout.Description>
+      </Callout.Content>
+    </Callout.Root>
+  </section>
 
   <section aria-label="fields">
     <Field.Root size="sm">

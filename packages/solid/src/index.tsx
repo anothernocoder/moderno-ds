@@ -39,6 +39,8 @@ export type {
 
 export { Alert } from "./alert.jsx";
 export type { AlertRootProps, AlertPartProps, AlertVariant, AlertSize } from "./alert.jsx";
+export { Callout } from "./callout.jsx";
+export type { CalloutRootProps, CalloutPartProps, CalloutVariant } from "./callout.jsx";
 
 export { Field } from "./field.jsx";
 export type {

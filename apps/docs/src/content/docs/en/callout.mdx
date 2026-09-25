@@ -1,0 +1,208 @@
+---
+title: Callout
+description: A soft note inside your content, for a tip, a caveat or a heads-up, in four variants.
+group: Components
+order: 24
+component: Callout
+pkg: "@moderno-ui/react"
+agentPropsHash: "sha256:478514988f8e6ff8141e1f981ed196bf87a995a56b1424fca44e16762f0e0216"
+agent:
+  intent: A soft note inside the page's content — a tip, a caveat or a heads-up the reader should not miss.
+  whenToUse: "Next to the content it is about: a tip in a settings page, a caveat before a risky form, a note in a guide."
+  whenNotToUse:
+    - case: Reporting the outcome or state of something (a failed payment, a saved change)
+      use: Alert
+    - case: A transient confirmation that disappears on its own
+      use: Toast
+    - case: A field-level validation message
+      use: Field.ErrorText
+  gotchas:
+    - "variant is the only visual knob; there is no size. Do not add className colour overrides."
+    - "The root is role=note, never a live region: a callout is not announced when it appears. Use Alert for news."
+    - "The icon is a slot — pass your own glyph; the primitive ships no icon set. Callout.Icon is aria-hidden by default."
+    - "Put Callout.Title and Callout.Description inside Callout.Content, next to the optional Callout.Icon."
+  theming:
+    - "The surface is --muted and the description --muted-foreground; only the inline-start stripe and the icon take the status hue."
+    - "Stripe and icon read --info / --success / --warning, and --destructive for error. Re-map the slot in your theme rather than restyling the part."
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import CalloutDemo from "../../../examples/callout/callout.svelte";
+import baseReact from "../../../examples/callout/react.tsx?raw";
+import baseVue from "../../../examples/callout/vue.vue?raw";
+import baseSolid from "../../../examples/callout/solid.tsx?raw";
+import baseSvelte from "../../../examples/callout/callout.svelte?raw";
+import CalloutVariantsDemo from "../../../examples/callout/variants/callout-variants.svelte";
+import variantsReact from "../../../examples/callout/variants/react.tsx?raw";
+import variantsVue from "../../../examples/callout/variants/vue.vue?raw";
+import variantsSolid from "../../../examples/callout/variants/solid.tsx?raw";
+import variantsSvelte from "../../../examples/callout/variants/callout-variants.svelte?raw";
+import CalloutTextOnlyDemo from "../../../examples/callout/text-only/callout-text-only.svelte";
+import textOnlyReact from "../../../examples/callout/text-only/react.tsx?raw";
+import textOnlyVue from "../../../examples/callout/text-only/vue.vue?raw";
+import textOnlySolid from "../../../examples/callout/text-only/solid.tsx?raw";
+import textOnlySvelte from "../../../examples/callout/text-only/callout-text-only.svelte?raw";
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
+  <CalloutDemo client:visible />
+</Preview>
+
+## Installation
+
+<Install pkg="@moderno-ui/react" />
+
+## Usage
+
+Use a callout for a note that belongs to the content: a tip, a caveat or a heads-up. It is quieter than an [Alert](/en/alert/), which reports what just happened.
+
+<ForFramework fw="react">
+
+```tsx
+import { Callout } from "@moderno-ui/react";
+```
+
+```tsx
+<Callout.Root variant="warning">
+  <Callout.Content>
+    <Callout.Title>Renaming breaks old links</Callout.Title>
+    <Callout.Description>Share the new address with your team.</Callout.Description>
+  </Callout.Content>
+</Callout.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Callout } from "@moderno-ui/vue";
+```
+
+```vue
+<Callout.Root variant="warning">
+  <Callout.Content>
+    <Callout.Title>Renaming breaks old links</Callout.Title>
+    <Callout.Description>Share the new address with your team.</Callout.Description>
+  </Callout.Content>
+</Callout.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Callout } from "@moderno-ui/svelte";
+```
+
+```svelte
+<Callout.Root variant="warning">
+  <Callout.Content>
+    <Callout.Title>Renaming breaks old links</Callout.Title>
+    <Callout.Description>Share the new address with your team.</Callout.Description>
+  </Callout.Content>
+</Callout.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Callout } from "@moderno-ui/solid";
+```
+
+```tsx
+<Callout.Root variant="warning">
+  <Callout.Content>
+    <Callout.Title>Renaming breaks old links</Callout.Title>
+    <Callout.Description>Share the new address with your team.</Callout.Description>
+  </Callout.Content>
+</Callout.Root>
+```
+
+</ForFramework>
+
+## API Reference
+
+### Callout.Root
+
+`variant` defaults to `info`.
+
+<PropsTable component="Callout" />
+
+| Prop   | Type     | Default | Description                                           |
+| ------ | -------- | ------- | ----------------------------------------------------- |
+| `role` | `string` | `note`  | Overrides the note role, for example with a `region`. |
+
+### Callout.Icon
+
+A slot for your own glyph; the part colours it with the variant's hue through `currentColor`.
+
+| Prop          | Type      | Default | Description                                     |
+| ------------- | --------- | ------- | ----------------------------------------------- |
+| `aria-hidden` | `boolean` | `true`  | Hides the decorative glyph from assistive tech. |
+
+### Parts
+
+Every part renders a `<div>` and accepts any div attribute.
+
+| Part                  | `data-part`   | Description                                  |
+| --------------------- | ------------- | -------------------------------------------- |
+| `Callout.Root`        | `root`        | The note. Carries `data-variant`.            |
+| `Callout.Icon`        | `icon`        | Optional glyph before the content.           |
+| `Callout.Content`     | `content`     | Column that holds the title and description. |
+| `Callout.Title`       | `title`       | Optional headline.                           |
+| `Callout.Description` | `description` | The text of the note.                        |
+
+### Variants
+
+| `variant` | Colour slot     |
+| --------- | --------------- |
+| `info`    | `--info`        |
+| `success` | `--success`     |
+| `warning` | `--warning`     |
+| `error`   | `--destructive` |
+
+## Examples
+
+### Variants
+
+The variant only colours the stripe and the icon. The surface stays calm.
+
+<Preview
+  examples={{
+    react: variantsReact,
+    vue: variantsVue,
+    solid: variantsSolid,
+    svelte: variantsSvelte,
+  }}
+>
+  <CalloutVariantsDemo client:visible />
+</Preview>
+
+### Text only
+
+A short note needs no title and no icon.
+
+<Preview
+  examples={{
+    react: textOnlyReact,
+    vue: textOnlyVue,
+    solid: textOnlySolid,
+    svelte: textOnlySvelte,
+  }}
+>
+  <CalloutTextOnlyDemo client:visible />
+</Preview>
+
+## Notes
+
+- Callout is CSS-only: no Ark machine, just parts carrying `data-scope="callout"` and their `data-part`.
+- A callout is not announced when it appears. If the message reports an event, use an Alert.

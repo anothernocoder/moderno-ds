@@ -1156,7 +1156,7 @@ main.main--wide {
 }
 .preview-panel--demo
   > astro-island
-  > :is([data-scope="alert"], [data-scope="divider"])[data-part="root"] {
+  > :is([data-scope="alert"], [data-scope="callout"], [data-scope="divider"])[data-part="root"] {
   width: min(100%, 32rem);
 }
 /* Rows and grids take the stage's width, so their items can sit side by side
@@ -1316,9 +1316,9 @@ main.main--wide {
   width: 100%;
   max-width: 22rem;
 }
-/* Full-width items (alerts, dividers) compared one under another need a wider
-   column than a form does. */
-.demo-stack:has(> :is([data-scope="alert"], [data-scope="divider"])) {
+/* Full-width items (alerts, callouts, dividers) compared one under another
+   need a wider column than a form does. */
+.demo-stack:has(> :is([data-scope="alert"], [data-scope="callout"], [data-scope="divider"])) {
   max-width: 32rem;
 }
 /* Skeleton lines stand in for lines of text, so they sit as close as text

@@ -17,6 +17,8 @@
  *   - Badge / Chip / Indicator — CSS-only; prove the optional parts (the
  *                badge dot, the chip's remove button, the indicator label) and
  *                the bare `data-pulse` attribute serialise identically both ways.
+ *   - Callout  — CSS-only; the note role and the optional icon serialise
+ *                identically both ways, at two statuses.
  *   - Skeleton / Spinner — CSS-only loading states; every shape, and the
  *                spinner's status role, ring and label, match both ways.
  *   - Avatar   — Ark's image-loading machine: ids from `useId`, and the
@@ -37,6 +39,7 @@
  * Phases 3–4 reuse this shape for the other frameworks.
  */
 import { Alert } from "../src/alert.js";
+import { Callout } from "../src/callout.js";
 import { Button } from "../src/button.js";
 import { Divider } from "../src/divider.js";
 import { Badge } from "../src/badge.js";
@@ -181,6 +184,21 @@ export function App({ open = false }: AppProps) {
             <Alert.Description>We could not charge your card.</Alert.Description>
           </Alert.Content>
         </Alert.Root>
+      </section>
+
+      <section aria-label="callouts">
+        <Callout.Root>
+          <Callout.Icon>i</Callout.Icon>
+          <Callout.Content>
+            <Callout.Title>Good to know</Callout.Title>
+            <Callout.Description>Exports run overnight.</Callout.Description>
+          </Callout.Content>
+        </Callout.Root>
+        <Callout.Root variant="warning">
+          <Callout.Content>
+            <Callout.Description>Renaming a workspace breaks old links.</Callout.Description>
+          </Callout.Content>
+        </Callout.Root>
       </section>
 
       <section aria-label="fields">

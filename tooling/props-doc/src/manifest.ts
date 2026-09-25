@@ -23,6 +23,7 @@ export const ENTRIES: ComponentEntry[] = [
   { name: "Indicator", file: "src/indicator.tsx", type: "IndicatorProps" },
   { name: "Skeleton", file: "src/skeleton.tsx", type: "SkeletonProps" },
   { name: "Spinner", file: "src/spinner.tsx", type: "SpinnerProps" },
+  { name: "Callout", file: "src/callout.tsx", type: "CalloutRootProps" },
   { name: "Select", file: "src/select.tsx", type: "ModernoSelectRootProps" },
   { name: "PinInput", file: "src/pin-input.tsx", type: "ModernoPinInputRootProps" },
   { name: "Avatar", file: "src/avatar.tsx", type: "ModernoAvatarRootProps" },
