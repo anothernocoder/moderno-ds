@@ -14,7 +14,7 @@
 import type { AggregatedManifests } from "../../src/manifests.ts";
 
 export const manifests: AggregatedManifests = {
-  scopeDir: "/fake/node_modules/@moderno",
+  scopeDir: "/fake/node_modules/@moderno-ui",
   contract: {
     package: "@moderno-ui/css",
     version: "0.5.0",

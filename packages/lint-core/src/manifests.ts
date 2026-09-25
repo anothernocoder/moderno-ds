@@ -1,7 +1,7 @@
 /**
  * Discovers and aggregates `moderno.agent.json` from the consumer's
  * `node_modules` (ADR-0003: pinned to the *installed* package version, not a
- * bundled snapshot). Walks up from `cwd` looking for a `node_modules/@moderno`
+ * bundled snapshot). Walks up from `cwd` looking for a `node_modules/@moderno-ui`
  * directory — the same directory Node's own resolution would land on for a
  * bare `@moderno-ui/*` import from `cwd` — and reads every package's
  * `dist/moderno.agent.json` it finds there. Shared by `@moderno-ui/mcp` (at
@@ -39,20 +39,23 @@ export interface AggregatedManifests {
   components: ComponentsManifest[];
   /** `@moderno-ui/css`'s shared contract manifest, if that package is installed. */
   contract: ContractManifest | null;
-  /** The `node_modules/@moderno` directory these were read from, for diagnostics. */
+  /** The `node_modules/@moderno-ui` directory these were read from, for diagnostics. */
   scopeDir: string | null;
 }
 
+/** The npm scope every Moderno package publishes under (ADR-0004). */
+const MODERNO_SCOPE = "@moderno-ui";
+
 /**
  * Walks from `startDir` up to the filesystem root looking for the nearest
- * `node_modules/@moderno` directory — mirroring Node's own module resolution
+ * `node_modules/@moderno-ui` directory — mirroring Node's own module resolution
  * so the server sees exactly what a bare `import "@moderno-ui/react"` from that
  * directory would resolve against.
  */
 function findModernoScopeDir(startDir: string): string | null {
   let dir = startDir;
   for (;;) {
-    const candidate = join(dir, "node_modules", "@moderno");
+    const candidate = join(dir, "node_modules", MODERNO_SCOPE);
     if (existsSync(candidate)) return candidate;
     const parent = dirname(dir);
     if (parent === dir) return null;

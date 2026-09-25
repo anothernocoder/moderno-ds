@@ -278,7 +278,7 @@ describe("runCli --registry", () => {
   });
 });
 
-describe("runCli with no @moderno manifests installed", () => {
+describe("runCli with no @moderno-ui manifests installed", () => {
   let emptyDir: string;
 
   afterEach(() => {
