@@ -203,8 +203,8 @@ demo of the switch lives at [`demo/multi-brand.html`](../demo/multi-brand.html)
    (spacing, motion, the type scale…) to the value it would inherit anyway.
    Drop those slots.
 4. **Add the item to [`registry.json`](registry.json)**, next to the other
-   themes. Nothing checks this step: without it the docs still show the theme,
-   but `moderno add` can't find it.
+   themes. Without it the docs still show the theme but `moderno add` can't
+   find it, so `themes.test.ts` fails until the entry exists.
 
    ```json
    {

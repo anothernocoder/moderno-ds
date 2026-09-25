@@ -57,6 +57,19 @@ describe("registry themes compile and stay in sync", () => {
     expect(themeNames).toEqual(expect.arrayContaining(["theme-moderno", "theme-contrast"]));
   });
 
+  /**
+   * A theme folder alone already shows up in the docs switcher and the Theme
+   * Builder, so a missing registry.json entry would pass unnoticed while
+   * `moderno add` cannot install the theme.
+   */
+  it.each(themeNames)("%s: is listed in registry.json with its theme.css", (name) => {
+    const manifest = JSON.parse(readFileSync(`${repoRoot}registry/registry.json`, "utf8"));
+    const item = manifest.items.find((i: { name: string }) => i.name === name);
+    expect(item, `add a "${name}" item to registry/registry.json`).toBeDefined();
+    expect(item.type).toBe("registry:theme");
+    expect(item.files.map((f: { path: string }) => f.path)).toContain(`themes/${name}/theme.css`);
+  });
+
   it.each(themeNames)("%s: committed theme.css matches a fresh compile", (name) => {
     const dir = `${themesRoot}/${name}`;
     const input = `${dir}/tokens.dtcg.json`;

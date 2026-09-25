@@ -147,7 +147,9 @@ Single-family system: **Hedvig Letters Sans** (`--font-sans`), with Hedvig Lette
 - **`ui-*`** is the interface ramp. A component's `sm`/`md`/`lg` sizes read `ui-sm`/`ui-md`/`ui-lg`, so controls grow one step at a time. `ui-md` is the default text of the interface, and `ui-xs` carries ticks and small helper text.
 - **`body`, `body-lg`, `heading-*`** set content: running text, lead paragraphs, and titles.
 
-Use a step, never a raw size. A size the scale lacks is a change to the scale, not a local exception.
+Weights come from the contract too: `--font-weight-normal` for running text, `--font-weight-medium` for controls and labels, `--font-weight-semibold` for titles. Hedvig Letters Sans ships a single 400 face, so the heavier weights are synthesized by the browser.
+
+Use a step, never a raw size or weight. A size the scale lacks is a change to the scale, not a local exception.
 
 ## Layout
 

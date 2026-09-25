@@ -11,7 +11,8 @@
  * light scope uses the contract names and the dark scope follows as `dark-*`.
  * A slot the theme does not express resolves to the neutral default in
  * @moderno-ui/tokens, exactly as it does in the browser. Font weight is left
- * out: the contract has no weight slot, so any value here would be invented.
+ * out: the contract's weights are not tied to a type step, so pairing one with
+ * each style here would be invented.
  */
 import { CONTRACT, TYPE_STEPS } from "@moderno-ui/tokens/contract";
 

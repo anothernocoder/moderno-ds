@@ -51,6 +51,10 @@ literals: a 13/14/15px control ramp, Tailwind's stock scale, and one-off sizes.
   registry blocks read them. The Tailwind preset maps them beside Tailwind's own
   `text-*` keys, not over them. `moderno/no-hardcoded-dimension` flags stock
   Tailwind sizes and literal `font-size` values.
+- **So are font weights.** `--font-weight-normal|medium|semibold|bold` reuse
+  Tailwind's own keys at its own values, on purpose: the unlayered contract
+  defaults beat Tailwind's layered ones, so a stock `font-semibold` follows a
+  theme that overrides the weight and changes nothing when none does.
 
 The default theme is authored like every other registry theme: the
 `tokens.dtcg.json` in its own directory. What sets it apart is only that the
