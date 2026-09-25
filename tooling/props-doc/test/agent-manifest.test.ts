@@ -243,4 +243,8 @@ describe("buildContractManifest", () => {
       "--container-lg",
     ]);
   });
+
+  it("lists the extended modal scrim among the colour slots an agent may reference", () => {
+    expect(manifest.slots.color).toContain("--overlay");
+  });
 });

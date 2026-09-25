@@ -38,6 +38,7 @@ beforeAll(async () => {
     "border-border",
     "ring-ring",
     "bg-chart-1",
+    "bg-overlay",
     "rounded-lg",
     "font-sans",
     "font-mono",
@@ -67,6 +68,7 @@ describe("@moderno-ui/tokens preset — generated utilities resolve to contract 
     expect(utilities).toContain("var(--border)");
     expect(utilities).toContain("var(--ring)");
     expect(utilities).toContain("var(--chart-1)");
+    expect(utilities).toMatch(/\.bg-overlay\s*\{[^}]*var\(--overlay\)/s);
   });
 
   it("emits .bg-primary backed by var(--primary), not a copied value", () => {
