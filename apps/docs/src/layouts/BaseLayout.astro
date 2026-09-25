@@ -28,9 +28,11 @@ interface Props {
   slug: string;
   /** From `render(entry)` — when present, renders a right-rail TOC. */
   headings?: { depth: number; slug: string; text: string }[];
+  /** Drop the prose measure so a tool page (the Theme Builder) gets the full column. */
+  wide?: boolean;
 }
 
-const { locale, title, description, slug, headings = [] } = Astro.props;
+const { locale, title, description, slug, headings = [], wide = false } = Astro.props;
 const tocHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
 const t = useTranslations(locale);
 const site = Astro.site ?? new URL("https://moderno.style");
@@ -146,7 +148,7 @@ const pageTitle = slug === "index" ? title : `${title} — Moderno`;
         </p>
       </aside>
 
-      <main id="main" data-pagefind-body>
+      <main id="main" class:list={[wide && "main--wide"]} data-pagefind-body>
         <slot />
       </main>
       {tocHeadings.length > 0 && <TableOfContents headings={tocHeadings} locale={locale} />}

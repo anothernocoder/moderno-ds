@@ -1,7 +1,8 @@
 ---
-import { getCollection, render } from "astro:content";
+import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { byReadingOrder } from "../../i18n/nav.ts";
+import CardArt from "../../components/CardArt.astro";
+import { sidebarSections } from "../../i18n/nav.ts";
 import { locales, splitId, useTranslations, type Locale } from "../../i18n/ui.ts";
 
 export function getStaticPaths() {
@@ -11,32 +12,65 @@ export function getStaticPaths() {
 const lang = Astro.params.lang as Locale;
 const t = useTranslations(lang);
 
-const all = await getCollection("docs");
-const home = all.find((e) => e.id === `${lang}/index`);
-const pages = all
-  .map((entry) => ({ entry, ...splitId(entry.id), order: entry.data.order }))
-  .filter((p) => p.locale === lang && p.slug !== "index")
-  .sort(byReadingOrder);
+const all = (await getCollection("docs")).map((entry) => ({ entry, ...splitId(entry.id) }));
+// The glob loader ids `en/index.mdx` as `en`, so match on the split slug, not the raw id.
+const home = all.find((p) => p.locale === lang && p.slug === "index")?.entry;
+const pages = all.filter((p) => p.locale === lang && p.slug !== "index");
+
+// Same sections as the sidebar, minus the home page's own group ("Start"): the
+// hero's buttons already point into it.
+const sections = sidebarSections(
+  pages.map((p) => ({
+    slug: p.slug,
+    title: p.entry.data.title,
+    group: p.entry.data.group,
+    order: p.entry.data.order,
+  })),
+).filter((s) => s.group !== home?.data.group);
+const blurb = new Map(pages.map((p) => [p.slug, p.entry.data.description]));
+
+/** A card shows the lead clause only — the full description lives on the page. */
+const short = (text = "") => text.split(" — ")[0]!.replace(/[.:;,]$/, "");
 
 const title = home?.data.title ?? "Moderno";
 const description = home?.data.description ?? "Framework-agnostic design system.";
-const Body = home ? (await render(home)).Content : null;
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 ---
 
 <BaseLayout locale={lang} title={title} description={description} slug="index">
-  <h1>{title}</h1>
-  <p class="page-lead">{description}</p>
-  {Body && <Body />}
-
-  <h2>{t("nav.components")}</h2>
-  <div class="card-grid">
-    {
-      pages.map((p) => (
-        <a class="card" href={`${base}${lang}/${p.slug}`}>
-          <h3>{p.entry.data.title}</h3>
-          <p>{p.entry.data.description}</p>
+  <div class="home">
+    <header class="home-hero">
+      <h1>{title}</h1>
+      <p class="page-lead">{description}</p>
+      <div class="home-actions">
+        <a class="home-btn home-btn--primary" href={`${base}${lang}/installation`}>
+          {t("home.getStarted")}
         </a>
+        <a class="home-btn" href={`${base}${lang}/theme-builder`}>{t("nav.themeBuilder")}</a>
+      </div>
+    </header>
+
+    {
+      sections.map((s) => (
+        <section class="home-section">
+          <h2>
+            {s.group}
+            <span class="home-count">{s.pages.length}</span>
+          </h2>
+          <div class="card-grid">
+            {s.pages.map((p) => (
+              <a class="card" href={`${base}${lang}/${p.slug}`}>
+                <div class="card-head">
+                  <h3>{p.title}</h3>
+                  <p>{short(blurb.get(p.slug))}</p>
+                </div>
+                <div class="card-stage">
+                  <CardArt slug={p.slug} />
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
       ))
     }
   </div>

@@ -13,11 +13,15 @@ const t = useTranslations(lang);
 const strings = {
   light: t("theme.light"),
   dark: t("theme.dark"),
+  name: t("theme.name"),
+  startFrom: t("theme.startFrom"),
   import: t("theme.import"),
   paste: t("theme.paste"),
   reset: t("theme.reset"),
-  exportCss: t("theme.exportCss"),
-  exportTokens: t("theme.exportTokens"),
+  export: t("theme.export"),
+  copy: t("theme.copy"),
+  download: t("theme.download"),
+  pickColor: t("theme.pickColor"),
   cliSnippet: t("theme.cliSnippet"),
   contrastOk: t("theme.contrastOk"),
   contrastFail: t("theme.contrastFail"),
@@ -35,7 +39,7 @@ const strings = {
 };
 ---
 
-<BaseLayout locale={lang} title={t("theme.title")} description={t("theme.lead")} slug="theme-builder">
+<BaseLayout locale={lang} title={t("theme.title")} description={t("theme.lead")} slug="theme-builder" wide>
   <h1>{t("theme.title")}</h1>
   <p class="page-lead">{t("theme.lead")}</p>
   <ThemeBuilder strings={strings} client:only="svelte" />

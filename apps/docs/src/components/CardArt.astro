@@ -1,0 +1,482 @@
+---
+/**
+ * An abstract, placeholder-style sketch of a page's component for the index
+ * card grid — bars for text, outlined boxes for surfaces. Pure markup painted
+ * by `.art-*` in docs.css from the contract slots, so it re-themes with the
+ * active brand like the rest of the chrome. Decorative only: the card's title
+ * and description carry the meaning, so the whole sketch is `aria-hidden`.
+ *
+ * A slug with no sketch of its own falls back to a generic text block.
+ */
+interface Props {
+  slug: string;
+}
+
+const { slug } = Astro.props;
+
+const bar = (w: string) => `--w:${w}`;
+
+const screens = ["screens", "sign-in", "sign-up", "forgot-password", "reset-password", "verify"];
+const sketched = new Set([
+  ...["installation", "token-contract", "blocks-and-containers", "using-with-agents"],
+  ...["button", "alert", "divider", "field", "checkbox", "dialog", "select", "card", "pin-input"],
+  ...["line-chart", "area-chart", "bar-chart", "scatter-chart"],
+  ...["blocks", "login-form", "form-layout", "alert-list"],
+  ...screens,
+  ...["flows", "auth"],
+]);
+---
+
+<div class="art" aria-hidden="true">
+  {
+    slug === "installation" && (
+      <div class="art-panel art-term">
+        <div class="art-row">
+          <span class="art-glyph">$</span>
+          <span class="art-bar art-bar--strong" style={bar("72%")} />
+        </div>
+        <div class="art-row">
+          <span class="art-bar" style={bar("48%")} />
+        </div>
+        <div class="art-row">
+          <span class="art-bar" style={bar("60%")} />
+        </div>
+      </div>
+    )
+  }
+  {
+    slug === "token-contract" && (
+      <div class="art-swatches">
+        {["--primary", "--chart-1", "--chart-2", "--chart-3", "--chart-4", "--chart-5"].map(
+          (v) => (
+            <div class="art-swatch">
+              <span class="art-swatch-chip" style={`background:var(${v})`} />
+              <span class="art-bar" style={bar("70%")} />
+            </div>
+          ),
+        )}
+      </div>
+    )
+  }
+  {
+    slug === "blocks-and-containers" && (
+      <div class="art-containers">
+        <div class="art-panel art-c art-c--lg">
+          <span class="art-bar" style={bar("40%")} />
+          <div class="art-panel art-c art-c--md">
+            <span class="art-bar" style={bar("50%")} />
+            <div class="art-panel art-c art-c--sm">
+              <span class="art-bar art-bar--strong" style={bar("70%")} />
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+  {
+    slug === "using-with-agents" && (
+      <div class="art-panel art-term art-term--wide">
+        <div class="art-row">
+          <span class="art-glyph">›</span>
+          <span class="art-bar art-bar--strong" style={bar("55%")} />
+        </div>
+        <div class="art-row art-row--indent">
+          <span class="art-tick" />
+          <span class="art-bar" style={bar("65%")} />
+        </div>
+        <div class="art-row art-row--indent">
+          <span class="art-tick" />
+          <span class="art-bar" style={bar("45%")} />
+        </div>
+        <div class="art-row art-row--indent">
+          <span class="art-spinner" />
+          <span class="art-bar" style={bar("35%")} />
+        </div>
+      </div>
+    )
+  }
+  {
+    slug === "button" && (
+      <div class="art-stack art-stack--row">
+        <span class="art-btn art-btn--ghost">
+          <span class="art-bar" style={bar("100%")} />
+        </span>
+        <span class="art-btn art-btn--lg">
+          <span class="art-bar" style={bar("100%")} />
+        </span>
+      </div>
+    )
+  }
+  {
+    slug === "alert" && (
+      <div class="art-panel art-alert">
+        <span class="art-icon">!</span>
+        <div class="art-stack">
+          <span class="art-bar art-bar--strong" style={bar("45%")} />
+          <span class="art-bar" style={bar("85%")} />
+        </div>
+      </div>
+    )
+  }
+  {
+    slug === "divider" && (
+      <div class="art-stack art-w">
+        <span class="art-bar" style={bar("60%")} />
+        <span class="art-bar" style={bar("80%")} />
+        <div class="art-rule">
+          <span class="art-rule-line" />
+          <span class="art-bar art-bar--strong" style={bar("2.5rem")} />
+          <span class="art-rule-line" />
+        </div>
+        <span class="art-bar" style={bar("70%")} />
+        <span class="art-bar" style={bar("45%")} />
+      </div>
+    )
+  }
+  {
+    slug === "field" && (
+      <div class="art-stack art-w">
+        <span class="art-bar art-bar--strong" style={bar("28%")} />
+        <span class="art-input art-input--focus">
+          <span class="art-bar" style={bar("45%")} />
+          <span class="art-caret" />
+        </span>
+        <span class="art-bar art-bar--faint" style={bar("62%")} />
+      </div>
+    )
+  }
+  {
+    slug === "checkbox" && (
+      <div class="art-stack art-stack--loose">
+        <div class="art-row">
+          <span class="art-check art-check--on" />
+          <span class="art-bar" style={bar("7rem")} />
+        </div>
+        <div class="art-row">
+          <span class="art-check" />
+          <span class="art-bar" style={bar("5.5rem")} />
+        </div>
+        <div class="art-row">
+          <span class="art-check art-check--mixed" />
+          <span class="art-bar" style={bar("6.5rem")} />
+        </div>
+      </div>
+    )
+  }
+  {
+    slug === "dialog" && (
+      <div class="art-scrim">
+        <div class="art-panel art-dialog">
+          <span class="art-bar art-bar--strong" style={bar("45%")} />
+          <span class="art-bar" style={bar("85%")} />
+          <span class="art-bar" style={bar("65%")} />
+          <div class="art-actions">
+            <span class="art-btn art-btn--ghost art-btn--sm">
+              <span class="art-bar" style={bar("100%")} />
+            </span>
+            <span class="art-btn art-btn--sm">
+              <span class="art-bar" style={bar("100%")} />
+            </span>
+          </div>
+        </div>
+      </div>
+    )
+  }
+  {
+    slug === "select" && (
+      <div class="art-stack art-w">
+        <span class="art-input">
+          <span class="art-bar" style={bar("40%")} />
+          <span class="art-chevron" />
+        </span>
+        <div class="art-panel art-menu">
+          <div class="art-option">
+            <span class="art-bar" style={bar("55%")} />
+          </div>
+          <div class="art-option art-option--active">
+            <span class="art-bar art-bar--strong" style={bar("40%")} />
+            <span class="art-checkmark" />
+          </div>
+          <div class="art-option">
+            <span class="art-bar" style={bar("65%")} />
+          </div>
+        </div>
+      </div>
+    )
+  }
+  {
+    slug === "card" && (
+      <div class="art-panel art-card">
+        <span class="art-bar art-bar--strong" style={bar("50%")} />
+        <span class="art-bar" style={bar("75%")} />
+        <span class="art-fill" />
+        <span class="art-fill" />
+        <span class="art-btn art-btn--block">
+          <span class="art-bar" style={bar("30%")} />
+        </span>
+      </div>
+    )
+  }
+  {
+    slug === "pin-input" && (
+      <div class="art-pins">
+        <span class="art-pin art-pin--filled" />
+        <span class="art-pin art-pin--filled" />
+        <span class="art-pin art-pin--filled" />
+        <span class="art-pin art-pin--focus" />
+        <span class="art-pin" />
+        <span class="art-pin" />
+      </div>
+    )
+  }
+  {
+    slug === "line-chart" && (
+      <svg class="art-chart" viewBox="0 0 200 110">
+        <g class="art-grid">
+          <line x1="0" y1="20" x2="200" y2="20" />
+          <line x1="0" y1="55" x2="200" y2="55" />
+          <line x1="0" y1="90" x2="200" y2="90" />
+        </g>
+        <polyline
+          class="art-series art-series--2"
+          points="0,80 30,70 60,76 90,55 120,62 150,45 180,50 200,40"
+        />
+        <polyline
+          class="art-series"
+          points="0,90 30,62 60,68 90,38 120,46 150,22 180,30 200,14"
+        />
+        <circle class="art-point" cx="150" cy="22" r="3.5" />
+      </svg>
+    )
+  }
+  {
+    slug === "area-chart" && (
+      <svg class="art-chart" viewBox="0 0 200 110">
+        <g class="art-grid">
+          <line x1="0" y1="20" x2="200" y2="20" />
+          <line x1="0" y1="55" x2="200" y2="55" />
+          <line x1="0" y1="90" x2="200" y2="90" />
+        </g>
+        <path
+          class="art-area"
+          d="M0,78 C25,70 40,48 70,54 S115,30 140,36 S180,18 200,22 L200,110 L0,110 Z"
+        />
+        <path
+          class="art-series"
+          d="M0,78 C25,70 40,48 70,54 S115,30 140,36 S180,18 200,22"
+        />
+      </svg>
+    )
+  }
+  {
+    slug === "bar-chart" && (
+      <div class="art-bars">
+        {[45, 70, 55, 90, 62, 80, 38].map((h, i) => (
+          <span class:list={["art-col", i === 3 && "art-col--hi"]} style={`--h:${h}%`} />
+        ))}
+      </div>
+    )
+  }
+  {
+    slug === "scatter-chart" && (
+      <svg class="art-chart" viewBox="0 0 200 110">
+        <g class="art-grid">
+          <line x1="0" y1="20" x2="200" y2="20" />
+          <line x1="0" y1="55" x2="200" y2="55" />
+          <line x1="0" y1="90" x2="200" y2="90" />
+        </g>
+        {[
+          [18, 84],
+          [34, 72],
+          [46, 80],
+          [62, 60],
+          [78, 66],
+          [92, 48],
+          [110, 52],
+          [124, 38],
+          [140, 42],
+          [156, 28],
+          [170, 34],
+          [186, 18],
+        ].map(([cx, cy], i) => (
+          <circle class:list={["art-dot", i % 3 === 0 && "art-dot--2"]} cx={cx} cy={cy} r="4" />
+        ))}
+      </svg>
+    )
+  }
+  {
+    slug === "blocks" && (
+      <div class="art-mosaic">
+        <div class="art-panel art-tile art-tile--wide">
+          <span class="art-bar art-bar--strong" style={bar("40%")} />
+          <span class="art-bar" style={bar("70%")} />
+        </div>
+        <div class="art-panel art-tile">
+          <span class="art-fill" />
+          <span class="art-btn art-btn--block art-btn--sm" />
+        </div>
+        <div class="art-panel art-tile">
+          <span class="art-bar" style={bar("60%")} />
+          <span class="art-bar" style={bar("80%")} />
+          <span class="art-bar" style={bar("50%")} />
+        </div>
+      </div>
+    )
+  }
+  {
+    slug === "login-form" && (
+      <div class="art-panel art-form">
+        <span class="art-bar art-bar--strong art-center" style={bar("45%")} />
+        <span class="art-bar art-center" style={bar("65%")} />
+        <span class="art-input" />
+        <span class="art-input" />
+        <span class="art-btn art-btn--block">
+          <span class="art-bar" style={bar("25%")} />
+        </span>
+      </div>
+    )
+  }
+  {
+    slug === "form-layout" && (
+      <div class="art-panel art-grid2">
+        {[35, 45, 30, 50].map((w) => (
+          <div class="art-stack">
+            <span class="art-bar art-bar--strong" style={bar(`${w}%`)} />
+            <span class="art-input" />
+          </div>
+        ))}
+        <div class="art-span2 art-actions">
+          <span class="art-btn art-btn--sm">
+            <span class="art-bar" style={bar("100%")} />
+          </span>
+        </div>
+      </div>
+    )
+  }
+  {
+    slug === "alert-list" && (
+      <div class="art-stack art-w">
+        {["85%", "65%", "75%"].map((w, i) => (
+          <div class:list={["art-panel art-alert art-alert--sm", i === 0 && "art-alert--hi"]}>
+            <span class="art-icon art-icon--sm" />
+            <span class="art-bar" style={bar(w)} />
+          </div>
+        ))}
+      </div>
+    )
+  }
+  {
+    screens.includes(slug) && (
+      <div class="art-panel art-window">
+        <div class="art-window-bar">
+          <span />
+          <span />
+          <span />
+        </div>
+        <div class:list={["art-window-body", slug === "screens" && "art-window-body--split"]}>
+          {slug === "screens" && (
+            <>
+              <div class="art-window-side" />
+              <div class="art-mini-form">
+                <span class="art-bar art-bar--strong" style={bar("55%")} />
+                <span class="art-input art-input--sm" />
+                <span class="art-input art-input--sm" />
+                <span class="art-btn art-btn--block art-btn--sm" />
+              </div>
+            </>
+          )}
+          {slug === "sign-in" && (
+            <div class="art-mini-form">
+              <span class="art-bar art-bar--strong art-center" style={bar("50%")} />
+              <span class="art-input art-input--sm" />
+              <span class="art-input art-input--sm" />
+              <span class="art-btn art-btn--block art-btn--sm" />
+              <span class="art-bar art-bar--faint art-center" style={bar("60%")} />
+            </div>
+          )}
+          {slug === "sign-up" && (
+            <div class="art-mini-form">
+              <span class="art-bar art-bar--strong art-center" style={bar("50%")} />
+              <div class="art-row art-row--tight">
+                <span class="art-input art-input--sm" />
+                <span class="art-input art-input--sm" />
+              </div>
+              <span class="art-input art-input--sm" />
+              <span class="art-input art-input--sm" />
+              <span class="art-btn art-btn--block art-btn--sm" />
+            </div>
+          )}
+          {slug === "forgot-password" && (
+            <div class="art-mini-form">
+              <span class="art-icon art-icon--sm art-center" />
+              <span class="art-bar art-bar--strong art-center" style={bar("60%")} />
+              <span class="art-bar art-center" style={bar("80%")} />
+              <span class="art-input art-input--sm" />
+              <span class="art-btn art-btn--block art-btn--sm" />
+            </div>
+          )}
+          {slug === "reset-password" && (
+            <div class="art-mini-form">
+              <span class="art-bar art-bar--strong art-center" style={bar("55%")} />
+              <span class="art-input art-input--sm art-input--dots">
+                <span />
+                <span />
+                <span />
+                <span />
+                <span />
+                <span />
+              </span>
+              <span class="art-meter">
+                <span />
+                <span />
+                <span />
+                <span />
+              </span>
+              <span class="art-input art-input--sm" />
+              <span class="art-btn art-btn--block art-btn--sm" />
+            </div>
+          )}
+          {slug === "verify" && (
+            <div class="art-mini-form">
+              <span class="art-bar art-bar--strong art-center" style={bar("55%")} />
+              <span class="art-bar art-center" style={bar("75%")} />
+              <div class="art-pins art-pins--sm">
+                <span class="art-pin art-pin--filled" />
+                <span class="art-pin art-pin--filled" />
+                <span class="art-pin art-pin--focus" />
+                <span class="art-pin" />
+              </div>
+              <span class="art-btn art-btn--block art-btn--sm" />
+            </div>
+          )}
+        </div>
+      </div>
+    )
+  }
+  {
+    (slug === "flows" || slug === "auth") && (
+      <div class="art-flow">
+        {[0, 1, 2].map((i) => (
+          <>
+            {i > 0 && <span class="art-arrow" />}
+            <div class:list={["art-panel art-node", i === 1 && "art-node--hi"]}>
+              <span class="art-bar art-bar--strong" style={bar("60%")} />
+              <span class="art-input art-input--xs" />
+              {slug === "auth" && <span class="art-input art-input--xs" />}
+              <span class="art-btn art-btn--block art-btn--xs" />
+            </div>
+          </>
+        ))}
+      </div>
+    )
+  }
+  {
+    !sketched.has(slug) && (
+      <div class="art-panel art-card">
+        <span class="art-bar art-bar--strong" style={bar("45%")} />
+        <span class="art-bar" style={bar("85%")} />
+        <span class="art-bar" style={bar("70%")} />
+      </div>
+    )
+  }
+</div>
