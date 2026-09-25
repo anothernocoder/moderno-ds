@@ -28,6 +28,13 @@ on:
 # real versions at pack time. `changeset version` still owns computing versions
 # and changelogs; only the publish mechanism differs. See
 # https://pnpm.io/using-changesets.
+#
+# `changeset tag` runs after the publish because `pnpm -r publish` prints no
+# "New tag:" lines, which is what changesets/action reads to push git tags and
+# create GitHub Releases. `changeset tag` makes a `<name>@<version>` tag for
+# every public package at its current version (tags that already exist are
+# skipped) and prints those lines, so the action tags and releases what was
+# just published.
 
 concurrency:
   group: release
