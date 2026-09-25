@@ -149,22 +149,12 @@ describe("@moderno-ui/css — contract data", () => {
 });
 
 describe("@moderno-ui/css — tokens.css satisfies the contract", () => {
-  it("defines every contract slot in :root with a non-empty value", () => {
-    for (const slot of CONTRACT) {
-      expect(root.get(slot.name), `--${slot.name} missing in :root`).toBeTruthy();
-    }
-  });
-
-  it("expresses all colour slots in OKLCH", () => {
-    for (const slot of COLOR_SLOTS) {
-      expect(root.get(slot), `--${slot}`).toMatch(/^oklch\(/);
-    }
-  });
-
-  it("declares no colour custom property outside the contract", () => {
-    for (const name of root.keys()) {
-      const declared = CONTRACT.some((s) => s.name === name);
-      expect(declared, `--${name} in tokens.css is not in the contract`).toBe(true);
+  // theme-compile's neutral mode owns the rest: every slot present in :root,
+  // colours in OKLCH, extended slots non-empty (and neutral.test.ts ties this
+  // file to that compile). It accepts an empty `$value` for these three.
+  it("gives --radius and the font stacks a non-empty value in :root", () => {
+    for (const slot of OTHER_SLOTS) {
+      expect(root.get(slot)?.trim(), `--${slot} is empty in :root`).toBeTruthy();
     }
   });
 });

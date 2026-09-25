@@ -74,8 +74,8 @@ function validateScope(
   // spacing, motion, type scale, font weights) are optional in a theme —
   // `@moderno-ui/css` already ships a neutral default for each. A theme that
   // *does* express one must give it a real value, or the emitted `--slot: ;`
-  // would silently blank the default instead of overriding it. An extended colour (`--overlay`) is held to the same OKLCH
-  // rule as the required colours.
+  // would silently blank the default instead of overriding it. An extended
+  // colour (`--overlay`) is held to the same OKLCH rule as the required colours.
   for (const slot of EXTENDED_SLOTS) {
     const token = s[slot];
     if (token === undefined) continue;

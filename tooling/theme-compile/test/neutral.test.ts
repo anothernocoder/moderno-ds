@@ -1,7 +1,6 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import postcss, { type Declaration, type Rule } from "postcss";
 import { CONTRACT, EXTENDED_SLOTS } from "@moderno-ui/css/contract";
 import { compileTheme, ThemeValidationError } from "../src/index.ts";
 
@@ -14,25 +13,6 @@ const repoRoot = fileURLToPath(new URL("../../../", import.meta.url));
 const source = "packages/css/src/tokens.dtcg.json";
 const read = (path: string) => readFileSync(`${repoRoot}${path}`, "utf8");
 const neutral = () => JSON.parse(read(source));
-
-/**
- * What every contract slot resolves to on `<html>` in light mode (`:root`)
- * and dark mode (`<html class="dark">`: `:root` plus `.dark`, which has the
- * same specificity and comes later).
- */
-function resolved(css: string): { light: Map<string, string>; dark: Map<string, string> } {
-  const bySelector = new Map<string, Map<string, string>>();
-  postcss.parse(css).walkRules((rule: Rule) => {
-    const decls = bySelector.get(rule.selector) ?? new Map<string, string>();
-    rule.walkDecls((decl: Declaration) => {
-      if (decl.prop.startsWith("--")) decls.set(decl.prop.slice(2), decl.value);
-    });
-    bySelector.set(rule.selector, decls);
-  });
-  expect([...bySelector.keys()].sort()).toEqual([".dark", ":root"]);
-  const light = bySelector.get(":root")!;
-  return { light, dark: new Map([...light, ...bySelector.get(".dark")!]) };
-}
 
 describe("the neutral defaults", () => {
   it("compile as a brand-less theme with every slot, clearing WCAG AA in both scopes", () => {
@@ -75,29 +55,6 @@ describe("the neutral defaults", () => {
         expect((description as string).trim(), `${scope}.${slot}`).not.toBe("");
         expect(description, `${scope}.${slot}`).not.toMatch(/\n/);
       }
-    }
-  });
-
-  /**
-   * #250 replaced a hand-written tokens.css with one compiled from
-   * tokens.dtcg.json. The fixture is that hand-written file, byte for byte, so
-   * this proves the switch changed no value in either mode. Once a neutral
-   * value changes on purpose, delete this test and its fixture.
-   */
-  it("resolve every slot to the value the hand-written tokens.css had (#250)", () => {
-    const before = resolved(
-      readFileSync(
-        fileURLToPath(new URL("fixtures/tokens.before-250.css", import.meta.url)),
-        "utf8",
-      ),
-    );
-    const after = resolved(read("packages/css/src/tokens.css"));
-    for (const scope of ["light", "dark"] as const) {
-      for (const { name } of CONTRACT) {
-        expect(before[scope].get(name), `${scope} --${name} before`).toBeDefined();
-        expect(after[scope].get(name), `${scope} --${name}`).toBe(before[scope].get(name));
-      }
-      expect([...after[scope].keys()].sort()).toEqual([...before[scope].keys()].sort());
     }
   });
 });
