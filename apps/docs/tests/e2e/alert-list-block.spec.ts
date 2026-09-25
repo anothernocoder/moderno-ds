@@ -18,9 +18,9 @@
  *    the whole claim is that the viewport does not decide. The header lines up
  *    at `--container-sm`, each dismiss control grows its label at
  *    `--container-md`, and each timestamp moves to the trailing edge at
- *    `--container-lg`. Every mounted copy is measured against its own container
- *    width, so the drawer figure stays stacked at 1280 while the wide figure has
- *    already crossed all three steps.
+ *    `--container-lg`. The copy each state of the demo mounts is measured against
+ *    its own container width, so the narrow frame stays stacked at 1280 while the
+ *    wide frame has already crossed all three steps.
  * 2. **Every state renders what it claims**, at every width: the four status
  *    variants in the default list, a card instead of a list when it is empty, a
  *    busy region instead of the list while it loads, one alert with a retry when
@@ -65,11 +65,37 @@ interface BlockMetrics {
   listLevelAlert: boolean;
 }
 
-/** Every mounted copy of the block on the page, in document order. */
-async function blockMetrics(page: Page): Promise<BlockMetrics[]> {
-  return page.evaluate(() => {
-    const panel = document.querySelector(".preview-panel--demo");
-    if (!panel) throw new Error("no .preview-panel--demo on the page");
+/**
+ * The page's previews (islands/AlertListBlockDemo.svelte): the main preview
+ * mounts the default at the stage's full width; the Examples section frames
+ * the same block at 18rem, 30rem and 50rem in one preview — one frame in each
+ * band of the three steps — then mounts the empty, loading, error and disabled states, one
+ * Preview each. Every copy is found by the `data-demo-state` its wrapper carries.
+ */
+const STATES = [
+  "default",
+  "narrow",
+  "panel",
+  "wide",
+  "empty",
+  "loading",
+  "error",
+  "disabled",
+] as const;
+type State = (typeof STATES)[number];
+
+/** Bring one state's copy on screen and wait for it to render. */
+async function showState(page: Page, state: State): Promise<void> {
+  const block = page.locator(`[data-demo-state="${state}"] section.moderno-block-alert-list`);
+  await block.scrollIntoViewIfNeeded();
+  await block.waitFor({ state: "visible" });
+}
+
+/** The copies of the block mounted for one state. */
+async function blockMetrics(page: Page, state: State): Promise<BlockMetrics[]> {
+  return page.evaluate((state) => {
+    const panel = document.querySelector(`[data-demo-state="${state}"]`);
+    if (!panel) throw new Error(`no preview for the ${state} state on the page`);
     return [...panel.querySelectorAll("section.moderno-block-alert-list")].map((section) => {
       const shell = section.firstElementChild;
       const header = shell?.firstElementChild;
@@ -121,7 +147,7 @@ async function blockMetrics(page: Page): Promise<BlockMetrics[]> {
         listLevelAlert: !list && alerts.length > 0,
       };
     });
-  });
+  }, state);
 }
 
 /**
@@ -133,7 +159,21 @@ async function blockMetrics(page: Page): Promise<BlockMetrics[]> {
  * exactly the way it painted them.
  */
 async function contrastRatios(page: Page): Promise<Record<string, number>> {
-  return page.evaluate(() => {
+  // Four states carry the texts in question: the list itself, and the empty,
+  // loading and failed-load renders that stand in for it.
+  let ratios: Record<string, number> = {};
+  for (const state of ["default", "empty", "loading", "error"] as const) {
+    await showState(page, state);
+    ratios = { ...ratios, ...(await textRatios(page, state)) };
+  }
+  return ratios;
+}
+
+async function textRatios(
+  page: Page,
+  state: "default" | "empty" | "loading" | "error",
+): Promise<Record<string, number>> {
+  return page.evaluate((state) => {
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d", { willReadFrequently: true });
     if (!ctx) throw new Error("no 2d context");
@@ -173,24 +213,25 @@ async function contrastRatios(page: Page): Promise<Record<string, number>> {
       return getComputedStyle(document.body).backgroundColor;
     }
 
-    const panel = document.querySelector(".preview-panel--demo");
-    if (!panel) throw new Error("no .preview-panel--demo on the page");
-    const blocks = [...panel.querySelectorAll("section.moderno-block-alert-list")];
-    const withList = blocks.find((section) => section.querySelector("ul li"));
-    const empty = blocks.find((section) =>
-      section
-        .querySelector('[data-scope="card"][data-part="title"]')
-        ?.textContent?.includes("caught up"),
-    );
-    const busy = blocks.find((section) => section.querySelector('[role="status"]'));
-    const failed = blocks.find(
-      (section) =>
-        !section.querySelector("ul") &&
-        section.querySelector('[data-scope="alert"][data-part="root"]'),
-    );
-    if (!withList || !empty || !busy || !failed) {
-      throw new Error("the alert-list demo did not render all of its states");
-    }
+    const panel = document.querySelector(`[data-demo-state="${state}"]`);
+    if (!panel) throw new Error(`no preview for the ${state} state on the page`);
+    const block = panel.querySelector("section.moderno-block-alert-list");
+    if (!block) throw new Error("the alert-list demo did not render");
+
+    // Each copy is identified by what it renders, not only by its id, so a copy
+    // that silently rendered another state fails here by name.
+    const renders = {
+      default: block.querySelector("ul li") !== null,
+      empty:
+        block
+          .querySelector('[data-scope="card"][data-part="title"]')
+          ?.textContent?.includes("caught up") === true,
+      loading: block.querySelector('[role="status"]') !== null,
+      error:
+        !block.querySelector("ul") &&
+        block.querySelector('[data-scope="alert"][data-part="root"]') !== null,
+    };
+    if (!renders[state]) throw new Error(`the ${state} preview did not render its state`);
 
     const pick = <T extends Element>(root: Element, selector: string): T => {
       const el = root.querySelector<T>(selector);
@@ -199,18 +240,29 @@ async function contrastRatios(page: Page): Promise<Record<string, number>> {
     };
 
     const against = (el: Element) => ratio(getComputedStyle(el).color, surfaceOf(el));
-    const rows = [...withList.querySelectorAll("ul li")];
 
+    if (state === "empty") {
+      return {
+        emptyTitle: against(pick(block, '[data-scope="card"][data-part="title"]')),
+        emptyDescription: against(pick(block, '[data-scope="card"][data-part="description"]')),
+      };
+    }
+    if (state === "loading") {
+      return { loadingText: against(pick(block, "p")) };
+    }
+    if (state === "error") {
+      return {
+        failedTitle: against(pick(block, '[data-scope="alert"][data-part="title"]')),
+        failedDescription: against(pick(block, '[data-scope="alert"][data-part="description"]')),
+        failedAction: against(pick(block, '[data-scope="alert"] [data-scope="button"]')),
+      };
+    }
+
+    const rows = [...block.querySelectorAll("ul li")];
     const ratios: Record<string, number> = {
-      heading: against(pick(withList, "h2")),
-      headingDescription: against(pick(withList, "p")),
-      dismissAllLabel: against(pick(withList, '[data-scope="button"]')),
-      emptyTitle: against(pick(empty, '[data-scope="card"][data-part="title"]')),
-      emptyDescription: against(pick(empty, '[data-scope="card"][data-part="description"]')),
-      loadingText: against(pick(busy, "p")),
-      failedTitle: against(pick(failed, '[data-scope="alert"][data-part="title"]')),
-      failedDescription: against(pick(failed, '[data-scope="alert"][data-part="description"]')),
-      failedAction: against(pick(failed, '[data-scope="alert"] [data-scope="button"]')),
+      heading: against(pick(block, "h2")),
+      headingDescription: against(pick(block, "p")),
+      dismissAllLabel: against(pick(block, '[data-scope="button"]')),
     };
 
     // One entry per status, so a variant whose tint is too light for its own
@@ -232,7 +284,7 @@ async function contrastRatios(page: Page): Promise<Record<string, number>> {
     }
 
     return ratios;
-  });
+  }, state);
 }
 
 for (const scheme of ["light", "dark"] as const) {
@@ -249,16 +301,19 @@ for (const scheme of ["light", "dark"] as const) {
           scheme === "dark",
         );
 
-        const blocks = await blockMetrics(page);
-        // The demo mounts the block eight times: four container widths (a
-        // drawer, a panel, the page column and a wide stage, one on each side
-        // of every step), then the empty, loading, error and disabled states.
-        expect(blocks).toHaveLength(8);
-
-        for (const [index, block] of blocks.entries()) {
-          const where = `${scheme} ${width}px, copy ${index + 1} (${block.containerWidth}px)`;
+        // Eight copies: four container widths (a drawer, a panel, the page
+        // column and a wide stage, one on each side of every step), then the
+        // empty, loading, error and disabled states — one mounted copy each.
+        const blocks: BlockMetrics[] = [];
+        for (const state of STATES) {
+          await showState(page, state);
+          const mounted = await blockMetrics(page, state);
+          expect(mounted, `${state}: mounted copies`).toHaveLength(1);
+          const block = mounted[0]!;
+          blocks.push(block);
+          const where = `${scheme} ${width}px, ${state} (${block.containerWidth}px)`;
           // Every step is answered from the block's own container, so the
-          // answers differ between the figures at one viewport — which is the
+          // answers differ between the copies at one viewport — which is the
           // whole point of ADR-0005.
           expect(block.headerDisplay, `${where}: header row`).toBe(
             block.containerWidth >= CONTAINER_SM ? "flex" : "grid",
@@ -279,10 +334,21 @@ for (const scheme of ["light", "dark"] as const) {
               "success",
             ]);
           }
+
+          // The `@lg` frame is a stage wider than the docs column, and it scrolls
+          // inside its own frame: the panel holding the demo never does, so the
+          // page is not pushed sideways by showing the widest layout.
+          const panel = await page.evaluate((state) => {
+            const el = document
+              .querySelector(`[data-demo-state="${state}"]`)!
+              .closest(".preview-panel--demo") as HTMLElement;
+            return { scroll: el.scrollWidth, client: el.clientWidth };
+          }, state);
+          expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
         }
 
         // The states, each identified by what it renders rather than by its
-        // position, so reordering the demo cannot quietly drop one.
+        // preview, so a copy that renders the wrong state cannot quietly pass.
         const lists = blocks.filter((block) => block.hasList);
         expect(lists.length, `${scheme} ${width}px: copies rendering the list`).toBe(5);
         expect(
@@ -297,23 +363,12 @@ for (const scheme of ["light", "dark"] as const) {
           blocks.filter((block) => block.listLevelAlert).length,
           `${scheme} ${width}px: the failed-load render`,
         ).toBe(1);
-        // Exactly one copy is `disabled`: the four container figures and the
+        // Exactly one copy is `disabled`: the four container copies and the
         // states that render no list leave their controls live.
         expect(
           lists.filter((block) => block.allControlsInert).length,
           `${scheme} ${width}px: the disabled render`,
         ).toBe(1);
-
-        // The `@lg` figure is a stage wider than the docs column, and it scrolls
-        // inside its own figure: the panel holding the demo never does, so the
-        // page is not pushed sideways by showing the widest layout.
-        const panel = await page.evaluate(() => {
-          const el = document.querySelector(".preview-panel--demo") as HTMLElement;
-          return { scroll: el.scrollWidth, client: el.clientWidth };
-        });
-        expect(panel.scroll, `${scheme} ${width}px: demo panel overflow`).toBeLessThanOrEqual(
-          panel.client,
-        );
 
         // Each of the three steps is exercised on both sides at every viewport,
         // so a step that silently stopped firing cannot pass this file.
@@ -321,11 +376,11 @@ for (const scheme of ["light", "dark"] as const) {
         for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
           expect(
             widths.some((w) => w < step),
-            `${scheme} ${width}px: a figure under ${step}px`,
+            `${scheme} ${width}px: a copy under ${step}px`,
           ).toBe(true);
           expect(
             widths.some((w) => w >= step),
-            `${scheme} ${width}px: a figure over ${step}px`,
+            `${scheme} ${width}px: a copy over ${step}px`,
           ).toBe(true);
         }
       });
@@ -345,11 +400,12 @@ for (const scheme of ["light", "dark"] as const) {
 
     test("names the alert in every dismiss control's accessible name", async ({ page }) => {
       await page.goto(PAGE, { waitUntil: "networkidle" });
+      await showState(page, "default");
       // The label is a glyph below `--container-md` and a word above it, so the
       // only thing that identifies the row at every width is the accessible
       // name — and WCAG's "label in name" needs the visible word inside it.
       const names = await page.evaluate(() => {
-        const panel = document.querySelector(".preview-panel--demo")!;
+        const panel = document.querySelector('[data-demo-state="default"]')!;
         const section = [...panel.querySelectorAll("section.moderno-block-alert-list")].find((el) =>
           el.querySelector("ul li"),
         )!;

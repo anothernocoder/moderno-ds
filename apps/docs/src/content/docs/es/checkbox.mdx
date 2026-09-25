@@ -1,6 +1,6 @@
 ---
 title: Checkbox
-description: Una casilla de tres estados con etiqueta — Ark enlaza la etiqueta con un input nativo oculto y marca data-state en cada parte; la receta size de Moderno agrega un data-size a la raíz para que components.css ajuste la densidad de la casilla y la etiqueta.
+description: Una casilla con etiqueta y estados marcado, desmarcado e indeterminado, respaldada por un input nativo.
 group: Componentes
 order: 25
 component: Checkbox
@@ -11,25 +11,36 @@ import Preview from "../../../components/Preview.astro";
 import PropsTable from "../../../components/PropsTable.astro";
 import Install from "../../../components/Install.astro";
 import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
 import CheckboxDemo from "../../../examples/checkbox/checkbox.svelte";
-import reactExample from "../../../examples/checkbox/react.tsx?raw";
-import vueExample from "../../../examples/checkbox/vue.vue?raw";
-import solidExample from "../../../examples/checkbox/solid.tsx?raw";
-import svelteExample from "../../../examples/checkbox/checkbox.svelte?raw";
-
-Solo `Checkbox.Root` está envuelto, para inyectar el `data-size` de la receta
-`size`; el resto de las partes son las de Ark tal cual. La raíz es un `<label>`
-enlazado a un `<input type="checkbox">` nativo visualmente oculto, así que los
-formularios, `name`/`value` y los lectores de pantalla funcionan sin cableado
-extra, y `components.css` pinta el control según el
-`data-state="checked|unchecked|indeterminate"` de Ark más
-`data-disabled`/`data-invalid`.
+import baseReact from "../../../examples/checkbox/react.tsx?raw";
+import baseVue from "../../../examples/checkbox/vue.vue?raw";
+import baseSolid from "../../../examples/checkbox/solid.tsx?raw";
+import baseSvelte from "../../../examples/checkbox/checkbox.svelte?raw";
+import CheckboxStatesDemo from "../../../examples/checkbox/states/checkbox-states.svelte";
+import statesReact from "../../../examples/checkbox/states/react.tsx?raw";
+import statesVue from "../../../examples/checkbox/states/vue.vue?raw";
+import statesSolid from "../../../examples/checkbox/states/solid.tsx?raw";
+import statesSvelte from "../../../examples/checkbox/states/checkbox-states.svelte?raw";
+import CheckboxSizesDemo from "../../../examples/checkbox/sizes/checkbox-sizes.svelte";
+import sizesReact from "../../../examples/checkbox/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/checkbox/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/checkbox/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/checkbox/sizes/checkbox-sizes.svelte?raw";
+import CheckboxDisabledDemo from "../../../examples/checkbox/disabled/checkbox-disabled.svelte";
+import disabledReact from "../../../examples/checkbox/disabled/react.tsx?raw";
+import disabledVue from "../../../examples/checkbox/disabled/vue.vue?raw";
+import disabledSolid from "../../../examples/checkbox/disabled/solid.tsx?raw";
+import disabledSvelte from "../../../examples/checkbox/disabled/checkbox-disabled.svelte?raw";
+import CheckboxInvalidDemo from "../../../examples/checkbox/invalid/checkbox-invalid.svelte";
+import invalidReact from "../../../examples/checkbox/invalid/react.tsx?raw";
+import invalidVue from "../../../examples/checkbox/invalid/vue.vue?raw";
+import invalidSolid from "../../../examples/checkbox/invalid/solid.tsx?raw";
+import invalidSvelte from "../../../examples/checkbox/invalid/checkbox-invalid.svelte?raw";
 
 <FrameworkSelect locale="es" />
 
-<Preview
-  examples={{ react: reactExample, vue: vueExample, solid: solidExample, svelte: svelteExample }}
->
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
   <CheckboxDemo client:visible />
 </Preview>
 
@@ -37,6 +48,167 @@ extra, y `components.css` pinta el control según el
 
 <Install pkg="@moderno-ui/react" />
 
-## Propiedades
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { Checkbox } from "@moderno-ui/react";
+```
+
+```tsx
+<Checkbox.Root>
+  <Checkbox.Control>
+    <Checkbox.Indicator>✓</Checkbox.Indicator>
+  </Checkbox.Control>
+  <Checkbox.Label>Acepto los términos</Checkbox.Label>
+  <Checkbox.HiddenInput />
+</Checkbox.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Checkbox } from "@moderno-ui/vue";
+```
+
+```vue
+<Checkbox.Root>
+  <Checkbox.Control>
+    <Checkbox.Indicator>✓</Checkbox.Indicator>
+  </Checkbox.Control>
+  <Checkbox.Label>Acepto los términos</Checkbox.Label>
+  <Checkbox.HiddenInput />
+</Checkbox.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Checkbox } from "@moderno-ui/svelte";
+```
+
+```svelte
+<Checkbox.Root>
+  <Checkbox.Control>
+    <Checkbox.Indicator>✓</Checkbox.Indicator>
+  </Checkbox.Control>
+  <Checkbox.Label>Acepto los términos</Checkbox.Label>
+  <Checkbox.HiddenInput />
+</Checkbox.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Checkbox } from "@moderno-ui/solid";
+```
+
+```tsx
+<Checkbox.Root>
+  <Checkbox.Control>
+    <Checkbox.Indicator>✓</Checkbox.Indicator>
+  </Checkbox.Control>
+  <Checkbox.Label>Acepto los términos</Checkbox.Label>
+  <Checkbox.HiddenInput />
+</Checkbox.Root>
+```
+
+</ForFramework>
+
+## Referencia de API
+
+### Checkbox.Root
+
+`size` es el añadido de Moderno y vale `md` por defecto; el resto de props vienen del Checkbox de Ark.
 
 <PropsTable component="Checkbox" />
+
+| Prop              | Tipo                             | Por defecto | Descripción                                                     |
+| ----------------- | -------------------------------- | ----------- | --------------------------------------------------------------- |
+| `checked`         | `boolean \| "indeterminate"`     | —           | Estado controlado. Úsalo con `onCheckedChange`.                 |
+| `defaultChecked`  | `boolean \| "indeterminate"`     | `false`     | Estado inicial cuando no está controlado.                       |
+| `onCheckedChange` | `(details: { checked }) => void` | —           | Se llama cuando cambia el estado.                               |
+| `disabled`        | `boolean`                        | `false`     | Deshabilita el input oculto y atenúa todas las partes.          |
+| `invalid`         | `boolean`                        | `false`     | Pone `aria-invalid` y recolorea el borde desde `--destructive`. |
+| `required`        | `boolean`                        | `false`     | Marca el input como obligatorio.                                |
+| `name`            | `string`                         | —           | Nombre del campo en el formulario.                              |
+| `value`           | `string`                         | `"on"`      | Valor que se envía con el formulario cuando está marcada.       |
+
+### Checkbox.Indicator
+
+| Prop            | Tipo      | Por defecto | Descripción                                                     |
+| --------------- | --------- | ----------- | --------------------------------------------------------------- |
+| `indeterminate` | `boolean` | `false`     | Muestra este indicador en el estado mixto en lugar del marcado. |
+
+### Partes
+
+| Parte                  | Elemento                  | Descripción                                                                   |
+| ---------------------- | ------------------------- | ----------------------------------------------------------------------------- |
+| `Checkbox.Root`        | `<label>`                 | Lleva `data-size`; un clic en cualquier punto alterna la casilla.             |
+| `Checkbox.Control`     | `<div>`                   | La caja visible.                                                              |
+| `Checkbox.Indicator`   | `<div>`                   | El glifo; solo se muestra en su estado.                                       |
+| `Checkbox.Label`       | `<span>`                  | El texto junto a la caja.                                                     |
+| `Checkbox.HiddenInput` | `<input type="checkbox">` | Input nativo oculto que lleva el foco, `name` y `value`. Renderízalo siempre. |
+
+### Atributos data
+
+| Atributo        | Valores                                                             |
+| --------------- | ------------------------------------------------------------------- |
+| `data-state`    | `"checked"`, `"unchecked"` o `"indeterminate"`, en todas las partes |
+| `data-disabled` | Presente con `disabled`                                             |
+| `data-invalid`  | Presente con `invalid`                                              |
+| `data-size`     | En la raíz: `"sm"`, `"md"` o `"lg"`                                 |
+
+## Ejemplos
+
+### Estados
+
+Una casilla que puede quedar mixta lleva los dos indicadores.
+
+<Preview
+  examples={{ react: statesReact, vue: statesVue, solid: statesSolid, svelte: statesSvelte }}
+>
+  <CheckboxStatesDemo client:visible />
+</Preview>
+
+### Tamaños
+
+<Preview examples={{ react: sizesReact, vue: sizesVue, solid: sizesSolid, svelte: sizesSvelte }}>
+  <CheckboxSizesDemo client:visible />
+</Preview>
+
+### Deshabilitado
+
+<Preview
+  examples={{
+    react: disabledReact,
+    vue: disabledVue,
+    solid: disabledSolid,
+    svelte: disabledSvelte,
+  }}
+>
+  <CheckboxDisabledDemo client:visible />
+</Preview>
+
+### Inválido
+
+Checkbox no tiene parte de texto de error, así que pon el mensaje junto a ella en tu formulario.
+
+<Preview
+  examples={{ react: invalidReact, vue: invalidVue, solid: invalidSolid, svelte: invalidSvelte }}
+>
+  <CheckboxInvalidDemo client:visible />
+</Preview>
+
+## Notas
+
+- Solo `Checkbox.Root` está envuelto, para añadir `size`; el resto de partes son las de Ark sin cambios.
+- Estiliza el estado desde `data-state` y los flags `data-*`; `size` es la única prop visual.
+- La caja rellena usa `--primary` con el glifo en `--primary-foreground`; el borde en reposo es `--input`.

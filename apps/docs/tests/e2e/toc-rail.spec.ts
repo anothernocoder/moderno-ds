@@ -12,7 +12,7 @@ import { expect, test } from "@playwright/test";
 
 /**
  * `using-with-agents` has a real two-level outline — two top h2s, six h3s
- * nested under the third h2, then two more h2s — so it exercises both the
+ * nested under the third h2, then three more h2s — so it exercises both the
  * h2→h3 and h3→h2 rail transitions the connectors exist for.
  */
 const PAGE = "/en/using-with-agents/";
@@ -56,7 +56,9 @@ test.describe("table-of-contents rail", () => {
 
     const currentSlug = () =>
       page.evaluate(
-        () => document.querySelector('.toc [aria-current="true"]')?.getAttribute("data-toc-link") ?? null,
+        () =>
+          document.querySelector('.toc [aria-current="true"]')?.getAttribute("data-toc-link") ??
+          null,
       );
 
     // A heading well into the page's middle run of h3s.
@@ -66,7 +68,9 @@ test.describe("table-of-contents rail", () => {
     }, target);
 
     await expect
-      .poll(() => currentSlug(), { message: "aria-current did not move to the scrolled-to heading" })
+      .poll(() => currentSlug(), {
+        message: "aria-current did not move to the scrolled-to heading",
+      })
       .toBe(target);
 
     // Exactly one link is marked current at a time.

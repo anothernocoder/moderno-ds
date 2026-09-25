@@ -5,148 +5,20 @@ group: Blocks
 order: 100
 ---
 
-import Preview from "../../../components/Preview.astro";
-import FrameworkSelect from "../../../components/FrameworkSelect.astro";
-import BlocksDemo from "../../../islands/BlocksDemo.svelte";
-import loginFormReact from "../../../../../../registry/blocks/login-form/react/login-form.tsx?raw";
-import loginFormVue from "../../../../../../registry/blocks/login-form/vue/LoginForm.vue?raw";
-import loginFormSolid from "../../../../../../registry/blocks/login-form/solid/login-form.tsx?raw";
-import loginFormSvelte from "../../../../../../registry/blocks/login-form/svelte/LoginForm.svelte?raw";
-import formLayoutReact from "../../../../../../registry/blocks/form-layout/react/form-layout.tsx?raw";
-import formLayoutVue from "../../../../../../registry/blocks/form-layout/vue/FormLayout.vue?raw";
-import formLayoutSolid from "../../../../../../registry/blocks/form-layout/solid/form-layout.tsx?raw";
-import formLayoutSvelte from "../../../../../../registry/blocks/form-layout/svelte/FormLayout.svelte?raw";
-import alertListReact from "../../../../../../registry/blocks/alert-list/react/alert-list.tsx?raw";
-import alertListVue from "../../../../../../registry/blocks/alert-list/vue/AlertList.vue?raw";
-import alertListSolid from "../../../../../../registry/blocks/alert-list/solid/alert-list.tsx?raw";
-import alertListSvelte from "../../../../../../registry/blocks/alert-list/svelte/AlertList.svelte?raw";
-import pricingReact from "../../../../../../registry/blocks/pricing/react/pricing.tsx?raw";
-import pricingVue from "../../../../../../registry/blocks/pricing/vue/Pricing.vue?raw";
-import pricingSolid from "../../../../../../registry/blocks/pricing/solid/pricing.tsx?raw";
-import pricingSvelte from "../../../../../../registry/blocks/pricing/svelte/Pricing.svelte?raw";
-import emptyStateReact from "../../../../../../registry/blocks/empty-state/react/empty-state.tsx?raw";
-import emptyStateVue from "../../../../../../registry/blocks/empty-state/vue/EmptyState.vue?raw";
-import emptyStateSolid from "../../../../../../registry/blocks/empty-state/solid/empty-state.tsx?raw";
-import emptyStateSvelte from "../../../../../../registry/blocks/empty-state/svelte/EmptyState.svelte?raw";
-
-A **block** is a page _section_ composed of primitives — a hero, a pricing
-table, a login form. You copy it into your project with the CLI and own it from
-that moment on; it is not an npm dependency.
-
-A block never owns the viewport and carries no navigation state. It responds to
-its **container**, not the viewport, so the same block looks right in a sidebar,
-a modal or a full page without knowing which.
+A block is a page section composed only of primitives. The CLI copies it into your project, where you own it, and it sizes itself from its container rather than the viewport.
 
 ```sh
-npx @moderno-ui/cli add login-form-react
+npx @moderno-ui/cli add <block>-<framework>
 ```
 
-Installing a block also installs the registry items it composes — ejected
-primitives, if it uses any — and records each one under its own version in
-`.moderno/manifest.json`, so `moderno update` and `moderno diff` stay per item.
+## Available blocks
 
-A block composes only primitives, never a screen or a flow — the registry
-enforces that direction. The catalog is being filled as the predecessor's
-inventory is absorbed; each published block gets its own page in this section.
+| Block                           | Description                                                                           |
+| ------------------------------- | ------------------------------------------------------------------------------------- |
+| [Login form](/en/login-form/)   | The credential card for sign in, sign up, forgot password, reset password and verify. |
+| [Form layout](/en/form-layout/) | A settings form with titled groups of fields and one actions row.                     |
+| [Alert list](/en/alert-list/)   | A notification centre of dismissible status alerts.                                   |
+| Pricing                         | A three-plan pricing section.                                                         |
+| Empty state                     | A centred no-data placeholder with one call to action.                                |
 
-## What ships today
-
-Five blocks, one registry entry per framework each. Every Preview below reads
-its source straight out of `registry/blocks/<name>/<framework>/` — for all four
-frameworks, switchable with the selector — so what you read is exactly what the
-CLI copies, not a mockup of it.
-
-<FrameworkSelect locale="en" />
-
-### Login form
-
-Composes `Card`, `Field`, `Checkbox`, `Button` and `Alert` into a sign-in
-section that sizes itself from its container. It has a page of its own —
-[Login form](/en/login-form/) — with the install command, the container steps
-and every state it renders.
-
-<Preview
-  examples={{
-    react: loginFormReact,
-    vue: loginFormVue,
-    solid: loginFormSolid,
-    svelte: loginFormSvelte,
-  }}
->
-  <BlocksDemo block="login-form" client:visible />
-</Preview>
-
-### Form layout
-
-Groups related fields under a heading, pairs them off when the container is wide
-enough and commits them from one actions row. It has a page of its own —
-[Form layout](/en/form-layout/) — with the three container steps and every state
-it renders.
-
-<Preview
-  examples={{
-    react: formLayoutReact,
-    vue: formLayoutVue,
-    solid: formLayoutSolid,
-    svelte: formLayoutSvelte,
-  }}
->
-  <BlocksDemo block="form-layout" client:visible />
-</Preview>
-
-### Alert list
-
-Stacks status alerts — all four variants — each dismissible on its own, with its
-own empty, loading and error renders. It has a page of its own —
-[Alert list](/en/alert-list/) — with the three container steps and every state it
-renders.
-
-<Preview
-  examples={{
-    react: alertListReact,
-    vue: alertListVue,
-    solid: alertListSolid,
-    svelte: alertListSvelte,
-  }}
->
-  <BlocksDemo block="alert-list" client:visible />
-</Preview>
-
-### Pricing
-
-Three plans from a local `plans` array — edit it, it is your file now.
-
-<Preview
-  examples={{ react: pricingReact, vue: pricingVue, solid: pricingSolid, svelte: pricingSvelte }}
->
-  <BlocksDemo block="pricing" client:visible />
-</Preview>
-
-### Empty state
-
-A centred placeholder with one call to action.
-
-<Preview
-  examples={{
-    react: emptyStateReact,
-    vue: emptyStateVue,
-    solid: emptyStateSolid,
-    svelte: emptyStateSvelte,
-  }}
->
-  <BlocksDemo block="empty-state" client:visible />
-</Preview>
-
-## Section layout, block by block
-
-The container-query styling pipeline of ADR-0005 has landed, and the blocks are
-being rewritten onto it one at a time. A rewritten block lays itself out with
-the Tailwind preset's contract-backed utilities and the `@sm` / `@md` / `@lg`
-container variants — `login-form`, `form-layout`, `alert-list` and `pricing`
-above are on that footing, and each gets its own page as it lands. `form-layout`
-and `alert-list` are the two that use all three steps, one layout decision each.
-
-`empty-state` is not there yet: its wrapper still carries a bare
-`moderno-block-*` class with **no rules on `main`** — no grid, no spacing scale,
-no surface. Showing the gap is the point rather than hiding it behind a mockup;
-it closes when that block is rewritten in turn.
+For the container rules every block follows, see [Blocks and containers](/en/blocks-and-containers/).

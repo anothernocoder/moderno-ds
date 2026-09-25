@@ -1,46 +1,148 @@
 ---
 title: Instalación
-description: Añade Moderno a un proyecto — instala un enlace de framework e importa la hoja de estilos compartida una vez.
+description: Instala un enlace de framework, importa la hoja de estilos compartida una vez y muestra tu primer componente.
 group: Inicio
 order: 1
 ---
 
 import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
 
-Elige el enlace para tu framework. Cada enlace depende de `@moderno-ui/core` (las
-recetas) y lo pinta `@moderno-ui/css` (la hoja de estilos compartida).
+<FrameworkSelect locale="es" />
 
-## React
+## Paquetes
 
-<Install pkg="@moderno-ui/react" />
+| Paquete                                          | Función                                                                |
+| ------------------------------------------------ | ---------------------------------------------------------------------- |
+| `@moderno-ui/react` · `vue` · `svelte` · `solid` | Los componentes para tu framework.                                     |
+| `@moderno-ui/core`                               | Recetas compartidas. Se instala con cada enlace.                       |
+| `@moderno-ui/css`                                | La hoja de estilos compartida y el tema por defecto. Dependencia peer. |
+| `@moderno-ui/cli`                                | Opcional. Copia blocks, screens y temas en tu código.                  |
+| `@moderno-ui/mcp`                                | Opcional. Responde a los agentes de código con tu API instalada.       |
 
-## Importa la hoja de estilos una vez
+Requisitos peer: React 19, Vue 3.5, Svelte 5 o Solid 1.9.
 
-Importa `@moderno-ui/css` una sola vez en la raíz de tu app — incluye los estilos
-de los componentes y los slots del contrato del tema por defecto.
+## Instalar
 
-```ts
-import "@moderno-ui/css";
+1. Instala el enlace de tu framework.
+
+   <Install pkg="@moderno-ui/react" />
+
+2. Instala el paquete de la hoja de estilos.
+
+   ```sh
+   npm install @moderno-ui/css
+   ```
+
+3. Importa la hoja de estilos una vez, en la raíz de tu app.
+
+   ```ts
+   import "@moderno-ui/css";
+   ```
+
+4. Muestra un componente.
+
+   <ForFramework fw="react">
+
+   ```tsx
+   import { Button } from "@moderno-ui/react";
+
+   <Button>Guardar cambios</Button>;
+   ```
+
+   </ForFramework>
+
+   <ForFramework fw="vue">
+
+   ```vue
+   <script setup lang="ts">
+   import { Button } from "@moderno-ui/vue";
+   </script>
+
+   <template>
+     <Button>Guardar cambios</Button>
+   </template>
+   ```
+
+   </ForFramework>
+
+   <ForFramework fw="svelte">
+
+   ```svelte
+   <script lang="ts">
+     import { Button } from "@moderno-ui/svelte";
+   </script>
+
+   <Button>Guardar cambios</Button>
+   ```
+
+   </ForFramework>
+
+   <ForFramework fw="solid">
+
+   ```tsx
+   import { Button } from "@moderno-ui/solid";
+
+   <Button>Guardar cambios</Button>;
+   ```
+
+   </ForFramework>
+
+## Tailwind v4 (opcional)
+
+Importa el preset después de la hoja de estilos para tener utilidades como `bg-primary` y `@md:`.
+
+```css
+@import "tailwindcss";
+@import "@moderno-ui/css";
+@import "@moderno-ui/css/preset";
 ```
 
-## Generar desde el registro (opcional)
+Consulta [Contrato de tokens](/es/token-contract#tailwind-v4) para ver cada slot mapeado.
 
-También puedes extraer el código fuente con la CLI, que lee el registro servido
-en `/r/registry.json`.
+## Generar con la CLI (opcional)
 
-<Install pkg="@moderno-ui/cli" mode="cli" />
+1. Inicializa el proyecto.
 
-## Sembrar AGENTS.md para agentes de código (opcional)
+   ```sh
+   npx @moderno-ui/cli init
+   ```
 
-`moderno init` también escribe un stanza en `AGENTS.md` — las reglas de oro,
-más instrucciones para usar el servidor MCP `moderno` y ejecutar
-`validate_usage` antes de terminar. Pasa `--claude` para además escribir un
-`CLAUDE.md` gemelo; cualquiera de los dos archivos se fusiona en el lugar en
-ejecuciones repetidas, sin sobrescribir el resto de tu contenido.
+2. Importa una vez la hoja de estilos generada, en lugar de `@moderno-ui/css`.
 
-```sh
-npx @moderno-ui/cli init --claude
-```
+   ```ts
+   import "@/styles/moderno.css";
+   ```
 
-Consulta [Usar Moderno con agentes](/es/using-with-agents) para ver qué dice
-el stanza y cómo funciona realmente el ciclo del MCP al que apunta.
+3. Añade un tema o un block.
+
+   ```sh
+   npx @moderno-ui/cli add theme-moderno
+   ```
+
+   <Install item="pricing" />
+
+### Comandos
+
+| Comando                    | Qué hace                                                                             |
+| -------------------------- | ------------------------------------------------------------------------------------ |
+| `moderno init`             | Escribe `components.json`, `src/styles/moderno.css` y el stanza de `AGENTS.md`.      |
+| `moderno init --claude`    | Lo mismo, más un `CLAUDE.md` gemelo del stanza.                                      |
+| `moderno add <item...>`    | Copia items del registro y sus dependencias. Un tema se `@import`a en `moderno.css`. |
+| `moderno update [item...]` | Actualiza los items instalados. Los archivos que editaste localmente se conservan.   |
+| `moderno diff <item>`      | Muestra el diff entre tu copia y la versión del registro.                            |
+| `moderno list`             | Lista los items instalados con su versión instalada y la más reciente.               |
+
+### Notas
+
+- Todos los comandos aceptan `--registry <url|path>`.
+- Orden de búsqueda del registro: `--registry`, luego `components.json`, luego `MODERNO_REGISTRY_URL`, luego `https://moderno.style/r/registry.json`.
+- Volver a ejecutar `init` actualiza el stanza de `AGENTS.md` en el sitio y conserva el resto del archivo.
+- La CLI y el servidor MCP necesitan Node 22 o superior.
+
+## Siguientes pasos
+
+- [Contrato de tokens](/es/token-contract): las variables CSS que define un tema.
+- [Bloques y contenedores](/es/blocks-and-containers): cómo responden los blocks a su contenedor.
+- [Usar Moderno con agentes](/es/using-with-agents): el servidor MCP y `validate_usage`.

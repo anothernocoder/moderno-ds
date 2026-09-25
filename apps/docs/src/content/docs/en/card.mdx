@@ -1,6 +1,6 @@
 ---
 title: Card
-description: A CSS-only surface with an Ark-style anatomy — header, title, description, content and footer parts, painted from the card and border slots with no shadow of its own.
+description: A bordered surface that groups related content, with optional header, content and footer parts.
 group: Components
 order: 45
 component: Card
@@ -27,41 +27,198 @@ import Preview from "../../../components/Preview.astro";
 import PropsTable from "../../../components/PropsTable.astro";
 import Install from "../../../components/Install.astro";
 import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
 import CardDemo from "../../../examples/card/card.svelte";
-import reactExample from "../../../examples/card/react.tsx?raw";
-import vueExample from "../../../examples/card/vue.vue?raw";
-import solidExample from "../../../examples/card/solid.tsx?raw";
-import svelteExample from "../../../examples/card/card.svelte?raw";
-
-Card is the first compound primitive that is authored rather than re-exported:
-there is no Ark machine for a surface — nothing to open, focus or wire — so
-every part is ours. What makes it a Moderno primitive is the same contract
-Button follows, widened across an anatomy: each part emits `data-scope="card"`
-plus its own `data-part`, the root carries `cardRecipe`'s `data-variant` and
-`data-size`, and `components.css` paints all of it from token slots.
+import baseReact from "../../../examples/card/react.tsx?raw";
+import baseVue from "../../../examples/card/vue.vue?raw";
+import baseSolid from "../../../examples/card/solid.tsx?raw";
+import baseSvelte from "../../../examples/card/card.svelte?raw";
+import CardPartsDemo from "../../../examples/card/parts/card-parts.svelte";
+import partsReact from "../../../examples/card/parts/react.tsx?raw";
+import partsVue from "../../../examples/card/parts/vue.vue?raw";
+import partsSolid from "../../../examples/card/parts/solid.tsx?raw";
+import partsSvelte from "../../../examples/card/parts/card-parts.svelte?raw";
+import CardVariantsDemo from "../../../examples/card/variants/card-variants.svelte";
+import variantsReact from "../../../examples/card/variants/react.tsx?raw";
+import variantsVue from "../../../examples/card/variants/vue.vue?raw";
+import variantsSolid from "../../../examples/card/variants/solid.tsx?raw";
+import variantsSvelte from "../../../examples/card/variants/card-variants.svelte?raw";
+import CardSizesDemo from "../../../examples/card/sizes/card-sizes.svelte";
+import sizesReact from "../../../examples/card/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/card/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/card/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/card/sizes/card-sizes.svelte?raw";
 
 <FrameworkSelect locale="en" />
 
-<Preview
-  examples={{ react: reactExample, vue: vueExample, solid: solidExample, svelte: svelteExample }}
->
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
   <CardDemo client:visible />
 </Preview>
-
-## Anatomy
-
-`root` is the surface; `header` holds `title` and `description`; `content` is
-the body and the only part that grows, so a row of cards keeps its footers
-aligned; `footer` is the actions row. Every part is optional and the order is
-yours — whichever pair ends up adjacent shares one padding step instead of
-stacking two.
 
 ## Installation
 
 <Install pkg="@moderno-ui/react" />
 
-## Props
+## Usage
 
-Props sit on `Card.Root`. The other parts take only native attributes.
+<ForFramework fw="react">
+
+```tsx
+import { Button, Card } from "@moderno-ui/react";
+```
+
+```tsx
+<Card.Root>
+  <Card.Header>
+    <Card.Title>Monthly revenue</Card.Title>
+    <Card.Description>Across every workspace on the plan.</Card.Description>
+  </Card.Header>
+  <Card.Content>Up 12% on last month.</Card.Content>
+  <Card.Footer>
+    <Button variant="outline" size="sm">
+      Export
+    </Button>
+  </Card.Footer>
+</Card.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import { Button, Card } from "@moderno-ui/vue";
+</script>
+```
+
+```vue
+<template>
+  <Card.Root>
+    <Card.Header>
+      <Card.Title>Monthly revenue</Card.Title>
+      <Card.Description>Across every workspace on the plan.</Card.Description>
+    </Card.Header>
+    <Card.Content>Up 12% on last month.</Card.Content>
+    <Card.Footer>
+      <Button variant="outline" size="sm">Export</Button>
+    </Card.Footer>
+  </Card.Root>
+</template>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import { Button, Card } from "@moderno-ui/svelte";
+</script>
+```
+
+```svelte
+<Card.Root>
+  <Card.Header>
+    <Card.Title>Monthly revenue</Card.Title>
+    <Card.Description>Across every workspace on the plan.</Card.Description>
+  </Card.Header>
+  <Card.Content>Up 12% on last month.</Card.Content>
+  <Card.Footer>
+    <Button variant="outline" size="sm">Export</Button>
+  </Card.Footer>
+</Card.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Button, Card } from "@moderno-ui/solid";
+```
+
+```tsx
+<Card.Root>
+  <Card.Header>
+    <Card.Title>Monthly revenue</Card.Title>
+    <Card.Description>Across every workspace on the plan.</Card.Description>
+  </Card.Header>
+  <Card.Content>Up 12% on last month.</Card.Content>
+  <Card.Footer>
+    <Button variant="outline" size="sm">
+      Export
+    </Button>
+  </Card.Footer>
+</Card.Root>
+```
+
+</ForFramework>
+
+## API Reference
+
+### Card.Root
 
 <PropsTable component="Card" />
+
+### Parts
+
+The parts other than `Card.Root` take only native attributes.
+
+| Part               | Element | Description                                                      |
+| ------------------ | ------- | ---------------------------------------------------------------- |
+| `Card.Root`        | `div`   | The surface. Takes `variant` and `size`.                         |
+| `Card.Header`      | `div`   | Holds the title and description.                                 |
+| `Card.Title`       | `h3`    | The card's heading. Pass `role`/`aria-level` to change its rank. |
+| `Card.Description` | `p`     | The muted line under the title.                                  |
+| `Card.Content`     | `div`   | The body. The only part that grows, so footers in a row line up. |
+| `Card.Footer`      | `div`   | The actions row.                                                 |
+
+### Data attributes
+
+| Attribute      | On         | Values                                                        |
+| -------------- | ---------- | ------------------------------------------------------------- |
+| `data-scope`   | Every part | `card`                                                        |
+| `data-part`    | Every part | `root`, `header`, `title`, `description`, `content`, `footer` |
+| `data-variant` | Root       | `outline` (default), `muted`, `ghost`                         |
+| `data-size`    | Root       | `sm`, `md` (default), `lg`                                    |
+
+## Examples
+
+### Anatomy
+
+Every part is optional and the order is yours.
+
+<Preview examples={{ react: partsReact, vue: partsVue, solid: partsSolid, svelte: partsSvelte }}>
+  <CardPartsDemo client:visible />
+</Preview>
+
+### Variants
+
+`outline` fills with `--card` and a 1px `--border`, `muted` recesses into `--muted`, and `ghost` drops the surface.
+
+<Preview
+  examples={{
+    react: variantsReact,
+    vue: variantsVue,
+    solid: variantsSolid,
+    svelte: variantsSvelte,
+  }}
+>
+  <CardVariantsDemo client:visible />
+</Preview>
+
+### Sizes
+
+`size` sets the padding every part shares; at `lg` the title steps up too.
+
+<Preview examples={{ react: sizesReact, vue: sizesVue, solid: sizesSolid, svelte: sizesSvelte }}>
+  <CardSizesDemo client:visible />
+</Preview>
+
+## Notes
+
+- Adjacent parts share one padding step instead of stacking two.
+- The root fills its container; the grid or flex row belongs to the page.
+- Depth is a surface step and a border, never a shadow.
+- The corner is `--radius`, so a theme that pins it to 0 gives square cards.

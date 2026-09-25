@@ -1,6 +1,6 @@
 ---
 title: Botón
-description: La primitiva de referencia — un botón simple que lleva los data-attributes de variante y tamaño de la receta, pintado por completo por la hoja de estilos compartida.
+description: Dispara una acción, con cinco variantes y tres tamaños pintados desde los slots de tokens del tema.
 group: Componentes
 order: 10
 component: Button
@@ -11,21 +11,36 @@ import Preview from "../../../components/Preview.astro";
 import PropsTable from "../../../components/PropsTable.astro";
 import Install from "../../../components/Install.astro";
 import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
 import ButtonDemo from "../../../examples/button/button.svelte";
-import reactExample from "../../../examples/button/react.tsx?raw";
-import vueExample from "../../../examples/button/vue.vue?raw";
-import solidExample from "../../../examples/button/solid.tsx?raw";
-import svelteExample from "../../../examples/button/button.svelte?raw";
-
-Button establece el patrón de Moderno: el componente no lleva color ni radio;
-`data-variant`/`data-size` de la receta determinan cada estilo en
-`components.css`. Cambiar el tema lo vuelve a pintar sin tocar el marcado.
+import baseReact from "../../../examples/button/react.tsx?raw";
+import baseVue from "../../../examples/button/vue.vue?raw";
+import baseSolid from "../../../examples/button/solid.tsx?raw";
+import baseSvelte from "../../../examples/button/button.svelte?raw";
+import ButtonVariantsDemo from "../../../examples/button/variants/button-variants.svelte";
+import variantsReact from "../../../examples/button/variants/react.tsx?raw";
+import variantsVue from "../../../examples/button/variants/vue.vue?raw";
+import variantsSolid from "../../../examples/button/variants/solid.tsx?raw";
+import variantsSvelte from "../../../examples/button/variants/button-variants.svelte?raw";
+import ButtonSizesDemo from "../../../examples/button/sizes/button-sizes.svelte";
+import sizesReact from "../../../examples/button/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/button/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/button/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/button/sizes/button-sizes.svelte?raw";
+import ButtonDestructiveDemo from "../../../examples/button/destructive/button-destructive.svelte";
+import destructiveReact from "../../../examples/button/destructive/react.tsx?raw";
+import destructiveVue from "../../../examples/button/destructive/vue.vue?raw";
+import destructiveSolid from "../../../examples/button/destructive/solid.tsx?raw";
+import destructiveSvelte from "../../../examples/button/destructive/button-destructive.svelte?raw";
+import ButtonDisabledDemo from "../../../examples/button/disabled/button-disabled.svelte";
+import disabledReact from "../../../examples/button/disabled/react.tsx?raw";
+import disabledVue from "../../../examples/button/disabled/vue.vue?raw";
+import disabledSolid from "../../../examples/button/disabled/solid.tsx?raw";
+import disabledSvelte from "../../../examples/button/disabled/button-disabled.svelte?raw";
 
 <FrameworkSelect locale="es" />
 
-<Preview
-  examples={{ react: reactExample, vue: vueExample, solid: solidExample, svelte: svelteExample }}
->
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
   <ButtonDemo client:visible />
 </Preview>
 
@@ -33,6 +48,126 @@ Button establece el patrón de Moderno: el componente no lleva color ni radio;
 
 <Install pkg="@moderno-ui/react" />
 
-## Propiedades
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { Button } from "@moderno-ui/react";
+```
+
+```tsx
+<Button variant="secondary">Guardar</Button>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Button } from "@moderno-ui/vue";
+```
+
+```vue
+<Button variant="secondary">Guardar</Button>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Button } from "@moderno-ui/svelte";
+```
+
+```svelte
+<Button variant="secondary">Guardar</Button>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Button } from "@moderno-ui/solid";
+```
+
+```tsx
+<Button variant="secondary">Guardar</Button>
+```
+
+</ForFramework>
+
+## Referencia de API
+
+### Button
+
+Renderiza un `<button>` nativo. `variant` vale `primary` por defecto y `size`, `md`.
 
 <PropsTable component="Button" />
+
+### Atributos data
+
+| Atributo       | Valores               |
+| -------------- | --------------------- |
+| `data-scope`   | `"button"`            |
+| `data-part`    | `"root"`              |
+| `data-variant` | El `variant` resuelto |
+| `data-size`    | El `size` resuelto    |
+
+## Ejemplos
+
+### Variantes
+
+<Preview
+  examples={{
+    react: variantsReact,
+    vue: variantsVue,
+    solid: variantsSolid,
+    svelte: variantsSvelte,
+  }}
+>
+  <ButtonVariantsDemo client:visible />
+</Preview>
+
+### Tamaños
+
+<Preview examples={{ react: sizesReact, vue: sizesVue, solid: sizesSolid, svelte: sizesSvelte }}>
+  <ButtonSizesDemo client:visible />
+</Preview>
+
+### Destructivo
+
+Acompaña una acción destructiva con una salida más discreta.
+
+<Preview
+  examples={{
+    react: destructiveReact,
+    vue: destructiveVue,
+    solid: destructiveSolid,
+    svelte: destructiveSvelte,
+  }}
+>
+  <ButtonDestructiveDemo client:visible />
+</Preview>
+
+### Deshabilitado
+
+<Preview
+  examples={{
+    react: disabledReact,
+    vue: disabledVue,
+    solid: disabledSolid,
+    svelte: disabledSvelte,
+  }}
+>
+  <ButtonDisabledDemo client:visible />
+</Preview>
+
+## Notas
+
+- Button no tiene color ni radio propios; cambiar de tema lo repinta sin tocar el marcado.
+- `destructive` pinta desde `--destructive`, el mismo slot que usan una Alert de error y un Field inválido.
+- `type` vale `"button"` por defecto, así que un Button dentro de un formulario no lo envía salvo que pases `type="submit"`.
+- `disabled` es el atributo nativo: el botón sale del orden de tabulación e ignora los clics.
+- Elige un `variant` en lugar de sobrescribir el color con una clase, y pasa `disabled` en lugar de estilizarlo.

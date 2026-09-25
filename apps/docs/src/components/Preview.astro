@@ -11,6 +11,18 @@
  * — never a string literal. All four always render; CSS shows only the one
  * matching the page's `<FrameworkSelect>` choice, read off `data-framework` on
  * `<html>` (docs.css), so switching frameworks needs no client script here.
+ *
+ * One Preview shows one idea (the default use, one axis of variants, one
+ * state), so its source is exactly what is on the stage. `layout` picks the
+ * stage: `center` (default) centres the demo on a fixed minimum height;
+ * `fill` gives blocks, screens and charts the full width, because they size
+ * themselves from their container (ADR-0005).
+ *
+ * A source longer than COLLAPSE_AFTER lines is height-capped behind an
+ * "Expand code" toggle (CodeBlock `collapsible`): still in the DOM and on
+ * screen, so the source stays "always visible" — the page just doesn't turn
+ * into a wall of code under every stage. Decided per framework, since a Vue
+ * file and a React file for the same demo differ in length.
  */
 import type { CodeLanguage } from "astro";
 import CodeBlock from "./CodeBlock.astro";
@@ -19,9 +31,10 @@ type Framework = "react" | "vue" | "svelte" | "solid";
 
 interface Props {
   examples: Record<Framework, string>;
+  layout?: "center" | "fill";
 }
 
-const { examples } = Astro.props;
+const { examples, layout = "center" } = Astro.props;
 
 /** Order they render in the DOM; kept in sync with FrameworkSelect.astro. */
 const FRAMEWORKS: Framework[] = ["react", "vue", "svelte", "solid"];
@@ -31,17 +44,24 @@ const LANG: Record<Framework, CodeLanguage> = {
   vue: "vue",
   svelte: "svelte",
 };
+/** Sources up to this many lines show in full; longer ones start collapsed. */
+const COLLAPSE_AFTER = 18;
+const lineCount = (code: string) => code.trimEnd().split("\n").length;
 ---
 
 <div class="preview">
-  <div class="preview-panel preview-panel--demo">
+  <div class="preview-panel preview-panel--demo" data-layout={layout}>
     <slot />
   </div>
   <div class="preview-panel preview-panel--code">
     {
       FRAMEWORKS.map((fw) => (
         <div class="preview-source" data-fw={fw}>
-          <CodeBlock code={examples[fw]} lang={LANG[fw]} />
+          <CodeBlock
+            code={examples[fw]}
+            lang={LANG[fw]}
+            collapsible={lineCount(examples[fw]) > COLLAPSE_AFTER}
+          />
         </div>
       ))
     }

@@ -1,6 +1,6 @@
 ---
 title: Divider
-description: A horizontal or vertical rule with an optional label, drawn from the --border slot by the shared stylesheet.
+description: A horizontal or vertical rule that separates content, with an optional label.
 group: Components
 order: 16
 component: Divider
@@ -29,23 +29,36 @@ import Preview from "../../../components/Preview.astro";
 import PropsTable from "../../../components/PropsTable.astro";
 import Install from "../../../components/Install.astro";
 import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
 import DividerDemo from "../../../examples/divider/divider.svelte";
-import reactExample from "../../../examples/divider/react.tsx?raw";
-import vueExample from "../../../examples/divider/vue.vue?raw";
-import solidExample from "../../../examples/divider/solid.tsx?raw";
-import svelteExample from "../../../examples/divider/divider.svelte?raw";
-
-Divider is CSS-only: there is no headless machine behind a rule. The two halves
-of the line are the root's `::before`/`::after`, so a bare divider is one
-continuous stroke and a labelled one splits around `[data-part="label"]` with no
-extra markup. `data-orientation`/`data-align` from the recipe key every style in
-`components.css`.
+import baseReact from "../../../examples/divider/react.tsx?raw";
+import baseVue from "../../../examples/divider/vue.vue?raw";
+import baseSolid from "../../../examples/divider/solid.tsx?raw";
+import baseSvelte from "../../../examples/divider/divider.svelte?raw";
+import DividerLabelDemo from "../../../examples/divider/label/divider-label.svelte";
+import labelReact from "../../../examples/divider/label/react.tsx?raw";
+import labelVue from "../../../examples/divider/label/vue.vue?raw";
+import labelSolid from "../../../examples/divider/label/solid.tsx?raw";
+import labelSvelte from "../../../examples/divider/label/divider-label.svelte?raw";
+import DividerAlignDemo from "../../../examples/divider/align/divider-align.svelte";
+import alignReact from "../../../examples/divider/align/react.tsx?raw";
+import alignVue from "../../../examples/divider/align/vue.vue?raw";
+import alignSolid from "../../../examples/divider/align/solid.tsx?raw";
+import alignSvelte from "../../../examples/divider/align/divider-align.svelte?raw";
+import DividerVerticalDemo from "../../../examples/divider/vertical/divider-vertical.svelte";
+import verticalReact from "../../../examples/divider/vertical/react.tsx?raw";
+import verticalVue from "../../../examples/divider/vertical/vue.vue?raw";
+import verticalSolid from "../../../examples/divider/vertical/solid.tsx?raw";
+import verticalSvelte from "../../../examples/divider/vertical/divider-vertical.svelte?raw";
+import DividerVerticalLabelDemo from "../../../examples/divider/vertical-label/divider-vertical-label.svelte";
+import verticalLabelReact from "../../../examples/divider/vertical-label/react.tsx?raw";
+import verticalLabelVue from "../../../examples/divider/vertical-label/vue.vue?raw";
+import verticalLabelSolid from "../../../examples/divider/vertical-label/solid.tsx?raw";
+import verticalLabelSvelte from "../../../examples/divider/vertical-label/divider-vertical-label.svelte?raw";
 
 <FrameworkSelect locale="en" />
 
-<Preview
-  examples={{ react: reactExample, vue: vueExample, solid: solidExample, svelte: svelteExample }}
->
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
   <DividerDemo client:visible />
 </Preview>
 
@@ -53,6 +66,125 @@ extra markup. `data-orientation`/`data-align` from the recipe key every style in
 
 <Install pkg="@moderno-ui/react" />
 
-## Props
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { Divider } from "@moderno-ui/react";
+```
+
+```tsx
+<Divider>Or continue with</Divider>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Divider } from "@moderno-ui/vue";
+```
+
+```vue
+<Divider>Or continue with</Divider>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Divider } from "@moderno-ui/svelte";
+```
+
+```svelte
+<Divider>Or continue with</Divider>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Divider } from "@moderno-ui/solid";
+```
+
+```tsx
+<Divider>Or continue with</Divider>
+```
+
+</ForFramework>
+
+## API Reference
+
+### Divider
+
+Renders a `<div>`; its children become the label. `orientation` defaults to `horizontal` and `align` to `center`.
 
 <PropsTable component="Divider" />
+
+### Parts
+
+| Part    | Element  | Description                                                                                    |
+| ------- | -------- | ---------------------------------------------------------------------------------------------- |
+| `root`  | `<div>`  | The rule. Carries `data-orientation` and `data-align`; the stroke is its `::before`/`::after`. |
+| `label` | `<span>` | Rendered only when there are children.                                                         |
+
+### Semantics
+
+| Divider            | `role`      | `aria-orientation` |
+| ------------------ | ----------- | ------------------ |
+| Bare (no children) | `separator` | The `orientation`  |
+| Labelled           | none        | none               |
+
+## Examples
+
+### With a label
+
+<Preview examples={{ react: labelReact, vue: labelVue, solid: labelSolid, svelte: labelSvelte }}>
+  <DividerLabelDemo client:visible />
+</Preview>
+
+### Label alignment
+
+`start` and `end` shorten the leading or trailing half to one `--spacing-4` step.
+
+<Preview examples={{ react: alignReact, vue: alignVue, solid: alignSolid, svelte: alignSvelte }}>
+  <DividerAlignDemo client:visible />
+</Preview>
+
+### Vertical
+
+<Preview
+  examples={{
+    react: verticalReact,
+    vue: verticalVue,
+    solid: verticalSolid,
+    svelte: verticalSvelte,
+  }}
+>
+  <DividerVerticalDemo client:visible />
+</Preview>
+
+### Vertical with a label
+
+The caption turns sideways, so the row needs real height for the stroke to show past it.
+
+<Preview
+  examples={{
+    react: verticalLabelReact,
+    vue: verticalLabelVue,
+    solid: verticalLabelSolid,
+    svelte: verticalLabelSvelte,
+  }}
+>
+  <DividerVerticalLabelDemo client:visible />
+</Preview>
+
+## Notes
+
+- A labelled divider drops `role="separator"`, because that role would hide the label from assistive tech.
+- `align` only moves the label; it does nothing on a bare divider.
+- A vertical divider stretches to the height of its row, with a `--spacing-4` minimum.
+- The stroke is `--border` and the label is `--muted-foreground`; never pass a colour.

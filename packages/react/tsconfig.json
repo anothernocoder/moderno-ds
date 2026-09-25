@@ -12,7 +12,6 @@
     "test/**/*.tsx",
     "playground/**/*.tsx",
     "tsup.config.ts",
-    "../../apps/docs/src/examples/**/react.tsx",
-    "../../apps/docs/src/examples/field/invalid-snippet.tsx"
+    "../../apps/docs/src/examples/**/react.tsx"
   ]
 }

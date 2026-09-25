@@ -49,3 +49,22 @@ export function sidebarSections(pages: readonly NavPage[]): NavSection[] {
   }
   return [...sections].map(([group, groupPages]) => ({ group, pages: groupPages }));
 }
+
+export interface PagerLinks {
+  prev?: NavPage;
+  next?: NavPage;
+}
+
+/**
+ * The previous and next page for the pager at the foot of a docs page — the
+ * neighbours in the order the sidebar lists them (its sections flattened), so
+ * reading "Next" walks the sidebar top to bottom. Crosses section boundaries;
+ * the first page has no `prev`, the last no `next`, and a slug the sidebar
+ * does not list gets neither.
+ */
+export function pagerLinks(sections: readonly NavSection[], slug: string): PagerLinks {
+  const flat = sections.flatMap((s) => s.pages);
+  const i = flat.findIndex((p) => p.slug === slug);
+  if (i === -1) return {};
+  return { prev: flat[i - 1], next: flat[i + 1] };
+}

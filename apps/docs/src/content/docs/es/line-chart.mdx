@@ -1,6 +1,6 @@
 ---
 title: Gráfico de líneas
-description: Un gráfico de líneas en SVG puro mapeado desde charts-core; el color de cada serie viene de los slots --chart-* por índice.
+description: Un gráfico de líneas en SVG que muestra cómo cambian una o más series sobre un eje continuo.
 group: Componentes
 order: 50
 component: LineChart
@@ -11,21 +11,28 @@ import Preview from "../../../components/Preview.astro";
 import PropsTable from "../../../components/PropsTable.astro";
 import Install from "../../../components/Install.astro";
 import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
 import LineChartDemo from "../../../examples/line-chart/line-chart.svelte";
-import reactExample from "../../../examples/line-chart/react.tsx?raw";
-import vueExample from "../../../examples/line-chart/vue.vue?raw";
-import solidExample from "../../../examples/line-chart/solid.tsx?raw";
-import svelteExample from "../../../examples/line-chart/line-chart.svelte?raw";
-
-LineChart es un mapeo determinista desde un modelo construido por
-`@moderno-ui/charts-core` hacia elementos `<path>`. No incluye color propio — cada
-serie se pinta con `--chart-1…5` según su índice, así se re-tematiza con el
-resto del sistema.
+import baseReact from "../../../examples/line-chart/react.tsx?raw";
+import baseVue from "../../../examples/line-chart/vue.vue?raw";
+import baseSolid from "../../../examples/line-chart/solid.tsx?raw";
+import baseSvelte from "../../../examples/line-chart/line-chart.svelte?raw";
+import LineChartMultipleSeriesDemo from "../../../examples/line-chart/multiple-series/line-chart-multiple-series.svelte";
+import multipleSeriesReact from "../../../examples/line-chart/multiple-series/react.tsx?raw";
+import multipleSeriesVue from "../../../examples/line-chart/multiple-series/vue.vue?raw";
+import multipleSeriesSolid from "../../../examples/line-chart/multiple-series/solid.tsx?raw";
+import multipleSeriesSvelte from "../../../examples/line-chart/multiple-series/line-chart-multiple-series.svelte?raw";
+import LineChartCurveDemo from "../../../examples/line-chart/curve/line-chart-curve.svelte";
+import curveReact from "../../../examples/line-chart/curve/react.tsx?raw";
+import curveVue from "../../../examples/line-chart/curve/vue.vue?raw";
+import curveSolid from "../../../examples/line-chart/curve/solid.tsx?raw";
+import curveSvelte from "../../../examples/line-chart/curve/line-chart-curve.svelte?raw";
 
 <FrameworkSelect locale="es" />
 
 <Preview
-  examples={{ react: reactExample, vue: vueExample, solid: solidExample, svelte: svelteExample }}
+  layout="fill"
+  examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}
 >
   <LineChartDemo client:visible />
 </Preview>
@@ -34,6 +41,172 @@ resto del sistema.
 
 <Install pkg="@moderno-ui/react" />
 
-## Propiedades
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { LineChart } from "@moderno-ui/react";
+
+const series = [
+  {
+    name: "Sessions",
+    points: [
+      { x: 0, y: 12 },
+      { x: 1, y: 28 },
+      { x: 2, y: 40 },
+    ],
+  },
+];
+```
+
+```tsx
+<LineChart width={520} height={260} series={series} />
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import { LineChart } from "@moderno-ui/vue";
+
+const series = [
+  {
+    name: "Sessions",
+    points: [
+      { x: 0, y: 12 },
+      { x: 1, y: 28 },
+      { x: 2, y: 40 },
+    ],
+  },
+];
+</script>
+```
+
+```vue
+<template>
+  <LineChart :width="520" :height="260" :series="series" />
+</template>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import { LineChart } from "@moderno-ui/svelte";
+
+  const series = [
+    {
+      name: "Sessions",
+      points: [
+        { x: 0, y: 12 },
+        { x: 1, y: 28 },
+        { x: 2, y: 40 },
+      ],
+    },
+  ];
+</script>
+```
+
+```svelte
+<LineChart width={520} height={260} {series} />
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { LineChart } from "@moderno-ui/solid";
+
+const series = [
+  {
+    name: "Sessions",
+    points: [
+      { x: 0, y: 12 },
+      { x: 1, y: 28 },
+      { x: 2, y: 40 },
+    ],
+  },
+];
+```
+
+```tsx
+<LineChart width={520} height={260} series={series} />
+```
+
+</ForFramework>
+
+## Referencia de API
+
+### LineChart
 
 <PropsTable component="LineChart" />
+
+### Series
+
+Cada entrada de `series` es una línea.
+
+| Campo    | Tipo                         | Descripción                                        |
+| -------- | ---------------------------- | -------------------------------------------------- |
+| `name`   | `string`                     | Etiqueta opcional de la serie.                     |
+| `points` | `{ x: number; y: number }[]` | Los puntos de datos, unidos en el orden del array. |
+
+### Valores por defecto
+
+| Prop               | Por defecto                                                               |
+| ------------------ | ------------------------------------------------------------------------- |
+| `xDomain`          | El rango de todos los valores x de todas las series.                      |
+| `yDomain`          | Todos los valores y más el 0, redondeados hacia afuera a números limpios. |
+| `xTicks`, `yTicks` | `5`                                                                       |
+| `margin`           | `{ top: 16, right: 16, bottom: 28, left: 36 }`                            |
+| `curve`            | Segmentos rectos                                                          |
+| `format`           | El número, redondeado a 4 decimales                                       |
+
+### Atributos de datos
+
+| Atributo      | En              | Valores                                                                  |
+| ------------- | --------------- | ------------------------------------------------------------------------ |
+| `data-chart`  | `svg` raíz      | `line`                                                                   |
+| `data-part`   | Cada elemento   | `root`, `grid`, `grid-line`, `axis-line`, `tick-label`, `series`, `line` |
+| `data-series` | `g` de la serie | Índice desde 0, asignado de `--chart-1` a `--chart-5`                    |
+
+## Ejemplos
+
+### Varias series
+
+Todas las series comparten un marco, y cada línea toma el siguiente slot `--chart-*`.
+
+<Preview
+  layout="fill"
+  examples={{
+    react: multipleSeriesReact,
+    vue: multipleSeriesVue,
+    solid: multipleSeriesSolid,
+    svelte: multipleSeriesSvelte,
+  }}
+>
+  <LineChartMultipleSeriesDemo client:visible />
+</Preview>
+
+### Curva
+
+Pasa una fábrica de curvas de `@moderno-ui/charts-core`: `curveMonotoneX`, `curveNatural`, `curveBasis`, `curveStep` o `curveLinear`.
+
+<Preview
+  layout="fill"
+  examples={{ react: curveReact, vue: curveVue, solid: curveSolid, svelte: curveSvelte }}
+>
+  <LineChartCurveDemo client:visible />
+</Preview>
+
+## Notas
+
+- No hay prop de color: las series se pintan de `--chart-1` a `--chart-5` por índice.
+- La sexta serie y las siguientes vuelven a `--chart-1`.
+- La cuadrícula, los ejes y las etiquetas usan `--border` y `--muted-foreground`.
+- La geometría viene de `@moderno-ui/charts-core`, matemática pura sin DOM, así se renderiza en el servidor.

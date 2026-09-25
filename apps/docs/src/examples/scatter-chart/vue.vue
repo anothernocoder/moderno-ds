@@ -1,6 +1,6 @@
 <!--
-  ScatterChart — pure SVG over @moderno-ui/charts-core; colour comes from the
-  `--chart-*` token slots via the series index, nothing baked in here.
+  One marker per (x, y) sample, no connecting line; its colour comes
+  from the `--chart-1` token slot, nothing baked in here — @moderno-ui/vue.
 -->
 <script setup lang="ts">
 import { ScatterChart } from "@moderno-ui/vue";
@@ -21,5 +21,5 @@ const series = [
 </script>
 
 <template>
-  <ScatterChart :width="520" :height="260" :series="series" :radius="4" />
+  <ScatterChart :width="520" :height="260" :series="series" />
 </template>

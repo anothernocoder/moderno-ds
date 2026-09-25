@@ -22,10 +22,18 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 const bundlePath = `${base}/${locale}/pagefind/`;
 ---
 
-<div data-pagefind-ignore>
-  <button type="button" class="search-trigger" data-search-trigger aria-haspopup="dialog">
-    <SearchIcon aria-hidden="true" size={16} />
-    <span>{t("search.trigger")}</span>
+<div class="search" data-pagefind-ignore>
+  <button
+    type="button"
+    class="search-trigger"
+    data-search-trigger
+    aria-haspopup="dialog"
+    aria-label={t("search.label")}
+    aria-keyshortcuts="Meta+K Control+K"
+  >
+    <SearchIcon aria-hidden="true" size={15} />
+    <span class="search-trigger-label">{t("search.trigger")}</span>
+    <kbd class="search-trigger-kbd" aria-hidden="true">{t("search.shortcut")}</kbd>
   </button>
 
   <dialog class="search-dialog" data-search-dialog data-bundle={bundlePath} aria-label={t("search.label")}>

@@ -14,9 +14,9 @@
  * form-layout is the block that leans hardest on ADR-0005: it makes three
  * layout decisions, one per contract step, and each is read off the width of
  * the element it was mounted in rather than the window. So the assertions below
- * are stated as a function of that container width and checked against every
- * copy on the page at once — which is why the narrow sidebar figure stays
- * stacked at 1280 while the wide figure has already crossed all three steps.
+ * are stated as a function of that container width and checked against the
+ * copy each state of the demo mounts — which is why the narrow frame stays stacked
+ * at 1280 while the wide frame has already crossed all three steps.
  *
  * Two claims:
  *
@@ -53,11 +53,28 @@ interface BlockMetrics {
   headingBeside: boolean;
 }
 
-/** Every mounted copy of the block on the page, in document order. */
-async function blockMetrics(page: Page): Promise<BlockMetrics[]> {
-  return page.evaluate(() => {
-    const panel = document.querySelector(".preview-panel--demo");
-    if (!panel) throw new Error("no .preview-panel--demo on the page");
+/**
+ * The page's previews (islands/FormLayoutBlockDemo.svelte): the main preview
+ * mounts the default at the stage's full width; the Examples section frames
+ * the same block at 18rem, 30rem and 50rem in one preview — one frame in each
+ * band of the three steps — then mounts the error, loading and disabled states, one
+ * Preview each. Every copy is found by the `data-demo-state` its wrapper carries.
+ */
+const STATES = ["default", "narrow", "panel", "wide", "error", "loading", "disabled"] as const;
+type State = (typeof STATES)[number];
+
+/** Bring one state's copy on screen and wait for it to render. */
+async function showState(page: Page, state: State): Promise<void> {
+  const block = page.locator(`[data-demo-state="${state}"] section.moderno-block-form-layout`);
+  await block.scrollIntoViewIfNeeded();
+  await block.waitFor({ state: "visible" });
+}
+
+/** The copies of the block mounted for one state. */
+async function blockMetrics(page: Page, state: State): Promise<BlockMetrics[]> {
+  return page.evaluate((state) => {
+    const panel = document.querySelector(`[data-demo-state="${state}"]`);
+    if (!panel) throw new Error(`no preview for the ${state} state on the page`);
     return [...panel.querySelectorAll("section.moderno-block-form-layout")].map((section) => {
       const form = section.querySelector("form");
       if (!form) throw new Error("the form-layout block did not render its own markup");
@@ -83,7 +100,7 @@ async function blockMetrics(page: Page): Promise<BlockMetrics[]> {
         headingBeside: heading.right <= fields.left + 1,
       };
     });
-  });
+  }, state);
 }
 
 /**
@@ -95,7 +112,17 @@ async function blockMetrics(page: Page): Promise<BlockMetrics[]> {
  * exactly the way it painted them.
  */
 async function contrastRatios(page: Page): Promise<Record<string, number>> {
-  return page.evaluate(() => {
+  // Two states carry the texts in question: the default form, and the alert and
+  // field errors that only the error preview mounts.
+  await showState(page, "default");
+  const form = await textRatios(page, "default");
+  await showState(page, "error");
+  const errors = await textRatios(page, "error");
+  return { ...form, ...errors };
+}
+
+async function textRatios(page: Page, state: "default" | "error"): Promise<Record<string, number>> {
+  return page.evaluate((state): Record<string, number> => {
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d", { willReadFrequently: true });
     if (!ctx) throw new Error("no 2d context");
@@ -135,14 +162,10 @@ async function contrastRatios(page: Page): Promise<Record<string, number>> {
       return getComputedStyle(document.body).backgroundColor;
     }
 
-    const panel = document.querySelector(".preview-panel--demo");
-    if (!panel) throw new Error("no .preview-panel--demo on the page");
-    const blocks = [...panel.querySelectorAll("section.moderno-block-form-layout")];
-    const first = blocks[0];
-    const withError = blocks.find((section) =>
-      section.querySelector('[data-scope="alert"][data-part="root"]'),
-    );
-    if (!first || !withError) throw new Error("the form-layout demo did not render its states");
+    const panel = document.querySelector(`[data-demo-state="${state}"]`);
+    if (!panel) throw new Error(`no preview for the ${state} state on the page`);
+    const block = panel.querySelector("section.moderno-block-form-layout");
+    if (!block) throw new Error("the form-layout demo did not render");
 
     const pick = <T extends Element>(root: Element, selector: string): T => {
       const el = root.querySelector<T>(selector);
@@ -152,25 +175,33 @@ async function contrastRatios(page: Page): Promise<Record<string, number>> {
 
     const against = (el: Element) => ratio(getComputedStyle(el).color, surfaceOf(el));
 
+    if (state === "error") {
+      if (!block.querySelector('[data-scope="alert"][data-part="root"]')) {
+        throw new Error("the error preview rendered no alert");
+      }
+      return {
+        alertTitle: against(pick(block, '[data-scope="alert"][data-part="title"]')),
+        fieldErrorText: against(pick(block, '[data-scope="field"][data-part="error-text"]')),
+      };
+    }
+
     return {
-      formTitle: against(pick(first, "h2")),
-      formDescription: against(pick(first, "header p")),
-      groupTitle: against(pick(first, "h3")),
-      fieldLabel: against(pick(first, '[data-scope="field"][data-part="label"]')),
-      helperText: against(pick(first, '[data-scope="field"][data-part="helper-text"]')),
-      checkboxLabel: against(pick(first, '[data-scope="checkbox"][data-part="label"]')),
+      formTitle: against(pick(block, "h2")),
+      formDescription: against(pick(block, "header p")),
+      groupTitle: against(pick(block, "h3")),
+      fieldLabel: against(pick(block, '[data-scope="field"][data-part="label"]')),
+      helperText: against(pick(block, '[data-scope="field"][data-part="helper-text"]')),
+      checkboxLabel: against(pick(block, '[data-scope="checkbox"][data-part="label"]')),
       submitLabel: (() => {
-        const submit = pick<HTMLElement>(first, 'button[type="submit"]');
+        const submit = pick<HTMLElement>(block, 'button[type="submit"]');
         return ratio(getComputedStyle(submit).color, surfaceOf(submit));
       })(),
       cancelLabel: (() => {
-        const cancel = pick<HTMLElement>(first, 'button[type="button"]');
+        const cancel = pick<HTMLElement>(block, 'button[type="button"]');
         return ratio(getComputedStyle(cancel).color, surfaceOf(cancel));
       })(),
-      alertTitle: against(pick(withError, '[data-scope="alert"][data-part="title"]')),
-      fieldErrorText: against(pick(withError, '[data-scope="field"][data-part="error-text"]')),
     };
-  });
+  }, state);
 }
 
 for (const scheme of ["light", "dark"] as const) {
@@ -187,16 +218,19 @@ for (const scheme of ["light", "dark"] as const) {
           scheme === "dark",
         );
 
-        const blocks = await blockMetrics(page);
-        // The demo mounts the block seven times: four container widths (a
-        // sidebar, a panel, the page column and a wide stage, one on each side
-        // of every step), then the error, loading and disabled states.
-        expect(blocks).toHaveLength(7);
-
-        for (const [index, block] of blocks.entries()) {
-          const where = `${scheme} ${width}px, copy ${index + 1} (${block.containerWidth}px)`;
+        // Seven copies: four container widths (a sidebar, a panel, the page
+        // column and a wide stage, one on each side of every step), then the
+        // error, loading and disabled states — one mounted copy each.
+        const blocks: BlockMetrics[] = [];
+        for (const state of STATES) {
+          await showState(page, state);
+          const mounted = await blockMetrics(page, state);
+          expect(mounted, `${state}: mounted copies`).toHaveLength(1);
+          const block = mounted[0]!;
+          blocks.push(block);
+          const where = `${scheme} ${width}px, ${state} (${block.containerWidth}px)`;
           // Every step is answered from the block's own container, so the
-          // answers differ between the figures at one viewport — which is the
+          // answers differ between the copies at one viewport — which is the
           // whole point of ADR-0005.
           expect(block.actionsDisplay, `${where}: actions row`).toBe(
             block.containerWidth >= CONTAINER_SM ? "flex" : "grid",
@@ -207,18 +241,18 @@ for (const scheme of ["light", "dark"] as const) {
           expect(block.headingBeside, `${where}: group heading`).toBe(
             block.containerWidth >= CONTAINER_LG,
           );
-        }
 
-        // The `@lg` figure is a stage wider than the docs column, and it scrolls
-        // inside its own figure: the panel holding the demo never does, so the
-        // page is not pushed sideways by showing the widest layout.
-        const panel = await page.evaluate(() => {
-          const el = document.querySelector(".preview-panel--demo") as HTMLElement;
-          return { scroll: el.scrollWidth, client: el.clientWidth };
-        });
-        expect(panel.scroll, `${scheme} ${width}px: demo panel overflow`).toBeLessThanOrEqual(
-          panel.client,
-        );
+          // The `@lg` frame is a stage wider than the docs column, and it scrolls
+          // inside its own frame: the panel holding the demo never does, so the
+          // page is not pushed sideways by showing the widest layout.
+          const panel = await page.evaluate((state) => {
+            const el = document
+              .querySelector(`[data-demo-state="${state}"]`)!
+              .closest(".preview-panel--demo") as HTMLElement;
+            return { scroll: el.scrollWidth, client: el.clientWidth };
+          }, state);
+          expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
+        }
 
         // Each of the three steps is exercised on both sides at every viewport,
         // so a step that silently stopped firing cannot pass this file.
@@ -226,11 +260,11 @@ for (const scheme of ["light", "dark"] as const) {
         for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
           expect(
             widths.some((w) => w < step),
-            `${scheme} ${width}px: a figure under ${step}px`,
+            `${scheme} ${width}px: a copy under ${step}px`,
           ).toBe(true);
           expect(
             widths.some((w) => w >= step),
-            `${scheme} ${width}px: a figure over ${step}px`,
+            `${scheme} ${width}px: a copy over ${step}px`,
           ).toBe(true);
         }
       });

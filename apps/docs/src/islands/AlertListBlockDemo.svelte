@@ -1,147 +1,86 @@
 <!--
-  The alert-list block, mounted eight times: four container widths — one in each
-  band of the block's three steps — and then the empty, loading, error and
-  disabled states in the page column.
+  The alert-list block in one state per Preview: the page's main preview mounts
+  `default`, and each example under it mounts one other state.
 
   This is the registry source itself (registry/blocks/alert-list/svelte), not a
   copy — what renders below is byte-for-byte what `moderno add alert-list-svelte`
   writes into a consumer project, so the demo cannot drift from the file the docs
   print underneath it.
 
-  Why four widths side by side: a notification centre is exactly the block that
-  gets mounted in a 320px drawer on one screen and across an activity page on the
-  next, and all three of its layout changes are container-driven, not
-  viewport-driven (ADR-0005). The drawer figure sits below `--container-sm`, so
-  the header stacks, the dismiss controls are glyphs and each timestamp sits under
-  its title; the panel figure sits between `--container-sm` and `--container-md`,
-  so the header lines up but the dismiss controls stay glyphs; the page column
-  crosses `--container-md` and the dismiss controls grow their label; the wide
-  stage crosses `--container-lg` and every timestamp moves to the trailing edge.
-  Read top to bottom, the four figures are the block's whole responsive story on
-  one screen — and they disagree with each other at the same viewport, which is
-  the point of a container query.
+  `widths` frames the same file three times, one in each band of the block's
+  steps (ADR-0005): 18rem is below `--container-sm` (header stacks, dismiss
+  glyphs, timestamps under titles), 30rem sits between `--container-sm` and
+  `--container-md` (header on one row, dismiss still glyphs), and 50rem crosses
+  `--container-lg` (timestamps on the trailing edge). The page column itself,
+  the `default` state, crosses `--container-md` on a desktop, so the dismiss
+  controls grow their label there.
 
-  The demo is presentational, like the block: nothing here removes an alert, so
-  every figure keeps rendering the same four notifications however often you
-  click. Dismissal is the consumer's own state, which is exactly what the block's
-  props say.
+  The `@lg` step is 48rem and the docs column never reaches it, so the wide frame
+  holds a 50rem stage and scrolls sideways inside itself; the page never does.
+
+  The demo is presentational, like the block: nothing here removes an alert.
+  `data-demo-state` names each copy's state on its wrapper, so the e2e spec can
+  find each copy by what it is meant to show.
 -->
 <script lang="ts">
   import AlertList from "../../../../registry/blocks/alert-list/svelte/AlertList.svelte";
+
+  type State = "default" | "widths" | "empty" | "loading" | "error" | "disabled";
+
+  let { locale = "en", state = "default" }: { locale?: "en" | "es"; state?: State } = $props();
+
+  const error = {
+    en: "We could not load your notifications.",
+    es: "No pudimos cargar tus notificaciones.",
+  }[locale];
 </script>
 
-<div class="demo-containers">
-  <figure class="demo-container">
-    <div class="demo-drawer">
-      <AlertList />
+<div class="demo-state" data-demo-state={state}>
+  {#if state === "widths"}
+    <div class="demo-widths">
+      <div data-demo-state="narrow" class="demo-viewport" style="--viewport-width: 18rem" data-label="18rem">
+        <AlertList />
+      </div>
+      <div data-demo-state="panel" class="demo-viewport" style="--viewport-width: 30rem" data-label="30rem">
+        <AlertList />
+      </div>
+      <div data-demo-state="wide" class="demo-viewport" style="--viewport-width: 50rem" data-label="50rem">
+        <div class="demo-scroll">
+          <div class="demo-wide"><AlertList /></div>
+        </div>
+      </div>
     </div>
-    <figcaption>
-      Narrow container — a notification drawer under <code>--container-sm</code>: the header stacks,
-      each dismiss control is a glyph and each timestamp sits under its title
-    </figcaption>
-  </figure>
-
-  <figure class="demo-container">
-    <div class="demo-panel">
-      <AlertList />
-    </div>
-    <figcaption>
-      Panel — past <code>--container-sm</code>, under <code>--container-md</code>: the heading and
-      “Dismiss all” share a row, the dismiss controls are still glyphs
-    </figcaption>
-  </figure>
-
-  <figure class="demo-container">
-    <AlertList />
-    <figcaption>
-      Page column — past <code>--container-md</code> each dismiss control grows its label
-    </figcaption>
-  </figure>
-
-  <figure class="demo-container">
-    <div class="demo-wide">
-      <div class="demo-wide-inner"><AlertList /></div>
-    </div>
-    <figcaption>
-      Wide container — past <code>--container-lg</code> each timestamp leaves the stack under its
-      title and lines up on the trailing edge, on the title's baseline. The docs prose column is
-      narrower than that step, so this figure holds a wider stage and scrolls sideways inside itself
-      rather than pretending the layout does not exist — <strong>scroll it to the right</strong> to
-      see the timestamps in their column.
-    </figcaption>
-  </figure>
-
-  <figure class="demo-container">
+  {:else if state === "empty"}
     <AlertList alerts={[]} />
-    <figcaption>
-      Empty — the list loaded and there is nothing in it, which is a render of its own rather than a
-      blank space
-    </figcaption>
-  </figure>
-
-  <figure class="demo-container">
+  {:else if state === "loading"}
     <AlertList loading />
-    <figcaption>
-      Loading — a busy region stands in for the list, so nobody acts on rows that are about to
-      change
-    </figcaption>
-  </figure>
-
-  <figure class="demo-container">
-    <AlertList error="We could not load your notifications." />
-    <figcaption>Error — the list itself failed, so one alert states it and offers a retry</figcaption>
-  </figure>
-
-  <figure class="demo-container">
+  {:else if state === "error"}
+    <AlertList {error} />
+  {:else if state === "disabled"}
     <AlertList disabled />
-    <figcaption>
-      Disabled — the alerts stay readable and every control is inert (an audit or read-only view)
-    </figcaption>
-  </figure>
+  {:else}
+    <AlertList />
+  {/if}
 </div>
 
 <style>
-  /* `minmax(0, 1fr)`, not the implicit `auto`: an auto track is sized from its
-     items' max-content, and the mock containers below carry definite widths
-     wider than the docs column on a phone — which would push the whole preview
-     panel sideways instead of letting each figure fit. Capping the track keeps
-     the horizontal scrolling inside the one figure that asks for it. */
-  .demo-containers {
+  /* The three frames stack, with room for each frame's label on its border.
+     `minmax(0, 1fr)`, not the implicit `auto`: an auto track grows to its
+     items' min-content, and the 50rem stage below would widen the track past
+     the panel, pushing the whole preview sideways instead of scrolling inside
+     its own frame. */
+  .demo-widths {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    gap: var(--spacing-8);
+    gap: 2.5rem;
   }
-  .demo-container {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--spacing-3);
-    margin: 0;
-  }
-  /* Mock containers, one in each band of the block's steps, so the stacked
-     header is on screen next to the lined-up one and the glyph-only dismiss
-     next to the labelled one. The widths are the demo's, not the design
-     system's — the block itself sizes only from contract slots. */
-  .demo-drawer {
-    width: 18rem;
-    max-width: 100%;
-  }
-  .demo-panel {
-    width: 30rem;
-    max-width: 100%;
-  }
-  /* The `@lg` step is 48rem and the docs prose column never reaches it, so this
-     figure carries its own stage past the step and scrolls inside itself. The
-     scroll is the demo's, not the block's: the page body never scrolls
-     sideways, and the block is measuring this stage exactly as it would measure
-     a real 50rem activity column. */
-  .demo-wide {
+  /* The frame never outgrows the stage, so the 50rem the `@lg` step needs is
+     carried by this inner stage and scrolled inside the frame. The width is the
+     demo's, not the design system's — the block sizes only from contract slots. */
+  .demo-scroll {
     overflow-x: auto;
   }
-  .demo-wide-inner {
+  .demo-wide {
     width: 50rem;
-  }
-  figcaption {
-    color: var(--muted-foreground);
-    font-size: 0.875em;
   }
 </style>

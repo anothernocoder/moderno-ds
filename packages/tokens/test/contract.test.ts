@@ -81,6 +81,7 @@ describe("@moderno-ui/tokens — contract data", () => {
     expect(slotType("font-serif")).toBe("fontFamily");
     expect(slotType("shadow-md")).toBe("shadow");
     expect(slotType("container-lg")).toBe("dimension");
+    expect(slotType("overlay")).toBe("color");
   });
 
   it("carries the display face, elevation and container slots as extended", () => {
@@ -95,6 +96,17 @@ describe("@moderno-ui/tokens — contract data", () => {
     ]) {
       expect(EXTENDED_SLOTS, `--${slot} is not an extended slot`).toContain(slot);
     }
+  });
+
+  /*
+   * `--overlay` is a colour, but a theme is not required to define it: it is
+   * extended, so it stays out of the mandatory colour list (theme-compile's
+   * required slots) and out of the editor's colour groups.
+   */
+  it("carries the modal scrim as an extended colour, not a required one", () => {
+    expect(EXTENDED_SLOTS).toContain("overlay");
+    expect(COLOR_SLOTS).not.toContain("overlay");
+    expect(COLOR_GROUPS.flatMap((g) => g.slots)).not.toContain("overlay");
   });
 });
 
@@ -124,6 +136,15 @@ describe("@moderno-ui/tokens — dark variant", () => {
     expect(tokenRules.has(".dark")).toBe(true);
     for (const slot of ["background", "foreground", "primary"]) {
       expect(dark.get(slot), `--${slot} not overridden in .dark`).toMatch(/^oklch\(/);
+    }
+  });
+
+  it("gives the modal scrim a denser dark value, and keeps it a black wash in both", () => {
+    expect(dark.get("overlay"), "--overlay not overridden in .dark").toBeTruthy();
+    expect(dark.get("overlay")).not.toBe(root.get("overlay"));
+    // A mix of --foreground would turn milky grey on a dark page.
+    for (const value of [root.get("overlay"), dark.get("overlay")]) {
+      expect(value).toMatch(/^oklch\(0 0 0 \/ [\d.]+\)$/);
     }
   });
 
@@ -168,6 +189,13 @@ describe("@moderno-ui/tokens — Tailwind v4 preset", () => {
   it("maps every colour slot to a utility variable via @theme inline", () => {
     expect(presetCss).toMatch(/@theme\s+inline/);
     for (const slot of COLOR_SLOTS) {
+      const re = new RegExp(`--color-${slot}:\\s*var\\(--${slot}\\)`);
+      expect(presetCss, `--color-${slot} not mapped`).toMatch(re);
+    }
+  });
+
+  it("maps the extended colour slots too (bg-overlay)", () => {
+    for (const slot of CONTRACT.filter((s) => s.type === "color").map((s) => s.name)) {
       const re = new RegExp(`--color-${slot}:\\s*var\\(--${slot}\\)`);
       expect(presetCss, `--color-${slot} not mapped`).toMatch(re);
     }

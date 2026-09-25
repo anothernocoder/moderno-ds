@@ -1,6 +1,6 @@
 ---
 title: Form layout
-description: The grouped settings form — a heading and a description per group of related fields, a field grid that pairs off when there is room, and one actions row — composed from Field, Checkbox, Divider, Button and Alert.
+description: Settings form with titled groups of fields, a responsive field grid and one actions row.
 group: Blocks
 order: 102
 agent:
@@ -29,86 +29,152 @@ agent:
 import Preview from "../../../components/Preview.astro";
 import Install from "../../../components/Install.astro";
 import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
 import FormLayoutBlockDemo from "../../../islands/FormLayoutBlockDemo.svelte";
 import formLayoutReact from "../../../../../../registry/blocks/form-layout/react/form-layout.tsx?raw";
 import formLayoutVue from "../../../../../../registry/blocks/form-layout/vue/FormLayout.vue?raw";
 import formLayoutSolid from "../../../../../../registry/blocks/form-layout/solid/form-layout.tsx?raw";
 import formLayoutSvelte from "../../../../../../registry/blocks/form-layout/svelte/FormLayout.svelte?raw";
 
-**Form layout** is the shape every settings page ends up needing: related fields
-gathered into a titled group with a sentence explaining it, groups separated by a
-rule, and one actions row that commits the whole thing. It composes `Field`,
-`Checkbox`, `Divider`, `Button` and `Alert` and paints nothing of its own, so a
-theme re-skins it untouched.
-
-It is a _block_, not a screen: it does not own the viewport and holds no values.
-The example ships an account-settings form because a block has to be something
-concrete — the groups, the fields and the copy are yours to rewrite the moment
-`moderno add` copies the file.
+export const examples = {
+  react: formLayoutReact,
+  vue: formLayoutVue,
+  solid: formLayoutSolid,
+  svelte: formLayoutSvelte,
+};
 
 <FrameworkSelect locale="en" />
 
-<Preview
-  examples={{
-    react: formLayoutReact,
-    vue: formLayoutVue,
-    solid: formLayoutSolid,
-    svelte: formLayoutSvelte,
-  }}
->
-  <FormLayoutBlockDemo client:visible />
+<Preview examples={examples} layout="fill">
+  <FormLayoutBlockDemo client:visible locale="en" />
 </Preview>
 
 ## Installation
 
 <Install item="form-layout" />
 
-Installing a block copies its file into your project and records it in
-`.moderno/manifest.json` under its own version, so `moderno update` and
-`moderno diff` keep working per item. From that moment the file is yours.
+## Usage
 
-## Sizing
+<ForFramework fw="react">
 
-This is the block that leans hardest on the container-query policy, because a
-form changes shape three times as it is given room — and each change is a
-different decision:
+```tsx
+import { FormLayout } from "@/components/blocks/form-layout";
+```
 
-| Step  | Slot             | What changes                                                            |
-| ----- | ---------------- | ----------------------------------------------------------------------- |
-| `@sm` | `--container-sm` | The actions row stops stacking and lines up to the trailing edge.       |
-| `@md` | `--container-md` | The field grid goes one-up → two-up, so short fields pair off.          |
-| `@lg` | `--container-lg` | Each group's heading leaves the top of its fields and sits beside them. |
+```tsx
+<FormLayout onSubmit={handleSubmit} onCancel={handleCancel} />
+```
 
-None of that reads the window. The same file is correct in a 320px settings
-sidebar, in a 480px panel, in the page column and on a 50rem stage, in light and
-dark alike, without a single media query — which is why the preview above mounts
-it at four widths at once and they disagree with each other on one screen. The
-rules behind this are in [Blocks and containers](/en/blocks-and-containers/) and
-ADR-0005.
+</ForFramework>
+<ForFramework fw="vue">
 
-## States
+```vue
+<script setup lang="ts">
+import FormLayout from "@/components/blocks/FormLayout.vue";
+</script>
+```
 
-| State           | What renders                                                                                                                             |
-| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| Default / empty | The pristine form — placeholders and helper text, no values. A form is the input surface, so "nothing entered yet" is its resting state. |
-| Hover           | The controls' own affordances from `components.css`: the field borders raise to `--ring`, the buttons lift a step.                       |
-| Focus visible   | The shared 2px `--ring` outline on every control and on both actions; an invalid field keeps the destructive colour while focused.       |
-| Disabled        | `disabled` — the form is read-only (a viewer-role member, a locked account). Controls take the muted fill.                               |
-| Loading         | `loading` — every control and both actions inert, the submit `aria-busy` with a spinner that stops under `prefers-reduced-motion`.       |
-| Error           | `error` raises one form-level `Alert`; each key in `errors` marks that field invalid and prints its own `Field.ErrorText`.               |
+```vue
+<FormLayout @submit="handleSubmit" @cancel="handleCancel" />
+```
 
-Unlike [Login form](/en/login-form/), which must never say _which_ credential was
-wrong, this block names the field. The person editing a settings form already
-owns the account, so there is nothing to leak, and "Enter a valid email address"
-next to the box is the only message they can act on.
+</ForFramework>
+<ForFramework fw="svelte">
 
-## Props
+```svelte
+<script lang="ts">
+  import FormLayout from "@/components/blocks/FormLayout.svelte";
+</script>
+```
 
-| Prop       | Type                     | Default | What it does                                                                                 |
-| ---------- | ------------------------ | ------- | -------------------------------------------------------------------------------------------- |
-| `error`    | `string`                 | —       | Form-level failure message; renders the alert above the first group.                         |
-| `errors`   | `Record<string, string>` | —       | Per-field messages keyed by the field's `name`; each marks that field invalid.               |
-| `loading`  | `boolean`                | `false` | The save is in flight: controls inert, submit busy.                                          |
-| `disabled` | `boolean`                | `false` | The form is read-only.                                                                       |
-| `onSubmit` | submit handler           | —       | The native submit event. React/Solid take `onSubmit`, Svelte `onsubmit`, Vue emits `submit`. |
-| `onCancel` | handler                  | —       | The trailing "Cancel". React/Solid take `onCancel`, Svelte `oncancel`, Vue emits `cancel`.   |
+```svelte
+<FormLayout onsubmit={handleSubmit} oncancel={handleCancel} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { FormLayout } from "@/components/blocks/form-layout";
+```
+
+```tsx
+<FormLayout onSubmit={handleSubmit} onCancel={handleCancel} />
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+| Prop       | Type                     | Default | Description                                                      |
+| ---------- | ------------------------ | ------- | ---------------------------------------------------------------- |
+| `error`    | `string`                 | —       | Form-level alert above the first group.                          |
+| `errors`   | `Record<string, string>` | —       | Per-field messages keyed by field `name`; each marks it invalid. |
+| `loading`  | `boolean`                | `false` | Disables every control and marks the submit `aria-busy`.         |
+| `disabled` | `boolean`                | `false` | The form is read-only.                                           |
+| `onSubmit` | `(event) => void`        | —       | Native submit event. Svelte: `onsubmit`. Vue: `@submit`.         |
+| `onCancel` | `() => void`             | —       | The "Cancel" button. Svelte: `oncancel`. Vue: `@cancel`.         |
+
+### Fields
+
+| Group         | Field           | `name`           |
+| ------------- | --------------- | ---------------- |
+| Profile       | Full name       | `fullName`       |
+| Profile       | Email           | `email`          |
+| Profile       | About           | `about`          |
+| Notifications | Product updates | `productUpdates` |
+| Notifications | Security alerts | `securityAlerts` |
+
+### States
+
+| State        | Prop       | What renders                                                         |
+| ------------ | ---------- | -------------------------------------------------------------------- |
+| Default      | —          | The empty form with placeholders and helper text.                    |
+| Error        | `error`    | One form-level alert for the save.                                   |
+| Field errors | `errors`   | Each named field goes invalid and prints its own message.            |
+| Loading      | `loading`  | Every control and both actions disabled; the submit shows a spinner. |
+| Disabled     | `disabled` | Every control and both actions disabled.                             |
+
+### Sizing
+
+| Container step           | What changes                                          |
+| ------------------------ | ----------------------------------------------------- |
+| `@sm` (`--container-sm`) | The actions row stops stacking and aligns to the end. |
+| `@md` (`--container-md`) | The fields pair off two per row.                      |
+| `@lg` (`--container-lg`) | Each group heading moves beside its fields.           |
+
+## Examples
+
+### Container widths
+
+The same form at 18rem, 30rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <FormLayoutBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Error
+
+<Preview examples={examples} layout="fill">
+  <FormLayoutBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <FormLayoutBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <FormLayoutBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Presentational: the controls are uncontrolled and it sends no request. Read the form in your submit handler.
+- `error` and `errors` are independent. Passing only `errors` marks the fields without an alert.
+- For credentials, use [Login form](/en/login-form/) instead.

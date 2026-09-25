@@ -82,6 +82,14 @@
   --shadow-lg: 0 4px 8px -2px oklch(0 0 0 / 0.08), 0 12px 28px -6px oklch(0 0 0 / 0.12);
 
   /*
+   * — Extended: modal scrim — the wash behind a dialog or command palette.
+   * Always a translucent black, never a mix of --foreground: in dark mode that
+   * slot is near-white and would turn the scrim milky grey. Paired with a
+   * backdrop blur where it is painted, so the page underneath recedes.
+   */
+  --overlay: oklch(0 0 0 / 0.32);
+
+  /*
    * — Extended: container breakpoints —
    * What blocks and screens respond to (ADR-0005): a block reads the width of
    * its container, never the viewport. The Tailwind preset mirrors these three
@@ -140,6 +148,9 @@
   --shadow-sm: 0 1px 2px 0 oklch(0 0 0 / 0.5);
   --shadow-md: 0 2px 4px -1px oklch(0 0 0 / 0.5), 0 4px 10px -2px oklch(0 0 0 / 0.55);
   --shadow-lg: 0 4px 8px -2px oklch(0 0 0 / 0.55), 0 12px 28px -6px oklch(0 0 0 / 0.6);
+
+  /* A dark page needs a denser wash to read as dimmed at all. */
+  --overlay: oklch(0 0 0 / 0.6);
 }
 
 /*

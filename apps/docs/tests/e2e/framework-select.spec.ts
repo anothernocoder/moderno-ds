@@ -19,15 +19,19 @@ async function pickFramework(page: import("@playwright/test").Page, label: strin
 }
 
 test.describe("framework selector", () => {
-  test("switches the Preview source panel and the Install command together, on a page with one Preview", async ({
+  test("switches the main Preview's source panel and the Install command together", async ({
     page,
   }) => {
     await page.goto("/en/button/", { waitUntil: "networkidle" });
 
+    // The page's main Preview, above Installation (CONTEXT.md "Docs page
+    // anatomy"); the Examples under it are the next test's business.
+    const main = page.locator(".preview").first();
+
     // Default: React, per CONTEXT.md ("Framework selector"), before any click.
     await expect(page.getByRole("radio", { name: "React" })).toBeChecked();
-    await expect(page.locator(".preview-source[data-fw='react']")).toBeVisible();
-    await expect(page.locator(".preview-source[data-fw='vue']")).toBeHidden();
+    await expect(main.locator(".preview-source[data-fw='react']")).toBeVisible();
+    await expect(main.locator(".preview-source[data-fw='vue']")).toBeHidden();
     const bunReact = page.locator(".install-panel--bun [data-fw='react']");
     await expect(bunReact).toBeVisible();
     await expect(bunReact).toContainText("@moderno-ui/react");
@@ -35,9 +39,9 @@ test.describe("framework selector", () => {
     await pickFramework(page, "Vue");
 
     // The Preview source panel switched...
-    await expect(page.locator(".preview-source[data-fw='vue']")).toBeVisible();
-    await expect(page.locator(".preview-source[data-fw='react']")).toBeHidden();
-    await expect(page.locator(".preview-source[data-fw='vue']")).toContainText("@moderno-ui/vue");
+    await expect(main.locator(".preview-source[data-fw='vue']")).toBeVisible();
+    await expect(main.locator(".preview-source[data-fw='react']")).toBeHidden();
+    await expect(main.locator(".preview-source[data-fw='vue']")).toContainText("@moderno-ui/vue");
 
     // ...and so did the Install command, without touching the bun/pnpm/npm tab.
     const bunVue = page.locator(".install-panel--bun [data-fw='vue']");
@@ -48,37 +52,39 @@ test.describe("framework selector", () => {
     await expect.poll(() => page.evaluate((k) => localStorage.getItem(k), STORAGE_KEY)).toBe("vue");
   });
 
-  test("applies to every Preview on a page with more than one, and survives navigation", async ({
-    page,
-  }) => {
+  test("applies to every Preview on the page, and survives navigation", async ({ page }) => {
+    /** Every Preview on the page shows `fw`'s source, and no other framework's. */
+    async function everyPreviewShows(fw: string) {
+      const previews = page.locator(".preview");
+      // A component page carries its main Preview plus one per Example, so
+      // "every" has to mean more than the first one.
+      expect(await previews.count()).toBeGreaterThan(1);
+      for (const preview of await previews.all()) {
+        await expect(preview.locator(`.preview-source[data-fw='${fw}']`)).toBeVisible();
+        for (const hidden of await preview.locator(`.preview-source:not([data-fw='${fw}'])`).all()) {
+          await expect(hidden).toBeHidden();
+        }
+      }
+    }
+
     await page.goto("/en/button/", { waitUntil: "networkidle" });
     await pickFramework(page, "Solid");
-    await expect(page.locator(".preview-source[data-fw='solid']")).toBeVisible();
+    await everyPreviewShows("solid");
 
     // A fresh navigation, not a client-side transition — the persisted choice
     // has to come from localStorage via BaseLayout's inline script, not from
-    // in-memory state carried by a router.
-    await page.goto("/en/blocks/", { waitUntil: "networkidle" });
+    // in-memory state carried by a router. A block page, so the sources are
+    // registry items rather than component examples.
+    await page.goto("/en/alert-list/", { waitUntil: "networkidle" });
 
     await expect(page.getByRole("radio", { name: "Solid" })).toBeChecked();
-
-    const solidPanels = page.locator(".preview-source[data-fw='solid']");
-    const reactPanels = page.locator(".preview-source[data-fw='react']");
-    // Five block previews on this page (login form, form layout, alert list,
-    // pricing, empty state) — every one of them switched, not just the first.
-    await expect(solidPanels).toHaveCount(5);
-    for (const panel of await solidPanels.all()) {
-      await expect(panel).toBeVisible();
-    }
-    for (const panel of await reactPanels.all()) {
-      await expect(panel).toBeHidden();
-    }
+    await everyPreviewShows("solid");
   });
 
   test("es locale renders the same control with the same values", async ({ page }) => {
     await page.goto("/es/button/", { waitUntil: "networkidle" });
     await expect(page.getByRole("radio", { name: "React" })).toBeChecked();
     await pickFramework(page, "Svelte");
-    await expect(page.locator(".preview-source[data-fw='svelte']")).toBeVisible();
+    await expect(page.locator(".preview").first().locator(".preview-source[data-fw='svelte']")).toBeVisible();
   });
 });

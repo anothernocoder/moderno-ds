@@ -1,45 +1,148 @@
 ---
 title: Installation
-description: Add Moderno to a project — install a framework binding and import the shared stylesheet once.
+description: Install a framework binding, import the shared stylesheet once, and render your first component.
 group: Start
 order: 1
 ---
 
 import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
 
-Pick the binding for your framework. Every binding depends on `@moderno-ui/core`
-(the recipes) and is painted by `@moderno-ui/css` (the shared stylesheet).
+<FrameworkSelect locale="en" />
 
-## React
+## Packages
 
-<Install pkg="@moderno-ui/react" />
+| Package                                          | Role                                                        |
+| ------------------------------------------------ | ----------------------------------------------------------- |
+| `@moderno-ui/react` · `vue` · `svelte` · `solid` | The components for your framework.                          |
+| `@moderno-ui/core`                               | Shared recipes. Installed with every binding.               |
+| `@moderno-ui/css`                                | The shared stylesheet and default theme. Peer dependency.   |
+| `@moderno-ui/cli`                                | Optional. Copies blocks, screens and themes into your code. |
+| `@moderno-ui/mcp`                                | Optional. Answers coding agents with your installed API.    |
 
-## Import the stylesheet once
+Peer requirements: React 19, Vue 3.5, Svelte 5 or Solid 1.9.
 
-Import `@moderno-ui/css` a single time at your app root — it carries the component
-styles and the default theme's contract slots.
+## Install
 
-```ts
-import "@moderno-ui/css";
+1. Install the binding for your framework.
+
+   <Install pkg="@moderno-ui/react" />
+
+2. Install the stylesheet package.
+
+   ```sh
+   npm install @moderno-ui/css
+   ```
+
+3. Import the stylesheet once, at your app root.
+
+   ```ts
+   import "@moderno-ui/css";
+   ```
+
+4. Render a component.
+
+   <ForFramework fw="react">
+
+   ```tsx
+   import { Button } from "@moderno-ui/react";
+
+   <Button>Save changes</Button>;
+   ```
+
+   </ForFramework>
+
+   <ForFramework fw="vue">
+
+   ```vue
+   <script setup lang="ts">
+   import { Button } from "@moderno-ui/vue";
+   </script>
+
+   <template>
+     <Button>Save changes</Button>
+   </template>
+   ```
+
+   </ForFramework>
+
+   <ForFramework fw="svelte">
+
+   ```svelte
+   <script lang="ts">
+     import { Button } from "@moderno-ui/svelte";
+   </script>
+
+   <Button>Save changes</Button>
+   ```
+
+   </ForFramework>
+
+   <ForFramework fw="solid">
+
+   ```tsx
+   import { Button } from "@moderno-ui/solid";
+
+   <Button>Save changes</Button>;
+   ```
+
+   </ForFramework>
+
+## Tailwind v4 (optional)
+
+Import the preset after the stylesheet to get utilities such as `bg-primary` and `@md:`.
+
+```css
+@import "tailwindcss";
+@import "@moderno-ui/css";
+@import "@moderno-ui/css/preset";
 ```
 
-## Scaffold from the registry (optional)
+See [Token contract](/en/token-contract#tailwind-v4) for every mapped slot.
 
-You can also eject source with the CLI, which reads the registry served at
-`/r/registry.json`.
+## Scaffold with the CLI (optional)
 
-<Install pkg="@moderno-ui/cli" mode="cli" />
+1. Initialise the project.
 
-## Seed AGENTS.md for coding agents (optional)
+   ```sh
+   npx @moderno-ui/cli init
+   ```
 
-`moderno init` also writes an `AGENTS.md` stanza — the golden rules, plus
-instructions to use the `moderno` MCP server and run `validate_usage` before
-finishing. Pass `--claude` to also write a `CLAUDE.md` twin; either file is
-merged in place on repeat runs, never clobbering your other content.
+2. Import the generated stylesheet once, instead of `@moderno-ui/css`.
 
-```sh
-npx @moderno-ui/cli init --claude
-```
+   ```ts
+   import "@/styles/moderno.css";
+   ```
 
-See [Using Moderno with agents](/en/using-with-agents) for what the stanza
-says and how the MCP loop it points to actually works.
+3. Add a theme or a block.
+
+   ```sh
+   npx @moderno-ui/cli add theme-moderno
+   ```
+
+   <Install item="pricing" />
+
+### Commands
+
+| Command                    | What it does                                                                             |
+| -------------------------- | ---------------------------------------------------------------------------------------- |
+| `moderno init`             | Writes `components.json`, `src/styles/moderno.css` and the `AGENTS.md` stanza.           |
+| `moderno init --claude`    | Same, plus a `CLAUDE.md` twin of the stanza.                                             |
+| `moderno add <item...>`    | Copies registry items and their dependencies. A theme is `@import`ed into `moderno.css`. |
+| `moderno update [item...]` | Updates installed items. Files you edited locally are kept.                              |
+| `moderno diff <item>`      | Prints the diff between your copy and the registry version.                              |
+| `moderno list`             | Lists installed items with their installed and latest versions.                          |
+
+### Notes
+
+- Every command takes `--registry <url|path>`.
+- Registry lookup order: `--registry`, then `components.json`, then `MODERNO_REGISTRY_URL`, then `https://moderno.style/r/registry.json`.
+- Re-running `init` updates the `AGENTS.md` stanza in place and keeps the rest of the file.
+- The CLI and the MCP server need Node 22 or later.
+
+## Next steps
+
+- [Token contract](/en/token-contract): the CSS variables a theme sets.
+- [Blocks and containers](/en/blocks-and-containers): how blocks respond to their container.
+- [Using Moderno with agents](/en/using-with-agents): the MCP server and `validate_usage`.

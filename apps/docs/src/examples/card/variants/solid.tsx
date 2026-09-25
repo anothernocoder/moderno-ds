@@ -1,0 +1,51 @@
+/** @jsxImportSource solid-js */
+/**
+ * Card's three surface variants side by side — variant on Card.Root
+ * repaints the surface, never the anatomy — @moderno-ui/solid.
+ *
+ * See examples/button/solid.tsx for why the pragma above is required.
+ */
+import { Button, Card } from "@moderno-ui/solid";
+
+export function CardVariantsDemo() {
+  return (
+    <div class="demo-grid">
+      <Card.Root variant="outline">
+        <Card.Header>
+          <Card.Title>Outline</Card.Title>
+          <Card.Description>The default surface: card fill, 1px border.</Card.Description>
+        </Card.Header>
+        <Card.Content>Up 12% on last month.</Card.Content>
+        <Card.Footer>
+          <Button variant="outline" size="sm">
+            Export
+          </Button>
+        </Card.Footer>
+      </Card.Root>
+      <Card.Root variant="muted">
+        <Card.Header>
+          <Card.Title>Muted</Card.Title>
+          <Card.Description>A recessed well for secondary content.</Card.Description>
+        </Card.Header>
+        <Card.Content>Up 12% on last month.</Card.Content>
+        <Card.Footer>
+          <Button variant="outline" size="sm">
+            Export
+          </Button>
+        </Card.Footer>
+      </Card.Root>
+      <Card.Root variant="ghost">
+        <Card.Header>
+          <Card.Title>Ghost</Card.Title>
+          <Card.Description>The anatomy's rhythm with no surface.</Card.Description>
+        </Card.Header>
+        <Card.Content>Up 12% on last month.</Card.Content>
+        <Card.Footer>
+          <Button variant="outline" size="sm">
+            Export
+          </Button>
+        </Card.Footer>
+      </Card.Root>
+    </div>
+  );
+}

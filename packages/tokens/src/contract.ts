@@ -103,16 +103,23 @@ export const CONTRACT: readonly ContractSlot[] = [
   { name: "shadow-sm", type: "shadow", group: "extended" },
   { name: "shadow-md", type: "shadow", group: "extended" },
   { name: "shadow-lg", type: "shadow", group: "extended" },
+  // Modal scrim: the dimming layer behind a dialog or command palette. A colour
+  // slot, but extended — every theme inherits the neutral black wash unless its
+  // brand wants a tinted one.
+  { name: "overlay", type: "color", group: "extended" },
   // Container breakpoints: what blocks and screens respond to (ADR-0005).
   { name: "container-sm", type: "dimension", group: "extended" },
   { name: "container-md", type: "dimension", group: "extended" },
   { name: "container-lg", type: "dimension", group: "extended" },
 ];
 
-/** Colour slots every theme must define in both scopes (CONTRACT.md minimum). */
-export const COLOR_SLOTS: readonly string[] = CONTRACT.filter((s) => s.type === "color").map(
-  (s) => s.name,
-);
+/**
+ * Colour slots every theme must define in both scopes (CONTRACT.md minimum).
+ * An extended colour slot (`--overlay`) is not one of them: it has a default.
+ */
+export const COLOR_SLOTS: readonly string[] = CONTRACT.filter(
+  (s) => s.type === "color" && s.group !== "extended",
+).map((s) => s.name);
 
 /** Non-colour slots every theme must define (radius + font stacks). */
 export const OTHER_SLOTS: readonly string[] = CONTRACT.filter((s) => s.group === "other").map(
@@ -134,7 +141,7 @@ export const CONTRAST_PAIRS: ReadonlyArray<readonly [fg: string, bg: string]> = 
  * group list derives from the contract too, so a colour slot under a new
  * group surfaces in the editor without touching this file.
  */
-const colorSlots = CONTRACT.filter((s) => s.type === "color");
+const colorSlots = CONTRACT.filter((s) => COLOR_SLOTS.includes(s.name));
 export const COLOR_GROUPS: ReadonlyArray<{ group: ContractGroup; slots: readonly string[] }> = [
   ...new Set(colorSlots.map((s) => s.group)),
 ].map((group) => ({

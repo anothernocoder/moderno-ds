@@ -1,16 +1,59 @@
 ---
+/**
+ * CodeBlock — one highlighted source with a copy button, and optionally a
+ * height cap. Preview's source panel renders one per framework; a fenced
+ * block in MDX prose gets the same chrome from `scripts/clipboard.ts`, which
+ * wraps every bare `pre.astro-code` in the same `.code-block` markup at load.
+ *
+ * `collapsible` caps a long source at a fixed height with a fade and an
+ * "Expand code" toggle. The whole source stays in the DOM and on screen — it is
+ * height-capped, never hidden — so it is still the "always visible" source
+ * CONTEXT.md's "Preview" asks for. The toggle is a checkbox + label (the same
+ * no-JS pattern Install's package-manager radios use), so it works before, or
+ * without, any client script.
+ */
 import type { CodeLanguage } from "astro";
 import { Code } from "astro:components";
+import { Check, ChevronDown, Copy } from "@lucide/astro";
 import shikiConfig from "../../shiki.config.ts";
+import { currentLocale, useTranslations } from "../i18n/ui.ts";
+import { uid } from "../lib/uid.ts";
 
 interface Props {
   code: string;
   lang?: CodeLanguage;
+  /** Cap the block's height behind an "Expand code" toggle. */
+  collapsible?: boolean;
 }
 
-const { code, lang = "tsx" } = Astro.props;
+const { code, lang = "tsx", collapsible = false } = Astro.props;
+const t = useTranslations(currentLocale(Astro.currentLocale));
+const id = uid("code");
 ---
 
-<div class="code-block">
-  <Code code={code} lang={lang} {...shikiConfig} />
+<div class="code-block" data-code-root data-collapsible={collapsible ? "" : undefined}>
+  {collapsible && <input type="checkbox" id={id} class="code-expand-toggle" />}
+  <div class="code-block-body">
+    <Code code={code} lang={lang} {...shikiConfig} />
+  </div>
+  {
+    collapsible && (
+      <label for={id} class="code-expand">
+        <span class="code-expand-more">{t("code.expand")}</span>
+        <span class="code-expand-less">{t("code.collapse")}</span>
+        <ChevronDown aria-hidden="true" size={14} />
+      </label>
+    )
+  }
+  <button
+    type="button"
+    class="code-copy"
+    data-copy-code
+    aria-label={t("copy.code")}
+    title={t("copy.code")}
+    data-copied={t("copy.copied")}
+  >
+    <Copy class="code-copy-idle" aria-hidden="true" size={14} />
+    <Check class="code-copy-done" aria-hidden="true" size={14} />
+  </button>
 </div>

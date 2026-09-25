@@ -79,6 +79,11 @@ Beyond color, the contract also standardizes:
   with the shadow so an overlay still separates from a near-black canvas;
   `theme-moderno` does. The `.dark` scope carries its own three values — a
   light-mode shadow disappears on a dark surface.
+- **Modal scrim** — `--overlay`, the wash behind a dialog or command palette,
+  painted over a `backdrop-filter: blur()` of the page. A color slot, but an
+  extended one: the neutral default is black at 32% (60% in `.dark`), never a
+  mix of `--foreground`, which is near-white in dark mode and would turn the
+  scrim milky grey. Tailwind: `bg-overlay`.
 - **Container breakpoints** — `--container-sm` (24rem), `--container-md` (36rem),
   `--container-lg` (48rem). Blocks and screens respond to the width of their
   _container_, never the viewport (ADR-0005). These three are the whole scale a

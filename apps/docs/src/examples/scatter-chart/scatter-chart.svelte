@@ -1,10 +1,9 @@
 <!--
-  Live ScatterChart preview — pure SVG over @moderno-ui/charts-core; colour comes
-  from the `--chart-*` token slots via the series index, nothing baked in here.
+  One marker per (x, y) sample, no connecting line; its colour comes
+  from the `--chart-1` token slot, nothing baked in here — @moderno-ui/svelte.
 
   This file is the Example the docs page shows *and* mounts (CONTEXT.md
-  "Example") — the source below the live demo is this file, raw-imported, so
-  it cannot drift from what actually renders.
+  "Example"), so the source under the live demo cannot drift from it.
 -->
 <script lang="ts">
   import { ScatterChart } from "@moderno-ui/svelte";
@@ -24,4 +23,4 @@
   ];
 </script>
 
-<ScatterChart width={520} height={260} {series} radius={4} />
+<ScatterChart width={520} height={260} {series} />

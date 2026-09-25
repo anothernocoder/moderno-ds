@@ -1,6 +1,6 @@
 ---
 title: Dialog
-description: Una superficie modal — la máquina Dialog de Ark atrapa el foco, lo restaura al cerrar, bloquea el scroll y conecta aria-labelledby/aria-describedby; components.css pinta el backdrop/content desde los slots de popover.
+description: Una ventana modal que atrapa el foco, bloquea el scroll y devuelve el foco a su trigger al cerrar.
 group: Componentes
 order: 30
 component: Dialog
@@ -11,26 +11,31 @@ import Preview from "../../../components/Preview.astro";
 import PropsTable from "../../../components/PropsTable.astro";
 import Install from "../../../components/Install.astro";
 import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
 import DialogDemo from "../../../examples/dialog/dialog.svelte";
-import reactExample from "../../../examples/dialog/react.tsx?raw";
-import vueExample from "../../../examples/dialog/vue.vue?raw";
-import solidExample from "../../../examples/dialog/solid.tsx?raw";
-import svelteExample from "../../../examples/dialog/dialog.svelte?raw";
-
-Dialog se compone como `Root > Trigger + Portal(> Backdrop + Positioner >
-Content)`. Ark maneja el atrapado y restauración de foco, el bloqueo de
-scroll y la conexión `aria-labelledby`/`aria-describedby`. Un render SSR solo
-emite el trigger; después de hidratar, el contenido se queda en el DOM entre
-aperturas y Ark lo saca del layout con el atributo `hidden`, que
-`components.css` respeta para todas las partes. Sin variantes de CVA — la
-superficie viene directo de los slots `--popover` / `--popover-foreground` vía
-`components.css`.
+import baseReact from "../../../examples/dialog/react.tsx?raw";
+import baseVue from "../../../examples/dialog/vue.vue?raw";
+import baseSolid from "../../../examples/dialog/solid.tsx?raw";
+import baseSvelte from "../../../examples/dialog/dialog.svelte?raw";
+import DialogDestructiveDemo from "../../../examples/dialog/destructive/dialog-destructive.svelte";
+import destructiveReact from "../../../examples/dialog/destructive/react.tsx?raw";
+import destructiveVue from "../../../examples/dialog/destructive/vue.vue?raw";
+import destructiveSolid from "../../../examples/dialog/destructive/solid.tsx?raw";
+import destructiveSvelte from "../../../examples/dialog/destructive/dialog-destructive.svelte?raw";
+import DialogFormDemo from "../../../examples/dialog/form/dialog-form.svelte";
+import formReact from "../../../examples/dialog/form/react.tsx?raw";
+import formVue from "../../../examples/dialog/form/vue.vue?raw";
+import formSolid from "../../../examples/dialog/form/solid.tsx?raw";
+import formSvelte from "../../../examples/dialog/form/dialog-form.svelte?raw";
+import DialogControlledDemo from "../../../examples/dialog/controlled/dialog-controlled.svelte";
+import controlledReact from "../../../examples/dialog/controlled/react.tsx?raw";
+import controlledVue from "../../../examples/dialog/controlled/vue.vue?raw";
+import controlledSolid from "../../../examples/dialog/controlled/solid.tsx?raw";
+import controlledSvelte from "../../../examples/dialog/controlled/dialog-controlled.svelte?raw";
 
 <FrameworkSelect locale="es" />
 
-<Preview
-  examples={{ react: reactExample, vue: vueExample, solid: solidExample, svelte: svelteExample }}
->
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
   <DialogDemo client:visible />
 </Preview>
 
@@ -38,6 +43,193 @@ superficie viene directo de los slots `--popover` / `--popover-foreground` vía
 
 <Install pkg="@moderno-ui/react" />
 
-## Propiedades
+## Uso
 
-<PropsTable component="Dialog" />
+<ForFramework fw="react">
+
+```tsx
+import { Dialog, Portal } from "@moderno-ui/react";
+```
+
+```tsx
+<Dialog.Root>
+  <Dialog.Trigger>Abrir</Dialog.Trigger>
+  <Portal>
+    <Dialog.Backdrop />
+    <Dialog.Positioner>
+      <Dialog.Content>
+        <Dialog.Title>¿Publicar cambios?</Dialog.Title>
+        <Dialog.Description>Tus ediciones quedan visibles para todos.</Dialog.Description>
+        <Dialog.CloseTrigger>Cerrar</Dialog.CloseTrigger>
+      </Dialog.Content>
+    </Dialog.Positioner>
+  </Portal>
+</Dialog.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Dialog, Portal } from "@moderno-ui/vue";
+```
+
+```vue
+<Dialog.Root>
+  <Dialog.Trigger>Abrir</Dialog.Trigger>
+  <Portal>
+    <Dialog.Backdrop />
+    <Dialog.Positioner>
+      <Dialog.Content>
+        <Dialog.Title>¿Publicar cambios?</Dialog.Title>
+        <Dialog.Description>Tus ediciones quedan visibles para todos.</Dialog.Description>
+        <Dialog.CloseTrigger>Cerrar</Dialog.CloseTrigger>
+      </Dialog.Content>
+    </Dialog.Positioner>
+  </Portal>
+</Dialog.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Dialog, Portal } from "@moderno-ui/svelte";
+```
+
+```svelte
+<Dialog.Root>
+  <Dialog.Trigger>Abrir</Dialog.Trigger>
+  <Portal>
+    <Dialog.Backdrop />
+    <Dialog.Positioner>
+      <Dialog.Content>
+        <Dialog.Title>¿Publicar cambios?</Dialog.Title>
+        <Dialog.Description>Tus ediciones quedan visibles para todos.</Dialog.Description>
+        <Dialog.CloseTrigger>Cerrar</Dialog.CloseTrigger>
+      </Dialog.Content>
+    </Dialog.Positioner>
+  </Portal>
+</Dialog.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Dialog, Portal } from "@moderno-ui/solid";
+```
+
+```tsx
+<Dialog.Root>
+  <Dialog.Trigger>Abrir</Dialog.Trigger>
+  <Portal>
+    <Dialog.Backdrop />
+    <Dialog.Positioner>
+      <Dialog.Content>
+        <Dialog.Title>¿Publicar cambios?</Dialog.Title>
+        <Dialog.Description>Tus ediciones quedan visibles para todos.</Dialog.Description>
+        <Dialog.CloseTrigger>Cerrar</Dialog.CloseTrigger>
+      </Dialog.Content>
+    </Dialog.Positioner>
+  </Portal>
+</Dialog.Root>
+```
+
+</ForFramework>
+
+## Referencia de API
+
+### Dialog.Root
+
+El Dialog de Ark, reexportado sin cambios; no renderiza ningún elemento propio.
+
+| Prop                     | Tipo                                   | Por defecto | Descripción                                                                                                                           |
+| ------------------------ | -------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `open`                   | `boolean`                              | —           | Estado abierto controlado. Úsalo con `onOpenChange` (`bind:open` en Svelte, `v-model:open` en Vue).                                   |
+| `defaultOpen`            | `boolean`                              | `false`     | Estado abierto inicial cuando no está controlado.                                                                                     |
+| `onOpenChange`           | `(details: { open: boolean }) => void` | —           | Se llama en cada apertura o cierre, incluidos Escape y los clics en el fondo.                                                         |
+| `role`                   | `"dialog" \| "alertdialog"`            | `"dialog"`  | Usa `alertdialog` para confirmaciones que no se pueden deshacer.                                                                      |
+| `modal`                  | `boolean`                              | `true`      | Bloquea la interacción fuera y oculta el contenido de debajo a las tecnologías de asistencia.                                         |
+| `trapFocus`              | `boolean`                              | `true`      | Mantiene el foco dentro del diálogo mientras está abierto.                                                                            |
+| `preventScroll`          | `boolean`                              | `true`      | Bloquea el scroll de la página mientras está abierto.                                                                                 |
+| `restoreFocus`           | `boolean`                              | `true`      | Devuelve el foco al elemento enfocado antes de abrir.                                                                                 |
+| `closeOnEscape`          | `boolean`                              | `true`      | Cierra con Escape.                                                                                                                    |
+| `closeOnInteractOutside` | `boolean`                              | `true`      | Cierra con un clic fuera; `false` cuando `role="alertdialog"`.                                                                        |
+| `initialFocusEl`         | `() => HTMLElement \| null`            | —           | Elemento que recibe el foco al abrir. Por defecto, el primer elemento enfocable, o el primer `Dialog.CloseTrigger` con `alertdialog`. |
+| `finalFocusEl`           | `() => HTMLElement \| null`            | —           | Elemento que recibe el foco al cerrar.                                                                                                |
+| `lazyMount`              | `boolean`                              | `false`     | Monta el contenido solo en la primera apertura.                                                                                       |
+| `unmountOnExit`          | `boolean`                              | `false`     | Quita el contenido del DOM al cerrar.                                                                                                 |
+
+### Portal
+
+Renderiza sus hijos al final de `document.body`, fuera del contexto de apilamiento de la página.
+
+### Partes
+
+Cada parte acepta los atributos de su elemento; `Dialog.Trigger` y `Dialog.CloseTrigger` aceptan además `asChild` para renderizar tu propio `Button`.
+
+| Parte                 | Elemento   | Descripción                                                                     |
+| --------------------- | ---------- | ------------------------------------------------------------------------------- |
+| `Dialog.Trigger`      | `<button>` | Abre el diálogo.                                                                |
+| `Dialog.Backdrop`     | `<div>`    | La capa detrás del contenido: `--overlay` sobre la página desenfocada.          |
+| `Dialog.Positioner`   | `<div>`    | Centra el contenido en el viewport.                                             |
+| `Dialog.Content`      | `<div>`    | La superficie, pintada desde `--popover` y `--popover-foreground`. Una columna. |
+| `Dialog.Title`        | `<h2>`     | El nombre accesible, conectado vía `aria-labelledby`.                           |
+| `Dialog.Description`  | `<div>`    | Conectada vía `aria-describedby`.                                               |
+| `Dialog.CloseTrigger` | `<button>` | Cierra el diálogo.                                                              |
+
+### Teclado
+
+| Tecla               | Acción                                                                            |
+| ------------------- | --------------------------------------------------------------------------------- |
+| `Esc`               | Cierra el diálogo.                                                                |
+| `Tab` / `Shift+Tab` | Mueve el foco entre los elementos enfocables, dando la vuelta dentro del diálogo. |
+
+## Ejemplos
+
+### Confirmación destructiva
+
+Con `role="alertdialog"`, el foco cae en el primer `Dialog.CloseTrigger`, así que pon Cancelar primero.
+
+<Preview
+  examples={{
+    react: destructiveReact,
+    vue: destructiveVue,
+    solid: destructiveSolid,
+    svelte: destructiveSvelte,
+  }}
+>
+  <DialogDestructiveDemo client:visible />
+</Preview>
+
+### Con un formulario
+
+<Preview examples={{ react: formReact, vue: formVue, solid: formSolid, svelte: formSvelte }}>
+  <DialogFormDemo client:visible />
+</Preview>
+
+### Controlado
+
+Controla `open` cuando algo distinto de `Dialog.Trigger` abre o cierra el diálogo.
+
+<Preview
+  examples={{
+    react: controlledReact,
+    vue: controlledVue,
+    solid: controlledSolid,
+    svelte: controlledSvelte,
+  }}
+>
+  <DialogControlledDemo client:visible />
+</Preview>
+
+## Notas
+
+- Renderiza siempre `Dialog.Title`; es el nombre accesible del diálogo.
+- El atrapado de foco, el bloqueo de scroll y la restauración del foco vienen de Ark; no los reimplementes.
+- Un render SSR emite solo el trigger; tras la hidratación el contenido sigue en el DOM, oculto con el atributo `hidden`.
+- Dialog no tiene variantes; el tono destructivo es de los `Button` que contiene.

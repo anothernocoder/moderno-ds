@@ -1,6 +1,6 @@
 ---
 title: Bar Chart
-description: A pure-SVG bar chart mapped from charts-core; one rect per category per series, colour comes from the --chart-* token slots by index.
+description: An SVG bar chart that compares values across categories, with grouped bars for several series.
 group: Components
 order: 70
 component: BarChart
@@ -26,21 +26,33 @@ import Preview from "../../../components/Preview.astro";
 import PropsTable from "../../../components/PropsTable.astro";
 import Install from "../../../components/Install.astro";
 import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
 import BarChartDemo from "../../../examples/bar-chart/bar-chart.svelte";
-import reactExample from "../../../examples/bar-chart/react.tsx?raw";
-import vueExample from "../../../examples/bar-chart/vue.vue?raw";
-import solidExample from "../../../examples/bar-chart/solid.tsx?raw";
-import svelteExample from "../../../examples/bar-chart/bar-chart.svelte?raw";
-
-BarChart is a deterministic map from a model built by `@moderno-ui/charts-core` to
-`<rect>` elements — one bar per category per series, positioned on a band
-scale. It bakes in no colour — each series paints from `--chart-1…5` keyed on
-its index, so it re-themes with the rest of the system.
+import baseReact from "../../../examples/bar-chart/react.tsx?raw";
+import baseVue from "../../../examples/bar-chart/vue.vue?raw";
+import baseSolid from "../../../examples/bar-chart/solid.tsx?raw";
+import baseSvelte from "../../../examples/bar-chart/bar-chart.svelte?raw";
+import BarChartGroupedDemo from "../../../examples/bar-chart/grouped/bar-chart-grouped.svelte";
+import groupedReact from "../../../examples/bar-chart/grouped/react.tsx?raw";
+import groupedVue from "../../../examples/bar-chart/grouped/vue.vue?raw";
+import groupedSolid from "../../../examples/bar-chart/grouped/solid.tsx?raw";
+import groupedSvelte from "../../../examples/bar-chart/grouped/bar-chart-grouped.svelte?raw";
+import BarChartPaddingDemo from "../../../examples/bar-chart/padding/bar-chart-padding.svelte";
+import paddingReact from "../../../examples/bar-chart/padding/react.tsx?raw";
+import paddingVue from "../../../examples/bar-chart/padding/vue.vue?raw";
+import paddingSolid from "../../../examples/bar-chart/padding/solid.tsx?raw";
+import paddingSvelte from "../../../examples/bar-chart/padding/bar-chart-padding.svelte?raw";
+import BarChartTickFormatDemo from "../../../examples/bar-chart/tick-format/bar-chart-tick-format.svelte";
+import tickFormatReact from "../../../examples/bar-chart/tick-format/react.tsx?raw";
+import tickFormatVue from "../../../examples/bar-chart/tick-format/vue.vue?raw";
+import tickFormatSolid from "../../../examples/bar-chart/tick-format/solid.tsx?raw";
+import tickFormatSvelte from "../../../examples/bar-chart/tick-format/bar-chart-tick-format.svelte?raw";
 
 <FrameworkSelect locale="en" />
 
 <Preview
-  examples={{ react: reactExample, vue: vueExample, solid: solidExample, svelte: svelteExample }}
+  layout="fill"
+  examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}
 >
   <BarChartDemo client:visible />
 </Preview>
@@ -49,6 +61,149 @@ its index, so it re-themes with the rest of the system.
 
 <Install pkg="@moderno-ui/react" />
 
-## Props
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { BarChart } from "@moderno-ui/react";
+
+const categories = ["Q1", "Q2", "Q3", "Q4"];
+const series = [{ name: "Revenue", values: [8, 14, 11, 20] }];
+```
+
+```tsx
+<BarChart width={520} height={260} categories={categories} series={series} />
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import { BarChart } from "@moderno-ui/vue";
+
+const categories = ["Q1", "Q2", "Q3", "Q4"];
+const series = [{ name: "Revenue", values: [8, 14, 11, 20] }];
+</script>
+```
+
+```vue
+<template>
+  <BarChart :width="520" :height="260" :categories="categories" :series="series" />
+</template>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import { BarChart } from "@moderno-ui/svelte";
+
+  const categories = ["Q1", "Q2", "Q3", "Q4"];
+  const series = [{ name: "Revenue", values: [8, 14, 11, 20] }];
+</script>
+```
+
+```svelte
+<BarChart width={520} height={260} {categories} {series} />
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { BarChart } from "@moderno-ui/solid";
+
+const categories = ["Q1", "Q2", "Q3", "Q4"];
+const series = [{ name: "Revenue", values: [8, 14, 11, 20] }];
+```
+
+```tsx
+<BarChart width={520} height={260} categories={categories} series={series} />
+```
+
+</ForFramework>
+
+## API Reference
+
+### BarChart
 
 <PropsTable component="BarChart" />
+
+### Series
+
+Each entry in `series` is one set of bars, one per category.
+
+| Field    | Type       | Description                                                                           |
+| -------- | ---------- | ------------------------------------------------------------------------------------- |
+| `name`   | `string`   | Optional label for the series.                                                        |
+| `values` | `number[]` | One value per category, aligned to `categories` by index. A missing value draws as 0. |
+
+### Defaults
+
+| Prop      | Default                                              |
+| --------- | ---------------------------------------------------- |
+| `padding` | `0.2`                                                |
+| `yDomain` | Every value plus 0, rounded outward to nice numbers. |
+| `yTicks`  | `5`                                                  |
+| `margin`  | `{ top: 16, right: 16, bottom: 28, left: 36 }`       |
+| `format`  | The number, rounded to 4 decimals                    |
+
+### Data attributes
+
+| Attribute     | On            | Values                                                                  |
+| ------------- | ------------- | ----------------------------------------------------------------------- |
+| `data-chart`  | Root `svg`    | `bar`                                                                   |
+| `data-part`   | Every element | `root`, `grid`, `grid-line`, `axis-line`, `tick-label`, `series`, `bar` |
+| `data-series` | Series `g`    | 0-based index, mapped to `--chart-1` through `--chart-5`                |
+
+## Examples
+
+### Grouped series
+
+With more than one series, each category's band is split between them and the bars sit side by side.
+
+<Preview
+  layout="fill"
+  examples={{ react: groupedReact, vue: groupedVue, solid: groupedSolid, svelte: groupedSvelte }}
+>
+  <BarChartGroupedDemo client:visible />
+</Preview>
+
+### Padding
+
+`padding` is the gap between categories as a fraction of each band's step, from 0 to 1.
+
+<Preview
+  layout="fill"
+  examples={{ react: paddingReact, vue: paddingVue, solid: paddingSolid, svelte: paddingSvelte }}
+>
+  <BarChartPaddingDemo client:visible />
+</Preview>
+
+### Tick format
+
+`format` labels each value-axis tick; category labels come straight from `categories`.
+
+<Preview
+  layout="fill"
+  examples={{
+    react: tickFormatReact,
+    vue: tickFormatVue,
+    solid: tickFormatSolid,
+    svelte: tickFormatSvelte,
+  }}
+>
+  <BarChartTickFormatDemo client:visible />
+</Preview>
+
+## Notes
+
+- Series have no category key, so every series needs one value per category.
+- There is no colour prop: series paint from `--chart-1` to `--chart-5` by index.
+- Grid, axes and tick labels use `--border` and `--muted-foreground`.

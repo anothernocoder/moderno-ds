@@ -1,84 +1,79 @@
 ---
 title: Using Moderno with agents
-description: Configure @moderno-ui/mcp, walk the search → get_component_api → get_contract → get_examples → write → validate_usage loop, and follow the golden rules a coding agent should never break.
+description: Connect a coding agent to the Moderno MCP server and check its code with validate_usage before it finishes.
 group: Guides
 order: 4
 ---
 
-import Install from "../../../components/Install.astro";
+## Set up
 
-Moderno ships a surface built for coding agents, not just for humans reading
-docs: a local MCP server that answers with the API actually installed in your
-project, plus a deterministic validator that catches mistakes before an agent
-calls the job done. This page covers setup, the end-to-end loop, and the rules
-an agent should follow while it's in a Moderno codebase.
+1. Add the `moderno` server to your agent's MCP config (Claude Code, Cursor and other MCP clients).
 
-## Configure the MCP server
+   ```json
+   {
+     "mcpServers": {
+       "moderno": {
+         "command": "npx",
+         "args": ["-y", "@moderno-ui/mcp"]
+       }
+     }
+   }
+   ```
 
-`@moderno-ui/mcp` is a local stdio server — no account, no hosted endpoint. Run it
-with your package manager's dlx runner:
+2. Start the agent from the project root, where `@moderno-ui/*` is installed.
 
-<Install pkg="@moderno-ui/mcp" mode="cli" />
+3. Optional: write the rules and the loop below into `AGENTS.md` (`--claude` adds a `CLAUDE.md` twin).
 
-Most agent tools (Claude Code, Cursor, and others that speak MCP) read server
-definitions from a JSON config. Add an entry for `moderno`:
+   ```sh
+   npx @moderno-ui/cli init --claude
+   ```
 
-```json
-{
-  "mcpServers": {
-    "moderno": {
-      "command": "npx",
-      "args": ["-y", "@moderno-ui/mcp"]
-    }
-  }
-}
-```
+- Local stdio server: no account, no hosted endpoint. Needs Node 22 or later.
+- It reads `moderno.agent.json` from `node_modules/@moderno-ui/*` once, at startup.
+- Answers match the installed versions, not the latest release.
 
-The server discovers `moderno.agent.json` from `node_modules/@moderno-ui/*` **once,
-at startup** — so it must run from (or be pointed at) the project that has
-Moderno installed. Because it reads what's actually installed, a project pinned
-to an older `@moderno-ui/react` gets that version's API back, not whatever shipped
-most recently.
+## Tools
+
+The tools read and verify; the agent writes the code itself.
+
+| Tool                | Input                | Returns                                                                       |
+| ------------------- | -------------------- | ----------------------------------------------------------------------------- |
+| `search_components` | `query`, `framework` | Components ranked by intent, with import path and when to use.                |
+| `get_component_api` | `name`, `framework`  | Props, `data-part`s and variants from the installed package.                  |
+| `get_contract`      | none                 | Token slots, the dark-mode and multi-brand model, the `data-part` convention. |
+| `get_examples`      | `name`, `framework`  | Working snippets in that framework's own syntax.                              |
+| `validate_usage`    | `code`, `framework`  | Rule findings. An empty list means clean.                                     |
+
+`framework` is one of `react`, `vue`, `svelte`, `solid` or `astro`.
 
 ## The agent loop
 
-The tools are read + verify, not write — an agent still writes the code itself
-and shells out to `@moderno-ui/cli` for scaffolding. The MCP's job is to ground
-that code in the real API and then check it.
-
-### 1. `search_components` — find the primitive by intent
-
-Don't guess a component name; describe the UI need.
+### 1. Search by intent
 
 ```
 search_components({ query: "modal blocking decision", framework: "react" })
-→ matches: [{ name: "Dialog", score: 0.82, … }, { name: "Button", score: 0.11, … }]
+→ { matches: [{ name: "Dialog", score: 0.82, … }, { name: "Button", score: 0.11, … }] }
 ```
 
-### 2. `get_component_api` — get its real props
-
-Read the props, `data-part`s, and variants from the **installed** version
-before writing any markup.
+### 2. Read the installed API
 
 ```
 get_component_api({ name: "Dialog", framework: "react" })
-→ { package: "@moderno-ui/react", version: "1.4.0", component: { props: […], parts: […] } }
+→ { package: "@moderno-ui/react", version: "0.3.0", framework: "react", component: { … } }
 ```
 
-### 3. `get_contract` — confirm the theming rules
+### 3. Check the contract
 
-Framework-agnostic: token slots, dark-mode model, and the `data-part`
-convention. Consult it before writing any color, radius, or spacing value.
+Do this before writing any colour, radius, spacing, elevation or container width.
 
 ```
 get_contract()
-→ { package: "@moderno-ui/tokens", slots: { color: ["--primary", "--destructive", …] }, rules: […] }
+→ { package: "@moderno-ui/tokens", slots: { color: ["--background", "--foreground", …] }, rules: […] }
 ```
 
-### 4. `get_examples` — get a working snippet in your framework
+### 4. Get a native example
 
-Never hand-translate a React example into Vue or Svelte syntax — ask for the
-framework-native one.
+Ask for the target framework instead of translating a React example by hand.
 
 ```
 get_examples({ name: "Dialog", framework: "react" })
@@ -86,65 +81,75 @@ get_examples({ name: "Dialog", framework: "react" })
 
 ### 5. Write the code
 
-Compose the snippet into the real feature — here, a destructive confirm
-dialog:
-
 ```tsx
+import { Button, Dialog, Portal } from "@moderno-ui/react";
+
 <Dialog.Root>
   <Dialog.Trigger asChild>
     <Button variant="destructive">Delete account</Button>
   </Dialog.Trigger>
-  <Dialog.Content>
-    <Dialog.Title>Delete account?</Dialog.Title>
-    <Button variant="destructive">Confirm</Button>
-  </Dialog.Content>
-</Dialog.Root>
+  <Portal>
+    <Dialog.Backdrop />
+    <Dialog.Positioner>
+      <Dialog.Content>
+        <Dialog.Title>Delete account?</Dialog.Title>
+        <Dialog.CloseTrigger asChild>
+          <Button variant="destructive">Confirm</Button>
+        </Dialog.CloseTrigger>
+      </Dialog.Content>
+    </Dialog.Positioner>
+  </Portal>
+</Dialog.Root>;
 ```
 
-### 6. `validate_usage` — verify before finishing
+### 6. Validate before finishing
 
-Run the deterministic rule engine over the diff. It catches hardcoded colors,
-invalid props, raw `@ark-ui`/`@zag-js` imports, bad `data-part` overrides, and
-hand-rolled reimplementations of an existing primitive:
+Fix every finding and run it again until the list is empty.
 
 ```
 validate_usage({ code: "…", framework: "react" })
-→ { findings: [] }   // green — safe to finish
+→ { findings: [] }
 ```
-
-A finding looks like this — fix it and re-run, not once-and-done:
 
 ```json
 {
   "ruleId": "moderno/no-hardcoded-color",
   "severity": "error",
-  "message": "Hardcoded color '#ff0000' bypasses the token contract.",
-  "suggestion": "var(--destructive)"
+  "message": "Hardcoded color \"#ff0000\" bypasses the token contract — components may only reference a contract slot.",
+  "suggestion": "Reference a contract color slot instead, e.g. var(--background)."
 }
 ```
 
-**Before finishing any task that touches Moderno components, run
-`validate_usage` and fix everything it reports.**
+## Validation rules
+
+| Rule                                 | Severity | Catches                                                                 |
+| ------------------------------------ | -------- | ----------------------------------------------------------------------- |
+| `moderno/no-hardcoded-color`         | error    | Hex, `rgb()`, `hsl()` and `oklch()` literals.                           |
+| `moderno/no-hardcoded-dimension`     | error    | Literal `border-radius` lengths and arbitrary lengths like `w-[320px]`. |
+| `moderno/valid-props`                | error    | Unknown props and invalid enum values.                                  |
+| `moderno/no-raw-ark`                 | error    | Imports from `@ark-ui/*` or `@zag-js/*`.                                |
+| `moderno/valid-data-part-override`   | error    | `data-scope` / `data-part` selectors naming a part that doesn't exist.  |
+| `moderno/no-reimplemented-primitive` | warn     | Hand-rolled dialogs, native selects and variant-styled buttons.         |
 
 ## Golden rules
 
-- **Components are never edited.** They're themed via CSS variables and varied
-  via props — never fork component markup or write per-component CSS.
-- Reference contract slots (`--background`, `--primary`, `--radius`, …) — never
-  hardcode hex colors, px spacing, or ms durations.
+- Never edit components: theme them with CSS variables and vary them with props.
+- Reference contract slots (`--background`, `--primary`, `--radius`, …), never hex colours, px spacing or ms durations.
 - Put brand values in a theme, not in `@moderno-ui/tokens`.
-- Keep `:root` light / `.dark` dark — don't invent a third theming mechanism.
-- `@moderno-ui/css` is the only public CSS specifier — never import internal
-  paths.
+- Keep `:root` light and `.dark` dark. Don't add a third theming mechanism.
+- Import CSS only from `@moderno-ui/css`, never from internal paths.
 
-These are the same rules [`moderno init`](/en/installation) writes into your
-project's `AGENTS.md` (and, with `--claude`, a `CLAUDE.md` twin), so an agent
-that reads either file lands on this same contract without you repeating
-yourself.
+## Lint in CI
 
-## For human contributors
+[`@moderno-ui/lint`](https://www.npmjs.com/package/@moderno-ui/lint) runs the same rules as `validate_usage`, for people and CI.
 
-Agents and humans share one rule engine. [`@moderno-ui/lint`](https://www.npmjs.com/package/@moderno-ui/lint)
-runs the exact checks behind `validate_usage` as an ESLint plugin and a CLI
-(`moderno-lint`), so a PR from a person and a PR from an agent are held to the
-same standard — and CI catches what either one misses.
+```js
+// eslint.config.js
+import moderno from "@moderno-ui/lint";
+
+export default [...moderno.configs.recommended];
+```
+
+```sh
+npx moderno-lint src/**/*.tsx
+```

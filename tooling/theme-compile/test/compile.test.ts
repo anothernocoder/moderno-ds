@@ -128,6 +128,7 @@ describe("compileTheme — extended slots are optional overrides", () => {
     expect(css).not.toContain("--font-serif");
     expect(css).not.toContain("--shadow-md");
     expect(css).not.toContain("--container-lg");
+    expect(css).not.toContain("--overlay");
   });
 
   it("emits the ones a theme does express, in the scope that declares them", () => {
@@ -135,10 +136,12 @@ describe("compileTheme — extended slots are optional overrides", () => {
     doc.light["font-serif"] = { $type: "fontFamily", $value: "ui-serif, Georgia, serif" };
     doc.light["shadow-md"] = { $type: "shadow", $value: "0 0 0 1px oklch(0 0 0 / 0.1)" };
     doc.light["container-lg"] = { $type: "dimension", $value: "48rem" };
+    doc.light["overlay"] = { $type: "color", $value: "oklch(0.2 0.05 260 / 0.4)" };
     const { css } = compileTheme(doc);
     expect(css).toContain("--font-serif: ui-serif, Georgia, serif;");
     expect(css).toContain("--shadow-md: 0 0 0 1px oklch(0 0 0 / 0.1);");
     expect(css).toContain("--container-lg: 48rem;");
+    expect(css).toContain("--overlay: oklch(0.2 0.05 260 / 0.4);");
     // The dark scope declared none, so it inherits the neutral defaults.
     expect(css.slice(css.indexOf(".dark"))).not.toContain("--font-serif");
   });
@@ -148,6 +151,13 @@ describe("compileTheme — extended slots are optional overrides", () => {
     doc.light["shadow-lg"] = { $type: "shadow", $value: "  " };
     expect(() => compileTheme(doc)).toThrow(/shadow-lg/);
     expect(() => compileTheme(doc)).toThrow(/light/);
+  });
+
+  it("holds an extended colour slot to the same oklch() rule as the required ones", () => {
+    const doc = defaultTheme();
+    doc.dark["overlay"] = { $type: "color", $value: "rgba(0, 0, 0, 0.6)" };
+    expect(() => compileTheme(doc)).toThrow(/overlay/);
+    expect(() => compileTheme(doc)).toThrow(/oklch/i);
   });
 });
 

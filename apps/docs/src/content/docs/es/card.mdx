@@ -1,6 +1,6 @@
 ---
 title: Card
-description: Una superficie solo-CSS con anatomía estilo Ark — partes header, title, description, content y footer, pintadas desde los slots card y border, sin sombra propia.
+description: Una superficie con borde que agrupa contenido relacionado, con header, content y footer opcionales.
 group: Componentes
 order: 45
 component: Card
@@ -11,42 +11,198 @@ import Preview from "../../../components/Preview.astro";
 import PropsTable from "../../../components/PropsTable.astro";
 import Install from "../../../components/Install.astro";
 import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
 import CardDemo from "../../../examples/card/card.svelte";
-import reactExample from "../../../examples/card/react.tsx?raw";
-import vueExample from "../../../examples/card/vue.vue?raw";
-import solidExample from "../../../examples/card/solid.tsx?raw";
-import svelteExample from "../../../examples/card/card.svelte?raw";
-
-Card es la primera primitiva compuesta que se escribe en vez de reexportarse: no
-existe una máquina de Ark para una superficie — no hay nada que abrir, enfocar o
-conectar —, así que todas las partes son nuestras. Lo que la vuelve una
-primitiva de Moderno es el mismo contrato que sigue Button, extendido a una
-anatomía: cada parte emite `data-scope="card"` más su propio `data-part`, la
-raíz lleva el `data-variant` y el `data-size` de `cardRecipe`, y
-`components.css` lo pinta todo desde slots de tokens.
+import baseReact from "../../../examples/card/react.tsx?raw";
+import baseVue from "../../../examples/card/vue.vue?raw";
+import baseSolid from "../../../examples/card/solid.tsx?raw";
+import baseSvelte from "../../../examples/card/card.svelte?raw";
+import CardPartsDemo from "../../../examples/card/parts/card-parts.svelte";
+import partsReact from "../../../examples/card/parts/react.tsx?raw";
+import partsVue from "../../../examples/card/parts/vue.vue?raw";
+import partsSolid from "../../../examples/card/parts/solid.tsx?raw";
+import partsSvelte from "../../../examples/card/parts/card-parts.svelte?raw";
+import CardVariantsDemo from "../../../examples/card/variants/card-variants.svelte";
+import variantsReact from "../../../examples/card/variants/react.tsx?raw";
+import variantsVue from "../../../examples/card/variants/vue.vue?raw";
+import variantsSolid from "../../../examples/card/variants/solid.tsx?raw";
+import variantsSvelte from "../../../examples/card/variants/card-variants.svelte?raw";
+import CardSizesDemo from "../../../examples/card/sizes/card-sizes.svelte";
+import sizesReact from "../../../examples/card/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/card/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/card/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/card/sizes/card-sizes.svelte?raw";
 
 <FrameworkSelect locale="es" />
 
-<Preview
-  examples={{ react: reactExample, vue: vueExample, solid: solidExample, svelte: svelteExample }}
->
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
   <CardDemo client:visible />
 </Preview>
-
-## Anatomía
-
-`root` es la superficie; `header` contiene `title` y `description`; `content` es
-el cuerpo y la única parte que crece, así que una fila de cards mantiene sus
-footers alineados; `footer` es la fila de acciones. Todas las partes son
-opcionales y el orden lo eliges tú — el par que quede adyacente comparte un solo
-paso de padding en vez de apilar dos.
 
 ## Instalación
 
 <Install pkg="@moderno-ui/react" />
 
-## Propiedades
+## Uso
 
-Las props van en `Card.Root`. Las demás partes solo aceptan atributos nativos.
+<ForFramework fw="react">
+
+```tsx
+import { Button, Card } from "@moderno-ui/react";
+```
+
+```tsx
+<Card.Root>
+  <Card.Header>
+    <Card.Title>Monthly revenue</Card.Title>
+    <Card.Description>Across every workspace on the plan.</Card.Description>
+  </Card.Header>
+  <Card.Content>Up 12% on last month.</Card.Content>
+  <Card.Footer>
+    <Button variant="outline" size="sm">
+      Export
+    </Button>
+  </Card.Footer>
+</Card.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import { Button, Card } from "@moderno-ui/vue";
+</script>
+```
+
+```vue
+<template>
+  <Card.Root>
+    <Card.Header>
+      <Card.Title>Monthly revenue</Card.Title>
+      <Card.Description>Across every workspace on the plan.</Card.Description>
+    </Card.Header>
+    <Card.Content>Up 12% on last month.</Card.Content>
+    <Card.Footer>
+      <Button variant="outline" size="sm">Export</Button>
+    </Card.Footer>
+  </Card.Root>
+</template>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import { Button, Card } from "@moderno-ui/svelte";
+</script>
+```
+
+```svelte
+<Card.Root>
+  <Card.Header>
+    <Card.Title>Monthly revenue</Card.Title>
+    <Card.Description>Across every workspace on the plan.</Card.Description>
+  </Card.Header>
+  <Card.Content>Up 12% on last month.</Card.Content>
+  <Card.Footer>
+    <Button variant="outline" size="sm">Export</Button>
+  </Card.Footer>
+</Card.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Button, Card } from "@moderno-ui/solid";
+```
+
+```tsx
+<Card.Root>
+  <Card.Header>
+    <Card.Title>Monthly revenue</Card.Title>
+    <Card.Description>Across every workspace on the plan.</Card.Description>
+  </Card.Header>
+  <Card.Content>Up 12% on last month.</Card.Content>
+  <Card.Footer>
+    <Button variant="outline" size="sm">
+      Export
+    </Button>
+  </Card.Footer>
+</Card.Root>
+```
+
+</ForFramework>
+
+## Referencia de API
+
+### Card.Root
 
 <PropsTable component="Card" />
+
+### Partes
+
+Las partes distintas de `Card.Root` solo reciben atributos nativos.
+
+| Parte              | Elemento | Descripción                                                                        |
+| ------------------ | -------- | ---------------------------------------------------------------------------------- |
+| `Card.Root`        | `div`    | La superficie. Recibe `variant` y `size`.                                          |
+| `Card.Header`      | `div`    | Contiene el título y la descripción.                                               |
+| `Card.Title`       | `h3`     | El encabezado de la card. Pasa `role`/`aria-level` para cambiar su rango.          |
+| `Card.Description` | `p`      | La línea atenuada bajo el título.                                                  |
+| `Card.Content`     | `div`    | El cuerpo. La única parte que crece, así los footers de una fila quedan alineados. |
+| `Card.Footer`      | `div`    | La fila de acciones.                                                               |
+
+### Atributos de datos
+
+| Atributo       | En               | Valores                                                       |
+| -------------- | ---------------- | ------------------------------------------------------------- |
+| `data-scope`   | Todas las partes | `card`                                                        |
+| `data-part`    | Todas las partes | `root`, `header`, `title`, `description`, `content`, `footer` |
+| `data-variant` | Root             | `outline` (por defecto), `muted`, `ghost`                     |
+| `data-size`    | Root             | `sm`, `md` (por defecto), `lg`                                |
+
+## Ejemplos
+
+### Anatomía
+
+Todas las partes son opcionales y el orden lo eliges tú.
+
+<Preview examples={{ react: partsReact, vue: partsVue, solid: partsSolid, svelte: partsSvelte }}>
+  <CardPartsDemo client:visible />
+</Preview>
+
+### Variantes
+
+`outline` rellena con `--card` y un `--border` de 1px, `muted` se hunde en `--muted` y `ghost` quita la superficie.
+
+<Preview
+  examples={{
+    react: variantsReact,
+    vue: variantsVue,
+    solid: variantsSolid,
+    svelte: variantsSvelte,
+  }}
+>
+  <CardVariantsDemo client:visible />
+</Preview>
+
+### Tamaños
+
+`size` define el padding que comparten todas las partes; en `lg` el título también sube de tamaño.
+
+<Preview examples={{ react: sizesReact, vue: sizesVue, solid: sizesSolid, svelte: sizesSvelte }}>
+  <CardSizesDemo client:visible />
+</Preview>
+
+## Notas
+
+- Las partes adyacentes comparten un solo paso de padding en vez de apilar dos.
+- La raíz llena su contenedor; la cuadrícula o la fila flex le corresponden a la página.
+- La profundidad es un paso de superficie y un borde, nunca una sombra.
+- La esquina es `--radius`, así un tema que lo fija en 0 da cards cuadradas.

@@ -540,14 +540,24 @@
 
   /* ─────────────────────────── Dialog ─────────────────────────── *
    * Ark owns portal + focus trap + ids. Scope "dialog".               */
+  /* The scrim is its own slot, not a mix of --foreground: that slot is
+     near-white in dark mode and would wash the page out grey. The blur turns
+     the page underneath into shapes, so the dialog is the only thing to read. */
+  /* Above an app's sticky chrome (the usual z-50 layer): a modal covers
+     the whole page, headers included. The positioner shares the layer and,
+     portalled after the backdrop, paints on top of it. */
   [data-scope="dialog"][data-part="backdrop"] {
     position: fixed;
     inset: 0;
-    background-color: color-mix(in oklab, var(--foreground) 40%, transparent);
+    z-index: 50;
+    background-color: var(--overlay);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
   }
   [data-scope="dialog"][data-part="positioner"] {
     position: fixed;
     inset: 0;
+    z-index: 50;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -564,7 +574,8 @@
     border-radius: var(--radius);
     background-color: var(--popover);
     color: var(--popover-foreground);
-    box-shadow: 0 10px 38px color-mix(in oklab, var(--foreground) 18%, transparent);
+    /* The elevation slot, not a --foreground mix: that glows in dark mode. */
+    box-shadow: var(--shadow-lg);
   }
   [data-scope="dialog"][data-part="title"] {
     font-size: 1.125rem;
@@ -626,7 +637,7 @@
     border-radius: var(--radius);
     background-color: var(--popover);
     color: var(--popover-foreground);
-    box-shadow: 0 10px 38px color-mix(in oklab, var(--foreground) 18%, transparent);
+    box-shadow: var(--shadow-md);
   }
   [data-scope="select"][data-part="item"] {
     display: flex;
