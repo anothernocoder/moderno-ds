@@ -176,31 +176,10 @@ describe("@moderno-ui/tokens — dark variant", () => {
 });
 
 describe("@moderno-ui/tokens — multi-brand", () => {
-  it("ships a [data-brand] scope that remaps at least one contract slot", () => {
-    const brandSelectors = [...tokenRules.keys()].filter((s) => s.includes("[data-brand"));
-    expect(brandSelectors.length).toBeGreaterThan(0);
-    const remapsContractSlot = brandSelectors.some((sel) => {
-      const decls = tokenRules.get(sel)!;
-      return COLOR_SLOTS.some((slot) => decls.has(slot));
-    });
-    expect(remapsContractSlot, "no [data-brand] scope overrides a contract slot").toBe(true);
-  });
-
-  it("re-maps WITHOUT touching the base tokens (override lives in its own scope)", () => {
-    let realRemap = false;
-    for (const [selector, decls] of tokenRules) {
-      if (!selector.includes("[data-brand")) continue;
-      // The brand scope must be distinct from the base :root.
-      expect(selector).not.toBe(":root");
-      for (const slot of COLOR_SLOTS) {
-        if (!decls.has(slot)) continue;
-        // Base :root still defines the slot — the brand overrides, never deletes.
-        expect(root.get(slot), `base :root lost --${slot}`).toBeTruthy();
-        if (decls.get(slot) !== root.get(slot)) realRemap = true;
-      }
-    }
-    // At least one slot genuinely changes — proving the remap is effective.
-    expect(realRemap, "no [data-brand] slot actually differs from the base").toBe(true);
+  // A brand is a registry theme (theme-contrast); the [data-brand] switch is
+  // covered by theme-compile's branded-theme tests, not by a demo scope here.
+  it("ships only :root and .dark, with no [data-brand] scope", () => {
+    expect([...tokenRules.keys()].sort()).toEqual([".dark", ":root"]);
   });
 });
 

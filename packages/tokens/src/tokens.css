@@ -8,7 +8,9 @@
  * contract names never change.
  *
  * Dark mode follows the shadcn convention: `:root` = light, `.dark` = dark.
- * Multi-brand: scope overrides with `[data-brand="…"]`, composable with `.dark`.
+ * Only `:root` and `.dark` live here. A brand is a registry theme: a branded one
+ * scopes its overrides under `[data-brand="…"]`, composable with `.dark`
+ * (`theme-contrast` is the example).
  */
 
 :root {
@@ -191,28 +193,4 @@
 
   /* A dark page needs a denser wash to read as dimmed at all. */
   --overlay: oklch(0 0 0 / 0.6);
-}
-
-/*
- * Example brand scope (demo). Proves the multi-brand architecture: a brand
- * re-maps contract slots WITHOUT touching the base tokens above. A real theme
- * (Phase 5) ships its own `[data-brand]` block + `.dark` companion.
- */
-[data-brand="contrast"] {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0 0 0);
-  --primary: oklch(0 0 0);
-  --primary-foreground: oklch(1 0 0);
-  --border: oklch(0 0 0);
-  --ring: oklch(0 0 0);
-}
-
-.dark [data-brand="contrast"],
-[data-brand="contrast"].dark {
-  --background: oklch(0 0 0);
-  --foreground: oklch(1 0 0);
-  --primary: oklch(1 0 0);
-  --primary-foreground: oklch(0 0 0);
-  --border: oklch(1 0 0);
-  --ring: oklch(1 0 0);
 }

@@ -18,7 +18,8 @@ status: accepted
 > `@moderno-ui/tokens`, and they are no longer hand-written CSS: they are
 > authored as a DTCG file and compiled by `theme-compile`, like every theme.
 > `CONTRACT.md` keeps the rules but no longer enumerates slots: `contract.ts`
-> is the one source of slot names, groups and roles.
+> is the one source of slot names, groups and roles. The neutral defaults no
+> longer ship the `contrast` demo scope: `theme-contrast` is the example brand.
 
 Phase 0 establishes the styling single-source-of-truth. This ADR records where
 the technical contract, the neutral package defaults, and the brand each live,

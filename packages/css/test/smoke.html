@@ -1,9 +1,10 @@
 <!doctype html>
 <!--
   Manual smoke test for the token contract.
-  Open directly in a browser: it links the neutral tokens and renders only via
-  contract variables. Use the buttons to toggle `.dark` and `[data-brand]` and
-  confirm the surface re-themes with NO change to the markup or base tokens.
+  Open directly in a browser: it links the neutral tokens plus the registry's
+  `theme-contrast` (a branded theme) and renders only via contract variables.
+  Use the buttons to toggle `.dark` and `[data-brand]` and confirm the surface
+  re-themes with NO change to the markup or base tokens.
 -->
 <html lang="en">
   <head>
@@ -17,6 +18,7 @@
       by relative path so the fixture works with zero tooling.
     -->
     <link rel="stylesheet" href="../../tokens/src/tokens.css" />
+    <link rel="stylesheet" href="../../../registry/themes/theme-contrast/theme.css" />
     <style>
       body {
         margin: 0;

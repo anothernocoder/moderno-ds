@@ -99,5 +99,7 @@ migration. That window closes with the first real consumer.
 - `CONTRACT.md` reads as rules, not a reference table. Someone looking for the
   list of slots reads `contract.ts` (or the Theme Builder, or a theme's
   `DESIGN.md`), and the prose says so.
-- The `[data-brand="contrast"]` demo block in the neutral stylesheet is not
-  decided here: other work owns its removal, and decision 3 waits for it.
+- The `[data-brand="contrast"]` demo block leaves the neutral stylesheet
+  before decision 3 (#252). `theme-contrast` in the registry has proven the
+  multi-brand switch since Phase 5, and a generated neutral stylesheet has the
+  shape of a brand-less theme: `:root` and `.dark` only.

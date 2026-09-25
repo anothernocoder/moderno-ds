@@ -4,7 +4,7 @@
  * Consumers import this one specifier; internal package paths stay hidden.
  *   @import "@moderno-ui/css";
  *
- * It re-exports the token contract (:root / .dark / [data-brand]) and the
+ * It re-exports the token contract (:root / .dark) and the
  * shared component stylesheet from @moderno-ui/core.
  */
 

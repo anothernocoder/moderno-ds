@@ -157,7 +157,8 @@ modal or a full page — so it reads the width of its container instead:
   `--background: var(--mod-surface-base)`.
 - **Multi-brand** scopes overrides under `[data-brand="…"]`, composable with
   `.dark`. Switching `[data-brand]` re-maps variables without touching the base
-  tokens. (`@moderno-ui/tokens` ships a `contrast` demo scope.)
+  tokens. The neutral defaults ship no brand scope: `theme-contrast` in the
+  registry is the example.
 - **Tailwind v4**: import `@moderno-ui/css/preset`. It maps each slot to a theme
   namespace with `@theme inline`, so utilities reference `var(--slot)` directly
   and runtime overrides re-theme without a rebuild — `bg-primary`, `font-serif`,
@@ -195,7 +196,7 @@ Variants are expressed as data attributes on the root part
 ## Package surface
 
 - **`@moderno-ui/tokens`** — the contract.
-  - `@moderno-ui/tokens/css` → the variables (`:root` / `.dark` / `[data-brand]`).
+  - `@moderno-ui/tokens/css` → the variables (`:root` / `.dark`).
   - `@moderno-ui/tokens/preset` → the Tailwind v4 `@theme inline` mapping.
   - `@moderno-ui/tokens/contract` → the contract as data (slot name, DTCG type,
     editor group, WCAG contrast pair). Every other slot list — theme-compile's
