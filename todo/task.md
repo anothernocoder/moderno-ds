@@ -1,4 +1,5 @@
 # Tasks
+- [ ] Migrar los componentes de moderno (legacy)
 - [ ] Implementar playground
 - [ ] Revisar badges readme repo y video demo
 - [ ] Crear soporte de variante
@@ -10,14 +11,29 @@
     - [ ] V0 design system 2
 - [ ] Unir Design Tools como un Playground
   - [ ] Agregar nuevas tools de pixel point
+  - [ ] Minitool card - https://id-cards.kshv.me
+  - [ ] Minitool Reso Paper Fold - https://riso-paper-fold.vercel.app
+  - [ ] Minitool particles linear Kowalski. 
+  - [ ] Minitool Shader Gradient background
+  - [ ] Minitool Dither Lab
+  - [ ] Miniool Dot Matrix
+  - [ ] Minitool Liquid Glass
+  - [ ] Minitool ASCII imagen converter
+  - [ ] Minitool QR Generator and QR lector
+  - [ ] Minitool Card Cloudaflare - https://cloudflare.pay
   - [ ] Replicar tool de la carpeta inspo
   - [ ] Minitool para crear Ads, OG Images, Posts, Covers, Carousels
   - [ ] Minitool para mockups
+  - [ ] Minitool generte graphics brands based on references
+  - [ ] Minitool para construir logos
+  - [ ] Minitool para construis Brand Guide HTML
+  - [ ] https://texture.fayaz.workers.dev
+  - [ ] https://www.playgrnd.tools
+  - [ ] https://www.designminis.com
+  - [ ] https://human-atlas-seven.vercel.app
+  - [ ] https://light-stroke-rail.vercel.app/?ref=designminis.com
   - [ ] Scenes para motion graphics
 - [ ] Convert inspo en new blocks
 - [ ] Add new flows
 - [ ] Add slides for decks
-- [ ] Minitool generte graphics brands based on references
-- [ ] Minitool para construir logos
-- [ ] Minitool para construis Brand Guide HTML
 - [ ] Skill para motion graphics + remotion + hyperframes
