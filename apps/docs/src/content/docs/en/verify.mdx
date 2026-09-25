@@ -23,14 +23,13 @@ agent:
     - "`resent` rewrites the card's header rather than adding a line: the header is already the card's live region, so the confirmation is announced without a second one."
     - "`errors.code` is the wrong or expired code — the cells go `aria-invalid` and the reason prints under them as an `alert`. `error` is the form-level failure: too many attempts, an address already verified."
     - "`codeLength` changes the number of cells *and* the number the description names, so the two can never disagree."
-    - "`notices={[]}` is the screen's empty state: the aside is not rendered at all and the card sits centred and alone."
     - "Full-viewport is a height (`min-h-dvh`). Every width decision is read off the screen's own container, so it is still correct mounted in a pane that is not the window."
     - "The root is a `<div>`, not a `<main>` — most app shells already provide the `main` landmark, and two visible ones in a document is invalid."
     - "The page's `h1` is the card's own title: the screen hands the block `titleLevel={1}` rather than printing a heading of its own above it."
   theming:
-    - "Nothing is painted here. The card is the LoginForm block and the notes are the AlertList block; the screen's own chrome is `text-foreground` / `text-muted-foreground` on `bg-background`."
+    - "Nothing is painted here. The card is the LoginForm block; the screen's own chrome is `text-foreground` / `text-muted-foreground` on `bg-background`."
     - "The code cells paint from --input / --background, turn --primary as they fill and --destructive when invalid; their density is PinInput's `size` recipe."
-    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the two steps are --container-sm and --container-md."
 ---
 
 import Preview from "../../../components/Preview.astro";
@@ -129,44 +128,34 @@ import { Verify } from "@/components/screens/verify";
 
 Callbacks are `on…` props in React and Solid, lowercase (`onsubmit`) in Svelte, and emits (`submit`, `navigate`) in Vue.
 
-| Prop               | Type                     | Default       | Description                                                            |
-| ------------------ | ------------------------ | ------------- | ---------------------------------------------------------------------- |
-| `sentTo`           | `string`                 | `""`          | The address the code went to, named in the card and posted as `email`. |
-| `codeLength`       | `number`                 | `6`           | Number of cells, and the digit count the description names.            |
-| `resendIn`         | `number`                 | `0`           | Seconds until a new code can be requested; you run the timer.          |
-| `resent`           | `boolean`                | `false`       | A new code just went out: the card header says so.                     |
-| `error`            | `string`                 | —             | Form-level failure: too many attempts or an already verified address.  |
-| `errors`           | `Record<string, string>` | —             | Per-field messages; here only `code`.                                  |
-| `loading`          | `boolean`                | `false`       | Submit in flight: every control inert, the button busy.                |
-| `disabled`         | `boolean`                | `false`       | No code can be checked here; pair it with `error`.                     |
-| `notices`          | `AlertListItem[]`        | three samples | Notes beside the card. `[]` hides the aside.                           |
-| `noticesError`     | `string`                 | —             | The notes failed to load; this message replaces the list.              |
-| `noticesLoading`   | `boolean`                | `false`       | A busy region stands in for the notes.                                 |
-| `onSubmit`         | `(event) => void`        | —             | Native form submit, from either button.                                |
-| `onNavigate`       | `(to, event) => void`    | —             | A screen link was clicked: `home`, `support`, `privacy` or `terms`.    |
-| `onNoticeAction`   | `(id) => void`           | —             | A note's action button, with the note id.                              |
-| `onDismissNotice`  | `(id) => void`           | —             | One note was dismissed.                                                |
-| `onDismissNotices` | `() => void`             | —             | All notes were dismissed.                                              |
-| `onRetryNotices`   | `() => void`             | —             | Retry after `noticesError`.                                            |
-| `signInHref`       | `string`                 | `"#"`         | Target of "Sign in" in the card footer.                                |
-| `homeHref`         | `string`                 | `"#"`         | Target of the wordmark.                                                |
-| `supportHref`      | `string`                 | `"#"`         | Target of "Contact support".                                           |
-| `privacyHref`      | `string`                 | `"#"`         | Target of the privacy link.                                            |
-| `termsHref`        | `string`                 | `"#"`         | Target of the terms link.                                              |
+| Prop          | Type                     | Default | Description                                                            |
+| ------------- | ------------------------ | ------- | ---------------------------------------------------------------------- |
+| `sentTo`      | `string`                 | `""`    | The address the code went to, named in the card and posted as `email`. |
+| `codeLength`  | `number`                 | `6`     | Number of cells, and the digit count the description names.            |
+| `resendIn`    | `number`                 | `0`     | Seconds until a new code can be requested; you run the timer.          |
+| `resent`      | `boolean`                | `false` | A new code just went out: the card header says so.                     |
+| `error`       | `string`                 | —       | Form-level failure: too many attempts or an already verified address.  |
+| `errors`      | `Record<string, string>` | —       | Per-field messages; here only `code`.                                  |
+| `loading`     | `boolean`                | `false` | Submit in flight: every control inert, the button busy.                |
+| `disabled`    | `boolean`                | `false` | No code can be checked here; pair it with `error`.                     |
+| `onSubmit`    | `(event) => void`        | —       | Native form submit, from either button.                                |
+| `onNavigate`  | `(to, event) => void`    | —       | A screen link was clicked: `home`, `support`, `privacy` or `terms`.    |
+| `signInHref`  | `string`                 | `"#"`   | Target of "Sign in" in the card footer.                                |
+| `homeHref`    | `string`                 | `"#"`   | Target of the wordmark.                                                |
+| `supportHref` | `string`                 | `"#"`   | Target of "Contact support".                                           |
+| `privacyHref` | `string`                 | `"#"`   | Target of the privacy link.                                            |
+| `termsHref`   | `string`                 | `"#"`   | Target of the terms link.                                              |
 
 ### States
 
 | State         | Props                | Renders                                                           |
 | ------------- | -------------------- | ----------------------------------------------------------------- |
-| Default       | —                    | The code cells, the resend ready, the notes beside or under them. |
+| Default       | —                    | The code cells and the resend, ready.                             |
 | Field error   | `errors={{ code }}`  | Every cell invalid, with the reason printed below as an `alert`.  |
 | Resend locked | `resendIn > 0`       | The resend is disabled and reads "Send a new code in 42s".        |
 | Resent        | `resent`             | The header says a new code is on its way and the old one is dead. |
 | Error         | `error` + `disabled` | One alert, the form inert.                                        |
 | Loading       | `loading`            | Controls inert, submit `aria-busy`.                               |
-| Notes loading | `noticesLoading`     | A busy region in place of the notes.                              |
-| Notes error   | `noticesError`       | An alert in place of the notes.                                   |
-| Empty         | `notices={[]}`       | No aside; the card sits centred and alone.                        |
 
 ### Form fields
 
@@ -182,14 +171,12 @@ Callbacks are `on…` props in React and Solid, lowercase (`onsubmit`) in Svelte
 | ------------------------ | -------------------------------- |
 | `@sm` (`--container-sm`) | The masthead moves onto one row. |
 | `@md` (`--container-md`) | The footer moves onto one row.   |
-| `@lg` (`--container-lg`) | The notes move beside the card.  |
 
 ### Composition
 
 | Part                         | Role                                               |
 | ---------------------------- | -------------------------------------------------- |
 | [LoginForm](/en/login-form/) | The card, in `verify` mode, with `titleLevel={1}`. |
-| [AlertList](/en/alert-list/) | The notes, headed "If the code has not arrived".   |
 
 ## Examples
 
@@ -233,20 +220,6 @@ Callbacks are `on…` props in React and Solid, lowercase (`onsubmit`) in Svelte
   layout="fill"
 >
   <VerifyScreenDemo client:visible locale="en" state="error" />
-</Preview>
-
-### Empty
-
-<Preview
-  examples={{
-    react: verifyReact,
-    vue: verifyVue,
-    solid: verifySolid,
-    svelte: verifySvelte,
-  }}
-  layout="fill"
->
-  <VerifyScreenDemo client:visible locale="en" state="empty" />
 </Preview>
 
 ## Notes

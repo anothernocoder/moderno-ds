@@ -1,9 +1,8 @@
 <!--
   ResetPassword — the full-viewport screen at the end of the emailed link: the
   card that takes a new password and its confirmation, with the rules ticking
-  off as they are met, and beside it the notes saying what using this link
-  actually does. Copy it into your project with
-  `moderno add reset-password-svelte`; the blocks it composes arrive with it,
+  off as they are met. Copy it into your project with
+  `moderno add reset-password-svelte`; the block it composes arrives with it,
   and every file is yours from that moment.
 
   The last step of the recovery, not a settings form. The person here got to
@@ -31,10 +30,6 @@
   before it does, to leave a ctrl/cmd-click to the browser — while the markup
   keeps its meaning without JavaScript.
 
-  The notes sit in an <aside>, deliberately unlabelled: the block's own `heading`
-  is the h2 inside it, and an `aria-label` repeating that string would make a
-  screen reader announce the same sentence twice.
-
   The root is a <div>, not a <main>: most app shells already provide the `main`
   landmark, and two visible ones in a document is invalid. If your route has
   none, make this element your <main>.
@@ -42,39 +37,22 @@
   Responsive to its container, not the viewport (ADR-0005). Full-viewport is a
   height — `min-h-dvh` — and every width decision is read off the screen's own
   `@container`: at `@sm` (--container-sm, 24rem) the masthead stops stacking; at
-  `@md` (--container-md, 36rem) the footer does; at `@lg` (--container-lg, 48rem)
-  the notes leave their place under the card and stand beside it, so what this
-  link is about to do is read before the password is chosen rather than after it
-  has been saved.
+  `@md` (--container-md, 36rem) the footer does.
 
   States. `loading` and `disabled` make the card inert; `errors.password` marks a
   password the rules reject and `errors.confirmPassword` two that do not match.
   `error` is the form-level failure, and it is where an expired or already-used
   link belongs — with `disabled` beside it, so a screen that cannot accept a
-  password does not pretend to take one. The notes carry their own
-  `noticesLoading` and `noticesError`, and the empty case is the screen's own:
-  with `notices={[]}` the aside is not rendered at all and the card sits centred
-  and alone.
+  password does not pretend to take one.
 
   Class strings are written out in full rather than shared through a variable:
   the docs compile the previews' Tailwind from `class` attributes, so a class
   assembled in JS would render here and vanish in the preview.
 -->
 <script lang="ts">
-  import AlertList from "@/components/blocks/AlertList.svelte";
   import LoginForm from "@/components/blocks/LoginForm.svelte";
 
   type ResetPasswordDestination = "home" | "support" | "privacy" | "terms";
-
-  /** One note, as the alert-list block renders it. */
-  interface Notice {
-    id: string;
-    variant: "info" | "success" | "warning" | "error";
-    title: string;
-    description?: string;
-    meta?: string;
-    actionLabel?: string;
-  }
 
   /** One rule under the new password, as the login-form block renders it. */
   interface PasswordRequirement {
@@ -96,12 +74,6 @@
     loading?: boolean;
     /** No password can be set here — pair it with `error` when the link is spent. */
     disabled?: boolean;
-    /** Notes to show beside the card. `[]` renders the card alone. */
-    notices?: Notice[];
-    /** The notes could not be loaded; that message replaces the list. */
-    noticesError?: string;
-    /** The notes are still loading: a busy region stands in for the list. */
-    noticesLoading?: boolean;
     /** Native submit; call `event.preventDefault()` and read the form yourself. */
     onsubmit?: (event: SubmitEvent) => void;
     /**
@@ -110,14 +82,6 @@
      * and read `metaKey` / `ctrlKey` first to leave a new-tab click alone.
      */
     onnavigate?: (destination: ResetPasswordDestination, event: MouseEvent) => void;
-    /** A note's own action (`actionLabel`), reported with that note's id. */
-    onnoticeaction?: (id: string) => void;
-    /** A note was dismissed; you drop it from your own state. */
-    ondismissnotice?: (id: string) => void;
-    /** Every note was dismissed at once. */
-    ondismissnotices?: () => void;
-    /** Retry after `noticesError`. */
-    onretrynotices?: () => void;
     /** Where "Sign in" points, in the card's footer. */
     signInHref?: string;
     /** Where the wordmark points. */
@@ -130,38 +94,6 @@
     termsHref?: string;
   }
 
-  /**
-   * What this screen answers before it is asked: what the link does, what
-   * changes when the password does, and the easiest way to pick one. Delete it
-   * and pass your own `notices` — or rewrite it in place, the file is yours.
-   */
-  const resetNotices: Notice[] = [
-    {
-      id: "single-use",
-      variant: "info",
-      title: "This link works once",
-      description:
-        "Saving a password retires it. Ask for a new link from the sign-in page if you need to start again.",
-      meta: "One use",
-    },
-    {
-      id: "sessions",
-      variant: "warning",
-      title: "Everywhere else gets signed out",
-      description:
-        "Phones, tablets and any browser you left open will ask for the new password the next time they are used.",
-      meta: "All devices",
-    },
-    {
-      id: "manager",
-      variant: "info",
-      title: "Let a password manager choose it",
-      description:
-        "Both fields are marked as a new password, so a manager offers to generate one and then to save it.",
-      meta: "Recommended",
-    },
-  ];
-
   let {
     token = "",
     requirements,
@@ -169,23 +101,14 @@
     errors,
     loading = false,
     disabled = false,
-    notices = resetNotices,
-    noticesError,
-    noticesLoading = false,
     onsubmit,
     onnavigate,
-    onnoticeaction,
-    ondismissnotice,
-    ondismissnotices,
-    onretrynotices,
     signInHref = "#",
     homeHref = "#",
     supportHref = "#",
     privacyHref = "#",
     termsHref = "#",
   }: Props = $props();
-
-  const showNotices = $derived(Boolean(noticesError) || noticesLoading || notices.length > 0);
 </script>
 
 <div class="@container moderno-screen-reset-password min-h-dvh bg-background text-foreground">
@@ -210,37 +133,19 @@
       </p>
     </header>
 
-    <div class="grid content-center gap-8 @lg:grid-cols-2 @lg:items-start @lg:gap-10">
-      <div class="mx-auto w-full max-w-sm">
-        <LoginForm
-          mode="reset-password"
-          titleLevel={1}
-          {token}
-          {requirements}
-          {error}
-          {errors}
-          {loading}
-          {disabled}
-          {onsubmit}
-          {signInHref}
-        />
-      </div>
-
-      {#if showNotices}
-        <aside class="mx-auto w-full max-w-md">
-          <AlertList
-            heading="What this link does"
-            description="Worth knowing before you choose the password."
-            alerts={notices}
-            error={noticesError}
-            loading={noticesLoading}
-            onaction={onnoticeaction}
-            ondismiss={ondismissnotice}
-            ondismissall={ondismissnotices}
-            onretry={onretrynotices}
-          />
-        </aside>
-      {/if}
+    <div class="mx-auto grid w-full max-w-sm content-center">
+      <LoginForm
+        mode="reset-password"
+        titleLevel={1}
+        {token}
+        {requirements}
+        {error}
+        {errors}
+        {loading}
+        {disabled}
+        {onsubmit}
+        {signInHref}
+      />
     </div>
 
     <footer

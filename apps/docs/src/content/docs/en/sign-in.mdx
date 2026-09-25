@@ -1,6 +1,6 @@
 ---
 title: Sign in
-description: A full-viewport sign-in screen that pairs the login form with the notices people need before signing in.
+description: A full-viewport sign-in screen with the login form centred between a masthead and a footer.
 group: Screens
 order: 111
 agent:
@@ -11,20 +11,15 @@ agent:
       use: the LoginForm block — a block never owns the viewport
     - case: The whole auth journey, with the navigation between its steps
       use: the auth flow, which sequences this screen with sign-up, forgot-password, reset-password and verify
-    - case: A notification centre after sign-in
-      use: the AlertList block on its own — here it carries service notices, not a signed-in person's feed
   gotchas:
     - "Presentational: no credentials, no request, no router. `onSubmit` hands back the native event and `onNavigate` names the destination of every link the screen draws itself and hands back the click event with it, so a router can `preventDefault()`; where those destinations go is the mounting page's business."
     - "The form's two links (recovery and sign-up) are `href`s, not callbacks — a credential-recovery link has to work when hydration fails, which is exactly when someone is locked out. Pass `forgotHref` and `signUpHref`."
-    - "`notices={[]}` is the screen's empty state: the aside is not rendered at all and the card sits centred and alone. It is not the block's 'all caught up' card."
-    - "`noticesError` and `noticesLoading` are about the notices, not the sign-in; `error`, `loading` and `disabled` are about the sign-in, not the notices. The two halves fail independently because they load independently."
     - "Full-viewport is a height (`min-h-dvh`). Every width decision is read off the screen's own container, so it is still correct mounted in a pane that is not the window."
-    - "The screen imports its blocks from `@/components/blocks/…`, where `moderno add` puts them. If your project uses a different path alias, those two import lines are the only thing to change."
+    - "The screen imports the LoginForm block from `@/components/blocks/…`, where `moderno add` puts it. If your project uses a different path alias, that one import line is the only thing to change."
     - "The root is a `<div>`, not a `<main>` — most app shells already provide the `main` landmark, and two visible ones in a document is invalid. If your route has none, change that one element."
   theming:
-    - "Nothing is painted here. The card is the LoginForm block, the notices are the AlertList block, and the screen's own chrome is `text-foreground` / `text-muted-foreground` on `bg-background`."
-    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg."
-    - "The notices' heading is a prop, not a hardcoded string: the same AlertList that is a notification centre elsewhere says 'Before you sign in' here."
+    - "Nothing is painted here. The card is the LoginForm block, and the screen's own chrome is `text-foreground` / `text-muted-foreground` on `bg-background`."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the two steps are --container-sm and --container-md."
 ---
 
 import Preview from "../../../components/Preview.astro";
@@ -132,38 +127,28 @@ import { SignIn } from "@/components/screens/sign-in";
 
 Callbacks are `on…` props in React and Solid, lowercase (`onsubmit`) in Svelte, and emits (`submit`, `navigate`) in Vue.
 
-| Prop               | Type                  | Default     | Description                                                         |
-| ------------------ | --------------------- | ----------- | ------------------------------------------------------------------- |
-| `error`            | `string`              | —           | Sign-in failed: shows the form alert and invalidates both fields.   |
-| `loading`          | `boolean`             | `false`     | Submit in flight: every control inert, the button busy.             |
-| `disabled`         | `boolean`             | `false`     | Sign-in is unavailable (SSO-only workspace, locked account).        |
-| `notices`          | `AlertListItem[]`     | two samples | Service notices beside the form. `[]` hides the aside.              |
-| `noticesError`     | `string`              | —           | The notices failed to load; this message replaces the list.         |
-| `noticesLoading`   | `boolean`             | `false`     | A busy region stands in for the notices.                            |
-| `onSubmit`         | `(event) => void`     | —           | Native form submit.                                                 |
-| `onNavigate`       | `(to, event) => void` | —           | A screen link was clicked: `home`, `support`, `privacy` or `terms`. |
-| `onNoticeAction`   | `(id) => void`        | —           | A notice's action button, with the notice id.                       |
-| `onDismissNotice`  | `(id) => void`        | —           | One notice was dismissed.                                           |
-| `onDismissNotices` | `() => void`          | —           | All notices were dismissed.                                         |
-| `onRetryNotices`   | `() => void`          | —           | Retry after `noticesError`.                                         |
-| `forgotHref`       | `string`              | `"#"`       | Target of "Forgot your password?".                                  |
-| `signUpHref`       | `string`              | `"#"`       | Target of "Create an account".                                      |
-| `homeHref`         | `string`              | `"#"`       | Target of the wordmark.                                             |
-| `supportHref`      | `string`              | `"#"`       | Target of "Contact support".                                        |
-| `privacyHref`      | `string`              | `"#"`       | Target of the privacy link.                                         |
-| `termsHref`        | `string`              | `"#"`       | Target of the terms link.                                           |
+| Prop          | Type                  | Default | Description                                                         |
+| ------------- | --------------------- | ------- | ------------------------------------------------------------------- |
+| `error`       | `string`              | —       | Sign-in failed: shows the form alert and invalidates both fields.   |
+| `loading`     | `boolean`             | `false` | Submit in flight: every control inert, the button busy.             |
+| `disabled`    | `boolean`             | `false` | Sign-in is unavailable (SSO-only workspace, locked account).        |
+| `onSubmit`    | `(event) => void`     | —       | Native form submit.                                                 |
+| `onNavigate`  | `(to, event) => void` | —       | A screen link was clicked: `home`, `support`, `privacy` or `terms`. |
+| `forgotHref`  | `string`              | `"#"`   | Target of "Forgot your password?".                                  |
+| `signUpHref`  | `string`              | `"#"`   | Target of "Create an account".                                      |
+| `homeHref`    | `string`              | `"#"`   | Target of the wordmark.                                             |
+| `supportHref` | `string`              | `"#"`   | Target of "Contact support".                                        |
+| `privacyHref` | `string`              | `"#"`   | Target of the privacy link.                                         |
+| `termsHref`   | `string`              | `"#"`   | Target of the terms link.                                           |
 
 ### States
 
-| State           | Props            | Renders                                                        |
-| --------------- | ---------------- | -------------------------------------------------------------- |
-| Default         | —                | The card with the service notices beside or under it.          |
-| Error           | `error`          | One form alert; both credential fields invalid, neither named. |
-| Loading         | `loading`        | Controls inert, submit `aria-busy`.                            |
-| Disabled        | `disabled`       | The form is shown but can't be used.                           |
-| Notices loading | `noticesLoading` | A polite busy region in place of the notices.                  |
-| Notices error   | `noticesError`   | One alert with a retry in place of the notices.                |
-| Empty           | `notices={[]}`   | No aside; the card sits centred and alone.                     |
+| State    | Props      | Renders                                                        |
+| -------- | ---------- | -------------------------------------------------------------- |
+| Default  | —          | The card, centred between the masthead and the footer.         |
+| Error    | `error`    | One form alert; both credential fields invalid, neither named. |
+| Loading  | `loading`  | Controls inert, submit `aria-busy`.                            |
+| Disabled | `disabled` | The form is shown but can't be used.                           |
 
 ### Form fields
 
@@ -175,18 +160,16 @@ Callbacks are `on…` props in React and Solid, lowercase (`onsubmit`) in Svelte
 
 ### Sizing
 
-| Container step           | Change                            |
-| ------------------------ | --------------------------------- |
-| `@sm` (`--container-sm`) | The masthead moves onto one row.  |
-| `@md` (`--container-md`) | The footer moves onto one row.    |
-| `@lg` (`--container-lg`) | The notices move beside the card. |
+| Container step           | Change                           |
+| ------------------------ | -------------------------------- |
+| `@sm` (`--container-sm`) | The masthead moves onto one row. |
+| `@md` (`--container-md`) | The footer moves onto one row.   |
 
 ### Composition
 
 | Part                         | Role                                                           |
 | ---------------------------- | -------------------------------------------------------------- |
 | [LoginForm](/en/login-form/) | The credential card, in `sign-in` mode, with `titleLevel={1}`. |
-| [AlertList](/en/alert-list/) | The notices, headed "Before you sign in".                      |
 
 ## Examples
 
@@ -206,8 +189,6 @@ Callbacks are `on…` props in React and Solid, lowercase (`onsubmit`) in Svelte
 
 ### Loading
 
-The form and the notices load at the same time here: `loading` plus `noticesLoading`.
-
 <Preview
   examples={{
     react: signInReact,
@@ -220,34 +201,6 @@ The form and the notices load at the same time here: `loading` plus `noticesLoad
   <SignInScreenDemo client:visible locale="en" state="loading" />
 </Preview>
 
-### Notices error
-
-<Preview
-  examples={{
-    react: signInReact,
-    vue: signInVue,
-    solid: signInSolid,
-    svelte: signInSvelte,
-  }}
-  layout="fill"
->
-  <SignInScreenDemo client:visible locale="en" state="notices-error" />
-</Preview>
-
-### Empty
-
-<Preview
-  examples={{
-    react: signInReact,
-    vue: signInVue,
-    solid: signInSolid,
-    svelte: signInSvelte,
-  }}
-  layout="fill"
->
-  <SignInScreenDemo client:visible locale="en" state="empty" />
-</Preview>
-
 ## Notes
 
 - Presentational: no request, no router, no stored credentials. The page that mounts it owns them.
@@ -255,4 +208,4 @@ The form and the notices load at the same time here: `loading` plus `noticesLoad
 - The recovery and sign-up links are plain `href`s, so they work before the page hydrates.
 - `onNavigate` passes the click event: skip `metaKey`/`ctrlKey` clicks, then `preventDefault()` to route.
 - The root is a `<div>`, not a `<main>`. Make it your `<main>` if the route has none.
-- The screen imports its blocks from `@/components/blocks/…`; edit those lines if your alias differs.
+- The screen imports the LoginForm block from `@/components/blocks/…`; edit that line if your alias differs.

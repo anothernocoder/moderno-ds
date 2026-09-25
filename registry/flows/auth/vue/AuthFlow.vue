@@ -111,22 +111,6 @@ function urlFor(step: AuthStep): string {
   return props.hrefFor ? props.hrefFor(step) : `#${step}`;
 }
 
-/**
- * The stand-in for the email, and the only thing in this file that exists
- * because an example has no server. In your product the reader leaves for their
- * inbox here and comes back on a URL, so this row goes away and
- * `initial-step="reset-password"` takes over.
- */
-const openTheLink = {
-  id: "open-link",
-  variant: "success" as const,
-  title: "The link is on its way",
-  description:
-    "In your product this arrives by email and re-enters the flow at reset-password with a token from the URL. There is no mail server behind this example, so open it from here.",
-  meta: "Example only",
-  actionLabel: "Open the reset link",
-};
-
 const step = ref<AuthStep>(props.initialStep);
 const email = ref(props.initialEmail);
 const token = ref(props.resetToken);
@@ -253,9 +237,13 @@ function submit(event: Event) {
   finish(address);
 }
 
-/** A note's own action. Only the stand-in for the email has one here. */
-function noticeAction(id: string) {
-  if (id !== openTheLink.id) return;
+/**
+ * The stand-in for the email, and the only thing in this file that exists
+ * because an example has no server. In your product the reader leaves for their
+ * inbox here and comes back on a URL, so this handler and the banner that calls
+ * it go away and `initialStep="reset-password"` takes over.
+ */
+function openResetLink() {
   token.value = token.value || "example-token";
   go("reset-password");
 }
@@ -288,20 +276,32 @@ function noticeAction(id: string) {
       :terms-href="termsHref"
       @submit="submit"
     />
-    <ForgotPassword
-      v-else-if="step === 'forgot-password'"
-      :sent="sent"
-      :sent-to="email"
-      :errors="errors"
-      :notices="sent ? [openTheLink] : undefined"
-      :sign-in-href="urlFor('sign-in')"
-      :home-href="homeHref"
-      :support-href="supportHref"
-      :privacy-href="privacyHref"
-      :terms-href="termsHref"
-      @submit="submit"
-      @notice-action="noticeAction"
-    />
+    <template v-else-if="step === 'forgot-password'">
+      <aside
+        v-if="sent"
+        class="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-border bg-muted p-3 text-ui-md text-muted-foreground"
+      >
+        <p>Example only: there is no mail server behind this flow.</p>
+        <button
+          type="button"
+          class="rounded-sm border border-border bg-background px-3 py-2 text-ui-md font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          @click="openResetLink"
+        >
+          Open the reset link
+        </button>
+      </aside>
+      <ForgotPassword
+        :sent="sent"
+        :sent-to="email"
+        :errors="errors"
+        :sign-in-href="urlFor('sign-in')"
+        :home-href="homeHref"
+        :support-href="supportHref"
+        :privacy-href="privacyHref"
+        :terms-href="termsHref"
+        @submit="submit"
+      />
+    </template>
     <ResetPassword
       v-else-if="step === 'reset-password'"
       :token="token"

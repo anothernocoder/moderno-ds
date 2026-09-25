@@ -19,9 +19,9 @@ agent:
     - "`hrefFor` is the seam for your router: return `/auth/sign-up` instead of `#sign-up` and every link and every interception follows, with no other edit."
     - "`onStepChange` is where you mirror the step into the URL. Without it a reload drops the reader back at sign-in."
     - "The flow owns the resend countdown — one timeout, in the assembly. The verify card renders `resendIn` and never runs a clock."
-    - '`reset-password` is entered from the emailed link, not from a step transition: pass `initialStep="reset-password"` and `resetToken` off the URL. The `Open the reset link` notice exists only because an example has no mail server; delete it.'
+    - '`reset-password` is entered from the emailed link, not from a step transition: pass `initialStep="reset-password"` and `resetToken` off the URL. The `Open the reset link` banner exists only because an example has no mail server; delete it.'
     - "`onAuthenticated` is the exit. The flow returns to its first step afterwards and paints no success page — leaving is your router's job."
-    - "Installing the flow installs its five screens and the two blocks they share, each under its own version in `.moderno/manifest.json`; one copy of the card, not five."
+    - "Installing the flow installs its five screens and the block they share, each under its own version in `.moderno/manifest.json`; one copy of the card, not five."
   theming:
     - "Nothing is painted here at all. The assembly renders one screen at a time and adds a single wrapper element with no styling of its own."
     - "Everything visible comes from the screens, their blocks and the primitives underneath — which is why a theme swap changes the whole journey at once."
@@ -55,7 +55,7 @@ import authSvelte from "../../../../../../registry/flows/auth/svelte/AuthFlow.sv
 
 <Install item="auth" />
 
-The flow lands in `src/components/flows/`, its five screens in `screens/` and their two shared blocks in `blocks/`, each versioned on its own.
+The flow lands in `src/components/flows/`, its five screens in `screens/` and their shared block in `blocks/`, each versioned on its own.
 
 ## Usage
 
@@ -176,5 +176,5 @@ What the assembly holds so the screens don't have to.
 - Navigation intercepts real `href`s: plain left clicks only; modified and middle clicks go to the browser.
 - Forward moves are plain form submissions, read with `new FormData(form, submitter)`.
 - `sent`, `resent` and `errors` reset on every move.
-- The "Open the reset link" notice exists only because the example has no mail server. Delete it.
+- The "Open the reset link" banner exists only because the example has no mail server. Delete it.
 - `onAuthenticated` returns the flow to its first step and draws no success page; leaving is your router's job.
