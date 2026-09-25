@@ -50,3 +50,16 @@
 - [ ] Convert cada imagen o layout de Inspo Vault y Websites en new blocks, screens y flows
 - [ ] Add slides for decks a inspo vault.
 - [ ] Skill para motion graphics + remotion + hyperframes
+- [ ] Importante:
+  - [ ] Hacer Code Review
+  - [ ] Hacer Auditoria con PonyTail
+  - [ ] Hacer Auditoria de Infraestructura
+  - [ ] Hacer Auditoria de securidad (opcional)
+  - [ ] Check de responsive
+  - [ ] Pasar skill de Emil Kowalski de animaciones y de UI
+  - [ ] Mejorar el CLAUDE.md
+  - [ ] Elimianr las skills que no son necesarias del Repo
+- [ ] Revisar si con Jevs se puede validar si todos los componentes de Inspo Vault ya tienen componentes en Moderno
+- [ ] Mejorar las descripciones de las primitivas y los componentes para que el MCP funcione perfecto
+  - [ ] Hacer pruebas con Agentes y el MCP
+- [ ] Sacar un lista de cada una de los compontes o mirar el json si tiene todas las primitivas de moderno.
