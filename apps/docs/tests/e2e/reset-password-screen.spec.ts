@@ -12,14 +12,12 @@
  *
  * Seven claims, per width and per scheme:
  *
- * 1. **Container, not viewport.** All three of the screen's steps are read off
- *    the width of the frame it was mounted in, never the window: the masthead
- *    lines up at `--container-sm`, the footer at `--container-md`, and the notes
- *    move beside the card at `--container-lg`. The demo's Phone, Tablet and
- *    Desktop tabs mount the same file in a phone-, a tablet- and a
- *    desktop-width frame, so at every viewport the three answers differ from
- *    each other — which is the whole of ADR-0005. Each tab mounts one copy, and
- *    every state is reached by selecting its tab.
+ * 1. **Container, not viewport.** Both of the screen's steps are read off the
+ *    width of the frame it was mounted in, never the window: the masthead lines
+ *    up at `--container-sm` and the footer at `--container-md`. The demo's
+ *    Phone, Tablet and Desktop tabs mount the same file in a phone-, a tablet- and a desktop-width frame, so at every viewport the phone copy answers
+ *    differently from the other two — which is the whole of ADR-0005. Each tab
+ *    mounts one copy, and every state is reached by selecting its tab.
  * 2. **A screen owns the viewport as a height.** Its root fills the window it is
  *    given, top to bottom. On this page each frame *is* that window — the demo
  *    overrides `min-h-dvh` to the frame's height so a browser window's worth of
@@ -46,16 +44,14 @@
  *    the card's title, carrying `titleLevel`, because the card *is* what the
  *    page is called — and no heading after it skips a rank.
  * 7. **AA contrast** on every text the screen paints itself — the wordmark, the
- *    support line and its link, the copyright, the legal links — plus the notes
- *    heading it hands the block and the rules under the password, in light and
- *    in dark.
+ *    support line and its link, the copyright, the legal links — plus the rules
+ *    under the password, in light and in dark.
  */
 import { expect, test, type Page } from "@playwright/test";
 
-/** The contract's three container steps, in px at the default root size. */
+/** The contract's two container steps the screen reads, in px at the default root size. */
 const CONTAINER_SM = 384;
 const CONTAINER_MD = 576;
-const CONTAINER_LG = 768;
 
 /** The responsive policy's three widths (ADR-0005). */
 const WIDTHS = [375, 768, 1280];
@@ -64,11 +60,11 @@ const PAGE = "/en/reset-password/";
 
 /**
  * Every copy of the screen the page mounts (islands/ResetPasswordScreenDemo.svelte), in
- * order: the main preview's three width tabs — one frame in each band of the
- * screen's three steps — then the states, each in its own Examples preview at
- * the tablet width. Each is one mounted copy, found by its `data-demo-state`.
+ * order: the main preview's three width tabs — one frame below `@sm`, two at or
+ * above `@md` — then the states, each in its own Examples preview at the tablet
+ * width. Each is one mounted copy, found by its `data-demo-state`.
  */
-const TABS = ["phone", "tablet", "desktop", "feedback", "error", "field-error", "empty"] as const;
+const TABS = ["phone", "tablet", "desktop", "feedback", "error", "field-error"] as const;
 type Tab = (typeof TABS)[number];
 
 /** The tabs of the main preview; every other entry is a state's own preview. */
@@ -88,10 +84,6 @@ interface ScreenMetrics {
   mastheadDisplay: string;
   /** `display` of the footer: stacked below `@md`, one row at or above it. */
   footerDisplay: string;
-  /** Number of grid tracks in the content region: one column, or two at `@lg`. */
-  contentColumns: number;
-  /** Whether the notes aside is rendered at all (it is not when empty). */
-  hasNotices: boolean;
   /** The `name` of every control the card submits, in document order. */
   fieldNames: string[];
   /** `type` of the control named `token`: the hidden carrier of the link's value. */
@@ -117,8 +109,7 @@ async function screenMetrics(page: Page, tab: Tab): Promise<ScreenMetrics[]> {
     return [...panel.querySelectorAll("div.moderno-screen-reset-password")].map((root) => {
       const masthead = root.querySelector("header");
       const footer = root.querySelector("footer");
-      const content = root.querySelector("header + div");
-      if (!masthead || !footer || !content) {
+      if (!masthead || !footer) {
         throw new Error("the reset-password screen did not render its own markup");
       }
       const token = root.querySelector<HTMLInputElement>('form [name="token"]');
@@ -138,8 +129,6 @@ async function screenMetrics(page: Page, tab: Tab): Promise<ScreenMetrics[]> {
         frameHeight: (root.parentElement as HTMLElement).clientHeight,
         mastheadDisplay: getComputedStyle(masthead).display,
         footerDisplay: getComputedStyle(footer).display,
-        contentColumns: getComputedStyle(content).gridTemplateColumns.split(/\s+/).length,
-        hasNotices: content.querySelector("aside") !== null,
         fieldNames: [...root.querySelectorAll<HTMLInputElement>("form [name]")].map(
           (el) => el.name,
         ),
@@ -283,8 +272,6 @@ async function contrastRatios(page: Page): Promise<Record<string, number>> {
       supportLine: against(pick("header p")),
       supportLink: against(pick("header p a")),
       passwordRules: against(pick('[data-part="helper-text"][role="list"]')),
-      noticesHeading: against(pick("aside h2")),
-      noticesDescription: against(pick("aside h2 + p")),
       copyright: against(pick("footer p")),
       legalLink: against(pick("footer nav a")),
     };
@@ -317,15 +304,15 @@ for (const scheme of ["light", "dark"] as const) {
         }
 
         // The three frame widths are fixed by the demo, so at every viewport its
-        // width tabs hold one copy in each band of the screen's three steps.
+        // width tabs hold a copy below `@sm` and copies at or above `@md`.
         const widths = screens.map((s) => s.containerWidth);
         expect(
           widths.some((w) => w < CONTAINER_SM),
           `${scheme} ${width}px: a copy below @sm`,
         ).toBe(true);
         expect(
-          widths.some((w) => w >= CONTAINER_LG),
-          `${scheme} ${width}px: a copy at or above @lg`,
+          widths.some((w) => w >= CONTAINER_MD),
+          `${scheme} ${width}px: a copy at or above @md`,
         ).toBe(true);
 
         for (const [index, screen] of screens.entries()) {
@@ -335,9 +322,6 @@ for (const scheme of ["light", "dark"] as const) {
           );
           expect(screen.footerDisplay, `${where}: footer`).toBe(
             screen.containerWidth >= CONTAINER_MD ? "flex" : "grid",
-          );
-          expect(screen.contentColumns, `${where}: content columns`).toBe(
-            screen.containerWidth >= CONTAINER_LG ? 2 : 1,
           );
           // Full-viewport is a height: the screen fills the window it is given.
           // On this page each frame stands in for that window (the demo says so
@@ -387,11 +371,6 @@ for (const scheme of ["light", "dark"] as const) {
             index === RULES_MET_COPY ? 2 : 0,
           );
         }
-
-        // The last tab is the empty one: nothing to say about the link, so the
-        // aside is not rendered at all rather than rendered with nothing in it.
-        expect(screens.slice(0, -1).every((s) => s.hasNotices)).toBe(true);
-        expect(screens.at(-1)!.hasNotices).toBe(false);
       });
     }
 
