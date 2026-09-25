@@ -1,5 +1,6 @@
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
+import { CONTRACT } from "@moderno-ui/css/contract";
 import { AGENT_COMPONENTS, buildComponentsManifest } from "../src/agent-manifest.ts";
 import { buildContractManifest } from "../src/contract-manifest.ts";
 
@@ -254,6 +255,11 @@ describe("buildContractManifest", () => {
       "--font-weight-bold",
     ]);
     expect(manifest.slots.type).toHaveLength(22);
+  });
+
+  it("carries each slot's role from the contract", () => {
+    expect(Object.keys(manifest.roles)).toEqual(CONTRACT.map((s) => `--${s.name}`));
+    for (const s of CONTRACT) expect(manifest.roles[`--${s.name}`]).toBe(s.role);
   });
 
   it("lists the extended modal scrim among the colour slots an agent may reference", () => {

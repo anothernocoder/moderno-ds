@@ -22,9 +22,11 @@ ships everything the two did:
 
 `@moderno-ui/css` no longer depends on `@moderno-ui/tokens`, and
 `@moderno-ui/tokens` gets no further releases: it will be deprecated on npm in
-favour of `@moderno-ui/css`. If you imported `@moderno-ui/tokens/css`, import
-`@moderno-ui/css`; replace `@moderno-ui/tokens/preset` and
-`@moderno-ui/tokens/contract` with the `@moderno-ui/css` subpaths above.
+favour of `@moderno-ui/css`. If you imported `@moderno-ui/tokens/css`, its exact
+equivalent is `@moderno-ui/css/tokens.css` (the variables alone); an app that
+also wants the component stylesheet imports `@moderno-ui/css`. Replace
+`@moderno-ui/tokens/preset` and `@moderno-ui/tokens/contract` with the
+`@moderno-ui/css` subpaths above.
 
 The contract manifest's `package` is `@moderno-ui/css` in `@moderno-ui/lint-core`'s
 `ContractManifest` type too, `get_contract`'s not-installed error names

@@ -30,6 +30,7 @@ export const manifests: AggregatedManifests = {
       container: ["--container-sm", "--container-md", "--container-lg"],
       type: ["--text-ui-md", "--leading-ui-md", "--text-body", "--leading-body"],
     },
+    roles: { "--primary": "the main action" },
     theming: {
       darkMode: ":root is the light scope, .dark overrides it.",
       multiBrand: '[data-brand="…"] scopes overrides and composes with .dark.',

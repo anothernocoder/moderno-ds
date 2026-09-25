@@ -1,11 +1,13 @@
 /**
  * @moderno-ui/css/contract — the token contract as data.
  *
- * The single machine-readable source of the CONTRACT.md slot contract. Every
- * other slot list in the repo derives from this one: `tokens.css` is asserted
- * against it in tests, `@moderno-ui/theme-compile` derives its required slots and
- * WCAG contrast pairs, and the docs Theme Builder derives its editor groups.
- * Adding a slot here is the *only* edit — the derivations follow.
+ * The one hand-edited source of the contract's slots: their names, DTCG types,
+ * groups, contrast pairs and roles (ADR-0008). CONTRACT.md holds the rules and
+ * points here for the slots. Every other slot list in the repo derives from
+ * this one: `tokens.css` is asserted against it in tests,
+ * `@moderno-ui/theme-compile` derives its required slots, its WCAG contrast
+ * pairs and each theme's DESIGN.md, the agent manifest carries the roles, and
+ * the docs Theme Builder derives its editor groups.
  *
  * Shipped as source (no bundler step), consistent with the CSS-first toolchain
  * decision in ADR-0001.
@@ -33,14 +35,42 @@ export interface ContractSlot {
   name: string;
   type: ContractSlotType;
   group: ContractGroup;
+  /** What the slot is for, in one line: a lowercase phrase with no final period. */
+  role: string;
   /** For a foreground slot: the background slot WCAG AA is checked against. */
   contrastAgainst?: string;
 }
 
-const color = (name: string, group: ContractGroup, contrastAgainst?: string): ContractSlot =>
+/** What each group of the contract holds, in one line. */
+export const GROUP_ROLES: Readonly<Record<ContractGroup, string>> = {
+  surfaces: "the page, raised surfaces and floating surfaces",
+  brand: "actions, from the primary fill to the quieter ones",
+  support: "recessed wells, the destructive action, status, lines and focus",
+  charts: "data-viz series, in order",
+  other: "the base corner radius and the interface and code faces",
+  extended: "optional in a theme, with a neutral default",
+};
+
+const color = (
+  name: string,
+  group: ContractGroup,
+  role: string,
+  contrastAgainst?: string,
+): ContractSlot =>
   contrastAgainst
-    ? { name, type: "color", group, contrastAgainst }
-    : { name, type: "color", group };
+    ? { name, type: "color", group, role, contrastAgainst }
+    : { name, type: "color", group, role };
+
+/** A `*-foreground` slot: what sits on its surface, checked against it. */
+const foreground = (surface: string, group: ContractGroup): ContractSlot =>
+  color(`${surface}-foreground`, group, `text and icons on \`${surface}\``, surface);
+
+const extended = (name: string, type: ContractSlotType, role: string): ContractSlot => ({
+  name,
+  type,
+  group: "extended",
+  role,
+});
 
 /**
  * Steps of the type scale, smallest first. Each step is two slots:
@@ -60,6 +90,19 @@ export const TYPE_STEPS = [
   "heading-lg",
 ] as const;
 
+/** What each type step sets. The `ui-*` ramp is what a component's sizes read. */
+export const TYPE_STEP_ROLES: Readonly<Record<(typeof TYPE_STEPS)[number], string>> = {
+  "ui-xs": "the smallest interface text: ticks and helper text",
+  "ui-sm": "a component's `sm` size",
+  "ui-md": "a component's `md` size, and the default text of the interface",
+  "ui-lg": "a component's `lg` size",
+  body: "running text",
+  "body-lg": "lead paragraphs and dialog titles",
+  "heading-sm": "small titles",
+  heading: "section titles",
+  "heading-lg": "page titles",
+};
+
 /**
  * Font weights, lightest first: `--font-weight-<weight>`. Unlike the type steps,
  * these deliberately *are* Tailwind's own keys, at its values: the unlayered
@@ -68,94 +111,103 @@ export const TYPE_STEPS = [
  */
 export const FONT_WEIGHTS = ["normal", "medium", "semibold", "bold"] as const;
 
+const WEIGHT_ROLES: Readonly<Record<(typeof FONT_WEIGHTS)[number], string>> = {
+  normal: "running text",
+  medium: "controls and labels",
+  semibold: "titles",
+  bold: "strong emphasis, sparingly",
+};
+
+const SPACING_STEPS = [1, 2, 3, 4, 5, 6, 7, 8] as const;
+
 /** The full contract, in editor display order. */
 export const CONTRACT: readonly ContractSlot[] = [
   // — Surfaces —
-  color("background", "surfaces"),
-  color("foreground", "surfaces", "background"),
-  color("card", "surfaces"),
-  color("card-foreground", "surfaces", "card"),
-  color("popover", "surfaces"),
-  color("popover-foreground", "surfaces", "popover"),
+  color("background", "surfaces", "the page surface"),
+  color("foreground", "surfaces", "text and icons on `background`", "background"),
+  color("card", "surfaces", "a raised surface: cards and panels"),
+  foreground("card", "surfaces"),
+  color("popover", "surfaces", "a floating surface: popovers, menus and select lists"),
+  foreground("popover", "surfaces"),
   // — Brand —
-  color("primary", "brand"),
-  color("primary-foreground", "brand", "primary"),
-  color("secondary", "brand"),
-  color("secondary-foreground", "brand", "secondary"),
-  color("accent", "brand"),
-  color("accent-foreground", "brand", "accent"),
+  color("primary", "brand", "the main action: primary button fills and emphasized controls"),
+  foreground("primary", "brand"),
+  color("secondary", "brand", "a quieter action than `primary`"),
+  foreground("secondary", "brand"),
+  color("accent", "brand", "the hover and highlight surface of quiet controls and list items"),
+  foreground("accent", "brand"),
   // — Support —
-  color("muted", "support"),
-  color("muted-foreground", "support", "muted"),
-  color("destructive", "support"),
-  color("destructive-foreground", "support", "destructive"),
-  /*
-   * Status hues. `--destructive` covers the error case for *actions* (a delete
-   * button); a status surface additionally needs a positive, a cautionary and an
-   * informational hue. Without them a component with info/success/warning/error
-   * variants (Alert, Callout, Badge…) could only be painted from literals, which
-   * the golden rule forbids. Themed like every other slot: a brand re-maps them
-   * and every status surface follows.
-   */
-  color("info", "support"),
-  color("info-foreground", "support", "info"),
-  color("success", "support"),
-  color("success-foreground", "support", "success"),
-  color("warning", "support"),
-  color("warning-foreground", "support", "warning"),
-  color("border", "support"),
-  color("input", "support"),
-  color("ring", "support"),
+  color("muted", "support", "a recessed surface: wells and quiet backgrounds"),
+  color("muted-foreground", "support", "subdued text on `background`, `card` or `muted`", "muted"),
+  color("destructive", "support", "irreversible actions, and the error state"),
+  foreground("destructive", "support"),
+  color("info", "support", "the hue of an informational status"),
+  foreground("info", "support"),
+  color("success", "support", "the hue of a positive status"),
+  foreground("success", "support"),
+  color("warning", "support", "the hue of a cautionary status"),
+  foreground("warning", "support"),
+  color("border", "support", "borders and separators"),
+  color("input", "support", "the stroke of form controls"),
+  color("ring", "support", "the focus indicator"),
   // — Data viz —
-  color("chart-1", "charts"),
-  color("chart-2", "charts"),
-  color("chart-3", "charts"),
-  color("chart-4", "charts"),
-  color("chart-5", "charts"),
+  ...[1, 2, 3, 4, 5].map((n) => color(`chart-${n}`, "charts", `data-viz series ${n}`)),
   // — Non-colour slots every theme must define —
-  { name: "radius", type: "dimension", group: "other" },
-  { name: "font-sans", type: "fontFamily", group: "other" },
-  { name: "font-mono", type: "fontFamily", group: "other" },
+  {
+    name: "radius",
+    type: "dimension",
+    group: "other",
+    role: "the base corner radius: buttons, inputs, cards and surfaces",
+  },
+  {
+    name: "font-sans",
+    type: "fontFamily",
+    group: "other",
+    role: "the interface and running text",
+  },
+  { name: "font-mono", type: "fontFamily", group: "other", role: "code" },
   // — Extended contract: base-only defaults, not required in themes —
-  { name: "spacing-1", type: "dimension", group: "extended" },
-  { name: "spacing-2", type: "dimension", group: "extended" },
-  { name: "spacing-3", type: "dimension", group: "extended" },
-  { name: "spacing-4", type: "dimension", group: "extended" },
-  { name: "spacing-5", type: "dimension", group: "extended" },
-  { name: "spacing-6", type: "dimension", group: "extended" },
-  { name: "spacing-7", type: "dimension", group: "extended" },
-  { name: "spacing-8", type: "dimension", group: "extended" },
-  { name: "motion-instant", type: "duration", group: "extended" },
-  { name: "motion-fast", type: "duration", group: "extended" },
-  { name: "motion-normal", type: "duration", group: "extended" },
-  { name: "radius-full", type: "dimension", group: "extended" },
-  // Display face: headings and pull quotes; the brand's serif in theme-moderno.
-  { name: "font-serif", type: "fontFamily", group: "extended" },
-  // Elevation: three steps for overlays (popover, menu, drawer, toast).
-  { name: "shadow-sm", type: "shadow", group: "extended" },
-  { name: "shadow-md", type: "shadow", group: "extended" },
-  { name: "shadow-lg", type: "shadow", group: "extended" },
-  // Modal scrim: the dimming layer behind a dialog or command palette. A colour
-  // slot, but extended — every theme inherits the neutral black wash unless its
-  // brand wants a tinted one.
-  { name: "overlay", type: "color", group: "extended" },
-  // Container breakpoints: what blocks and screens respond to (ADR-0005).
-  { name: "container-sm", type: "dimension", group: "extended" },
-  { name: "container-md", type: "dimension", group: "extended" },
-  { name: "container-lg", type: "dimension", group: "extended" },
-  // Type scale: a font size and its line height per step. The ui-* ramp is what
-  // controls size with (sm/md/lg → 13/14/15); body and heading steps set content.
+  ...SPACING_STEPS.map((n) =>
+    extended(
+      `spacing-${n}`,
+      "dimension",
+      `step ${n} of the spacing scale, where 1 is the smallest`,
+    ),
+  ),
+  extended("motion-instant", "duration", "hover and focus feedback"),
+  extended("motion-fast", "duration", "reveals: menus and tooltips"),
+  extended("motion-normal", "duration", "panels and sheets"),
+  extended(
+    "radius-full",
+    "dimension",
+    "fully rounded ends: pills, badges, avatars and status dots",
+  ),
+  extended(
+    "font-serif",
+    "fontFamily",
+    "the display face for headings and pull quotes, when the brand has one",
+  ),
+  extended("shadow-sm", "shadow", "the lowest float: tooltips and small overlays"),
+  extended("shadow-md", "shadow", "menus, select lists and popovers"),
+  extended("shadow-lg", "shadow", "the highest float: dialogs, drawers and toasts"),
+  extended("overlay", "color", "the scrim behind a dialog or command palette"),
+  extended("container-sm", "dimension", "the smallest container breakpoint (`@sm:`)"),
+  extended("container-md", "dimension", "the middle container breakpoint (`@md:`)"),
+  extended("container-lg", "dimension", "the largest container breakpoint (`@lg:`)"),
   ...TYPE_STEPS.flatMap((step): ContractSlot[] => [
-    { name: `text-${step}`, type: "dimension", group: "extended" },
-    { name: `leading-${step}`, type: "dimension", group: "extended" },
+    extended(
+      `text-${step}`,
+      "dimension",
+      `the font size of the \`${step}\` step: ${TYPE_STEP_ROLES[step]}`,
+    ),
+    extended(
+      `leading-${step}`,
+      "dimension",
+      `the line height of the \`${step}\` step, set with \`text-${step}\``,
+    ),
   ]),
-  // Font weights: 400/500/600/700, the ramp components and blocks set text in.
-  ...FONT_WEIGHTS.map(
-    (weight): ContractSlot => ({
-      name: `font-weight-${weight}`,
-      type: "fontWeight",
-      group: "extended",
-    }),
+  ...FONT_WEIGHTS.map((weight) =>
+    extended(`font-weight-${weight}`, "fontWeight", WEIGHT_ROLES[weight]),
   ),
 ];
 

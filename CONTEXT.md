@@ -49,7 +49,7 @@ Documentation of the visual identity of a specific brand (typography, tone, aest
 _Avoid_: CONTRACT.md (for brand content)
 
 **Token contract**:
-The minimal set of shadcn-style semantic variables (`--primary`, `--background`, …) that every component references. Defined in CONTRACT.md, implemented in CSS by each theme.
+The minimal set of shadcn-style semantic variables (`--primary`, `--background`, …) that every component references. The slots, each with its role, are defined in `contract.ts` (`@moderno-ui/css/contract`); the rules for theming them are in CONTRACT.md. Implemented in CSS by each theme.
 _Avoid_: Token spec, design tokens file
 
 **Brand token (brand primitive)**:
@@ -101,7 +101,7 @@ The prefix of published packages: `@moderno-ui/*` (`@moderno-ui/css`, `@moderno-
 _Avoid_: @ds/_, moderno-ds/_ (as an npm scope), private registry (v1)
 
 **Extended contract**:
-Beyond shadcn color slots, the contract includes spacing (`--spacing-1…8`), motion (`--motion-instant|fast|normal`), radius (`--radius`, `--radius-full`), a display face (`--font-serif`), elevation (`--shadow-sm|md|lg`), a modal scrim (`--overlay`), container breakpoints (`--container-sm|md|lg`), a type scale (`--text-*` / `--leading-*`) and font weights (`--font-weight-*`). Defined in CONTRACT.md, defaults in `@moderno-ui/css`, overrides in themes.
+Beyond shadcn color slots, the contract includes spacing (`--spacing-1…8`), motion (`--motion-instant|fast|normal`), radius (`--radius`, `--radius-full`), a display face (`--font-serif`), elevation (`--shadow-sm|md|lg`), a modal scrim (`--overlay`), container breakpoints (`--container-sm|md|lg`), a type scale (`--text-*` / `--leading-*`) and font weights (`--font-weight-*`). The slots are defined in `contract.ts` and the rules in CONTRACT.md; defaults in `@moderno-ui/css`, overrides in themes.
 _Avoid_: Hardcoded spacing, magic numbers in CSS, viewport breakpoints as tokens
 
 **Theme Moderno v1**:

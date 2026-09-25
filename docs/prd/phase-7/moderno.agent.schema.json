@@ -148,7 +148,7 @@
     "contractManifest": {
       "type": "object",
       "description": "Shared, framework-agnostic contract. Ships in @moderno-ui/css. Backs get_contract and feeds the token-related validate rules.",
-      "required": ["package", "version", "kind", "goldenRule", "slots", "rules"],
+      "required": ["package", "version", "kind", "goldenRule", "slots", "roles", "rules"],
       "additionalProperties": false,
       "properties": {
         "package": { "const": "@moderno-ui/css" },
@@ -169,6 +169,11 @@
             "container": { "type": "array", "items": { "type": "string" } },
             "type": { "type": "array", "items": { "type": "string" } }
           }
+        },
+        "roles": {
+          "type": "object",
+          "description": "What each slot is for, in one line, keyed by custom-property name (\"--primary\"). Taken from the contract data in @moderno-ui/css/contract.",
+          "additionalProperties": { "type": "string", "minLength": 1 }
         },
         "theming": {
           "type": "object",

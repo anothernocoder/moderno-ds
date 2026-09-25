@@ -1,8 +1,9 @@
 /**
  * @moderno-ui/css's moderno.agent.json — the shared, framework-agnostic
  * `contract` manifest (schema: `docs/prd/phase-7/moderno.agent.schema.json`,
- * `definitions.contractManifest`). CONTRACT.md, as data — see that file for
- * the prose this mirrors.
+ * `definitions.contractManifest`). The slots and their roles come from the
+ * contract data (`@moderno-ui/css/contract`); the theming notes and rules
+ * mirror CONTRACT.md's prose.
  *
  * Split out from `agent-manifest.ts` on purpose: the contract manifest is built
  * from the contract data alone, so this module must not import
@@ -27,6 +28,8 @@ export interface ContractManifest {
     container: string[];
     type: string[];
   };
+  /** What each slot is for, in one line, keyed by custom-property name. */
+  roles: Record<string, string>;
   theming: {
     darkMode: string;
     multiBrand: string;
@@ -56,6 +59,7 @@ export function buildContractManifest(version: string): ContractManifest {
         slot(s.name),
       ),
     },
+    roles: Object.fromEntries(CONTRACT.map((s) => [slot(s.name), s.role])),
     theming: {
       darkMode:
         ":root is the light scope, .dark overrides it — shadcn-style, no third theming mechanism.",

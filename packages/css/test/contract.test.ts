@@ -9,7 +9,9 @@ import {
   CONTRAST_PAIRS,
   EXTENDED_SLOTS,
   FONT_WEIGHTS,
+  GROUP_ROLES,
   OTHER_SLOTS,
+  TYPE_STEP_ROLES,
   TYPE_STEPS,
   slotType,
 } from "../src/contract.ts";
@@ -58,6 +60,23 @@ describe("@moderno-ui/css — contract data", () => {
     const derived = [...COLOR_SLOTS, ...OTHER_SLOTS, ...EXTENDED_SLOTS];
     expect(new Set(derived).size).toBe(derived.length);
     expect(derived.sort()).toEqual(CONTRACT.map((s) => s.name).sort());
+  });
+
+  it("gives every slot a one-line role", () => {
+    for (const slot of CONTRACT) {
+      expect(slot.role.trim(), `--${slot.name} has no role`).not.toBe("");
+      expect(slot.role, `--${slot.name}'s role spans lines`).not.toMatch(/\n/);
+    }
+  });
+
+  it("describes every group and every type step in one line", () => {
+    for (const role of [...Object.values(GROUP_ROLES), ...Object.values(TYPE_STEP_ROLES)]) {
+      expect(role.trim()).not.toBe("");
+      expect(role).not.toMatch(/\n/);
+    }
+    expect(Object.keys(GROUP_ROLES).sort()).toEqual(
+      [...new Set(CONTRACT.map((s) => s.group))].sort(),
+    );
   });
 
   it("groups every colour slot for the editor, in contract order", () => {

@@ -6,9 +6,10 @@
  * 1. **Front matter**: the theme's values, from its tokens.dtcg.json plus the
  *    neutral defaults it inherits. The format has no dark mode, so the light
  *    scope uses the contract names and the dark scope follows as `dark-*`.
- * 2. **System rules**: how any Moderno theme is applied. They come from the
- *    token contract (@moderno-ui/css/contract), are identical for every
- *    theme, and name slots without restating values, so they cannot drift.
+ * 2. **System rules**: how any Moderno theme is applied. Slot and group roles
+ *    come from the token contract (@moderno-ui/css/contract); the rules are
+ *    identical for every theme and name slots without restating values, so
+ *    they cannot drift.
  * 3. **Brand notes**: the one hand-written part, between the brand-notes
  *    markers. A rebuild keeps them verbatim; a theme without notes gets a
  *    draft derived from its values, for a person to review and rewrite.
@@ -20,8 +21,9 @@ import {
   CONTRACT,
   CONTRAST_PAIRS,
   FONT_WEIGHTS,
+  GROUP_ROLES,
+  TYPE_STEP_ROLES,
   TYPE_STEPS,
-  type ContractGroup,
 } from "@moderno-ui/css/contract";
 import { contrastRatio, parseOklch } from "./color.ts";
 
@@ -174,12 +176,23 @@ function renderFrontMatter(doc: ThemeDoc, defaults: Defaults): string {
 
 // — System rules —
 
-const SLOT_NAMES = new Set(CONTRACT.map((s) => s.name));
+const ROLES = new Map(CONTRACT.map((s) => [s.name, s.role]));
 
 /** A contract slot, in code. Throws on a name the contract lacks, so prose cannot name a dead slot. */
 function slot(name: string): string {
-  if (!SLOT_NAMES.has(name)) throw new Error(`DESIGN.md: "${name}" is not a contract slot`);
+  if (!ROLES.has(name)) throw new Error(`DESIGN.md: "${name}" is not a contract slot`);
   return `\`${name}\``;
+}
+
+/** A contract slot's role, from the contract. */
+function roleOf(name: string): string {
+  slot(name);
+  return ROLES.get(name)!;
+}
+
+/** A list item naming a slot and its role. */
+function roleLine(name: string, indent = ""): string {
+  return `${indent}- ${slot(name)}: ${roleOf(name)}.`;
 }
 
 function codeList(names: readonly string[]): string {
@@ -190,81 +203,56 @@ function slotsNamed(prefix: string): string[] {
   return CONTRACT.filter((s) => s.name.startsWith(prefix)).map((s) => s.name);
 }
 
-/** What each colour group of the contract is for; every group must have a line. */
-const COLOR_GROUP_ROLES: Partial<Record<ContractGroup, string>> = {
-  surfaces: "the page, raised surfaces and floating surfaces",
-  brand: "actions, from the primary fill to the quieter ones",
-  support: "recessed wells, the destructive action, status, lines and focus",
-  charts: "data-viz series, in order",
-};
-
-const MOTION_ROLES: Record<string, string> = {
-  "motion-instant": "hover and focus feedback",
-  "motion-fast": "reveals (menus, tooltips)",
-  "motion-normal": "panels and sheets",
-};
-
-const WEIGHT_ROLES: Record<(typeof FONT_WEIGHTS)[number], string> = {
-  normal: "running text",
-  medium: "controls and labels",
-  semibold: "titles",
-  bold: "strong emphasis, sparingly",
-};
+function capitalized(word: string): string {
+  return word.charAt(0).toUpperCase() + word.slice(1);
+}
 
 function colorsSection(): string {
   const colorSlots = CONTRACT.filter((s) => s.type === "color");
-  const groups = [...new Set(colorSlots.map((s) => s.group))].filter((g) => g !== "extended");
-  const groupLines = groups.map((group) => {
-    const role = COLOR_GROUP_ROLES[group];
-    if (role === undefined) throw new Error(`DESIGN.md: no role for colour group "${group}"`);
-    const names = colorSlots.filter((s) => s.group === group).map((s) => s.name);
-    return `- **${group.charAt(0).toUpperCase() + group.slice(1)}** (${role}): ${codeList(names)}.`;
-  });
-  const extended = colorSlots.filter((s) => s.group === "extended").map((s) => s.name);
+  const groups = [...new Set(colorSlots.map((s) => s.group))];
+  const groupLines = groups.flatMap((group) => [
+    `- **${capitalized(group)}** (${GROUP_ROLES[group]}):`,
+    ...colorSlots.filter((s) => s.group === group).map((s) => roleLine(s.name, "  ")),
+  ]);
   const pairLines = CONTRAST_PAIRS.map(([fg, bg]) => `- \`${fg}\` on \`${bg}\``);
   return [
     "## Colors",
     "Paint from contract slots, never from a raw color value. The front matter lists the light scope under the slot names and the dark scope as `dark-*`; code names the slot once and the scope follows `.dark`.",
-    [
-      ...groupLines,
-      `- **Extended** (optional in a theme, with a neutral default): ${codeList(extended)}.`,
-    ].join("\n"),
+    groupLines.join("\n"),
     `Every \`*-foreground\` is paired with one surface and sits on that surface only, with one exception: ${slot("muted-foreground")} is the subdued text of the whole page, meant for ${slot("background")}, ${slot("card")} and ${slot("muted")} alike. \`theme-compile\` checks each pair for WCAG AA (4.5:1) in both scopes:`,
     pairLines.join("\n"),
-    "Roles:",
+    "Rules:",
     [
-      `- ${slot("primary")} is the main action: primary button fills and emphasized controls. ${slot("destructive")} is reserved for irreversible actions, and error states reuse it so an error and a destructive action speak with one voice.`,
-      `- ${slot("muted-foreground")} is subdued text on ${slot("background")}, ${slot("card")} or ${slot("muted")}, never on a filled ${slot("primary")} or ${slot("secondary")}.`,
+      `- ${slot("destructive")} is reserved for irreversible actions, and error states reuse it so an error and a destructive action speak with one voice.`,
+      `- ${slot("muted-foreground")} never sits on a filled ${slot("primary")} or ${slot("secondary")}.`,
       `- ${slot("info")}, ${slot("success")} and ${slot("warning")} carry the hue of a state, not of an action: a status surface tints itself with them against ${slot("card")}.`,
       `- Status hues and ${codeList(slotsNamed("chart-"))} carry meaning. Never use them for decoration.`,
-      `- ${slot("border")} separates, ${slot("input")} strokes form controls, and ${slot("ring")} is the focus indicator.`,
-      `- ${slot("overlay")} is the scrim behind a dialog or command palette, painted over a blur of the page. Never mix it from ${slot("foreground")}.`,
+      `- ${slot("overlay")} is painted over a blur of the page. Never mix it from ${slot("foreground")}.`,
     ].join("\n"),
   ].join("\n\n");
 }
 
 function typographySection(): string {
+  const stepLine = (step: (typeof TYPE_STEPS)[number]) => {
+    slot(`text-${step}`);
+    slot(`leading-${step}`);
+    return `  - \`${step}\`: ${TYPE_STEP_ROLES[step]}.`;
+  };
   const ui = TYPE_STEPS.filter((s) => s.startsWith("ui-"));
   const content = TYPE_STEPS.filter((s) => !s.startsWith("ui-"));
-  const sizes = ["sm", "md", "lg"].map((size) => {
-    slot(`text-ui-${size}`);
-    return `ui-${size}`;
-  });
-  slot("text-ui-xs");
-  const weightLines = FONT_WEIGHTS.map((w) => {
-    slot(`font-weight-${w}`);
-    return `- \`font-weight-${w}\`: ${WEIGHT_ROLES[w]}.`;
-  });
   return [
     "## Typography",
-    `${slot("font-sans")} sets the interface and running text, and is the \`fontFamily\` of every style in the front matter. ${slot("font-serif")} is the display face for headings and pull quotes when the brand has one. ${slot("font-mono")} sets code.`,
+    [roleLine("font-sans"), roleLine("font-serif"), roleLine("font-mono")].join("\n"),
+    `${slot("font-sans")} is the \`fontFamily\` of every style in the front matter.`,
     "The type scale is a size and a line height per step (`--text-<step>`, `--leading-<step>`), in two ramps:",
     [
-      `- **Interface** (${codeList(ui)}): a component's \`sm\`/\`md\`/\`lg\` sizes read ${codeList(sizes)}, so controls grow one step at a time. \`ui-md\` is the default text of the interface, and \`ui-xs\` carries ticks and helper text.`,
+      `- **Interface** (${codeList(ui)}): a component's \`sm\`/\`md\`/\`lg\` sizes read \`ui-sm\`/\`ui-md\`/\`ui-lg\`, so controls grow one step at a time.`,
+      ...ui.map(stepLine),
       `- **Content** (${codeList(content)}): running text, lead paragraphs and titles.`,
+      ...content.map(stepLine),
     ].join("\n"),
     "Weights (`--font-weight-*`):",
-    weightLines.join("\n"),
+    FONT_WEIGHTS.map((w) => roleLine(`font-weight-${w}`)).join("\n"),
     "Use a step and a weight, never a raw size or weight. A size the scale lacks is a change to the contract, not a local exception.",
   ].join("\n\n");
 }
@@ -285,23 +273,27 @@ function layoutSection(): string {
 }
 
 function elevationSection(): string {
-  const motionLines = slotsNamed("motion-").map((name) => {
-    const role = MOTION_ROLES[name];
-    if (role === undefined) throw new Error(`DESIGN.md: no role for --${name}`);
-    return `- \`${name}\`: ${role}.`;
-  });
   return [
     "## Elevation & Depth",
-    `Resting surfaces separate by fill and a ${slot("border")}, not by shadow: ${slot("muted")} recesses, ${slot("card")} sits at page level. Shadows (${codeList(slotsNamed("shadow-"))}) are for overlays only (popover, menu, drawer, toast), one step per layer of float. The dark scope carries its own shadows, since a light-mode shadow disappears on a dark surface.`,
+    `Resting surfaces separate by fill and a ${slot("border")}, not by shadow: ${slot("muted")} recesses, ${slot("card")} sits at page level. Shadows are for overlays only, one step per layer of float. The dark scope carries its own shadows, since a light-mode shadow disappears on a dark surface.`,
+    slotsNamed("shadow-")
+      .map((name) => roleLine(name))
+      .join("\n"),
     "Motion durations:",
-    motionLines.join("\n"),
+    slotsNamed("motion-")
+      .map((name) => roleLine(name))
+      .join("\n"),
   ].join("\n\n");
 }
 
 function shapesSection(): string {
   return [
     "## Shapes",
-    `\`rounded.base\` (${slot("radius")}) shapes buttons, inputs, cards and surfaces. \`rounded.full\` (${slot("radius-full")}) is for pills, badges, avatars and status dots. Never set a corner radius by hand.`,
+    [
+      `- \`rounded.base\` (${slot("radius")}): ${roleOf("radius")}.`,
+      `- \`rounded.full\` (${slot("radius-full")}): ${roleOf("radius-full")}.`,
+    ].join("\n"),
+    "Never set a corner radius by hand.",
   ].join("\n\n");
 }
 
@@ -397,7 +389,7 @@ function overviewIntro(doc: ThemeDoc): string {
   return [
     "## Overview",
     scope,
-    "The front matter holds the theme's values, and every slot the theme leaves out appears at the neutral default it inherits. The sections after this one are the rules every Moderno theme shares, derived from the token contract (`CONTRACT.md`): they name slots and never restate values. What sets this theme apart is in its brand notes, below.",
+    "The front matter holds the theme's values, and every slot the theme leaves out appears at the neutral default it inherits. The sections after this one are the rules every Moderno theme shares: the slots and their roles come from the token contract (`@moderno-ui/css/contract`), the rules from `CONTRACT.md`, and they name slots without restating values. What sets this theme apart is in its brand notes, below.",
   ].join("\n\n");
 }
 
