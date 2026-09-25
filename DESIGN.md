@@ -50,7 +50,7 @@ colors:
   dark-muted: "oklch(0.269 0 0)"
   dark-muted-foreground: "oklch(0.708 0 0)"
   dark-destructive: "oklch(0.704 0.191 22.216)"
-  dark-destructive-foreground: "oklch(0.985 0 0)"
+  dark-destructive-foreground: "oklch(0.145 0 0)"
   dark-info: "oklch(0.72 0.13 255)"
   dark-info-foreground: "oklch(0.145 0 0)"
   dark-success: "oklch(0.72 0.15 152)"

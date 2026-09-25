@@ -26,7 +26,8 @@
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
+  /* 0.505, not 0.556: the lighter grey reads 4.34:1 on --muted, under AA. */
+  --muted-foreground: oklch(0.505 0 0);
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);
@@ -163,7 +164,8 @@
   --accent: oklch(0.269 0 0);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: oklch(0.985 0 0);
+  /* Ink, not white, on the light dark-mode red: like the other status fills. */
+  --destructive-foreground: oklch(0.145 0 0);
 
   --info: oklch(0.72 0.13 255);
   --info-foreground: oklch(0.145 0 0);

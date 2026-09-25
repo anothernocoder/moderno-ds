@@ -2,7 +2,8 @@ import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import postcss, { type Declaration, type Rule } from "postcss";
-import { EXTENDED_SLOTS } from "@moderno-ui/tokens/contract";
+import { CONTRAST_PAIRS, EXTENDED_SLOTS } from "@moderno-ui/tokens/contract";
+import { contrastRatio } from "../src/color.ts";
 import { defaultsFrom, readMeta, renderFrontMatter, withFrontMatter } from "../src/design-md.ts";
 import { compileTheme } from "../src/index.ts";
 
@@ -62,6 +63,23 @@ describe("registry themes compile and stay in sync", () => {
    * Builder, so a missing registry.json entry would pass unnoticed while
    * `moderno add` cannot install the theme.
    */
+  // theme-compile only warns, so without this a failing pair ships with a warning in the log.
+  it.each(themeNames)("%s: clears WCAG AA on every contract pair", (name) => {
+    const doc = JSON.parse(readFileSync(`${themesRoot}/${name}/tokens.dtcg.json`, "utf8"));
+    expect(compileTheme(doc).warnings).toEqual([]);
+  });
+
+  it("the neutral defaults clear WCAG AA on every contract pair, in both scopes", () => {
+    const failing: string[] = [];
+    for (const scope of ["light", "dark"] as const) {
+      for (const [fg, bg] of CONTRAST_PAIRS) {
+        const ratio = contrastRatio(defaults[scope].get(fg)!, defaults[scope].get(bg)!);
+        if (ratio < 4.5) failing.push(`${scope}: --${fg} on --${bg} is ${ratio.toFixed(2)}:1`);
+      }
+    }
+    expect(failing).toEqual([]);
+  });
+
   it.each(themeNames)("%s: is listed in registry.json with its theme.css", (name) => {
     const manifest = JSON.parse(readFileSync(`${repoRoot}registry/registry.json`, "utf8"));
     const item = manifest.items.find((i: { name: string }) => i.name === name);
