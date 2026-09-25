@@ -1,6 +1,6 @@
 ---
 title: Alert
-description: An inline status message with an icon slot, title, description and optional action, in four statuses painted from the contract's status slots.
+description: An inline status message with an icon, title, description and optional action, in four statuses.
 group: Components
 order: 15
 component: Alert
@@ -30,41 +30,185 @@ import Preview from "../../../components/Preview.astro";
 import PropsTable from "../../../components/PropsTable.astro";
 import Install from "../../../components/Install.astro";
 import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
 import AlertDemo from "../../../examples/alert/alert.svelte";
-import reactExample from "../../../examples/alert/react.tsx?raw";
-import vueExample from "../../../examples/alert/vue.vue?raw";
-import solidExample from "../../../examples/alert/solid.tsx?raw";
-import svelteExample from "../../../examples/alert/alert.svelte?raw";
-
-Alert is a CSS-only primitive: Ark has no alert machine because an alert has no
-behaviour to own — it is a static region. So, like Button, it is the contract in
-its purest form: elements carrying `data-scope`/`data-part` plus the recipe's
-`data-variant`/`data-size`, with every pixel coming from `components.css`.
-
-The anatomy is `root > icon + content(> title + description + action)`. `Icon`
-is a slot, never an icon set: primitives stay icon-agnostic, so you pass your own
-glyph and the part hands it the status hue through `currentColor`.
+import baseReact from "../../../examples/alert/react.tsx?raw";
+import baseVue from "../../../examples/alert/vue.vue?raw";
+import baseSolid from "../../../examples/alert/solid.tsx?raw";
+import baseSvelte from "../../../examples/alert/alert.svelte?raw";
+import AlertStatusesDemo from "../../../examples/alert/statuses/alert-statuses.svelte";
+import statusesReact from "../../../examples/alert/statuses/react.tsx?raw";
+import statusesVue from "../../../examples/alert/statuses/vue.vue?raw";
+import statusesSolid from "../../../examples/alert/statuses/solid.tsx?raw";
+import statusesSvelte from "../../../examples/alert/statuses/alert-statuses.svelte?raw";
+import AlertActionDemo from "../../../examples/alert/action/alert-action.svelte";
+import actionReact from "../../../examples/alert/action/react.tsx?raw";
+import actionVue from "../../../examples/alert/action/vue.vue?raw";
+import actionSolid from "../../../examples/alert/action/solid.tsx?raw";
+import actionSvelte from "../../../examples/alert/action/alert-action.svelte?raw";
+import AlertSizesDemo from "../../../examples/alert/sizes/alert-sizes.svelte";
+import sizesReact from "../../../examples/alert/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/alert/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/alert/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/alert/sizes/alert-sizes.svelte?raw";
 
 <FrameworkSelect locale="en" />
 
-<Preview
-  examples={{ react: reactExample, vue: vueExample, solid: solidExample, svelte: svelteExample }}
->
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
   <AlertDemo client:visible />
 </Preview>
-
-## Statuses
-
-`info`, `success`, `warning` and `error` each tint one surface from the matching
-contract slot — `--info`, `--success`, `--warning`, and `--destructive` for
-`error`, so a destructive action and an error message speak with one voice.
-Urgency follows the status: `warning` and `error` render `role="alert"`
-(assertive), `info` and `success` `role="status"` (polite).
 
 ## Installation
 
 <Install pkg="@moderno-ui/react" />
 
-## Props
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { Alert } from "@moderno-ui/react";
+```
+
+```tsx
+<Alert.Root variant="warning">
+  <Alert.Content>
+    <Alert.Title>Card expiring</Alert.Title>
+    <Alert.Description>Update it before the next invoice.</Alert.Description>
+  </Alert.Content>
+</Alert.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Alert } from "@moderno-ui/vue";
+```
+
+```vue
+<Alert.Root variant="warning">
+  <Alert.Content>
+    <Alert.Title>Card expiring</Alert.Title>
+    <Alert.Description>Update it before the next invoice.</Alert.Description>
+  </Alert.Content>
+</Alert.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Alert } from "@moderno-ui/svelte";
+```
+
+```svelte
+<Alert.Root variant="warning">
+  <Alert.Content>
+    <Alert.Title>Card expiring</Alert.Title>
+    <Alert.Description>Update it before the next invoice.</Alert.Description>
+  </Alert.Content>
+</Alert.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Alert } from "@moderno-ui/solid";
+```
+
+```tsx
+<Alert.Root variant="warning">
+  <Alert.Content>
+    <Alert.Title>Card expiring</Alert.Title>
+    <Alert.Description>Update it before the next invoice.</Alert.Description>
+  </Alert.Content>
+</Alert.Root>
+```
+
+</ForFramework>
+
+## API Reference
+
+### Alert.Root
+
+`variant` defaults to `info` and `size` to `md`.
 
 <PropsTable component="Alert" />
+
+| Prop   | Type     | Default        | Description                                    |
+| ------ | -------- | -------------- | ---------------------------------------------- |
+| `role` | `string` | From `variant` | Overrides the live-region role (see Statuses). |
+
+### Alert.Icon
+
+A slot for your own glyph; the part colours it with the status hue through `currentColor`.
+
+| Prop          | Type      | Default | Description                                     |
+| ------------- | --------- | ------- | ----------------------------------------------- |
+| `aria-hidden` | `boolean` | `true`  | Hides the decorative glyph from assistive tech. |
+
+### Parts
+
+Every part renders a `<div>` and accepts any div attribute.
+
+| Part                | `data-part`   | Description                                                           |
+| ------------------- | ------------- | --------------------------------------------------------------------- |
+| `Alert.Root`        | `root`        | The region. Carries `data-variant` and `data-size`.                   |
+| `Alert.Icon`        | `icon`        | Optional glyph before the content.                                    |
+| `Alert.Content`     | `content`     | Column that holds the title, description and action.                  |
+| `Alert.Title`       | `title`       | The headline.                                                         |
+| `Alert.Description` | `description` | Supporting copy.                                                      |
+| `Alert.Action`      | `action`      | Optional action, placed inside `Alert.Content` under the description. |
+
+### Statuses
+
+| `variant` | Colour slot     | `role`              |
+| --------- | --------------- | ------------------- |
+| `info`    | `--info`        | `status` (polite)   |
+| `success` | `--success`     | `status` (polite)   |
+| `warning` | `--warning`     | `alert` (assertive) |
+| `error`   | `--destructive` | `alert` (assertive) |
+
+## Examples
+
+### Statuses
+
+<Preview
+  examples={{
+    react: statusesReact,
+    vue: statusesVue,
+    solid: statusesSolid,
+    svelte: statusesSvelte,
+  }}
+>
+  <AlertStatusesDemo client:visible />
+</Preview>
+
+### With an action
+
+Keep the action to one small, quiet button so the status colour stays the loudest thing in the region.
+
+<Preview
+  examples={{ react: actionReact, vue: actionVue, solid: actionSolid, svelte: actionSvelte }}
+>
+  <AlertActionDemo client:visible />
+</Preview>
+
+### Sizes
+
+`sm` tightens the padding and the icon gap for dense layouts.
+
+<Preview examples={{ react: sizesReact, vue: sizesVue, solid: sizesSolid, svelte: sizesSvelte }}>
+  <AlertSizesDemo client:visible />
+</Preview>
+
+## Notes
+
+- Alert is CSS-only: no Ark machine, just parts carrying `data-scope="alert"` and their `data-part`.
+- The primitive ships no icon set; pass your own glyph to `Alert.Icon`.
+- An alert already on the page at load is not announced; render it in response to the event it reports.

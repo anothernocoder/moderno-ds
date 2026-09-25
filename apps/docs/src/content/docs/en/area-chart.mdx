@@ -1,6 +1,6 @@
 ---
 title: Area Chart
-description: A pure-SVG area chart mapped from charts-core; each series fills from the value-0 baseline, colour comes from the --chart-* token slots by index.
+description: An SVG area chart that fills each series from the zero baseline to show magnitude.
 group: Components
 order: 60
 component: AreaChart
@@ -26,21 +26,28 @@ import Preview from "../../../components/Preview.astro";
 import PropsTable from "../../../components/PropsTable.astro";
 import Install from "../../../components/Install.astro";
 import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
 import AreaChartDemo from "../../../examples/area-chart/area-chart.svelte";
-import reactExample from "../../../examples/area-chart/react.tsx?raw";
-import vueExample from "../../../examples/area-chart/vue.vue?raw";
-import solidExample from "../../../examples/area-chart/solid.tsx?raw";
-import svelteExample from "../../../examples/area-chart/area-chart.svelte?raw";
-
-AreaChart is a deterministic map from a model built by `@moderno-ui/charts-core` to
-`<path>` elements — a filled area plus a stroked top line per series. It bakes
-in no colour — each series paints from `--chart-1…5` keyed on its index, so it
-re-themes with the rest of the system.
+import baseReact from "../../../examples/area-chart/react.tsx?raw";
+import baseVue from "../../../examples/area-chart/vue.vue?raw";
+import baseSolid from "../../../examples/area-chart/solid.tsx?raw";
+import baseSvelte from "../../../examples/area-chart/area-chart.svelte?raw";
+import AreaChartMultipleSeriesDemo from "../../../examples/area-chart/multiple-series/area-chart-multiple-series.svelte";
+import multipleSeriesReact from "../../../examples/area-chart/multiple-series/react.tsx?raw";
+import multipleSeriesVue from "../../../examples/area-chart/multiple-series/vue.vue?raw";
+import multipleSeriesSolid from "../../../examples/area-chart/multiple-series/solid.tsx?raw";
+import multipleSeriesSvelte from "../../../examples/area-chart/multiple-series/area-chart-multiple-series.svelte?raw";
+import AreaChartNegativeValuesDemo from "../../../examples/area-chart/negative-values/area-chart-negative-values.svelte";
+import negativeValuesReact from "../../../examples/area-chart/negative-values/react.tsx?raw";
+import negativeValuesVue from "../../../examples/area-chart/negative-values/vue.vue?raw";
+import negativeValuesSolid from "../../../examples/area-chart/negative-values/solid.tsx?raw";
+import negativeValuesSvelte from "../../../examples/area-chart/negative-values/area-chart-negative-values.svelte?raw";
 
 <FrameworkSelect locale="en" />
 
 <Preview
-  examples={{ react: reactExample, vue: vueExample, solid: solidExample, svelte: svelteExample }}
+  layout="fill"
+  examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}
 >
   <AreaChartDemo client:visible />
 </Preview>
@@ -49,6 +56,177 @@ re-themes with the rest of the system.
 
 <Install pkg="@moderno-ui/react" />
 
-## Props
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { AreaChart } from "@moderno-ui/react";
+
+const series = [
+  {
+    name: "Sessions",
+    points: [
+      { x: 0, y: 12 },
+      { x: 1, y: 28 },
+      { x: 2, y: 40 },
+    ],
+  },
+];
+```
+
+```tsx
+<AreaChart width={520} height={260} series={series} />
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import { AreaChart } from "@moderno-ui/vue";
+
+const series = [
+  {
+    name: "Sessions",
+    points: [
+      { x: 0, y: 12 },
+      { x: 1, y: 28 },
+      { x: 2, y: 40 },
+    ],
+  },
+];
+</script>
+```
+
+```vue
+<template>
+  <AreaChart :width="520" :height="260" :series="series" />
+</template>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import { AreaChart } from "@moderno-ui/svelte";
+
+  const series = [
+    {
+      name: "Sessions",
+      points: [
+        { x: 0, y: 12 },
+        { x: 1, y: 28 },
+        { x: 2, y: 40 },
+      ],
+    },
+  ];
+</script>
+```
+
+```svelte
+<AreaChart width={520} height={260} {series} />
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { AreaChart } from "@moderno-ui/solid";
+
+const series = [
+  {
+    name: "Sessions",
+    points: [
+      { x: 0, y: 12 },
+      { x: 1, y: 28 },
+      { x: 2, y: 40 },
+    ],
+  },
+];
+```
+
+```tsx
+<AreaChart width={520} height={260} series={series} />
+```
+
+</ForFramework>
+
+## API Reference
+
+### AreaChart
 
 <PropsTable component="AreaChart" />
+
+### Series
+
+Each entry in `series` is one filled area.
+
+| Field    | Type                         | Description                             |
+| -------- | ---------------------------- | --------------------------------------- |
+| `name`   | `string`                     | Optional label for the series.          |
+| `points` | `{ x: number; y: number }[]` | The data points, joined in array order. |
+
+### Defaults
+
+| Prop               | Default                                                |
+| ------------------ | ------------------------------------------------------ |
+| `xDomain`          | The extent of every x value across all series.         |
+| `yDomain`          | Every y value plus 0, rounded outward to nice numbers. |
+| `xTicks`, `yTicks` | `5`                                                    |
+| `margin`           | `{ top: 16, right: 16, bottom: 28, left: 36 }`         |
+| `curve`            | Straight segments                                      |
+| `format`           | The number, rounded to 4 decimals                      |
+
+### Data attributes
+
+| Attribute     | On            | Values                                                                           |
+| ------------- | ------------- | -------------------------------------------------------------------------------- |
+| `data-chart`  | Root `svg`    | `area`                                                                           |
+| `data-part`   | Every element | `root`, `grid`, `grid-line`, `axis-line`, `tick-label`, `series`, `area`, `line` |
+| `data-series` | Series `g`    | 0-based index, mapped to `--chart-1` through `--chart-5`                         |
+
+## Examples
+
+### Multiple series
+
+Every series fills from the same baseline, so they overlap rather than stack.
+
+<Preview
+  layout="fill"
+  examples={{
+    react: multipleSeriesReact,
+    vue: multipleSeriesVue,
+    solid: multipleSeriesSolid,
+    svelte: multipleSeriesSvelte,
+  }}
+>
+  <AreaChartMultipleSeriesDemo client:visible />
+</Preview>
+
+### Negative values
+
+A series that crosses zero fills downward below it, with no extra prop.
+
+<Preview
+  layout="fill"
+  examples={{
+    react: negativeValuesReact,
+    vue: negativeValuesVue,
+    solid: negativeValuesSolid,
+    svelte: negativeValuesSvelte,
+  }}
+>
+  <AreaChartNegativeValuesDemo client:visible />
+</Preview>
+
+## Notes
+
+- The area fills between the value-0 baseline and the line, not from the bottom of the plot.
+- The fill sits at 15% opacity under a solid top line; past two or three series, use a LineChart.
+- There is no colour prop: series paint from `--chart-1` to `--chart-5` by index.
+- Grid, axes and tick labels use `--border` and `--muted-foreground`.

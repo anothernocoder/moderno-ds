@@ -1,6 +1,6 @@
 ---
 title: Auth flow
-description: sign-in → sign-up → forgot-password → reset-password → verify, plus the example assembly that owns the navigation state between them — link interception, form submissions and the one countdown in the journey.
+description: The five auth screens in sequence, plus an example assembly that owns the navigation between them.
 group: Flows
 order: 121
 agent:
@@ -30,22 +30,12 @@ agent:
 import Preview from "../../../components/Preview.astro";
 import Install from "../../../components/Install.astro";
 import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
 import AuthFlowDemo from "../../../islands/AuthFlowDemo.svelte";
 import authReact from "../../../../../../registry/flows/auth/react/auth-flow.tsx?raw";
 import authVue from "../../../../../../registry/flows/auth/vue/AuthFlow.vue?raw";
 import authSolid from "../../../../../../registry/flows/auth/solid/auth-flow.tsx?raw";
 import authSvelte from "../../../../../../registry/flows/auth/svelte/AuthFlow.svelte?raw";
-
-**Auth** is the first [flow](/en/flows/): the five screens a person meets on the
-way into an account — [sign in](/en/sign-in/), [sign up](/en/sign-up/),
-[forgot password](/en/forgot-password/), [reset password](/en/reset-password/)
-and [verify](/en/verify/) — plus the example assembly that supplies the
-navigation state between them.
-
-The screens are presentational by design: props in, callbacks out, no step, no
-router, no timer. That leaves exactly one question open — what comes after what
-— and the assembly is the answer, written once so you can read it and then
-replace it with your own.
 
 <FrameworkSelect locale="en" />
 
@@ -56,49 +46,24 @@ replace it with your own.
     solid: authSolid,
     svelte: authSvelte,
   }}
+  layout="fill"
 >
-  <AuthFlowDemo client:visible />
+  <AuthFlowDemo client:visible locale="en" />
 </Preview>
 
 ## Installation
 
 <Install item="auth" />
 
-Installing a flow is transitive: the five screens land, the two blocks they
-share (`login-form` and `alert-list`) land once between them, and every item is
-recorded under its own version in `.moderno/manifest.json`. `moderno update` and
-`moderno diff` therefore keep working per item — take an upstream fix to the
-verify screen while the assembly you rewrote stays exactly as you left it.
+The flow lands in `src/components/flows/`, its five screens in `screens/` and their two shared blocks in `blocks/`, each versioned on its own.
 
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { AuthFlow } from "@/components/flows/auth-flow";
 ```
-src/components/
-  flows/auth-flow.tsx
-  screens/sign-in.tsx  sign-up.tsx  forgot-password.tsx  reset-password.tsx  verify.tsx
-  blocks/login-form.tsx  alert-list.tsx
-```
-
-Nothing is pulled in upward, in either direction: a screen installed on its own
-arrives without this flow, and the flow arrives without any screen it does not
-sequence.
-
-## The sequence
-
-| Step              | Reached by                                         | Leaves for                              |
-| ----------------- | -------------------------------------------------- | --------------------------------------- |
-| `sign-in`         | the flow's first step, or "Sign in" from anywhere  | `onAuthenticated`, or the two links out |
-| `sign-up`         | "Create an account"                                | `verify`, on submit                     |
-| `forgot-password` | "Forgot your password?"                            | its own confirmation, then the mail     |
-| `reset-password`  | the emailed link — `initialStep` plus `resetToken` | `onAuthenticated`, on submit            |
-| `verify`          | a submitted sign-up                                | `onAuthenticated`, on a full code       |
-
-## Navigation is link interception
-
-Every route between two screens is a real `href` that a card or a masthead
-draws — "Create an account", "Forgot your password?", "Sign in" — because a link
-out of a sign-in page has to work on a page whose JavaScript never arrived,
-which is precisely the moment somebody is locked out. So the assembly does what
-a client router does: it hands each screen the URLs it should point at and
-catches the clicks on the way up.
 
 ```tsx
 <AuthFlow
@@ -109,79 +74,107 @@ catches the clicks on the way up.
 />
 ```
 
-`hrefFor` is the whole seam. It draws the links **and** it is what the
-interception matches against, so pointing it at your routes changes both halves
-at once and no markup moves. A click is taken over only when it is the plain
-left click a router may claim: a ⌘/Ctrl/Shift/Alt click, a middle click and any
-link that is not one of the flow's own are left to the browser, untouched.
+</ForFramework>
+<ForFramework fw="vue">
 
-## Forward moves are form submissions
-
-Each screen posts a plain `<form>`. The assembly reads it with the submitter —
-`new FormData(form, submitter)` — because the verify screen has two submit
-buttons and only the one that was pressed shows up in the payload:
-
-```tsx
-const form = new FormData(event.currentTarget, event.nativeEvent.submitter);
-if (form.get("intent") === "resend") {
-  /* a new code */
-}
+```ts
+import AuthFlow from "@/components/flows/AuthFlow.vue";
 ```
 
-Replacing each branch with your own request is the intended edit. The
-transitions are the part worth keeping.
+```vue
+<AuthFlow
+  :href-for="(step) => `/auth/${step}`"
+  :initial-step="stepFromUrl"
+  @step-change="(step) => router.push(`/auth/${step}`)"
+  @authenticated="() => router.push('/')"
+/>
+```
 
-## The one edge it cannot own
+</ForFramework>
+<ForFramework fw="svelte">
 
-`reset-password` is reached in real life by opening a link in an inbox — that
-is, by **entering** the flow at that step with a token off the URL, which is
-what `initialStep` and `resetToken` are for. An example has no mail server, so
-the confirmation offers the link as a notice instead, and activating it moves
-the flow along. That notice, and the branch of the notice handler it feeds, are
-the first thing to delete in a real project.
+```ts
+import AuthFlow from "@/components/flows/AuthFlow.svelte";
+```
 
-## What the assembly owns
+```svelte
+<AuthFlow
+  hrefFor={(step) => `/auth/${step}`}
+  initialStep={stepFromUrl}
+  onstepchange={(step) => goto(`/auth/${step}`)}
+  onauthenticated={() => goto("/")}
+/>
+```
 
-Everything the screens refuse to hold, and nothing else:
+</ForFramework>
+<ForFramework fw="solid">
 
-| State             | Why it is here                                                                                 |
-| ----------------- | ---------------------------------------------------------------------------------------------- |
-| `step`            | Which screen is on the route. A screen that knew this could not be mounted under your router.  |
-| `email`           | Carried from where it was typed to where it is named next — the sign-up form to the code card. |
-| `token`           | The secret out of the emailed reset link, submitted from the card's hidden input.              |
-| `resendIn`        | The seconds left on the verify resend. One `setTimeout` in the whole journey lives here.       |
-| `sent` / `resent` | The two confirmations a card paints once a recovery link or a fresh code has gone out.         |
-| `errors`          | Whatever the last submit rejected.                                                             |
+```tsx
+import { AuthFlow } from "@/components/flows/auth-flow";
+```
 
-The last three are transients of the step that produced them, and every move
-drops all three: walk away from the recovery confirmation and back, and the card
-asks for an address again rather than confirming the previous one.
+```tsx
+<AuthFlow
+  hrefFor={(step) => `/auth/${step}`}
+  initialStep={stepFromUrl()}
+  onStepChange={(step) => navigate(`/auth/${step}`)}
+  onAuthenticated={() => navigate("/")}
+/>
+```
 
-## Props
+</ForFramework>
 
-| Prop              | Type               | Default          | What it does                                                                           |
-| ----------------- | ------------------ | ---------------- | -------------------------------------------------------------------------------------- |
-| `initialStep`     | `AuthStep`         | `"sign-in"`      | Which screen the flow opens on — in a real app, whatever the route says.               |
-| `initialEmail`    | `string`           | `""`             | An address already known, pre-carried between steps.                                   |
-| `resetToken`      | `string`           | `""`             | The token out of an emailed reset link, when the route entered at `reset-password`.    |
-| `resendSeconds`   | `number`           | `30`             | How long the verify resend stays locked after a code goes out.                         |
-| `codeLength`      | `number`           | `6`              | How many digits the one-time code has.                                                 |
-| `hrefFor`         | `(step) => string` | `` `#${step}` `` | The URL each step lives at. Both the links drawn and the clicks intercepted read this. |
-| `onStepChange`    | `(step) => void`   | —                | The flow moved: mirror it in the URL. Svelte `onstepchange`, Vue emits `stepChange`.   |
-| `onAuthenticated` | `(email) => void`  | —                | The reader is through. Svelte `onauthenticated`, Vue emits `authenticated`.            |
-| `homeHref`        | `string`           | `"#"`            | Where the wordmark points, on every screen.                                            |
-| `supportHref`     | `string`           | `"#"`            | Where "Contact support" points, on every screen.                                       |
-| `privacyHref`     | `string`           | `"#"`            | Where the privacy links point, on every screen.                                        |
-| `termsHref`       | `string`           | `"#"`            | Where the terms links point, on every screen.                                          |
+## API Reference
 
-The four chrome links are configured once here rather than five times, which is
-the small dividend of having something above the screens.
+### Props
 
-## Sizing
+Callbacks are `on…` props in React and Solid, lowercase (`onstepchange`) in Svelte, and emits (`stepChange`, `authenticated`) in Vue.
 
-The assembly adds one wrapper element and no styling at all: every width and
-height decision belongs to the screen currently on the route, read off its own
-container rather than the window (ADR-0005). The two frames above are the same
-flow at two widths, disagreeing with each other on one screen — which is why the
-rules live on the screen pages and in
-[Blocks and containers](/en/blocks-and-containers/), not here.
+| Prop              | Type               | Default          | Description                                                              |
+| ----------------- | ------------------ | ---------------- | ------------------------------------------------------------------------ |
+| `initialStep`     | `AuthStep`         | `"sign-in"`      | The screen the flow opens on; in an app, whatever the route says.        |
+| `initialEmail`    | `string`           | `""`             | An address already known, carried between steps.                         |
+| `resetToken`      | `string`           | `""`             | The token from an emailed reset link, when entering at `reset-password`. |
+| `resendSeconds`   | `number`           | `30`             | How long the verify resend stays locked after a code goes out.           |
+| `codeLength`      | `number`           | `6`              | Digits in the one-time code.                                             |
+| `hrefFor`         | `(step) => string` | `` `#${step}` `` | The URL of each step; drives both the links and the interception.        |
+| `onStepChange`    | `(step) => void`   | —                | The flow moved; mirror it in the URL.                                    |
+| `onAuthenticated` | `(email) => void`  | —                | The reader is through: signed in, verified or reset.                     |
+| `homeHref`        | `string`           | `"#"`            | Target of the wordmark on every screen.                                  |
+| `supportHref`     | `string`           | `"#"`            | Target of "Contact support" on every screen.                             |
+| `privacyHref`     | `string`           | `"#"`            | Target of the privacy links on every screen.                             |
+| `termsHref`       | `string`           | `"#"`            | Target of the terms links on every screen.                               |
+
+### Steps
+
+`AuthStep` is one of the five screens, in the order the flow moves through them.
+
+| Step                                      | Reached by                                     | Leaves for                              |
+| ----------------------------------------- | ---------------------------------------------- | --------------------------------------- |
+| [`sign-in`](/en/sign-in/)                 | The first step, or "Sign in" from anywhere     | `onAuthenticated`, or its two links out |
+| [`sign-up`](/en/sign-up/)                 | "Create an account"                            | `verify`, on submit                     |
+| [`forgot-password`](/en/forgot-password/) | "Forgot your password?"                        | Its own confirmation, then the email    |
+| [`reset-password`](/en/reset-password/)   | The emailed link: `initialStep` + `resetToken` | `onAuthenticated`, on submit            |
+| [`verify`](/en/verify/)                   | A submitted sign-up                            | `onAuthenticated`, on a full code       |
+
+### State
+
+What the assembly holds so the screens don't have to.
+
+| State             | Holds                                                              |
+| ----------------- | ------------------------------------------------------------------ |
+| `step`            | The screen currently on the route.                                 |
+| `email`           | The address, carried from where it was typed to where it is named. |
+| `token`           | The secret from the emailed reset link.                            |
+| `resendIn`        | Seconds left on the verify resend; the only timer in the flow.     |
+| `sent` / `resent` | The confirmations after a recovery link or a new code goes out.    |
+| `errors`          | Whatever the last submit rejected.                                 |
+
+## Notes
+
+- The assembly is example code, the one file you are expected to rewrite. The screens stay as shipped.
+- Navigation intercepts real `href`s: plain left clicks only; modified and middle clicks go to the browser.
+- Forward moves are plain form submissions, read with `new FormData(form, submitter)`.
+- `sent`, `resent` and `errors` reset on every move.
+- The "Open the reset link" notice exists only because the example has no mail server. Delete it.
+- `onAuthenticated` returns the flow to its first step and draws no success page; leaving is your router's job.

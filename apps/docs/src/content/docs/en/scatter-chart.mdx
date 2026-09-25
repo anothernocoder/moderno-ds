@@ -1,6 +1,6 @@
 ---
 title: Scatter Chart
-description: A pure-SVG scatter chart mapped from charts-core; one circle per point, colour comes from the --chart-* token slots by index.
+description: An SVG scatter chart with one marker per (x, y) sample, to show how two values relate.
 group: Components
 order: 80
 component: ScatterChart
@@ -26,21 +26,28 @@ import Preview from "../../../components/Preview.astro";
 import PropsTable from "../../../components/PropsTable.astro";
 import Install from "../../../components/Install.astro";
 import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
 import ScatterChartDemo from "../../../examples/scatter-chart/scatter-chart.svelte";
-import reactExample from "../../../examples/scatter-chart/react.tsx?raw";
-import vueExample from "../../../examples/scatter-chart/vue.vue?raw";
-import solidExample from "../../../examples/scatter-chart/solid.tsx?raw";
-import svelteExample from "../../../examples/scatter-chart/scatter-chart.svelte?raw";
-
-ScatterChart is a deterministic map from a model built by `@moderno-ui/charts-core`
-to `<circle>` elements — one marker per point, no path. It bakes in no colour —
-each series paints from `--chart-1…5` keyed on its index, so it re-themes with
-the rest of the system.
+import baseReact from "../../../examples/scatter-chart/react.tsx?raw";
+import baseVue from "../../../examples/scatter-chart/vue.vue?raw";
+import baseSolid from "../../../examples/scatter-chart/solid.tsx?raw";
+import baseSvelte from "../../../examples/scatter-chart/scatter-chart.svelte?raw";
+import ScatterChartMultipleSeriesDemo from "../../../examples/scatter-chart/multiple-series/scatter-chart-multiple-series.svelte";
+import multipleSeriesReact from "../../../examples/scatter-chart/multiple-series/react.tsx?raw";
+import multipleSeriesVue from "../../../examples/scatter-chart/multiple-series/vue.vue?raw";
+import multipleSeriesSolid from "../../../examples/scatter-chart/multiple-series/solid.tsx?raw";
+import multipleSeriesSvelte from "../../../examples/scatter-chart/multiple-series/scatter-chart-multiple-series.svelte?raw";
+import ScatterChartMarkerSizeDemo from "../../../examples/scatter-chart/marker-size/scatter-chart-marker-size.svelte";
+import markerSizeReact from "../../../examples/scatter-chart/marker-size/react.tsx?raw";
+import markerSizeVue from "../../../examples/scatter-chart/marker-size/vue.vue?raw";
+import markerSizeSolid from "../../../examples/scatter-chart/marker-size/solid.tsx?raw";
+import markerSizeSvelte from "../../../examples/scatter-chart/marker-size/scatter-chart-marker-size.svelte?raw";
 
 <FrameworkSelect locale="en" />
 
 <Preview
-  examples={{ react: reactExample, vue: vueExample, solid: solidExample, svelte: svelteExample }}
+  layout="fill"
+  examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}
 >
   <ScatterChartDemo client:visible />
 </Preview>
@@ -49,6 +56,176 @@ the rest of the system.
 
 <Install pkg="@moderno-ui/react" />
 
-## Props
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { ScatterChart } from "@moderno-ui/react";
+
+const series = [
+  {
+    name: "Sessions",
+    points: [
+      { x: 0, y: 12 },
+      { x: 1, y: 28 },
+      { x: 2, y: 40 },
+    ],
+  },
+];
+```
+
+```tsx
+<ScatterChart width={520} height={260} series={series} />
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import { ScatterChart } from "@moderno-ui/vue";
+
+const series = [
+  {
+    name: "Sessions",
+    points: [
+      { x: 0, y: 12 },
+      { x: 1, y: 28 },
+      { x: 2, y: 40 },
+    ],
+  },
+];
+</script>
+```
+
+```vue
+<template>
+  <ScatterChart :width="520" :height="260" :series="series" />
+</template>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import { ScatterChart } from "@moderno-ui/svelte";
+
+  const series = [
+    {
+      name: "Sessions",
+      points: [
+        { x: 0, y: 12 },
+        { x: 1, y: 28 },
+        { x: 2, y: 40 },
+      ],
+    },
+  ];
+</script>
+```
+
+```svelte
+<ScatterChart width={520} height={260} {series} />
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { ScatterChart } from "@moderno-ui/solid";
+
+const series = [
+  {
+    name: "Sessions",
+    points: [
+      { x: 0, y: 12 },
+      { x: 1, y: 28 },
+      { x: 2, y: 40 },
+    ],
+  },
+];
+```
+
+```tsx
+<ScatterChart width={520} height={260} series={series} />
+```
+
+</ForFramework>
+
+## API Reference
+
+### ScatterChart
 
 <PropsTable component="ScatterChart" />
+
+### Series
+
+Each entry in `series` is one group of samples.
+
+| Field    | Type                         | Description                    |
+| -------- | ---------------------------- | ------------------------------ |
+| `name`   | `string`                     | Optional label for the series. |
+| `points` | `{ x: number; y: number }[]` | One marker per point.          |
+
+### Defaults
+
+| Prop               | Default                                                |
+| ------------------ | ------------------------------------------------------ |
+| `radius`           | `4`                                                    |
+| `xDomain`          | The extent of every x value across all series.         |
+| `yDomain`          | Every y value plus 0, rounded outward to nice numbers. |
+| `xTicks`, `yTicks` | `5`                                                    |
+| `margin`           | `{ top: 16, right: 16, bottom: 28, left: 36 }`         |
+| `format`           | The number, rounded to 4 decimals                      |
+
+### Data attributes
+
+| Attribute     | On            | Values                                                                    |
+| ------------- | ------------- | ------------------------------------------------------------------------- |
+| `data-chart`  | Root `svg`    | `scatter`                                                                 |
+| `data-part`   | Every element | `root`, `grid`, `grid-line`, `axis-line`, `tick-label`, `series`, `point` |
+| `data-series` | Series `g`    | 0-based index, mapped to `--chart-1` through `--chart-5`                  |
+
+## Examples
+
+### Multiple series
+
+Each group's markers take the next `--chart-*` slot, so two populations read apart on the same axes.
+
+<Preview
+  layout="fill"
+  examples={{
+    react: multipleSeriesReact,
+    vue: multipleSeriesVue,
+    solid: multipleSeriesSolid,
+    svelte: multipleSeriesSvelte,
+  }}
+>
+  <ScatterChartMultipleSeriesDemo client:visible />
+</Preview>
+
+### Marker size
+
+`radius` sets the marker size in pixels for every point; there is no per-point size.
+
+<Preview
+  layout="fill"
+  examples={{
+    react: markerSizeReact,
+    vue: markerSizeVue,
+    solid: markerSizeSolid,
+    svelte: markerSizeSvelte,
+  }}
+>
+  <ScatterChartMarkerSizeDemo client:visible />
+</Preview>
+
+## Notes
+
+- Points are not connected; use a LineChart when the order between them matters.
+- There is no colour prop: series paint from `--chart-1` to `--chart-5` by index.
+- Grid, axes and tick labels use `--border` and `--muted-foreground`.

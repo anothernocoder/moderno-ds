@@ -1,7 +1,7 @@
 /** @jsxImportSource solid-js */
 /**
- * ScatterChart — pure SVG over @moderno-ui/charts-core; colour comes from the
- * `--chart-*` token slots via the series index, nothing baked in here.
+ * One marker per (x, y) sample, no connecting line; its colour comes
+ * from the `--chart-1` token slot, nothing baked in here — @moderno-ui/solid.
  *
  * See examples/button/solid.tsx for why the pragma above is required.
  */
@@ -22,5 +22,5 @@ const series = [
 ];
 
 export function ScatterChartDemo() {
-  return <ScatterChart width={520} height={260} series={series} radius={4} />;
+  return <ScatterChart width={520} height={260} series={series} />;
 }

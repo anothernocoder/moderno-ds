@@ -16,8 +16,8 @@
  * 1. **Container, not viewport.** The block's secondary row (remember-me + the
  *    recovery link) stacks below `--container-sm` and sits on one line at or
  *    above it — decided by the width of the element the block was mounted in,
- *    which is why the page's narrow sidebar figure stays stacked at 1280 while
- *    the wide figure crosses the step on its own.
+ *    which is why the narrow example stays stacked at 1280 while
+ *    the default preview crosses the step on its own.
  * 2. **AA contrast.** The card's own text, the submit's label on its fill, and
  *    the error alert's text all clear 4.5:1 against the surface behind them, in
  *    light and in dark.
@@ -41,11 +41,27 @@ interface BlockMetrics {
   cardWidth: number;
 }
 
-/** Every mounted copy of the block on the page, in document order. */
-async function blockMetrics(page: Page): Promise<BlockMetrics[]> {
-  return page.evaluate(() => {
-    const panel = document.querySelector(".preview-panel--demo");
-    if (!panel) throw new Error("no .preview-panel--demo on the page");
+/**
+ * The page's previews (islands/LoginFormBlockDemo.svelte): the main preview
+ * mounts the default, and the Examples section mounts the same block in an
+ * 18rem sidebar, then the error, loading and disabled states — one Preview
+ * each, found by the `data-demo-state` its wrapper carries.
+ */
+const STATES = ["default", "narrow", "error", "loading", "disabled"] as const;
+type State = (typeof STATES)[number];
+
+/** Bring one state's preview on screen and wait for its copy of the block. */
+async function showState(page: Page, state: State): Promise<void> {
+  const block = page.locator(`[data-demo-state="${state}"] section.moderno-block-login`);
+  await block.scrollIntoViewIfNeeded();
+  await block.waitFor({ state: "visible" });
+}
+
+/** The copies of the block mounted in one state's preview. */
+async function blockMetrics(page: Page, state: State): Promise<BlockMetrics[]> {
+  return page.evaluate((state) => {
+    const panel = document.querySelector(`[data-demo-state="${state}"]`);
+    if (!panel) throw new Error(`no preview for the ${state} state on the page`);
     return [...panel.querySelectorAll("section.moderno-block-login")].map((section) => {
       const link = section.querySelector<HTMLAnchorElement>("form a[href]");
       const row = link?.parentElement;
@@ -57,7 +73,7 @@ async function blockMetrics(page: Page): Promise<BlockMetrics[]> {
         cardWidth: card.getBoundingClientRect().width,
       };
     });
-  });
+  }, state);
 }
 
 /**
@@ -69,7 +85,17 @@ async function blockMetrics(page: Page): Promise<BlockMetrics[]> {
  * exactly the way it painted them.
  */
 async function contrastRatios(page: Page): Promise<Record<string, number>> {
-  return page.evaluate(() => {
+  // Two states carry the texts in question: the default card, and the alert
+  // that only the error preview mounts.
+  await showState(page, "default");
+  const card = await textRatios(page, "default");
+  await showState(page, "error");
+  const { alertTitle } = await textRatios(page, "error");
+  return { ...card, alertTitle: alertTitle! };
+}
+
+async function textRatios(page: Page, state: State): Promise<Record<string, number | undefined>> {
+  return page.evaluate((state) => {
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d", { willReadFrequently: true });
     if (!ctx) throw new Error("no 2d context");
@@ -119,13 +145,10 @@ async function contrastRatios(page: Page): Promise<Record<string, number>> {
       return [r!, g!, b!, a! / 255];
     }
 
-    const panel = document.querySelector(".preview-panel--demo");
-    if (!panel) throw new Error("no .preview-panel--demo on the page");
+    const panel = document.querySelector(`[data-demo-state="${state}"]`);
+    if (!panel) throw new Error(`no preview for the ${state} state on the page`);
     const first = panel.querySelector("section.moderno-block-login");
-    const withError = [...panel.querySelectorAll("section.moderno-block-login")].find((section) =>
-      section.querySelector('[data-scope="alert"][data-part="root"]'),
-    );
-    if (!first || !withError) throw new Error("the login-form demo did not render its states");
+    if (!first) throw new Error("the login-form demo did not render");
 
     const pick = <T extends Element>(root: Element, selector: string): T => {
       const el = root.querySelector<T>(selector);
@@ -137,7 +160,7 @@ async function contrastRatios(page: Page): Promise<Record<string, number>> {
     const description = pick(first, '[data-scope="card"][data-part="description"]');
     const label = pick(first, '[data-scope="field"][data-part="label"]');
     const submit = pick(first, '[data-scope="button"][data-part="root"]');
-    const alertTitle = pick(withError, '[data-scope="alert"][data-part="title"]');
+    const alertTitle = first.querySelector('[data-scope="alert"][data-part="title"]');
 
     const against = (el: Element) => ratio(getComputedStyle(el).color, surfaceOf(el));
 
@@ -146,9 +169,9 @@ async function contrastRatios(page: Page): Promise<Record<string, number>> {
       cardDescription: against(description),
       fieldLabel: against(label),
       submitLabel: ratio(getComputedStyle(submit).color, getComputedStyle(submit).backgroundColor),
-      alertTitle: against(alertTitle),
+      alertTitle: alertTitle ? against(alertTitle) : undefined,
     };
-  });
+  }, state);
 }
 
 for (const scheme of ["light", "dark"] as const) {
@@ -165,13 +188,13 @@ for (const scheme of ["light", "dark"] as const) {
           scheme === "dark",
         );
 
-        const blocks = await blockMetrics(page);
-        // The demo mounts the block five times: two container widths, then the
-        // error, loading and disabled states.
-        expect(blocks).toHaveLength(5);
-
-        for (const [index, block] of blocks.entries()) {
-          const where = `${scheme} ${width}px, copy ${index + 1} (${block.containerWidth}px)`;
+        for (const state of STATES) {
+          await showState(page, state);
+          const blocks = await blockMetrics(page, state);
+          // One preview, one mounted copy.
+          expect(blocks, `${state}: mounted copies`).toHaveLength(1);
+          const block = blocks[0]!;
+          const where = `${scheme} ${width}px, ${state} (${block.containerWidth}px)`;
           // The @sm step is read off the block's own container, so the answer
           // differs between the sidebar figure and the full-width ones at the
           // same viewport — which is the whole point of ADR-0005.

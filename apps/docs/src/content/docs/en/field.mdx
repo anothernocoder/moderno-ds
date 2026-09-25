@@ -1,6 +1,6 @@
 ---
 title: Field
-description: A labelled form control with helper/error wiring — Ark's Field machine owns the label/id association and the invalid/disabled/required data-attributes; a size recipe on the root sets the density of every part.
+description: A labelled text input or textarea with helper and error text wired up for accessibility.
 group: Components
 order: 20
 component: Field
@@ -25,48 +25,194 @@ agent:
 ---
 
 import Preview from "../../../components/Preview.astro";
-import CodeBlock from "../../../components/CodeBlock.astro";
 import PropsTable from "../../../components/PropsTable.astro";
 import Install from "../../../components/Install.astro";
 import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
 import FieldDemo from "../../../examples/field/field.svelte";
-import reactExample from "../../../examples/field/react.tsx?raw";
-import vueExample from "../../../examples/field/vue.vue?raw";
-import solidExample from "../../../examples/field/solid.tsx?raw";
-import svelteExample from "../../../examples/field/field.svelte?raw";
-import invalidSnippet from "../../../examples/field/invalid-snippet.tsx?raw";
-
-Field wires accessibility, not appearance: Ark's Field machine associates
-`label[for]` with the control's `id` and mirrors `aria-invalid`/
-`aria-describedby`/`aria-required` onto `data-invalid`/`data-disabled`/
-`data-required` — those attributes, not CVA variants, are what
-`components.css` keys the error/disabled look off.
-
-The one thing you choose is `size`. It goes on `Field.Root`, and the single
-`data-size` it emits sizes every part at once: the label, the control's height
-and padding, and the helper/error text.
+import baseReact from "../../../examples/field/react.tsx?raw";
+import baseVue from "../../../examples/field/vue.vue?raw";
+import baseSolid from "../../../examples/field/solid.tsx?raw";
+import baseSvelte from "../../../examples/field/field.svelte?raw";
+import FieldSizesDemo from "../../../examples/field/sizes/field-sizes.svelte";
+import sizesReact from "../../../examples/field/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/field/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/field/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/field/sizes/field-sizes.svelte?raw";
+import FieldInvalidDemo from "../../../examples/field/invalid/field-invalid.svelte";
+import invalidReact from "../../../examples/field/invalid/react.tsx?raw";
+import invalidVue from "../../../examples/field/invalid/vue.vue?raw";
+import invalidSolid from "../../../examples/field/invalid/solid.tsx?raw";
+import invalidSvelte from "../../../examples/field/invalid/field-invalid.svelte?raw";
+import FieldDisabledDemo from "../../../examples/field/disabled/field-disabled.svelte";
+import disabledReact from "../../../examples/field/disabled/react.tsx?raw";
+import disabledVue from "../../../examples/field/disabled/vue.vue?raw";
+import disabledSolid from "../../../examples/field/disabled/solid.tsx?raw";
+import disabledSvelte from "../../../examples/field/disabled/field-disabled.svelte?raw";
+import FieldTextareaDemo from "../../../examples/field/textarea/field-textarea.svelte";
+import textareaReact from "../../../examples/field/textarea/react.tsx?raw";
+import textareaVue from "../../../examples/field/textarea/vue.vue?raw";
+import textareaSolid from "../../../examples/field/textarea/solid.tsx?raw";
+import textareaSvelte from "../../../examples/field/textarea/field-textarea.svelte?raw";
 
 <FrameworkSelect locale="en" />
 
-<Preview
-  examples={{ react: reactExample, vue: vueExample, solid: solidExample, svelte: svelteExample }}
->
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
   <FieldDemo client:visible />
 </Preview>
-
-## Input and Textarea
-
-Both controls are Ark parts of the same scope, so they share the border, radius,
-focus ring and invalid treatment. They differ where the shape differs: an input
-is one line with a fixed height, a textarea has a minimum height per size and
-resizes vertically only, so it can never break out of the field's column.
-
-<CodeBlock code={invalidSnippet} lang="tsx" />
 
 ## Installation
 
 <Install pkg="@moderno-ui/react" />
 
-## Props
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { Field } from "@moderno-ui/react";
+```
+
+```tsx
+<Field.Root>
+  <Field.Label>Email</Field.Label>
+  <Field.Input type="email" />
+  <Field.HelperText>We only use it to send receipts.</Field.HelperText>
+</Field.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Field } from "@moderno-ui/vue";
+```
+
+```vue
+<Field.Root>
+  <Field.Label>Email</Field.Label>
+  <Field.Input type="email" />
+  <Field.HelperText>We only use it to send receipts.</Field.HelperText>
+</Field.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Field } from "@moderno-ui/svelte";
+```
+
+```svelte
+<Field.Root>
+  <Field.Label>Email</Field.Label>
+  <Field.Input type="email" />
+  <Field.HelperText>We only use it to send receipts.</Field.HelperText>
+</Field.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Field } from "@moderno-ui/solid";
+```
+
+```tsx
+<Field.Root>
+  <Field.Label>Email</Field.Label>
+  <Field.Input type="email" />
+  <Field.HelperText>We only use it to send receipts.</Field.HelperText>
+</Field.Root>
+```
+
+</ForFramework>
+
+## API Reference
+
+### Field.Root
+
+`size` is the Moderno addition and defaults to `md`; the other props come from Ark's Field.
 
 <PropsTable component="Field" />
+
+| Prop       | Type      | Default | Description                                                                          |
+| ---------- | --------- | ------- | ------------------------------------------------------------------------------------ |
+| `invalid`  | `boolean` | `false` | Switches border, tint and focus ring to `--destructive` and shows `Field.ErrorText`. |
+| `disabled` | `boolean` | `false` | Disables the control and dims every part.                                            |
+| `required` | `boolean` | `false` | Sets `required` on the control and `data-required` on the label.                     |
+| `readOnly` | `boolean` | `false` | Sets `readOnly` on the control.                                                      |
+
+### Field.Textarea
+
+Shares the input's border, radius, focus ring and invalid treatment, with a minimum height per size and vertical resize only.
+
+| Prop         | Type      | Default | Description                          |
+| ------------ | --------- | ------- | ------------------------------------ |
+| `autoresize` | `boolean` | `false` | Grows the textarea with its content. |
+
+### Parts
+
+| Part                      | Element              | Description                                                                              |
+| ------------------------- | -------------------- | ---------------------------------------------------------------------------------------- |
+| `Field.Root`              | `<div role="group">` | Carries `data-size`, `data-invalid`, `data-disabled` and `data-readonly`.                |
+| `Field.Label`             | `<label>`            | Bound to the control's `id` automatically.                                               |
+| `Field.Input`             | `<input>`            | Single-line control.                                                                     |
+| `Field.Textarea`          | `<textarea>`         | Multi-line control.                                                                      |
+| `Field.HelperText`        | `<span>`             | Linked to the control through `aria-describedby`.                                        |
+| `Field.ErrorText`         | `<span>`             | Rendered only while `invalid`; linked through `aria-describedby` and announced politely. |
+| `Field.RequiredIndicator` | `<span>`             | Rendered only while `required`; hidden from assistive tech.                              |
+
+## Examples
+
+### Sizes
+
+`sm` suits dense forms and filter bars, `lg` a roomy sign-up form.
+
+<Preview examples={{ react: sizesReact, vue: sizesVue, solid: sizesSolid, svelte: sizesSvelte }}>
+  <FieldSizesDemo client:visible />
+</Preview>
+
+### Invalid
+
+<Preview
+  examples={{ react: invalidReact, vue: invalidVue, solid: invalidSolid, svelte: invalidSvelte }}
+>
+  <FieldInvalidDemo client:visible />
+</Preview>
+
+### Disabled
+
+<Preview
+  examples={{
+    react: disabledReact,
+    vue: disabledVue,
+    solid: disabledSolid,
+    svelte: disabledSvelte,
+  }}
+>
+  <FieldDisabledDemo client:visible />
+</Preview>
+
+### Textarea
+
+<Preview
+  examples={{
+    react: textareaReact,
+    vue: textareaVue,
+    solid: textareaSolid,
+    svelte: textareaSvelte,
+  }}
+>
+  <FieldTextareaDemo client:visible />
+</Preview>
+
+## Notes
+
+- Put `size` on `Field.Root`, not on the control: one `data-size` sizes every part.
+- Don't add `htmlFor` or ids by hand; the parts wire the label, control and messages together.
+- Put validation copy in `Field.ErrorText`, not in a sibling element, so it is announced with the field.
+- The input border uses `--input` and the focus ring `--ring`; disabled fills with `--muted`.

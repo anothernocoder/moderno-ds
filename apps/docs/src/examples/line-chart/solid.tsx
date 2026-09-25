@@ -1,7 +1,7 @@
 /** @jsxImportSource solid-js */
 /**
- * LineChart — pure SVG over @moderno-ui/charts-core; colour comes from the
- * `--chart-*` token slots via the series index, nothing baked in here.
+ * A single series on a continuous x axis; its colour comes from the
+ * `--chart-1` token slot, nothing baked in here — @moderno-ui/solid.
  *
  * See examples/button/solid.tsx for why the pragma above is required.
  */
@@ -17,17 +17,6 @@ const series = [
       { x: 3, y: 40 },
       { x: 4, y: 36 },
       { x: 5, y: 54 },
-    ],
-  },
-  {
-    name: "Signups",
-    points: [
-      { x: 0, y: 6 },
-      { x: 1, y: 10 },
-      { x: 2, y: 18 },
-      { x: 3, y: 16 },
-      { x: 4, y: 30 },
-      { x: 5, y: 34 },
     ],
   },
 ];

@@ -9,7 +9,7 @@
  * They read `dist/`, which the suite already requires.
  */
 import { readdirSync, readFileSync } from "node:fs";
-import { basename, resolve } from "node:path";
+import { basename, dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { expect, test } from "@playwright/test";
 import { allPages, previewPages } from "./pages.ts";
@@ -88,10 +88,26 @@ test.describe("built docs", () => {
     // both the docs show and the live demo mounts; each is named after its
     // component (`button/button.svelte`), never the generic `svelte.svelte`,
     // precisely so this basename-matching stays one-to-one.
+    //
+    // A `.svelte` file another island imports (`DemoTabs.svelte`, the tab
+    // chrome the screen and Pricing demos share) is bundled into its parent's
+    // chunk and never hydrates on its own, so it has no `component-url` to find;
+    // it is covered through the island that mounts it.
     const islandDirs = ["islands", "examples"];
-    const islands = islandDirs
-      .flatMap((dir) => readdirSync(resolve(srcDir, dir), { recursive: true }) as string[])
-      .filter((f) => f.endsWith(".svelte"))
+    const files = islandDirs.flatMap((dir) =>
+      (readdirSync(resolve(srcDir, dir), { recursive: true }) as string[])
+        .filter((f) => f.endsWith(".svelte"))
+        .map((f) => resolve(srcDir, dir, f)),
+    );
+    const children = new Set(
+      files.flatMap((file) =>
+        [...readFileSync(file, "utf8").matchAll(/from\s+["'](\.{1,2}\/[^"']+\.svelte)["']/g)].map(
+          (m) => resolve(dirname(file), m[1]!),
+        ),
+      ),
+    );
+    const islands = files
+      .filter((f) => !children.has(f))
       .map((f) => basename(f, ".svelte"))
       .sort();
     expect(islands.length, "no islands found").toBeGreaterThan(0);

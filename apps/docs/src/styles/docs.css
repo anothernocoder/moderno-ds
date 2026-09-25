@@ -1,23 +1,53 @@
 /*
-  Docs chrome — painted entirely from the @moderno contract token slots
-  (--background, --foreground, --border, …) so the whole site re-themes with the
-  active brand and the Theme Builder. No brand colours are hard-coded here.
+  Docs chrome — painted entirely from the @moderno contract token slots, so the
+  theme the header selects (ThemeSelect → data-brand, siteThemes.ts), dark mode
+  and the Theme Builder re-skin the WHOLE site, chrome included: colours
+  (--background, --foreground, --border, …), type (--font-sans, --font-mono) and
+  shape (--radius). Nothing here is brand-specific. The --docs-* variables below
+  only derive from those slots — mixes, steps of the radius — and are never
+  written back onto a contract slot, so a live preview always sees the real,
+  untouched contract.
 */
 :root {
-  --docs-max: 88rem;
-  --docs-sidebar: 16rem;
-  --docs-toc: 15rem;
-  --docs-gap: 2rem;
+  --docs-max: 90rem;
+  --docs-sidebar: 15rem;
+  --docs-toc: 14rem;
+  --docs-gap: 2.5rem;
+  --docs-measure: 46rem;
+  --docs-header-h: 3.5rem;
 
-  /*
-   * Docs-site chrome typography only. The design system's own --font-sans /
-   * --font-mono contract (packages/tokens) stays the intentionally-neutral
-   * system stack — live component previews keep using that, unaffected.
-   */
-  --docs-font-sans:
-    "Geist Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --docs-font-mono:
-    "Geist Mono Variable", ui-monospace, "SFMono-Regular", "Menlo", "Consolas", monospace;
+  /* Steps of the theme's --radius. A square theme (--radius: 0) squares the
+     pills too: 0 × 1000 caps at 0, anything rounder caps at a full pill. */
+  --docs-radius-sm: calc(var(--radius) * 0.6);
+  --docs-radius: var(--radius);
+  --docs-radius-lg: calc(var(--radius) * 1.25);
+  --docs-radius-pill: min(999px, calc(var(--radius) * 1000));
+
+  /* Headings stay on --foreground; running text and lists sit a step back. */
+  --docs-fg: var(--foreground);
+  --docs-fg-body: color-mix(in oklch, var(--foreground) 74%, var(--background));
+  --docs-fg-muted: var(--muted-foreground);
+  --docs-border: var(--border);
+  --docs-border-soft: color-mix(in oklch, var(--border) 65%, var(--background));
+  /* Quiet surfaces: code, install, hovered rows. Mixed, never transparent, so a
+     fade gradient painted in the same colour lines up exactly. */
+  --docs-surface: color-mix(in oklch, var(--foreground) 3%, var(--background));
+  --docs-surface-strong: color-mix(in oklch, var(--foreground) 6.5%, var(--background));
+  --docs-code-size: 0.8125rem;
+  --docs-ease: 0.15s ease;
+
+  /* The theme's own faces (BaseLayout loads the files the registry themes name). */
+  --docs-font-sans: var(--font-sans);
+  --docs-font-mono: var(--font-mono);
+}
+
+/* Native scrollbars, form controls and the select's popup follow the site's
+   own scheme toggle, not the OS — otherwise a dark page keeps light scrollbars. */
+:root {
+  color-scheme: light;
+}
+:root.dark {
+  color-scheme: dark;
 }
 
 * {
@@ -34,6 +64,9 @@ body {
   color: var(--foreground);
   font-family: var(--docs-font-sans);
   line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 a {
@@ -45,12 +78,28 @@ a:hover {
 }
 
 code,
-pre {
+pre,
+kbd {
   font-family: var(--docs-font-mono);
+  /* A mono face's contextual alternates can redraw runs like `--` and `->`;
+     in code every character has to read as itself. */
+  font-variant-ligatures: none;
+  font-feature-settings:
+    "liga" 0,
+    "calt" 0;
 }
 
-/* Live component previews render real design-system markup — keep them on
-   the system's actual --font-sans/--font-mono, not the docs chrome font. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Live previews render real design-system markup on the contract's own
+   --font-sans/--font-mono (the chrome reads the same slots, via --docs-font-*). */
 .preview-panel--demo {
   font-family: var(--font-sans);
 }
@@ -72,64 +121,171 @@ pre {
   left: 0;
 }
 
-/* Header */
+/*
+  Header — one row of quiet controls, all 2rem tall: filled search field,
+  ghost icon buttons, one bordered select.
+*/
 .site-header {
   display: flex;
   align-items: center;
-  gap: var(--docs-gap);
-  padding: 0.75rem 1.5rem;
-  border-bottom: 1px solid var(--border);
+  gap: 1.5rem;
+  height: var(--docs-header-h);
+  padding: 0 1.5rem;
+  border-bottom: 1px solid var(--docs-border-soft);
   position: sticky;
   top: 0;
-  background: color-mix(in oklch, var(--background) 92%, transparent);
-  backdrop-filter: blur(8px);
+  background: color-mix(in oklch, var(--background) 86%, transparent);
+  backdrop-filter: saturate(1.5) blur(12px);
+  -webkit-backdrop-filter: saturate(1.5) blur(12px);
   z-index: 50;
 }
 .brand a {
-  font-weight: 700;
+  font-size: 0.975rem;
+  font-weight: 600;
   letter-spacing: -0.02em;
+}
+.brand a:hover {
+  text-decoration: none;
 }
 .site-nav {
   display: flex;
-  gap: 1rem;
-  font-size: 0.9rem;
+  gap: 0.125rem;
+  font-size: 0.875rem;
+}
+.site-nav a {
+  padding: 0.3rem 0.625rem;
+  border-radius: var(--docs-radius);
+  color: var(--docs-fg-muted);
+  transition: color var(--docs-ease);
+}
+.site-nav a:hover {
+  color: var(--docs-fg);
+  text-decoration: none;
+}
+.site-nav a[aria-current="true"] {
+  color: var(--docs-fg);
+  font-weight: 500;
 }
 .header-tools {
   margin-left: auto;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.375rem;
 }
-.lang-switch {
-  font-size: 0.85rem;
-  padding: 0.3rem 0.6rem;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+/* Ghost icon buttons: the language switch and the scheme toggle. */
+.lang-switch,
+.theme-toggle,
+.nav-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  height: 2rem;
+  min-width: 2rem;
+  padding: 0 0.5rem;
+  border: 0;
+  border-radius: var(--docs-radius);
+  background: transparent;
+  color: var(--docs-fg-muted);
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    color var(--docs-ease),
+    background var(--docs-ease);
+}
+.lang-switch:hover,
+.theme-toggle:hover,
+.nav-toggle-btn:hover {
+  color: var(--docs-fg);
+  background: var(--docs-surface-strong);
+  text-decoration: none;
+}
+.lang-switch:focus-visible,
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+.lang-switch-short {
+  display: none;
+}
+.theme-toggle {
+  padding: 0;
 }
 
-/* Search — ⌘K dialog over pagefind.search(), never PagefindUI. */
+/* Mobile menu toggle — hidden on a wide screen, where the sidebar is always in
+   view; see the 56rem breakpoint below. */
+.nav-toggle {
+  display: none;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+.nav-toggle-btn {
+  display: none;
+  padding: 0;
+  margin-left: -0.375rem;
+}
+.nav-toggle:focus-visible + .nav-toggle-btn {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+.nav-toggle-close,
+.nav-toggle:checked + .nav-toggle-btn .nav-toggle-open {
+  display: none;
+}
+.nav-toggle:checked + .nav-toggle-btn .nav-toggle-close {
+  display: block;
+}
+
+/* Search — ⌘K dialog over pagefind.search(), never PagefindUI. The trigger
+   reads as a filled search field with its shortcut on the right. */
 .search-trigger {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.3rem 0.6rem;
-  font-size: 0.85rem;
-  color: var(--muted-foreground);
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  gap: 0.5rem;
+  width: 14rem;
+  height: 2rem;
+  padding: 0 0.375rem 0 0.625rem;
+  font: inherit;
+  font-size: 0.8125rem;
+  color: var(--docs-fg-muted);
+  background: var(--docs-surface);
+  border: 1px solid var(--docs-border-soft);
+  border-radius: var(--docs-radius);
   cursor: pointer;
-  transition: border-color var(--motion-fast) ease;
+  transition:
+    border-color var(--docs-ease),
+    color var(--docs-ease);
 }
-.search-trigger:hover,
+.search-trigger:hover {
+  border-color: var(--docs-border);
+  color: var(--docs-fg);
+}
 .search-trigger:focus-visible {
-  border-color: var(--ring);
-  color: var(--foreground);
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+.search-trigger-kbd {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  height: 1.25rem;
+  padding: 0 0.3rem;
+  font-size: 0.6875rem;
+  line-height: 1;
+  color: var(--docs-fg-muted);
+  background: var(--background);
+  border: 1px solid var(--docs-border-soft);
+  border-radius: var(--docs-radius-sm);
 }
 .search-dialog {
   padding: 0;
-  border: none;
-  border-radius: var(--radius);
+  border: 1px solid var(--docs-border);
+  border-radius: var(--docs-radius-lg);
   background: var(--popover);
   color: var(--popover-foreground);
   box-shadow: var(--shadow-lg);
@@ -137,8 +293,12 @@ pre {
   max-height: min(30rem, calc(100vh - 6rem));
   margin: 6rem auto auto;
 }
+/* The contract's modal scrim, the same one the Dialog backdrop paints: a black
+   wash (denser in dark mode) over a blur that turns the page into shapes. */
 .search-dialog::backdrop {
-  background: color-mix(in oklch, var(--foreground) 45%, transparent);
+  background: var(--overlay);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 .search-dialog-inner {
   display: flex;
@@ -150,14 +310,15 @@ pre {
   align-items: center;
   gap: 0.6rem;
   padding: 0 1rem;
-  border-bottom: 1px solid var(--border);
-  color: var(--muted-foreground);
+  border-bottom: 1px solid var(--docs-border-soft);
+  color: var(--docs-fg-muted);
 }
 .search-input {
   flex: 1;
   padding: 0.9rem 0;
-  font-size: 1rem;
-  color: inherit;
+  font: inherit;
+  font-size: 0.9375rem;
+  color: var(--docs-fg);
   background: transparent;
   border: none;
 }
@@ -178,71 +339,86 @@ pre {
   margin: 0;
   padding: 0.3rem 0.6rem;
   font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--muted-foreground);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  font-weight: 500;
+  color: var(--docs-fg-muted);
 }
 .search-result {
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
   padding: 0.5rem 0.6rem;
-  border-radius: calc(var(--radius) - 2px);
+  border-radius: var(--docs-radius);
   color: inherit;
 }
 .search-result:hover,
 .search-result:focus-visible,
 .search-result[aria-selected="true"] {
-  background: var(--accent);
-  color: var(--accent-foreground);
+  background: var(--docs-surface-strong);
+  color: var(--docs-fg);
   text-decoration: none;
 }
 .search-result-title {
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   font-weight: 500;
 }
 .search-result-excerpt {
-  font-size: 0.8rem;
-  color: var(--muted-foreground);
-}
-.search-result[aria-selected="true"] .search-result-excerpt {
-  color: inherit;
+  font-size: 0.8125rem;
+  color: var(--docs-fg-muted);
 }
 .search-result-excerpt mark {
   background: none;
-  color: var(--primary);
+  color: var(--docs-fg);
   font-weight: 600;
 }
 .search-result[aria-selected="true"] .search-result-excerpt mark {
-  color: inherit;
   text-decoration: underline;
 }
 .search-state {
   margin: 0;
   padding: 2rem 1rem;
   text-align: center;
-  font-size: 0.9rem;
-  color: var(--muted-foreground);
-}
-.theme-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--card);
-  color: var(--card-foreground);
-  cursor: pointer;
-  transition: border-color 0.15s ease;
-}
-.theme-toggle:hover {
-  border-color: var(--ring);
+  font-size: 0.875rem;
+  color: var(--docs-fg-muted);
 }
 .theme-toggle-dark {
   display: none;
+}
+.theme-select {
+  height: 2rem;
+  padding: 0 1.75rem 0 0.625rem;
+  border: 1px solid var(--docs-border-soft);
+  border-radius: var(--docs-radius);
+  background-color: transparent;
+  /* Native chevron replaced so the control takes the theme's colours. */
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--muted-foreground) 50%),
+    linear-gradient(135deg, var(--muted-foreground) 50%, transparent 50%);
+  background-position:
+    right 0.85rem center,
+    right 0.6rem center;
+  background-size: 0.25rem 0.25rem;
+  background-repeat: no-repeat;
+  color: var(--docs-fg);
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  appearance: none;
+  cursor: pointer;
+  transition:
+    border-color var(--docs-ease),
+    background-color var(--docs-ease);
+}
+.theme-select:hover {
+  border-color: var(--docs-border);
+  background-color: var(--docs-surface);
+}
+.theme-select:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+.theme-select option {
+  background: var(--popover);
+  color: var(--popover-foreground);
 }
 :root.dark .theme-toggle-light {
   display: none;
@@ -251,56 +427,120 @@ pre {
   display: block;
 }
 
-/* Layout */
+/* Layout: sidebar | content (centred in its column) | on-this-page rail. */
 .layout {
   display: grid;
-  grid-template-columns: var(--docs-sidebar) 1fr;
-  gap: var(--docs-gap);
+  grid-template-columns: var(--docs-sidebar) minmax(0, 1fr);
+  column-gap: var(--docs-gap);
   max-width: var(--docs-max);
   margin: 0 auto;
-  padding: var(--docs-gap) 1.5rem 6rem;
+  padding: 0 1.5rem;
 }
 .layout--with-toc {
-  grid-template-columns: var(--docs-sidebar) 1fr var(--docs-toc);
+  grid-template-columns: var(--docs-sidebar) minmax(0, 1fr) var(--docs-toc);
 }
+
+/* Sidebar — sentence-case group labels, 14px rows, the current page a soft pill. */
 .sidebar {
   position: sticky;
-  top: 4.5rem;
+  top: var(--docs-header-h);
   align-self: start;
-  height: calc(100vh - 6rem);
+  height: calc(100vh - var(--docs-header-h));
   overflow-y: auto;
-  font-size: 0.9rem;
+  overscroll-behavior: contain;
+  /* Room for the bar is kept even while it's hidden, so rows never shift. */
+  scrollbar-gutter: stable;
+  padding: 1.5rem 0.5rem 3rem 0;
+  margin-left: -0.625rem;
+  font-size: 0.875rem;
+}
+/* Its scrollbar stays invisible until the sidebar is hovered or holds focus,
+   then shows as a thin thumb with no track. The standard properties drive
+   Chrome and Firefox; the pseudo-elements only serve a browser without
+   `scrollbar-color` (older Safari), since Chrome ignores them once it's set. */
+.sidebar {
+  --docs-scrollbar-thumb: transparent;
+  scrollbar-width: thin;
+  scrollbar-color: var(--docs-scrollbar-thumb) transparent;
+}
+.sidebar:hover,
+.sidebar:focus-within {
+  --docs-scrollbar-thumb: color-mix(in oklch, var(--foreground) 20%, transparent);
+}
+@supports not (scrollbar-color: auto) {
+  .sidebar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .sidebar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .sidebar::-webkit-scrollbar-thumb {
+    background: var(--docs-scrollbar-thumb);
+    border-radius: var(--docs-radius-pill);
+  }
 }
 .sidebar-filter {
-  margin-bottom: 0.75rem;
+  position: relative;
+  margin: 0 0 0.5rem 0.625rem;
 }
 .sidebar-filter-input {
   width: 100%;
-  padding: 0.4rem 0.6rem;
-  font-size: 0.85rem;
-  color: var(--foreground);
-  background: var(--background);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  height: 2rem;
+  padding: 0 1.75rem 0 0.625rem;
+  font: inherit;
+  font-size: 0.8125rem;
+  color: var(--docs-fg);
+  background: var(--docs-surface);
+  border: 1px solid var(--docs-border-soft);
+  border-radius: var(--docs-radius);
+  transition: border-color var(--docs-ease);
 }
 .sidebar-filter-input::placeholder {
-  color: var(--muted-foreground);
+  color: var(--docs-fg-muted);
+}
+.sidebar-filter-input:hover {
+  border-color: var(--docs-border);
 }
 .sidebar-filter-input:focus-visible {
   outline: 2px solid var(--ring);
   outline-offset: 1px;
 }
+/* The `/` shortcut hint, gone once the field is in use. */
+.sidebar-filter::after {
+  content: "/";
+  position: absolute;
+  top: 50%;
+  right: 0.4rem;
+  translate: 0 -50%;
+  display: grid;
+  place-items: center;
+  width: 1.1rem;
+  height: 1.1rem;
+  font: 0.6875rem/1 var(--docs-font-mono);
+  color: var(--docs-fg-muted);
+  border: 1px solid var(--docs-border-soft);
+  border-radius: 0.25rem;
+  background: var(--background);
+  pointer-events: none;
+}
+.sidebar-filter:has(
+    .sidebar-filter-input:focus,
+    .sidebar-filter-input:not(:placeholder-shown)
+  )::after {
+  display: none;
+}
 .sidebar-empty {
-  padding: 0.3rem 0.6rem;
-  font-size: 0.85rem;
-  color: var(--muted-foreground);
+  padding: 0.3rem 0.625rem;
+  font-size: 0.8125rem;
+  color: var(--docs-fg-muted);
 }
 .sidebar-group h2 {
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--muted-foreground);
-  margin: 1.25rem 0 0.5rem;
+  margin: 1.5rem 0 0.25rem;
+  padding: 0 0.625rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.5rem;
+  color: var(--docs-fg-muted);
 }
 .sidebar-group ul {
   list-style: none;
@@ -309,26 +549,35 @@ pre {
 }
 .sidebar-group a {
   display: block;
-  padding: 0.3rem 0.6rem;
-  border-radius: var(--radius);
-  color: var(--muted-foreground);
+  padding: 0.3rem 0.625rem;
+  border-radius: var(--docs-radius);
+  color: color-mix(in oklch, var(--foreground) 82%, var(--background));
+  line-height: 1.5;
   transition:
-    color 0.15s ease,
-    background 0.15s ease;
+    color var(--docs-ease),
+    background var(--docs-ease);
 }
 .sidebar-group a:hover {
-  color: var(--foreground);
-  background: var(--muted);
+  color: var(--docs-fg);
+  background: var(--docs-surface);
+  text-decoration: none;
+}
+.sidebar-group a:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
 }
 .sidebar-group a[aria-current="page"] {
-  color: var(--foreground);
-  background: var(--muted);
+  color: var(--docs-fg);
+  background: var(--docs-surface-strong);
   font-weight: 500;
 }
 
 main {
   min-width: 0;
-  max-width: 44rem;
+  width: 100%;
+  max-width: var(--docs-measure);
+  margin: 0 auto;
+  padding: 2.5rem 0 5rem;
 }
 main.main--wide {
   max-width: none;
@@ -349,43 +598,305 @@ main.main--wide {
   `docs.prose` is declared *before* `moderno.base` in the order statement that
   `generated/tailwind.css` puts at the top of the cascade, so both of those win
   inside the panel while the prose still styles every ordinary docs page (no
-  layered rule competes for a heading out there).
+  layered rule competes for a heading out there). Colour is the one property
+  the preflight does not reset, so every rule that sets one also excludes the
+  demo panel (`:not(.preview-panel--demo *)`) — a block's paragraph keeps the
+  colour its own stylesheet gives it.
+
+  The hierarchy: headings in --foreground, running text a step back
+  (--docs-fg-body), generous space above each h2 so sections read as sections.
 */
 @layer docs.prose {
   main h1 {
-    font-size: 2.5rem;
+    font-size: 2.25rem;
+    line-height: 2.5rem;
     font-weight: 600;
-    letter-spacing: -0.03em;
-    margin: 0 0 0.6rem;
+    letter-spacing: -0.025em;
+    margin: 0 0 0.5rem;
   }
   main h2 {
-    margin: 3rem 0 0.9rem;
-    font-size: 1.375rem;
+    margin: 3.5rem 0 1rem;
+    font-size: 1.5rem;
+    line-height: 2rem;
     font-weight: 600;
-    letter-spacing: -0.015em;
+    letter-spacing: -0.02em;
   }
   main h3 {
-    margin: 2rem 0 0.6rem;
-    font-size: 1.1rem;
+    margin: 2.25rem 0 0.75rem;
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  main h4 {
+    margin: 1.75rem 0 0.5rem;
+    font-size: 1rem;
     font-weight: 600;
   }
   main p {
-    margin: 0.9rem 0;
+    margin: 0.75rem 0;
   }
-  main :where(h1, h2, h3) {
-    scroll-margin-top: 5rem;
+  main :where(p, li, dd):not(.preview-panel--demo *) {
+    color: var(--docs-fg-body);
+    line-height: 1.7;
+  }
+  main :where(strong, b):not(.preview-panel--demo *) {
+    color: var(--docs-fg);
+    font-weight: 600;
+  }
+  main :where(h1, h2, h3, h4) {
+    scroll-margin-top: calc(var(--docs-header-h) + 1.5rem);
+  }
+  /* A heading straight after another heading already has its separation; the
+     full top margin there reads as a hole. */
+  main :where(h2 + h3) {
+    margin-top: 1.25rem;
+  }
+  main :where(.page-header + h2) {
+    margin-top: 0;
+  }
+
+  /*
+    The rest of the prose vocabulary. Every rule below excludes the live demo
+    panel (`:not(.preview-panel--demo *)`): a block's own <ul> or <table> is the
+    block's business, and its utilities must not have to fight these.
+  */
+  main :where(ul, ol):not(.preview-panel--demo *) {
+    margin: 0.75rem 0 1rem;
+    padding-inline-start: 1.25rem;
+  }
+  main :where(li):not(.preview-panel--demo *) {
+    margin: 0.35rem 0;
+    padding-inline-start: 0.25rem;
+  }
+  main :where(li)::marker {
+    color: color-mix(in oklch, var(--foreground) 35%, var(--background));
+  }
+  main :where(li > ul, li > ol):not(.preview-panel--demo *) {
+    margin: 0.35rem 0;
+  }
+
+  /* Inline code: a soft tinted chip, so a slot or prop name reads as a token and
+     not as a word. Fenced code (<pre>) keeps its own surface. */
+  main :where(:not(pre) > code):not(.preview-panel--demo *) {
+    padding: 0.1em 0.35em;
+    border-radius: 0.3rem;
+    background: var(--docs-surface-strong);
+    color: var(--docs-fg);
+    font-size: 0.85em;
+    overflow-wrap: anywhere;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+  main :where(a:has(> code)):not(.preview-panel--demo *) {
+    text-decoration: none;
+  }
+
+  main :where(a):not(.preview-panel--demo *, .page-actions *, .pager *, .home *) {
+    color: var(--docs-fg);
+    font-weight: 500;
+    text-decoration: underline;
+    text-decoration-color: color-mix(in oklch, var(--foreground) 30%, transparent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+  main :where(a):not(.preview-panel--demo *, .page-actions *, .pager *, .home *):hover {
+    text-decoration-color: currentColor;
+  }
+
+  /* Tables: a reference grid, not a boxed card — a small muted header, row
+     dividers only, one step below body text. Same look as <PropsTable>. */
+  main :where(table):not(.preview-panel--demo *) {
+    width: 100%;
+    margin: 1rem 0 1.5rem;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+    line-height: 1.55;
+  }
+  main :where(table):not(.preview-panel--demo *) :where(th, td) {
+    padding: 0.7rem 1rem 0.7rem 0;
+    border-bottom: 1px solid var(--docs-border-soft);
+    text-align: start;
+    vertical-align: top;
+  }
+  main :where(table):not(.preview-panel--demo *) :where(th, td):last-child {
+    padding-inline-end: 0;
+  }
+  main :where(table):not(.preview-panel--demo *) :where(thead th) {
+    padding-top: 0;
+    padding-bottom: 0.55rem;
+    border-bottom-color: var(--docs-border);
+    color: var(--docs-fg-muted);
+    font-size: 0.75rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  main :where(table):not(.preview-panel--demo *) :where(td) {
+    color: var(--docs-fg-body);
+  }
+  /* Code in a cell stays on one line — a prop name, `false`, `"sign-in"` never
+     break mid-token. The second column is the exception: that is where a type
+     lives, and a long union (`"sm" | "md" | "lg"`) wraps at its spaces rather
+     than pushing the table sideways. The last column of a wider table is the
+     prose one, so it keeps a readable minimum and takes the flexible width. */
+  main :where(table):not(.preview-panel--demo *) :where(td, th) :where(code) {
+    white-space: nowrap;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+  main :where(table):not(.preview-panel--demo *) :where(td:nth-child(2)) :where(code) {
+    white-space: normal;
+  }
+  main :where(table):not(.preview-panel--demo *) :where(td:last-child:nth-child(n + 3)) {
+    min-width: 12rem;
+  }
+  main :where(table):not(.preview-panel--demo *) :where(td:first-child code) {
+    background: none;
+    padding: 0;
+    font-weight: 500;
+  }
+
+  main :where(blockquote):not(.preview-panel--demo *) {
+    margin: 1.5rem 0;
+    padding: 0.25rem 0 0.25rem 1rem;
+    border-inline-start: 2px solid var(--docs-border);
+    color: var(--docs-fg-muted);
+  }
+  main :where(hr):not(.preview-panel--demo *) {
+    margin: 3rem 0;
+    border: 0;
+    border-top: 1px solid var(--docs-border-soft);
   }
 }
+
+/* A wide table scrolls inside its own frame on a phone instead of pushing the
+   page sideways. */
+@media (max-width: 40rem) {
+  main table:not(.preview-panel--demo *, .props-table) {
+    display: block;
+    overflow-x: auto;
+  }
+}
+
+/* The theme builder's lead (and any other bare lead). */
 .page-lead {
-  color: var(--muted-foreground);
-  font-size: 1.15rem;
-  line-height: 1.6;
+  color: var(--docs-fg-muted);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+}
+
+/* Page header — H1, a one-line lead, then quiet pill actions; tight inside,
+   generous space below before the first preview. */
+.page-header {
+  margin: 0 0 2.25rem;
+}
+.page-header .page-lead {
+  max-width: 60ch;
+  margin: 0;
+  text-wrap: pretty;
 }
 .page-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
   align-items: center;
-  margin: 1.25rem 0 2.25rem;
+  margin: 1.25rem 0 0;
+}
+.page-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  height: 1.75rem;
+  padding: 0 0.7rem 0 0.6rem;
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--docs-fg-muted);
+  background: var(--background);
+  border: 1px solid var(--docs-border);
+  border-radius: var(--docs-radius-pill);
+  cursor: pointer;
+  transition:
+    color var(--docs-ease),
+    background var(--docs-ease),
+    border-color var(--docs-ease);
+}
+.page-action:hover {
+  color: var(--docs-fg);
+  background: var(--docs-surface);
+  text-decoration: none;
+}
+.page-action:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+.page-action-done,
+.page-action[data-state="copied"] .page-action-idle {
+  display: none;
+}
+.page-action[data-state="copied"] .page-action-done {
+  display: block;
+}
+
+/* Prev / next — two cards at the foot of the page, in sidebar order. */
+.pager {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 4.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--docs-border-soft);
+}
+.pager-link {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--docs-border);
+  border-radius: var(--docs-radius-lg);
+  transition:
+    border-color var(--docs-ease),
+    background var(--docs-ease);
+}
+.pager-link:hover {
+  border-color: color-mix(in oklch, var(--foreground) 22%, var(--border));
+  background: var(--docs-surface);
+  text-decoration: none;
+}
+.pager-link:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+.pager-link--next {
+  grid-column: 2;
+  align-items: flex-end;
+  text-align: end;
+}
+.pager-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  color: var(--docs-fg-muted);
+}
+.pager-title {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--docs-fg);
+}
+@media (max-width: 30rem) {
+  .pager {
+    gap: 0.5rem;
+  }
+  .pager-link {
+    padding: 0.75rem;
+  }
 }
 
 /*
@@ -393,25 +904,26 @@ main.main--wide {
   an indented sub-group (indent 1rem) joined to the rail by a curved
   connector at each depth change. The rail itself is not one continuous
   border on the nav — each link draws its own `border-left` segment at its
-  own indent, so a thicker/coloured segment can mark a single active item
-  without touching its neighbours; the connectors bridge the 1rem gap between
-  an h2 segment and the h3 segment above/below it. Adapted from Nimbus's TOC
-  (see the attribution header in TableOfContents.astro).
+  own indent, so a darker segment can mark a single active item without
+  touching its neighbours; the connectors bridge the 1rem gap between an h2
+  segment and the h3 segment above/below it. Adapted from Nimbus's TOC (see
+  the attribution header in TableOfContents.astro).
 */
 .toc {
   position: sticky;
-  top: 4.5rem;
+  top: var(--docs-header-h);
   align-self: start;
-  height: calc(100vh - 6rem);
+  max-height: calc(100vh - var(--docs-header-h));
   overflow-y: auto;
-  font-size: 0.82rem;
+  scrollbar-width: thin;
+  padding: 2.5rem 0 2rem;
+  font-size: 0.8125rem;
 }
 .toc-title {
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--muted-foreground);
   margin: 0 0 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--docs-fg);
 }
 .toc-list {
   list-style: none;
@@ -428,20 +940,20 @@ main.main--wide {
 }
 .toc-list a {
   display: block;
-  color: var(--muted-foreground);
-  border-left: 2px solid var(--border);
-  padding: 0.3rem 0 0.3rem 1rem;
+  color: var(--docs-fg-muted);
+  border-left: 1px solid var(--docs-border);
+  padding: 0.3rem 0 0.3rem 0.875rem;
+  line-height: 1.4;
 }
 @media (prefers-reduced-motion: no-preference) {
   .toc-list a {
     transition:
-      color 0.15s ease,
-      border-color 0.15s ease,
-      border-left-width 0.15s ease;
+      color var(--docs-ease),
+      border-color var(--docs-ease);
   }
 }
 .toc-list a:hover {
-  color: var(--foreground);
+  color: var(--docs-fg);
   text-decoration: none;
 }
 .toc-list a:focus-visible {
@@ -449,11 +961,10 @@ main.main--wide {
   outline-offset: -1px;
 }
 .toc-list a[aria-current="true"] {
-  color: var(--foreground);
+  color: var(--docs-fg);
   font-weight: 500;
-  border-left-width: 3px;
-  border-left-color: var(--primary);
-  padding-left: calc(1rem - 1px);
+  border-left: 2px solid var(--docs-fg);
+  padding-left: calc(0.875rem - 1px);
 }
 /* The S-curve bridging an indent change — a block between two links in the
    same flex column, spanning the 1rem gap between the h2 segment's x=0 line
@@ -465,41 +976,131 @@ main.main--wide {
   display: block;
   width: 1rem;
   height: 0.5rem;
-  color: var(--border);
+  margin-left: 0.5px;
+  color: var(--docs-border);
   overflow: visible;
 }
 .toc-connector path {
   fill: none;
   stroke: currentColor;
-  stroke-width: 2;
+  stroke-width: 1;
   stroke-linecap: round;
 }
 
 @media (max-width: 75rem) {
   .layout--with-toc {
-    grid-template-columns: var(--docs-sidebar) 1fr;
+    grid-template-columns: var(--docs-sidebar) minmax(0, 1fr);
   }
   .toc {
     display: none;
   }
 }
 
+/*
+  Below 56rem the sidebar leaves the grid and becomes a full-height drawer under
+  the header, opened by the header's menu toggle (a checkbox, read here through
+  :has(), so it works without script). The rail stays hidden: the pager at the
+  foot of the page and the headings themselves carry the outline.
+*/
 @media (max-width: 56rem) {
   .layout,
   .layout--with-toc {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
+    padding: 0 1rem;
+  }
+  .nav-toggle {
+    display: block;
+  }
+  .nav-toggle-btn {
+    display: inline-flex;
   }
   .sidebar {
-    position: static;
+    display: none;
+    position: fixed;
+    inset: var(--docs-header-h) 0 0 0;
+    z-index: 40;
+    /* Back to `normal`: the grid-item `align-self: start` above also aligns an
+       absolutely positioned box, and would size the drawer to its content. */
+    align-self: auto;
     height: auto;
+    margin: 0;
+    padding: 1rem 1rem 3rem 0.375rem;
+    background: var(--background);
   }
-  .toc {
+  body:has(.nav-toggle:checked) {
+    overflow: hidden;
+  }
+  body:has(.nav-toggle:checked) .sidebar {
     display: block;
-    position: static;
-    height: auto;
-    margin-top: 2rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--border);
+  }
+  main {
+    padding-top: 2rem;
+  }
+  .search-trigger {
+    width: 2rem;
+    padding: 0;
+    justify-content: center;
+    background: transparent;
+    border-color: transparent;
+  }
+  .search-trigger:hover {
+    background: var(--docs-surface-strong);
+  }
+  .search-trigger-label,
+  .search-trigger-kbd {
+    display: none;
+  }
+}
+
+/* Phone: the header takes two rows — menu, brand and the icon tools on top;
+   the section links and the site-theme select underneath. */
+@media (max-width: 48rem) {
+  :root {
+    --docs-header-h: 5.75rem;
+  }
+  .site-header {
+    display: grid;
+    grid-template-columns: auto 1fr auto auto auto;
+    grid-template-areas:
+      "menu brand search lang toggle"
+      "nav nav nav theme theme";
+    align-content: center;
+    column-gap: 0.25rem;
+    row-gap: 0.375rem;
+    padding: 0 1rem;
+  }
+  .header-tools {
+    display: contents;
+  }
+  .nav-toggle-btn {
+    grid-area: menu;
+    margin-right: 0.25rem;
+  }
+  .brand {
+    grid-area: brand;
+  }
+  .search {
+    grid-area: search;
+  }
+  .lang-switch {
+    grid-area: lang;
+  }
+  .theme-toggle {
+    grid-area: toggle;
+  }
+  .site-nav {
+    grid-area: nav;
+    margin-left: -0.625rem;
+  }
+  .theme-select {
+    grid-area: theme;
+    justify-self: end;
+  }
+  .lang-switch-long {
+    display: none;
+  }
+  .lang-switch-short {
+    display: inline;
   }
 }
 
@@ -510,31 +1111,82 @@ main.main--wide {
    attribute BaseLayout's inline script sets on <html> — see
    FrameworkSelect.astro for the attribution on that mechanism. */
 .preview {
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  margin: 1.5rem 0;
+  margin: 1.5rem 0 2.25rem;
+  border: 1px solid var(--docs-border);
+  border-radius: var(--docs-radius-lg);
+  background: var(--background);
   overflow: hidden;
 }
+/* The stage. By default the demo sits dead centre on a fixed minimum height, so
+   every preview on every page has the same composition whatever it holds — a
+   single button, a row of sizes, a stacked form. The island mounts as
+   `<astro-island style="display:contents">`, so the example's own root element
+   is the flex item being centred.
+
+   `layout="fill"` (blocks, screens, charts) drops the centring: those size
+   themselves from their container (ADR-0005), so they get the full width. */
 .preview-panel--demo {
-  padding: 2rem;
-  /* A dot-grid backdrop separates "this is a rendered demo" from the prose
-     around it without a label — a stage, not a card. Dots are the foreground
-     colour at low opacity over the ordinary background, so the grid re-tints
-     with the theme instead of carrying a colour of its own. */
-  background-color: var(--background);
-  background-image: radial-gradient(
-    color-mix(in oklch, var(--foreground) 18%, transparent) 1px,
-    transparent 1px
-  );
-  background-size: 16px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  min-height: 20rem;
+  padding: 3rem 2rem;
+  /* A calm, plain stage: the frame and the code surface under it are what set
+     the demo apart from the prose, so the component is the only thing to look
+     at. */
+  background: var(--background);
 }
+/* A lone form control centred on the stage gets a reading width instead of its
+   intrinsic ~20ch, without the example having to carry a docs-only class. */
+.preview-panel--demo
+  > astro-island
+  > :is([data-scope="field"], [data-scope="select"])[data-part="root"],
+.demo-row > :is([data-scope="field"], [data-scope="select"])[data-part="root"] {
+  width: min(100%, 20rem);
+}
+.demo-row > :is([data-scope="field"], [data-scope="select"])[data-part="root"] {
+  flex: 1 1 10rem;
+  max-width: 13rem;
+}
+/* A lone card or message gets its natural reading width, not the whole stage. */
+.preview-panel--demo > astro-island > [data-scope="card"][data-part="root"] {
+  width: min(100%, 24rem);
+}
+.preview-panel--demo
+  > astro-island
+  > :is([data-scope="alert"], [data-scope="divider"])[data-part="root"] {
+  width: min(100%, 32rem);
+}
+/* Rows and grids take the stage's width, so their items can sit side by side
+   instead of shrink-wrapping to one column; the row still centres them. */
+.preview-panel--demo > astro-island > :is(.demo-row, .demo-grid) {
+  align-self: stretch;
+}
+.preview-panel--demo[data-layout="fill"] {
+  display: block;
+  min-height: 0;
+  padding: 2rem;
+}
+.preview-panel--demo[data-layout="fill"]:has(.demo-tabs) {
+  padding: 0;
+}
+@media (max-width: 40rem) {
+  .preview-panel--demo {
+    min-height: 15rem;
+    padding: 2.5rem 1rem;
+  }
+  .preview-panel--demo[data-layout="fill"] {
+    padding: 1rem;
+  }
+}
+/* The source: always shown, on the quiet code surface. A long one is capped
+   by CodeBlock's collapsible toggle rather than scrolling in a box. */
 .preview-panel--code {
   padding: 0;
-  border-top: 1px solid var(--border);
-  /* The source scrolls past this height instead of growing the page — a
-     multi-variant demo's real source can run long. */
-  max-height: 24rem;
-  overflow-y: auto;
+  border-top: 1px solid var(--docs-border);
+  background: var(--docs-surface);
 }
 /* Only the source panel for the page's selected framework is shown; the exact
    framework values a rule reacts to are also declared in FrameworkSelect.astro
@@ -553,19 +1205,25 @@ main.main--wide {
   margin: 0;
   border: none;
   border-radius: 0;
+  padding: 1rem 3rem 1rem 1.25rem;
 }
 
 /* Framework selector — one page-wide control (CONTEXT.md "Framework
-   selector"). Visually a segmented control, the same tab styling the install
-   package-manager tabs use, so the two page-wide switches read as one family. */
+   selector"). A compact segmented control; the install package-manager pills
+   and the block-state tabs use the same checked look, so every switch on the
+   page reads as one family. */
 .framework-select {
   display: inline-flex;
-  gap: 0.25rem;
-  padding: 0.3rem;
-  margin: 0 0 1.25rem;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--muted);
+  gap: 0.125rem;
+  padding: 0.1875rem;
+  margin: 0 0 0.875rem;
+  border: 1px solid var(--docs-border-soft);
+  border-radius: var(--docs-radius);
+  background: var(--docs-surface);
+}
+.framework-select + .preview,
+.framework-select + script + .preview {
+  margin-top: 0;
 }
 .framework-radio {
   position: absolute;
@@ -573,34 +1231,38 @@ main.main--wide {
   pointer-events: none;
 }
 .framework-option {
-  font-size: 0.83rem;
+  display: inline-flex;
+  align-items: center;
+  height: 1.625rem;
+  padding: 0 0.7rem;
+  font-size: 0.8125rem;
   font-weight: 500;
-  padding: 0.3rem 0.75rem;
-  border-radius: calc(var(--radius) - 2px);
+  border-radius: var(--docs-radius-sm);
   cursor: pointer;
-  color: var(--muted-foreground);
+  color: var(--docs-fg-muted);
   transition:
-    color 0.15s ease,
-    background 0.15s ease;
+    color var(--docs-ease),
+    background var(--docs-ease);
 }
 .framework-option:hover {
-  color: var(--foreground);
+  color: var(--docs-fg);
 }
 .framework-radio:checked + .framework-option {
   background: var(--background);
-  color: var(--foreground);
-  box-shadow: 0 1px 2px color-mix(in oklch, var(--foreground) 8%, transparent);
+  color: var(--docs-fg);
+  box-shadow:
+    0 0 0 1px var(--docs-border-soft),
+    0 1px 2px color-mix(in oklch, var(--foreground) 8%, transparent);
 }
 .framework-radio:focus-visible + .framework-option {
   outline: 2px solid var(--ring);
+  outline-offset: 1px;
 }
 
+/* Install's package-manager pills (bun / pnpm / npm). */
 .install-tabs {
   display: flex;
-  gap: 0.25rem;
-  padding: 0.4rem 0.5rem;
-  border-bottom: 1px solid var(--border);
-  background: var(--muted);
+  gap: 0.125rem;
 }
 .install-radio {
   position: absolute;
@@ -608,36 +1270,157 @@ main.main--wide {
   pointer-events: none;
 }
 .install-tab {
-  font-size: 0.83rem;
+  display: inline-flex;
+  align-items: center;
+  height: 1.5rem;
+  padding: 0 0.55rem;
+  font-size: 0.75rem;
   font-weight: 500;
-  padding: 0.3rem 0.75rem;
-  border-radius: calc(var(--radius) - 2px);
+  border-radius: var(--docs-radius-sm);
   cursor: pointer;
-  color: var(--muted-foreground);
+  color: var(--docs-fg-muted);
   transition:
-    color 0.15s ease,
-    background 0.15s ease;
+    color var(--docs-ease),
+    background var(--docs-ease);
 }
 .install-tab:hover {
-  color: var(--foreground);
+  color: var(--docs-fg);
 }
 .install-radio:checked + .install-tab {
   background: var(--background);
-  color: var(--foreground);
-  box-shadow: 0 1px 2px color-mix(in oklch, var(--foreground) 8%, transparent);
+  color: var(--docs-fg);
+  box-shadow: 0 0 0 1px var(--docs-border-soft);
 }
 .install-radio:focus-visible + .install-tab {
   outline: 2px solid var(--ring);
+  outline-offset: 1px;
 }
 
+/* Variants of one axis, side by side. `last baseline` lines up the text inside
+   each control — a small, a medium and a large button, or three field sizes,
+   share the line their labels sit on instead of floating at three heights. */
 .demo-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
-  align-items: center;
+  justify-content: center;
+  gap: 1rem 1.25rem;
+  align-items: last baseline;
 }
 .demo-row + .demo-row {
   margin-top: 1rem;
+}
+/* Parts of one form, one under the other at a reading width. */
+.demo-stack {
+  display: grid;
+  gap: 1.25rem;
+  width: 100%;
+  max-width: 22rem;
+}
+/* Full-width items (alerts, dividers) compared one under another need a wider
+   column than a form does. */
+.demo-stack:has(> :is([data-scope="alert"], [data-scope="divider"])) {
+  max-width: 32rem;
+}
+/* A row of actions inside a dialog is its footer: it sits at the end. */
+[data-scope="dialog"] .demo-row {
+  justify-content: flex-end;
+}
+
+/*
+  Block and screen previews: a tab per state, one mounted copy at a time
+  (islands/DemoTabs.svelte). Same segmented look as the install tabs, so every
+  switch on the page reads as one family.
+*/
+.demo-tabs-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.125rem;
+  padding: 0.375rem 0.5rem;
+  border-bottom: 1px solid var(--docs-border-soft);
+  background: var(--docs-surface);
+}
+.demo-tab {
+  display: inline-flex;
+  align-items: center;
+  height: 1.625rem;
+  font-family: var(--docs-font-sans);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  padding: 0 0.7rem;
+  border: 0;
+  border-radius: var(--docs-radius-sm);
+  background: transparent;
+  color: var(--docs-fg-muted);
+  cursor: pointer;
+  transition:
+    color var(--docs-ease),
+    background var(--docs-ease);
+}
+.demo-tab:hover {
+  color: var(--docs-fg);
+}
+.demo-tab[aria-selected="true"] {
+  background: var(--background);
+  color: var(--docs-fg);
+  box-shadow:
+    0 0 0 1px var(--docs-border-soft),
+    0 1px 2px color-mix(in oklch, var(--foreground) 8%, transparent);
+}
+.demo-tab:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+.demo-tabs-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2.5rem 2rem 1.5rem;
+}
+.demo-tabs-panel > .demo-stage {
+  width: 100%;
+}
+.demo-caption {
+  max-width: 36rem;
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  text-align: center;
+}
+@media (max-width: 40rem) {
+  .demo-tabs-panel {
+    padding: 2rem 1rem 1.25rem;
+  }
+}
+
+/* A container drawn on purpose: a dashed outline with its width written on it,
+   so a block laid out for a narrow box reads as "this is the 18rem sidebar" and
+   not as a layout bug. */
+.demo-viewport {
+  position: relative;
+  margin-inline: auto;
+  /* `--viewport-width` is the width the *content* gets; the frame adds its own
+     padding and border around it, and never outgrows the stage. */
+  width: min(100%, calc(var(--viewport-width, 100%) + 2rem + 2px));
+  padding: 1rem;
+  border: 1px dashed color-mix(in oklch, var(--foreground) 30%, transparent);
+  border-radius: var(--radius);
+}
+.demo-viewport[data-label]::before {
+  content: attr(data-label);
+  position: absolute;
+  top: 0;
+  /* Anchored at the start, so a frame wider than the column (which scrolls
+     sideways) still shows its width without scrolling. */
+  left: 0.75rem;
+  translate: 0 -50%;
+  padding: 0 0.5rem;
+  background: var(--background);
+  color: var(--muted-foreground);
+  font-family: var(--docs-font-mono);
+  font-size: 0.75rem;
+  white-space: nowrap;
 }
 
 /* Surface demos (Card): an intrinsic grid, so the samples sit side by side on a
@@ -651,18 +1434,25 @@ main.main--wide {
 }
 
 /* Code blocks — Astro's native Shiki emits a bare <pre class="astro-code">, so
-   all of the chrome is ours: the same bordered, rounded card as the rest of the
-   site's surfaces, painted from --border/--radius and the docs mono face so it
-   re-themes with the brand. */
+   all of the chrome is ours: a soft surface, a rounded frame and the docs mono
+   face at 13px. The same rule covers fenced blocks in prose, Preview's source
+   panel and Install; each context below only strips what its own frame
+   already draws. */
 .astro-code {
   font-family: var(--docs-font-mono);
-  font-size: 0.9rem;
-  line-height: 1.65;
-  margin: 1.25rem 0;
-  padding: 0.9rem 1.25rem;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background-color: var(--shiki-light-bg);
+  font-size: var(--docs-code-size);
+  line-height: 1.7;
+  margin: 1rem 0 1.25rem;
+  padding: 0.9rem 1.1rem;
+  border: 1px solid var(--docs-border-soft);
+  border-radius: var(--docs-radius-lg);
+  background-color: var(--docs-surface);
+  overflow-x: auto;
+  tab-size: 2;
+  scrollbar-width: thin;
+}
+.astro-code code {
+  font-family: inherit;
 }
 
 /* github-light and github-dark ship as inline custom properties on the <pre>
@@ -670,7 +1460,8 @@ main.main--wide {
    switching palette is a variable re-point, not a repaint. The site's own
    toggle owns the `.dark` class on <html> — deliberately no
    `prefers-color-scheme` here, so a reader who overrides the OS scheme gets
-   the palette they picked.
+   the palette they picked. The block's background is ours (--docs-surface),
+   not the theme's, so code sits on the same quiet surface in both schemes.
 
    Only four variables exist to read: neither theme sets a font style, weight or
    text-decoration on any token, so Shiki emits --shiki-light/--shiki-dark and
@@ -687,35 +1478,183 @@ main.main--wide {
 .dark .astro-code span {
   color: var(--shiki-dark);
 }
-.dark .astro-code {
-  background-color: var(--shiki-dark-bg);
-}
 
-/* The wrapper only controls placement: inside .preview-panel--code the panel
-   supplies the margin, in prose the <pre> keeps its own. */
+/* CodeBlock / an enhanced prose block: the wrapper positions the copy button. */
 .code-block {
+  position: relative;
   margin: 0;
 }
+.code-block--prose {
+  margin: 1rem 0 1.25rem;
+}
+.code-block--prose > .astro-code {
+  margin: 0;
+}
+.code-block .astro-code {
+  padding-right: 3rem;
+}
 
-/* Install */
-.install {
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  margin: 1.25rem 0;
+/* Copy button: top-right, ghost until hovered; a check replaces the copy
+   glyph for ~1.2s after a copy (clipboard.ts sets data-state). */
+.code-copy {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  border: 0;
+  border-radius: var(--docs-radius-sm);
+  background: transparent;
+  color: var(--docs-fg-muted);
+  cursor: pointer;
+  transition:
+    color var(--docs-ease),
+    background var(--docs-ease);
+}
+.code-copy:hover {
+  color: var(--docs-fg);
+  background: color-mix(in oklch, var(--foreground) 8%, var(--background));
+}
+.code-copy:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+.code-copy-done,
+.code-copy[data-state="copied"] .code-copy-idle {
+  display: none;
+}
+.code-copy[data-state="copied"] .code-copy-done {
+  display: block;
+  color: var(--docs-fg);
+}
+
+/* Collapsible source (CodeBlock `collapsible`): capped at 12rem with a fade
+   and an "Expand code" pill. The code stays in the DOM and on screen — only its
+   height is capped. A visually-hidden checkbox drives it, so it works without
+   script and is keyboard-reachable (its focus ring shows on the pill). */
+.code-expand-toggle {
+  position: absolute;
+  width: 1px;
+  height: 1px;
   overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.code-block[data-collapsible] .code-block-body {
+  position: relative;
+  max-height: 12rem;
+  overflow: hidden;
+}
+.code-block[data-collapsible] .code-block-body::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 5.5rem;
+  background: linear-gradient(to bottom, transparent, var(--docs-surface) 85%);
+  pointer-events: none;
+}
+.code-expand-toggle:checked ~ .code-block-body {
+  max-height: none;
+}
+.code-expand-toggle:checked ~ .code-block-body::after {
+  display: none;
+}
+.code-expand {
+  position: absolute;
+  left: 50%;
+  bottom: 0.75rem;
+  translate: -50% 0;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  height: 1.75rem;
+  padding: 0 0.6rem 0 0.8rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+  color: var(--docs-fg);
+  background: var(--background);
+  border: 1px solid var(--docs-border);
+  border-radius: var(--docs-radius-pill);
+  box-shadow: 0 1px 2px color-mix(in oklch, var(--foreground) 8%, transparent);
+  cursor: pointer;
+  user-select: none;
+  transition: background var(--docs-ease);
+}
+.code-expand:hover {
+  background: var(--docs-surface);
+}
+.code-expand svg {
+  color: var(--docs-fg-muted);
+  transition: rotate var(--docs-ease);
+}
+.code-expand-less,
+.code-expand-toggle:checked ~ .code-expand .code-expand-more {
+  display: none;
+}
+.code-expand-toggle:checked ~ .code-expand .code-expand-less {
+  display: inline;
+}
+.code-expand-toggle:checked ~ .code-expand {
+  position: static;
+  translate: none;
+  display: flex;
+  width: fit-content;
+  margin: 0 auto 0.875rem;
+}
+.code-expand-toggle:checked ~ .code-expand svg {
+  rotate: 180deg;
+}
+.code-expand-toggle:focus-visible ~ .code-expand {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* Install — a rounded box: a bar of package-manager pills and the copy
+   button, the command underneath on the same quiet surface as code. */
+.install {
+  position: relative;
+  margin: 1rem 0 1.5rem;
+  border: 1px solid var(--docs-border-soft);
+  border-radius: var(--docs-radius-lg);
+  background: var(--docs-surface);
+  overflow: hidden;
+}
+.install-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.375rem 0.3rem 0.75rem;
+  border-bottom: 1px solid var(--docs-border-soft);
+}
+.install-icon {
+  flex: none;
+  color: var(--docs-fg-muted);
+}
+.install-bar .code-copy {
+  position: static;
+  margin-left: auto;
 }
 .install-panel {
   display: none;
-  background: var(--card);
 }
-/* .preview/.install already draw their own outer card — strip the border,
-   radius and margin off the embedded block so there's one frame, not a nested
-   one. */
+/* .preview/.install already draw their own outer frame — strip the border,
+   radius, margin and surface off the embedded block so there's one frame, not
+   a nested one. */
 .preview-panel--code .astro-code,
 .install-panel .astro-code {
   margin: 0;
   border: none;
   border-radius: 0;
+  background-color: transparent;
+}
+.install-panel .astro-code {
+  padding: 0.8rem 1rem;
 }
 .install:has(.install-radio:nth-of-type(1):checked) .install-panel--bun,
 .install:has(.install-radio:nth-of-type(2):checked) .install-panel--pnpm,
@@ -735,70 +1674,75 @@ main.main--wide {
 :root[data-framework="solid"] .install-panel [data-fw="solid"] {
   display: block;
 }
+/* <ForFramework> — a Usage snippet per framework, same switch. */
+.for-fw[data-fw] {
+  display: none;
+}
+:root:not([data-framework]) .for-fw[data-fw="react"],
+:root[data-framework="react"] .for-fw[data-fw="react"],
+:root[data-framework="vue"] .for-fw[data-fw="vue"],
+:root[data-framework="svelte"] .for-fw[data-fw="svelte"],
+:root[data-framework="solid"] .for-fw[data-fw="solid"] {
+  display: block;
+}
 
-/* Props table */
+/* Props table — a reference grid: Prop | Type | Default | Description, a
+   small muted header, row dividers only (the markdown-table look in the prose
+   layer above, which it inherits; these unlayered rules only add what is
+   PropsTable's own). The prop name is plain mono with a "required" badge;
+   types and defaults are chips that never break mid-token. */
 .props-table-wrap {
+  margin: 1rem 0 1.5rem;
   overflow-x: auto;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  margin: 1.25rem 0;
 }
-.props-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.88rem;
+main .props-table {
+  margin: 0;
 }
-.props-table th,
-.props-table td {
-  text-align: left;
-  padding: 0.6rem 0.85rem;
-  border-bottom: 1px solid var(--border);
-  vertical-align: top;
+/* Without a Description column there is no prose cell to give, so the table
+   keeps its natural width instead of flinging Default to the far edge. */
+main .props-table:not(:has(.props-description)) {
+  width: auto;
+  min-width: min(100%, 28rem);
 }
-.props-table th {
-  background: var(--muted);
-  color: var(--muted-foreground);
-  font-weight: 600;
-  font-size: 0.78rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+.props-table tbody th {
+  font-weight: normal;
+  white-space: nowrap;
 }
-.props-table tr:last-child td {
-  border-bottom: none;
+.props-name code {
+  padding: 0;
+  background: none;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--docs-fg);
+}
+.props-required {
+  display: inline-block;
+  margin-left: 0.4rem;
+  padding: 0 0.35rem;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  line-height: 1.1rem;
+  vertical-align: 0.05rem;
+  color: var(--docs-fg-muted);
+  border: 1px solid var(--docs-border);
+  border-radius: var(--docs-radius-pill);
 }
 .props-type {
-  color: var(--muted-foreground);
+  font-size: 0.75rem;
+  color: var(--docs-fg-body);
+}
+.props-default {
+  white-space: nowrap;
+}
+.props-none {
+  color: var(--docs-fg-muted);
+}
+.props-description {
+  min-width: 12rem;
 }
 .props-empty {
-  color: var(--muted-foreground);
-  font-style: italic;
-}
-
-/* Copy-as-markdown — one is a <button>, the other an <a>; neither inherits
-   font/line-height from the page the same way by default, which is what was
-   throwing their heights out of sync. Force identical box models instead of
-   relying on UA defaults. */
-.copy-md,
-.copy-md-link {
-  display: inline-flex;
-  align-items: center;
-  box-sizing: border-box;
-  height: 1.9rem;
-  font: inherit;
-  font-size: 0.8rem;
-  line-height: 1;
-  padding: 0 0.7rem;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--card);
-  color: var(--card-foreground);
-  cursor: pointer;
-  transition: border-color 0.15s ease;
-}
-.copy-md:hover,
-.copy-md-link:hover {
-  border-color: var(--ring);
-  text-decoration: none;
+  color: var(--docs-fg-muted);
+  font-size: 0.875rem;
 }
 
 /*

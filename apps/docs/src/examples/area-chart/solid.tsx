@@ -1,7 +1,7 @@
 /** @jsxImportSource solid-js */
 /**
- * AreaChart — pure SVG over @moderno-ui/charts-core; colour comes from the
- * `--chart-*` token slots via the series index, nothing baked in here.
+ * A single series filled from the value-0 baseline; its colour comes
+ * from the `--chart-1` token slot, nothing baked in here — @moderno-ui/solid.
  *
  * See examples/button/solid.tsx for why the pragma above is required.
  */

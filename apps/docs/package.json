@@ -19,8 +19,8 @@
     "check:parity": "node --experimental-strip-types ./scripts/check-parity.ts"
   },
   "dependencies": {
-    "@fontsource-variable/geist": "^5.2.9",
-    "@fontsource-variable/geist-mono": "^5.2.8",
+    "@fontsource/hedvig-letters-sans": "^5.3.0",
+    "@fontsource/hedvig-letters-serif": "^5.3.0",
     "@lucide/astro": "^1.25.0",
     "@moderno-ui/charts-core": "workspace:*",
     "@moderno-ui/cli": "workspace:*",
@@ -37,20 +37,20 @@
     "@astrojs/svelte": "^9.0.1",
     "@astrojs/vercel": "^11.0.10",
     "@moderno-ui/props-doc": "workspace:*",
+    "@moderno-ui/react": "workspace:*",
+    "@moderno-ui/solid": "workspace:*",
+    "@moderno-ui/vue": "workspace:*",
     "@playwright/test": "1.63.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
     "astro": "^7.3.1",
     "pagefind": "^1.5.2",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "solid-js": "^1.9.13",
     "svelte": "^5.43.6",
     "tailwindcss": "^4.0.0",
     "typescript": "^5.7.2",
-    "@moderno-ui/react": "workspace:*",
-    "@moderno-ui/vue": "workspace:*",
-    "@moderno-ui/solid": "workspace:*",
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "vue": "^3.5.38",
-    "solid-js": "^1.9.13"
+    "vue": "^3.5.38"
   }
 }

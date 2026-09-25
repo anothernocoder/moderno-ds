@@ -25,8 +25,9 @@
  *    JavaScript, and clicking one changes the screen without changing the
  *    document's URL, which is what makes the assembly a router rather than a
  *    set of anchors.
- * 3. **Container, not viewport.** The page mounts the flow in a phone-width and
- *    a desktop-width frame, so at every viewport the two disagree: the masthead
+ * 3. **Container, not viewport.** The demo's Desktop and Phone tabs mount the
+ *    flow in a desktop-width and a phone-width frame — one copy per tab, each
+ *    reached by selecting it — so at every viewport the two disagree: the masthead
  *    lines up at `--container-sm`, the footer at `--container-md`, and the notes
  *    move beside the card at `--container-lg` — all read off the frame, never
  *    the window (ADR-0005).
@@ -45,8 +46,13 @@ const WIDTHS = [375, 768, 1280];
 
 const PAGE = "/en/auth/";
 
-/** The demo mounts the flow twice: one desktop-width frame, one phone-width. */
-const MOUNTED_COPIES = 2;
+/**
+ * The demo's tabs (islands/AuthFlowDemo.svelte), in order: a desktop-width
+ * frame, then a phone-width one. Only the active tab's copy of the flow is
+ * mounted, and the desktop one is what the page opens on.
+ */
+const TABS = ["desktop", "phone"] as const;
+type Tab = (typeof TABS)[number];
 
 /**
  * The card's own title, which is the page's `h1` — the screen hands the block
@@ -57,9 +63,32 @@ function cardTitle(page: Page): Locator {
   return flow(page).locator('[data-scope="card"][data-part="title"]');
 }
 
-/** The walkable copy — the wide one, which also carries the callback readout. */
+/** The walkable copy — the Desktop tab's, which the page opens on. */
 function flow(page: Page): Locator {
-  return page.locator(".preview-panel--demo .demo-frame--desktop .moderno-flow-auth");
+  return page.locator('.preview-panel--demo [data-demo-state="desktop"] .moderno-flow-auth');
+}
+
+/**
+ * Scrolls the preview into view and waits for it to hydrate.
+ *
+ * The demo mounts `client:visible`, and until it has hydrated neither the tabs
+ * nor the assembly's interception of the step links are live: a click on a tab
+ * selects nothing, and a click on a step link is an ordinary fragment link.
+ */
+async function hydrated(page: Page): Promise<void> {
+  await page.locator(".preview-panel--demo").scrollIntoViewIfNeeded();
+  await page
+    .locator(".preview-panel--demo astro-island:not([ssr])")
+    .first()
+    .waitFor({ state: "attached" });
+}
+
+/** Selects a tab of the demo and waits for its copy of the flow to mount. */
+async function showTab(page: Page, tab: Tab): Promise<void> {
+  await page.locator(`[data-demo-tab="${tab}"]`).click();
+  await page
+    .locator(`[data-demo-state="${tab}"] div.moderno-flow-auth`)
+    .waitFor({ state: "attached" });
 }
 
 /** Which screen the assembly currently has on the route, by the screen's own class. */
@@ -96,11 +125,11 @@ interface FlowMetrics {
   headingLevels: number[];
 }
 
-/** Every mounted copy of the flow on the page, in document order. */
+/** Every copy of the flow the active tab mounted — one, when the demo is right. */
 async function flowMetrics(page: Page): Promise<FlowMetrics[]> {
   return page.evaluate(() => {
-    const panel = document.querySelector(".preview-panel--demo");
-    if (!panel) throw new Error("no .preview-panel--demo on the page");
+    const panel = document.querySelector(".preview-panel--demo [data-demo-state]");
+    if (!panel) throw new Error("no demo tab panel on the page");
     return [...panel.querySelectorAll("div.moderno-flow-auth")].map((wrapper) => {
       const root = wrapper.firstElementChild;
       if (!root) throw new Error("the flow rendered no screen");
@@ -172,7 +201,9 @@ async function contrastRatios(page: Page): Promise<Record<string, number>> {
       return getComputedStyle(document.body).backgroundColor;
     }
 
-    const root = document.querySelector(".preview-panel--demo div.moderno-flow-auth");
+    const root = document.querySelector(
+      ".preview-panel--demo [data-demo-state] div.moderno-flow-auth",
+    );
     if (!root) throw new Error("the flow did not render");
 
     const pick = <T extends Element>(selector: string): T => {
@@ -200,6 +231,7 @@ test.describe("auth flow", () => {
   }) => {
     await page.setViewportSize({ width: 1280, height: 1200 });
     await page.goto(PAGE, { waitUntil: "networkidle" });
+    await hydrated(page);
 
     const walked = flow(page);
     await expect(cardTitle(page)).toHaveText("Sign in");
@@ -250,6 +282,7 @@ test.describe("auth flow", () => {
   test("walks forgot-password → reset-password → signed in", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 1200 });
     await page.goto(PAGE, { waitUntil: "networkidle" });
+    await hydrated(page);
 
     const walked = flow(page);
     const forgot = walked.getByRole("link", { name: "Forgot your password?" });
@@ -310,11 +343,20 @@ test.describe("auth flow", () => {
             await page.evaluate(() => document.documentElement.classList.contains("dark")),
           ).toBe(scheme === "dark");
 
-          const mounted = await flowMetrics(page);
-          expect(mounted).toHaveLength(MOUNTED_COPIES);
+          await hydrated(page);
 
-          // The two frame widths are fixed by the demo, so at every viewport the
-          // page holds one copy below the first step and one above the last.
+          // One tab, one mounted copy: walk the tabs in order, so `mounted[i]`
+          // is the copy `TABS[i]` mounted.
+          const mounted: FlowMetrics[] = [];
+          for (const tab of TABS) {
+            await showTab(page, tab);
+            const copies = await flowMetrics(page);
+            expect(copies, `${scheme} ${width}px, ${tab}: mounted copies`).toHaveLength(1);
+            mounted.push(copies[0]!);
+          }
+
+          // The two frame widths are fixed by the demo, so at every viewport its
+          // tabs hold one copy below the first step and one above the last.
           const widths = mounted.map((m) => m.containerWidth);
           expect(
             widths.some((w) => w < CONTAINER_SM),
@@ -326,7 +368,7 @@ test.describe("auth flow", () => {
           ).toBe(true);
 
           for (const [index, metrics] of mounted.entries()) {
-            const where = `${scheme} ${width}px, copy ${index + 1} (${metrics.containerWidth}px)`;
+            const where = `${scheme} ${width}px, ${TABS[index]} (${metrics.containerWidth}px)`;
             expect(metrics.mastheadDisplay, `${where}: masthead`).toBe(
               metrics.containerWidth >= CONTAINER_SM ? "flex" : "grid",
             );

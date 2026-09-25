@@ -105,7 +105,7 @@ The prefix of published packages: `@moderno-ui/*` (`@moderno-ui/tokens`, `@moder
 _Avoid_: @ds/_, moderno-ds/_ (as an npm scope), private registry (v1)
 
 **Extended contract**:
-Beyond shadcn color slots, the contract includes spacing (`--spacing-1…8`), motion (`--motion-instant|fast|normal`), radius (`--radius`, `--radius-full`), a display face (`--font-serif`), elevation (`--shadow-sm|md|lg`) and container breakpoints (`--container-sm|md|lg`). Defined in CONTRACT.md, defaults in `@moderno-ui/tokens`, overrides in themes.
+Beyond shadcn color slots, the contract includes spacing (`--spacing-1…8`), motion (`--motion-instant|fast|normal`), radius (`--radius`, `--radius-full`), a display face (`--font-serif`), elevation (`--shadow-sm|md|lg`), a modal scrim (`--overlay`) and container breakpoints (`--container-sm|md|lg`). Defined in CONTRACT.md, defaults in `@moderno-ui/tokens`, overrides in themes.
 _Avoid_: Hardcoded spacing, magic numbers in CSS, viewport breakpoints as tokens
 
 **Theme Moderno v1**:
@@ -178,8 +178,12 @@ The `pnpm theme:build` script (`tooling/theme-compile`) validates and emits `the
 _Avoid_: themes as npm packages, hand-written CSS without a schema
 
 **Preview**:
-The docs component that renders a demo live above its example source, both always visible. One live island per demo whatever the framework, because the component stylesheet is shared: one instance is the proof.
+The docs component that renders a demo live above its example source, both always visible. One live island per demo whatever the framework, because the component stylesheet is shared: one instance is the proof. A long source starts height-capped behind an "Expand code" toggle; it is still on the page, never behind a tab.
 _Avoid_: Preview/Code tabs, sandbox, playground
+
+**Docs page anatomy**:
+The fixed order every component, block and screen page follows: the main Preview, then **Installation** → **Usage** → **API Reference** → **Examples** → optional **Notes**, under an H1 and a one-sentence lead. Detail lives in API Reference tables, not in prose; guide pages keep the same voice without the anatomy.
+_Avoid_: intro essays, per-page section orders, props explained in paragraphs
 
 **Example**:
 The source a docs page shows for a demo, one per framework, kept as a real file that the docs both display and mount — never a literal inside the page. A block's example is the registry item itself.

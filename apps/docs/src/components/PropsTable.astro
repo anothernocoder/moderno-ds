@@ -28,6 +28,7 @@ const modules = import.meta.glob<ComponentDoc>("../generated/props/*.json", { ea
 const entry = Object.entries(modules).find(([path]) => path.endsWith(`/${component}.json`));
 const doc = entry?.[1] as ComponentDoc | undefined;
 const props = doc?.props ?? [];
+const hasDescriptions = props.some((p) => p.description);
 ---
 
 {
@@ -38,25 +39,28 @@ const props = doc?.props ?? [];
       <table class="props-table">
         <thead>
           <tr>
-            <th>{t("props.name")}</th>
-            <th>{t("props.type")}</th>
-            <th>{t("props.required")}</th>
-            <th>{t("props.default")}</th>
-            {props.some((p) => p.description) && <th>{t("props.description")}</th>}
+            <th scope="col">{t("props.name")}</th>
+            <th scope="col">{t("props.type")}</th>
+            <th scope="col">{t("props.default")}</th>
+            {hasDescriptions && <th scope="col">{t("props.description")}</th>}
           </tr>
         </thead>
         <tbody>
           {props.map((p) => (
             <tr>
-              <td>
+              <th scope="row" class="props-name">
                 <code>{p.name}</code>
-              </td>
+                {p.required && (
+                  <span class="props-required" title={t("props.requiredLabel")}>
+                    {t("props.required")}
+                  </span>
+                )}
+              </th>
               <td>
                 <code class="props-type">{p.type}</code>
               </td>
-              <td>{p.required ? t("props.yes") : t("props.no")}</td>
-              <td>{p.default ? <code>{p.default}</code> : "—"}</td>
-              {props.some((q) => q.description) && <td>{p.description ?? ""}</td>}
+              <td>{p.default ? <code class="props-default">{p.default}</code> : <span class="props-none">—</span>}</td>
+              {hasDescriptions && <td class="props-description">{p.description ?? ""}</td>}
             </tr>
           ))}
         </tbody>

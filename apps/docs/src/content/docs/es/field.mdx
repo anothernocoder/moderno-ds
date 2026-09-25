@@ -1,6 +1,6 @@
 ---
 title: Field
-description: Un control de formulario con etiqueta y manejo de ayuda/error — la máquina Field de Ark asocia la etiqueta con el id y expone los data-attributes de inválido/deshabilitado/requerido; una receta de tamaño en la raíz define la densidad de todas las partes.
+description: Un input o textarea con etiqueta, y texto de ayuda y de error conectados para la accesibilidad.
 group: Componentes
 order: 20
 component: Field
@@ -8,49 +8,194 @@ pkg: "@moderno-ui/react"
 ---
 
 import Preview from "../../../components/Preview.astro";
-import CodeBlock from "../../../components/CodeBlock.astro";
 import PropsTable from "../../../components/PropsTable.astro";
 import Install from "../../../components/Install.astro";
 import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
 import FieldDemo from "../../../examples/field/field.svelte";
-import reactExample from "../../../examples/field/react.tsx?raw";
-import vueExample from "../../../examples/field/vue.vue?raw";
-import solidExample from "../../../examples/field/solid.tsx?raw";
-import svelteExample from "../../../examples/field/field.svelte?raw";
-import invalidSnippet from "../../../examples/field/invalid-snippet.tsx?raw";
-
-Field resuelve accesibilidad, no apariencia: la máquina Field de Ark asocia
-`label[for]` con el `id` del control y refleja `aria-invalid`/
-`aria-describedby`/`aria-required` en `data-invalid`/`data-disabled`/
-`data-required` — esos atributos, no variantes de CVA, son los que
-`components.css` usa para el estilo de error/deshabilitado.
-
-Lo único que eliges es `size`. Va en `Field.Root`, y el único `data-size` que
-emite dimensiona todas las partes a la vez: la etiqueta, la altura y el padding
-del control, y el texto de ayuda/error.
+import baseReact from "../../../examples/field/react.tsx?raw";
+import baseVue from "../../../examples/field/vue.vue?raw";
+import baseSolid from "../../../examples/field/solid.tsx?raw";
+import baseSvelte from "../../../examples/field/field.svelte?raw";
+import FieldSizesDemo from "../../../examples/field/sizes/field-sizes.svelte";
+import sizesReact from "../../../examples/field/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/field/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/field/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/field/sizes/field-sizes.svelte?raw";
+import FieldInvalidDemo from "../../../examples/field/invalid/field-invalid.svelte";
+import invalidReact from "../../../examples/field/invalid/react.tsx?raw";
+import invalidVue from "../../../examples/field/invalid/vue.vue?raw";
+import invalidSolid from "../../../examples/field/invalid/solid.tsx?raw";
+import invalidSvelte from "../../../examples/field/invalid/field-invalid.svelte?raw";
+import FieldDisabledDemo from "../../../examples/field/disabled/field-disabled.svelte";
+import disabledReact from "../../../examples/field/disabled/react.tsx?raw";
+import disabledVue from "../../../examples/field/disabled/vue.vue?raw";
+import disabledSolid from "../../../examples/field/disabled/solid.tsx?raw";
+import disabledSvelte from "../../../examples/field/disabled/field-disabled.svelte?raw";
+import FieldTextareaDemo from "../../../examples/field/textarea/field-textarea.svelte";
+import textareaReact from "../../../examples/field/textarea/react.tsx?raw";
+import textareaVue from "../../../examples/field/textarea/vue.vue?raw";
+import textareaSolid from "../../../examples/field/textarea/solid.tsx?raw";
+import textareaSvelte from "../../../examples/field/textarea/field-textarea.svelte?raw";
 
 <FrameworkSelect locale="es" />
 
-<Preview
-  examples={{ react: reactExample, vue: vueExample, solid: solidExample, svelte: svelteExample }}
->
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
   <FieldDemo client:visible />
 </Preview>
-
-## Input y Textarea
-
-Ambos controles son partes de Ark del mismo scope, así que comparten borde,
-radio, anillo de foco y tratamiento de inválido. Se diferencian donde cambia la
-forma: un input es una línea de altura fija, y un textarea tiene una altura
-mínima por tamaño y solo se redimensiona en vertical, de modo que nunca se sale
-de la columna del campo.
-
-<CodeBlock code={invalidSnippet} lang="tsx" />
 
 ## Instalación
 
 <Install pkg="@moderno-ui/react" />
 
-## Propiedades
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { Field } from "@moderno-ui/react";
+```
+
+```tsx
+<Field.Root>
+  <Field.Label>Correo</Field.Label>
+  <Field.Input type="email" />
+  <Field.HelperText>Solo lo usamos para enviarte recibos.</Field.HelperText>
+</Field.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Field } from "@moderno-ui/vue";
+```
+
+```vue
+<Field.Root>
+  <Field.Label>Correo</Field.Label>
+  <Field.Input type="email" />
+  <Field.HelperText>Solo lo usamos para enviarte recibos.</Field.HelperText>
+</Field.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Field } from "@moderno-ui/svelte";
+```
+
+```svelte
+<Field.Root>
+  <Field.Label>Correo</Field.Label>
+  <Field.Input type="email" />
+  <Field.HelperText>Solo lo usamos para enviarte recibos.</Field.HelperText>
+</Field.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Field } from "@moderno-ui/solid";
+```
+
+```tsx
+<Field.Root>
+  <Field.Label>Correo</Field.Label>
+  <Field.Input type="email" />
+  <Field.HelperText>Solo lo usamos para enviarte recibos.</Field.HelperText>
+</Field.Root>
+```
+
+</ForFramework>
+
+## Referencia de API
+
+### Field.Root
+
+`size` es el añadido de Moderno y vale `md` por defecto; el resto de props vienen del Field de Ark.
 
 <PropsTable component="Field" />
+
+| Prop       | Tipo      | Por defecto | Descripción                                                                                  |
+| ---------- | --------- | ----------- | -------------------------------------------------------------------------------------------- |
+| `invalid`  | `boolean` | `false`     | Cambia el borde, el tinte y el anillo de foco a `--destructive` y muestra `Field.ErrorText`. |
+| `disabled` | `boolean` | `false`     | Deshabilita el control y atenúa todas las partes.                                            |
+| `required` | `boolean` | `false`     | Pone `required` en el control y `data-required` en la etiqueta.                              |
+| `readOnly` | `boolean` | `false`     | Pone `readOnly` en el control.                                                               |
+
+### Field.Textarea
+
+Comparte el borde, el radio, el anillo de foco y el tratamiento inválido del input, con una altura mínima por tamaño y redimensionado solo vertical.
+
+| Prop         | Tipo      | Por defecto | Descripción                               |
+| ------------ | --------- | ----------- | ----------------------------------------- |
+| `autoresize` | `boolean` | `false`     | Hace crecer el textarea con su contenido. |
+
+### Partes
+
+| Parte                     | Elemento             | Descripción                                                                                    |
+| ------------------------- | -------------------- | ---------------------------------------------------------------------------------------------- |
+| `Field.Root`              | `<div role="group">` | Lleva `data-size`, `data-invalid`, `data-disabled` y `data-readonly`.                          |
+| `Field.Label`             | `<label>`            | Vinculada al `id` del control automáticamente.                                                 |
+| `Field.Input`             | `<input>`            | Control de una línea.                                                                          |
+| `Field.Textarea`          | `<textarea>`         | Control de varias líneas.                                                                      |
+| `Field.HelperText`        | `<span>`             | Vinculado al control vía `aria-describedby`.                                                   |
+| `Field.ErrorText`         | `<span>`             | Solo se renderiza con `invalid`; vinculado vía `aria-describedby` y anunciado de forma cortés. |
+| `Field.RequiredIndicator` | `<span>`             | Solo se renderiza con `required`; oculto a las tecnologías de asistencia.                      |
+
+## Ejemplos
+
+### Tamaños
+
+`sm` va bien en formularios densos y barras de filtros, `lg` en un registro con espacio de sobra.
+
+<Preview examples={{ react: sizesReact, vue: sizesVue, solid: sizesSolid, svelte: sizesSvelte }}>
+  <FieldSizesDemo client:visible />
+</Preview>
+
+### Inválido
+
+<Preview
+  examples={{ react: invalidReact, vue: invalidVue, solid: invalidSolid, svelte: invalidSvelte }}
+>
+  <FieldInvalidDemo client:visible />
+</Preview>
+
+### Deshabilitado
+
+<Preview
+  examples={{
+    react: disabledReact,
+    vue: disabledVue,
+    solid: disabledSolid,
+    svelte: disabledSvelte,
+  }}
+>
+  <FieldDisabledDemo client:visible />
+</Preview>
+
+### Textarea
+
+<Preview
+  examples={{
+    react: textareaReact,
+    vue: textareaVue,
+    solid: textareaSolid,
+    svelte: textareaSvelte,
+  }}
+>
+  <FieldTextareaDemo client:visible />
+</Preview>
+
+## Notas
+
+- Pon `size` en `Field.Root`, no en el control: un solo `data-size` dimensiona todas las partes.
+- No añadas `htmlFor` ni ids a mano; las partes conectan la etiqueta, el control y los mensajes.
+- Pon el texto de validación en `Field.ErrorText`, no en un elemento hermano, para que se anuncie con el campo.
+- El borde del input usa `--input` y el anillo de foco `--ring`; deshabilitado se rellena con `--muted`.

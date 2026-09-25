@@ -1,8 +1,7 @@
 /** @jsxImportSource solid-js */
 /**
- * Select across its three sizes — @moderno-ui/solid, the same demo every
- * framework's example shows. The menu is portalled and opens on click; it is
- * deliberately not forced open here.
+ * A labelled Select at the default size; the menu is portalled and opens
+ * on click — @moderno-ui/solid.
  *
  * See examples/button/solid.tsx for why the pragma above is required.
  */
@@ -18,42 +17,30 @@ const frameworks = createListCollection({
   ],
 });
 
-const sizes = [
-  { size: "sm" as const, label: "Small", value: [] as string[] },
-  { size: "md" as const, label: "Medium", value: ["svelte"] },
-  { size: "lg" as const, label: "Large", value: [] as string[] },
-];
-
 export function SelectDemo() {
   return (
-    <div class="demo-selects">
-      <For each={sizes}>
-        {(demo) => (
-          <Select.Root collection={frameworks} size={demo.size} defaultValue={demo.value}>
-            <Select.Label>{demo.label}</Select.Label>
-            <Select.Control>
-              <Select.Trigger>
-                <Select.ValueText placeholder="Pick one" />
-                <Select.Indicator>▾</Select.Indicator>
-              </Select.Trigger>
-            </Select.Control>
-            <Portal>
-              <Select.Positioner>
-                <Select.Content>
-                  <For each={frameworks.items}>
-                    {(item) => (
-                      <Select.Item item={item}>
-                        <Select.ItemText>{item.label}</Select.ItemText>
-                        <Select.ItemIndicator>✓</Select.ItemIndicator>
-                      </Select.Item>
-                    )}
-                  </For>
-                </Select.Content>
-              </Select.Positioner>
-            </Portal>
-          </Select.Root>
-        )}
-      </For>
-    </div>
+    <Select.Root collection={frameworks}>
+      <Select.Label>Framework</Select.Label>
+      <Select.Control>
+        <Select.Trigger>
+          <Select.ValueText placeholder="Pick one" />
+          <Select.Indicator>▾</Select.Indicator>
+        </Select.Trigger>
+      </Select.Control>
+      <Portal>
+        <Select.Positioner>
+          <Select.Content>
+            <For each={frameworks.items}>
+              {(item) => (
+                <Select.Item item={item}>
+                  <Select.ItemText>{item.label}</Select.ItemText>
+                  <Select.ItemIndicator>✓</Select.ItemIndicator>
+                </Select.Item>
+              )}
+            </For>
+          </Select.Content>
+        </Select.Positioner>
+      </Portal>
+    </Select.Root>
   );
 }

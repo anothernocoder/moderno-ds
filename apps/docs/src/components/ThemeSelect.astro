@@ -1,0 +1,43 @@
+---
+/**
+ * Site theme selector — switches the whole docs site (chrome and every live
+ * preview) between the registry themes and the neutral contract by setting
+ * `data-brand` on <html>; siteThemes.ts re-scopes each theme onto that
+ * attribute. The choice persists in localStorage and is applied before paint by
+ * BaseLayout's inline script, so this control only reflects and writes it.
+ */
+import { siteThemes, NEUTRAL_THEME, SITE_THEME_STORAGE_KEY } from "../lib/siteThemes.ts";
+import { useTranslations, type Locale } from "../i18n/ui.ts";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+const themes = siteThemes(t("siteTheme.neutral"));
+---
+
+<select
+  class="theme-select"
+  aria-label={t("siteTheme.label")}
+  data-theme-select
+  data-neutral={NEUTRAL_THEME}
+  data-storage-key={SITE_THEME_STORAGE_KEY}
+>
+  {themes.map((theme) => <option value={theme.id}>{theme.label}</option>)}
+</select>
+
+<script>
+  const select = document.querySelector<HTMLSelectElement>("[data-theme-select]");
+  if (select) {
+    const { neutral, storageKey } = select.dataset;
+    const root = document.documentElement;
+    select.value = root.dataset.brand ?? neutral!;
+    select.addEventListener("change", () => {
+      if (select.value === neutral) delete root.dataset.brand;
+      else root.dataset.brand = select.value;
+      localStorage.setItem(storageKey!, select.value);
+    });
+  }
+</script>

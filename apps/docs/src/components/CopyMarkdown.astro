@@ -1,4 +1,5 @@
 ---
+import { Check, Copy, FileText } from "@lucide/astro";
 import { currentLocale, useTranslations } from "../i18n/ui.ts";
 
 // Derive locale + slug from the route so MDX can drop `<CopyMarkdown />` bare.
@@ -15,14 +16,14 @@ const slug = path.slice(1).join("/") || "index";
 const mdUrl = `${base}/${locale}/${slug}.md`;
 ---
 
-<div class="page-actions">
-  <button
-    type="button"
-    class="copy-md"
-    data-copy-url={mdUrl}
-    data-copied={t("copy.copied")}
-  >
-    {t("copy.markdown")}
+<div class="page-actions" data-pagefind-ignore>
+  <button type="button" class="page-action" data-copy-url={mdUrl} data-copied={t("copy.copied")}>
+    <Copy class="page-action-idle" aria-hidden="true" size={13} />
+    <Check class="page-action-done" aria-hidden="true" size={13} />
+    <span>{t("copy.markdown")}</span>
   </button>
-  <a class="copy-md-link" href={mdUrl}>.md</a>
+  <a class="page-action" href={mdUrl}>
+    <FileText aria-hidden="true" size={13} />
+    <span>{t("copy.viewMarkdown")}</span>
+  </a>
 </div>

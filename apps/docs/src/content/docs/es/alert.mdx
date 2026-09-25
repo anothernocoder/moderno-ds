@@ -1,6 +1,6 @@
 ---
 title: Alert
-description: Un mensaje de estado en línea con ranura de icono, título, descripción y acción opcional, en cuatro estados pintados desde los slots de estado del contrato.
+description: Un mensaje de estado en línea con icono, título, descripción y acción opcional, en cuatro estados.
 group: Componentes
 order: 15
 component: Alert
@@ -11,43 +11,185 @@ import Preview from "../../../components/Preview.astro";
 import PropsTable from "../../../components/PropsTable.astro";
 import Install from "../../../components/Install.astro";
 import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
 import AlertDemo from "../../../examples/alert/alert.svelte";
-import reactExample from "../../../examples/alert/react.tsx?raw";
-import vueExample from "../../../examples/alert/vue.vue?raw";
-import solidExample from "../../../examples/alert/solid.tsx?raw";
-import svelteExample from "../../../examples/alert/alert.svelte?raw";
-
-Alert es una primitiva solo-CSS: Ark no tiene una máquina para alert porque una
-alerta no tiene comportamiento que gobernar — es una región estática. Así que,
-como Button, es el contrato en su forma más pura: elementos que llevan
-`data-scope`/`data-part` más el `data-variant`/`data-size` de la receta, con cada
-píxel proveniente de `components.css`.
-
-La anatomía es `root > icon + content(> title + description + action)`. `Icon` es
-una ranura, nunca un set de iconos: las primitivas siguen siendo agnósticas del
-icono, así que pasas tu propio glifo y la parte le entrega el tono del estado a
-través de `currentColor`.
+import baseReact from "../../../examples/alert/react.tsx?raw";
+import baseVue from "../../../examples/alert/vue.vue?raw";
+import baseSolid from "../../../examples/alert/solid.tsx?raw";
+import baseSvelte from "../../../examples/alert/alert.svelte?raw";
+import AlertStatusesDemo from "../../../examples/alert/statuses/alert-statuses.svelte";
+import statusesReact from "../../../examples/alert/statuses/react.tsx?raw";
+import statusesVue from "../../../examples/alert/statuses/vue.vue?raw";
+import statusesSolid from "../../../examples/alert/statuses/solid.tsx?raw";
+import statusesSvelte from "../../../examples/alert/statuses/alert-statuses.svelte?raw";
+import AlertActionDemo from "../../../examples/alert/action/alert-action.svelte";
+import actionReact from "../../../examples/alert/action/react.tsx?raw";
+import actionVue from "../../../examples/alert/action/vue.vue?raw";
+import actionSolid from "../../../examples/alert/action/solid.tsx?raw";
+import actionSvelte from "../../../examples/alert/action/alert-action.svelte?raw";
+import AlertSizesDemo from "../../../examples/alert/sizes/alert-sizes.svelte";
+import sizesReact from "../../../examples/alert/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/alert/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/alert/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/alert/sizes/alert-sizes.svelte?raw";
 
 <FrameworkSelect locale="es" />
 
-<Preview
-  examples={{ react: reactExample, vue: vueExample, solid: solidExample, svelte: svelteExample }}
->
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
   <AlertDemo client:visible />
 </Preview>
-
-## Estados
-
-`info`, `success`, `warning` y `error` tiñen una superficie desde el slot del
-contrato correspondiente — `--info`, `--success`, `--warning`, y `--destructive`
-para `error`, de modo que una acción destructiva y un mensaje de error hablen con
-una sola voz. La urgencia sigue al estado: `warning` y `error` renderizan
-`role="alert"` (asertivo), `info` y `success` `role="status"` (cortés).
 
 ## Instalación
 
 <Install pkg="@moderno-ui/react" />
 
-## Propiedades
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { Alert } from "@moderno-ui/react";
+```
+
+```tsx
+<Alert.Root variant="warning">
+  <Alert.Content>
+    <Alert.Title>Tarjeta por vencer</Alert.Title>
+    <Alert.Description>Actualízala antes de la próxima factura.</Alert.Description>
+  </Alert.Content>
+</Alert.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Alert } from "@moderno-ui/vue";
+```
+
+```vue
+<Alert.Root variant="warning">
+  <Alert.Content>
+    <Alert.Title>Tarjeta por vencer</Alert.Title>
+    <Alert.Description>Actualízala antes de la próxima factura.</Alert.Description>
+  </Alert.Content>
+</Alert.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Alert } from "@moderno-ui/svelte";
+```
+
+```svelte
+<Alert.Root variant="warning">
+  <Alert.Content>
+    <Alert.Title>Tarjeta por vencer</Alert.Title>
+    <Alert.Description>Actualízala antes de la próxima factura.</Alert.Description>
+  </Alert.Content>
+</Alert.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Alert } from "@moderno-ui/solid";
+```
+
+```tsx
+<Alert.Root variant="warning">
+  <Alert.Content>
+    <Alert.Title>Tarjeta por vencer</Alert.Title>
+    <Alert.Description>Actualízala antes de la próxima factura.</Alert.Description>
+  </Alert.Content>
+</Alert.Root>
+```
+
+</ForFramework>
+
+## Referencia de API
+
+### Alert.Root
+
+`variant` vale `info` por defecto y `size`, `md`.
 
 <PropsTable component="Alert" />
+
+| Prop   | Tipo     | Por defecto     | Descripción                                      |
+| ------ | -------- | --------------- | ------------------------------------------------ |
+| `role` | `string` | Según `variant` | Sobrescribe el rol de región viva (ver Estados). |
+
+### Alert.Icon
+
+Un slot para tu propio glifo; la parte lo colorea con el tono del estado vía `currentColor`.
+
+| Prop          | Tipo      | Por defecto | Descripción                                                 |
+| ------------- | --------- | ----------- | ----------------------------------------------------------- |
+| `aria-hidden` | `boolean` | `true`      | Oculta el glifo decorativo a las tecnologías de asistencia. |
+
+### Partes
+
+Cada parte renderiza un `<div>` y acepta cualquier atributo de div.
+
+| Parte               | `data-part`   | Descripción                                                     |
+| ------------------- | ------------- | --------------------------------------------------------------- |
+| `Alert.Root`        | `root`        | La región. Lleva `data-variant` y `data-size`.                  |
+| `Alert.Icon`        | `icon`        | Glifo opcional antes del contenido.                             |
+| `Alert.Content`     | `content`     | Columna con el título, la descripción y la acción.              |
+| `Alert.Title`       | `title`       | El titular.                                                     |
+| `Alert.Description` | `description` | Texto de apoyo.                                                 |
+| `Alert.Action`      | `action`      | Acción opcional, dentro de `Alert.Content` bajo la descripción. |
+
+### Estados
+
+| `variant` | Slot de color   | `role`             |
+| --------- | --------------- | ------------------ |
+| `info`    | `--info`        | `status` (cortés)  |
+| `success` | `--success`     | `status` (cortés)  |
+| `warning` | `--warning`     | `alert` (asertivo) |
+| `error`   | `--destructive` | `alert` (asertivo) |
+
+## Ejemplos
+
+### Estados
+
+<Preview
+  examples={{
+    react: statusesReact,
+    vue: statusesVue,
+    solid: statusesSolid,
+    svelte: statusesSvelte,
+  }}
+>
+  <AlertStatusesDemo client:visible />
+</Preview>
+
+### Con una acción
+
+Limita la acción a un botón pequeño y discreto, para que el color del estado siga siendo lo más llamativo de la región.
+
+<Preview
+  examples={{ react: actionReact, vue: actionVue, solid: actionSolid, svelte: actionSvelte }}
+>
+  <AlertActionDemo client:visible />
+</Preview>
+
+### Tamaños
+
+`sm` reduce el padding y el espacio del icono para layouts densos.
+
+<Preview examples={{ react: sizesReact, vue: sizesVue, solid: sizesSolid, svelte: sizesSvelte }}>
+  <AlertSizesDemo client:visible />
+</Preview>
+
+## Notas
+
+- Alert es solo CSS: sin máquina de Ark, solo partes con `data-scope="alert"` y su `data-part`.
+- La primitiva no trae set de iconos; pasa tu propio glifo a `Alert.Icon`.
+- Una alerta que ya está en la página al cargar no se anuncia; renderízala en respuesta al evento que reporta.

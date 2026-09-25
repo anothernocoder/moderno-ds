@@ -2,7 +2,7 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { byReadingOrder, sidebarSections, type NavPage } from "./nav.ts";
+import { byReadingOrder, pagerLinks, sidebarSections, type NavPage } from "./nav.ts";
 import { locales, type Locale } from "./ui.ts";
 
 describe("sidebarSections", () => {
@@ -92,5 +92,39 @@ describe("docs reading order — a property of the content, not of the loader", 
       [...readNavPages(l)].sort(byReadingOrder).map((p) => p.slug),
     );
     expect(sequences[1]).toEqual(sequences[0]);
+  });
+});
+
+describe("pagerLinks", () => {
+  const page = (slug: string, group: string, order: number): NavPage => ({
+    slug,
+    title: slug,
+    group,
+    order,
+  });
+  // "late" sorts before "blocks" by `order`, but its section ranks first, so the
+  // sidebar (and the pager) list it before "blocks".
+  const sections = sidebarSections([
+    page("button", "Components", 10),
+    page("blocks", "Blocks", 100),
+    page("select", "Components", 40),
+    page("late", "Components", 150),
+  ]);
+
+  it("follows the sidebar order, across section boundaries", () => {
+    expect(pagerLinks(sections, "select")).toEqual({
+      prev: expect.objectContaining({ slug: "button" }),
+      next: expect.objectContaining({ slug: "late" }),
+    });
+    expect(pagerLinks(sections, "late").next?.slug).toBe("blocks");
+  });
+
+  it("has no prev on the first page and no next on the last", () => {
+    expect(pagerLinks(sections, "button").prev).toBeUndefined();
+    expect(pagerLinks(sections, "blocks").next).toBeUndefined();
+  });
+
+  it("returns nothing for a page the sidebar does not list", () => {
+    expect(pagerLinks(sections, "index")).toEqual({});
   });
 });

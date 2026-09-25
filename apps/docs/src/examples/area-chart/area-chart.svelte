@@ -1,10 +1,9 @@
 <!--
-  Live AreaChart preview — pure SVG over @moderno-ui/charts-core; colour comes from
-  the `--chart-*` token slots via the series index, nothing baked in here.
+  A single series filled from the value-0 baseline; its colour comes
+  from the `--chart-1` token slot, nothing baked in here — @moderno-ui/svelte.
 
   This file is the Example the docs page shows *and* mounts (CONTEXT.md
-  "Example") — the source below the live demo is this file, raw-imported, so
-  it cannot drift from what actually renders.
+  "Example"), so the source under the live demo cannot drift from it.
 -->
 <script lang="ts">
   import { AreaChart } from "@moderno-ui/svelte";

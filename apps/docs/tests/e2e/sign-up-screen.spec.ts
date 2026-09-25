@@ -15,14 +15,15 @@
  * 1. **Container, not viewport.** All three of the screen's steps are read off
  *    the width of the frame it was mounted in, never the window: the masthead
  *    lines up at `--container-sm`, the footer at `--container-md`, and the
- *    highlights move beside the card at `--container-lg`. The page mounts the
- *    same file in a phone-, a tablet- and a desktop-width frame, so at every
- *    viewport the three answers differ from each other — which is the whole of
- *    ADR-0005.
+ *    highlights move beside the card at `--container-lg`. The demo's Phone,
+ *    Tablet and Desktop tabs mount the same file in a phone-, a tablet- and a
+ *    desktop-width frame, so at every viewport the three answers differ from
+ *    each other — which is the whole of ADR-0005. Each tab mounts one copy, and
+ *    every state is reached by selecting its tab.
  * 2. **A screen owns the viewport as a height.** Its root fills the window it is
  *    given, top to bottom. On this page each frame *is* that window — the demo
- *    overrides `min-h-dvh` to the frame's height so seven copies of a browser
- *    window do not stack down the page — so what is asserted here is that the
+ *    overrides `min-h-dvh` to the frame's height so a browser window's worth of
+ *    screen does not bury the page — so what is asserted here is that the
  *    screen fills whatever it was told the window is. That the shipped file says
  *    `min-h-dvh` is held by `tooling/cli/test/screens-install.test.ts`, against
  *    the bytes the CLI writes.
@@ -45,8 +46,17 @@ const WIDTHS = [375, 768, 1280];
 
 const PAGE = "/en/sign-up/";
 
-/** The demo mounts the screen once per frame width, then once per state. */
-const MOUNTED_COPIES = 7;
+/**
+ * Every copy of the screen the page mounts (islands/SignUpScreenDemo.svelte), in
+ * order: the main preview's three width tabs — one frame in each band of the
+ * screen's three steps — then the states, each in its own Examples preview at
+ * the tablet width. Each is one mounted copy, found by its `data-demo-state`.
+ */
+const TABS = ["phone", "tablet", "desktop", "error", "field-errors", "loading", "empty"] as const;
+type Tab = (typeof TABS)[number];
+
+/** The tabs of the main preview; every other entry is a state's own preview. */
+const WIDTH_TABS: readonly Tab[] = ["phone", "tablet", "desktop"];
 
 interface ScreenMetrics {
   /** Width of the screen's own `@container` root — what its steps read. */
@@ -71,11 +81,11 @@ interface ScreenMetrics {
   headingLevels: number[];
 }
 
-/** Every mounted copy of the screen on the page, in document order. */
-async function screenMetrics(page: Page): Promise<ScreenMetrics[]> {
-  return page.evaluate(() => {
-    const panel = document.querySelector(".preview-panel--demo");
-    if (!panel) throw new Error("no .preview-panel--demo on the page");
+/** Every copy of the screen under `tab`'s stage — one, when the demo is right. */
+async function screenMetrics(page: Page, tab: Tab): Promise<ScreenMetrics[]> {
+  return page.evaluate((state) => {
+    const panel = document.querySelector(`[data-demo-state="${state}"]`);
+    if (!panel) throw new Error(`no ${state} stage on the page`);
     return [...panel.querySelectorAll("div.moderno-screen-sign-up")].map((root) => {
       const masthead = root.querySelector("header");
       const footer = root.querySelector("footer");
@@ -101,7 +111,39 @@ async function screenMetrics(page: Page): Promise<ScreenMetrics[]> {
         ),
       };
     });
-  });
+  }, tab);
+}
+
+/**
+ * Scrolls the preview into view and waits for it to hydrate.
+ *
+ * The demo mounts `client:visible`, and its tabs are only live once it has: at
+ * 375px the preview panel starts below the fold, and a click on a tab that has
+ * not hydrated yet selects nothing.
+ */
+async function hydrated(page: Page): Promise<void> {
+  await page.locator(".preview-panel--demo").first().scrollIntoViewIfNeeded();
+  await page
+    .locator(".preview-panel--demo astro-island:not([ssr])")
+    .first()
+    .waitFor({ state: "attached" });
+}
+
+/** Brings up one entry of `TABS` — a width tab or a state's preview — and waits for its copy to mount. */
+async function showTab(page: Page, tab: Tab): Promise<void> {
+  if (WIDTH_TABS.includes(tab)) {
+    await page.locator(`[data-demo-tab="${tab}"]`).click();
+  } else {
+    // A state is its own Examples preview: bring it on screen so its
+    // `client:visible` island hydrates, the way a reader scrolling would.
+    await page.locator(`[data-demo-state="${tab}"]`).scrollIntoViewIfNeeded();
+    await page
+      .locator(`astro-island:not([ssr]):has([data-demo-state="${tab}"])`)
+      .waitFor({ state: "attached" });
+  }
+  await page
+    .locator(`[data-demo-state="${tab}"] div.moderno-screen-sign-up`)
+    .waitFor({ state: "attached" });
 }
 
 /**
@@ -153,8 +195,8 @@ async function contrastRatios(page: Page): Promise<Record<string, number>> {
       return getComputedStyle(document.body).backgroundColor;
     }
 
-    const panel = document.querySelector(".preview-panel--demo");
-    if (!panel) throw new Error("no .preview-panel--demo on the page");
+    const panel = document.querySelector(".preview-panel--demo [data-demo-state]");
+    if (!panel) throw new Error("no demo tab panel on the page");
     const root = panel.querySelector("div.moderno-screen-sign-up");
     if (!root) throw new Error("the sign-up screen did not render");
 
@@ -188,16 +230,24 @@ for (const scheme of ["light", "dark"] as const) {
         await page.setViewportSize({ width, height: 1200 });
         await page.goto(PAGE, { waitUntil: "networkidle" });
         await page.evaluate(() => document.fonts.ready.then(() => true));
+        await hydrated(page);
 
         expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(
           scheme === "dark",
         );
 
-        const screens = await screenMetrics(page);
-        expect(screens).toHaveLength(MOUNTED_COPIES);
+        // One tab, one mounted copy: walk the tabs in order, so `screens[i]` is
+        // the copy `TABS[i]` mounted.
+        const screens: ScreenMetrics[] = [];
+        for (const tab of TABS) {
+          await showTab(page, tab);
+          const mounted = await screenMetrics(page, tab);
+          expect(mounted, `${scheme} ${width}px, ${tab}: mounted copies`).toHaveLength(1);
+          screens.push(mounted[0]!);
+        }
 
-        // The three frame widths are fixed by the demo, so at every viewport the
-        // page holds one copy in each band of the screen's three steps.
+        // The three frame widths are fixed by the demo, so at every viewport its
+        // width tabs hold one copy in each band of the screen's three steps.
         const widths = screens.map((s) => s.containerWidth);
         expect(
           widths.some((w) => w < CONTAINER_SM),
@@ -209,7 +259,7 @@ for (const scheme of ["light", "dark"] as const) {
         ).toBe(true);
 
         for (const [index, screen] of screens.entries()) {
-          const where = `${scheme} ${width}px, copy ${index + 1} (${screen.containerWidth}px)`;
+          const where = `${scheme} ${width}px, ${TABS[index]} (${screen.containerWidth}px)`;
           expect(screen.mastheadDisplay, `${where}: masthead`).toBe(
             screen.containerWidth >= CONTAINER_SM ? "flex" : "grid",
           );
@@ -250,7 +300,7 @@ for (const scheme of ["light", "dark"] as const) {
           }
         }
 
-        // The last copy is the empty one: an invite-only sign-up has nothing to
+        // The last tab is the empty one: an invite-only sign-up has nothing to
         // sell, so the aside is not rendered at all rather than left blank.
         expect(screens.slice(0, -1).every((s) => s.hasHighlights)).toBe(true);
         expect(screens.at(-1)!.hasHighlights).toBe(false);

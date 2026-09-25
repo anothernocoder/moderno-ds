@@ -1,6 +1,6 @@
 ---
 title: Select
-description: A collection + popover picker — Ark drives typeahead, keyboard navigation, and positioning; the Moderno size recipe folds a data-size onto the root so components.css keys the trigger/menu density off it.
+description: Pick one or more options from a list in a popover, with typeahead and keyboard navigation.
 group: Components
 order: 40
 component: Select
@@ -24,22 +24,36 @@ import Preview from "../../../components/Preview.astro";
 import PropsTable from "../../../components/PropsTable.astro";
 import Install from "../../../components/Install.astro";
 import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
 import SelectDemo from "../../../examples/select/select.svelte";
-import reactExample from "../../../examples/select/react.tsx?raw";
-import vueExample from "../../../examples/select/vue.vue?raw";
-import solidExample from "../../../examples/select/solid.tsx?raw";
-import svelteExample from "../../../examples/select/select.svelte?raw";
-
-Only `Select.Root` is wrapped, to inject the `size` recipe's `data-size`; every
-other part is Ark's verbatim, styled by `components.css` keyed on Ark's
-`data-part` plus `data-highlighted`/`data-state`. The menu renders in a
-`Portal`, unmounted while closed, so SSR/hydration stay clean.
+import baseReact from "../../../examples/select/react.tsx?raw";
+import baseVue from "../../../examples/select/vue.vue?raw";
+import baseSolid from "../../../examples/select/solid.tsx?raw";
+import baseSvelte from "../../../examples/select/select.svelte?raw";
+import SelectSizesDemo from "../../../examples/select/sizes/select-sizes.svelte";
+import sizesReact from "../../../examples/select/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/select/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/select/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/select/sizes/select-sizes.svelte?raw";
+import SelectDefaultValueDemo from "../../../examples/select/default-value/select-default-value.svelte";
+import defaultValueReact from "../../../examples/select/default-value/react.tsx?raw";
+import defaultValueVue from "../../../examples/select/default-value/vue.vue?raw";
+import defaultValueSolid from "../../../examples/select/default-value/solid.tsx?raw";
+import defaultValueSvelte from "../../../examples/select/default-value/select-default-value.svelte?raw";
+import SelectMultipleDemo from "../../../examples/select/multiple/select-multiple.svelte";
+import multipleReact from "../../../examples/select/multiple/react.tsx?raw";
+import multipleVue from "../../../examples/select/multiple/vue.vue?raw";
+import multipleSolid from "../../../examples/select/multiple/solid.tsx?raw";
+import multipleSvelte from "../../../examples/select/multiple/select-multiple.svelte?raw";
+import SelectDisabledItemsDemo from "../../../examples/select/disabled-items/select-disabled-items.svelte";
+import disabledItemsReact from "../../../examples/select/disabled-items/react.tsx?raw";
+import disabledItemsVue from "../../../examples/select/disabled-items/vue.vue?raw";
+import disabledItemsSolid from "../../../examples/select/disabled-items/solid.tsx?raw";
+import disabledItemsSvelte from "../../../examples/select/disabled-items/select-disabled-items.svelte?raw";
 
 <FrameworkSelect locale="en" />
 
-<Preview
-  examples={{ react: reactExample, vue: vueExample, solid: solidExample, svelte: svelteExample }}
->
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
   <SelectDemo client:visible />
 </Preview>
 
@@ -47,6 +61,259 @@ other part is Ark's verbatim, styled by `components.css` keyed on Ark's
 
 <Install pkg="@moderno-ui/react" />
 
-## Props
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { Select, Portal, createListCollection } from "@moderno-ui/react";
+
+const frameworks = createListCollection({
+  items: [
+    { label: "React", value: "react" },
+    { label: "Vue", value: "vue" },
+  ],
+});
+```
+
+```tsx
+<Select.Root collection={frameworks}>
+  <Select.Label>Framework</Select.Label>
+  <Select.Control>
+    <Select.Trigger>
+      <Select.ValueText placeholder="Pick one" />
+    </Select.Trigger>
+  </Select.Control>
+  <Portal>
+    <Select.Positioner>
+      <Select.Content>
+        {frameworks.items.map((item) => (
+          <Select.Item key={item.value} item={item}>
+            <Select.ItemText>{item.label}</Select.ItemText>
+          </Select.Item>
+        ))}
+      </Select.Content>
+    </Select.Positioner>
+  </Portal>
+</Select.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import { Select, Portal, createListCollection } from "@moderno-ui/vue";
+
+const frameworks = createListCollection({
+  items: [
+    { label: "React", value: "react" },
+    { label: "Vue", value: "vue" },
+  ],
+});
+</script>
+```
+
+```vue
+<template>
+  <Select.Root :collection="frameworks">
+    <Select.Label>Framework</Select.Label>
+    <Select.Control>
+      <Select.Trigger>
+        <Select.ValueText placeholder="Pick one" />
+      </Select.Trigger>
+    </Select.Control>
+    <Portal>
+      <Select.Positioner>
+        <Select.Content>
+          <Select.Item v-for="item in frameworks.items" :key="item.value" :item="item">
+            <Select.ItemText>{{ item.label }}</Select.ItemText>
+          </Select.Item>
+        </Select.Content>
+      </Select.Positioner>
+    </Portal>
+  </Select.Root>
+</template>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import { Select, Portal, createListCollection } from "@moderno-ui/svelte";
+
+  const frameworks = createListCollection({
+    items: [
+      { label: "React", value: "react" },
+      { label: "Vue", value: "vue" },
+    ],
+  });
+</script>
+```
+
+```svelte
+<Select.Root collection={frameworks}>
+  <Select.Label>Framework</Select.Label>
+  <Select.Control>
+    <Select.Trigger>
+      <Select.ValueText placeholder="Pick one" />
+    </Select.Trigger>
+  </Select.Control>
+  <Portal>
+    <Select.Positioner>
+      <Select.Content>
+        {#each frameworks.items as item (item.value)}
+          <Select.Item {item}>
+            <Select.ItemText>{item.label}</Select.ItemText>
+          </Select.Item>
+        {/each}
+      </Select.Content>
+    </Select.Positioner>
+  </Portal>
+</Select.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { For } from "solid-js";
+import { Select, Portal, createListCollection } from "@moderno-ui/solid";
+
+const frameworks = createListCollection({
+  items: [
+    { label: "React", value: "react" },
+    { label: "Vue", value: "vue" },
+  ],
+});
+```
+
+```tsx
+<Select.Root collection={frameworks}>
+  <Select.Label>Framework</Select.Label>
+  <Select.Control>
+    <Select.Trigger>
+      <Select.ValueText placeholder="Pick one" />
+    </Select.Trigger>
+  </Select.Control>
+  <Portal>
+    <Select.Positioner>
+      <Select.Content>
+        <For each={frameworks.items}>
+          {(item) => (
+            <Select.Item item={item}>
+              <Select.ItemText>{item.label}</Select.ItemText>
+            </Select.Item>
+          )}
+        </For>
+      </Select.Content>
+    </Select.Positioner>
+  </Portal>
+</Select.Root>
+```
+
+</ForFramework>
+
+## API Reference
+
+### Select.Root
 
 <PropsTable component="Select" />
+
+Selection props come from Ark. The ones the examples use:
+
+| Prop           | Type             | Default | Description                                                          |
+| -------------- | ---------------- | ------- | -------------------------------------------------------------------- |
+| `collection`   | `ListCollection` | —       | The options, built with `createListCollection`. Required.            |
+| `defaultValue` | `string[]`       | —       | Initial selection, uncontrolled. Always an array, even for one pick. |
+| `value`        | `string[]`       | —       | Controlled selection. Update it from `onValueChange`.                |
+| `multiple`     | `boolean`        | `false` | Allows several picks. The menu stays open between picks.             |
+
+### Parts
+
+| Part                   | Description                                                          |
+| ---------------------- | -------------------------------------------------------------------- |
+| `Select.Root`          | Holds the state. Takes `collection`, `size` and the selection props. |
+| `Select.Label`         | The visible label.                                                   |
+| `Select.Control`       | Wraps the trigger.                                                   |
+| `Select.Trigger`       | The button that opens the menu.                                      |
+| `Select.ValueText`     | The selected label(s), or `placeholder` when empty.                  |
+| `Select.Indicator`     | The open/close affordance inside the trigger.                        |
+| `Select.Positioner`    | Positions the menu. Wrap it in `Portal`.                             |
+| `Select.Content`       | The menu surface.                                                    |
+| `Select.Item`          | One option. Takes an `item` from the collection.                     |
+| `Select.ItemText`      | The option's label.                                                  |
+| `Select.ItemIndicator` | Shown while the option is checked.                                   |
+
+### Data attributes
+
+| Attribute          | On      | Values                                       |
+| ------------------ | ------- | -------------------------------------------- |
+| `data-size`        | Root    | `sm`, `md` (default), `lg`                   |
+| `data-state`       | Content | `open`, `closed`                             |
+| `data-state`       | Item    | `checked`, `unchecked`                       |
+| `data-highlighted` | Item    | Present on the keyboard or pointer highlight |
+| `data-disabled`    | Item    | Present when the item has `disabled: true`   |
+
+## Examples
+
+### Sizes
+
+`size` on `Select.Root` sets the trigger's height and type size; the menu keeps one density.
+
+<Preview examples={{ react: sizesReact, vue: sizesVue, solid: sizesSolid, svelte: sizesSvelte }}>
+  <SelectSizesDemo client:visible />
+</Preview>
+
+### Default value
+
+<Preview
+  examples={{
+    react: defaultValueReact,
+    vue: defaultValueVue,
+    solid: defaultValueSolid,
+    svelte: defaultValueSvelte,
+  }}
+>
+  <SelectDefaultValueDemo client:visible />
+</Preview>
+
+### Multiple
+
+<Preview
+  examples={{
+    react: multipleReact,
+    vue: multipleVue,
+    solid: multipleSolid,
+    svelte: multipleSvelte,
+  }}
+>
+  <SelectMultipleDemo client:visible />
+</Preview>
+
+### Disabled options
+
+Give an item `disabled: true` in the collection.
+
+<Preview
+  examples={{
+    react: disabledItemsReact,
+    vue: disabledItemsVue,
+    solid: disabledItemsSolid,
+    svelte: disabledItemsSvelte,
+  }}
+>
+  <SelectDisabledItemsDemo client:visible />
+</Preview>
+
+## Notes
+
+- Only `Select.Root` is wrapped, to add `size`. Every other part is Ark's.
+- The menu renders in a `Portal` and unmounts while closed, so SSR and hydration stay clean.
+- A disabled item is skipped by keyboard navigation and typeahead, and can't be selected.
+- Style the menu through `[data-scope="select"][data-part="content"]`, not a wrapper class.
+- The menu surface paints from `--popover` and `--popover-foreground`.

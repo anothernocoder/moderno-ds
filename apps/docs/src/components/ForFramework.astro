@@ -1,0 +1,20 @@
+---
+/**
+ * ForFramework — shows its slot only while the page's <FrameworkSelect> choice
+ * is `fw`. A page's Usage section wraps one fenced code block per framework in
+ * one of these, so the import line and the minimal call track the selector the
+ * same way Preview's source panel and Install's command do: the
+ * `data-framework` attribute on <html> (docs.css), no client script.
+ */
+type Framework = "react" | "vue" | "svelte" | "solid";
+
+interface Props {
+  fw: Framework;
+}
+
+const { fw } = Astro.props;
+---
+
+<div class="for-fw" data-fw={fw}>
+  <slot />
+</div>

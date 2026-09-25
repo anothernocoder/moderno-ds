@@ -1,6 +1,8 @@
+import { readFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
 import type { APIRoute } from "astro";
 import { getCollection } from "astro:content";
-import { pageMarkdown } from "../../lib/markdown.ts";
+import { pageMarkdown, type PropRow } from "../../lib/markdown.ts";
 import { splitId } from "../../i18n/ui.ts";
 
 // One `.md` twin per docs page per locale — the copy-as-markdown source and the
@@ -13,14 +15,43 @@ export async function getStaticPaths() {
     .map((p) => ({ params: { lang: p.locale, slug: p.slug }, props: { entry: p.entry } }));
 }
 
+// The same generated JSON <PropsTable> renders, so the `.md` table can't drift
+// from the HTML one.
+const propModules = import.meta.glob<{ props: PropRow[] }>("../../generated/props/*.json", {
+  eager: true,
+});
+function propsFor(component: string): PropRow[] | undefined {
+  return Object.entries(propModules).find(([path]) => path.endsWith(`/${component}.json`))?.[1]
+    .props;
+}
+
+interface Entry {
+  data: { title: string; description: string };
+  body?: string;
+  /** Relative to the Astro root (apps/docs), from the glob loader. */
+  filePath?: string;
+}
+
 export const GET: APIRoute = ({ props }) => {
-  const entry = (
-    props as { entry: { data: { title: string; description: string }; body?: string } }
-  ).entry;
+  const entry = (props as { entry: Entry }).entry;
+  const dir = entry.filePath ? dirname(resolve(process.cwd(), entry.filePath)) : undefined;
   const body = pageMarkdown({
     title: entry.data.title,
     description: entry.data.description,
     body: entry.body ?? "",
+    resolve: {
+      // A Preview's example is a `?raw` import of a real file (CONTEXT.md
+      // "Example"): read that file, so the `.md` shows the source the page shows.
+      raw: (specifier) => {
+        if (!dir || !specifier.endsWith("?raw")) return undefined;
+        try {
+          return readFileSync(resolve(dir, specifier.slice(0, -"?raw".length)), "utf8");
+        } catch {
+          return undefined;
+        }
+      },
+      props: propsFor,
+    },
   });
   return new Response(body, { headers: { "content-type": "text/markdown; charset=utf-8" } });
 };

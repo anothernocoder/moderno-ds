@@ -1,6 +1,6 @@
 /**
- * AreaChart — pure SVG over @moderno-ui/charts-core; colour comes from the
- * `--chart-*` token slots via the series index, nothing baked in here.
+ * A single series filled from the value-0 baseline; its colour comes
+ * from the `--chart-1` token slot, nothing baked in here — @moderno-ui/react.
  */
 import { AreaChart } from "@moderno-ui/react";
 

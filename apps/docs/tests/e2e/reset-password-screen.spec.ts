@@ -15,13 +15,15 @@
  * 1. **Container, not viewport.** All three of the screen's steps are read off
  *    the width of the frame it was mounted in, never the window: the masthead
  *    lines up at `--container-sm`, the footer at `--container-md`, and the notes
- *    move beside the card at `--container-lg`. The page mounts the same file in
- *    a phone-, a tablet- and a desktop-width frame, so at every viewport the
- *    three answers differ from each other — which is the whole of ADR-0005.
+ *    move beside the card at `--container-lg`. The demo's Phone, Tablet and
+ *    Desktop tabs mount the same file in a phone-, a tablet- and a
+ *    desktop-width frame, so at every viewport the three answers differ from
+ *    each other — which is the whole of ADR-0005. Each tab mounts one copy, and
+ *    every state is reached by selecting its tab.
  * 2. **A screen owns the viewport as a height.** Its root fills the window it is
  *    given, top to bottom. On this page each frame *is* that window — the demo
- *    overrides `min-h-dvh` to the frame's height so seven copies of a browser
- *    window do not stack down the page — so what is asserted here is that the
+ *    overrides `min-h-dvh` to the frame's height so a browser window's worth of
+ *    screen does not bury the page — so what is asserted here is that the
  *    screen fills whatever it was told the window is. That the shipped file says
  *    `min-h-dvh` is held by `tooling/cli/test/screens-install.test.ts`, against
  *    the bytes the CLI writes.
@@ -37,8 +39,8 @@
  *    one row that flips is announced; and every row states its status in words
  *    as well as in a glyph, because a rule you can only tell has passed by its
  *    colour has not been said to everyone.
- * 5. **`met` comes from the page, not the card.** The fourth copy is the one
- *    with two rules met; every other copy shows the same three rules unticked,
+ * 5. **`met` comes from the page, not the card.** The Validation feedback
+ *    tab's copy is the one with two rules met; every other copy shows the same three rules unticked,
  *    which is what a block that holds no value can honestly render.
  * 6. **The outline reads as one page.** The screen's first heading is level 1 —
  *    the card's title, carrying `titleLevel`, because the card *is* what the
@@ -60,11 +62,20 @@ const WIDTHS = [375, 768, 1280];
 
 const PAGE = "/en/reset-password/";
 
-/** The demo mounts the screen once per frame width, then once per state. */
-const MOUNTED_COPIES = 7;
+/**
+ * Every copy of the screen the page mounts (islands/ResetPasswordScreenDemo.svelte), in
+ * order: the main preview's three width tabs — one frame in each band of the
+ * screen's three steps — then the states, each in its own Examples preview at
+ * the tablet width. Each is one mounted copy, found by its `data-demo-state`.
+ */
+const TABS = ["phone", "tablet", "desktop", "feedback", "error", "field-error", "empty"] as const;
+type Tab = (typeof TABS)[number];
 
-/** The demo's fourth copy is the one whose rules are half met. */
-const RULES_MET_COPY = 3;
+/** The tabs of the main preview; every other entry is a state's own preview. */
+const WIDTH_TABS: readonly Tab[] = ["phone", "tablet", "desktop"];
+
+/** The tab whose copy was handed two met rules. */
+const RULES_MET_COPY = TABS.indexOf("feedback");
 
 interface ScreenMetrics {
   /** Width of the screen's own `@container` root — what its steps read. */
@@ -98,11 +109,11 @@ interface ScreenMetrics {
   headingLevels: number[];
 }
 
-/** Every mounted copy of the screen on the page, in document order. */
-async function screenMetrics(page: Page): Promise<ScreenMetrics[]> {
-  return page.evaluate(() => {
-    const panel = document.querySelector(".preview-panel--demo");
-    if (!panel) throw new Error("no .preview-panel--demo on the page");
+/** Every copy of the screen under `tab`'s stage — one, when the demo is right. */
+async function screenMetrics(page: Page, tab: Tab): Promise<ScreenMetrics[]> {
+  return page.evaluate((state) => {
+    const panel = document.querySelector(`[data-demo-state="${state}"]`);
+    if (!panel) throw new Error(`no ${state} stage on the page`);
     return [...panel.querySelectorAll("div.moderno-screen-reset-password")].map((root) => {
       const masthead = root.querySelector("header");
       const footer = root.querySelector("footer");
@@ -144,7 +155,7 @@ async function screenMetrics(page: Page): Promise<ScreenMetrics[]> {
         ),
       };
     });
-  });
+  }, tab);
 }
 
 /**
@@ -155,20 +166,54 @@ async function screenMetrics(page: Page): Promise<ScreenMetrics[]> {
  * the new-password input's `aria-describedby` at the helper text that holds the
  * rules. At 375px the preview panel starts below the fold, so without this the
  * assertion would be reading a page the reader has not got to yet.
+ *
+ * It is also what makes the tabs live: a click on a tab that has not hydrated
+ * selects nothing.
  */
 async function hydrated(page: Page): Promise<void> {
-  await page.locator(".preview-panel--demo").scrollIntoViewIfNeeded();
-  await page.waitForFunction((expected) => {
-    const roots = [...document.querySelectorAll("div.moderno-screen-reset-password")];
+  await page.locator(".preview-panel--demo").first().scrollIntoViewIfNeeded();
+  await page
+    .locator(".preview-panel--demo astro-island:not([ssr])")
+    .first()
+    .waitFor({ state: "attached" });
+  await wired(page, "phone");
+}
+
+/** Waits for Ark to finish wiring the copy mounted under `tab`'s stage. */
+async function wired(page: Page, tab: Tab): Promise<void> {
+  await page.waitForFunction((state) => {
+    const roots = [
+      ...document.querySelectorAll(
+        `[data-demo-state="${state}"] div.moderno-screen-reset-password`,
+      ),
+    ];
     return (
-      roots.length === expected &&
+      roots.length === 1 &&
       roots.every(
         (root) =>
           (root.querySelector('form [name="password"]')?.getAttribute("aria-describedby") ?? "")
             .length > 0,
       )
     );
-  }, MOUNTED_COPIES);
+  }, tab);
+}
+
+/** Brings up one entry of `TABS` — a width tab or a state's preview — and waits for its copy to mount and wire up. */
+async function showTab(page: Page, tab: Tab): Promise<void> {
+  if (WIDTH_TABS.includes(tab)) {
+    await page.locator(`[data-demo-tab="${tab}"]`).click();
+  } else {
+    // A state is its own Examples preview: bring it on screen so its
+    // `client:visible` island hydrates, the way a reader scrolling would.
+    await page.locator(`[data-demo-state="${tab}"]`).scrollIntoViewIfNeeded();
+    await page
+      .locator(`astro-island:not([ssr]):has([data-demo-state="${tab}"])`)
+      .waitFor({ state: "attached" });
+  }
+  await page
+    .locator(`[data-demo-state="${tab}"] div.moderno-screen-reset-password`)
+    .waitFor({ state: "attached" });
+  await wired(page, tab);
 }
 
 /**
@@ -220,8 +265,8 @@ async function contrastRatios(page: Page): Promise<Record<string, number>> {
       return getComputedStyle(document.body).backgroundColor;
     }
 
-    const panel = document.querySelector(".preview-panel--demo");
-    if (!panel) throw new Error("no .preview-panel--demo on the page");
+    const panel = document.querySelector(".preview-panel--demo [data-demo-state]");
+    if (!panel) throw new Error("no demo tab panel on the page");
     const root = panel.querySelector("div.moderno-screen-reset-password");
     if (!root) throw new Error("the reset-password screen did not render");
 
@@ -261,11 +306,18 @@ for (const scheme of ["light", "dark"] as const) {
           scheme === "dark",
         );
 
-        const screens = await screenMetrics(page);
-        expect(screens).toHaveLength(MOUNTED_COPIES);
+        // One tab, one mounted copy: walk the tabs in order, so `screens[i]` is
+        // the copy `TABS[i]` mounted.
+        const screens: ScreenMetrics[] = [];
+        for (const tab of TABS) {
+          await showTab(page, tab);
+          const mounted = await screenMetrics(page, tab);
+          expect(mounted, `${scheme} ${width}px, ${tab}: mounted copies`).toHaveLength(1);
+          screens.push(mounted[0]!);
+        }
 
-        // The three frame widths are fixed by the demo, so at every viewport the
-        // page holds one copy in each band of the screen's three steps.
+        // The three frame widths are fixed by the demo, so at every viewport its
+        // width tabs hold one copy in each band of the screen's three steps.
         const widths = screens.map((s) => s.containerWidth);
         expect(
           widths.some((w) => w < CONTAINER_SM),
@@ -277,7 +329,7 @@ for (const scheme of ["light", "dark"] as const) {
         ).toBe(true);
 
         for (const [index, screen] of screens.entries()) {
-          const where = `${scheme} ${width}px, copy ${index + 1} (${screen.containerWidth}px)`;
+          const where = `${scheme} ${width}px, ${TABS[index]} (${screen.containerWidth}px)`;
           expect(screen.mastheadDisplay, `${where}: masthead`).toBe(
             screen.containerWidth >= CONTAINER_SM ? "flex" : "grid",
           );
@@ -331,12 +383,12 @@ for (const scheme of ["light", "dark"] as const) {
         // handed ticked rules shows any, and it shows exactly the two it was
         // given. Every other copy renders the block's own unticked default.
         for (const [index, screen] of screens.entries()) {
-          expect(screen.rulesMet, `${scheme} ${width}px, copy ${index + 1}: rules met`).toBe(
+          expect(screen.rulesMet, `${scheme} ${width}px, ${TABS[index]}: rules met`).toBe(
             index === RULES_MET_COPY ? 2 : 0,
           );
         }
 
-        // The last copy is the empty one: nothing to say about the link, so the
+        // The last tab is the empty one: nothing to say about the link, so the
         // aside is not rendered at all rather than rendered with nothing in it.
         expect(screens.slice(0, -1).every((s) => s.hasNotices)).toBe(true);
         expect(screens.at(-1)!.hasNotices).toBe(false);

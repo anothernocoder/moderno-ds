@@ -37,17 +37,48 @@ interface FigureMetrics {
   titleOffsetInCard: number;
 }
 
+/**
+ * The demo's two tabs (islands/PricingBlockDemo.svelte), in order: the block
+ * framed at 24rem, then the same block at the stage's full width. Only the
+ * active tab's copy is mounted.
+ */
+const STATES = ["narrow", "wide"] as const;
+
+/** Select a tab of the demo and wait for its copy of the block to mount. */
+async function showState(page: Page, state: (typeof STATES)[number]): Promise<void> {
+  // The island is `client:visible`: bring it on screen so it hydrates, and
+  // click only once Astro has dropped `ssr` — a click on the server-rendered
+  // tab would land before the handler exists and be lost.
+  await page.locator(".preview-panel--demo [role='tablist']").scrollIntoViewIfNeeded();
+  await page
+    .locator(`.preview-panel--demo astro-island:not([ssr]) [data-demo-tab="${state}"]`)
+    .click();
+  await page
+    .locator(`[data-demo-state="${state}"] section.moderno-block-pricing`)
+    .waitFor({ state: "visible" });
+}
+
+/** One copy of the block per tab, reached by selecting each tab in turn. */
 async function figureMetrics(page: Page): Promise<FigureMetrics[]> {
+  const figures: FigureMetrics[] = [];
+  for (const state of STATES) {
+    await showState(page, state);
+    figures.push(...(await mountedMetrics(page)));
+  }
+  return figures;
+}
+
+/** The copy of the block the active tab mounted. */
+async function mountedMetrics(page: Page): Promise<FigureMetrics[]> {
   return page.evaluate(() => {
-    const panel = document.querySelector(".preview-panel--demo");
-    if (!panel) throw new Error("no .preview-panel--demo on the page");
-    return [...panel.querySelectorAll("figure.demo-container")].map((figure) => {
-      const section = figure.querySelector("section");
-      const heading = figure.querySelector("h2");
-      const card = figure.querySelector("li");
+    const panel = document.querySelector(".preview-panel--demo [data-demo-state]");
+    if (!panel) throw new Error("no demo tab panel on the page");
+    return [...panel.querySelectorAll("section.moderno-block-pricing")].map((section) => {
+      const heading = section.querySelector("h2");
+      const card = section.querySelector("li");
       const planName = card?.querySelector("h3") ?? null;
       const price = card?.querySelector("p") ?? null;
-      if (!section || !heading || !card || !planName || !price) {
+      if (!heading || !card || !planName || !price) {
         throw new Error("the pricing block did not render its own markup");
       }
       const h = getComputedStyle(heading);
@@ -66,10 +97,10 @@ async function figureMetrics(page: Page): Promise<FigureMetrics[]> {
 }
 
 /**
- * The guide that mounts the Pricing block twice. It is the only page with a
- * `.preview-panel--demo`, so the slug lives here once: renaming the page and
- * forgetting this line would otherwise land on a prose page and fail with
- * "no .preview-panel--demo", several tests deep.
+ * The guide that shows the Pricing block in two containers, one tab each. The
+ * slug lives here once: renaming the page and forgetting this line would
+ * otherwise land on a page without the pricing demo and fail with a missing
+ * tab, several tests deep.
  */
 const GUIDE = { en: "/en/blocks-and-containers/", es: "/es/blocks-and-containers/" };
 
@@ -79,7 +110,7 @@ test.describe("the preview panel renders a block the way a consumer would see it
       await page.goto(path, { waitUntil: "networkidle" });
       await page.evaluate(() => document.fonts.ready.then(() => true));
       const figures = await figureMetrics(page);
-      // Two containers, one above the other — the page's whole argument.
+      // Two containers, one tab each — the page's whole argument.
       expect(figures).toHaveLength(2);
 
       for (const [index, figure] of figures.entries()) {
@@ -87,14 +118,14 @@ test.describe("the preview panel renders a block the way a consumer would see it
 
         // The block's own type step, and nothing inherited from the prose.
         // `@md:text-xl` fires from the *container's* width, so which of the two
-        // sizes is correct depends on the figure, not on the viewport — that
+        // sizes is correct depends on the tab, not on the viewport — that
         // asymmetry is what the page exists to demonstrate.
         const expected = figure.containerWidth >= CONTAINER_MD ? TEXT_XL : TEXT_LG;
         expect(figure.headingFontSize, `${where}: heading size`).toBe(expected);
         expect(figure.planNameFontSize, `${where}: plan name size`).toBe(TEXT_SM);
 
         // Preflight is scoped to this panel precisely so the prose margins
-        // (`main h2` 3rem, `main h3` 2rem, `main p` 0.9rem) stop at its edge.
+        // (`main h2` 3.5rem, `main h3` 2.25rem, `main p` 0.75rem) stop at its edge.
         expect(figure.headingMarginTop, `${where}: heading margin-top`).toBe("0px");
         expect(figure.headingMarginBottom, `${where}: heading margin-bottom`).toBe("0px");
         expect(figure.planNameMarginTop, `${where}: plan name margin-top`).toBe("0px");
@@ -116,10 +147,10 @@ test.describe("the preview panel renders a block the way a consumer would see it
   }) => {
     await page.goto(GUIDE.en, { waitUntil: "networkidle" });
     const [narrow, wide] = await figureMetrics(page);
-    // `max-w-sm` caps the first figure below `--container-md` at every viewport.
+    // The 24rem frame caps the narrow tab below `--container-md` at every viewport.
     expect(narrow!.containerWidth).toBeLessThan(CONTAINER_MD);
     expect(narrow!.headingFontSize).toBe(TEXT_LG);
-    // Above the step the second figure must differ; below it, both stack and
+    // Above the step the wide tab must differ; below it, both stack and
     // both read `text-lg` — the demo is width-honest either way.
     if (wide!.containerWidth >= CONTAINER_MD) {
       expect(wide!.headingFontSize).toBe(TEXT_XL);
@@ -133,14 +164,18 @@ test.describe("the preview panel renders a block the way a consumer would see it
     // The other half of the contract: scoping the preview must not reach out
     // and flatten the page around it.
     const prose = await page.evaluate(() => {
+      // Not the section straight under the page header: that one drops its
+      // top margin on purpose (docs.css `.page-header + h2`).
       const heading = [...document.querySelectorAll("main h2")].find(
-        (el) => !el.closest(".preview-panel--demo"),
+        (el) =>
+          !el.closest(".preview-panel--demo") &&
+          !el.previousElementSibling?.classList.contains("page-header"),
       );
       if (!heading) throw new Error("no prose heading on the page");
       const s = getComputedStyle(heading);
       return { fontSize: s.fontSize, marginTop: s.marginTop };
     });
-    expect(prose.fontSize).toBe("22px"); // docs.css `main h2`, 1.375rem
-    expect(prose.marginTop).toBe("48px"); // docs.css `main h2`, 3rem
+    expect(prose.fontSize).toBe("24px"); // docs.css `main h2`, 1.5rem
+    expect(prose.marginTop).toBe("56px"); // docs.css `main h2`, 3.5rem
   });
 });

@@ -1,136 +1,88 @@
 <!--
-  The form-layout block, mounted seven times: four container widths — one in
-  each band of the block's three steps — and then the error, loading and
-  disabled states in the page column.
+  The form-layout block in one state per Preview: the page's main preview mounts
+  `default`, and each example under it mounts one other state.
 
   This is the registry source itself (registry/blocks/form-layout/svelte), not a
   copy — what renders below is byte-for-byte what `moderno add form-layout-svelte`
   writes into a consumer project, so the demo cannot drift from the file the docs
   print underneath it.
 
-  Why four widths side by side: a form-layout is the block whose shape changes
-  most with the room it is given, and all three changes are container-driven, not
-  viewport-driven (ADR-0005). The sidebar figure sits below `--container-sm`, so
-  the actions row stacks and the fields run one-up; the panel figure sits between
-  `--container-sm` and `--container-md`, so the actions row lines up but the
-  fields still run one-up; the page column crosses `--container-md` and the
-  fields pair off; the wide stage crosses `--container-lg` and each group's
-  heading moves beside its fields. Read top to bottom, the four figures are the
-  block's whole responsive story on one screen — and they disagree with each
-  other at the same viewport, which is the point of a container query.
+  `widths` frames the same file three times, one in each band of the block's
+  steps (ADR-0005): 18rem is below `--container-sm` (actions stack, fields
+  one-up), 30rem sits between `--container-sm` and `--container-md` (actions line
+  up, fields still one-up), and 50rem crosses `--container-lg` (each group's
+  heading beside its fields). The page column itself, the `default` state,
+  crosses `--container-md` on a desktop, so the fields pair off there.
+
+  The `@lg` step is 48rem and the docs column never reaches it, so the wide frame
+  holds a 50rem stage and scrolls sideways inside itself; the page never does.
+
+  `data-demo-state` names each copy's state on its wrapper, so the e2e spec can
+  find each copy by what it is meant to show.
 -->
 <script lang="ts">
   import FormLayout from "../../../../registry/blocks/form-layout/svelte/FormLayout.svelte";
+
+  type State = "default" | "widths" | "error" | "loading" | "disabled";
+
+  let { locale = "en", state = "default" }: { locale?: "en" | "es"; state?: State } = $props();
+
+  const copy = {
+    en: {
+      error: "We could not save your changes. Fix the two fields below and try again.",
+      errors: { email: "Enter a valid email address.", about: "Keep this under 280 characters." },
+    },
+    es: {
+      error: "No pudimos guardar tus cambios. Corrige los dos campos de abajo e inténtalo de nuevo.",
+      errors: { email: "Introduce un correo electrónico válido.", about: "Mantenlo por debajo de 280 caracteres." },
+    },
+  }[locale];
 </script>
 
-<div class="demo-containers">
-  <figure class="demo-container">
-    <div class="demo-sidebar">
-      <FormLayout />
+<div class="demo-state" data-demo-state={state}>
+  {#if state === "widths"}
+    <div class="demo-widths">
+      <div data-demo-state="narrow" class="demo-viewport" style="--viewport-width: 18rem" data-label="18rem">
+        <FormLayout />
+      </div>
+      <div data-demo-state="panel" class="demo-viewport" style="--viewport-width: 30rem" data-label="30rem">
+        <FormLayout />
+      </div>
+      <div data-demo-state="wide" class="demo-viewport" style="--viewport-width: 50rem" data-label="50rem">
+        <div class="demo-scroll">
+          <div class="demo-wide"><FormLayout /></div>
+        </div>
+      </div>
     </div>
-    <figcaption>
-      Narrow container — a settings sidebar under <code>--container-sm</code>: the actions row
-      stacks and the fields run one-up
-    </figcaption>
-  </figure>
-
-  <figure class="demo-container">
-    <div class="demo-panel">
-      <FormLayout />
-    </div>
-    <figcaption>
-      Panel — past <code>--container-sm</code>, under <code>--container-md</code>: the actions row
-      lines up to the trailing edge, the fields still run one-up
-    </figcaption>
-  </figure>
-
-  <figure class="demo-container">
-    <FormLayout />
-    <figcaption>
-      Page column — past <code>--container-md</code> the fields pair off, two to a row
-    </figcaption>
-  </figure>
-
-  <figure class="demo-container">
-    <div class="demo-wide">
-      <div class="demo-wide-inner"><FormLayout /></div>
-    </div>
-    <figcaption>
-      Wide container — past <code>--container-lg</code> each group's heading leaves the top of its
-      fields and sits beside them. The docs prose column is narrower than that step, so this figure
-      holds a wider stage and scrolls sideways inside itself rather than pretending the layout does
-      not exist.
-    </figcaption>
-  </figure>
-
-  <figure class="demo-container">
-    <FormLayout
-      error="We could not save your changes. Fix the two fields below and try again."
-      errors={{
-        email: "Enter a valid email address.",
-        about: "Keep this under 280 characters.",
-      }}
-    />
-    <figcaption>
-      Error — one form-level alert for the save, plus a message on each field that caused it
-    </figcaption>
-  </figure>
-
-  <figure class="demo-container">
+  {:else if state === "error"}
+    <FormLayout error={copy.error} errors={copy.errors} />
+  {:else if state === "loading"}
     <FormLayout loading />
-    <figcaption>Loading — every control inert, the submit marked <code>aria-busy</code></figcaption>
-  </figure>
-
-  <figure class="demo-container">
+  {:else if state === "disabled"}
     <FormLayout disabled />
-    <figcaption>
-      Disabled — the form is read-only (a viewer-role member, a locked account)
-    </figcaption>
-  </figure>
+  {:else}
+    <FormLayout />
+  {/if}
 </div>
 
 <style>
-  /* `minmax(0, 1fr)`, not the implicit `auto`: an auto track is sized from its
-     items' max-content, and the mock containers below carry definite widths
-     wider than the docs column on a phone — which would push the whole preview
-     panel sideways instead of letting each figure fit. Capping the track keeps
-     the horizontal scrolling inside the one figure that asks for it. */
-  .demo-containers {
+  /* The three frames stack, with room for each frame's label on its border.
+     `minmax(0, 1fr)`, not the implicit `auto`: an auto track grows to its
+     items' min-content, and the 50rem stage below would widen the track past
+     the panel, pushing the whole preview sideways instead of scrolling inside
+     its own frame. */
+  .demo-widths {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    gap: var(--spacing-8);
+    gap: 2.5rem;
   }
-  .demo-container {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--spacing-3);
-    margin: 0;
-  }
-  /* Mock containers, one in each band of the block's steps, so the stacked
-     actions row is on screen next to the lined-up one and the one-up field
-     column next to the paired grid. The widths are the demo's, not the design
-     system's — the block itself sizes only from contract slots. */
-  .demo-sidebar {
-    width: 18rem;
-    max-width: 100%;
-  }
-  .demo-panel {
-    width: 30rem;
-    max-width: 100%;
-  }
-  /* The `@lg` step is 48rem and the docs prose column never reaches it, so this
-     figure carries its own stage past the step and scrolls inside itself. The
-     scroll is the demo's, not the block's: the page body never scrolls
-     sideways, and the block is measuring this stage exactly as it would
-     measure a real 50rem settings column. */
-  .demo-wide {
+  /* The frame never outgrows the stage, so the 50rem the `@lg` step needs is
+     carried by this inner stage and scrolled inside the frame. The width is the
+     demo's, not the design system's — the block sizes only from contract slots. */
+  .demo-scroll {
     overflow-x: auto;
   }
-  .demo-wide-inner {
+  .demo-wide {
     width: 50rem;
-  }
-  figcaption {
-    color: var(--muted-foreground);
-    font-size: 0.875em;
   }
 </style>

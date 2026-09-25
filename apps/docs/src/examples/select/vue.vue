@@ -1,7 +1,6 @@
 <!--
-  Select across its three sizes — @moderno-ui/vue, the same demo every
-  framework's example shows. The menu is portalled and opens on click; it is
-  deliberately not forced open here.
+  A labelled Select at the default size; the menu is portalled and opens
+  on click — @moderno-ui/vue.
 -->
 <script setup lang="ts">
 import { Select, Portal, createListCollection } from "@moderno-ui/vue";
@@ -14,40 +13,26 @@ const frameworks = createListCollection({
     { label: "Solid", value: "solid" },
   ],
 });
-
-const sizes = [
-  { size: "sm", label: "Small", value: [] as string[] },
-  { size: "md", label: "Medium", value: ["svelte"] },
-  { size: "lg", label: "Large", value: [] as string[] },
-] as const;
 </script>
 
 <template>
-  <div class="demo-selects">
-    <Select.Root
-      v-for="demo in sizes"
-      :key="demo.size"
-      :collection="frameworks"
-      :size="demo.size"
-      :default-value="[...demo.value]"
-    >
-      <Select.Label>{{ demo.label }}</Select.Label>
-      <Select.Control>
-        <Select.Trigger>
-          <Select.ValueText placeholder="Pick one" />
-          <Select.Indicator>▾</Select.Indicator>
-        </Select.Trigger>
-      </Select.Control>
-      <Portal>
-        <Select.Positioner>
-          <Select.Content>
-            <Select.Item v-for="item in frameworks.items" :key="item.value" :item="item">
-              <Select.ItemText>{{ item.label }}</Select.ItemText>
-              <Select.ItemIndicator>✓</Select.ItemIndicator>
-            </Select.Item>
-          </Select.Content>
-        </Select.Positioner>
-      </Portal>
-    </Select.Root>
-  </div>
+  <Select.Root :collection="frameworks">
+    <Select.Label>Framework</Select.Label>
+    <Select.Control>
+      <Select.Trigger>
+        <Select.ValueText placeholder="Pick one" />
+        <Select.Indicator>▾</Select.Indicator>
+      </Select.Trigger>
+    </Select.Control>
+    <Portal>
+      <Select.Positioner>
+        <Select.Content>
+          <Select.Item v-for="item in frameworks.items" :key="item.value" :item="item">
+            <Select.ItemText>{{ item.label }}</Select.ItemText>
+            <Select.ItemIndicator>✓</Select.ItemIndicator>
+          </Select.Item>
+        </Select.Content>
+      </Select.Positioner>
+    </Portal>
+  </Select.Root>
 </template>

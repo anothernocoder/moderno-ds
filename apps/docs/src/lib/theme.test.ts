@@ -61,6 +61,29 @@ describe("tokensToState / stateToTokens — round trip", () => {
     expect(doc.light["container-sm"].$type).toBe("dimension");
   });
 
+  it("edits the extended modal scrim as an optional colour field", () => {
+    const state = tokensToState(modernoTokens);
+    // theme-moderno inherits the neutral scrim, so the field starts blank.
+    expect(state.dark["overlay"]).toBeUndefined();
+    state.dark["overlay"] = "oklch(0.1 0.02 260 / 0.7)";
+    const bundle = buildTheme(state);
+    expect(bundle.valid).toBe(true);
+    expect(bundle.tokens.dark["overlay"]).toEqual({
+      $type: "color",
+      $value: "oklch(0.1 0.02 260 / 0.7)",
+    });
+    expect(bundle.css).toContain("--overlay: oklch(0.1 0.02 260 / 0.7);");
+    expect(previewStyle(state.dark)).toContain("--overlay: oklch(0.1 0.02 260 / 0.7)");
+  });
+
+  it("rejects a scrim the compiler can't read as oklch(), like any colour slot", () => {
+    const state = tokensToState(modernoTokens);
+    state.light["overlay"] = "rgba(0, 0, 0, 0.3)";
+    const bundle = buildTheme(state);
+    expect(bundle.valid).toBe(false);
+    expect(bundle.error).toMatch(/overlay/);
+  });
+
   it("drops a slot the editor left blank rather than exporting an empty value", () => {
     const state = tokensToState(modernoTokens);
     state.light["font-serif"] = "";

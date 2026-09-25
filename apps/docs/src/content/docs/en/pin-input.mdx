@@ -1,6 +1,6 @@
 ---
 title: PinInput
-description: A one-time-code input — Ark moves focus between cells, distributes a pasted code, masks the characters and flags the invalid state; the Moderno size recipe folds a data-size onto the root so components.css keys the cell density off it.
+description: A one-time code input with one cell per character, paste support and masked or invalid states.
 group: Components
 order: 46
 component: PinInput
@@ -29,24 +29,41 @@ import Preview from "../../../components/Preview.astro";
 import PropsTable from "../../../components/PropsTable.astro";
 import Install from "../../../components/Install.astro";
 import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
 import PinInputDemo from "../../../examples/pin-input/pin-input.svelte";
-import reactExample from "../../../examples/pin-input/react.tsx?raw";
-import vueExample from "../../../examples/pin-input/vue.vue?raw";
-import solidExample from "../../../examples/pin-input/solid.tsx?raw";
-import svelteExample from "../../../examples/pin-input/pin-input.svelte?raw";
-
-Only `PinInput.Root` is wrapped, to inject the `size` recipe's `data-size`;
-every other part is Ark's verbatim. Ark advances focus as characters land,
-retreats on backspace, distributes a pasted code across the cells, swaps them to
-`type="password"` when `mask` is set, and mirrors `invalid` onto `aria-invalid`
-plus a `data-invalid` on every part — so `components.css` styles the filled,
-complete and invalid states without the binding tracking any of them.
+import baseReact from "../../../examples/pin-input/react.tsx?raw";
+import baseVue from "../../../examples/pin-input/vue.vue?raw";
+import baseSolid from "../../../examples/pin-input/solid.tsx?raw";
+import baseSvelte from "../../../examples/pin-input/pin-input.svelte?raw";
+import PinInputSizesDemo from "../../../examples/pin-input/sizes/pin-input-sizes.svelte";
+import sizesReact from "../../../examples/pin-input/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/pin-input/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/pin-input/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/pin-input/sizes/pin-input-sizes.svelte?raw";
+import PinInputFilledDemo from "../../../examples/pin-input/filled/pin-input-filled.svelte";
+import filledReact from "../../../examples/pin-input/filled/react.tsx?raw";
+import filledVue from "../../../examples/pin-input/filled/vue.vue?raw";
+import filledSolid from "../../../examples/pin-input/filled/solid.tsx?raw";
+import filledSvelte from "../../../examples/pin-input/filled/pin-input-filled.svelte?raw";
+import PinInputMaskedDemo from "../../../examples/pin-input/masked/pin-input-masked.svelte";
+import maskedReact from "../../../examples/pin-input/masked/react.tsx?raw";
+import maskedVue from "../../../examples/pin-input/masked/vue.vue?raw";
+import maskedSolid from "../../../examples/pin-input/masked/solid.tsx?raw";
+import maskedSvelte from "../../../examples/pin-input/masked/pin-input-masked.svelte?raw";
+import PinInputInvalidDemo from "../../../examples/pin-input/invalid/pin-input-invalid.svelte";
+import invalidReact from "../../../examples/pin-input/invalid/react.tsx?raw";
+import invalidVue from "../../../examples/pin-input/invalid/vue.vue?raw";
+import invalidSolid from "../../../examples/pin-input/invalid/solid.tsx?raw";
+import invalidSvelte from "../../../examples/pin-input/invalid/pin-input-invalid.svelte?raw";
+import PinInputAlphanumericDemo from "../../../examples/pin-input/alphanumeric/pin-input-alphanumeric.svelte";
+import alphanumericReact from "../../../examples/pin-input/alphanumeric/react.tsx?raw";
+import alphanumericVue from "../../../examples/pin-input/alphanumeric/vue.vue?raw";
+import alphanumericSolid from "../../../examples/pin-input/alphanumeric/solid.tsx?raw";
+import alphanumericSvelte from "../../../examples/pin-input/alphanumeric/pin-input-alphanumeric.svelte?raw";
 
 <FrameworkSelect locale="en" />
 
-<Preview
-  examples={{ react: reactExample, vue: vueExample, solid: solidExample, svelte: svelteExample }}
->
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
   <PinInputDemo client:visible />
 </Preview>
 
@@ -54,6 +71,188 @@ complete and invalid states without the binding tracking any of them.
 
 <Install pkg="@moderno-ui/react" />
 
-## Props
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { PinInput } from "@moderno-ui/react";
+
+const cells = [0, 1, 2, 3, 4, 5];
+```
+
+```tsx
+<PinInput.Root count={cells.length} otp>
+  <PinInput.Label>Verification code</PinInput.Label>
+  <PinInput.Control>
+    {cells.map((index) => (
+      <PinInput.Input key={index} index={index} />
+    ))}
+  </PinInput.Control>
+  <PinInput.HiddenInput />
+</PinInput.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import { PinInput } from "@moderno-ui/vue";
+
+const cells = [0, 1, 2, 3, 4, 5];
+</script>
+```
+
+```vue
+<template>
+  <PinInput.Root :count="cells.length" otp>
+    <PinInput.Label>Verification code</PinInput.Label>
+    <PinInput.Control>
+      <PinInput.Input v-for="index in cells" :key="index" :index="index" />
+    </PinInput.Control>
+    <PinInput.HiddenInput />
+  </PinInput.Root>
+</template>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import { PinInput } from "@moderno-ui/svelte";
+
+  const cells = [0, 1, 2, 3, 4, 5];
+</script>
+```
+
+```svelte
+<PinInput.Root count={cells.length} otp>
+  <PinInput.Label>Verification code</PinInput.Label>
+  <PinInput.Control>
+    {#each cells as index (index)}
+      <PinInput.Input {index} />
+    {/each}
+  </PinInput.Control>
+  <PinInput.HiddenInput />
+</PinInput.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { For } from "solid-js";
+import { PinInput } from "@moderno-ui/solid";
+
+const cells = [0, 1, 2, 3, 4, 5];
+```
+
+```tsx
+<PinInput.Root count={cells.length} otp>
+  <PinInput.Label>Verification code</PinInput.Label>
+  <PinInput.Control>
+    <For each={cells}>{(index) => <PinInput.Input index={index} />}</For>
+  </PinInput.Control>
+  <PinInput.HiddenInput />
+</PinInput.Root>
+```
+
+</ForFramework>
+
+## API Reference
+
+### PinInput.Root
 
 <PropsTable component="PinInput" />
+
+Behaviour props come from Ark. The ones the examples use:
+
+| Prop           | Type                                    | Default   | Description                                                                 |
+| -------------- | --------------------------------------- | --------- | --------------------------------------------------------------------------- |
+| `count`        | `number`                                | —         | Number of cells. Pass it so server-rendered aria labels match the client's. |
+| `type`         | `numeric`, `alphanumeric`, `alphabetic` | `numeric` | Accepted characters. `numeric` renders cells as `type="tel"`.               |
+| `mask`         | `boolean`                               | `false`   | Renders every cell as `type="password"`.                                    |
+| `otp`          | `boolean`                               | `false`   | Sets `autocomplete="one-time-code"` on the cells.                           |
+| `invalid`      | `boolean`                               | `false`   | Sets `aria-invalid` and `data-invalid`.                                     |
+| `defaultValue` | `string[]`                              | —         | Initial characters, one per cell.                                           |
+
+### Parts
+
+| Part                   | Description                                              |
+| ---------------------- | -------------------------------------------------------- |
+| `PinInput.Root`        | Holds the state. Takes `size` and the behaviour props.   |
+| `PinInput.Label`       | The visible label.                                       |
+| `PinInput.Control`     | Wraps the cells.                                         |
+| `PinInput.Input`       | One cell. Render one per `index`, from 0 to `count - 1`. |
+| `PinInput.HiddenInput` | The named form field that carries the joined code.       |
+
+### Data attributes
+
+| Attribute       | On                 | Meaning                                          |
+| --------------- | ------------------ | ------------------------------------------------ |
+| `data-size`     | Root               | `sm`, `md` (default), `lg`                       |
+| `data-filled`   | Input              | The cell holds a character.                      |
+| `data-complete` | Root, Label, Input | Every cell holds a character.                    |
+| `data-invalid`  | Root, Label, Input | `invalid` is set. Wins over filled and complete. |
+| `data-disabled` | Root, Label, Input | `disabled` is set.                               |
+
+## Examples
+
+### Sizes
+
+<Preview examples={{ react: sizesReact, vue: sizesVue, solid: sizesSolid, svelte: sizesSvelte }}>
+  <PinInputSizesDemo client:visible />
+</Preview>
+
+### Filled and complete
+
+A filled cell's border tints toward `--primary`, and the whole code turns `--primary` once complete.
+
+<Preview
+  examples={{ react: filledReact, vue: filledVue, solid: filledSolid, svelte: filledSvelte }}
+>
+  <PinInputFilledDemo client:visible />
+</Preview>
+
+### Masked
+
+<Preview
+  examples={{ react: maskedReact, vue: maskedVue, solid: maskedSolid, svelte: maskedSvelte }}
+>
+  <PinInputMaskedDemo client:visible />
+</Preview>
+
+### Invalid
+
+Set `invalid` when the code was rejected; each cell's border switches to `--destructive`.
+
+<Preview
+  examples={{ react: invalidReact, vue: invalidVue, solid: invalidSolid, svelte: invalidSvelte }}
+>
+  <PinInputInvalidDemo client:visible />
+</Preview>
+
+### Alphanumeric
+
+<Preview
+  examples={{
+    react: alphanumericReact,
+    vue: alphanumericVue,
+    solid: alphanumericSolid,
+    svelte: alphanumericSvelte,
+  }}
+>
+  <PinInputAlphanumericDemo client:visible />
+</Preview>
+
+## Notes
+
+- Focus advances as characters land, retreats on Backspace, and a pasted code fills the cells.
+- Only `PinInput.Root` is wrapped, to add `size`. Every other part is Ark's.
+- Add `PinInput.HiddenInput` when the code is submitted with a form.
+- Filled, complete and invalid are Ark data attributes: style them, don't recreate them.

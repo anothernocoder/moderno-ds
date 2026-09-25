@@ -50,6 +50,83 @@ describe("pageMarkdown — page → plain Markdown", () => {
   });
 });
 
+describe("pageMarkdown — docs components become Markdown, never raw JSX", () => {
+  const body = [
+    'import Preview from "../../../components/Preview.astro";',
+    'import ButtonDemo from "../../../examples/button/button.svelte";',
+    'import baseReact from "../../../examples/button/react.tsx?raw";',
+    'import baseVue from "../../../examples/button/vue.vue?raw";',
+    "",
+    '<FrameworkSelect locale="en" />',
+    "",
+    "<Preview",
+    "  examples={{ react: baseReact, vue: baseVue }}",
+    '  layout="fill"',
+    ">",
+    "  <ButtonDemo client:visible />",
+    '  <div class="demo-row">x</div>',
+    "</Preview>",
+    "",
+    "## Installation",
+    "",
+    '<Install pkg="@moderno-ui/react" />',
+    "",
+    '<Install pkg="@moderno-ui/cli" mode="cli" />',
+    "",
+    "## Usage",
+    "",
+    '<ForFramework fw="vue">',
+    "",
+    "```vue",
+    '<Button variant="secondary">Save</Button>',
+    "```",
+    "",
+    "</ForFramework>",
+    "",
+    "## API Reference",
+    "",
+    '<PropsTable component="Button" />',
+  ].join("\n");
+
+  const md = pageMarkdown({
+    title: "Button",
+    description: "x",
+    body,
+    resolve: {
+      raw: (spec) => (spec.endsWith("react.tsx?raw") ? "export const A = 1;\n" : undefined),
+      props: (name) =>
+        name === "Button"
+          ? [{ name: "size", type: '"sm" | "md"', required: true, default: '"md"' }]
+          : undefined,
+    },
+  });
+
+  it("drops multi-line component tags and the preview's demo markup", () => {
+    expect(md).not.toMatch(
+      /<Preview|<ButtonDemo|client:visible|examples=|demo-row|<FrameworkSelect/,
+    );
+  });
+
+  it("shows a Preview as its React example's source", () => {
+    expect(md).toContain("```tsx\nexport const A = 1;\n```");
+  });
+
+  it("labels each ForFramework block and keeps its fenced code", () => {
+    expect(md).toContain('**Vue**\n\n```vue\n<Button variant="secondary">Save</Button>\n```');
+    expect(md).not.toContain("ForFramework");
+  });
+
+  it("renders Install as the npm command, framework-agnostic packages unchanged", () => {
+    expect(md).toContain("```sh\nnpm install @moderno-ui/react\n```");
+    expect(md).toContain("```sh\nnpx @moderno-ui/cli\n```");
+  });
+
+  it("renders PropsTable as a Markdown table with escaped unions", () => {
+    expect(md).toContain("| Prop | Type | Default |");
+    expect(md).toContain('| `size` (required) | `"sm" \\| "md"` | `"md"` |');
+  });
+});
+
 describe("llmsIndex — per-locale llms.txt", () => {
   it("lists every page as an absolute link with its description", () => {
     const txt = llmsIndex({

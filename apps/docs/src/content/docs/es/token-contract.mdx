@@ -1,136 +1,116 @@
 ---
 title: Contrato de tokens
-description: Todos los slots semánticos que un componente de Moderno puede referenciar — color, radio, tipografías, espaciado, movimiento, la tipografía de display, la escala de elevación y los breakpoints de contenedor — y cuáles debe definir un tema.
+description: Las variables CSS que lee cada componente de Moderno, y cuáles de ellas debe definir un tema.
 group: Inicio
 order: 2
 ---
 
-Un componente de Moderno referencia **slots**, nunca valores. Sobrescribir un
-slot es la forma de re-tematizar; no hay otro mecanismo. `@moderno-ui/tokens`
-trae un valor neutro por defecto para cada slot de esta página, así que los
-componentes se ven bien antes de instalar ninguna marca, y un tema remapea esos
-mismos nombres a valores de marca.
+Los componentes referencian slots, nunca valores: sobrescribir un slot es la única forma de re-tematizar.
+`@moderno-ui/tokens` trae un valor neutro por defecto para cada slot de esta página.
 
-`:root` es el ámbito claro y `.dark` lo sobrescribe. Un tema multimarca acota sus
-overrides bajo `[data-brand="…"]`, que se compone con `.dark`.
+## Ámbitos
 
-## Color
-
-Todos los slots de color son OKLCH y se definen en ambos ámbitos. Todo tema debe
-definirlos todos.
-
-| Slot                                         | Rol                               |
-| -------------------------------------------- | --------------------------------- |
-| `--background` / `--foreground`              | superficie de página + texto      |
-| `--card` / `--card-foreground`               | superficie elevada                |
-| `--popover` / `--popover-foreground`         | superficie flotante               |
-| `--primary` / `--primary-foreground`         | acción principal                  |
-| `--secondary` / `--secondary-foreground`     | acción secundaria                 |
-| `--muted` / `--muted-foreground`             | superficie apagada + texto tenue  |
-| `--accent` / `--accent-foreground`           | superficie de acento              |
-| `--destructive` / `--destructive-foreground` | acción destructiva                |
-| `--border`                                   | bordes / separadores              |
-| `--input`                                    | bordes de controles de formulario |
-| `--ring`                                     | anillo de foco                    |
-| `--chart-1` … `--chart-5`                    | series de datos                   |
-
-Cada slot `*-foreground` se contrasta contra su superficie a nivel WCAG AA
-(4.5:1) al compilar un tema; el Editor de temas muestra los mismos avisos en
-vivo.
-
-## Slots obligatorios sin color
-
-| Slot          | Rol                            |
-| ------------- | ------------------------------ |
-| `--radius`    | radio de esquina base          |
-| `--font-sans` | tipografía de interfaz y texto |
-| `--font-mono` | código, cifras tabulares       |
-
-## Slots extendidos
-
-Opcionales en un tema: `@moderno-ui/tokens` ya trae un valor neutro por defecto,
-así que un tema solo sobrescribe lo que su marca cambia de verdad. En el Editor
-de temas aparecen bajo **Extendidos (opcionales)** — deja el campo vacío para
-heredar.
-
-| Slot                                                     | Por defecto                 | Rol                                        |
-| -------------------------------------------------------- | --------------------------- | ------------------------------------------ |
-| `--radius-full`                                          | `9999px`                    | píldoras, puntos, avatares                 |
-| `--spacing-1` … `--spacing-8`                            | `0.25rem` … `2rem`          | la escala de espaciado                     |
-| `--motion-instant` / `--motion-fast` / `--motion-normal` | `150ms` / `200ms` / `300ms` | duraciones de transición                   |
-| `--font-serif`                                           | `ui-serif, Georgia, …`      | tipografía de display para títulos y citas |
-| `--shadow-sm` / `--shadow-md` / `--shadow-lg`            | tres pasos neutros          | elevación de popovers, menús y drawers     |
-| `--container-sm` / `--container-md` / `--container-lg`   | `24rem` / `36rem` / `48rem` | breakpoints de contenedor                  |
-
-La **elevación** lleva sus propios valores en `.dark`: una sombra de modo claro
-desaparece sobre un lienzo casi negro. Un tema puede componer un anillo de un
-píxel con la sombra para que un overlay siga separándose de la superficie que
-tiene detrás — `theme-moderno` lo hace:
+| Selector           | Contiene                                    |
+| ------------------ | ------------------------------------------- |
+| `:root`            | Valores claros.                             |
+| `.dark`            | Overrides oscuros.                          |
+| `[data-brand="…"]` | Overrides de marca. Se compone con `.dark`. |
 
 ```css
---shadow-md: 0 0 0 1px oklch(0.922 0 0), 0 4px 12px -2px oklch(0 0 0 / 0.08);
-```
+:root {
+  --primary: oklch(0.55 0.2 260);
+  --radius: 0.5rem;
+}
 
-Los **breakpoints de contenedor** son a lo que responden los blocks y las
-screens. Un block lee el ancho de su _contenedor_, nunca el del viewport, así
-que el mismo block se ve correcto en una barra lateral, en un modal y a página
-completa. Tres pasos son toda la escala: un block se maqueta con `@sm:` /
-`@md:` / `@lg:` y nada más ancho.
-
-## Tailwind v4
-
-`@import "@moderno-ui/css/preset";` registra los slots como claves de tema de
-Tailwind con `@theme inline`, de modo que las utilidades generadas referencian
-`var(--slot)` y un override en tiempo de ejecución las re-tematiza sin recompilar.
-
-| Slot            | Utilidades                                                                      |
-| --------------- | ------------------------------------------------------------------------------- |
-| slots de color  | `bg-primary`, `text-muted-foreground`, …                                        |
-| `--radius`      | `rounded-sm` … `rounded-xl`                                                     |
-| `--font-serif`  | `font-serif`                                                                    |
-| `--shadow-*`    | `shadow-sm`, `shadow-md`, `shadow-lg`                                           |
-| `--container-*` | `max-w-sm`, `w-md`, y las variantes de container query `@sm:` / `@md:` / `@lg:` |
-
-Los breakpoints de contenedor son el único mapeo que **no** es inline. Una
-condición de container query en CSS no puede contener `var()` — `@container
-(width >= var(--container-sm))` nunca coincide — así que el preset registra las
-tres longitudes de forma literal y `@sm:` se dispara en 24rem fijos. Las
-utilidades de ancho no se ven afectadas: `max-w-sm` sigue resolviendo a
-`var(--container-sm)` y respeta el override del tema en tiempo de ejecución.
-
-### La escala de contenedor se reemplaza, no se amplía
-
-`--container-*` es el propio namespace de Tailwind — `sm 24rem, md 28rem,
-lg 32rem, xl 36rem, 2xl 42rem, 3xl 48rem, …` — y los tres pasos del contrato no
-son esos valores. En vez de redefinir tres claves dentro de una escala que
-quedaría desordenada (`max-w-lg`, 48rem, sería _más ancha_ que `max-w-xl`,
-36rem, y `@lg:` se dispararía después de `@xl:`), el preset resetea el namespace
-y declara solo los pasos del contrato:
-
-```css
-@theme {
-  --container-*: initial;
-
-  --container-sm: 24rem;
-  --container-md: 36rem;
-  --container-lg: 48rem;
+.dark {
+  --primary: oklch(0.75 0.15 260);
 }
 ```
 
-Así que tras instalar el preset tienes `max-w-sm|md|lg`, `w-sm|md|lg` y
-`@sm:` / `@md:` / `@lg:`, y los tamaños de contenedor más anchos de Tailwind
-(`max-w-xl` en adelante, `@xl:` en adelante) desaparecen. Si los necesitas,
-declara tus propias claves en un bloque `@theme` de tu aplicación.
+## Slots obligatorios
 
-Una advertencia si te saltas el preset: `@moderno-ui/css` declara esos tres
-nombres en un `:root` sin capa, que gana a `@layer theme` de Tailwind, así que
-importarlo solo ya deja `max-w-md` en 36rem y `max-w-lg` en 48rem mientras
-`max-w-xl` se queda en los 36rem de Tailwind. Importa el preset junto a él para
-tener la escala ordenada.
+Un tema debe definir todos los slots de esta sección. Crea uno visualmente en el [Editor de temas](/es/theme-builder).
+
+### Color
+
+Valores OKLCH, definidos en `:root` y en `.dark`. Cada slot `*-foreground` debe alcanzar WCAG AA (4.5:1) sobre su superficie al compilar el tema.
+
+| Slot                                         | Rol                                           |
+| -------------------------------------------- | --------------------------------------------- |
+| `--background` / `--foreground`              | Superficie de página y texto.                 |
+| `--card` / `--card-foreground`               | Superficie elevada.                           |
+| `--popover` / `--popover-foreground`         | Superficie flotante.                          |
+| `--primary` / `--primary-foreground`         | Acción principal.                             |
+| `--secondary` / `--secondary-foreground`     | Acción secundaria.                            |
+| `--accent` / `--accent-foreground`           | Superficie de acento.                         |
+| `--muted` / `--muted-foreground`             | Superficie apagada y texto tenue.             |
+| `--destructive` / `--destructive-foreground` | Acción destructiva. También el tono de error. |
+| `--info` / `--info-foreground`               | Estado informativo.                           |
+| `--success` / `--success-foreground`         | Estado positivo.                              |
+| `--warning` / `--warning-foreground`         | Estado de advertencia.                        |
+| `--border`                                   | Bordes y separadores.                         |
+| `--input`                                    | Bordes de controles de formulario.            |
+| `--ring`                                     | Anillo de foco.                               |
+| `--chart-1` … `--chart-5`                    | Series de datos.                              |
+
+### Sin color
+
+| Slot          | Rol                             |
+| ------------- | ------------------------------- |
+| `--radius`    | Radio de esquina base.          |
+| `--font-sans` | Tipografía de interfaz y texto. |
+| `--font-mono` | Código, cifras tabulares.       |
+
+## Slots extendidos
+
+Opcionales en un tema: omite un slot para heredar el valor por defecto. El Editor de temas los muestra bajo **Extendidos (opcionales)**.
+
+| Slot                                                     | Por defecto                 | Rol                                                                 |
+| -------------------------------------------------------- | --------------------------- | ------------------------------------------------------------------- |
+| `--radius-full`                                          | `9999px`                    | Píldoras, puntos, avatares.                                         |
+| `--spacing-1` … `--spacing-8`                            | `0.25rem` … `2rem`          | Escala de espaciado, en pasos de `0.25rem`.                         |
+| `--motion-instant` / `--motion-fast` / `--motion-normal` | `150ms` / `200ms` / `300ms` | Duraciones de transición.                                           |
+| `--font-serif`                                           | `ui-serif, Georgia, …`      | Tipografía de display para títulos y citas.                         |
+| `--shadow-sm` / `--shadow-md` / `--shadow-lg`            | Tres pasos neutros          | Elevación de popovers, menús y drawers. Valores propios en `.dark`. |
+| `--overlay`                                              | Negro, 32% / 60% en `.dark` | Capa modal detrás de un diálogo. Se pinta sobre un desenfoque.      |
+| `--container-sm` / `--container-md` / `--container-lg`   | `24rem` / `36rem` / `48rem` | Breakpoints de contenedor a los que responden blocks y screens.     |
+
+## Tailwind v4
+
+Importa el preset para registrar los slots como claves de tema de Tailwind.
+
+```css
+@import "tailwindcss";
+@import "@moderno-ui/css";
+@import "@moderno-ui/css/preset";
+```
+
+| Slot                                           | Utilidades                                                                  |
+| ---------------------------------------------- | --------------------------------------------------------------------------- |
+| Slots de color                                 | `bg-primary`, `text-muted-foreground`, `border-input`, …                    |
+| `--radius`                                     | `rounded-sm` (−4px), `rounded-md` (−2px), `rounded-lg`, `rounded-xl` (+4px) |
+| `--radius-full`                                | `rounded-full`                                                              |
+| `--font-sans` / `--font-serif` / `--font-mono` | `font-sans`, `font-serif`, `font-mono`                                      |
+| `--shadow-*`                                   | `shadow-sm`, `shadow-md`, `shadow-lg`                                       |
+| `--container-*`                                | `max-w-sm`, `max-w-md`, `max-w-lg`, `w-*`, `@sm:` / `@md:` / `@lg:`         |
+| `--spacing-*`, `--motion-*`                    | Sin mapear. Usa `var(--spacing-4)` y similares.                             |
+
+### Notas
+
+- Las utilidades de color, radio, tipografía y sombra apuntan a `var(--slot)` (`@theme inline`), así que un override en tiempo de ejecución las re-tematiza sin recompilar.
+- `@sm:` / `@md:` / `@lg:` se disparan en 24rem / 36rem / 48rem fijos, porque una container query no puede leer `var()`.
+- `max-w-*` y `w-*` siguen resolviendo a `var(--container-*)` y respetan el override del tema.
+- El preset resetea la escala de contenedor de Tailwind (`--container-*: initial`): `max-w-xl`, `@xl:` y superiores no existen.
+- ¿Necesitas un tamaño más ancho? Declara tu propia clave en un bloque `@theme` de tu aplicación.
+- Sin el preset, `@moderno-ui/css` solo sobrescribe `sm|md|lg` en la escala de Tailwind, así que `max-w-lg` (48rem) queda más ancho que `max-w-xl` (36rem).
 
 ## Leerlo como datos
 
-El contrato también es legible por máquinas. `@moderno-ui/tokens/contract`
-exporta cada slot con su tipo DTCG y su grupo de editor; el `get_contract` de
-`@moderno-ui/mcp` sirve esa misma lista a los agentes de código. Nada en el
-repositorio guarda una segunda copia de estos nombres.
+| Fuente                             | Devuelve                                                               |
+| ---------------------------------- | ---------------------------------------------------------------------- |
+| `@moderno-ui/tokens/contract`      | `CONTRACT`: cada slot con su tipo DTCG y su grupo del Editor de temas. |
+| `get_contract` (`@moderno-ui/mcp`) | Los mismos slots, más las reglas de tematización, para agentes.        |
+
+```ts
+import { CONTRACT, COLOR_SLOTS, EXTENDED_SLOTS } from "@moderno-ui/tokens/contract";
+```

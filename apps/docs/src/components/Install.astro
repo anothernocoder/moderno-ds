@@ -9,7 +9,10 @@
  *
  * `pkg` names the React package (every primitive page already passes this);
  * the other three frameworks share its scope, so the framework segment is the
- * only thing that changes — `@moderno-ui/react` → `@moderno-ui/vue`, etc.
+ * only thing that changes — `@moderno-ui/react` → `@moderno-ui/vue`, etc. A
+ * `pkg` that is not one of the four bindings (`@moderno-ui/cli` with
+ * `mode="cli"`, `@moderno-ui/css`) is framework-agnostic and renders a single
+ * command that ignores the selector.
  *
  * A registry item is installed rather than depended on, so a block/screen/flow
  * page passes `item` instead: the command becomes `<runner> @moderno-ui/cli add
@@ -17,7 +20,9 @@
  * (`login-form-react`, `login-form-svelte`, …). Exactly one of `pkg` / `item`.
  */
 import { Code } from "astro:components";
+import { Check, Copy, Terminal } from "@lucide/astro";
 import shikiConfig from "../../shiki.config.ts";
+import { currentLocale, useTranslations } from "../i18n/ui.ts";
 import { uid } from "../lib/uid.ts";
 
 type Framework = "react" | "vue" | "svelte" | "solid";
@@ -38,9 +43,19 @@ if ((pkg === undefined) === (item === undefined)) {
   throw new Error("<Install> takes exactly one of `pkg` (an npm package) or `item` (a registry item)");
 }
 
-/** `@moderno-ui/react` → `@moderno-ui/vue` and friends. */
+/**
+ * Only the four framework bindings (`@moderno-ui/react`, `…/vue`, `…/svelte`,
+ * `…/solid`) have a per-framework twin. Any other package — `@moderno-ui/css`,
+ * `@moderno-ui/cli`, `@moderno-ui/mcp` — is framework-agnostic: one command,
+ * no `data-fw` split, shown whatever the framework selector says.
+ */
+const bindingPkg =
+  pkg !== undefined && (FRAMEWORKS as string[]).includes(pkg.slice(pkg.lastIndexOf("/") + 1));
+const perFramework = item !== undefined || bindingPkg;
+
+/** `@moderno-ui/react` → `@moderno-ui/vue` and friends; other packages unchanged. */
 function pkgFor(framework: Framework): string {
-  return pkg!.slice(0, pkg!.lastIndexOf("/") + 1) + framework;
+  return bindingPkg ? pkg!.slice(0, pkg!.lastIndexOf("/") + 1) + framework : pkg!;
 }
 
 function commandFor(framework: Framework): { bun: string; pnpm: string; npm: string } {
@@ -61,37 +76,56 @@ const managers = [
 ];
 
 const name = uid("install");
+const t = useTranslations(currentLocale(Astro.currentLocale));
 ---
 
-<div class="install">
-  <div class="install-tabs" role="tablist">
-    {
-      managers.map((m, i) => (
-        <Fragment>
-          <input
-            type="radio"
-            name={name}
-            id={`${name}-${m.id}`}
-            class="install-radio"
-            checked={i === 0}
-          />
-          <label for={`${name}-${m.id}`} class="install-tab">
-            {m.label}
-          </label>
-        </Fragment>
-      ))
-    }
+<!-- `data-code-root`: the copy button copies whichever command is showing
+     (clipboard.ts picks the one visible <pre> under the root). -->
+<div class="install" data-code-root>
+  <div class="install-bar">
+    <Terminal class="install-icon" aria-hidden="true" size={14} />
+    <div class="install-tabs" role="radiogroup" aria-label={t("install.manager")}>
+      {
+        managers.map((m, i) => (
+          <Fragment>
+            <input
+              type="radio"
+              name={name}
+              id={`${name}-${m.id}`}
+              class="install-radio"
+              checked={i === 0}
+            />
+            <label for={`${name}-${m.id}`} class="install-tab">
+              {m.label}
+            </label>
+          </Fragment>
+        ))
+      }
+    </div>
+    <button
+      type="button"
+      class="code-copy"
+      data-copy-code
+      aria-label={t("copy.code")}
+      title={t("copy.code")}
+      data-copied={t("copy.copied")}
+    >
+      <Copy class="code-copy-idle" aria-hidden="true" size={14} />
+      <Check class="code-copy-done" aria-hidden="true" size={14} />
+    </button>
   </div>
   {
     managers.map((m) => (
-      <div class={`install-panel install-panel--${m.id}`} role="tabpanel">
-        {
+      <div class={`install-panel install-panel--${m.id}`}>
+        {perFramework ? (
           FRAMEWORKS.map((fw) => (
             <div data-fw={fw}>
               <Code code={commandFor(fw)[m.id]} lang="sh" {...shikiConfig} />
             </div>
           ))
-        }
+        ) : (
+          <Code code={commandFor("react")[m.id]} lang="sh" {...shikiConfig} />
+        )}
       </div>
     ))
   }

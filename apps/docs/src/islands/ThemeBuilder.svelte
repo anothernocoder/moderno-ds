@@ -242,9 +242,11 @@
       </details>
 
       <!--
-        Extended slots (display face, elevation, container breakpoints, spacing,
-        motion) are optional: @moderno-ui/tokens ships a neutral default for each,
-        so a blank field means "inherit it" and exports nothing for that slot.
+        Extended slots (display face, elevation, modal scrim, container
+        breakpoints, spacing, motion) are optional: @moderno-ui/tokens ships a
+        neutral default for each, so a blank field means "inherit it" and exports
+        nothing for that slot. The scrim is a colour, but a translucent one, so
+        it gets a text field only: the native picker has no alpha channel.
       -->
       <details class="tb-group">
         <summary><span>{strings.groups["extended"] ?? "Extended"}</span></summary>

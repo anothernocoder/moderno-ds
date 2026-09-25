@@ -1,8 +1,10 @@
 ---
 import { getCollection, render } from "astro:content";
+import { ArrowLeft, ArrowRight } from "@lucide/astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import CopyMarkdown from "../../components/CopyMarkdown.astro";
-import { splitId, type Locale } from "../../i18n/ui.ts";
+import { pagerLinks, sidebarSections } from "../../i18n/nav.ts";
+import { splitId, useTranslations, type Locale } from "../../i18n/ui.ts";
 
 export async function getStaticPaths() {
   const docs = await getCollection("docs");
@@ -16,6 +18,24 @@ const { entry } = Astro.props;
 const lang = Astro.params.lang as Locale;
 const { slug } = splitId(entry.id);
 const { Content, headings } = await render(entry);
+const t = useTranslations(lang);
+const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
+
+// Prev/next at the foot of the page walk the sidebar in its own order.
+const { prev, next } = pagerLinks(
+  sidebarSections(
+    (await getCollection("docs"))
+      .map((e) => ({ e, ...splitId(e.id) }))
+      .filter((p) => p.locale === lang && p.slug !== "index")
+      .map((p) => ({
+        slug: p.slug,
+        title: p.e.data.title,
+        group: p.e.data.group,
+        order: p.e.data.order,
+      })),
+  ),
+  slug,
+);
 ---
 
 <BaseLayout
@@ -25,8 +45,36 @@ const { Content, headings } = await render(entry);
   slug={slug}
   headings={headings}
 >
-  <h1>{entry.data.title}</h1>
-  <p class="page-lead">{entry.data.description}</p>
-  <CopyMarkdown />
+  <header class="page-header">
+    <h1>{entry.data.title}</h1>
+    <p class="page-lead">{entry.data.description}</p>
+    <CopyMarkdown />
+  </header>
   <Content />
+  {
+    (prev || next) && (
+      <nav class="pager" aria-label={t("pager.label")} data-pagefind-ignore>
+        {prev ? (
+          <a class="pager-link pager-link--prev" href={`${base}${lang}/${prev.slug}`} rel="prev">
+            <span class="pager-label">
+              <ArrowLeft aria-hidden="true" size={14} />
+              {t("pager.prev")}
+            </span>
+            <span class="pager-title">{prev.title}</span>
+          </a>
+        ) : (
+          <span />
+        )}
+        {next && (
+          <a class="pager-link pager-link--next" href={`${base}${lang}/${next.slug}`} rel="next">
+            <span class="pager-label">
+              {t("pager.next")}
+              <ArrowRight aria-hidden="true" size={14} />
+            </span>
+            <span class="pager-title">{next.title}</span>
+          </a>
+        )}
+      </nav>
+    )
+  }
 </BaseLayout>
