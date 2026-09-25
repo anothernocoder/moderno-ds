@@ -1,6 +1,6 @@
 {
   "name": "@moderno-ui/react",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Reference React 19 bindings for Moderno: Ark UI headless behaviour + @moderno-ui/core CVA (props → data-attributes), styled entirely by the shared components.css.",
   "repository": {
     "type": "git",
