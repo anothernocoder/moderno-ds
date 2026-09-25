@@ -248,7 +248,7 @@ importers:
         specifier: workspace:*
         version: link:../core
       '@moderno-ui/css':
-        specifier: workspace:*
+        specifier: workspace:>=0.3.0 <1.0.0
         version: link:../css
     devDependencies:
       '@moderno-ui/props-doc':
@@ -288,7 +288,7 @@ importers:
         specifier: workspace:*
         version: link:../core
       '@moderno-ui/css':
-        specifier: workspace:*
+        specifier: workspace:>=0.3.0 <1.0.0
         version: link:../css
     devDependencies:
       '@moderno-ui/props-doc':
@@ -325,7 +325,7 @@ importers:
         specifier: workspace:*
         version: link:../core
       '@moderno-ui/css':
-        specifier: workspace:*
+        specifier: workspace:>=0.3.0 <1.0.0
         version: link:../css
     devDependencies:
       '@moderno-ui/props-doc':
@@ -362,7 +362,7 @@ importers:
         specifier: workspace:*
         version: link:../core
       '@moderno-ui/css':
-        specifier: workspace:*
+        specifier: workspace:>=0.3.0 <1.0.0
         version: link:../css
     devDependencies:
       '@moderno-ui/props-doc':
