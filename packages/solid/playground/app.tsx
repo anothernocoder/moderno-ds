@@ -17,6 +17,7 @@ import { Skeleton } from "../src/skeleton.jsx";
 import { Spinner } from "../src/spinner.jsx";
 import { Field } from "../src/field.jsx";
 import { Card } from "../src/card.jsx";
+import { Avatar } from "../src/avatar.jsx";
 import { Checkbox } from "../src/checkbox.jsx";
 import { Dialog, Portal } from "../src/dialog.js";
 import { Select, createListCollection } from "../src/select.jsx";
@@ -114,6 +115,16 @@ export function App(props: { open?: boolean }) {
         <Skeleton shape="circle" />
         <Spinner />
         <Spinner size="lg" label="Saving changes" />
+      </section>
+
+      <section aria-label="avatars">
+        <Avatar.Root>
+          <Avatar.Fallback>AL</Avatar.Fallback>
+          <Avatar.Image src="/ada.png" alt="Ada Lovelace" />
+        </Avatar.Root>
+        <Avatar.Root size="sm" shape="square">
+          <Avatar.Fallback>MD</Avatar.Fallback>
+        </Avatar.Root>
       </section>
 
       <section aria-label="alerts">

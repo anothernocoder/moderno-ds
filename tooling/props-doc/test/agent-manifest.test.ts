@@ -26,6 +26,7 @@ describe("AGENT_COMPONENTS", () => {
       "Dialog",
       "Select",
       "PinInput",
+      "Avatar",
       "LineChart",
       "AreaChart",
       "BarChart",
@@ -189,6 +190,16 @@ describe("buildComponentsManifest", () => {
     expect(spinner.props.map((p) => p.name).sort()).toEqual(["label", "size"]);
     expect(spinner.variants).toEqual({ size: ["sm", "md", "lg"] });
     expect(spinner.parts.map((p) => p.name)).toEqual(["root", "circle", "label"]);
+  });
+
+  it("carries Avatar's recipe props, variants and Ark parts — what validate_usage checks against", () => {
+    const avatar = manifest.components.find((c) => c.name === "Avatar")!;
+    expect(avatar.scope).toBe("avatar");
+    expect(avatar.props.map((p) => p.name).sort()).toEqual(["shape", "size"]);
+    expect(avatar.variants).toEqual({ size: ["sm", "md", "lg"], shape: ["circle", "square"] });
+    expect(avatar.parts.map((p) => p.name)).toEqual(["root", "image", "fallback"]);
+    // Ark's own Root props (onStatusChange, ids) live under node_modules.
+    expect(avatar.propsComplete).toBe(false);
   });
 
   it("reads variants straight off the shared @moderno-ui/core recipes", () => {

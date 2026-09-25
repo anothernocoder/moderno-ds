@@ -112,3 +112,24 @@ describe("moderno/valid-props over the real Skeleton and Spinner manifest", () =
     ]);
   });
 });
+
+describe("moderno/valid-props over the real Avatar manifest", () => {
+  const manifests = manifestsFor("react");
+  const check = (code: string) =>
+    validProps.check({ code, framework: "react", manifests }).map((f) => f.message);
+
+  it("accepts the recipe props and Ark's own props on the root", { timeout: 30_000 }, () => {
+    expect(
+      check('<Avatar.Root size="sm" shape="square" onStatusChange={track}>AL</Avatar.Root>'),
+    ).toEqual([]);
+  });
+
+  it("rejects a value outside the recipe", () => {
+    expect(check('<Avatar.Root shape="rounded" />')).toEqual([
+      expect.stringContaining('Invalid value "rounded"'),
+    ]);
+    expect(check('<Avatar.Root size="xl" />')).toEqual([
+      expect.stringContaining('Invalid value "xl"'),
+    ]);
+  });
+});

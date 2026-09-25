@@ -61,6 +61,17 @@ export type {
   CheckboxHiddenInputProps,
 } from "./checkbox.js";
 
+export { Avatar } from "./avatar.js";
+export type {
+  AvatarSize,
+  AvatarShape,
+  ModernoAvatarRootProps,
+  AvatarRootProps,
+  AvatarImageProps,
+  AvatarFallbackProps,
+  AvatarStatusChangeDetails,
+} from "./avatar.js";
+
 export { Dialog, Portal } from "./dialog.js";
 export type {
   DialogRootProps,

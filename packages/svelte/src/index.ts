@@ -9,11 +9,13 @@
  */
 import type { Component } from "svelte";
 import {
+  Avatar as ArkAvatar,
   Checkbox as ArkCheckbox,
   Field as ArkField,
   PinInput as ArkPinInput,
   Select as ArkSelect,
 } from "@ark-ui/svelte";
+import AvatarRoot from "./AvatarRoot.svelte";
 import CheckboxRoot from "./CheckboxRoot.svelte";
 import FieldRoot from "./FieldRoot.svelte";
 import PinInputRoot from "./PinInputRoot.svelte";
@@ -183,6 +185,19 @@ export const PinInput: Omit<typeof ArkPinInput, "Root"> & { Root: typeof PinInpu
   Root: PinInputRoot,
 };
 
+/**
+ * Avatar — a picture of a person or a team, with initials when there is none.
+ * Ark shows `Fallback` while the image loads or when it fails, `Image` once it
+ * has loaded; only `Root` is wrapped (to inject the `size` × `shape` recipe),
+ * every other part is Ark's verbatim. Annotated so the emitted `.d.ts` doesn't
+ * inline an un-nameable `@zag-js` type (TS2742).
+ */
+export const Avatar: Omit<typeof ArkAvatar, "Root"> & { Root: typeof AvatarRoot } = {
+  ...ArkAvatar,
+  Root: AvatarRoot,
+};
+export type { AvatarSize, AvatarShape } from "@moderno-ui/core";
+
 export { createListCollection } from "@ark-ui/svelte";
 
 export type {
@@ -191,4 +206,5 @@ export type {
   SelectValueChangeDetails,
   PinInputValueChangeDetails,
   PinInputValueInvalidDetails,
+  AvatarStatusChangeDetails,
 } from "@ark-ui/svelte";

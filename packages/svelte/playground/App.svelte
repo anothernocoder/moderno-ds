@@ -12,6 +12,7 @@
   import { Skeleton, Spinner } from "../src/index.js";
   import { Card } from "../src/index.js";
   import { Field } from "../src/index.js";
+  import { Avatar } from "../src/index.js";
   import { Checkbox } from "../src/index.js";
   import { Dialog, Portal } from "../src/index.js";
   import { Select, createListCollection } from "../src/index.js";
@@ -84,6 +85,16 @@
     <Skeleton shape="circle" />
     <Spinner />
     <Spinner size="lg" label="Saving changes" />
+  </section>
+
+  <section aria-label="avatars">
+    <Avatar.Root>
+      <Avatar.Fallback>AL</Avatar.Fallback>
+      <Avatar.Image src="/ada.png" alt="Ada Lovelace" />
+    </Avatar.Root>
+    <Avatar.Root size="sm" shape="square">
+      <Avatar.Fallback>MD</Avatar.Fallback>
+    </Avatar.Root>
   </section>
 
   <section aria-label="alerts">

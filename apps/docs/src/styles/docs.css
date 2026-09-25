@@ -1322,11 +1322,12 @@ main.main--wide {
   max-width: 32rem;
 }
 /* Skeleton lines stand in for lines of text, so they sit as close as text
-   does; a row of spinners has no text baseline, so it centres instead. */
+   does; a row of spinners or avatars has no shared text baseline, so it
+   centres instead. */
 .demo-stack:has(> [data-scope="skeleton"]) {
   gap: 0.75rem;
 }
-.demo-row:has(> [data-scope="spinner"]) {
+.demo-row:has(> :is([data-scope="spinner"], [data-scope="avatar"])) {
   align-items: center;
 }
 /* A media object: a fixed item (an avatar) beside text that takes the rest of

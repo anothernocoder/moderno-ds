@@ -64,6 +64,17 @@ export type {
   DialogCloseTriggerProps,
 } from "./dialog.js";
 
+export { Avatar } from "./avatar.js";
+export type {
+  AvatarSize,
+  AvatarShape,
+  ModernoAvatarRootProps,
+  AvatarRootProps,
+  AvatarImageProps,
+  AvatarFallbackProps,
+  AvatarStatusChangeDetails,
+} from "./avatar.js";
+
 export { PinInput } from "./pin-input.js";
 export type {
   PinInputSize,

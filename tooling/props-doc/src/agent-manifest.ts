@@ -28,6 +28,7 @@
 import { createHash } from "node:crypto";
 import {
   alertRecipe,
+  avatarRecipe,
   badgeRecipe,
   buttonRecipe,
   cardRecipe,
@@ -257,6 +258,21 @@ export const AGENT_COMPONENTS: AgentComponentSpec[] = [
     propsEntry: findEntry("PinInput"),
     parts: [{ name: "root" }, { name: "label" }, { name: "control" }, { name: "input" }],
     variants: pinInputRecipe.variants,
+  },
+  {
+    name: "Avatar",
+    slug: "avatar",
+    scope: "avatar",
+    propsEntry: findEntry("Avatar"),
+    parts: [
+      { name: "root" },
+      { name: "image", description: "The picture; shown once it has loaded." },
+      {
+        name: "fallback",
+        description: "The initials; shown while the image loads, when it fails, or with no image.",
+      },
+    ],
+    variants: avatarRecipe.variants,
   },
   {
     name: "LineChart",

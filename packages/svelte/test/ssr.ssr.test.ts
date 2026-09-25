@@ -61,6 +61,16 @@ describe("SSR (Svelte, server-only island)", () => {
     expect(partAttrs(html, "spinner", "root", "data-size")).toEqual(["md", "lg"]);
     expect(partAttrs(html, "spinner", "circle", "aria-hidden")).toEqual(["true", "true"]);
     expect(html).toMatch(/data-part="label"[^>]*>Saving changes</);
+    // Avatar: Ark's image-loading machine. On the server the image has not
+    // loaded, so the initials show and the image is hidden; the recipe lands on
+    // each root.
+    expect(partAttrs(html, "avatar", "root", "data-size")).toEqual(["md", "sm"]);
+    expect(partAttrs(html, "avatar", "root", "data-shape")).toEqual(["circle", "square"]);
+    expect(partAttrs(html, "avatar", "fallback", "data-state")).toEqual(["visible", "visible"]);
+    expect(partAttrs(html, "avatar", "image", "data-state")).toEqual(["hidden"]);
+    expect(partTags(html, "avatar", "image")[0]).toMatch(/\shidden(?:=""|[\s>])/);
+    // Vue and Svelte put hydration comments between the tag and its text.
+    expect(html).toMatch(/data-part="fallback"[^>]*>(?:<!--[^>]*-->)*AL</);
     expect(html).toContain('data-scope="pin-input"');
     // Every code cell is on the server, and `count` makes the server's aria
     // labels agree with the client's — the PinInput-specific SSR hazard.

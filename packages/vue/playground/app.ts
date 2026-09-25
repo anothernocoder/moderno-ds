@@ -19,6 +19,7 @@ import { Skeleton } from "../src/skeleton.js";
 import { Spinner } from "../src/spinner.js";
 import { Card } from "../src/card.js";
 import { Field } from "../src/field.js";
+import { Avatar } from "../src/avatar.js";
 import { Checkbox } from "../src/checkbox.js";
 import { Dialog, Portal } from "../src/dialog.js";
 import { Select, createListCollection } from "../src/select.js";
@@ -113,6 +114,16 @@ export const App = defineComponent({
           h(Skeleton, { shape: "circle" }),
           h(Spinner),
           h(Spinner, { size: "lg", label: "Saving changes" }),
+        ]),
+
+        h("section", { "aria-label": "avatars" }, [
+          h(Avatar.Root, {}, () => [
+            h(Avatar.Fallback, {}, () => "AL"),
+            h(Avatar.Image, { src: "/ada.png", alt: "Ada Lovelace" }),
+          ]),
+          h(Avatar.Root, { size: "sm", shape: "square" }, () => [
+            h(Avatar.Fallback, {}, () => "MD"),
+          ]),
         ]),
 
         h("section", { "aria-label": "alerts" }, [

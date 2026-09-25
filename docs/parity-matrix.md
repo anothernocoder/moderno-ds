@@ -199,6 +199,17 @@ shared stylesheet keys on.
 | mask → `type="password"`               |  ✅   | ✅  |   ✅   |  ✅   |
 | invalid → `data-invalid` + aria        |  ✅   | ✅  |   ✅   |  ✅   |
 
+### Avatar (`avatarRecipe`: `data-size` × `data-shape`; Ark image-loading machine)
+
+| State                                      | React | Vue | Svelte | Solid |
+| ------------------------------------------ | :---: | :-: | :----: | :---: |
+| size/shape → root `data-*` (+ md, circle)  |  ✅   | ✅  |   ✅   |  ✅   |
+| every Ark part exposed                     |  ✅   | ✅  |   ✅   |  ✅   |
+| loading → fallback visible, image `hidden` |  ✅   | ✅  |   ✅   |  ✅   |
+| image loads → image visible, `loaded`      |  ✅   | ✅  |   ✅   |  ✅   |
+| image fails → fallback stays, `error`      |  ✅   | ✅  |   ✅   |  ✅   |
+| native props forwarded, no baked style     |  ✅   | ✅  |   ✅   |  ✅   |
+
 ## SSR (F3.3 / F3.5)
 
 | Guarantee                                   | React | Vue | Svelte | Solid |
@@ -210,6 +221,7 @@ shared stylesheet keys on.
 | static server-only island (zero `<script>`) |   —   |  —  |   ✅   |   —   |
 | `defaultOpen` survives SSR                  |  ✅   | ✅  |   ✅   |  ✅   |
 | PinInput `count` → correct server aria      |  ✅   | ✅  |   ✅   |  ✅   |
+| Avatar fallback shown / image hidden on SSR |  ✅   | ✅  |   ✅   |  ✅   |
 
 ¹ Vue hydration is verified on the portal-free primitives (Button, Card, Field
 and Checkbox), the deterministic `useId` hazard; Ark's portaled popovers

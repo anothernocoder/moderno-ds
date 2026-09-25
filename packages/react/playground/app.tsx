@@ -19,6 +19,8 @@
  *                the bare `data-pulse` attribute serialise identically both ways.
  *   - Skeleton / Spinner — CSS-only loading states; every shape, and the
  *                spinner's status role, ring and label, match both ways.
+ *   - Avatar   — Ark's image-loading machine: ids from `useId`, and the
+ *                fallback shown / image hidden while loading must match both ways.
  *   - Checkbox — a label bound to a visually hidden native input by `useId`,
  *                plus indicators the machine hides via the `hidden` attribute.
  *   - Dialog   — a Portal + focus-trap machine that must emit a stable,
@@ -44,6 +46,7 @@ import { Skeleton } from "../src/skeleton.js";
 import { Spinner } from "../src/spinner.js";
 import { Card } from "../src/card.js";
 import { Field } from "../src/field.js";
+import { Avatar } from "../src/avatar.js";
 import { Checkbox } from "../src/checkbox.js";
 import { Dialog, Portal } from "../src/dialog.js";
 import { Select, createListCollection } from "../src/select.js";
@@ -146,6 +149,16 @@ export function App({ open = false }: AppProps) {
         <Skeleton shape="circle" />
         <Spinner />
         <Spinner size="lg" label="Saving changes" />
+      </section>
+
+      <section aria-label="avatars">
+        <Avatar.Root>
+          <Avatar.Fallback>AL</Avatar.Fallback>
+          <Avatar.Image src="/ada.png" alt="Ada Lovelace" />
+        </Avatar.Root>
+        <Avatar.Root size="sm" shape="square">
+          <Avatar.Fallback>MD</Avatar.Fallback>
+        </Avatar.Root>
       </section>
 
       <section aria-label="alerts">
