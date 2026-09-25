@@ -179,3 +179,65 @@ Install both and switch brand by toggling `data-brand`, composed with `.dark`:
 No component is touched — only the contract variables are re-mapped. A runnable
 demo of the switch lives at [`demo/multi-brand.html`](../demo/multi-brand.html)
 (open it directly in a browser).
+
+### Adding a theme
+
+1. **Get a token file.** Build the theme in the docs' Theme Builder
+   (`/en/theme-builder`) and download its `tokens.dtcg.json`, or copy an
+   existing theme's `tokens.dtcg.json` and change the values.
+2. **Save it as `registry/themes/theme-<name>/tokens.dtcg.json`.** Give it a
+   `$description`, and set the two fields under
+   `$extensions["style.moderno.theme"]`:
+   - `name`: the directory name, `theme-<name>`.
+   - `brand`: where the theme applies. `null` compiles to `:root` and `.dark`,
+     so the theme replaces the default one; a project installs only one such
+     theme. A brand id such as `"ocean"` compiles to `[data-brand="ocean"]` and
+     its `.dark` pairs, so the theme sits beside the default and paints only
+     under an element with `data-brand="ocean"`. Use `<name>` as the id: the
+     docs site switches to the theme with `data-brand="<name>"` whatever the
+     field says. The Theme Builder copies `brand` from the theme you started
+     from, so check it after exporting.
+3. **Run `pnpm theme:build`.** It writes `theme.css` beside the tokens, prints
+   WCAG AA contrast warnings, and fails on an invalid file. `themes.test.ts`
+   then fails if `theme.css` goes stale, or if the theme sets an extended slot
+   (spacing, motion, the type scale…) to the value it would inherit anyway.
+   Drop those slots.
+4. **Add the item to [`registry.json`](registry.json)**, next to the other
+   themes. Nothing checks this step: without it the docs still show the theme,
+   but `moderno add` can't find it.
+
+   ```json
+   {
+     "name": "theme-ocean",
+     "type": "registry:theme",
+     "version": "0.1.0",
+     "title": "Theme Ocean",
+     "description": "One sentence on the brand and the selector it paints.",
+     "dependencies": [],
+     "registryDependencies": [],
+     "files": [
+       {
+         "path": "themes/theme-ocean/theme.css",
+         "type": "registry:theme",
+         "target": "src/styles/theme-ocean.css"
+       }
+     ]
+   }
+   ```
+
+After that, nothing else needs registering:
+
+- The docs header's theme switcher and the Theme Builder's "Start from" row read
+  `registry/themes/*/tokens.dtcg.json` (`apps/docs/src/lib/siteThemes.ts`) and
+  list the new theme as `<Name>`, after the default in alphabetical order.
+- The docs build copies `registry/` to `/r/`, so consumers install it with
+  `npx @moderno-ui/cli add theme-<name>`. That writes
+  `src/styles/theme-<name>.css` and appends its `@import` to
+  `src/styles/moderno.css`.
+
+**Fonts.** A theme names its typefaces in `font-sans` and `font-serif`, but the
+registry ships no font files. The docs site loads them itself: add the
+`@fontsource/<family>` package to `apps/docs/package.json` and import it in
+`apps/docs/src/layouts/BaseLayout.astro`, next to the Hedvig Letters imports.
+Without that, the docs fall back to the next family in the stack. Consumers load
+the font files themselves, for example from the same `@fontsource` package.
