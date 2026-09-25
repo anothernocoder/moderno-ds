@@ -141,6 +141,40 @@ Consulta [Contrato de tokens](/es/token-contract#tailwind-v4) para ver cada slot
 - Volver a ejecutar `init` actualiza el stanza de `AGENTS.md` en el sitio y conserva el resto del archivo.
 - La CLI y el servidor MCP necesitan Node 22 o superior.
 
+## Cambiar la fuente
+
+Un tema nombra sus tipografías en `--font-sans`, `--font-serif` y `--font-mono`, pero no incluye los archivos de fuente. Cárgala tú: `theme-moderno` nombra Hedvig Letters y usa la fuente del sistema hasta que lo hagas.
+
+1. Instala la fuente, o cárgala desde Google Fonts o tu propio servidor.
+
+   ```sh
+   npm install @fontsource/inter
+   ```
+
+2. Sobrescribe el slot en una hoja de estilos propia. No edites el archivo del tema copiado: `moderno add` lo sobrescribe y `moderno update` deja de actualizarlo en cuanto lo editas.
+
+   ```css
+   /* src/styles/fonts.css */
+   :root,
+   .dark {
+     --font-sans: "Inter", system-ui, sans-serif;
+   }
+   ```
+
+3. Importa la fuente y la sobrescritura, esta después de `moderno.css` (o de `@moderno-ui/css` si no usas la CLI).
+
+   ```ts
+   import "@fontsource/inter";
+   import "@/styles/moderno.css";
+   import "@/styles/fonts.css";
+   ```
+
+Todos los componentes y la utilidad `font-sans` de Tailwind leen el slot, así que no cambia nada más.
+
+- Mantén `.dark` en el selector: el tema vuelve a definir las fuentes ahí.
+- `@fontsource/inter` solo carga el peso 400. Importa cada peso que uses, como `@fontsource/inter/600.css`.
+- Un tema de marca necesita su propio scope, p. ej. `[data-brand="contrast"], .dark [data-brand="contrast"], [data-brand="contrast"].dark` para `theme-contrast`.
+
 ## Siguientes pasos
 
 - [Contrato de tokens](/es/token-contract): las variables CSS que define un tema.
