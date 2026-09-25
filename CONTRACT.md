@@ -89,9 +89,16 @@ Beyond color, the contract also standardizes:
   _container_, never the viewport (ADR-0005). These three are the whole scale a
   block may use: in Tailwind they replace the container namespace rather than
   extend it (see below).
+- **Type scale** — a size and a line height per step: `--text-<step>` and
+  `--leading-<step>`. The `ui-*` steps are the control ramp — `ui-xs` 12/16,
+  `ui-sm` 13/18, `ui-md` 14/20, `ui-lg` 15/22 — and a component's
+  `sm`/`md`/`lg` sizes read `ui-sm`/`ui-md`/`ui-lg`. Content steps: `body`
+  16/24, `body-lg` 18/28, `heading-sm` 20/28, `heading` 24/32, `heading-lg`
+  36/40. The names stay clear of Tailwind's own `text-*` keys, so the tokens
+  never resize a stock `text-sm`.
 
-No hardcoded spacing, durations, radii, shadows, or widths in components —
-reference the slot.
+No hardcoded spacing, durations, radii, shadows, widths, or font sizes in
+components — reference the slot.
 
 Extended slots are **optional in a theme**: `@moderno-ui/tokens` ships a neutral
 default for each, and a theme overrides only what its brand actually changes.

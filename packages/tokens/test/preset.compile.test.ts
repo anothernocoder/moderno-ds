@@ -52,6 +52,10 @@ beforeAll(async () => {
     "@sm:flex",
     "@md:grid",
     "@lg:block",
+    "text-ui-sm",
+    "text-heading",
+    "leading-body",
+    "text-sm",
     // Keys the contract does not define: Tailwind ships them, the reset drops
     // them. Asked for here so their absence from the output is a real assertion.
     "max-w-xl",
@@ -91,6 +95,21 @@ describe("@moderno-ui/tokens preset — generated utilities resolve to contract 
         new RegExp(`\\.shadow-${step}\\s*\\{[^}]*var\\(--shadow-${step}\\)`, "s"),
       );
     }
+  });
+
+  it("emits type utilities backed by the scale slots, size and line height together", () => {
+    expect(utilities).toMatch(
+      /\.text-ui-sm\s*\{[^}]*font-size:\s*var\(--text-ui-sm\)[^}]*var\(--leading-ui-sm\)/s,
+    );
+    expect(utilities).toMatch(
+      /\.text-heading\s*\{[^}]*font-size:\s*var\(--text-heading\)[^}]*var\(--leading-heading\)/s,
+    );
+    expect(utilities).toMatch(/\.leading-body\s*\{[^}]*var\(--leading-body\)/s);
+  });
+
+  it("leaves Tailwind's stock text sizes alone", () => {
+    expect(utilities).toMatch(/\.text-sm\s*\{[^}]*font-size:\s*var\(--text-sm\)/s);
+    expect(utilities).not.toMatch(/\.text-sm\s*\{[^}]*--text-ui/s);
   });
 
   /**

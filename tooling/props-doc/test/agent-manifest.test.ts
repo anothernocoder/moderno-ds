@@ -244,6 +244,12 @@ describe("buildContractManifest", () => {
     ]);
   });
 
+  it("carries the type scale: a size and a line height per step", () => {
+    expect(manifest.slots.type).toContain("--text-ui-md");
+    expect(manifest.slots.type).toContain("--leading-ui-md");
+    expect(manifest.slots.type).toHaveLength(18);
+  });
+
   it("lists the extended modal scrim among the colour slots an agent may reference", () => {
     expect(manifest.slots.color).toContain("--overlay");
   });

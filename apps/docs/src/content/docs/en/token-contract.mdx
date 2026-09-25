@@ -74,6 +74,21 @@ Optional in a theme: leave a slot out to inherit the default. The Theme Builder 
 | `--shadow-sm` / `--shadow-md` / `--shadow-lg`            | Three neutral steps         | Elevation for popovers, menus, drawers. Own `.dark` values. |
 | `--overlay`                                              | Black, 32% / 60% in `.dark` | Modal scrim behind a dialog. Painted over a backdrop blur.  |
 | `--container-sm` / `--container-md` / `--container-lg`   | `24rem` / `36rem` / `48rem` | Container breakpoints that blocks and screens respond to.   |
+| `--text-<step>` / `--leading-<step>`                     | See the type scale below    | Font size and line height per step of the type scale.       |
+
+### Type scale
+
+| Step         | Size / line height | Role                                           |
+| ------------ | ------------------ | ---------------------------------------------- |
+| `ui-xs`      | 12px / 16px        | Smallest text: chart ticks, small helper text. |
+| `ui-sm`      | 13px / 18px        | `sm` controls, helper and error text.          |
+| `ui-md`      | 14px / 20px        | Default UI text, `md` controls, labels.        |
+| `ui-lg`      | 15px / 22px        | `lg` controls.                                 |
+| `body`       | 16px / 24px        | Running text, card titles.                     |
+| `body-lg`    | 18px / 28px        | Dialog titles, lead paragraphs.                |
+| `heading-sm` | 20px / 28px        | Section titles in blocks.                      |
+| `heading`    | 24px / 32px        | Page section headings.                         |
+| `heading-lg` | 36px / 40px        | Page titles.                                   |
 
 ## Tailwind v4
 
@@ -93,10 +108,12 @@ Import the preset to register the slots as Tailwind theme keys.
 | `--font-sans` / `--font-serif` / `--font-mono` | `font-sans`, `font-serif`, `font-mono`                                      |
 | `--shadow-*`                                   | `shadow-sm`, `shadow-md`, `shadow-lg`                                       |
 | `--container-*`                                | `max-w-sm`, `max-w-md`, `max-w-lg`, `w-*`, `@sm:` / `@md:` / `@lg:`         |
+| `--text-*` / `--leading-*`                     | `text-ui-sm`, `text-body`, … (size and line height), `leading-body`, …      |
 | `--spacing-*`, `--motion-*`                    | Not mapped. Use `var(--spacing-4)` and friends.                             |
 
 ### Notes
 
+- The type steps sit beside Tailwind's own `text-xs` … `text-9xl`, not over them: `text-sm` keeps its size.
 - Colour, radius, font and shadow utilities point at `var(--slot)` (`@theme inline`), so a runtime override re-themes them without a rebuild.
 - `@sm:` / `@md:` / `@lg:` fire at fixed 24rem / 36rem / 48rem, because a container query can't read `var()`.
 - `max-w-*` and `w-*` still resolve to `var(--container-*)` and follow a theme override.

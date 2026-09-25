@@ -74,6 +74,21 @@ Opcionales en un tema: omite un slot para heredar el valor por defecto. El Edito
 | `--shadow-sm` / `--shadow-md` / `--shadow-lg`            | Tres pasos neutros          | Elevación de popovers, menús y drawers. Valores propios en `.dark`. |
 | `--overlay`                                              | Negro, 32% / 60% en `.dark` | Capa modal detrás de un diálogo. Se pinta sobre un desenfoque.      |
 | `--container-sm` / `--container-md` / `--container-lg`   | `24rem` / `36rem` / `48rem` | Breakpoints de contenedor a los que responden blocks y screens.     |
+| `--text-<paso>` / `--leading-<paso>`                     | Ver la escala tipográfica   | Tamaño de fuente e interlineado de cada paso de la escala.          |
+
+### Escala tipográfica
+
+| Paso         | Tamaño / interlineado | Rol                                                 |
+| ------------ | --------------------- | --------------------------------------------------- |
+| `ui-xs`      | 12px / 16px           | El texto más pequeño: ticks de gráficos, ayudas.    |
+| `ui-sm`      | 13px / 18px           | Controles `sm`, texto de ayuda y de error.          |
+| `ui-md`      | 14px / 20px           | Texto de UI por defecto, controles `md`, etiquetas. |
+| `ui-lg`      | 15px / 22px           | Controles `lg`.                                     |
+| `body`       | 16px / 24px           | Texto corrido, títulos de card.                     |
+| `body-lg`    | 18px / 28px           | Títulos de diálogo, párrafos de entrada.            |
+| `heading-sm` | 20px / 28px           | Títulos de sección en blocks.                       |
+| `heading`    | 24px / 32px           | Títulos de sección de página.                       |
+| `heading-lg` | 36px / 40px           | Títulos de página.                                  |
 
 ## Tailwind v4
 
@@ -93,10 +108,12 @@ Importa el preset para registrar los slots como claves de tema de Tailwind.
 | `--font-sans` / `--font-serif` / `--font-mono` | `font-sans`, `font-serif`, `font-mono`                                      |
 | `--shadow-*`                                   | `shadow-sm`, `shadow-md`, `shadow-lg`                                       |
 | `--container-*`                                | `max-w-sm`, `max-w-md`, `max-w-lg`, `w-*`, `@sm:` / `@md:` / `@lg:`         |
+| `--text-*` / `--leading-*`                     | `text-ui-sm`, `text-body`, … (tamaño e interlineado), `leading-body`, …     |
 | `--spacing-*`, `--motion-*`                    | Sin mapear. Usa `var(--spacing-4)` y similares.                             |
 
 ### Notas
 
+- Los pasos tipográficos conviven con los `text-xs` … `text-9xl` de Tailwind, sin pisarlos: `text-sm` conserva su tamaño.
 - Las utilidades de color, radio, tipografía y sombra apuntan a `var(--slot)` (`@theme inline`), así que un override en tiempo de ejecución las re-tematiza sin recompilar.
 - `@sm:` / `@md:` / `@lg:` se disparan en 24rem / 36rem / 48rem fijos, porque una container query no puede leer `var()`.
 - `max-w-*` y `w-*` siguen resolviendo a `var(--container-*)` y respetan el override del tema.

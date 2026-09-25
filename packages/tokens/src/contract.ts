@@ -36,6 +36,24 @@ const color = (name: string, group: ContractGroup, contrastAgainst?: string): Co
     ? { name, type: "color", group, contrastAgainst }
     : { name, type: "color", group };
 
+/**
+ * Steps of the type scale, smallest first. Each step is two slots:
+ * `--text-<step>` (font size) and `--leading-<step>` (line height). The names
+ * stay clear of Tailwind's own `--text-*` keys (`xs`, `sm`, `base`, `lg`…), so
+ * the unlayered `:root` in tokens.css never resizes a stock `text-sm`.
+ */
+export const TYPE_STEPS = [
+  "ui-xs",
+  "ui-sm",
+  "ui-md",
+  "ui-lg",
+  "body",
+  "body-lg",
+  "heading-sm",
+  "heading",
+  "heading-lg",
+] as const;
+
 /** The full contract, in editor display order. */
 export const CONTRACT: readonly ContractSlot[] = [
   // — Surfaces —
@@ -111,6 +129,12 @@ export const CONTRACT: readonly ContractSlot[] = [
   { name: "container-sm", type: "dimension", group: "extended" },
   { name: "container-md", type: "dimension", group: "extended" },
   { name: "container-lg", type: "dimension", group: "extended" },
+  // Type scale: a font size and its line height per step. The ui-* ramp is what
+  // controls size with (sm/md/lg → 13/14/15); body and heading steps set content.
+  ...TYPE_STEPS.flatMap((step): ContractSlot[] => [
+    { name: `text-${step}`, type: "dimension", group: "extended" },
+    { name: `leading-${step}`, type: "dimension", group: "extended" },
+  ]),
 ];
 
 /**
