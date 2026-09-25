@@ -377,11 +377,15 @@
     border-color: var(--ring);
   }
   /* The shared focus ring keys off [data-part="root"]; Field's control is a
-     separate part, so it gets its own ring here. */
+     separate part, so it gets its own ring here. The ring is drawn INSIDE the
+     box (a -2px offset covers the 1px border and one more px), so the control
+     shows one solid stroke. An offset ring would leave the resting border
+     visible inside it — a double border. Select's trigger and Pin Input's cells
+     use the same inset ring. */
   [data-scope="field"][data-part="input"]:focus-visible,
   [data-scope="field"][data-part="textarea"]:focus-visible {
     outline: 2px solid var(--ring);
-    outline-offset: 2px;
+    outline-offset: -2px;
   }
   [data-scope="field"][data-part="input"][data-invalid],
   [data-scope="field"][data-part="textarea"][data-invalid] {
@@ -628,7 +632,7 @@
   }
   [data-scope="select"][data-part="trigger"]:focus-visible {
     outline: 2px solid var(--ring);
-    outline-offset: 2px;
+    outline-offset: -2px;
   }
   /* Density driven by the recipe's data-size on the root part. */
   [data-scope="select"][data-size="sm"] [data-part="trigger"] {
@@ -815,7 +819,7 @@
      part, so they get their own ring here (same as Field's control). */
   [data-scope="pin-input"][data-part="input"]:focus-visible {
     outline: 2px solid var(--ring);
-    outline-offset: 2px;
+    outline-offset: -2px;
   }
   /* Density driven by the recipe's data-size on the root part. `lg` exceeds the
      top spacing slot, so it sums two slots rather than inventing a token. */
