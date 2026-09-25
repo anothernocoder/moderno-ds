@@ -91,6 +91,10 @@ export const ui = {
     "theme.group.charts": "Charts",
     "theme.group.other": "Other",
     "theme.group.extended": "Extended (optional)",
+    "theme.customize": "Customize",
+    "theme.closePanel": "Close panel",
+    "theme.contrast": "Contrast",
+    "theme.preview": "Preview",
   },
   es: {
     "nav.docs": "Documentación",
@@ -158,6 +162,10 @@ export const ui = {
     "theme.group.charts": "Gráficas",
     "theme.group.other": "Otros",
     "theme.group.extended": "Extendidos (opcionales)",
+    "theme.customize": "Personalizar",
+    "theme.closePanel": "Cerrar panel",
+    "theme.contrast": "Contraste",
+    "theme.preview": "Vista previa",
   },
 } as const;
 
