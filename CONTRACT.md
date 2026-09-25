@@ -5,10 +5,11 @@ component references, the rules for theming them, the `data-scope`/`data-part`
 styling convention, and the implementation guardrails.
 
 This is **not a brand guide**. Values shipped in `@moderno-ui/tokens` are neutral
-(OKLCH grays + a system font stack). A brand is a _theme_ layered on top — the
-Moderno **default theme** is authored in [`DESIGN.md`](DESIGN.md) (the source of
-truth for its tokens and rationale) and shipped as the `theme-moderno` registry
-item in Phase 5.
+(OKLCH grays + a system font stack). A brand is a _theme_ layered on top: a
+registry item authored in `registry/themes/<name>/tokens.dtcg.json`, from which
+`pnpm theme:build` generates its `theme.css` and its `DESIGN.md` (the brand's
+values, these rules applied, and its hand-written brand notes). The Moderno
+default brand is one such theme, `theme-moderno`.
 
 ## Golden rule
 

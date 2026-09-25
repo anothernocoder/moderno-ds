@@ -125,20 +125,22 @@ See [Token contract](/en/token-contract#tailwind-v4) for every mapped slot.
 
 ### Commands
 
-| Command                    | What it does                                                                             |
-| -------------------------- | ---------------------------------------------------------------------------------------- |
-| `moderno init`             | Writes `components.json`, `src/styles/moderno.css` and the `AGENTS.md` stanza.           |
-| `moderno init --claude`    | Same, plus a `CLAUDE.md` twin of the stanza.                                             |
-| `moderno add <item...>`    | Copies registry items and their dependencies. A theme is `@import`ed into `moderno.css`. |
-| `moderno update [item...]` | Updates installed items. Files you edited locally are kept.                              |
-| `moderno diff <item>`      | Prints the diff between your copy and the registry version.                              |
-| `moderno list`             | Lists installed items with their installed and latest versions.                          |
+| Command                    | What it does                                                                                          |
+| -------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `moderno init`             | Writes `components.json`, `src/styles/moderno.css` and the `AGENTS.md` stanza.                        |
+| `moderno init --claude`    | Same, plus a `CLAUDE.md` twin of the stanza.                                                          |
+| `moderno add <item...>`    | Copies registry items and their dependencies. A theme's stylesheet is `@import`ed into `moderno.css`. |
+| `moderno update [item...]` | Updates installed items. Files you edited locally are kept.                                           |
+| `moderno diff <item>`      | Prints the diff between your copy and the registry version.                                           |
+| `moderno list`             | Lists installed items with their installed and latest versions.                                       |
 
 ### Notes
 
 - Every command takes `--registry <url|path>`.
 - Registry lookup order: `--registry`, then `components.json`, then `MODERNO_REGISTRY_URL`, then `https://moderno.style/r/registry.json`.
 - Re-running `init` updates the `AGENTS.md` stanza in place and keeps the rest of the file.
+- A theme also installs its `DESIGN.md`, the brand's rules for people and agents: at your project root for a theme that replaces the default, such as `theme-moderno`, or at `design/<theme>/DESIGN.md` for a brand theme, such as `theme-contrast`.
+- `add` never overwrites a file it did not write. If you already have your own `DESIGN.md`, it is kept and reported, and `update` keeps it too; `moderno diff <theme>` shows the theme's version.
 - The CLI and the MCP server need Node 22 or later.
 
 ## Change the font
@@ -151,7 +153,7 @@ A theme names its faces in `--font-sans`, `--font-serif` and `--font-mono`, but 
    npm install @fontsource/inter
    ```
 
-2. Override the slot in a stylesheet of your own. Don't edit the copied theme file: `moderno add` overwrites it, and `moderno update` stops updating it once edited.
+2. Override the slot in a stylesheet of your own. Don't edit the copied theme file: re-running `moderno add` overwrites it, and `moderno update` stops updating it once edited.
 
    ```css
    /* src/styles/fonts.css */

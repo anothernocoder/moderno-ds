@@ -4,10 +4,14 @@ status: accepted
 
 # Token contract (CONTRACT.md), neutral defaults, and the default theme (DESIGN.md)
 
-> Amended by [ADR-0007](0007-default-theme-single-source-and-type-scale.md):
-> `registry/themes/theme-moderno/tokens.dtcg.json` is now the one hand-edited
-> source of `theme-moderno`'s values; `theme.css` and `DESIGN.md`'s front matter
-> derive from it. The root `tokens.json` is gone.
+> Amended by [ADR-0007](0007-default-theme-single-source-and-type-scale.md),
+> which reverses where this ADR put the default theme. This ADR made the root
+> `DESIGN.md` plus the root `tokens.json` the source of `theme-moderno`; both
+> are gone. Each theme's `registry/themes/<name>/tokens.dtcg.json` is now its
+> one hand-edited source, and `pnpm theme:build` generates that theme's
+> `theme.css` and its own `DESIGN.md` beside it (only the brand notes are
+> hand-written). The registry ships each theme's `DESIGN.md`. `CONTRACT.md`
+> stays the root document, as decided here.
 
 Phase 0 establishes the styling single-source-of-truth. This ADR records where
 the technical contract, the neutral package defaults, and the brand each live,

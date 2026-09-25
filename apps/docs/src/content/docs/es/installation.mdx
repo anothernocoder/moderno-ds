@@ -125,20 +125,22 @@ Consulta [Contrato de tokens](/es/token-contract#tailwind-v4) para ver cada slot
 
 ### Comandos
 
-| Comando                    | Qué hace                                                                             |
-| -------------------------- | ------------------------------------------------------------------------------------ |
-| `moderno init`             | Escribe `components.json`, `src/styles/moderno.css` y el stanza de `AGENTS.md`.      |
-| `moderno init --claude`    | Lo mismo, más un `CLAUDE.md` gemelo del stanza.                                      |
-| `moderno add <item...>`    | Copia items del registro y sus dependencias. Un tema se `@import`a en `moderno.css`. |
-| `moderno update [item...]` | Actualiza los items instalados. Los archivos que editaste localmente se conservan.   |
-| `moderno diff <item>`      | Muestra el diff entre tu copia y la versión del registro.                            |
-| `moderno list`             | Lista los items instalados con su versión instalada y la más reciente.               |
+| Comando                    | Qué hace                                                                                                   |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `moderno init`             | Escribe `components.json`, `src/styles/moderno.css` y el stanza de `AGENTS.md`.                            |
+| `moderno init --claude`    | Lo mismo, más un `CLAUDE.md` gemelo del stanza.                                                            |
+| `moderno add <item...>`    | Copia items del registro y sus dependencias. La hoja de estilos de un tema se `@import`a en `moderno.css`. |
+| `moderno update [item...]` | Actualiza los items instalados. Los archivos que editaste localmente se conservan.                         |
+| `moderno diff <item>`      | Muestra el diff entre tu copia y la versión del registro.                                                  |
+| `moderno list`             | Lista los items instalados con su versión instalada y la más reciente.                                     |
 
 ### Notas
 
 - Todos los comandos aceptan `--registry <url|path>`.
 - Orden de búsqueda del registro: `--registry`, luego `components.json`, luego `MODERNO_REGISTRY_URL`, luego `https://moderno.style/r/registry.json`.
 - Volver a ejecutar `init` actualiza el stanza de `AGENTS.md` en el sitio y conserva el resto del archivo.
+- Un tema instala también su `DESIGN.md`, las reglas de la marca para personas y agentes: en la raíz del proyecto si el tema reemplaza al de por defecto, como `theme-moderno`, o en `design/<theme>/DESIGN.md` si es un tema de marca, como `theme-contrast`.
+- `add` nunca sobrescribe un archivo que no escribió él. Si ya tienes tu propio `DESIGN.md`, se conserva y se avisa, y `update` también lo conserva; `moderno diff <theme>` muestra la versión del tema.
 - La CLI y el servidor MCP necesitan Node 22 o superior.
 
 ## Cambiar la fuente
@@ -151,7 +153,7 @@ Un tema nombra sus tipografías en `--font-sans`, `--font-serif` y `--font-mono`
    npm install @fontsource/inter
    ```
 
-2. Sobrescribe el slot en una hoja de estilos propia. No edites el archivo del tema copiado: `moderno add` lo sobrescribe y `moderno update` deja de actualizarlo en cuanto lo editas.
+2. Sobrescribe el slot en una hoja de estilos propia. No edites el archivo del tema copiado: volver a ejecutar `moderno add` lo sobrescribe y `moderno update` deja de actualizarlo en cuanto lo editas.
 
    ```css
    /* src/styles/fonts.css */
