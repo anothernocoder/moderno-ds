@@ -27,7 +27,7 @@ reaches a consumer's project.
 `;
 
 export interface RunCliOptions {
-  /** Directory to discover node_modules/@moderno from. Defaults to process.cwd(). */
+  /** Directory to discover node_modules/@moderno-ui from. Defaults to process.cwd(). */
   cwd?: string;
   stdout?: (line: string) => void;
   stderr?: (line: string) => void;

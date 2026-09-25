@@ -33,7 +33,7 @@ function fail(error: unknown): CallToolResult {
 }
 
 export interface CreateServerOptions {
-  /** Directory to discover `node_modules/@moderno` from. Defaults to `process.cwd()`. */
+  /** Directory to discover `node_modules/@moderno-ui` from. Defaults to `process.cwd()`. */
   cwd?: string;
 }
 

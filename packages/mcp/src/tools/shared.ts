@@ -20,7 +20,7 @@ export function frameworkNotFoundError(
       ? `Installed frameworks: ${installed.join(", ")}.`
       : manifests.scopeDir
         ? `No @moderno-ui/* framework package found under ${manifests.scopeDir}.`
-        : "No node_modules/@moderno directory found from this working directory — is a @moderno-ui/* package installed?";
+        : "No node_modules/@moderno-ui directory found from this working directory — is a @moderno-ui/* package installed?";
   return new ModernoMcpError(`No manifest for framework "${framework}". ${hint}`);
 }
 
