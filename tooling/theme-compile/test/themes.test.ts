@@ -93,6 +93,44 @@ describe("registry themes compile and stay in sync", () => {
     expect(failing).toEqual([]);
   });
 
+  /**
+   * `muted-foreground` is the one foreground the rules let onto several
+   * surfaces (DESIGN.md: subdued text on `background`, `card` or `muted`), but
+   * the contract pairs it with `muted` alone, so theme-compile never checks the
+   * other two. Hold every theme, and the defaults it falls back to, to AA on all
+   * three, resolved the way the cascade resolves them.
+   */
+  const MUTED_SURFACES = ["background", "card", "muted"] as const;
+
+  function mutedForegroundFailures(resolve: (scope: "light" | "dark", slot: string) => string) {
+    const failing: string[] = [];
+    for (const scope of ["light", "dark"] as const) {
+      for (const bg of MUTED_SURFACES) {
+        const ratio = contrastRatio(resolve(scope, "muted-foreground"), resolve(scope, bg));
+        if (!(ratio >= 4.5)) {
+          failing.push(`${scope}: --muted-foreground on --${bg} is ${ratio.toFixed(2)}:1`);
+        }
+      }
+    }
+    return failing;
+  }
+
+  it("the neutral defaults clear WCAG AA for muted-foreground on background, card and muted", () => {
+    expect(mutedForegroundFailures((scope, slot) => defaults[scope].get(slot)!)).toEqual([]);
+  });
+
+  it.each(themeNames)(
+    "%s: clears WCAG AA for muted-foreground on background, card and muted",
+    (name) => {
+      const doc = JSON.parse(readFileSync(`${themesRoot}/${name}/tokens.dtcg.json`, "utf8"));
+      const resolve = (scope: "light" | "dark", slot: string): string =>
+        doc[scope]?.[slot]?.$value ??
+        (scope === "dark" ? doc.light?.[slot]?.$value : undefined) ??
+        defaults[scope].get(slot)!;
+      expect(mutedForegroundFailures(resolve)).toEqual([]);
+    },
+  );
+
   it.each(themeNames)("%s: is listed in registry.json with its theme.css and DESIGN.md", (name) => {
     const manifest = JSON.parse(readFileSync(`${repoRoot}registry/registry.json`, "utf8"));
     const item = manifest.items.find((i: { name: string }) => i.name === name);

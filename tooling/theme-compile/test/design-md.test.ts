@@ -62,7 +62,15 @@ describe("renderDesignMd — front matter", () => {
     expect(frontMatter).toContain('name: "Ocean Breeze"');
     // quoted as Prettier quotes it, so a formatted file stays byte-identical
     expect(frontMatter).toContain(`description: 'A "test" brand.'`);
-    expect(frontMatter).toContain("registry/themes/theme-ocean-breeze/tokens.dtcg.json");
+  });
+
+  // The same file ships from the registry and from the Theme Builder, and lands
+  // in a consumer project that has no registry/ folder: it names the theme's
+  // tokens, never a path that only exists in the Moderno repo.
+  it("points at the theme's tokens without naming a repo-only path", () => {
+    const out = renderDesignMd(doc, defaults);
+    expect(frontMatter).toContain("from the theme's tokens (tokens.dtcg.json)");
+    expect(out).not.toMatch(/registry\/themes|pnpm theme:build/);
   });
 
   it("falls back to a description when the theme has none", () => {
@@ -117,6 +125,14 @@ describe("renderDesignMd — system rules from the contract", () => {
     for (const [fg, bg] of CONTRAST_PAIRS) expect(body).toContain(`- \`${fg}\` on \`${bg}\``);
   });
 
+  // "Each foreground on its own surface" and "muted-foreground on background,
+  // card or muted" would contradict each other unless the exception is stated.
+  it("states muted-foreground as the one foreground meant for several surfaces", () => {
+    expect(body).toContain(
+      "with one exception: `muted-foreground` is the subdued text of the whole page, meant for `background`, `card` and `muted` alike",
+    );
+  });
+
   it("names every colour slot, every type step and every weight", () => {
     for (const s of CONTRACT.filter((c) => c.type === "color"))
       expect(body).toContain(`\`${s.name}\``);
@@ -138,10 +154,7 @@ describe("renderDesignMd — system rules from the contract", () => {
   it("is identical for every theme outside the overview and brand notes", () => {
     const other = { light: { radius: token("1rem") }, dark: {} };
     const rules = (md: string) => bodyOf(md).slice(bodyOf(md).indexOf("## Colors"));
-    const normalize = (md: string) => rules(md).replace(/registry\/themes\/[\w-]+\//g, "");
-    expect(normalize(renderDesignMd(other, defaults))).toBe(
-      normalize(renderDesignMd(doc, defaults)),
-    );
+    expect(rules(renderDesignMd(other, defaults))).toBe(rules(renderDesignMd(doc, defaults)));
   });
 
   it("repeats no ## heading and follows the format's section order", () => {
