@@ -32,7 +32,7 @@ const sampleAlerts: AlertListItem[] = [
     id: "sign-in",
     variant: "info",
     title: "New sign-in from Lisbon",
-    description: "Chrome on macOS. If this was not you, end the session and change your password.",
+    description: "Chrome on macOS. Not you? End the session and change your password.",
     meta: "3 hrs ago",
     actionLabel: "Review session",
   },
@@ -199,14 +199,32 @@ export function AlertList({
                     <StatusIcon variant={item.variant} />
                   </Alert.Icon>
                   <Alert.Content>
-                    <div className="grid gap-1 @lg:flex @lg:items-baseline @lg:justify-between @lg:gap-4">
-                      <Alert.Title>{item.title}</Alert.Title>
-                      {item.meta ? (
-                        <Alert.Description className="text-ui-xs">{item.meta}</Alert.Description>
-                      ) : null}
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="grid min-w-0 flex-1 gap-1 @lg:flex @lg:items-baseline @lg:justify-between @lg:gap-4">
+                        <Alert.Title>{item.title}</Alert.Title>
+                        {item.meta ? (
+                          <Alert.Description className="hidden text-ui-xs @sm:block">
+                            {item.meta}
+                          </Alert.Description>
+                        ) : null}
+                      </div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="shrink-0"
+                        disabled={inert}
+                        aria-label={`Dismiss — ${item.title}`}
+                        onClick={() => onDismiss?.(item.id)}
+                      >
+                        <DismissIcon />
+                        <span className="hidden @md:inline">Dismiss</span>
+                      </Button>
                     </div>
                     {item.description ? (
-                      <Alert.Description>{item.description}</Alert.Description>
+                      <Alert.Description className="line-clamp-2 @md:line-clamp-none">
+                        {item.description}
+                      </Alert.Description>
                     ) : null}
                     {item.actionLabel ? (
                       <Alert.Action>
@@ -222,18 +240,6 @@ export function AlertList({
                       </Alert.Action>
                     ) : null}
                   </Alert.Content>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="shrink-0"
-                    disabled={inert}
-                    aria-label={`Dismiss — ${item.title}`}
-                    onClick={() => onDismiss?.(item.id)}
-                  >
-                    <DismissIcon />
-                    <span className="hidden @md:inline">Dismiss</span>
-                  </Button>
                 </Alert.Root>
               </li>
             ))}

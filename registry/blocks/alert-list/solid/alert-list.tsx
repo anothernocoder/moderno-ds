@@ -33,7 +33,7 @@ const sampleAlerts: AlertListItem[] = [
     id: "sign-in",
     variant: "info",
     title: "New sign-in from Lisbon",
-    description: "Chrome on macOS. If this was not you, end the session and change your password.",
+    description: "Chrome on macOS. Not you? End the session and change your password.",
     meta: "3 hrs ago",
     actionLabel: "Review session",
   },
@@ -194,14 +194,32 @@ export function AlertList(props: AlertListProps) {
                       <StatusIcon variant={item.variant} />
                     </Alert.Icon>
                     <Alert.Content>
-                      <div class="grid gap-1 @lg:flex @lg:items-baseline @lg:justify-between @lg:gap-4">
-                        <Alert.Title>{item.title}</Alert.Title>
-                        <Show when={item.meta}>
-                          <Alert.Description class="text-ui-xs">{item.meta}</Alert.Description>
-                        </Show>
+                      <div class="flex items-start justify-between gap-2">
+                        <div class="grid min-w-0 flex-1 gap-1 @lg:flex @lg:items-baseline @lg:justify-between @lg:gap-4">
+                          <Alert.Title>{item.title}</Alert.Title>
+                          <Show when={item.meta}>
+                            <Alert.Description class="hidden text-ui-xs @sm:block">
+                              {item.meta}
+                            </Alert.Description>
+                          </Show>
+                        </div>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          class="shrink-0"
+                          disabled={inert()}
+                          aria-label={`Dismiss — ${item.title}`}
+                          onClick={() => props.onDismiss?.(item.id)}
+                        >
+                          <DismissIcon />
+                          <span class="hidden @md:inline">Dismiss</span>
+                        </Button>
                       </div>
                       <Show when={item.description}>
-                        <Alert.Description>{item.description}</Alert.Description>
+                        <Alert.Description class="line-clamp-2 @md:line-clamp-none">
+                          {item.description}
+                        </Alert.Description>
                       </Show>
                       <Show when={item.actionLabel}>
                         <Alert.Action>
@@ -217,18 +235,6 @@ export function AlertList(props: AlertListProps) {
                         </Alert.Action>
                       </Show>
                     </Alert.Content>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      class="shrink-0"
-                      disabled={inert()}
-                      aria-label={`Dismiss — ${item.title}`}
-                      onClick={() => props.onDismiss?.(item.id)}
-                    >
-                      <DismissIcon />
-                      <span class="hidden @md:inline">Dismiss</span>
-                    </Button>
                   </Alert.Root>
                 </li>
               )}
