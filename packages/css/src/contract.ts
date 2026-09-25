@@ -35,7 +35,11 @@ export interface ContractSlot {
   name: string;
   type: ContractSlotType;
   group: ContractGroup;
-  /** What the slot is for, in one line: a lowercase phrase with no final period. */
+  /**
+   * What the slot is for, in one line: a lowercase phrase with no final period
+   * and no colon outside code, since `DESIGN.md` and the docs print it after
+   * `slot:` and add their own period.
+   */
   role: string;
   /** For a foreground slot: the background slot WCAG AA is checked against. */
   contrastAgainst?: string;
@@ -92,7 +96,7 @@ export const TYPE_STEPS = [
 
 /** What each type step sets. The `ui-*` ramp is what a component's sizes read. */
 export const TYPE_STEP_ROLES: Readonly<Record<(typeof TYPE_STEPS)[number], string>> = {
-  "ui-xs": "the smallest interface text: ticks and helper text",
+  "ui-xs": "the smallest interface text, for ticks and helper text",
   "ui-sm": "a component's `sm` size",
   "ui-md": "a component's `md` size, and the default text of the interface",
   "ui-lg": "a component's `lg` size",
@@ -125,19 +129,19 @@ export const CONTRACT: readonly ContractSlot[] = [
   // — Surfaces —
   color("background", "surfaces", "the page surface"),
   color("foreground", "surfaces", "text and icons on `background`", "background"),
-  color("card", "surfaces", "a raised surface: cards and panels"),
+  color("card", "surfaces", "a raised surface, for cards and panels"),
   foreground("card", "surfaces"),
-  color("popover", "surfaces", "a floating surface: popovers, menus and select lists"),
+  color("popover", "surfaces", "a floating surface, for popovers, menus and select lists"),
   foreground("popover", "surfaces"),
   // — Brand —
-  color("primary", "brand", "the main action: primary button fills and emphasized controls"),
+  color("primary", "brand", "the main action, for primary button fills and emphasized controls"),
   foreground("primary", "brand"),
   color("secondary", "brand", "a quieter action than `primary`"),
   foreground("secondary", "brand"),
   color("accent", "brand", "the hover and highlight surface of quiet controls and list items"),
   foreground("accent", "brand"),
   // — Support —
-  color("muted", "support", "a recessed surface: wells and quiet backgrounds"),
+  color("muted", "support", "a recessed surface, for wells and quiet backgrounds"),
   color("muted-foreground", "support", "subdued text on `background`, `card` or `muted`", "muted"),
   color("destructive", "support", "irreversible actions, and the error state"),
   foreground("destructive", "support"),
@@ -157,7 +161,7 @@ export const CONTRACT: readonly ContractSlot[] = [
     name: "radius",
     type: "dimension",
     group: "other",
-    role: "the base corner radius: buttons, inputs, cards and surfaces",
+    role: "the base corner radius of buttons, inputs, cards and surfaces",
   },
   {
     name: "font-sans",
@@ -175,21 +179,21 @@ export const CONTRACT: readonly ContractSlot[] = [
     ),
   ),
   extended("motion-instant", "duration", "hover and focus feedback"),
-  extended("motion-fast", "duration", "reveals: menus and tooltips"),
+  extended("motion-fast", "duration", "reveals, such as menus and select lists"),
   extended("motion-normal", "duration", "panels and sheets"),
   extended(
     "radius-full",
     "dimension",
-    "fully rounded ends: pills, badges, avatars and status dots",
+    "fully rounded ends, for pills, badges, avatars and status dots",
   ),
   extended(
     "font-serif",
     "fontFamily",
     "the display face for headings and pull quotes, when the brand has one",
   ),
-  extended("shadow-sm", "shadow", "the lowest float: tooltips and small overlays"),
+  extended("shadow-sm", "shadow", "the lowest float, for small overlays"),
   extended("shadow-md", "shadow", "menus, select lists and popovers"),
-  extended("shadow-lg", "shadow", "the highest float: dialogs, drawers and toasts"),
+  extended("shadow-lg", "shadow", "the highest float, for dialogs, drawers and toasts"),
   extended("overlay", "color", "the scrim behind a dialog or command palette"),
   extended("container-sm", "dimension", "the smallest container breakpoint (`@sm:`)"),
   extended("container-md", "dimension", "the middle container breakpoint (`@md:`)"),
@@ -198,7 +202,7 @@ export const CONTRACT: readonly ContractSlot[] = [
     extended(
       `text-${step}`,
       "dimension",
-      `the font size of the \`${step}\` step: ${TYPE_STEP_ROLES[step]}`,
+      `the font size of the \`${step}\` step (${TYPE_STEP_ROLES[step]})`,
     ),
     extended(
       `leading-${step}`,

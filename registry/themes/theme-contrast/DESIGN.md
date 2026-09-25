@@ -150,19 +150,19 @@ Paint from contract slots, never from a raw color value. The front matter lists 
 - **Surfaces** (the page, raised surfaces and floating surfaces):
   - `background`: the page surface.
   - `foreground`: text and icons on `background`.
-  - `card`: a raised surface: cards and panels.
+  - `card`: a raised surface, for cards and panels.
   - `card-foreground`: text and icons on `card`.
-  - `popover`: a floating surface: popovers, menus and select lists.
+  - `popover`: a floating surface, for popovers, menus and select lists.
   - `popover-foreground`: text and icons on `popover`.
 - **Brand** (actions, from the primary fill to the quieter ones):
-  - `primary`: the main action: primary button fills and emphasized controls.
+  - `primary`: the main action, for primary button fills and emphasized controls.
   - `primary-foreground`: text and icons on `primary`.
   - `secondary`: a quieter action than `primary`.
   - `secondary-foreground`: text and icons on `secondary`.
   - `accent`: the hover and highlight surface of quiet controls and list items.
   - `accent-foreground`: text and icons on `accent`.
 - **Support** (recessed wells, the destructive action, status, lines and focus):
-  - `muted`: a recessed surface: wells and quiet backgrounds.
+  - `muted`: a recessed surface, for wells and quiet backgrounds.
   - `muted-foreground`: subdued text on `background`, `card` or `muted`.
   - `destructive`: irreversible actions, and the error state.
   - `destructive-foreground`: text and icons on `destructive`.
@@ -217,7 +217,7 @@ Rules:
 The type scale is a size and a line height per step (`--text-<step>`, `--leading-<step>`), in two ramps:
 
 - **Interface** (`ui-xs`, `ui-sm`, `ui-md`, `ui-lg`): a component's `sm`/`md`/`lg` sizes read `ui-sm`/`ui-md`/`ui-lg`, so controls grow one step at a time.
-  - `ui-xs`: the smallest interface text: ticks and helper text.
+  - `ui-xs`: the smallest interface text, for ticks and helper text.
   - `ui-sm`: a component's `sm` size.
   - `ui-md`: a component's `md` size, and the default text of the interface.
   - `ui-lg`: a component's `lg` size.
@@ -250,20 +250,20 @@ Spacing uses the contract's scale, `spacing-1` to `spacing-8` (the front matter'
 
 Resting surfaces separate by fill and a `border`, not by shadow: `muted` recesses, `card` sits at page level. Shadows are for overlays only, one step per layer of float. The dark scope carries its own shadows, since a light-mode shadow disappears on a dark surface.
 
-- `shadow-sm`: the lowest float: tooltips and small overlays.
+- `shadow-sm`: the lowest float, for small overlays.
 - `shadow-md`: menus, select lists and popovers.
-- `shadow-lg`: the highest float: dialogs, drawers and toasts.
+- `shadow-lg`: the highest float, for dialogs, drawers and toasts.
 
 Motion durations:
 
 - `motion-instant`: hover and focus feedback.
-- `motion-fast`: reveals: menus and tooltips.
+- `motion-fast`: reveals, such as menus and select lists.
 - `motion-normal`: panels and sheets.
 
 ## Shapes
 
-- `rounded.base` (`radius`): the base corner radius: buttons, inputs, cards and surfaces.
-- `rounded.full` (`radius-full`): fully rounded ends: pills, badges, avatars and status dots.
+- `rounded.base` (`radius`): the base corner radius of buttons, inputs, cards and surfaces.
+- `rounded.full` (`radius-full`): fully rounded ends, for pills, badges, avatars and status dots.
 
 Never set a corner radius by hand.
 

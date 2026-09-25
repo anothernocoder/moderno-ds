@@ -5,6 +5,8 @@ group: Inicio
 order: 2
 ---
 
+import ContractTable from "../../../components/ContractTable.astro";
+
 Los componentes referencian slots, nunca valores: sobrescribir un slot es la única forma de re-tematizar.
 `@moderno-ui/css` trae un valor neutro por defecto para cada slot de esta página.
 
@@ -31,65 +33,29 @@ Los componentes referencian slots, nunca valores: sobrescribir un slot es la ún
 
 Un tema debe definir todos los slots de esta sección. Crea uno visualmente en el [Editor de temas](/es/theme-builder).
 
+Las tablas salen del contrato de tokens. Los roles están en inglés, igual que los leen los agentes.
+
 ### Color
 
 Valores OKLCH, definidos en `:root` y en `.dark`. Cada slot `*-foreground` debe alcanzar WCAG AA (4.5:1) sobre su superficie al compilar el tema.
 
-| Slot                                         | Rol                                           |
-| -------------------------------------------- | --------------------------------------------- |
-| `--background` / `--foreground`              | Superficie de página y texto.                 |
-| `--card` / `--card-foreground`               | Superficie elevada.                           |
-| `--popover` / `--popover-foreground`         | Superficie flotante.                          |
-| `--primary` / `--primary-foreground`         | Acción principal.                             |
-| `--secondary` / `--secondary-foreground`     | Acción secundaria.                            |
-| `--accent` / `--accent-foreground`           | Superficie de acento.                         |
-| `--muted` / `--muted-foreground`             | Superficie apagada y texto tenue.             |
-| `--destructive` / `--destructive-foreground` | Acción destructiva. También el tono de error. |
-| `--info` / `--info-foreground`               | Estado informativo.                           |
-| `--success` / `--success-foreground`         | Estado positivo.                              |
-| `--warning` / `--warning-foreground`         | Estado de advertencia.                        |
-| `--border`                                   | Bordes y separadores.                         |
-| `--input`                                    | Bordes de controles de formulario.            |
-| `--ring`                                     | Anillo de foco.                               |
-| `--chart-1` … `--chart-5`                    | Series de datos.                              |
+<ContractTable table="color" />
 
 ### Sin color
 
-| Slot          | Rol                             |
-| ------------- | ------------------------------- |
-| `--radius`    | Radio de esquina base.          |
-| `--font-sans` | Tipografía de interfaz y texto. |
-| `--font-mono` | Código, cifras tabulares.       |
+<ContractTable table="other" />
 
 ## Slots extendidos
 
 Opcionales en un tema: omite un slot para heredar el valor por defecto. El Editor de temas los muestra bajo **Extendidos (opcionales)**.
 
-| Slot                                                     | Por defecto                   | Rol                                                                 |
-| -------------------------------------------------------- | ----------------------------- | ------------------------------------------------------------------- |
-| `--radius-full`                                          | `9999px`                      | Píldoras, puntos, avatares.                                         |
-| `--spacing-1` … `--spacing-8`                            | `0.25rem` … `2rem`            | Escala de espaciado, en pasos de `0.25rem`.                         |
-| `--motion-instant` / `--motion-fast` / `--motion-normal` | `150ms` / `200ms` / `300ms`   | Duraciones de transición.                                           |
-| `--font-serif`                                           | `ui-serif, Georgia, …`        | Tipografía de display para títulos y citas.                         |
-| `--shadow-sm` / `--shadow-md` / `--shadow-lg`            | Tres pasos neutros            | Elevación de popovers, menús y drawers. Valores propios en `.dark`. |
-| `--overlay`                                              | Negro, 32% / 60% en `.dark`   | Capa modal detrás de un diálogo. Se pinta sobre un desenfoque.      |
-| `--container-sm` / `--container-md` / `--container-lg`   | `24rem` / `36rem` / `48rem`   | Breakpoints de contenedor a los que responden blocks y screens.     |
-| `--text-<paso>` / `--leading-<paso>`                     | Ver la escala tipográfica     | Tamaño de fuente e interlineado de cada paso de la escala.          |
-| `--font-weight-normal` … `--font-weight-bold`            | `400` / `500` / `600` / `700` | Pesos: texto corrido, etiquetas y controles, títulos, display.      |
+<ContractTable table="extended" />
 
 ### Escala tipográfica
 
-| Paso         | Tamaño / interlineado | Rol                                                 |
-| ------------ | --------------------- | --------------------------------------------------- |
-| `ui-xs`      | 12px / 16px           | El texto más pequeño: ticks de gráficos, ayudas.    |
-| `ui-sm`      | 13px / 18px           | Controles `sm`, texto de ayuda y de error.          |
-| `ui-md`      | 14px / 20px           | Texto de UI por defecto, controles `md`, etiquetas. |
-| `ui-lg`      | 15px / 22px           | Controles `lg`.                                     |
-| `body`       | 16px / 24px           | Texto corrido, títulos de card.                     |
-| `body-lg`    | 18px / 28px           | Títulos de diálogo, párrafos de entrada.            |
-| `heading-sm` | 20px / 28px           | Títulos de sección en blocks.                       |
-| `heading`    | 24px / 32px           | Títulos de sección de página.                       |
-| `heading-lg` | 36px / 40px           | Títulos de página.                                  |
+Cada paso son dos slots extendidos: `--text-<paso>` (tamaño de fuente) y `--leading-<paso>` (interlineado).
+
+<ContractTable table="type-scale" />
 
 ## Tailwind v4
 
@@ -126,10 +92,10 @@ Importa el preset para registrar los slots como claves de tema de Tailwind.
 
 ## Leerlo como datos
 
-| Fuente                             | Devuelve                                                               |
-| ---------------------------------- | ---------------------------------------------------------------------- |
-| `@moderno-ui/css/contract`         | `CONTRACT`: cada slot con su tipo DTCG y su grupo del Editor de temas. |
-| `get_contract` (`@moderno-ui/mcp`) | Los mismos slots, más las reglas de tematización, para agentes.        |
+| Fuente                             | Devuelve                                                                       |
+| ---------------------------------- | ------------------------------------------------------------------------------ |
+| `@moderno-ui/css/contract`         | `CONTRACT`: cada slot con su tipo DTCG, su grupo del Editor de temas y su rol. |
+| `get_contract` (`@moderno-ui/mcp`) | Los mismos slots, más las reglas de tematización, para agentes.                |
 
 ```ts
 import { CONTRACT, COLOR_SLOTS, EXTENDED_SLOTS } from "@moderno-ui/css/contract";

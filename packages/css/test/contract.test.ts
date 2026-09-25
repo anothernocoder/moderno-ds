@@ -79,6 +79,22 @@ describe("@moderno-ui/css — contract data", () => {
     );
   });
 
+  // DESIGN.md prints a role after `slot:` and adds its own period, so a role
+  // that ends in a period prints `..` and a colon in its prose stacks colons.
+  it("writes every role as a lowercase phrase with no final period and no colon", () => {
+    const roles: Array<[label: string, role: string]> = [
+      ...CONTRACT.map((s): [string, string] => [`--${s.name}`, s.role]),
+      ...Object.entries(GROUP_ROLES).map(([g, r]): [string, string] => [`group ${g}`, r]),
+      ...Object.entries(TYPE_STEP_ROLES).map(([t, r]): [string, string] => [`step ${t}`, r]),
+    ];
+    for (const [label, role] of roles) {
+      expect(role, `${label}'s role must start lowercase`).toMatch(/^[a-z`]/);
+      expect(role, `${label}'s role ends in a period`).not.toMatch(/\.$/);
+      const prose = role.replace(/`[^`]*`/g, "");
+      expect(prose, `${label}'s role has a colon outside code`).not.toMatch(/:/);
+    }
+  });
+
   it("groups every colour slot for the editor, in contract order", () => {
     const grouped = COLOR_GROUPS.flatMap((g) => g.slots);
     expect(grouped).toEqual([...COLOR_SLOTS]);

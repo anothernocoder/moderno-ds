@@ -13,6 +13,8 @@
  *   the block it wraps, so the four Usage snippets read as four labelled ones.
  * - `<PropsTable component="X" />` → a Prop | Type | Default | Description
  *   table (when a `resolve.props` reader is given).
+ * - `<ContractTable table="X" />` → the same slot table as Markdown (when a
+ *   `resolve.contractTable` reader is given).
  * - `<Install pkg|item … />` → the npm command.
  * - Anything else (`<FrameworkSelect>`, islands) is dropped.
  *
@@ -33,6 +35,8 @@ export interface MarkdownResolvers {
   raw?: (specifier: string) => string | undefined;
   /** Generated props of a component, by name. */
   props?: (component: string) => PropRow[] | undefined;
+  /** A token-contract slot table as Markdown, by its `table` name. */
+  contractTable?: (table: string) => string | undefined;
 }
 
 const FRAMEWORK_LABEL: Record<string, string> = {
@@ -141,6 +145,10 @@ function componentMarkdown(
     const component = attr(tag, "component");
     const rows = component && resolve.props ? resolve.props(component) : undefined;
     return rows && rows.length > 0 ? propsMarkdown(rows) : "";
+  }
+  if (name === "ContractTable") {
+    const table = attr(tag, "table");
+    return (table && resolve.contractTable?.(table)) ?? "";
   }
   if (name === "Install") return installMarkdown(tag) ?? "";
   return "";
