@@ -25,6 +25,7 @@ export {
   chipRecipe,
   indicatorRecipe,
   indicatorAttrs,
+  indicatorRole,
 } from "./recipes.js";
 export type {
   ButtonVariant,
@@ -46,4 +47,5 @@ export type {
   IndicatorVariant,
   IndicatorSize,
   IndicatorAttrsProps,
+  IndicatorNameAttrs,
 } from "./recipes.js";

@@ -52,4 +52,27 @@ describe("Indicator", () => {
     expect(root.className).toBe("mine");
     expect(root.getAttribute("aria-label")).toBe("Online");
   });
+
+  it("names a bare dot through role=img, so a screen reader reads its status", () => {
+    render(<Indicator variant="error" aria-label="Offline" />);
+    const root = screen.getByRole("img", { name: "Offline" });
+    expect(root.getAttribute("data-part")).toBe("root");
+  });
+
+  it("gives no role to a labelled indicator or an unnamed dot", () => {
+    const { container } = render(
+      <>
+        <Indicator aria-label="Status">Online</Indicator>
+        <Indicator />
+      </>,
+    );
+    for (const root of container.querySelectorAll('[data-part="root"]')) {
+      expect(root.hasAttribute("role")).toBe(false);
+    }
+  });
+
+  it("lets a consumer role win", () => {
+    render(<Indicator role="status" aria-label="Offline" />);
+    expect(screen.getByRole("status", { name: "Offline" })).toBeTruthy();
+  });
 });

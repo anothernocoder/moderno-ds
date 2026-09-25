@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
+import { createCommentVNode, defineComponent, h } from "vue";
 import { cleanup, render, screen } from "@testing-library/vue";
 import { Indicator } from "../src/indicator.js";
 
@@ -57,5 +58,47 @@ describe("Indicator (Vue)", () => {
     const root = container.firstElementChild!;
     expect(root.className).toBe("mine");
     expect(root.getAttribute("aria-label")).toBe("Online");
+  });
+
+  it("names a bare dot through role=img, so a screen reader reads its status", () => {
+    const { container } = render(Indicator, {
+      props: { variant: "error" },
+      attrs: { "aria-label": "Offline" },
+    });
+    expect(screen.getByRole("img", { name: "Offline" })).toBe(container.firstElementChild);
+  });
+
+  it("gives no role to a labelled indicator or an unnamed dot", () => {
+    const labelled = render(Indicator, {
+      attrs: { "aria-label": "Status" },
+      slots: { default: () => "Online" },
+    });
+    expect(labelled.container.firstElementChild!.hasAttribute("role")).toBe(false);
+    cleanup();
+    const bare = render(Indicator);
+    expect(bare.container.firstElementChild!.hasAttribute("role")).toBe(false);
+  });
+
+  it("lets a consumer role win", () => {
+    render(Indicator, { attrs: { role: "status", "aria-label": "Offline" } });
+    expect(screen.getByRole("status", { name: "Offline" })).toBeTruthy();
+  });
+
+  it("renders no label part when the slot holds only a comment or whitespace", () => {
+    const ShowLabel = defineComponent({
+      props: { show: Boolean },
+      setup: (props) => () =>
+        h(Indicator, null, {
+          default: () => (props.show ? ["Online"] : [createCommentVNode("v-if")]),
+        }),
+    });
+    const hidden = render(ShowLabel, { props: { show: false } });
+    expect(hidden.container.querySelector('[data-part="label"]')).toBeNull();
+    cleanup();
+    const blank = render(Indicator, { slots: { default: () => "  " } });
+    expect(blank.container.querySelector('[data-part="label"]')).toBeNull();
+    cleanup();
+    render(ShowLabel, { props: { show: true } });
+    expect(screen.getByText("Online").getAttribute("data-part")).toBe("label");
   });
 });

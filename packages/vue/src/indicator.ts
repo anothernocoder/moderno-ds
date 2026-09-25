@@ -1,10 +1,12 @@
 import { defineComponent, h, type PropType } from "vue";
 import {
   indicatorAttrs,
+  indicatorRole,
   partAttrs,
   type IndicatorSize,
   type IndicatorVariant,
 } from "@moderno-ui/core";
+import { hasSlotContent } from "./slot-content.js";
 
 /**
  * Indicator — a small status dot with an optional label and pulse, ported to
@@ -14,7 +16,8 @@ import {
  * `data-scope`/`data-part` plus the shared `indicatorAttrs` (`data-variant`,
  * `data-size`, and a bare `data-pulse` when `pulse` is on). The dot is always
  * rendered and hidden from assistive tech; the default slot becomes the
- * `label` part.
+ * `label` part, only when it holds visible content. A bare dot named by
+ * `aria-label` takes `role="img"` (`indicatorRole`).
  *
  * `inheritAttrs: false` so consumer attributes spread explicitly *before* the
  * scope/part/variant attrs — the contract attrs land last and can't be
@@ -31,10 +34,11 @@ export const Indicator = defineComponent({
   setup(props, { slots, attrs }) {
     return () => {
       const label = slots.default?.();
-      const hasLabel = label !== undefined && label.length > 0;
+      const hasLabel = hasSlotContent(label);
       return h(
         "span",
         {
+          role: indicatorRole(hasLabel, attrs),
           ...attrs,
           ...partAttrs("indicator", "root"),
           ...indicatorAttrs({ variant: props.variant, size: props.size, pulse: props.pulse }),

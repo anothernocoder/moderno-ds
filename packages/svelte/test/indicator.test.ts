@@ -52,4 +52,24 @@ describe("Indicator (Svelte)", () => {
     expect(root(container).className).toBe("mine");
     expect(root(container).getAttribute("aria-label")).toBe("Online");
   });
+
+  it("names a bare dot through role=img, so a screen reader reads its status", () => {
+    const { container } = render(Indicator, {
+      props: { variant: "error", "aria-label": "Offline" },
+    });
+    expect(screen.getByRole("img", { name: "Offline" })).toBe(root(container));
+  });
+
+  it("gives no role to a labelled indicator or an unnamed dot", () => {
+    const labelled = render(Indicator, { props: { "aria-label": "Status", label: "Online" } });
+    expect(root(labelled.container).hasAttribute("role")).toBe(false);
+    cleanup();
+    const bare = render(Indicator);
+    expect(root(bare.container).hasAttribute("role")).toBe(false);
+  });
+
+  it("lets a consumer role win", () => {
+    render(Indicator, { props: { role: "status", "aria-label": "Offline" } });
+    expect(screen.getByRole("status", { name: "Offline" })).toBeTruthy();
+  });
 });

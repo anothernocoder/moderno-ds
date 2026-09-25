@@ -110,11 +110,11 @@ Renderiza un `<span>`; sus hijos son la etiqueta. `variant` vale `neutral` por d
 
 ### Partes
 
-| Parte   | Elemento | Descripción                                                     |
-| ------- | -------- | --------------------------------------------------------------- |
-| `root`  | `<span>` | Lleva `data-variant`, `data-size` y, con `pulse`, `data-pulse`. |
-| `dot`   | `<span>` | El punto de color. Siempre se renderiza; `aria-hidden`.         |
-| `label` | `<span>` | Solo se renderiza cuando hay hijos.                             |
+| Parte   | Elemento | Descripción                                                                                                                 |
+| ------- | -------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `root`  | `<span>` | Lleva `data-variant`, `data-size` y, con `pulse`, `data-pulse`. Un punto solo con `aria-label` también recibe `role="img"`. |
+| `dot`   | `<span>` | El punto de color. Siempre se renderiza; `aria-hidden`.                                                                     |
+| `label` | `<span>` | Solo se renderiza cuando hay hijos.                                                                                         |
 
 ## Ejemplos
 
@@ -148,7 +148,7 @@ Un anillo lento crece desde el punto. Se detiene cuando el usuario pide menos mo
 
 ### Sin etiqueta
 
-Dale un `aria-label` a un punto solo, para que el estado no dependa solo del color.
+Dale un `aria-label` a un punto solo, para que el estado no dependa solo del color. El punto recibe entonces `role="img"`, así los lectores de pantalla leen la etiqueta.
 
 <Preview
   examples={{
@@ -177,5 +177,5 @@ Dale un `aria-label` a un punto solo, para que el estado no dependa solo del col
 ## Notas
 
 - Indicator es solo CSS: un `<span>` con `data-scope="indicator"`, sin máquina de Ark.
-- Acompaña siempre el color con texto: una etiqueta, o un `aria-label` en un punto solo.
+- Acompaña siempre el color con texto: una etiqueta, o un `aria-label` en un punto solo. Un `<span>` simple no puede llevar un nombre; por eso un punto solo con nombre recibe `role="img"`.
 - Reserva `pulse` para el único estado que está ocurriendo ahora mismo.

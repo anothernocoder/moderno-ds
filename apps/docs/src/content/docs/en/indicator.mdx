@@ -15,7 +15,7 @@ agent:
     - case: Progress toward a goal
       use: Progress
   gotchas:
-    - "Colour alone says nothing to a screen reader: give the indicator a label (children) or an aria-label."
+    - 'Colour alone says nothing to a screen reader: give the indicator a label (children), or give a bare dot an aria-label. A named bare dot gets role="img" so the name is read; do not remove that role.'
     - "pulse is for a status that is happening now; use it on one indicator per view, not on every row."
     - "The pulse stops for users who ask for reduced motion; the dot stays."
   theming:
@@ -126,11 +126,11 @@ Renders a `<span>`; its children become the label. `variant` defaults to `neutra
 
 ### Parts
 
-| Part    | Element  | Description                                                          |
-| ------- | -------- | -------------------------------------------------------------------- |
-| `root`  | `<span>` | Carries `data-variant`, `data-size` and, with `pulse`, `data-pulse`. |
-| `dot`   | `<span>` | The coloured dot. Always rendered; `aria-hidden`.                    |
-| `label` | `<span>` | Rendered only when there are children.                               |
+| Part    | Element  | Description                                                                                                                  |
+| ------- | -------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `root`  | `<span>` | Carries `data-variant`, `data-size` and, with `pulse`, `data-pulse`. A bare dot with an `aria-label` also gets `role="img"`. |
+| `dot`   | `<span>` | The coloured dot. Always rendered; `aria-hidden`.                                                                            |
+| `label` | `<span>` | Rendered only when there are children.                                                                                       |
 
 ## Examples
 
@@ -164,7 +164,7 @@ A slow ring grows from the dot. It stops when the user asks for reduced motion.
 
 ### Without a label
 
-Give a bare dot an `aria-label`, so the status is not colour alone.
+Give a bare dot an `aria-label`, so the status is not colour alone. The dot then gets `role="img"`, so screen readers read the label.
 
 <Preview
   examples={{
@@ -193,5 +193,5 @@ Give a bare dot an `aria-label`, so the status is not colour alone.
 ## Notes
 
 - Indicator is CSS-only: a `<span>` with `data-scope="indicator"`, no Ark machine.
-- Always pair the colour with text: a label, or an `aria-label` on a bare dot.
+- Always pair the colour with text: a label, or an `aria-label` on a bare dot. A plain `<span>` cannot carry a name, which is why a named bare dot gets `role="img"`.
 - Keep `pulse` for the one status that is happening right now.

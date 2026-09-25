@@ -11,6 +11,7 @@ import {
   fieldRecipe,
   indicatorAttrs,
   indicatorRecipe,
+  indicatorRole,
   pinInputRecipe,
   selectRecipe,
 } from "../src/recipes.js";
@@ -232,5 +233,22 @@ describe("indicatorRecipe / indicatorAttrs", () => {
   it("rejects values outside the schema", () => {
     // @ts-expect-error — "solid" is a badge variant, not an indicator status
     expect(() => indicatorAttrs({ variant: "solid" })).toThrow(/invalid value/);
+  });
+});
+
+describe("indicatorRole", () => {
+  it("makes a named bare dot an image, so its name is read", () => {
+    expect(indicatorRole(false, { "aria-label": "Offline" })).toBe("img");
+    expect(indicatorRole(false, { "aria-labelledby": "status-text" })).toBe("img");
+  });
+
+  it("leaves a labelled indicator a plain span", () => {
+    expect(indicatorRole(true, { "aria-label": "Offline" })).toBeUndefined();
+    expect(indicatorRole(true, {})).toBeUndefined();
+  });
+
+  it("leaves an unnamed bare dot decorative", () => {
+    expect(indicatorRole(false, {})).toBeUndefined();
+    expect(indicatorRole(false, { "aria-label": "" })).toBeUndefined();
   });
 });
