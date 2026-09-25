@@ -781,8 +781,8 @@ main.main--wide {
 /* The theme builder's lead (and any other bare lead). */
 .page-lead {
   color: var(--docs-fg-muted);
-  font-size: var(--text-body-lg);
-  line-height: var(--leading-body-lg);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
 }
 
 /* Page header — H1, a one-line lead, then quiet pill actions; tight inside,
@@ -1334,6 +1334,7 @@ main.main--wide {
 .demo-tabs-list {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 0.125rem;
   padding: 0.375rem 0.5rem;
   border-bottom: 1px solid var(--docs-border-soft);
@@ -1355,6 +1356,15 @@ main.main--wide {
   transition:
     color var(--docs-ease),
     background var(--docs-ease);
+}
+.demo-tab-icon {
+  width: 1rem;
+  height: 1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 .demo-tab:hover {
   color: var(--docs-fg);

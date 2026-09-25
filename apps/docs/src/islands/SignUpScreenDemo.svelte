@@ -36,9 +36,9 @@
       label: "Sign-up screen widths",
       frames: { phone: "phone", tablet: "tablet", desktop: "desktop" },
       tabs: [
-        { id: "phone", label: "Phone", caption: "Under --container-sm the masthead, the footer and the highlights all stack under the card." },
-        { id: "tablet", label: "Tablet", caption: "Past --container-md and under --container-lg the masthead and the footer each sit on one row, the highlights still under the card." },
-        { id: "desktop", label: "Desktop", caption: "Past --container-lg the highlights stand beside the card; this frame is wider than the docs column, so scroll it sideways." },
+        { id: "phone", icon: "phone", label: "Phone", caption: "Under --container-sm the masthead, the footer and the highlights all stack under the card." },
+        { id: "tablet", icon: "tablet", label: "Tablet", caption: "Past --container-md and under --container-lg the masthead and the footer each sit on one row, the highlights still under the card." },
+        { id: "desktop", icon: "desktop", label: "Desktop", caption: "Past --container-lg the highlights stand beside the card; this frame is wider than the docs column, so scroll it sideways." },
       ],
       error: "We could not create the account. Try again in a moment.",
       errors: {
@@ -50,9 +50,9 @@
       label: "Anchos de la pantalla de registro",
       frames: { phone: "teléfono", tablet: "tableta", desktop: "escritorio" },
       tabs: [
-        { id: "phone", label: "Teléfono", caption: "Por debajo de --container-sm la cabecera, el pie y las razones se apilan bajo la tarjeta." },
-        { id: "tablet", label: "Tableta", caption: "Entre --container-md y --container-lg la cabecera y el pie ocupan una fila cada uno, y las razones siguen bajo la tarjeta." },
-        { id: "desktop", label: "Escritorio", caption: "Por encima de --container-lg las razones se ponen junto a la tarjeta; este marco es más ancho que la columna de la documentación, así que desplázalo en horizontal." },
+        { id: "phone", icon: "phone", label: "Teléfono", caption: "Por debajo de --container-sm la cabecera, el pie y las razones se apilan bajo la tarjeta." },
+        { id: "tablet", icon: "tablet", label: "Tableta", caption: "Entre --container-md y --container-lg la cabecera y el pie ocupan una fila cada uno, y las razones siguen bajo la tarjeta." },
+        { id: "desktop", icon: "desktop", label: "Escritorio", caption: "Por encima de --container-lg las razones se ponen junto a la tarjeta; este marco es más ancho que la columna de la documentación, así que desplázalo en horizontal." },
       ],
       error: "No pudimos crear la cuenta. Inténtalo de nuevo en un momento.",
       errors: {
