@@ -1,5 +1,17 @@
 # Tasks
 - [ ] Migrar los componentes de moderno (legacy)
+- [ ] Fixes Moderno-DS
+  - [ ] Tamaño de texto de los parrafos de 17px a 15px, y headings de bold a semibold o 500
+  - [ ] Animacion fluida de linea en On this page menu
+  - [ ] Corregir focus de los inputs
+  - [ ] Componentes del Doc Site deben ser componentes de la libreria o blocks
+  - [ ] Los blocks o estilo de codigo debe ser escrito clean code como los de schadcn, legibles
+  - [ ] Los blocks, screens y flows pueden tener varios archivos, asi que el preview debe mostrar el arbol de archivos y el codigo de cada archivo como schadcn. Usar la libreria de pieter computer o desde 0
+  - [ ] Centrar el selector de mobile, table y desktop y cambiarlo por iconos
+  - [ ] Agregar header de tag + title + description + cta en intro de blogs y hacer la intro con el render de elevenlabs masonry grid
+  - [ ] Mejorar la pagina de Agents con prompts de ejemplos, botones de Copy to Claude, Codes, Cursor, Pi, etc
+    - [ ] Agregar un seccion para instalar las skill
+    - [ ] Hacer sencilla la docs del MCP y como instalarlo
 - [ ] Implementar playground
 - [ ] Revisar badges readme repo y video demo
 - [ ] Crear soporte de variante
@@ -10,7 +22,7 @@
 - [ ] Probar el Moderno repo en 
     - [ ] V0 design system 2
 - [ ] Unir Design Tools como un Playground
-  - [ ] Agregar nuevas tools de pixel point
+  - [ ] Agregar nuevas tools de pixel point de examples y del video de Figma y algunas de Inspo Vault
   - [ ] Minitool card - https://id-cards.kshv.me
   - [ ] Minitool Reso Paper Fold - https://riso-paper-fold.vercel.app
   - [ ] Minitool particles linear Kowalski. 
@@ -22,18 +34,19 @@
   - [ ] Minitool QR Generator and QR lector
   - [ ] Minitool Card Cloudaflare - https://cloudflare.pay
   - [ ] Replicar tool de la carpeta inspo
-  - [ ] Minitool para crear Ads, OG Images, Posts, Covers, Carousels
+  - [ ] Minitool para crear Ads, OG Images, Posts, Covers, Carousels, deberia poder leer el thema de moderno. Seleccionable de select o se le puede pasar el css
   - [ ] Minitool para mockups
   - [ ] Minitool generte graphics brands based on references
   - [ ] Minitool para construir logos
   - [ ] Minitool para construis Brand Guide HTML
+  - [ ] Minitool con videos templates de motion graphics de Inspo Vault en Hyperframes
   - [ ] https://texture.fayaz.workers.dev
   - [ ] https://www.playgrnd.tools
   - [ ] https://www.designminis.com
   - [ ] https://human-atlas-seven.vercel.app
   - [ ] https://light-stroke-rail.vercel.app/?ref=designminis.com
   - [ ] Scenes para motion graphics
-- [ ] Convert inspo en new blocks
-- [ ] Add new flows
-- [ ] Add slides for decks
+- [ ] Generar prompts de cada image o video (ui, ads, realistics) de Inspo Vault y Websites
+- [ ] Convert cada imagen o layout de Inspo Vault y Websites en new blocks, screens y flows
+- [ ] Add slides for decks a inspo vault.
 - [ ] Skill para motion graphics + remotion + hyperframes
