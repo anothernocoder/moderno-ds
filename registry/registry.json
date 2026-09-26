@@ -2370,6 +2370,78 @@
       ]
     },
     {
+      "name": "stat-strip-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Stat Strip (React)",
+      "description": "An editorial row of headline figures, composing the @moderno-ui/react Alert, Button and Skeleton primitives: a serif heading and a short line over a grid of large serif values, each above its muted label on a hairline rule, with an optional action and its own loading, empty and error renders; responds to its container (@container) — the action beside the heading at @sm, a larger heading and values at @md, and all four figures on one row with more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/stat-strip/react/stat-strip.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/stat-strip.tsx"
+        }
+      ]
+    },
+    {
+      "name": "stat-strip-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Stat Strip (Vue)",
+      "description": "An editorial row of headline figures, composing the @moderno-ui/vue Alert, Button and Skeleton primitives: a serif heading and a short line over a grid of large serif values, each above its muted label on a hairline rule, with an optional action and its own loading, empty and error renders; responds to its container (@container) — the action beside the heading at @sm, a larger heading and values at @md, and all four figures on one row with more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/stat-strip/vue/StatStrip.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/StatStrip.vue"
+        }
+      ]
+    },
+    {
+      "name": "stat-strip-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Stat Strip (Svelte)",
+      "description": "An editorial row of headline figures, composing the @moderno-ui/svelte Alert, Button and Skeleton primitives: a serif heading and a short line over a grid of large serif values, each above its muted label on a hairline rule, with an optional action and its own loading, empty and error renders; responds to its container (@container) — the action beside the heading at @sm, a larger heading and values at @md, and all four figures on one row with more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/stat-strip/svelte/StatStrip.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/StatStrip.svelte"
+        }
+      ]
+    },
+    {
+      "name": "stat-strip-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Stat Strip (Solid)",
+      "description": "An editorial row of headline figures, composing the @moderno-ui/solid Alert, Button and Skeleton primitives: a serif heading and a short line over a grid of large serif values, each above its muted label on a hairline rule, with an optional action and its own loading, empty and error renders; responds to its container (@container) — the action beside the heading at @sm, a larger heading and values at @md, and all four figures on one row with more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/stat-strip/solid/stat-strip.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/stat-strip.tsx"
+        }
+      ]
+    },
+    {
       "name": "status-monitoring-react",
       "type": "registry:block",
       "version": "0.1.0",

@@ -1,0 +1,194 @@
+---
+title: Stat Strip
+description: A row of headline figures under a short heading — the "by the numbers" section of a landing page.
+group: Blocks
+order: 119
+agent:
+  intent: An editorial row of headline figures on a marketing page — a serif heading and a short line over large serif values, each above its muted label on a hairline rule, with an optional action.
+  whenToUse: "On a landing or about page, to back a claim with a few big numbers: customers, volume, time saved, uptime."
+  whenNotToUse:
+    - case: Live metrics in an app, with a change against the last period
+      use: StatRow — it puts each figure in a card with a delta badge
+    - case: Which companies use the product
+      use: LogoStrip — a logo proves who, a number says how much
+    - case: A single call to act, with no figures
+      use: Cta — it is built around its buttons
+  gotchas:
+    - "`stats` is an array of `{ id, value, label }`. `value` is a string you format yourself, like `$2.4B` or `99.99%`. Four figures fill one row at the widest step; two or four read best."
+    - "Each figure is a `<dt>` label and a `<dd>` value in one `<dl>`. The value shows first on screen; a screen reader reads the label first."
+    - '`stats={[]}` is the empty state: the heading stays over a dashed box that reads "No numbers to show yet."'
+    - 'Presentational: `onAction` reports that the action was pressed and `onRetry` that "Try again" was. Pass `actionLabel=""` to drop the action.'
+    - "`loading` keeps the heading and replaces the figures with four skeleton pairs in one busy `status` region."
+    - '`error` keeps the heading and puts an error Alert with your message and a "Try again" button where the figures were. An empty string counts as no error.'
+    - "`disabled` keeps the figures and disables the action and the retry button."
+    - "The layout follows the block's own width, not the viewport: two figures per row with the action under the heading below `--container-sm`, the action beside the heading from there, a larger heading and values from `--container-md`, and all four figures on one row from `--container-lg`."
+  theming:
+    - "It paints no surface of its own: it sits on the page's --background. The action and the retry are Button's outline variant, the error is Alert's error variant and the loading placeholders are Skeleton."
+    - "The heading and the values are set in --font-serif on --foreground; the description and the labels read --muted-foreground."
+    - "Each figure sits on a --border hairline; the empty box is a dashed --border."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg. The block is capped at --container-lg and its heading at --container-md."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import StatStripBlockDemo from "../../../islands/StatStripBlockDemo.svelte";
+import statStripReact from "../../../../../../registry/blocks/stat-strip/react/stat-strip.tsx?raw";
+import statStripVue from "../../../../../../registry/blocks/stat-strip/vue/StatStrip.vue?raw";
+import statStripSolid from "../../../../../../registry/blocks/stat-strip/solid/stat-strip.tsx?raw";
+import statStripSvelte from "../../../../../../registry/blocks/stat-strip/svelte/StatStrip.svelte?raw";
+
+export const examples = {
+  react: statStripReact,
+  vue: statStripVue,
+  solid: statStripSolid,
+  svelte: statStripSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <StatStripBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="stat-strip" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { StatStrip } from "@/components/blocks/stat-strip";
+```
+
+```tsx
+<StatStrip heading="By the numbers" stats={stats} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import StatStrip from "@/components/blocks/StatStrip.vue";
+</script>
+```
+
+```vue
+<StatStrip heading="By the numbers" :stats="stats" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import StatStrip from "@/components/blocks/StatStrip.svelte";
+</script>
+```
+
+```svelte
+<StatStrip heading="By the numbers" {stats} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { StatStrip } from "@/components/blocks/stat-strip";
+```
+
+```tsx
+<StatStrip heading="By the numbers" stats={stats} />
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+| Prop          | Type              | Default             | Description                                                            |
+| ------------- | ----------------- | ------------------- | ---------------------------------------------------------------------- |
+| `heading`     | `string`          | a sentence          | The title above the figures. Rendered as an `h2`.                      |
+| `description` | `string`          | a sentence          | One short line under the heading. `""` hides it.                       |
+| `actionLabel` | `string`          | a label             | The outline button beside the heading. `""` hides it.                  |
+| `stats`       | `StatStripStat[]` | four sample figures | The figures, in order. `[]` shows the empty message.                   |
+| `error`       | `string`          | —                   | Loading the figures failed; an error Alert with a retry replaces them. |
+| `loading`     | `boolean`         | `false`             | Skeleton pairs in a busy region replace the figures.                   |
+| `disabled`    | `boolean`         | `false`             | The figures stay; the action and the retry button are disabled.        |
+| `onAction`    | `() => void`      | —                   | The action was pressed. Svelte: `onaction`. Vue: `@action`.            |
+| `onRetry`     | `() => void`      | —                   | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.           |
+
+### Stat
+
+| Field   | Type     | Description                                       |
+| ------- | -------- | ------------------------------------------------- |
+| `id`    | `string` | A stable key for the figure.                      |
+| `value` | `string` | The figure, already formatted, like `$2.4B`.      |
+| `label` | `string` | What the figure counts. It reads under the value. |
+
+### States
+
+| State    | Prop         | What renders                                               |
+| -------- | ------------ | ---------------------------------------------------------- |
+| Default  | —            | The heading, the action and every figure.                  |
+| Empty    | `stats={[]}` | The heading and "No numbers to show yet." in a dashed box. |
+| Loading  | `loading`    | The heading and four placeholder pairs.                    |
+| Error    | `error`      | The heading and an error Alert with "Try again".           |
+| Disabled | `disabled`   | The same figures; the action is disabled.                  |
+
+### Sizing
+
+| Container step           | What changes                                             |
+| ------------------------ | -------------------------------------------------------- |
+| below `@sm`              | Two figures per row; the action sits under the heading.  |
+| `@sm` (`--container-sm`) | The action moves beside the heading.                     |
+| `@md` (`--container-md`) | The heading and the values step up one size.             |
+| `@lg` (`--container-lg`) | Four figures on one row, with more room above and below. |
+
+## Examples
+
+### Container widths
+
+The same block at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <StatStripBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Empty
+
+Pass an empty `stats` array.
+
+<Preview examples={examples} layout="fill">
+  <StatStripBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <StatStripBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+Press "Try again" to clear the message and bring the figures back.
+
+<Preview examples={examples} layout="fill">
+  <StatStripBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <StatStripBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Keep values short. A figure longer than about eight characters crowds its column.
+- Say where a number comes from, in the description or on the page the action opens.

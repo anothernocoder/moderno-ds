@@ -1,0 +1,170 @@
+---
+title: Stat Strip
+description: Una fila de cifras destacadas bajo un encabezado breve — la sección "en cifras" de una página de producto.
+group: Bloques
+order: 119
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import StatStripBlockDemo from "../../../islands/StatStripBlockDemo.svelte";
+import statStripReact from "../../../../../../registry/blocks/stat-strip/react/stat-strip.tsx?raw";
+import statStripVue from "../../../../../../registry/blocks/stat-strip/vue/StatStrip.vue?raw";
+import statStripSolid from "../../../../../../registry/blocks/stat-strip/solid/stat-strip.tsx?raw";
+import statStripSvelte from "../../../../../../registry/blocks/stat-strip/svelte/StatStrip.svelte?raw";
+
+export const examples = {
+  react: statStripReact,
+  vue: statStripVue,
+  solid: statStripSolid,
+  svelte: statStripSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <StatStripBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="stat-strip" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { StatStrip } from "@/components/blocks/stat-strip";
+```
+
+```tsx
+<StatStrip heading="En cifras" stats={stats} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import StatStrip from "@/components/blocks/StatStrip.vue";
+</script>
+```
+
+```vue
+<StatStrip heading="En cifras" :stats="stats" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import StatStrip from "@/components/blocks/StatStrip.svelte";
+</script>
+```
+
+```svelte
+<StatStrip heading="En cifras" {stats} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { StatStrip } from "@/components/blocks/stat-strip";
+```
+
+```tsx
+<StatStrip heading="En cifras" stats={stats} />
+```
+
+</ForFramework>
+
+## Referencia de la API
+
+### Props
+
+| Prop          | Tipo              | Por defecto              | Descripción                                                                  |
+| ------------- | ----------------- | ------------------------ | ---------------------------------------------------------------------------- |
+| `heading`     | `string`          | una frase                | El título sobre las cifras. Se muestra como `h2`.                            |
+| `description` | `string`          | una frase                | Una línea breve bajo el encabezado. `""` la oculta.                          |
+| `actionLabel` | `string`          | una etiqueta             | El botón outline junto al encabezado. `""` lo oculta.                        |
+| `stats`       | `StatStripStat[]` | cuatro cifras de muestra | Las cifras, en orden. `[]` muestra el mensaje de vacío.                      |
+| `error`       | `string`          | —                        | Falló la carga de las cifras; un Alert de error con reintento las sustituye. |
+| `loading`     | `boolean`         | `false`                  | Pares de esqueleto en una región ocupada sustituyen a las cifras.            |
+| `disabled`    | `boolean`         | `false`                  | Las cifras se quedan; la acción y el reintento quedan deshabilitados.        |
+| `onAction`    | `() => void`      | —                        | Se pulsó la acción. Svelte: `onaction`. Vue: `@action`.                      |
+| `onRetry`     | `() => void`      | —                        | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.                  |
+
+### Cifra
+
+| Campo   | Tipo     | Descripción                                   |
+| ------- | -------- | --------------------------------------------- |
+| `id`    | `string` | Una clave estable para la cifra.              |
+| `value` | `string` | La cifra, ya con formato, como `$2.4B`.       |
+| `label` | `string` | Lo que cuenta la cifra. Se lee bajo el valor. |
+
+### Estados
+
+| Estado        | Prop         | Qué se muestra                                                     |
+| ------------- | ------------ | ------------------------------------------------------------------ |
+| Por defecto   | —            | El encabezado, la acción y cada cifra.                             |
+| Vacío         | `stats={[]}` | El encabezado y "No numbers to show yet." en un recuadro punteado. |
+| Cargando      | `loading`    | El encabezado y cuatro pares de marcador.                          |
+| Error         | `error`      | El encabezado y un Alert de error con "Try again".                 |
+| Deshabilitado | `disabled`   | Las mismas cifras; la acción queda deshabilitada.                  |
+
+### Tamaño
+
+| Paso del contenedor      | Qué cambia                                                     |
+| ------------------------ | -------------------------------------------------------------- |
+| bajo `@sm`               | Dos cifras por fila; la acción va bajo el encabezado.          |
+| `@sm` (`--container-sm`) | La acción pasa junto al encabezado.                            |
+| `@md` (`--container-md`) | El encabezado y los valores suben un tamaño.                   |
+| `@lg` (`--container-lg`) | Las cuatro cifras en una fila, con más espacio arriba y abajo. |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+El mismo bloque a 18rem, 30rem, 40rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <StatStripBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Vacío
+
+Pasa un array `stats` vacío.
+
+<Preview examples={examples} layout="fill">
+  <StatStripBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <StatStripBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+Pulsa "Try again" para quitar el mensaje y recuperar las cifras.
+
+<Preview examples={examples} layout="fill">
+  <StatStripBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+<Preview examples={examples} layout="fill">
+  <StatStripBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
+
+## Notas
+
+- Mantén los valores cortos. Una cifra de más de unos ocho caracteres aprieta su columna.
+- Di de dónde sale cada número, en la descripción o en la página que abre la acción.
