@@ -1,0 +1,163 @@
+---
+title: CTA
+description: Una sección de llamada a la acción — un título con serifa, una línea de descripción y dos botones dentro de un panel con borde.
+group: Bloques
+order: 118
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import CtaBlockDemo from "../../../islands/CtaBlockDemo.svelte";
+import ctaReact from "../../../../../../registry/blocks/cta/react/cta.tsx?raw";
+import ctaVue from "../../../../../../registry/blocks/cta/vue/Cta.vue?raw";
+import ctaSolid from "../../../../../../registry/blocks/cta/solid/cta.tsx?raw";
+import ctaSvelte from "../../../../../../registry/blocks/cta/svelte/Cta.svelte?raw";
+
+export const examples = {
+  react: ctaReact,
+  vue: ctaVue,
+  solid: ctaSolid,
+  svelte: ctaSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <CtaBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="cta" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { Cta } from "@/components/blocks/cta";
+```
+
+```tsx
+<Cta title="¿Listo para cobrar antes?" primaryAction="Empezar" onPrimaryAction={signUp} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import Cta from "@/components/blocks/Cta.vue";
+</script>
+```
+
+```vue
+<Cta title="¿Listo para cobrar antes?" primary-action="Empezar" @primary-action="signUp" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import Cta from "@/components/blocks/Cta.svelte";
+</script>
+```
+
+```svelte
+<Cta title="¿Listo para cobrar antes?" primaryAction="Empezar" onprimaryaction={signUp} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { Cta } from "@/components/blocks/cta";
+```
+
+```tsx
+<Cta title="¿Listo para cobrar antes?" primaryAction="Empezar" onPrimaryAction={signUp} />
+```
+
+</ForFramework>
+
+## Referencia de la API
+
+### Props
+
+| Prop                | Tipo         | Por defecto                              | Descripción                                                                                  |
+| ------------------- | ------------ | ---------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `title`             | `string`     | `"Close the month in minutes, not days"` | Qué obtiene el lector, en pocas palabras. Va en la fuente con serifa.                        |
+| `description`       | `string`     | una frase                                | Una línea bajo el título; `""` la oculta.                                                    |
+| `primaryAction`     | `string`     | `"Start free trial"`                     | La etiqueta del botón principal; `""` lo oculta.                                             |
+| `secondaryAction`   | `string`     | `"Talk to sales"`                        | La etiqueta del botón con contorno; `""` lo oculta.                                          |
+| `error`             | `string`     | —                                        | Algo detrás de las acciones falló; un Alert de error con reintento sustituye a las acciones. |
+| `loading`           | `boolean`    | `false`                                  | Marcadores de esqueleto en una región ocupada sustituyen al contenido.                       |
+| `disabled`          | `boolean`    | `false`                                  | El contenido se queda y todos los botones se deshabilitan.                                   |
+| `onPrimaryAction`   | `() => void` | —                                        | Se pulsó el botón principal. Svelte: `onprimaryaction`. Vue: `@primary-action`.              |
+| `onSecondaryAction` | `() => void` | —                                        | Se pulsó el botón con contorno. Svelte: `onsecondaryaction`. Vue: `@secondary-action`.       |
+| `onRetry`           | `() => void` | —                                        | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.                                  |
+
+### Estados
+
+| Estado        | Prop                     | Qué se muestra                                                           |
+| ------------- | ------------------------ | ------------------------------------------------------------------------ |
+| Por defecto   | —                        | Título, descripción y las dos acciones.                                  |
+| Vacío         | todo texto menos `title` | Solo el título, cuando pasas `""` a la descripción y a las dos acciones. |
+| Cargando      | `loading`                | Marcadores para el título, la descripción y dos botones.                 |
+| Error         | `error`                  | El título y la descripción, y después un Alert de error con "Try again". |
+| Deshabilitado | `disabled`               | El mismo contenido con los dos botones deshabilitados.                   |
+
+### Tamaño
+
+| Paso del contenedor      | Qué cambia                                                                  |
+| ------------------------ | --------------------------------------------------------------------------- |
+| bajo `@sm`               | Todo va centrado; las acciones se apilan, cada una tan ancha como el panel. |
+| `@sm` (`--container-sm`) | Las acciones van una junto a otra, centradas, con su propio ancho.          |
+| `@md` (`--container-md`) | El título sube un tamaño.                                                   |
+| `@lg` (`--container-lg`) | El texto pasa al inicio y las acciones al final, en una sola fila.          |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+El mismo bloque a 18rem, 30rem, 40rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <CtaBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Solo título
+
+Pasa `""` a todo menos al título.
+
+<Preview examples={examples} layout="fill">
+  <CtaBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <CtaBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+Pulsa "Try again" para quitar el mensaje y recuperar las acciones.
+
+<Preview examples={examples} layout="fill">
+  <CtaBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+<Preview examples={examples} layout="fill">
+  <CtaBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
+
+## Notas
+
+- Pide una sola cosa. La acción secundaria es para quien aún no está listo.
+- Mantén el título en una línea a tamaños anchos: di qué obtiene el lector.
