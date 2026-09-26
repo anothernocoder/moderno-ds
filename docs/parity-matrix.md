@@ -271,6 +271,23 @@ shared stylesheet keys on.
 | disabled item → native `disabled` + `data-disabled`, inert   |  ✅   | ✅  |   ✅   |  ✅   |
 | native props forwarded to the root                           |  ✅   | ✅  |   ✅   |  ✅   |
 
+### Progress (`progressRecipe`: `data-size`; Ark progress machine)
+
+| State                                                               | React | Vue | Svelte | Solid |
+| ------------------------------------------------------------------- | :---: | :-: | :----: | :---: |
+| size → root `data-size` (+ `md`)                                    |  ✅   | ✅  |   ✅   |  ✅   |
+| every Ark part exposed                                              |  ✅   | ✅  |   ✅   |  ✅   |
+| linear: track is the `progressbar` (`aria-valuenow`/min/max)        |  ✅   | ✅  |   ✅   |  ✅   |
+| range width + value text follow the value, measured against min/max |  ✅   | ✅  |   ✅   |  ✅   |
+| controlled value → `data-state="complete"` at max, `View` shows     |  ✅   | ✅  |   ✅   |  ✅   |
+| `null` value → `data-state="indeterminate"`, no value, no width †   |  ✅   | ✅  |   ✅   |  ✅   |
+| circular: `<svg>` circle is the `progressbar`, track + range inside |  ✅   | ✅  |   ✅   |  ✅   |
+| native props forwarded to the root                                  |  ✅   | ✅  |   ✅   |  ✅   |
+
+† Zag's Solid binding reads a `null` value as "uncontrolled", so in Solid an
+indeterminate progress is `defaultValue={null}`; React, Vue and Svelte take
+`value={null}` too.
+
 ### Dialog (Ark portal + focus trap + ids)
 
 | State                    | React | Vue | Svelte | Solid |
@@ -328,6 +345,7 @@ shared stylesheet keys on.
 | Toggle / ToggleGroup pressed state + roles   |  ✅   | ✅  |   ✅   |  ✅   |
 | Tabs selected tab, hidden panels + tab ids   |  ✅   | ✅  |   ✅   |  ✅   |
 | Accordion open items, hidden contents + ids  |  ✅   | ✅  |   ✅   |  ✅   |
+| Progress value, state + circle geometry      |  ✅   | ✅  |   ✅   |  ✅   |
 
 ¹ Vue hydration is verified on the portal-free primitives (Button, Card, Field
 and Checkbox), the deterministic `useId` hazard; Ark's portaled popovers

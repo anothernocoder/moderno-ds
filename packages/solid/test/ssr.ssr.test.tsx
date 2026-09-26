@@ -258,6 +258,26 @@ describe("SSR (Solid)", () => {
     ]);
     expect(html).toContain("Shipping answer");
     expect(html).toContain("Support answer");
+    // Progress: Ark's progress machine. The recipe lands on each root, the
+    // state reaches the server, the track or the circle is the progressbar
+    // with its value, and the percentage is inline on the range; an
+    // indeterminate progress has no value and no width.
+    expect(partAttrs(html, "progress", "root", "data-size")).toEqual(["md", "sm", "lg"]);
+    expect(partAttrs(html, "progress", "root", "data-state")).toEqual([
+      "loading",
+      "loading",
+      "indeterminate",
+    ]);
+    expect(partAttrs(html, "progress", "track", "role")).toEqual(["progressbar", "progressbar"]);
+    expect(partAttrs(html, "progress", "track", "aria-valuenow")).toEqual(["40", undefined]);
+    const progressRanges = partAttrs(html, "progress", "range", "style");
+    expect(progressRanges[0]).toMatch(/^width:\s*40%;?$/);
+    expect(progressRanges[1] ?? "").not.toMatch(/width/);
+    expect(partTags(html, "progress", "circle")[0]).toMatch(/^<svg/);
+    expect(partAttrs(html, "progress", "circle", "role")).toEqual(["progressbar"]);
+    expect(partAttrs(html, "progress", "circle", "aria-valuenow")).toEqual(["75"]);
+    expect(partTags(html, "progress", "circle-range")).toHaveLength(1);
+    expect(html).toMatch(/data-part="value-text"[^>]*>(?:<!--[^>]*-->)*40%/);
     expect(html).toContain('data-scope="pin-input"');
     // Every code cell is on the server, and `count` makes the server's aria
     // labels agree with the client's — the PinInput-specific SSR hazard.

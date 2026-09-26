@@ -21,6 +21,7 @@ import { Toggle } from "../src/toggle.js";
 import { ToggleGroup } from "../src/toggle-group.js";
 import { Tabs } from "../src/tabs.js";
 import { Accordion } from "../src/accordion.js";
+import { Progress } from "../src/progress.js";
 import { attrOf, partAttrs, partTags } from "../../core/test/ssr-parts.ts";
 import { PinInput } from "../src/pin-input.js";
 
@@ -277,6 +278,26 @@ describe("SSR (Vue)", () => {
     ]);
     expect(html).toContain("Shipping answer");
     expect(html).toContain("Support answer");
+    // Progress: Ark's progress machine. The recipe lands on each root, the
+    // state reaches the server, the track or the circle is the progressbar
+    // with its value, and the percentage is inline on the range; an
+    // indeterminate progress has no value and no width.
+    expect(partAttrs(html, "progress", "root", "data-size")).toEqual(["md", "sm", "lg"]);
+    expect(partAttrs(html, "progress", "root", "data-state")).toEqual([
+      "loading",
+      "loading",
+      "indeterminate",
+    ]);
+    expect(partAttrs(html, "progress", "track", "role")).toEqual(["progressbar", "progressbar"]);
+    expect(partAttrs(html, "progress", "track", "aria-valuenow")).toEqual(["40", undefined]);
+    const progressRanges = partAttrs(html, "progress", "range", "style");
+    expect(progressRanges[0]).toMatch(/^width:\s*40%;?$/);
+    expect(progressRanges[1] ?? "").not.toMatch(/width/);
+    expect(partTags(html, "progress", "circle")[0]).toMatch(/^<svg/);
+    expect(partAttrs(html, "progress", "circle", "role")).toEqual(["progressbar"]);
+    expect(partAttrs(html, "progress", "circle", "aria-valuenow")).toEqual(["75"]);
+    expect(partTags(html, "progress", "circle-range")).toHaveLength(1);
+    expect(html).toMatch(/data-part="value-text"[^>]*>(?:<!--[^>]*-->)*40%/);
     expect(html).toContain('data-scope="pin-input"');
     // Every code cell is on the server, and `count` makes the server's aria
     // labels agree with the client's — the PinInput-specific SSR hazard.
@@ -427,6 +448,14 @@ const HydrationApp = defineComponent({
             h(Accordion.ItemTrigger, {}, () => "Warranty"),
             h(Accordion.ItemContent, {}, () => "Warranty answer"),
           ]),
+        ]),
+        h(Progress.Root, { modelValue: 60, size: "sm" }, () => [
+          h(Progress.Label, {}, () => "Uploading"),
+          h(Progress.ValueText),
+          h(Progress.Track, {}, () => h(Progress.Range)),
+        ]),
+        h(Progress.Root, { modelValue: null }, () => [
+          h(Progress.Circle, {}, () => [h(Progress.CircleTrack), h(Progress.CircleRange)]),
         ]),
         h(Alert.Root, { variant: "error" }, () => [
           h(Alert.Icon, {}, () => "!"),

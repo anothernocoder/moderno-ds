@@ -28,6 +28,7 @@ import { Toggle } from "../src/toggle.js";
 import { ToggleGroup } from "../src/toggle-group.js";
 import { Tabs } from "../src/tabs.js";
 import { Accordion } from "../src/accordion.js";
+import { Progress } from "../src/progress.js";
 import { Dialog, Portal } from "../src/dialog.js";
 import { Select, createListCollection } from "../src/select.js";
 import { PinInput } from "../src/pin-input.js";
@@ -360,6 +361,21 @@ export const App = defineComponent({
               ]),
             ],
           ),
+        ]),
+
+        h("section", { "aria-label": "progress" }, [
+          h(Progress.Root, { modelValue: 40 }, () => [
+            h(Progress.Label, {}, () => "Uploading"),
+            h(Progress.ValueText),
+            h(Progress.Track, {}, () => h(Progress.Range)),
+          ]),
+          h(Progress.Root, { size: "sm", modelValue: 75 }, () => [
+            h(Progress.Circle, {}, () => [h(Progress.CircleTrack), h(Progress.CircleRange)]),
+            h(Progress.ValueText),
+          ]),
+          h(Progress.Root, { size: "lg", modelValue: null }, () => [
+            h(Progress.Track, {}, () => h(Progress.Range)),
+          ]),
         ]),
 
         h(Dialog.Root, { defaultOpen: props.open }, () => [

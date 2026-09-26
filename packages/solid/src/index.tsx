@@ -151,6 +151,22 @@ export type {
   AccordionValueChangeDetails,
 } from "./accordion.jsx";
 
+export { Progress } from "./progress.jsx";
+export type {
+  ProgressSize,
+  ModernoProgressRootProps,
+  ProgressRootProps,
+  ProgressLabelProps,
+  ProgressTrackProps,
+  ProgressRangeProps,
+  ProgressValueTextProps,
+  ProgressCircleProps,
+  ProgressCircleTrackProps,
+  ProgressCircleRangeProps,
+  ProgressViewProps,
+  ProgressValueChangeDetails,
+} from "./progress.jsx";
+
 export { Avatar } from "./avatar.jsx";
 export type {
   AvatarSize,

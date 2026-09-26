@@ -48,6 +48,7 @@ import {
   toggleGroupRecipe,
   tabsRecipe,
   accordionRecipe,
+  progressRecipe,
 } from "@moderno-ui/core";
 import { extractProps, type ComponentDoc, type ComponentEntry, type PropDoc } from "./index.ts";
 import { ENTRIES } from "./manifest.ts";
@@ -388,6 +389,24 @@ export const AGENT_COMPONENTS: AgentComponentSpec[] = [
       },
     ],
     variants: accordionRecipe.variants,
+  },
+  {
+    name: "Progress",
+    slug: "progress",
+    scope: "progress",
+    propsEntry: findEntry("Progress"),
+    parts: [
+      { name: "root", description: "Carries size; holds a linear or a circular progress." },
+      { name: "label", description: "Optional; names what is in progress." },
+      { name: "value-text", description: "Optional; the percentage, or your own text." },
+      { name: "track", description: "The linear progressbar; holds the range." },
+      { name: "range", description: "The filled part of the track, as wide as the value." },
+      { name: "circle", description: "The circular progressbar, an <svg>." },
+      { name: "circle-track", description: "The full ring behind the range." },
+      { name: "circle-range", description: "The arc drawn as far as the value." },
+      { name: "view", description: "Optional; shows its children in one state only." },
+    ],
+    variants: progressRecipe.variants,
   },
   {
     name: "LineChart",

@@ -20,6 +20,7 @@
   import { Toggle, ToggleGroup } from "../src/index.js";
   import { Tabs } from "../src/index.js";
   import { Accordion } from "../src/index.js";
+  import { Progress } from "../src/index.js";
   import { Dialog, Portal } from "../src/index.js";
   import { Select, createListCollection } from "../src/index.js";
   import { PinInput } from "../src/index.js";
@@ -329,6 +330,28 @@
         <Accordion.ItemContent>Support answer</Accordion.ItemContent>
       </Accordion.Item>
     </Accordion.Root>
+  </section>
+
+  <section aria-label="progress">
+    <Progress.Root value={40}>
+      <Progress.Label>Uploading</Progress.Label>
+      <Progress.ValueText />
+      <Progress.Track>
+        <Progress.Range />
+      </Progress.Track>
+    </Progress.Root>
+    <Progress.Root size="sm" value={75}>
+      <Progress.Circle>
+        <Progress.CircleTrack />
+        <Progress.CircleRange />
+      </Progress.Circle>
+      <Progress.ValueText />
+    </Progress.Root>
+    <Progress.Root size="lg" value={null}>
+      <Progress.Track>
+        <Progress.Range />
+      </Progress.Track>
+    </Progress.Root>
   </section>
 
   <Dialog.Root defaultOpen={open}>

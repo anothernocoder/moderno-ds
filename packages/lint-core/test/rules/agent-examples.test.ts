@@ -264,3 +264,21 @@ describe("moderno/valid-props over the real Accordion manifest", () => {
     ]);
   });
 });
+
+describe("moderno/valid-props over the real Progress manifest", () => {
+  const manifests = manifestsFor("react");
+  const check = (code: string) =>
+    validProps.check({ code, framework: "react", manifests }).map((f) => f.message);
+
+  it("accepts the recipe prop and Ark's own props on the root", { timeout: 30_000 }, () => {
+    expect(
+      check('<Progress.Root size="sm" value={progress} min={0} max={10} orientation="vertical" />'),
+    ).toEqual([]);
+  });
+
+  it("rejects a size outside the recipe", () => {
+    expect(check('<Progress.Root size="xl" />')).toEqual([
+      expect.stringContaining('Invalid value "xl"'),
+    ]);
+  });
+});

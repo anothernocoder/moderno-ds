@@ -36,6 +36,7 @@ export {
   toggleGroupRecipe,
   tabsRecipe,
   accordionRecipe,
+  progressRecipe,
 } from "./recipes.js";
 export type {
   ButtonVariant,
@@ -73,4 +74,5 @@ export type {
   TabsSize,
   AccordionVariant,
   AccordionSize,
+  ProgressSize,
 } from "./recipes.js";

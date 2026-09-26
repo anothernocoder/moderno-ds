@@ -1,0 +1,290 @@
+---
+title: Progress
+description: Shows how far a task has come, as a bar or a ring.
+group: Components
+order: 33
+component: Progress
+pkg: "@moderno-ui/react"
+agentPropsHash: "sha256:b4c6b0cda1ea1fb99fda06d7ef5251dfb769dfa3ba4ca8d68e42c5068f7f49e6"
+agent:
+  intent: Show how far a task has come, as a bar or a ring.
+  whenToUse: Work the user waits on and you can measure — an upload, an install, the steps of a setup — or work that has started but whose amount is not known yet.
+  whenNotToUse:
+    - case: A short wait with nothing to measure, inside a button or a line of text
+      use: Spinner
+    - case: Content that is still loading and has a known shape
+      use: Skeleton
+    - case: A value the user sets
+      use: Slider
+  gotchas:
+    - "Build a bar from Progress.Track with Progress.Range inside it; build a ring from Progress.Circle with Progress.CircleTrack and Progress.CircleRange inside it. Both go directly inside Progress.Root."
+    - "A null value is indeterminate: the bar slides and the ring turns. In Solid, start it with defaultValue={null}; Solid treats value={null} as uncontrolled."
+    - "value is measured against min and max (0 and 100 by default); Progress.ValueText prints the percentage unless you give it your own text."
+    - "In Vue, bind the value with :model-value or v-model; value is not a Vue prop."
+  theming:
+    - "The track and ring are --muted and the range is --primary, with --radius-full ends. Do not pass a hex."
+    - "The label is --foreground and the value text --muted-foreground; the value glides over --motion-normal."
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ProgressDemo from "../../../examples/progress/progress.svelte";
+import baseReact from "../../../examples/progress/react.tsx?raw";
+import baseVue from "../../../examples/progress/vue.vue?raw";
+import baseSolid from "../../../examples/progress/solid.tsx?raw";
+import baseSvelte from "../../../examples/progress/progress.svelte?raw";
+import ProgressCircularDemo from "../../../examples/progress/circular/progress-circular.svelte";
+import circularReact from "../../../examples/progress/circular/react.tsx?raw";
+import circularVue from "../../../examples/progress/circular/vue.vue?raw";
+import circularSolid from "../../../examples/progress/circular/solid.tsx?raw";
+import circularSvelte from "../../../examples/progress/circular/progress-circular.svelte?raw";
+import ProgressIndeterminateDemo from "../../../examples/progress/indeterminate/progress-indeterminate.svelte";
+import indeterminateReact from "../../../examples/progress/indeterminate/react.tsx?raw";
+import indeterminateVue from "../../../examples/progress/indeterminate/vue.vue?raw";
+import indeterminateSolid from "../../../examples/progress/indeterminate/solid.tsx?raw";
+import indeterminateSvelte from "../../../examples/progress/indeterminate/progress-indeterminate.svelte?raw";
+import ProgressSizesDemo from "../../../examples/progress/sizes/progress-sizes.svelte";
+import sizesReact from "../../../examples/progress/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/progress/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/progress/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/progress/sizes/progress-sizes.svelte?raw";
+import ProgressVerticalDemo from "../../../examples/progress/vertical/progress-vertical.svelte";
+import verticalReact from "../../../examples/progress/vertical/react.tsx?raw";
+import verticalVue from "../../../examples/progress/vertical/vue.vue?raw";
+import verticalSolid from "../../../examples/progress/vertical/solid.tsx?raw";
+import verticalSvelte from "../../../examples/progress/vertical/progress-vertical.svelte?raw";
+import ProgressRangeDemo from "../../../examples/progress/range/progress-range.svelte";
+import rangeReact from "../../../examples/progress/range/react.tsx?raw";
+import rangeVue from "../../../examples/progress/range/vue.vue?raw";
+import rangeSolid from "../../../examples/progress/range/solid.tsx?raw";
+import rangeSvelte from "../../../examples/progress/range/progress-range.svelte?raw";
+
+<FrameworkSelect locale="en" />
+
+<Preview
+  examples={{
+    react: baseReact,
+    vue: baseVue,
+    solid: baseSolid,
+    svelte: baseSvelte,
+  }}
+>
+  <ProgressDemo client:visible />
+</Preview>
+
+## Installation
+
+<Install pkg="@moderno-ui/react" />
+
+## Usage
+
+Progress shows how much of a task is done. Use it when the user waits on work you can measure, like an upload. It draws a bar, or a ring when you build it from `Progress.Circle`.
+
+<ForFramework fw="react">
+
+```tsx
+import { Progress } from "@moderno-ui/react";
+```
+
+```tsx
+<Progress.Root value={progress}>
+  <Progress.Label>Uploading photos</Progress.Label>
+  <Progress.ValueText />
+  <Progress.Track>
+    <Progress.Range />
+  </Progress.Track>
+</Progress.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Progress } from "@moderno-ui/vue";
+```
+
+```vue
+<Progress.Root :model-value="progress">
+  <Progress.Label>Uploading photos</Progress.Label>
+  <Progress.ValueText />
+  <Progress.Track>
+    <Progress.Range />
+  </Progress.Track>
+</Progress.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Progress } from "@moderno-ui/svelte";
+```
+
+```svelte
+<Progress.Root value={progress}>
+  <Progress.Label>Uploading photos</Progress.Label>
+  <Progress.ValueText />
+  <Progress.Track>
+    <Progress.Range />
+  </Progress.Track>
+</Progress.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Progress } from "@moderno-ui/solid";
+```
+
+```tsx
+<Progress.Root value={progress}>
+  <Progress.Label>Uploading photos</Progress.Label>
+  <Progress.ValueText />
+  <Progress.Track>
+    <Progress.Range />
+  </Progress.Track>
+</Progress.Root>
+```
+
+</ForFramework>
+
+`value` runs from 0 to 100 by default. Pass `null` when you don't know the amount yet.
+
+## API Reference
+
+### Progress.Root
+
+`size` is the Moderno addition; every part follows it. The other props come from Ark's Progress.
+
+<PropsTable component="Progress" />
+
+| Prop            | Type                                           | Default                | Description                                      |
+| --------------- | ---------------------------------------------- | ---------------------- | ------------------------------------------------ |
+| `value`         | `number \| null`                               | —                      | Controlled value. `null` makes it indeterminate. |
+| `defaultValue`  | `number \| null`                               | `50`                   | Value at first when uncontrolled.                |
+| `onValueChange` | `(details: { value: number \| null }) => void` | —                      | Called when the value changes.                   |
+| `min`           | `number`                                       | `0`                    | The value of an empty bar.                       |
+| `max`           | `number`                                       | `100`                  | The value of a full bar.                         |
+| `orientation`   | `"horizontal" \| "vertical"`                   | `"horizontal"`         | Lays a bar across or stands it up.               |
+| `formatOptions` | `Intl.NumberFormatOptions`                     | `{ style: "percent" }` | How `Progress.ValueText` prints the value.       |
+| `locale`        | `string`                                       | `"en-US"`              | The locale used to print the value.              |
+
+In Vue, bind the value with `:model-value` or `v-model`, and listen with `@value-change`.
+
+### Progress.View
+
+| Prop    | Type                                         | Default | Description                                      |
+| ------- | -------------------------------------------- | ------- | ------------------------------------------------ |
+| `state` | `"loading" \| "complete" \| "indeterminate"` | —       | Required. Shows its children only in this state. |
+
+### Parts
+
+| Part                   | Element    | Description                                                    |
+| ---------------------- | ---------- | -------------------------------------------------------------- |
+| `Progress.Root`        | `<div>`    | Carries `data-size`.                                           |
+| `Progress.Label`       | `<span>`   | Optional. Names what is in progress.                           |
+| `Progress.ValueText`   | `<span>`   | Optional. The percentage, or your own text.                    |
+| `Progress.Track`       | `<div>`    | The bar, with `role="progressbar"` and `aria-valuenow`.        |
+| `Progress.Range`       | `<div>`    | The filled part of the bar. Ark sets its width from the value. |
+| `Progress.Circle`      | `<svg>`    | The ring, with `role="progressbar"` and `aria-valuenow`.       |
+| `Progress.CircleTrack` | `<circle>` | The full ring behind the range.                                |
+| `Progress.CircleRange` | `<circle>` | The arc, drawn as far as the value.                            |
+| `Progress.View`        | `<span>`   | Optional. Shows its children in one state only.                |
+
+### Data attributes
+
+| Attribute          | Values                                                                                                         |
+| ------------------ | -------------------------------------------------------------------------------------------------------------- |
+| `data-state`       | `"loading"`, `"complete"` or `"indeterminate"`, on the root, the track and range, and the circle and its range |
+| `data-orientation` | `"horizontal"` or `"vertical"`, on the root, label, track and range                                            |
+| `data-size`        | On the root: `"sm"`, `"md"` or `"lg"`                                                                          |
+
+## Examples
+
+### Circular
+
+Build a ring from `Progress.Circle`. The value text sits in its middle.
+
+<Preview
+  examples={{
+    react: circularReact,
+    vue: circularVue,
+    solid: circularSolid,
+    svelte: circularSvelte,
+  }}
+>
+  <ProgressCircularDemo client:visible />
+</Preview>
+
+### Indeterminate
+
+With a `null` value, a short bar slides across the track. A ring turns the same way.
+
+<Preview
+  examples={{
+    react: indeterminateReact,
+    vue: indeterminateVue,
+    solid: indeterminateSolid,
+    svelte: indeterminateSvelte,
+  }}
+>
+  <ProgressIndeterminateDemo client:visible />
+</Preview>
+
+### Sizes
+
+<Preview
+  examples={{
+    react: sizesReact,
+    vue: sizesVue,
+    solid: sizesSolid,
+    svelte: sizesSvelte,
+  }}
+>
+  <ProgressSizesDemo client:visible />
+</Preview>
+
+### Vertical
+
+With `orientation="vertical"`, the bar stands up and fills from the bottom.
+
+<Preview
+  examples={{
+    react: verticalReact,
+    vue: verticalVue,
+    solid: verticalSolid,
+    svelte: verticalSvelte,
+  }}
+>
+  <ProgressVerticalDemo client:visible />
+</Preview>
+
+### Steps
+
+Set `max` to count steps, and give `Progress.ValueText` your own text.
+
+<Preview
+  examples={{
+    react: rangeReact,
+    vue: rangeVue,
+    solid: rangeSolid,
+    svelte: rangeSvelte,
+  }}
+>
+  <ProgressRangeDemo client:visible />
+</Preview>
+
+## Notes
+
+- `Progress.Root` is wrapped to add `size`; every other part is Ark's unchanged.
+- The progressbar is named by its value (for example "60%"). To name it by the task, pass `aria-label` to `Progress.Track` or `Progress.Circle`.
+- In Solid, start an indeterminate progress with `defaultValue={null}`. Ark's Solid binding treats `value={null}` as uncontrolled.
+- Under reduced motion the value stops gliding, and the indeterminate bar and ring move slower instead of stopping.
+- For a short wait with nothing to measure, use Spinner.

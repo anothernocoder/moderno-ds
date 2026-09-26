@@ -35,12 +35,19 @@ function referencedVars(css: string): Set<string> {
 }
 
 /**
- * Custom properties set by Ark/floating-ui at runtime — on the positioner, and
- * on the Tabs indicator (the selected trigger's box) — not contract slots, and
- * intentionally referenced with no fallback so they resolve against the live
- * element.
+ * Custom properties set by Ark/floating-ui at runtime — on the positioner, on
+ * the Tabs indicator (the selected trigger's box) and on the Progress circle's
+ * range (its circumference) — not contract slots, and intentionally referenced
+ * with no fallback so they resolve against the live element.
  */
-const RUNTIME_VARS = new Set(["--reference-width", "--width", "--height", "--top", "--left"]);
+const RUNTIME_VARS = new Set([
+  "--reference-width",
+  "--width",
+  "--height",
+  "--top",
+  "--left",
+  "--circumference",
+]);
 
 describe("components.css references only contract token slots", () => {
   const defined = definedVars(tokensCss);

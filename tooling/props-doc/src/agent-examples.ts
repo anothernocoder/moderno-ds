@@ -1857,6 +1857,137 @@ export const AGENT_EXAMPLES: Record<string, Partial<Record<Framework, AgentExamp
     ],
   },
 
+  Progress: {
+    react: [
+      {
+        title: "A labelled bar with the percentage",
+        code: [
+          'import { Progress } from "@moderno-ui/react";',
+          "",
+          "<Progress.Root value={uploaded}>",
+          "  <Progress.Label>Uploading photos</Progress.Label>",
+          "  <Progress.ValueText />",
+          "  <Progress.Track>",
+          "    <Progress.Range />",
+          "  </Progress.Track>",
+          "</Progress.Root>",
+        ].join("\n"),
+      },
+      {
+        title: "A circle that spins while the amount is unknown",
+        code: [
+          'import { Progress } from "@moderno-ui/react";',
+          "",
+          "<Progress.Root value={null}>",
+          "  <Progress.Circle>",
+          "    <Progress.CircleTrack />",
+          "    <Progress.CircleRange />",
+          "  </Progress.Circle>",
+          "</Progress.Root>",
+        ].join("\n"),
+      },
+    ],
+    vue: [
+      {
+        title: "A labelled bar with the percentage",
+        code: [
+          '<script setup lang="ts">',
+          'import { Progress } from "@moderno-ui/vue";',
+          "</script>",
+          "",
+          "<template>",
+          '  <Progress.Root :model-value="uploaded">',
+          "    <Progress.Label>Uploading photos</Progress.Label>",
+          "    <Progress.ValueText />",
+          "    <Progress.Track>",
+          "      <Progress.Range />",
+          "    </Progress.Track>",
+          "  </Progress.Root>",
+          "</template>",
+        ].join("\n"),
+      },
+      {
+        title: "A circle that spins while the amount is unknown",
+        code: [
+          '<script setup lang="ts">',
+          'import { Progress } from "@moderno-ui/vue";',
+          "</script>",
+          "",
+          "<template>",
+          '  <Progress.Root :model-value="null">',
+          "    <Progress.Circle>",
+          "      <Progress.CircleTrack />",
+          "      <Progress.CircleRange />",
+          "    </Progress.Circle>",
+          "  </Progress.Root>",
+          "</template>",
+        ].join("\n"),
+      },
+    ],
+    svelte: [
+      {
+        title: "A labelled bar with the percentage",
+        code: [
+          '<script lang="ts">',
+          '  import { Progress } from "@moderno-ui/svelte";',
+          "</script>",
+          "",
+          "<Progress.Root value={uploaded}>",
+          "  <Progress.Label>Uploading photos</Progress.Label>",
+          "  <Progress.ValueText />",
+          "  <Progress.Track>",
+          "    <Progress.Range />",
+          "  </Progress.Track>",
+          "</Progress.Root>",
+        ].join("\n"),
+      },
+      {
+        title: "A circle that spins while the amount is unknown",
+        code: [
+          '<script lang="ts">',
+          '  import { Progress } from "@moderno-ui/svelte";',
+          "</script>",
+          "",
+          "<Progress.Root value={null}>",
+          "  <Progress.Circle>",
+          "    <Progress.CircleTrack />",
+          "    <Progress.CircleRange />",
+          "  </Progress.Circle>",
+          "</Progress.Root>",
+        ].join("\n"),
+      },
+    ],
+    solid: [
+      {
+        title: "A labelled bar with the percentage",
+        code: [
+          'import { Progress } from "@moderno-ui/solid";',
+          "",
+          "<Progress.Root value={uploaded}>",
+          "  <Progress.Label>Uploading photos</Progress.Label>",
+          "  <Progress.ValueText />",
+          "  <Progress.Track>",
+          "    <Progress.Range />",
+          "  </Progress.Track>",
+          "</Progress.Root>",
+        ].join("\n"),
+      },
+      {
+        title: "A circle that spins while the amount is unknown",
+        code: [
+          'import { Progress } from "@moderno-ui/solid";',
+          "",
+          "<Progress.Root defaultValue={null}>",
+          "  <Progress.Circle>",
+          "    <Progress.CircleTrack />",
+          "    <Progress.CircleRange />",
+          "  </Progress.Circle>",
+          "</Progress.Root>",
+        ].join("\n"),
+      },
+    ],
+  },
+
   LineChart: {
     react: [
       {

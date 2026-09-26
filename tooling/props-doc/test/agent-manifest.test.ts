@@ -34,6 +34,7 @@ describe("AGENT_COMPONENTS", () => {
       "ToggleGroup",
       "Tabs",
       "Accordion",
+      "Progress",
       "LineChart",
       "AreaChart",
       "BarChart",
@@ -303,6 +304,26 @@ describe("buildComponentsManifest", () => {
     ]);
     // Ark's own Root props (value, multiple, collapsible, …) live under node_modules.
     expect(accordion.propsComplete).toBe(false);
+  });
+
+  it("carries Progress's recipe prop, size and Ark parts", () => {
+    const progress = manifest.components.find((c) => c.name === "Progress")!;
+    expect(progress.scope).toBe("progress");
+    expect(progress.props.map((p) => p.name)).toEqual(["size"]);
+    expect(progress.variants).toEqual({ size: ["sm", "md", "lg"] });
+    expect(progress.parts.map((p) => p.name)).toEqual([
+      "root",
+      "label",
+      "value-text",
+      "track",
+      "range",
+      "circle",
+      "circle-track",
+      "circle-range",
+      "view",
+    ]);
+    // Ark's own Root props (value, min, max, …) live under node_modules.
+    expect(progress.propsComplete).toBe(false);
   });
 
   it("reads variants straight off the shared @moderno-ui/core recipes", () => {

@@ -26,6 +26,7 @@ import { Toggle } from "../src/toggle.jsx";
 import { ToggleGroup } from "../src/toggle-group.jsx";
 import { Tabs } from "../src/tabs.jsx";
 import { Accordion } from "../src/accordion.jsx";
+import { Progress } from "../src/progress.jsx";
 import { Dialog, Portal } from "../src/dialog.js";
 import { Select, createListCollection } from "../src/select.jsx";
 import { PinInput } from "../src/pin-input.jsx";
@@ -359,6 +360,28 @@ export function App(props: { open?: boolean }) {
             <Accordion.ItemContent>Support answer</Accordion.ItemContent>
           </Accordion.Item>
         </Accordion.Root>
+      </section>
+
+      <section aria-label="progress">
+        <Progress.Root value={40}>
+          <Progress.Label>Uploading</Progress.Label>
+          <Progress.ValueText />
+          <Progress.Track>
+            <Progress.Range />
+          </Progress.Track>
+        </Progress.Root>
+        <Progress.Root size="sm" value={75}>
+          <Progress.Circle>
+            <Progress.CircleTrack />
+            <Progress.CircleRange />
+          </Progress.Circle>
+          <Progress.ValueText />
+        </Progress.Root>
+        <Progress.Root size="lg" defaultValue={null}>
+          <Progress.Track>
+            <Progress.Range />
+          </Progress.Track>
+        </Progress.Root>
       </section>
 
       <Dialog.Root defaultOpen={props.open}>

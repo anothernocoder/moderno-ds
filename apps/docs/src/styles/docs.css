@@ -1165,6 +1165,14 @@ main.main--wide {
   )[data-part="root"] {
   width: min(100%, 32rem);
 }
+/* A lone bar gets a card's width; a ring or a standing bar keeps its own. */
+.preview-panel--demo
+  > astro-island
+  > [data-scope="progress"][data-part="root"][data-orientation="horizontal"]:not(
+    :has(> [data-part="circle"])
+  ) {
+  width: min(100%, 24rem);
+}
 /* Rows and grids take the stage's width, so their items can sit side by side
    instead of shrink-wrapping to one column; the row still centres them. */
 .preview-panel--demo > astro-island > :is(.demo-row, .demo-grid) {

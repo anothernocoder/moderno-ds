@@ -282,6 +282,20 @@ export const accordionRecipe = cva({
   defaultVariants: { variant: "line", size: "md" },
 });
 
+/**
+ * Progress: `size` on the root — the thickness of a linear track, or the
+ * diameter and stroke of a circle, and the type of the label and value text.
+ * Linear or circular is the anatomy the consumer composes (Track + Range, or
+ * Circle), not a variant. The value, min, max and orientation are Ark's own
+ * props; loading, complete and indeterminate surface as Ark's `data-state`.
+ */
+export const progressRecipe = cva({
+  variants: {
+    size: ["sm", "md", "lg"],
+  },
+  defaultVariants: { size: "md" },
+});
+
 /*
  * The variant unions, derived once beside the recipes. Bindings import these
  * names instead of re-deriving them from the recipe tables — a recipe change
@@ -455,3 +469,6 @@ export type AccordionVariant = NonNullable<
 
 /** Accordion's density (trigger padding and type), shared by every item. */
 export type AccordionSize = NonNullable<VariantProps<typeof accordionRecipe.variants>["size"]>;
+
+/** Progress' density (track thickness, circle size, type), shared by every part. */
+export type ProgressSize = NonNullable<VariantProps<typeof progressRecipe.variants>["size"]>;

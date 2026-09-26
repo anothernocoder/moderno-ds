@@ -18,6 +18,7 @@ import {
   Switch as ArkSwitch,
   Tabs as ArkTabs,
   Accordion as ArkAccordion,
+  Progress as ArkProgress,
   Toggle as ArkToggle,
   ToggleGroup as ArkToggleGroup,
 } from "@ark-ui/svelte";
@@ -34,6 +35,7 @@ import ToggleRoot from "./ToggleRoot.svelte";
 import ToggleGroupRoot from "./ToggleGroupRoot.svelte";
 import TabsRoot from "./TabsRoot.svelte";
 import AccordionRoot from "./AccordionRoot.svelte";
+import ProgressRoot from "./ProgressRoot.svelte";
 import type { AlertPartProps, AlertRootProps } from "./alert-props.js";
 import AlertRoot from "./AlertRoot.svelte";
 import AlertIcon from "./AlertIcon.svelte";
@@ -341,6 +343,22 @@ export const Accordion: Omit<typeof ArkAccordion, "Root"> & { Root: typeof Accor
 };
 export type { AccordionVariant, AccordionSize } from "@moderno-ui/core";
 
+/**
+ * Progress — how far a task has come, as a bar or a ring. Ark renders the
+ * `Track` (linear) or the `Circle` (circular) as the `role="progressbar"`
+ * with `aria-valuenow`, `aria-valuemin` and `aria-valuemax`; every part
+ * carries `data-state` (`loading`, `complete`, or `indeterminate` when
+ * `value` is `null`), the `Range` and `CircleRange` show the percentage and
+ * `ValueText` prints it. `Root` is wrapped to inject the `size` recipe; every
+ * other part is Ark's verbatim. Annotated so the emitted `.d.ts` doesn't
+ * inline an un-nameable `@zag-js` type (TS2742).
+ */
+export const Progress: Omit<typeof ArkProgress, "Root"> & { Root: typeof ProgressRoot } = {
+  ...ArkProgress,
+  Root: ProgressRoot,
+};
+export type { ProgressSize } from "@moderno-ui/core";
+
 export { createListCollection } from "@ark-ui/svelte";
 
 export type {
@@ -355,4 +373,5 @@ export type {
   ToggleGroupValueChangeDetails,
   TabsValueChangeDetails,
   AccordionValueChangeDetails,
+  ProgressValueChangeDetails,
 } from "@ark-ui/svelte";

@@ -253,6 +253,30 @@
       }
     },
     {
+      "name": "Progress",
+      "scope": "progress",
+      "import": "import { Progress } from \"@moderno-ui/react\"",
+      "propsHash": "sha256:fixture-progress",
+      "props": [{ "name": "size", "type": "\"sm\" | \"md\" | \"lg\"", "required": false }],
+      "propsComplete": false,
+      "parts": [
+        { "name": "root" },
+        { "name": "label" },
+        { "name": "value-text" },
+        { "name": "track" },
+        { "name": "range" },
+        { "name": "circle" },
+        { "name": "circle-track" },
+        { "name": "circle-range" },
+        { "name": "view" }
+      ],
+      "variants": { "size": ["sm", "md", "lg"] },
+      "guidance": {
+        "intent": "Show how far a task has come, as a bar or a ring.",
+        "whenToUse": "Uploads, installs, multi-step setup: work whose progress you can measure, or not yet."
+      }
+    },
+    {
       "name": "Callout",
       "scope": "callout",
       "import": "import { Callout } from \"@moderno-ui/react\"",

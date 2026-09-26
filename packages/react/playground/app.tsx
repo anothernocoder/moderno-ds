@@ -43,6 +43,9 @@
  *                content ids from `useId` wired by aria-controls /
  *                aria-labelledby, the open items (aria-expanded, data-state),
  *                the hidden contents and a disabled item must match both ways.
+ *   - Progress — Ark's progress machine: the progressbar's value and ids, the
+ *                range's inline width, the circle's inline geometry and the
+ *                loading / indeterminate state must match both ways.
  *   - Dialog   — a Portal + focus-trap machine that must emit a stable,
  *                hydration-safe trigger while its content stays unmounted-visible.
  *   - Select   — a collection + popover whose hidden native <select> and ids
@@ -75,6 +78,7 @@ import { Toggle } from "../src/toggle.js";
 import { ToggleGroup } from "../src/toggle-group.js";
 import { Tabs } from "../src/tabs.js";
 import { Accordion } from "../src/accordion.js";
+import { Progress } from "../src/progress.js";
 import { Dialog, Portal } from "../src/dialog.js";
 import { Select, createListCollection } from "../src/select.js";
 import { PinInput } from "../src/pin-input.js";
@@ -413,6 +417,28 @@ export function App({ open = false }: AppProps) {
             <Accordion.ItemContent>Support answer</Accordion.ItemContent>
           </Accordion.Item>
         </Accordion.Root>
+      </section>
+
+      <section aria-label="progress">
+        <Progress.Root value={40}>
+          <Progress.Label>Uploading</Progress.Label>
+          <Progress.ValueText />
+          <Progress.Track>
+            <Progress.Range />
+          </Progress.Track>
+        </Progress.Root>
+        <Progress.Root size="sm" value={75}>
+          <Progress.Circle>
+            <Progress.CircleTrack />
+            <Progress.CircleRange />
+          </Progress.Circle>
+          <Progress.ValueText />
+        </Progress.Root>
+        <Progress.Root size="lg" value={null}>
+          <Progress.Track>
+            <Progress.Range />
+          </Progress.Track>
+        </Progress.Root>
       </section>
 
       <Dialog.Root defaultOpen={open}>
