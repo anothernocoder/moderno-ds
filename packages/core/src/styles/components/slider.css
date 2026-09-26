@@ -1,0 +1,240 @@
+/* ─────────────────────────── Slider ─────────────────────────── *
+ * Ark's slider machine: root > label + value-text, then control > track >
+ * range, plus one thumb per value (two make a range), each holding its
+ * hidden input and, optionally, a dragging-indicator; then marker-group >
+ * marker. Ark places everything inline from the value: the range from
+ * --slider-range-start/-end, each thumb and marker from
+ * --slider-thumb-offset-<index> with a centring transform, so the rules
+ * below only size, paint and centre the parts across the track. Ark stamps
+ * data-orientation, data-disabled, data-invalid, data-focus and
+ * data-dragging on the parts, and data-state (under-value | at-value |
+ * over-value) on each marker. `sliderRecipe` puts size on the root; the
+ * parts follow it through child combinators (root > part).            */
+[data-scope="slider"][data-part="root"] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--spacing-2) var(--spacing-3);
+  width: 100%;
+}
+/*
+ * Ark stamps data-disabled on EVERY part, and the base layer dims anything
+ * carrying it — nesting would multiply the opacity. Dim the root once and
+ * leave its parts opaque.
+ */
+[data-scope="slider"][data-part="root"][data-disabled] :where([data-part]) {
+  opacity: 1;
+}
+[data-scope="slider"][data-part="label"] {
+  grid-column: 1;
+  color: var(--foreground);
+  font-size: var(--text-ui-md);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--leading-ui-md);
+}
+/* The value ends the label's row; tabular figures keep it from jittering
+   while the thumb moves. */
+[data-scope="slider"][data-part="value-text"] {
+  grid-column: 2;
+  justify-self: end;
+  color: var(--muted-foreground);
+  font-size: var(--text-ui-md);
+  line-height: var(--leading-ui-md);
+  font-variant-numeric: tabular-nums;
+}
+/* The control is as tall as the thumb, so the thumb never spills over the
+   rows around it; the track runs through its middle. */
+[data-scope="slider"][data-part="control"] {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  height: var(--spacing-5);
+  cursor: pointer;
+}
+[data-scope="slider"][data-part="track"] {
+  flex: 1;
+  height: calc(var(--spacing-1) * 1.5);
+  border-radius: var(--radius-full);
+  background-color: var(--muted);
+}
+[data-scope="slider"][data-part="range"] {
+  inset-block: 0;
+  border-radius: var(--radius-full);
+  background-color: var(--primary);
+}
+/* Ark centres the thumb along the track; `translate` (a property of its
+   own, beside Ark's inline `transform`) centres it across. */
+[data-scope="slider"][data-part="thumb"] {
+  top: 50%;
+  width: var(--spacing-5);
+  height: var(--spacing-5);
+  translate: 0 -50%;
+  border: calc(var(--spacing-1) / 2) solid var(--primary);
+  border-radius: var(--radius-full);
+  background-color: var(--background);
+  box-shadow: var(--shadow-sm);
+  cursor: grab;
+}
+[data-scope="slider"][data-part="thumb"][data-dragging] {
+  cursor: grabbing;
+}
+[data-scope="slider"][data-part="thumb"]:focus-visible {
+  outline-color: var(--ring);
+  outline-style: solid;
+  outline-width: 2px;
+  outline-offset: 2px;
+}
+[data-scope="slider"][data-part="range"][data-invalid] {
+  background-color: var(--destructive);
+}
+[data-scope="slider"][data-part="thumb"][data-invalid] {
+  border-color: var(--destructive);
+}
+/* The value while dragging, in a bubble over its thumb. Ark renders it
+   inside the thumb but places it like one, from the thumb's offset along
+   the whole track; resetting that offset here centres it on its own thumb
+   instead. */
+[data-scope="slider"][data-part="dragging-indicator"] {
+  --slider-thumb-offset-0: 50%;
+  --slider-thumb-offset-1: 50%;
+  bottom: calc(100% + var(--spacing-2));
+  padding: var(--spacing-1) var(--spacing-2);
+  border-radius: var(--radius);
+  background-color: var(--foreground);
+  color: var(--background);
+  font-size: var(--text-ui-xs);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--leading-ui-xs);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+/* The marks sit under the track, each centred on the value it names, as
+   wide as the track so they line up with the thumb. */
+[data-scope="slider"][data-part="marker-group"] {
+  grid-column: 1 / -1;
+  height: var(--leading-ui-xs);
+}
+[data-scope="slider"][data-part="marker"] {
+  color: var(--muted-foreground);
+  font-size: var(--text-ui-xs);
+  line-height: var(--leading-ui-xs);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Vertical — the control stands up with the marks beside it; the label
+   sits above it and the value text below, both centred on the track. Ark places the range, thumbs and
+   marks from the bottom, inline, so the horizontal rules' top edges are
+   taken back here. */
+[data-scope="slider"][data-part="root"][data-orientation="vertical"] {
+  display: inline-grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    "label ."
+    "control marks"
+    "value .";
+  justify-items: center;
+  column-gap: 0;
+  width: auto;
+}
+[data-scope="slider"][data-part="root"][data-orientation="vertical"] > [data-part="label"] {
+  grid-area: label;
+}
+[data-scope="slider"][data-part="root"][data-orientation="vertical"] > [data-part="value-text"] {
+  grid-area: value;
+  justify-self: center;
+}
+[data-scope="slider"][data-part="root"][data-orientation="vertical"] > [data-part="control"] {
+  grid-area: control;
+}
+[data-scope="slider"][data-part="root"][data-orientation="vertical"] > [data-part="marker-group"] {
+  grid-area: marks;
+  justify-self: start;
+  margin-inline-start: var(--spacing-2);
+}
+[data-scope="slider"][data-part="control"][data-orientation="vertical"] {
+  flex-direction: column;
+  width: var(--spacing-5);
+  height: calc(var(--spacing-8) * 4);
+}
+[data-scope="slider"][data-part="track"][data-orientation="vertical"] {
+  width: calc(var(--spacing-1) * 1.5);
+  height: auto;
+}
+[data-scope="slider"][data-part="range"][data-orientation="vertical"] {
+  inset-inline: 0;
+}
+[data-scope="slider"][data-part="thumb"][data-orientation="vertical"] {
+  top: auto;
+  left: 50%;
+  translate: -50% 0;
+}
+[data-scope="slider"][data-part="dragging-indicator"][data-orientation="vertical"] {
+  left: calc(100% + var(--spacing-2));
+}
+[data-scope="slider"][data-part="marker-group"][data-orientation="vertical"] {
+  width: var(--spacing-8);
+  height: calc(var(--spacing-8) * 4);
+}
+
+/* Density driven by the recipe's data-size on the root: the track's
+   thickness, the thumb's diameter (and the control's height with it), and
+   the type. */
+[data-scope="slider"][data-part="root"][data-size="sm"] > [data-part="label"],
+[data-scope="slider"][data-part="root"][data-size="sm"] > [data-part="value-text"] {
+  font-size: var(--text-ui-sm);
+  line-height: var(--leading-ui-sm);
+}
+[data-scope="slider"][data-part="root"][data-size="lg"] > [data-part="label"],
+[data-scope="slider"][data-part="root"][data-size="lg"] > [data-part="value-text"] {
+  font-size: var(--text-ui-lg);
+  line-height: var(--leading-ui-lg);
+}
+[data-scope="slider"][data-part="root"][data-size="sm"]
+  > [data-part="control"][data-orientation="horizontal"] {
+  height: var(--spacing-4);
+}
+[data-scope="slider"][data-part="root"][data-size="lg"]
+  > [data-part="control"][data-orientation="horizontal"] {
+  height: var(--spacing-6);
+}
+[data-scope="slider"][data-part="root"][data-size="sm"]
+  > [data-part="control"][data-orientation="vertical"] {
+  width: var(--spacing-4);
+}
+[data-scope="slider"][data-part="root"][data-size="lg"]
+  > [data-part="control"][data-orientation="vertical"] {
+  width: var(--spacing-6);
+}
+[data-scope="slider"][data-part="root"][data-size="sm"]
+  > [data-part="control"]
+  > [data-part="track"][data-orientation="horizontal"] {
+  height: var(--spacing-1);
+}
+[data-scope="slider"][data-part="root"][data-size="lg"]
+  > [data-part="control"]
+  > [data-part="track"][data-orientation="horizontal"] {
+  height: var(--spacing-2);
+}
+[data-scope="slider"][data-part="root"][data-size="sm"]
+  > [data-part="control"]
+  > [data-part="track"][data-orientation="vertical"] {
+  width: var(--spacing-1);
+}
+[data-scope="slider"][data-part="root"][data-size="lg"]
+  > [data-part="control"]
+  > [data-part="track"][data-orientation="vertical"] {
+  width: var(--spacing-2);
+}
+[data-scope="slider"][data-part="root"][data-size="sm"]
+  > [data-part="control"]
+  > [data-part="thumb"] {
+  width: var(--spacing-4);
+  height: var(--spacing-4);
+}
+[data-scope="slider"][data-part="root"][data-size="lg"]
+  > [data-part="control"]
+  > [data-part="thumb"] {
+  width: var(--spacing-6);
+  height: var(--spacing-6);
+}

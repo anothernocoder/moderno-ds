@@ -1,0 +1,69 @@
+/* ─────────────────────────── Badge ──────────────────────────── *
+ * `badgeRecipe` variant × size on the root. A static label, no Ark
+ * machine: root + an optional leading dot. Heights and padding step on
+ * the spacing scale; the pill shape is --radius-full, so it stays a pill
+ * even under a theme that squares every other corner.                */
+[data-scope="badge"][data-part="root"] {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  height: var(--spacing-5);
+  padding-inline: var(--spacing-2);
+  border: 1px solid transparent;
+  border-radius: var(--radius-full);
+  background-color: var(--muted);
+  color: var(--foreground);
+  font-size: var(--text-ui-xs);
+  font-weight: var(--font-weight-medium);
+  line-height: 1;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+/* Parts carry data-scope too, so the base layer's --foreground default would
+   land on each of them; restore inheritance so they take the root's colour. */
+[data-scope="badge"] :where([data-part]) {
+  color: inherit;
+}
+[data-scope="badge"][data-part="root"][data-size="sm"] {
+  height: var(--spacing-4);
+  padding-inline: calc(var(--spacing-1) * 1.5);
+}
+/* The dot takes the badge's text colour, so every variant tints it. */
+[data-scope="badge"][data-part="dot"] {
+  flex: none;
+  width: calc(var(--spacing-1) * 1.5);
+  height: calc(var(--spacing-1) * 1.5);
+  border-radius: var(--radius-full);
+  background-color: currentColor;
+}
+
+[data-scope="badge"][data-part="root"][data-variant="solid"] {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+[data-scope="badge"][data-part="root"][data-variant="outline"] {
+  border-color: var(--border);
+  background-color: transparent;
+  color: var(--foreground);
+}
+/* Status tints, written per variant so every colour traces to a slot by
+   name (the Alert pattern). The text is the status slot pulled toward
+   --foreground: a pure --warning on its own 14% tint is far under AA in
+   light mode, and the mix keeps the hue while clearing 4.5:1 in both
+   schemes. */
+[data-scope="badge"][data-part="root"][data-variant="info"] {
+  background-color: color-mix(in oklab, var(--info) 14%, var(--background));
+  color: color-mix(in oklab, var(--info) 55%, var(--foreground));
+}
+[data-scope="badge"][data-part="root"][data-variant="success"] {
+  background-color: color-mix(in oklab, var(--success) 14%, var(--background));
+  color: color-mix(in oklab, var(--success) 55%, var(--foreground));
+}
+[data-scope="badge"][data-part="root"][data-variant="warning"] {
+  background-color: color-mix(in oklab, var(--warning) 14%, var(--background));
+  color: color-mix(in oklab, var(--warning) 55%, var(--foreground));
+}
+[data-scope="badge"][data-part="root"][data-variant="error"] {
+  background-color: color-mix(in oklab, var(--destructive) 14%, var(--background));
+  color: color-mix(in oklab, var(--destructive) 55%, var(--foreground));
+}

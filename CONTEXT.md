@@ -81,7 +81,7 @@ shadcn convention: `:root` = light, `.dark` = dark. Moderno apps mount `<html cl
 _Avoid_: Dark-first inversion, data-theme attribute
 
 **Component stylesheet**:
-A single shared CSS based on Ark's `[data-scope]` / `[data-part]`. Lives in `@moderno-ui/core/styles/components.css`. Imported by all framework packages and the docs.
+A single shared CSS based on Ark's `[data-scope]` / `[data-part]`. Lives in `@moderno-ui/core/styles/components.css`. Imported by all framework packages and the docs. Authored as one partial per scope in `packages/core/src/styles/components/`; `pnpm gen` assembles them into that one flat file (ADR-0009).
 _Avoid_: Per-framework CSS, styled-components layer
 
 **Theme item**:

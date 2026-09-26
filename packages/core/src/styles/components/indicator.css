@@ -1,0 +1,73 @@
+/* ───────────────────────── Indicator ────────────────────────── *
+ * `indicatorAttrs` on the root: `data-variant` × `data-size`, plus a bare
+ * `data-pulse`. Parts root > dot + label. The dot sets its own `color` from
+ * the status slot and paints with currentColor, so the pulse ring (its
+ * ::after) inherits the same hue with no second rule per status.        */
+[data-scope="indicator"][data-part="root"] {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  color: var(--muted-foreground);
+  font-size: var(--text-ui-sm);
+  line-height: 1;
+  vertical-align: middle;
+}
+/* The label takes the root's muted colour rather than the base layer's
+   --foreground; the dot re-pins its own below. */
+[data-scope="indicator"] :where([data-part]) {
+  color: inherit;
+}
+[data-scope="indicator"][data-part="dot"] {
+  position: relative;
+  flex: none;
+  width: var(--spacing-2);
+  height: var(--spacing-2);
+  border-radius: var(--radius-full);
+  background-color: currentColor;
+  color: var(--muted-foreground);
+}
+[data-scope="indicator"][data-size="sm"] [data-part="dot"] {
+  width: calc(var(--spacing-1) * 1.5);
+  height: calc(var(--spacing-1) * 1.5);
+}
+[data-scope="indicator"][data-size="sm"] [data-part="label"] {
+  font-size: var(--text-ui-xs);
+}
+[data-scope="indicator"][data-variant="info"] [data-part="dot"] {
+  color: var(--info);
+}
+[data-scope="indicator"][data-variant="success"] [data-part="dot"] {
+  color: var(--success);
+}
+[data-scope="indicator"][data-variant="warning"] [data-part="dot"] {
+  color: var(--warning);
+}
+[data-scope="indicator"][data-variant="error"] [data-part="dot"] {
+  color: var(--destructive);
+}
+/* The pulse: a copy of the dot that grows and fades. Five --motion-normal
+   steps make one slow, calm beat rather than a flicker. */
+[data-scope="indicator"][data-pulse] [data-part="dot"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-full);
+  background-color: currentColor;
+  animation: moderno-indicator-pulse calc(var(--motion-normal) * 5) ease-out infinite;
+}
+@keyframes moderno-indicator-pulse {
+  from {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  to {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+}
+/* A user who asked for less motion keeps the status, loses the beat. */
+@media (prefers-reduced-motion: reduce) {
+  [data-scope="indicator"][data-pulse] [data-part="dot"]::after {
+    display: none;
+  }
+}

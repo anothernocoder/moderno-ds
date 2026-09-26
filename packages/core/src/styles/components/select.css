@@ -1,0 +1,71 @@
+/* ─────────────────────────── Select ─────────────────────────── *
+ * `selectRecipe` size on root; Ark drives popover + keyboard + state. */
+/* @runtime-vars --reference-width — the trigger's width, set by Ark's positioner. */
+[data-scope="select"][data-part="root"] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+[data-scope="select"][data-part="label"] {
+  font-size: var(--text-ui-md);
+  font-weight: var(--font-weight-medium);
+  color: var(--foreground);
+}
+[data-scope="select"][data-part="trigger"] {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-2);
+  height: var(--spacing-8);
+  padding-inline: var(--spacing-3);
+  border: 1px solid var(--input);
+  border-radius: var(--radius);
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-size: var(--text-ui-md);
+  cursor: pointer;
+}
+[data-scope="select"][data-part="trigger"]:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+/* Density driven by the recipe's data-size on the root part. */
+[data-scope="select"][data-size="sm"] [data-part="trigger"] {
+  height: var(--spacing-7);
+  font-size: var(--text-ui-sm);
+}
+[data-scope="select"][data-size="lg"] [data-part="trigger"] {
+  height: calc(var(--spacing-8) + var(--spacing-2));
+  font-size: var(--text-ui-lg);
+}
+[data-scope="select"][data-part="content"] {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: var(--reference-width);
+  padding: var(--spacing-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background-color: var(--popover);
+  color: var(--popover-foreground);
+  box-shadow: var(--shadow-md);
+}
+[data-scope="select"][data-part="item"] {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-3);
+  border-radius: var(--radius);
+  font-size: var(--text-ui-md);
+  cursor: pointer;
+}
+[data-scope="select"][data-part="item"][data-highlighted] {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+[data-scope="select"][data-part="item"][data-state="checked"] {
+  font-weight: var(--font-weight-semibold);
+}

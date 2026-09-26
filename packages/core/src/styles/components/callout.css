@@ -1,0 +1,72 @@
+/* ────────────────────────── Callout ─────────────────────────── *
+ * `calloutRecipe` variant on the root part. No Ark machine — a static note,
+ * so every attribute comes from the recipe. Anatomy:
+ * root > icon + content(> title + description).
+ *
+ * Softer than Alert on purpose: the surface stays a neutral --muted and only
+ * a stripe on the inline-start edge and the icon take the status hue.
+ * --muted-foreground is AA on --muted by contract, so the description needs
+ * no mix. `error` reads --destructive, as it does for Alert and Badge. */
+[data-scope="callout"][data-part="root"] {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4);
+  border-inline-start: calc(var(--spacing-1) * 0.75) solid var(--border);
+  border-radius: var(--radius);
+  background-color: var(--muted);
+}
+/* The icon is the consumer's glyph; the part only positions it on the
+   title's first line and hands down the status hue via currentColor. */
+[data-scope="callout"][data-part="icon"] {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  height: var(--leading-ui-md);
+}
+[data-scope="callout"][data-part="content"] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  /* Let long words wrap instead of stretching the flex row. */
+  min-width: 0;
+  flex: 1;
+}
+[data-scope="callout"][data-part="title"] {
+  font-size: var(--text-ui-md);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--leading-ui-md);
+  color: var(--foreground);
+}
+[data-scope="callout"][data-part="description"] {
+  font-size: var(--text-ui-md);
+  line-height: var(--leading-ui-md);
+  color: var(--muted-foreground);
+}
+
+/* Status stripes. Written per variant so every colour traces to a contract
+   slot by name. */
+[data-scope="callout"][data-part="root"][data-variant="info"] {
+  border-inline-start-color: var(--info);
+}
+[data-scope="callout"][data-variant="info"] [data-part="icon"] {
+  color: var(--info);
+}
+[data-scope="callout"][data-part="root"][data-variant="success"] {
+  border-inline-start-color: var(--success);
+}
+[data-scope="callout"][data-variant="success"] [data-part="icon"] {
+  color: var(--success);
+}
+[data-scope="callout"][data-part="root"][data-variant="warning"] {
+  border-inline-start-color: var(--warning);
+}
+[data-scope="callout"][data-variant="warning"] [data-part="icon"] {
+  color: var(--warning);
+}
+[data-scope="callout"][data-part="root"][data-variant="error"] {
+  border-inline-start-color: var(--destructive);
+}
+[data-scope="callout"][data-variant="error"] [data-part="icon"] {
+  color: var(--destructive);
+}

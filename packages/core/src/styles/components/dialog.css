@@ -1,0 +1,48 @@
+/* ─────────────────────────── Dialog ─────────────────────────── *
+ * Ark owns portal + focus trap + ids. Scope "dialog".               */
+/* The scrim is its own slot, not a mix of --foreground: that slot is
+   near-white in dark mode and would wash the page out grey. The blur turns
+   the page underneath into shapes, so the dialog is the only thing to read. */
+/* Above an app's sticky chrome (the usual z-50 layer): a modal covers
+   the whole page, headers included. The positioner shares the layer and,
+   portalled after the backdrop, paints on top of it. */
+[data-scope="dialog"][data-part="backdrop"] {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background-color: var(--overlay);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+[data-scope="dialog"][data-part="positioner"] {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-4);
+}
+[data-scope="dialog"][data-part="content"] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  width: 100%;
+  max-width: 32rem;
+  padding: var(--spacing-6);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background-color: var(--popover);
+  color: var(--popover-foreground);
+  /* The elevation slot, not a --foreground mix: that glows in dark mode. */
+  box-shadow: var(--shadow-lg);
+}
+[data-scope="dialog"][data-part="title"] {
+  font-size: var(--text-body-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--foreground);
+}
+[data-scope="dialog"][data-part="description"] {
+  font-size: var(--text-ui-md);
+  color: var(--muted-foreground);
+}
