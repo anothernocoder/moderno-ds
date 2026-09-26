@@ -1,0 +1,170 @@
+---
+title: Lista en cuadrícula
+description: Una cuadrícula adaptable de tarjetas, una por proyecto, con estados vacío, cargando y de error.
+group: Bloques
+order: 110
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import GridListBlockDemo from "../../../islands/GridListBlockDemo.svelte";
+import gridListReact from "../../../../../../registry/blocks/grid-list/react/grid-list.tsx?raw";
+import gridListVue from "../../../../../../registry/blocks/grid-list/vue/GridList.vue?raw";
+import gridListSolid from "../../../../../../registry/blocks/grid-list/solid/grid-list.tsx?raw";
+import gridListSvelte from "../../../../../../registry/blocks/grid-list/svelte/GridList.svelte?raw";
+
+export const examples = {
+  react: gridListReact,
+  vue: gridListVue,
+  solid: gridListSolid,
+  svelte: gridListSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <GridListBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="grid-list" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { GridList } from "@/components/blocks/grid-list";
+```
+
+```tsx
+<GridList items={projects} onOpen={(id) => navigate(`/projects/${id}`)} onCreate={openNew} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import GridList from "@/components/blocks/GridList.vue";
+</script>
+```
+
+```vue
+<GridList :items="projects" @open="goTo" @create="openNew" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import GridList from "@/components/blocks/GridList.svelte";
+</script>
+```
+
+```svelte
+<GridList items={projects} onopen={goTo} oncreate={openNew} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { GridList } from "@/components/blocks/grid-list";
+```
+
+```tsx
+<GridList items={projects()} onOpen={(id) => navigate(`/projects/${id}`)} onCreate={openNew} />
+```
+
+</ForFramework>
+
+## Referencia de API
+
+### Props
+
+| Prop          | Tipo                   | Por defecto            | Descripción                                                                 |
+| ------------- | ---------------------- | ---------------------- | --------------------------------------------------------------------------- |
+| `items`       | `GridListItem[]`       | un conjunto de muestra | Las tarjetas, en el orden en que se muestran. `[]` muestra el estado vacío. |
+| `heading`     | `string`               | `"Projects"`           | El título sobre la cuadrícula.                                              |
+| `description` | `string`               | una frase              | La línea bajo el título; `""` la oculta.                                    |
+| `error`       | `string`               | —                      | La cuadrícula no cargó; una alerta con reintento la sustituye.              |
+| `loading`     | `boolean`              | `false`                | Tarjetas esqueleto en una región ocupada sustituyen la cuadrícula.          |
+| `disabled`    | `boolean`              | `false`                | Las tarjetas siguen legibles y todos los botones quedan deshabilitados.     |
+| `onOpen`      | `(id: string) => void` | —                      | El botón Open de una tarjeta. Svelte: `onopen`. Vue: `@open`.               |
+| `onCreate`    | `() => void`           | —                      | "New project". Svelte: `oncreate`. Vue: `@create`.                          |
+| `onRetry`     | `() => void`           | —                      | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.                 |
+
+### GridListItem
+
+| Campo           | Tipo                                                       | Descripción                                       |
+| --------------- | ---------------------------------------------------------- | ------------------------------------------------- |
+| `id`            | `string`                                                   | Identidad estable, la que devuelve `onOpen`.      |
+| `title`         | `string`                                                   | El título de la tarjeta.                          |
+| `subtitle`      | `string`                                                   | Línea opcional bajo el título, como un equipo.    |
+| `initials`      | `string`                                                   | El respaldo del avatar cuando no hay imagen.      |
+| `image`         | `string`                                                   | URL opcional de la miniatura del avatar.          |
+| `status`        | `string`                                                   | Texto opcional de la insignia.                    |
+| `statusVariant` | `"neutral" \| "info" \| "success" \| "warning" \| "error"` | El color de la insignia. Por defecto `"neutral"`. |
+| `meta`          | `string`                                                   | Línea tenue opcional, como "Updated 2 hrs ago".   |
+
+### Estados
+
+| Estado        | Prop         | Qué se muestra                                                          |
+| ------------- | ------------ | ----------------------------------------------------------------------- |
+| Por defecto   | —            | Una tarjeta por elemento.                                               |
+| Vacío         | `items={[]}` | Una tarjeta "No projects yet".                                          |
+| Cargando      | `loading`    | Tres tarjetas esqueleto en una región `status` ocupada.                 |
+| Error         | `error`      | Una alerta de error con un botón "Try again" en lugar de la cuadrícula. |
+| Deshabilitado | `disabled`   | La cuadrícula con todos los botones deshabilitados.                     |
+
+### Dimensionado
+
+| Paso del contenedor      | Qué cambia                                |
+| ------------------------ | ----------------------------------------- |
+| `@sm` (`--container-sm`) | El título y "New project" comparten fila. |
+| `@md` (`--container-md`) | Dos columnas; el título sube un tamaño.   |
+| `@lg` (`--container-lg`) | Tres columnas.                            |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+La misma cuadrícula a 18rem, 40rem y 50rem. El marco de 50rem se desplaza por dentro.
+
+<Preview examples={examples} layout="fill">
+  <GridListBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Vacío
+
+<Preview examples={examples} layout="fill">
+  <GridListBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <GridListBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+<Preview examples={examples} layout="fill">
+  <GridListBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+<Preview examples={examples} layout="fill">
+  <GridListBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
+
+## Notas
+
+- Es presentacional: no navega a ningún sitio. Los callbacks informan de lo que pidió el lector.
+- El nombre accesible de cada botón Open incluye el título de la tarjeta.
