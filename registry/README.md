@@ -5,7 +5,9 @@ Versioned, shadcn-style **copy items** installed with `@moderno-ui/cli`. Unlike 
 into the consumer project and owned by them: **themes**, **blocks**, **screens**,
 **flows**, and **ejected primitives**.
 
-Source of truth: [`registry.json`](registry.json). Public URL (Phase 6):
+Source of truth: one `item.json` per unit, in `<tier>/<name>/item.json`.
+`pnpm gen` expands them into [`registry.json`](registry.json), the manifest the
+CLI reads (see [Item shape](#item-shape)). Public URL (Phase 6):
 `https://moderno.style/r/registry.json`. The CLI default is overridable via
 `components.json` → `registry` or the `MODERNO_REGISTRY_URL` env var.
 
@@ -66,6 +68,78 @@ they take icons as children.
 `path` is resolved relative to the registry root, so the same `registry.json`
 works served from disk (dev) or from `/r/` on the docs site (prod).
 
+### Where an item comes from: `item.json`
+
+`registry.json` is generated: never edit it by hand. Each unit keeps its fields
+in its own `item.json`, and `pnpm gen` builds the manifest from all of them. The
+folders give the rest: `<tier>` sets the `type` (`themes`, `primitives`,
+`blocks`, `screens`, `flows`), and `<name>` sets the item name.
+
+A theme or the ejected primitive is one item. Its `item.json` holds the item's
+fields without `name` and `type`:
+
+```json
+{
+  "title": "Theme Moderno",
+  "description": "The default Moderno brand…",
+  "version": "0.3.0",
+  "dependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "themes/theme-moderno/theme.css",
+      "type": "registry:theme",
+      "target": "src/styles/theme-moderno.css"
+    }
+  ]
+}
+```
+
+A block, screen or flow is one item per framework. Its `files` is a map from
+framework to that framework's files, and `pnpm gen` writes one item for each:
+
+```json
+{
+  "title": "Sign in",
+  "description": "Full-viewport sign-in screen composing the login-form block…",
+  "version": "0.1.1",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": ["login-form-{framework}"],
+  "files": {
+    "react": [
+      {
+        "path": "screens/sign-in/react/sign-in.tsx",
+        "type": "registry:screen",
+        "target": "src/components/screens/sign-in.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "screens/sign-in/vue/SignIn.vue",
+        "type": "registry:screen",
+        "target": "src/components/screens/SignIn.vue"
+      }
+    ]
+  }
+}
+```
+
+That unit becomes `sign-in-react` and `sign-in-vue`:
+
+- `name` is `<name>-<framework>`, and `title` gets the framework's label:
+  `Sign in (React)`.
+- `{framework}` in `description`, `dependencies` and `registryDependencies`
+  becomes the framework: `@moderno-ui/react`, `login-form-react`.
+- `version` is shared. When one framework changes on its own, give one
+  version per framework instead: `"version": { "react": "0.1.1", "vue": "0.1.2" }`.
+
+`registry.json` lists the items by tier (themes, primitives, blocks, screens,
+flows), then by name, then in framework order (React, Vue, Svelte, Solid). The
+docs build copies `registry/` to `/r/` without the `item.json` files.
+
+To add or change an item: edit its `item.json`, run `pnpm gen`, and commit both.
+`pnpm gen --check` fails in CI when `registry.json` is out of date.
+
 ## CLI lifecycle
 
 ```sh
@@ -110,6 +184,12 @@ leaves it out of the manifest; `update` then preserves it like a local edit, and
 `diff` shows the registry version beside it.
 
 ## Authoring a block
+
+A block lives in `blocks/<name>/`: one folder per framework for its source,
+and an `item.json` beside them that registers it. Add the `item.json`, run
+`pnpm gen`, and the block's four items reach `registry.json`
+(see [Where an item comes from](#where-an-item-comes-from-itemjson)). A screen
+and a flow register the same way, in `screens/<name>/` and `flows/<name>/`.
 
 A block is styled with the Tailwind v4 preset (`@moderno-ui/css/preset`), whose
 utilities resolve to contract slots — `bg-card`, `text-muted-foreground`,
@@ -229,9 +309,10 @@ demo of the switch lives at [`demo/multi-brand.html`](../demo/multi-brand.html)
    `<!-- brand-notes:start -->` and `<!-- brand-notes:end -->`, using `###`
    headings or smaller. Everything outside the markers is regenerated, so edit
    nothing else, then run `pnpm theme:build` again.
-5. **Add the item to [`registry.json`](registry.json)**, next to the other
-   themes, with both files. Without it the docs still show the theme but
-   `moderno add` can't find it, so `themes.test.ts` fails until the entry
+5. **Add `registry/themes/theme-<name>/item.json`, then run `pnpm gen`.** The
+   item lists both files, and `pnpm gen` adds it to
+   [`registry.json`](registry.json). Without it the docs still show the theme
+   but `moderno add` can't find it, so `themes.test.ts` fails until the item
    exists. The `DESIGN.md` target follows the brand: a brand-less theme
    (`brand: null`) replaces the default, so its guide is the project's own
    `DESIGN.md`; a branded theme sits beside the default, so its guide goes to
@@ -239,11 +320,9 @@ demo of the switch lives at [`demo/multi-brand.html`](../demo/multi-brand.html)
 
    ```json
    {
-     "name": "theme-ocean",
-     "type": "registry:theme",
-     "version": "0.1.0",
      "title": "Theme Ocean",
      "description": "One sentence on the brand and the selector it paints.",
+     "version": "0.1.0",
      "dependencies": [],
      "registryDependencies": [],
      "files": [

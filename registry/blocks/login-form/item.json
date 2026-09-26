@@ -1,0 +1,37 @@
+{
+  "title": "Login Form",
+  "description": "Credential card composing the @moderno-ui/{framework} Card, Field, PinInput, Checkbox, Button and Alert primitives, in any of its five modes: sign-in (email, password, remember-me, recovery link), sign-up (full name, email, a new password and consent), forgot-password (the address alone, and the same card confirming once the link is sent), reset-password (a new password and its confirmation, the rules ticking off as they are met, and the emailed token in a hidden input) or verify (one cell per digit of a one-time code, the address riding along in a hidden input, and a second submit that asks for a new code once the countdown is up). Responds to its container (@container) rather than the viewport, renders its default, disabled, loading and error states from props, and takes the heading rank its title carries (titleLevel) so a screen can mount it as the whole route.",
+  "version": "0.7.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": [],
+  "files": {
+    "react": [
+      {
+        "path": "blocks/login-form/react/login-form.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/login-form.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "blocks/login-form/vue/LoginForm.vue",
+        "type": "registry:block",
+        "target": "src/components/blocks/LoginForm.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "blocks/login-form/svelte/LoginForm.svelte",
+        "type": "registry:block",
+        "target": "src/components/blocks/LoginForm.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "blocks/login-form/solid/login-form.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/login-form.tsx"
+      }
+    ]
+  }
+}

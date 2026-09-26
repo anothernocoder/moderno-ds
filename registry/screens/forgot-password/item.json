@@ -1,0 +1,42 @@
+{
+  "title": "Forgot password",
+  "description": "Full-viewport password-recovery screen composing the login-form block in its forgot-password mode: the address field and — once sent — the same card confirming the link is on its way. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm and the footer at @md.",
+  "version": {
+    "react": "0.1.1",
+    "vue": "0.1.2",
+    "svelte": "0.1.1",
+    "solid": "0.1.1"
+  },
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": ["login-form-{framework}"],
+  "files": {
+    "react": [
+      {
+        "path": "screens/forgot-password/react/forgot-password.tsx",
+        "type": "registry:screen",
+        "target": "src/components/screens/forgot-password.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "screens/forgot-password/vue/ForgotPassword.vue",
+        "type": "registry:screen",
+        "target": "src/components/screens/ForgotPassword.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "screens/forgot-password/svelte/ForgotPassword.svelte",
+        "type": "registry:screen",
+        "target": "src/components/screens/ForgotPassword.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "screens/forgot-password/solid/forgot-password.tsx",
+        "type": "registry:screen",
+        "target": "src/components/screens/forgot-password.tsx"
+      }
+    ]
+  }
+}

@@ -6,7 +6,7 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 
 import { basename, dirname, join } from "node:path";
 import { pathToFileURL } from "node:url";
 import type { Aggregator } from "./aggregator.ts";
-import { generatedBanner } from "./banner.ts";
+import { withGeneratedBanner } from "./banner.ts";
 
 export interface NamedAggregator {
   /** The module's file name without `.ts`; shown in the banner. */
@@ -58,8 +58,8 @@ export async function renderGeneratedFiles(
   const files: GeneratedFile[] = [];
   for (const { name, aggregator } of aggregators) {
     const body = await aggregator.generate({ root, outputs });
-    const banner = generatedBanner(name, aggregator.source, aggregator.output);
-    files.push({ path: aggregator.output, content: `${banner}\n${body}` });
+    const content = withGeneratedBanner(name, aggregator.source, aggregator.output, body);
+    files.push({ path: aggregator.output, content });
   }
   return files;
 }

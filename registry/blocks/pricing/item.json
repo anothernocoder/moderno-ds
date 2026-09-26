@@ -1,0 +1,37 @@
+{
+  "title": "Pricing",
+  "description": "Three-plan pricing section composing the @moderno-ui/{framework} Button primitive; responds to its container (@container) rather than the viewport.",
+  "version": "0.2.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": [],
+  "files": {
+    "react": [
+      {
+        "path": "blocks/pricing/react/pricing.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/pricing.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "blocks/pricing/vue/Pricing.vue",
+        "type": "registry:block",
+        "target": "src/components/blocks/Pricing.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "blocks/pricing/svelte/Pricing.svelte",
+        "type": "registry:block",
+        "target": "src/components/blocks/Pricing.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "blocks/pricing/solid/pricing.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/pricing.tsx"
+      }
+    ]
+  }
+}
