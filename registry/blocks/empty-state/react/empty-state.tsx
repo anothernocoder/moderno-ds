@@ -93,7 +93,7 @@ export function EmptyState({
           </div>
 
           <div role={error ? "alert" : undefined} className="grid max-w-sm gap-1">
-            <h2 className="text-body-lg font-semibold @md:text-heading-sm">{error ?? title}</h2>
+            <h2 className="text-body-lg font-semibold @md:text-heading-sm">{error || title}</h2>
             {error ? (
               <p className="text-ui-md text-muted-foreground">
                 Nothing was lost. Check your connection, then try again.

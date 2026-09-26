@@ -90,7 +90,7 @@ export function EmptyState(props: EmptyStateProps) {
           </div>
 
           <div role={props.error ? "alert" : undefined} class="grid max-w-sm gap-1">
-            <h2 class="text-body-lg font-semibold @md:text-heading-sm">{props.error ?? title()}</h2>
+            <h2 class="text-body-lg font-semibold @md:text-heading-sm">{props.error || title()}</h2>
             <Show
               when={!props.error}
               fallback={

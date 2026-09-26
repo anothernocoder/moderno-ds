@@ -17,6 +17,9 @@
  *    inert buttons when disabled. Every copy is centred in its box.
  * 3. **AA contrast** in both schemes on every text the block paints.
  * 4. **Hover and focus-visible** on both actions.
+ *
+ * It also checks that an empty `error` string counts as no error: the title
+ * stays, with no alert.
  */
 import { expect, test, type Page } from "@playwright/test";
 
@@ -425,6 +428,20 @@ for (const scheme of ["light", "dark"] as const) {
       const alert = page.locator(`[data-demo-state="error"] ${BLOCK} [role="alert"]`);
       await expect(alert).toContainText("We could not load your projects.");
       await expect(alert).toContainText("try again");
+    });
+
+    test("treats an empty error string as no error", async ({ page }) => {
+      await page.goto(PAGE, { waitUntil: "networkidle" });
+      await showState(page, "error");
+      const block = page.locator(`[data-demo-state="error"] ${BLOCK}`);
+
+      // The demo's retry clears its message to "", the way a consumer holding
+      // the error as a string does once the load succeeds.
+      await block.getByRole("button", { name: "Try again" }).click();
+
+      await expect(block.locator("h2")).toHaveText(TITLE);
+      await expect(block.locator('[role="alert"]')).toHaveCount(0);
+      await expect(block.locator('[data-scope="button"]')).toHaveText(ACTIONS);
     });
   });
 }

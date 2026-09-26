@@ -13,6 +13,10 @@
   below). The docs column never reaches the 48rem `@lg` step, so the wide frame
   holds a 50rem stage and scrolls sideways inside itself; the page never does.
 
+  The error copy holds its message the way a consumer does, as a string, and
+  "Try again" clears it to "": the block treats the empty string as no error
+  and shows its title again.
+
   `data-demo-state` names each copy's state on its wrapper, so the e2e spec can
   find each copy by what it is meant to show.
 -->
@@ -28,7 +32,9 @@
     | "error"
     | "disabled";
 
-  let { locale = "en", state = "default" }: { locale?: "en" | "es"; state?: State } = $props();
+  // `state` is read as `shown`: the name `state` would turn `$state` into a store read.
+  let { locale = "en", state: shown = "default" }: { locale?: "en" | "es"; state?: State } =
+    $props();
 
   const copy = {
     en: {
@@ -48,10 +54,12 @@
       caughtUpDescription: "Las notificaciones nuevas aparecen aquí en cuanto llegan.",
     },
   }[locale];
+
+  let error = $state(copy.error);
 </script>
 
-<div class="demo-state" data-demo-state={state}>
-  {#if state === "widths"}
+<div class="demo-state" data-demo-state={shown}>
+  {#if shown === "widths"}
     <div class="demo-widths">
       <div data-demo-state="narrow" class="demo-viewport" style="--viewport-width: 18rem" data-label="18rem">
         <EmptyState />
@@ -68,7 +76,7 @@
         </div>
       </div>
     </div>
-  {:else if state === "no-results"}
+  {:else if shown === "no-results"}
     <EmptyState
       icon="search"
       title={copy.noResultsTitle}
@@ -76,7 +84,7 @@
       primaryAction=""
       secondaryAction={copy.clearFilters}
     />
-  {:else if state === "message-only"}
+  {:else if shown === "message-only"}
     <EmptyState
       icon="inbox"
       title={copy.caughtUpTitle}
@@ -84,11 +92,11 @@
       primaryAction=""
       secondaryAction=""
     />
-  {:else if state === "loading"}
+  {:else if shown === "loading"}
     <EmptyState loading />
-  {:else if state === "error"}
-    <EmptyState error={copy.error} />
-  {:else if state === "disabled"}
+  {:else if shown === "error"}
+    <EmptyState {error} onretry={() => (error = "")} />
+  {:else if shown === "disabled"}
     <EmptyState disabled />
   {:else}
     <EmptyState />

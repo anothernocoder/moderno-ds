@@ -45,6 +45,10 @@ describe("moderno add empty-state-<framework>", () => {
       // …and carrying its own loading and error renders.
       expect(written).toContain("aria-busy");
       expect(written).toContain("Try again");
+      // An empty `error` string is no error, as in every other check, so the
+      // title stays in the heading.
+      expect(written).toMatch(/error \|\| title/);
+      expect(written).not.toContain("error ??");
 
       const recorded = await readManifest(project());
       expect(recorded.items[item]!.version).toBe(registry.getItem(item)!.version);

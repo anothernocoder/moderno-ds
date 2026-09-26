@@ -94,7 +94,7 @@ const hasActions = computed(() =>
       </div>
 
       <div :role="error ? 'alert' : undefined" class="grid max-w-sm gap-1">
-        <h2 class="text-body-lg font-semibold @md:text-heading-sm">{{ error ?? title }}</h2>
+        <h2 class="text-body-lg font-semibold @md:text-heading-sm">{{ error || title }}</h2>
         <p v-if="error" class="text-ui-md text-muted-foreground">
           Nothing was lost. Check your connection, then try again.
         </p>
