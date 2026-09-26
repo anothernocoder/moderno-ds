@@ -1,0 +1,168 @@
+---
+title: Newsletter
+description: Un formulario de suscripción en línea — un encabezado con serifa, una línea de descripción y un campo de correo junto a un botón Subscribe, dentro de un panel con borde.
+group: Bloques
+order: 119
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import NewsletterBlockDemo from "../../../islands/NewsletterBlockDemo.svelte";
+import newsletterReact from "../../../../../../registry/blocks/newsletter/react/newsletter.tsx?raw";
+import newsletterVue from "../../../../../../registry/blocks/newsletter/vue/Newsletter.vue?raw";
+import newsletterSolid from "../../../../../../registry/blocks/newsletter/solid/newsletter.tsx?raw";
+import newsletterSvelte from "../../../../../../registry/blocks/newsletter/svelte/Newsletter.svelte?raw";
+
+export const examples = {
+  react: newsletterReact,
+  vue: newsletterVue,
+  solid: newsletterSolid,
+  svelte: newsletterSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <NewsletterBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="newsletter" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { Newsletter } from "@/components/blocks/newsletter";
+```
+
+```tsx
+<Newsletter heading="Recibe las novedades" onSubmit={subscribe} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import Newsletter from "@/components/blocks/Newsletter.vue";
+</script>
+```
+
+```vue
+<Newsletter heading="Recibe las novedades" @submit="subscribe" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import Newsletter from "@/components/blocks/Newsletter.svelte";
+</script>
+```
+
+```svelte
+<Newsletter heading="Recibe las novedades" onsubmit={subscribe} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { Newsletter } from "@/components/blocks/newsletter";
+```
+
+```tsx
+<Newsletter heading="Recibe las novedades" onSubmit={subscribe} />
+```
+
+</ForFramework>
+
+## Referencia de la API
+
+### Props
+
+| Prop          | Tipo              | Por defecto                              | Descripción                                                          |
+| ------------- | ----------------- | ---------------------------------------- | -------------------------------------------------------------------- |
+| `heading`     | `string`          | `"One calm email a month"`               | Qué recibe el lector. Va en la fuente con serifa.                    |
+| `description` | `string`          | una frase                                | Una línea bajo el encabezado; `""` la oculta.                        |
+| `note`        | `string`          | `"No spam. Unsubscribe with one click."` | Una línea corta bajo el formulario; `""` la oculta.                  |
+| `error`       | `string`          | —                                        | El campo pasa a inválido y muestra este mensaje debajo.              |
+| `loading`     | `boolean`         | `false`                                  | El campo deshabilitado y el botón ocupado, "Subscribing".            |
+| `disabled`    | `boolean`         | `false`                                  | El campo y el botón deshabilitados.                                  |
+| `subscribed`  | `boolean`         | `false`                                  | Un Alert de éxito sustituye al formulario.                           |
+| `onSubmit`    | `(event) => void` | —                                        | El evento submit del formulario. Svelte: `onsubmit`. Vue: `@submit`. |
+
+### Estados
+
+| Estado        | Prop                  | Qué se muestra                                                  |
+| ------------- | --------------------- | --------------------------------------------------------------- |
+| Por defecto   | —                     | Encabezado, descripción, el formulario y la nota.               |
+| Vacío         | `description`, `note` | Solo el encabezado y el formulario, cuando ambas son `""`.      |
+| Cargando      | `loading`             | El mismo formulario con el campo deshabilitado y "Subscribing". |
+| Error         | `error`               | El campo inválido, con tu mensaje debajo.                       |
+| Deshabilitado | `disabled`            | El mismo formulario con el campo y el botón deshabilitados.     |
+| Suscrito      | `subscribed`          | "You are subscribed" en lugar del formulario.                   |
+
+### Tamaño
+
+| Paso del contenedor      | Qué cambia                                                          |
+| ------------------------ | ------------------------------------------------------------------- |
+| bajo `@sm`               | Todo va centrado y apilado; el botón ocupa todo el ancho.           |
+| `@sm` (`--container-sm`) | El campo y el botón comparten una fila.                             |
+| `@md` (`--container-md`) | El encabezado sube un tamaño.                                       |
+| `@lg` (`--container-lg`) | El texto pasa al inicio y el formulario a su lado, en dos columnas. |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+El mismo bloque a 18rem, 30rem, 40rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <NewsletterBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Solo encabezado y formulario
+
+Pasa `""` a la descripción y a la nota.
+
+<Preview examples={examples} layout="fill">
+  <NewsletterBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <NewsletterBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+Pulsa "Subscribe" para quitar el mensaje.
+
+<Preview examples={examples} layout="fill">
+  <NewsletterBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+<Preview examples={examples} layout="fill">
+  <NewsletterBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
+
+### Suscrito
+
+<Preview examples={examples} layout="fill">
+  <NewsletterBlockDemo client:visible locale="es" state="subscribed" />
+</Preview>
+
+## Notas
+
+- Di qué recibe el lector y cada cuánto. "Un correo al mes" es mejor que "Mantente al día".
+- Mantén `error` corto y di cómo arreglarlo. El campo conserva lo que escribió el lector.

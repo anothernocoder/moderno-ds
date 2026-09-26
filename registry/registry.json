@@ -1938,6 +1938,78 @@
       ]
     },
     {
+      "name": "newsletter-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Newsletter (React)",
+      "description": "An inline subscribe form in a bordered panel, composing the @moderno-ui/react Field, Button and Alert primitives: a serif heading, one line of description, an email field beside a Subscribe button and a short note, with its own empty, disabled, loading, error and subscribed renders; responds to its container (@container) — the field and the button share one row at @sm, the heading steps up at @md and the text and the form split into two columns at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/newsletter/react/newsletter.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/newsletter.tsx"
+        }
+      ]
+    },
+    {
+      "name": "newsletter-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Newsletter (Vue)",
+      "description": "An inline subscribe form in a bordered panel, composing the @moderno-ui/vue Field, Button and Alert primitives: a serif heading, one line of description, an email field beside a Subscribe button and a short note, with its own empty, disabled, loading, error and subscribed renders; responds to its container (@container) — the field and the button share one row at @sm, the heading steps up at @md and the text and the form split into two columns at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/newsletter/vue/Newsletter.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/Newsletter.vue"
+        }
+      ]
+    },
+    {
+      "name": "newsletter-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Newsletter (Svelte)",
+      "description": "An inline subscribe form in a bordered panel, composing the @moderno-ui/svelte Field, Button and Alert primitives: a serif heading, one line of description, an email field beside a Subscribe button and a short note, with its own empty, disabled, loading, error and subscribed renders; responds to its container (@container) — the field and the button share one row at @sm, the heading steps up at @md and the text and the form split into two columns at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/newsletter/svelte/Newsletter.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/Newsletter.svelte"
+        }
+      ]
+    },
+    {
+      "name": "newsletter-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Newsletter (Solid)",
+      "description": "An inline subscribe form in a bordered panel, composing the @moderno-ui/solid Field, Button and Alert primitives: a serif heading, one line of description, an email field beside a Subscribe button and a short note, with its own empty, disabled, loading, error and subscribed renders; responds to its container (@container) — the field and the button share one row at @sm, the heading steps up at @md and the text and the form split into two columns at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/newsletter/solid/newsletter.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/newsletter.tsx"
+        }
+      ]
+    },
+    {
       "name": "panel-react",
       "type": "registry:block",
       "version": "0.1.0",
