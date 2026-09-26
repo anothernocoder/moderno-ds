@@ -1,0 +1,196 @@
+---
+title: Banner
+description: An announcement strip for the top of a page — a badge, a short message, one action and a dismiss.
+group: Blocks
+order: 118
+agent:
+  intent: A strip across the top of a page that announces one thing — a badge, a bold title, one line of message and one action — and hides itself when the visitor dismisses it.
+  whenToUse: "One announcement every visitor should see, above the page: a launch, an event, a new feature or a change in terms."
+  whenNotToUse:
+    - case: A notice about the signed-in user's session — impersonation, a trial ending, an incident
+      use: AppBanner — it stacks several tinted notices, each with its own action
+    - case: A message about one form or one section of a page
+      use: Alert — compose the primitive where the message belongs
+  gotchas:
+    - "Dismissing hides the strip at once and calls `onDismiss`. The block does not remember it: to keep it hidden on the next visit, store that in `onDismiss` and stop rendering the block."
+    - "The action is a Button, not a link: `onAction` reports the press. Navigate in it, or edit the file — it is yours after `moderno add`."
+    - 'Every text prop has sample copy so the block renders standalone. Pass `badge=""` or `actionLabel=""` to drop that part; `dismissible={false}` drops the dismiss.'
+    - "`title` and `message` both empty renders nothing, so the page keeps its space. `loading` shows one skeleton strip inside a busy `status` region; `error` shows one alert with a retry."
+    - 'The strip is a `section` named "Announcement", so screen readers list it as a region; the dismiss button is named "Dismiss announcement".'
+    - "The layout follows the block's own width, not the viewport: the action sits under the message below `--container-sm` and beside it from there on, the badge, title and message share one line from `--container-md`, and the message centres in the strip from `--container-lg`."
+  theming:
+    - "The strip paints --muted with a --border hairline under it; the title is --foreground and the message --muted-foreground."
+    - "The badge is an outline Badge, the action a primary Button, the dismiss a ghost Button; the loading strip is Skeleton on --muted and the failed load an error Alert."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import BannerBlockDemo from "../../../islands/BannerBlockDemo.svelte";
+import bannerReact from "../../../../../../registry/blocks/banner/react/banner.tsx?raw";
+import bannerVue from "../../../../../../registry/blocks/banner/vue/Banner.vue?raw";
+import bannerSolid from "../../../../../../registry/blocks/banner/solid/banner.tsx?raw";
+import bannerSvelte from "../../../../../../registry/blocks/banner/svelte/Banner.svelte?raw";
+
+export const examples = {
+  react: bannerReact,
+  vue: bannerVue,
+  solid: bannerSolid,
+  svelte: bannerSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <BannerBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="banner" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { Banner } from "@/components/blocks/banner";
+```
+
+```tsx
+<Banner
+  title="Moderno 1.0 is out"
+  message="Blocks now ship for four frameworks."
+  onAction={() => open("/changelog")}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import Banner from "@/components/blocks/Banner.vue";
+</script>
+```
+
+```vue
+<Banner
+  title="Moderno 1.0 is out"
+  message="Blocks now ship for four frameworks."
+  @action="open('/changelog')"
+/>
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import Banner from "@/components/blocks/Banner.svelte";
+</script>
+```
+
+```svelte
+<Banner
+  title="Moderno 1.0 is out"
+  message="Blocks now ship for four frameworks."
+  onaction={() => open("/changelog")}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { Banner } from "@/components/blocks/banner";
+```
+
+```tsx
+<Banner
+  title="Moderno 1.0 is out"
+  message="Blocks now ship for four frameworks."
+  onAction={() => open("/changelog")}
+/>
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+| Prop          | Type         | Default              | Description                                                         |
+| ------------- | ------------ | -------------------- | ------------------------------------------------------------------- |
+| `badge`       | `string`     | `"New"`              | A short label before the title. `""` drops it.                      |
+| `title`       | `string`     | sample copy          | The announcement, in bold.                                          |
+| `message`     | `string`     | sample copy          | One line more, after the title.                                     |
+| `actionLabel` | `string`     | `"See how it works"` | The action button's label. `""` drops the button.                   |
+| `dismissible` | `boolean`    | `true`               | Shows the dismiss button.                                           |
+| `error`       | `string`     | —                    | The announcement failed to load; an alert with a retry replaces it. |
+| `loading`     | `boolean`    | `false`              | One skeleton strip in a busy region replaces it.                    |
+| `disabled`    | `boolean`    | `false`              | The strip stays readable and both buttons are disabled.             |
+| `onAction`    | `() => void` | —                    | The action was pressed. Svelte: `onaction`. Vue: `@action`.         |
+| `onDismiss`   | `() => void` | —                    | The strip was dismissed. Svelte: `ondismiss`. Vue: `@dismiss`.      |
+| `onRetry`     | `() => void` | —                    | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.        |
+
+### States
+
+| State     | Prop                    | What renders                                                     |
+| --------- | ----------------------- | ---------------------------------------------------------------- |
+| Default   | —                       | The strip with its badge, title, message, action and dismiss.    |
+| Dismissed | pressing the dismiss    | Nothing: the strip hides itself and calls `onDismiss`.           |
+| Empty     | `title=""` `message=""` | Nothing: the block takes no space.                               |
+| Loading   | `loading`               | One skeleton strip in a busy `status` region.                    |
+| Error     | `error`                 | One error alert with a "Try again" button in place of the strip. |
+| Disabled  | `disabled`              | The strip with both buttons disabled.                            |
+
+### Sizing
+
+| Container step           | What changes                                 |
+| ------------------------ | -------------------------------------------- |
+| below `@sm`              | The action sits under the message.           |
+| `@sm` (`--container-sm`) | The action moves beside the message.         |
+| `@md` (`--container-md`) | The badge, title and message share one line. |
+| `@lg` (`--container-lg`) | The message and action centre in the strip.  |
+
+## Examples
+
+### Container widths
+
+The same strip at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <BannerBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Empty
+
+<Preview examples={examples} layout="fill">
+  <BannerBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <BannerBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+<Preview examples={examples} layout="fill">
+  <BannerBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <BannerBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Put it once, above the page header, so it spans the full width.
+- To keep it dismissed across visits, save that in `onDismiss` and skip rendering the block.

@@ -354,6 +354,78 @@
       ]
     },
     {
+      "name": "banner-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Banner (React)",
+      "description": "An announcement strip for the top of a page composing the @moderno-ui/react Badge, Button, Alert and Skeleton primitives: a badge, a bold title and one line of message, one action and a dismiss that hides the strip, with its own empty, loading and error renders; responds to its container (@container) — the action moves beside the message at @sm, the badge, title and message share one line at @md and the message centres in the strip at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/banner/react/banner.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/banner.tsx"
+        }
+      ]
+    },
+    {
+      "name": "banner-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Banner (Vue)",
+      "description": "An announcement strip for the top of a page composing the @moderno-ui/vue Badge, Button, Alert and Skeleton primitives: a badge, a bold title and one line of message, one action and a dismiss that hides the strip, with its own empty, loading and error renders; responds to its container (@container) — the action moves beside the message at @sm, the badge, title and message share one line at @md and the message centres in the strip at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/banner/vue/Banner.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/Banner.vue"
+        }
+      ]
+    },
+    {
+      "name": "banner-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Banner (Svelte)",
+      "description": "An announcement strip for the top of a page composing the @moderno-ui/svelte Badge, Button, Alert and Skeleton primitives: a badge, a bold title and one line of message, one action and a dismiss that hides the strip, with its own empty, loading and error renders; responds to its container (@container) — the action moves beside the message at @sm, the badge, title and message share one line at @md and the message centres in the strip at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/banner/svelte/Banner.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/Banner.svelte"
+        }
+      ]
+    },
+    {
+      "name": "banner-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Banner (Solid)",
+      "description": "An announcement strip for the top of a page composing the @moderno-ui/solid Badge, Button, Alert and Skeleton primitives: a badge, a bold title and one line of message, one action and a dismiss that hides the strip, with its own empty, loading and error renders; responds to its container (@container) — the action moves beside the message at @sm, the badge, title and message share one line at @md and the message centres in the strip at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/banner/solid/banner.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/banner.tsx"
+        }
+      ]
+    },
+    {
       "name": "container-react",
       "type": "registry:block",
       "version": "0.1.0",
