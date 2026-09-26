@@ -1,0 +1,187 @@
+---
+title: Stat row
+description: A row of KPI stats with deltas that wraps to the width of its container.
+group: Blocks
+order: 104
+agent:
+  intent: A row of headline numbers — each a label, a value and its change — at the top of a dashboard or report.
+  whenToUse: "Anywhere a few key numbers are read together at a glance: the top of a dashboard, a report's summary, an account or project overview, a billing page's usage totals."
+  whenNotToUse:
+    - case: A number that needs its trend over time, not only its change
+      use: a chart (LineChart, AreaChart or BarChart) under or beside the row
+    - case: A long list of metrics that people compare, sort or filter
+      use: a table — a row of cards is for the four or so numbers that matter most
+    - case: A single status the reader must act on
+      use: Alert — a stat reports, it does not ask
+  gotchas:
+    - "Presentational: it fetches and formats nothing. `value` and `delta` are strings you have already formatted for the reader's locale and currency."
+    - "`tone` is what the change means, not which way it moved. A falling churn rate is `positive`; a falling order value is `negative`. It defaults to `neutral`."
+    - "The sign lives in the `delta` text (`+12.5%`, `−2.4%`), so the direction is readable without the tint; the tint only adds whether it is good news."
+    - "`stats` defaults to a sample set so the block renders standalone. Pass your own array — or edit the constant, the file is yours after `moderno add`."
+    - "`stats={[]}` is the empty state: the period loaded and has nothing to show. `loading` replaces the numbers with placeholders, and `error` replaces them with a retry, because a zero and a failed load are different facts."
+    - "The block responds to its container, never the viewport: one stat a row below --container-sm, two from it, four from --container-lg."
+  theming:
+    - "Nothing is painted here. Each stat is Card's outline surface, each change is a Badge status (success, error or neutral), the placeholders are Skeleton and the failed load is Alert's error variant."
+    - "The values are set in --font-serif, the brand's display face, with tabular figures so numbers line up from card to card."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import StatRowBlockDemo from "../../../islands/StatRowBlockDemo.svelte";
+import statRowReact from "../../../../../../registry/blocks/stat-row/react/stat-row.tsx?raw";
+import statRowVue from "../../../../../../registry/blocks/stat-row/vue/StatRow.vue?raw";
+import statRowSolid from "../../../../../../registry/blocks/stat-row/solid/stat-row.tsx?raw";
+import statRowSvelte from "../../../../../../registry/blocks/stat-row/svelte/StatRow.svelte?raw";
+
+export const examples = {
+  react: statRowReact,
+  vue: statRowVue,
+  solid: statRowSolid,
+  svelte: statRowSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <StatRowBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="stat-row" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { StatRow } from "@/components/blocks/stat-row";
+```
+
+```tsx
+<StatRow stats={stats} onAction={openReport} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import StatRow from "@/components/blocks/StatRow.vue";
+</script>
+```
+
+```vue
+<StatRow :stats="stats" @action="openReport" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import StatRow from "@/components/blocks/StatRow.svelte";
+</script>
+```
+
+```svelte
+<StatRow {stats} onaction={openReport} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { StatRow } from "@/components/blocks/stat-row";
+```
+
+```tsx
+<StatRow stats={stats()} onAction={openReport} />
+```
+
+</ForFramework>
+
+Each stat is `{ id, label, value, delta, tone, caption }`. Set `tone` to what the change means: a drop in churn is `positive`.
+
+## API Reference
+
+### Props
+
+| Prop          | Type            | Default         | Description                                                    |
+| ------------- | --------------- | --------------- | -------------------------------------------------------------- |
+| `stats`       | `StatRowItem[]` | a sample set    | The stats, in reading order. `[]` renders the empty state.     |
+| `heading`     | `string`        | `"Overview"`    | The heading over the row.                                      |
+| `description` | `string`        | a sentence      | The line under the heading; `""` hides it.                     |
+| `actionLabel` | `string`        | `"View report"` | The header button's label; `""` hides the button.              |
+| `error`       | `string`        | —               | The stats failed to load; an alert with a retry replaces them. |
+| `loading`     | `boolean`       | `false`         | Placeholder cards in a busy region replace the stats.          |
+| `disabled`    | `boolean`       | `false`         | The stats stay readable and every button is disabled.          |
+| `onAction`    | `() => void`    | —               | The header button. Svelte: `onaction`. Vue: `@action`.         |
+| `onRetry`     | `() => void`    | —               | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.   |
+
+### StatRowItem
+
+| Field     | Type                                    | Description                                           |
+| --------- | --------------------------------------- | ----------------------------------------------------- |
+| `id`      | `string`                                | Stable identity.                                      |
+| `label`   | `string`                                | What is measured.                                     |
+| `value`   | `string`                                | The number, already formatted.                        |
+| `delta`   | `string`                                | Optional change, with its sign: `+12.5%`, `−0.4 pts`. |
+| `tone`    | `"positive" \| "negative" \| "neutral"` | What the change means. Default `"neutral"`.           |
+| `caption` | `string`                                | Optional context after the change: `vs last month`.   |
+
+### States
+
+| State    | Prop         | What renders                                                   |
+| -------- | ------------ | -------------------------------------------------------------- |
+| Default  | —            | One card per stat.                                             |
+| Empty    | `stats={[]}` | A "No numbers yet" card.                                       |
+| Loading  | `loading`    | Four placeholder cards in a busy `status` region.              |
+| Error    | `error`      | One error alert with a "Try again" button in place of the row. |
+| Disabled | `disabled`   | The stats with every button disabled.                          |
+
+### Sizing
+
+| Container step           | What changes                                              |
+| ------------------------ | --------------------------------------------------------- |
+| below `@sm`              | One stat a row; the header button sits under the heading. |
+| `@sm` (`--container-sm`) | Two stats a row; the heading and the button share a row.  |
+| `@md` (`--container-md`) | Larger values and a larger heading.                       |
+| `@lg` (`--container-lg`) | Four stats a row.                                         |
+
+## Examples
+
+### Container widths
+
+The same row at 18rem, 30rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <StatRowBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Empty
+
+<Preview examples={examples} layout="fill">
+  <StatRowBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <StatRowBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+<Preview examples={examples} layout="fill">
+  <StatRowBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <StatRowBlockDemo client:visible locale="en" state="disabled" />
+</Preview>

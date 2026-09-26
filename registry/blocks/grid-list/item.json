@@ -1,0 +1,37 @@
+{
+  "title": "Grid List",
+  "description": "Responsive tile grid of cards composing the @moderno-ui/{framework} Card, Avatar, Badge, Button, Skeleton and Alert primitives: one card per item with a square avatar, a title, a status badge and an Open action, with its own empty, loading and error renders; responds to its container (@container) — the header lines up at @sm, the grid goes to two columns at @md and three at @lg.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": [],
+  "files": {
+    "react": [
+      {
+        "path": "blocks/grid-list/react/grid-list.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/grid-list.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "blocks/grid-list/vue/GridList.vue",
+        "type": "registry:block",
+        "target": "src/components/blocks/GridList.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "blocks/grid-list/svelte/GridList.svelte",
+        "type": "registry:block",
+        "target": "src/components/blocks/GridList.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "blocks/grid-list/solid/grid-list.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/grid-list.tsx"
+      }
+    ]
+  }
+}
