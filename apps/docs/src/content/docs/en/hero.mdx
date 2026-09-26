@@ -1,0 +1,185 @@
+---
+title: Hero
+description: The opening section of a landing page — a kicker, a serif title, a subtitle and two calls to action.
+group: Blocks
+order: 117
+agent:
+  intent: The first section of a landing or product page — a short kicker, a large serif title, one or two sentences of subtitle and a primary and a secondary call to action.
+  whenToUse: "The top of a marketing page, a product launch, a pricing or sign-up page: the one place that says what the product is and what to do next."
+  whenNotToUse:
+    - case: The header of an app page, with breadcrumbs, a status and actions
+      use: SectionHeader — the hero is for marketing pages, not for the inside of an app
+    - case: A collection with nothing in it yet
+      use: EmptyState — it says what is missing and leads to the first item
+    - case: A title over a list or a section further down the page
+      use: SectionHeader with the section variant — only the first section of a page is a hero
+  gotchas:
+    - '`kicker`, `subtitle`, `primaryAction` and `secondaryAction` hide when you pass `""`. Hide them all and the title stands alone.'
+    - "The title is an `h1`. Use one hero per page."
+    - "Presentational: `onPrimaryAction`, `onSecondaryAction` and `onRetry` report which button was pressed. Signing up, booking and retrying stay yours."
+    - "`loading` replaces the content with skeleton placeholders in one busy `status` region."
+    - '`error` keeps the title and subtitle and puts an error Alert with your message and a "Try again" button where the actions were. An empty string counts as no error.'
+    - "The layout follows the block's own width, not the viewport: the actions stack full width below `--container-sm` and sit side by side from there on."
+  theming:
+    - "The block paints nothing of its own. The kicker is Badge's neutral variant, the actions are Button's primary and outline variants at size lg, the error is Alert's error variant and the loading placeholders are Skeleton."
+    - "The title reads --font-serif and --foreground; the subtitle reads --muted-foreground."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg, the title is capped at --container-lg and the subtitle at --container-md."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import HeroBlockDemo from "../../../islands/HeroBlockDemo.svelte";
+import heroReact from "../../../../../../registry/blocks/hero/react/hero.tsx?raw";
+import heroVue from "../../../../../../registry/blocks/hero/vue/Hero.vue?raw";
+import heroSolid from "../../../../../../registry/blocks/hero/solid/hero.tsx?raw";
+import heroSvelte from "../../../../../../registry/blocks/hero/svelte/Hero.svelte?raw";
+
+export const examples = {
+  react: heroReact,
+  vue: heroVue,
+  solid: heroSolid,
+  svelte: heroSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <HeroBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="hero" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { Hero } from "@/components/blocks/hero";
+```
+
+```tsx
+<Hero title="Ship invoices in minutes" primaryAction="Get started" onPrimaryAction={signUp} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import Hero from "@/components/blocks/Hero.vue";
+</script>
+```
+
+```vue
+<Hero title="Ship invoices in minutes" primary-action="Get started" @primary-action="signUp" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import Hero from "@/components/blocks/Hero.svelte";
+</script>
+```
+
+```svelte
+<Hero title="Ship invoices in minutes" primaryAction="Get started" onprimaryaction={signUp} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { Hero } from "@/components/blocks/hero";
+```
+
+```tsx
+<Hero title="Ship invoices in minutes" primaryAction="Get started" onPrimaryAction={signUp} />
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+| Prop                | Type         | Default                               | Description                                                                            |
+| ------------------- | ------------ | ------------------------------------- | -------------------------------------------------------------------------------------- |
+| `kicker`            | `string`     | `"Now in public beta"`                | A short label above the title; `""` hides it.                                          |
+| `title`             | `string`     | `"Run your business, not your books"` | What the product does, in a few words. Set in the serif face.                          |
+| `subtitle`          | `string`     | a sentence                            | One or two sentences under the title; `""` hides it.                                   |
+| `primaryAction`     | `string`     | `"Start free trial"`                  | The primary button's label; `""` hides it.                                             |
+| `secondaryAction`   | `string`     | `"Book a demo"`                       | The outline button's label; `""` hides it.                                             |
+| `error`             | `string`     | —                                     | Something behind the actions failed; an error Alert with a retry replaces the actions. |
+| `loading`           | `boolean`    | `false`                               | Skeleton placeholders in a busy region replace the content.                            |
+| `disabled`          | `boolean`    | `false`                               | The content stays and every button is disabled.                                        |
+| `onPrimaryAction`   | `() => void` | —                                     | The primary button was pressed. Svelte: `onprimaryaction`. Vue: `@primary-action`.     |
+| `onSecondaryAction` | `() => void` | —                                     | The outline button was pressed. Svelte: `onsecondaryaction`. Vue: `@secondary-action`. |
+| `onRetry`           | `() => void` | —                                     | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.                           |
+
+### States
+
+| State    | Prop                   | What renders                                                                   |
+| -------- | ---------------------- | ------------------------------------------------------------------------------ |
+| Default  | —                      | Kicker, title, subtitle and both actions.                                      |
+| Empty    | every text but `title` | The title alone, when you pass `""` for the kicker, subtitle and both actions. |
+| Loading  | `loading`              | Placeholders for the kicker, the title, the subtitle and a button.             |
+| Error    | `error`                | The title and subtitle, then an error Alert with "Try again".                  |
+| Disabled | `disabled`             | The same content with both buttons disabled.                                   |
+
+### Sizing
+
+| Container step           | What changes                                                          |
+| ------------------------ | --------------------------------------------------------------------- |
+| below `@sm`              | The actions stack, each as wide as the block, the primary one on top. |
+| `@sm` (`--container-sm`) | The actions sit side by side, centred, at their own width.            |
+| `@md` (`--container-md`) | The title and the subtitle step up a size.                            |
+| `@lg` (`--container-lg`) | The block takes twice the room above and below.                       |
+
+## Examples
+
+### Container widths
+
+The same block at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <HeroBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Title only
+
+Pass `""` for everything but the title.
+
+<Preview examples={examples} layout="fill">
+  <HeroBlockDemo client:visible locale="en" state="title-only" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <HeroBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+Press "Try again" to clear the message and bring the actions back.
+
+<Preview examples={examples} layout="fill">
+  <HeroBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <HeroBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Use one hero per page, at the top.
+- Keep the title short. Say what the product does, not what it is called.
