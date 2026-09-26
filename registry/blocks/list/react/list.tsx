@@ -124,7 +124,7 @@ export function List({
           </Alert.Root>
         ) : null}
 
-        {loading ? (
+        {!error && loading ? (
           <Card.Root size="sm">
             <div role="status" aria-busy="true">
               <span className="sr-only">Loading team members…</span>
@@ -184,7 +184,13 @@ export function List({
                       ) : null}
                     </div>
                   ) : null}
-                  <div className="col-start-2 flex gap-2 @sm:col-start-3 @sm:row-span-2 @sm:row-start-1 @md:col-start-4 @md:row-span-1">
+                  <div
+                    className={
+                      item.status || item.meta
+                        ? "col-start-2 flex gap-2 @sm:col-start-3 @sm:row-span-2 @sm:row-start-1 @md:col-start-4 @md:row-span-1"
+                        : "col-start-2 flex gap-2 @sm:col-start-3 @sm:row-start-1 @md:col-start-4"
+                    }
+                  >
                     <Button
                       type="button"
                       variant="outline"

@@ -1,7 +1,7 @@
 <script lang="ts">
   import List from "../../../../registry/blocks/list/svelte/List.svelte";
 
-  type State = "default" | "widths" | "empty" | "loading" | "error" | "disabled";
+  type State = "default" | "widths" | "bare" | "empty" | "loading" | "error" | "disabled";
 
   let { locale = "en", state = "default" }: { locale?: "en" | "es"; state?: State } = $props();
 
@@ -9,6 +9,12 @@
     en: "We could not load your team.",
     es: "No pudimos cargar tu equipo.",
   }[locale];
+
+  const bareItems = [
+    { id: "ana-lopez", title: "Ana López", subtitle: "ana.lopez@example.com", initials: "AL" },
+    { id: "ben-okafor", title: "Ben Okafor", subtitle: "ben.okafor@example.com", initials: "BO" },
+    { id: "chen-wei", title: "Chen Wei", subtitle: "chen.wei@example.com", initials: "CW" },
+  ];
 </script>
 
 <div class="demo-state" data-demo-state={state}>
@@ -26,6 +32,8 @@
         </div>
       </div>
     </div>
+  {:else if state === "bare"}
+    <List items={bareItems} />
   {:else if state === "empty"}
     <List items={[]} />
   {:else if state === "loading"}

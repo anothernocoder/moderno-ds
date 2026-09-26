@@ -11,6 +11,8 @@
  *    and fact get a column of their own, one above the other, and the heading
  *    grows; from `--container-lg` they sit side by side and the facts line up,
  *    right-aligned. Each copy is measured against its own container width.
+ *    A row with no status or fact is only as tall as its content, with its
+ *    buttons centred on it, at every step.
  * 2. **Every state renders what it claims**: five rows tinted by status, a
  *    message when there are none, placeholders in a busy region while loading,
  *    one alert with a retry when the load failed, and inert buttons when
@@ -74,7 +76,7 @@ interface BlockMetrics {
   failedLoad: boolean;
 }
 
-async function showState(page: Page, state: State): Promise<void> {
+async function showState(page: Page, state: State | "bare"): Promise<void> {
   const block = page.locator(`[data-demo-state="${state}"] ${BLOCK}`);
   await block.scrollIntoViewIfNeeded();
   await block.waitFor({ state: "visible" });
@@ -365,6 +367,54 @@ for (const scheme of ["light", "dark"] as const) {
         }
       });
     }
+
+    test("keeps a row without a status or fact as tall as its content", async ({ page }) => {
+      // 560px puts the example between `--container-sm` and `--container-md`,
+      // the one step where the buttons span a status row when there is one.
+      const containerWidths: number[] = [];
+      for (const width of [375, 560, ...WIDTHS.slice(1)]) {
+        await page.setViewportSize({ width, height: 1200 });
+        await page.goto(PAGE, { waitUntil: "networkidle" });
+        await showState(page, "bare");
+        const rows = await page.evaluate((block) => {
+          const section = document.querySelector(`[data-demo-state="bare"] ${block}`)!;
+          return {
+            containerWidth: section.getBoundingClientRect().width,
+            rows: [...section.querySelectorAll("ul > li")].map((row) => {
+              const style = getComputedStyle(row);
+              const [avatar, , actions] = [...row.children];
+              if (!avatar || !actions || row.children.length !== 3) {
+                throw new Error("a bare row renders avatar, text and buttons only");
+              }
+              const middle = (el: Element) => {
+                const box = el.getBoundingClientRect();
+                return box.top + box.height / 2;
+              };
+              return {
+                content:
+                  row.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom),
+                tallest: Math.max(
+                  ...[...row.children].map((part) => part.getBoundingClientRect().height),
+                ),
+                offCentre: Math.abs(middle(actions) - middle(avatar)),
+              };
+            }),
+          };
+        }, BLOCK);
+        const where = `${scheme} ${width}px (${rows.containerWidth}px)`;
+        expect(rows.rows, `${where}: rows`).toHaveLength(3);
+        containerWidths.push(rows.containerWidth);
+        if (rows.containerWidth < CONTAINER_SM) continue;
+        for (const [index, row] of rows.rows.entries()) {
+          expect(row.content, `${where}: row ${index + 1} height`).toBeCloseTo(row.tallest, 0);
+          expect(row.offCentre, `${where}: row ${index + 1} buttons centred`).toBeLessThan(1);
+        }
+      }
+      expect(
+        containerWidths.some((w) => w >= CONTAINER_SM && w < CONTAINER_MD),
+        "a copy between --container-sm and --container-md",
+      ).toBe(true);
+    });
 
     test("names every row button after its record", async ({ page }) => {
       await page.goto(PAGE, { waitUntil: "networkidle" });

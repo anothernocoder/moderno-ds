@@ -179,7 +179,11 @@ const inert = computed(() => props.loading || props.disabled);
               >
             </div>
             <div
-              class="col-start-2 flex gap-2 @sm:col-start-3 @sm:row-span-2 @sm:row-start-1 @md:col-start-4 @md:row-span-1"
+              :class="
+                item.status || item.meta
+                  ? 'col-start-2 flex gap-2 @sm:col-start-3 @sm:row-span-2 @sm:row-start-1 @md:col-start-4 @md:row-span-1'
+                  : 'col-start-2 flex gap-2 @sm:col-start-3 @sm:row-start-1 @md:col-start-4'
+              "
             >
               <Button
                 type="button"
