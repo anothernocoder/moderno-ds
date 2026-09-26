@@ -30,6 +30,7 @@ import { Tabs } from "../src/tabs.js";
 import { Accordion } from "../src/accordion.js";
 import { Progress } from "../src/progress.js";
 import { Slider } from "../src/slider.js";
+import { NumberInput } from "../src/number-input.js";
 import { Dialog, Portal } from "../src/dialog.js";
 import { Select, createListCollection } from "../src/select.js";
 import { PinInput } from "../src/pin-input.js";
@@ -401,6 +402,33 @@ export const App = defineComponent({
               h(Slider.Thumb, { index: 1 }, () => h(Slider.HiddenInput)),
             ]),
           ]),
+        ]),
+
+        h("section", { "aria-label": "number-input" }, [
+          h(NumberInput.Root, { defaultValue: "10", min: 0, max: 10 }, () => [
+            h(NumberInput.Label, {}, () => "Quantity"),
+            h(NumberInput.Control, {}, () => [
+              h(NumberInput.Input),
+              h(NumberInput.DecrementTrigger, {}, () => "−"),
+              h(NumberInput.IncrementTrigger, {}, () => "+"),
+            ]),
+          ]),
+          h(
+            NumberInput.Root,
+            {
+              size: "sm",
+              defaultValue: "1234.5",
+              formatOptions: { style: "currency", currency: "USD" },
+            },
+            () => [
+              h(NumberInput.Label, {}, () => "Price"),
+              h(NumberInput.Control, {}, () => [
+                h(NumberInput.Input),
+                h(NumberInput.DecrementTrigger, {}, () => "−"),
+                h(NumberInput.IncrementTrigger, {}, () => "+"),
+              ]),
+            ],
+          ),
         ]),
 
         h(Dialog.Root, { defaultOpen: props.open }, () => [

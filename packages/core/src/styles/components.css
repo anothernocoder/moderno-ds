@@ -2394,6 +2394,198 @@
     height: var(--spacing-6);
   }
 
+  /* ───────────────────────── Number Input ───────────────────────── *
+   * Ark's number-input machine: root > label + control > input + the two
+   * steppers (decrement-trigger, increment-trigger, native <button>s), with
+   * an optional scrubber (drag it sideways to change the value) and
+   * value-text (the formatted value, for a readout outside the box). The
+   * control is the one bordered box, like Field's input: the input inside it
+   * has no border of its own, and each stepper is split off by a hairline.
+   * Ark formats the value, clamps it on blur, stamps data-focus,
+   * data-invalid, data-disabled and data-scrubbing on the parts, and
+   * disables a stepper once the value reaches its bound. `numberInputRecipe`
+   * puts size on the root; the parts follow it through child combinators
+   * (root > control > part).                                              */
+  [data-scope="number-input"][data-part="root"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+  }
+  [data-scope="number-input"][data-part="label"] {
+    color: var(--foreground);
+    font-size: var(--text-ui-md);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--leading-ui-md);
+  }
+  [data-scope="number-input"][data-part="control"] {
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+    height: var(--spacing-8);
+    border: 1px solid var(--input);
+    border-radius: var(--radius);
+    background-color: var(--background);
+    /* The steppers' hover fill stays inside the box's corners. */
+    overflow: hidden;
+    transition:
+      border-color var(--motion-fast),
+      background-color var(--motion-fast);
+  }
+  /* Hover raises the border to the focus colour, as on Field's input; an
+     invalid or disabled box keeps its own border. */
+  [data-scope="number-input"][data-part="control"]:hover:not([data-disabled]):not([data-invalid]) {
+    border-color: var(--ring);
+  }
+  /* The ring is the box's, drawn INSIDE it (a -2px offset covers the 1px
+     border and one more px), whether the caret is in the input or a stepper
+     took focus on touch. An offset ring would leave the resting border
+     visible inside it — a double border. Field, Select and Pin Input do the
+     same. */
+  [data-scope="number-input"][data-part="control"]:focus-within {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+  }
+  [data-scope="number-input"][data-part="control"][data-invalid] {
+    border-color: var(--destructive);
+    background-color: color-mix(in oklab, var(--destructive) 4%, var(--background));
+  }
+  /* An invalid box keeps its error colour while focused; a neutral ring over
+     a red border reads as "fixed" before it is. */
+  [data-scope="number-input"][data-part="control"][data-invalid]:focus-within {
+    outline-color: var(--destructive);
+  }
+  [data-scope="number-input"][data-part="control"][data-disabled] {
+    background-color: var(--muted);
+  }
+  /* The input fills the box; the box draws the border and the ring. Tabular
+     figures keep the digits from jittering as the value steps. */
+  [data-scope="number-input"][data-part="input"] {
+    flex: 1;
+    min-width: 0;
+    padding: 0 var(--spacing-3);
+    border: 0;
+    outline: none;
+    background-color: transparent;
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: var(--text-ui-md);
+    font-variant-numeric: tabular-nums;
+  }
+  [data-scope="number-input"][data-part="input"]::placeholder {
+    color: var(--muted-foreground);
+  }
+  [data-scope="number-input"][data-part="decrement-trigger"],
+  [data-scope="number-input"][data-part="increment-trigger"] {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: var(--spacing-8);
+    padding: 0;
+    border: 0;
+    border-inline-start: 1px solid var(--input);
+    /* Clears the UA `buttonface` grey: a stepper has no fill until hovered. */
+    background-color: transparent;
+    color: var(--muted-foreground);
+    font-family: var(--font-sans);
+    font-size: var(--text-ui-md);
+    line-height: 1;
+    cursor: pointer;
+    user-select: none;
+    transition:
+      background-color var(--motion-fast),
+      color var(--motion-fast);
+  }
+  [data-scope="number-input"][data-part="decrement-trigger"]:hover:not(:disabled),
+  [data-scope="number-input"][data-part="increment-trigger"]:hover:not(:disabled) {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+  /* A stepper at its bound is dead: Ark sets the native `disabled` and
+     data-disabled on it. Both look the same, so a stepper disabled before Ark
+     hydrates reads as one too. */
+  [data-scope="number-input"][data-part="decrement-trigger"]:disabled,
+  [data-scope="number-input"][data-part="increment-trigger"]:disabled,
+  [data-scope="number-input"][data-part="decrement-trigger"][data-disabled],
+  [data-scope="number-input"][data-part="increment-trigger"][data-disabled] {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+  /* The scrubber is a handle the user drags sideways; Ark sets its cursor
+     inline. Inside the box it leads the input, like an icon. */
+  [data-scope="number-input"][data-part="scrubber"] {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    color: var(--muted-foreground);
+    user-select: none;
+    touch-action: none;
+  }
+  [data-scope="number-input"][data-part="control"] > [data-part="scrubber"] {
+    padding-inline-start: var(--spacing-3);
+  }
+  [data-scope="number-input"][data-part="value-text"] {
+    color: var(--muted-foreground);
+    font-size: var(--text-ui-sm);
+    line-height: var(--leading-ui-sm);
+    font-variant-numeric: tabular-nums;
+  }
+  /*
+   * Ark stamps data-disabled on EVERY part of a disabled number input, and
+   * the base layer and the stepper rule above dim anything carrying it —
+   * nesting would multiply the opacity. Dim the root once and leave its parts
+   * opaque. This rule must stay after the stepper one: same specificity, so
+   * order decides.
+   */
+  [data-scope="number-input"][data-part="root"][data-disabled] :where([data-part]) {
+    opacity: 1;
+  }
+
+  /* Density driven by the recipe's data-size on the root: the box's height,
+     the steppers' width (square with the box) and the type. `lg` exceeds the
+     top spacing slot, so it sums two slots rather than inventing a token. */
+  [data-scope="number-input"][data-part="root"][data-size="sm"] {
+    gap: var(--spacing-1);
+  }
+  [data-scope="number-input"][data-part="root"][data-size="sm"] > [data-part="label"] {
+    font-size: var(--text-ui-sm);
+    line-height: var(--leading-ui-sm);
+  }
+  [data-scope="number-input"][data-part="root"][data-size="lg"] > [data-part="label"] {
+    font-size: var(--text-ui-lg);
+    line-height: var(--leading-ui-lg);
+  }
+  [data-scope="number-input"][data-part="root"][data-size="sm"] > [data-part="control"] {
+    height: var(--spacing-7);
+  }
+  [data-scope="number-input"][data-part="root"][data-size="lg"] > [data-part="control"] {
+    height: calc(var(--spacing-8) + var(--spacing-2));
+  }
+  [data-scope="number-input"][data-part="root"][data-size="sm"]
+    > [data-part="control"]
+    > [data-part="input"] {
+    padding-inline: var(--spacing-2);
+    font-size: var(--text-ui-sm);
+  }
+  [data-scope="number-input"][data-part="root"][data-size="lg"]
+    > [data-part="control"]
+    > [data-part="input"] {
+    padding-inline: var(--spacing-4);
+    font-size: var(--text-ui-lg);
+  }
+  [data-scope="number-input"][data-part="root"][data-size="sm"]
+    > [data-part="control"]
+    > :is([data-part="decrement-trigger"], [data-part="increment-trigger"]) {
+    width: var(--spacing-7);
+    font-size: var(--text-ui-sm);
+  }
+  [data-scope="number-input"][data-part="root"][data-size="lg"]
+    > [data-part="control"]
+    > :is([data-part="decrement-trigger"], [data-part="increment-trigger"]) {
+    width: calc(var(--spacing-8) + var(--spacing-2));
+    font-size: var(--text-ui-lg);
+  }
+
   /* ─────────────────────────── Avatar ─────────────────────────── *
    * `avatarRecipe` size × shape on the root; Ark's image-loading machine.
    * Parts root > image + fallback. Ark shows one of the two: the fallback

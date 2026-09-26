@@ -545,3 +545,101 @@ describe("@moderno-ui/core components.css — Slider", () => {
     }
   });
 });
+
+/*
+ * A bordered control draws its focus ring INSIDE its box: a 2px ring offset
+ * by -2px covers the 1px resting border. An outset ring would leave that
+ * border visible inside it, a double border (7ea4320).
+ */
+describe("@moderno-ui/core components.css — bordered controls ring inset", () => {
+  const ruleDecls = (selector: string): Declaration[] => {
+    const found: Declaration[] = [];
+    root.walkRules((r: Rule) => {
+      if (!r.selectors.map((s) => s.trim().replace(/\s+/g, " ")).includes(selector)) return;
+      r.walkDecls((d: Declaration) => {
+        found.push(d);
+      });
+    });
+    return found;
+  };
+  const prop = (decls: Declaration[], name: string) => decls.find((d) => d.prop === name)?.value;
+
+  it.each([
+    `[data-scope="field"][data-part="input"]:focus-visible`,
+    `[data-scope="field"][data-part="textarea"]:focus-visible`,
+    `[data-scope="select"][data-part="trigger"]:focus-visible`,
+    `[data-scope="pin-input"][data-part="input"]:focus-visible`,
+    `[data-scope="number-input"][data-part="control"]:focus-within`,
+  ])("%s", (selector) => {
+    const decls = ruleDecls(selector);
+    expect(prop(decls, "outline")).toBe("2px solid var(--ring)");
+    expect(prop(decls, "outline-offset")).toBe("-2px");
+  });
+});
+
+/*
+ * NumberInput's control is the bordered box; the input inside it and the
+ * steppers draw no border or ring of their own, and a disabled number input
+ * is dimmed once.
+ */
+describe("@moderno-ui/core components.css — NumberInput", () => {
+  const ruleDecls = (selector: string): Declaration[] => {
+    const found: Declaration[] = [];
+    root.walkRules((r: Rule) => {
+      if (!r.selectors.map((s) => s.trim().replace(/\s+/g, " ")).includes(selector)) return;
+      r.walkDecls((d: Declaration) => {
+        found.push(d);
+      });
+    });
+    return found;
+  };
+  const prop = (decls: Declaration[], name: string) => decls.find((d) => d.prop === name)?.value;
+  const SCOPE = `[data-scope="number-input"]`;
+  const ROOT = `${SCOPE}[data-part="root"]`;
+
+  it("borders the control, not the input inside it", () => {
+    expect(prop(ruleDecls(`${SCOPE}[data-part="control"]`), "border")).toBe(
+      "1px solid var(--input)",
+    );
+    const input = ruleDecls(`${SCOPE}[data-part="input"]`);
+    expect(prop(input, "border")).toBe("0");
+    expect(prop(input, "outline")).toBe("none");
+  });
+
+  it("clears the native button fill on both steppers and dims them on :disabled too", () => {
+    for (const part of ["decrement-trigger", "increment-trigger"]) {
+      const selector = `${SCOPE}[data-part="${part}"]`;
+      expect(prop(ruleDecls(selector), "background-color"), part).toBe("transparent");
+      expect(prop(ruleDecls(`${selector}:disabled`), "opacity"), part).toBe("0.5");
+      expect(prop(ruleDecls(`${selector}[data-disabled]`), "opacity"), part).toBe("0.5");
+    }
+  });
+
+  it("dims a disabled number input once: its parts are reset", () => {
+    expect(prop(ruleDecls(`${ROOT}[data-disabled] :where([data-part])`), "opacity")).toBe("1");
+  });
+
+  it("sizes the box from spacing slots at every size", () => {
+    const controls = [
+      `${SCOPE}[data-part="control"]`,
+      `${ROOT}[data-size="sm"] > [data-part="control"]`,
+      `${ROOT}[data-size="lg"] > [data-part="control"]`,
+    ];
+    for (const selector of controls) {
+      expect(prop(ruleDecls(selector), "height"), selector).toMatch(/var\(--spacing-\d\)/);
+    }
+  });
+
+  it("reaches its parts through child combinators", () => {
+    const sizeRules: string[] = [];
+    root.walkRules((r: Rule) => {
+      for (const s of r.selectors) {
+        if (s.includes(`${ROOT}[data-size=`)) sizeRules.push(s.replace(/\s+/g, " "));
+      }
+    });
+    expect(sizeRules.length).toBeGreaterThan(0);
+    for (const s of sizeRules) {
+      expect(s, s).not.toMatch(/\] \[data-part/);
+    }
+  });
+});

@@ -36,6 +36,7 @@ describe("AGENT_COMPONENTS", () => {
       "Accordion",
       "Progress",
       "Slider",
+      "NumberInput",
       "LineChart",
       "AreaChart",
       "BarChart",
@@ -346,6 +347,25 @@ describe("buildComponentsManifest", () => {
     ]);
     // Ark's own Root props (value, min, max, step, …) live under node_modules.
     expect(slider.propsComplete).toBe(false);
+  });
+
+  it("carries NumberInput's recipe prop, size and Ark parts", () => {
+    const numberInput = manifest.components.find((c) => c.name === "NumberInput")!;
+    expect(numberInput.scope).toBe("number-input");
+    expect(numberInput.props.map((p) => p.name)).toEqual(["size"]);
+    expect(numberInput.variants).toEqual({ size: ["sm", "md", "lg"] });
+    expect(numberInput.parts.map((p) => p.name)).toEqual([
+      "root",
+      "label",
+      "control",
+      "input",
+      "decrement-trigger",
+      "increment-trigger",
+      "scrubber",
+      "value-text",
+    ]);
+    // Ark's own Root props (value, min, max, step, …) live under node_modules.
+    expect(numberInput.propsComplete).toBe(false);
   });
 
   it("reads variants straight off the shared @moderno-ui/core recipes", () => {

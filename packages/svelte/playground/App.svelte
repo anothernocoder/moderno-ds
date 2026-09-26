@@ -22,6 +22,7 @@
   import { Accordion } from "../src/index.js";
   import { Progress } from "../src/index.js";
   import { Slider } from "../src/index.js";
+  import { NumberInput } from "../src/index.js";
   import { Dialog, Portal } from "../src/index.js";
   import { Select, createListCollection } from "../src/index.js";
   import { PinInput } from "../src/index.js";
@@ -387,6 +388,29 @@
         </Slider.Thumb>
       </Slider.Control>
     </Slider.Root>
+  </section>
+
+  <section aria-label="number-input">
+    <NumberInput.Root defaultValue="10" min={0} max={10}>
+      <NumberInput.Label>Quantity</NumberInput.Label>
+      <NumberInput.Control>
+        <NumberInput.Input />
+        <NumberInput.DecrementTrigger>−</NumberInput.DecrementTrigger>
+        <NumberInput.IncrementTrigger>+</NumberInput.IncrementTrigger>
+      </NumberInput.Control>
+    </NumberInput.Root>
+    <NumberInput.Root
+      size="sm"
+      defaultValue="1234.5"
+      formatOptions={{ style: "currency", currency: "USD" }}
+    >
+      <NumberInput.Label>Price</NumberInput.Label>
+      <NumberInput.Control>
+        <NumberInput.Input />
+        <NumberInput.DecrementTrigger>−</NumberInput.DecrementTrigger>
+        <NumberInput.IncrementTrigger>+</NumberInput.IncrementTrigger>
+      </NumberInput.Control>
+    </NumberInput.Root>
   </section>
 
   <Dialog.Root defaultOpen={open}>

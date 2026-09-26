@@ -20,6 +20,7 @@ import {
   Accordion as ArkAccordion,
   Progress as ArkProgress,
   Slider as ArkSlider,
+  NumberInput as ArkNumberInput,
   Toggle as ArkToggle,
   ToggleGroup as ArkToggleGroup,
 } from "@ark-ui/svelte";
@@ -38,6 +39,7 @@ import TabsRoot from "./TabsRoot.svelte";
 import AccordionRoot from "./AccordionRoot.svelte";
 import ProgressRoot from "./ProgressRoot.svelte";
 import SliderRoot from "./SliderRoot.svelte";
+import NumberInputRoot from "./NumberInputRoot.svelte";
 import type { AlertPartProps, AlertRootProps } from "./alert-props.js";
 import AlertRoot from "./AlertRoot.svelte";
 import AlertIcon from "./AlertIcon.svelte";
@@ -377,6 +379,24 @@ export const Slider: Omit<typeof ArkSlider, "Root"> & { Root: typeof SliderRoot 
 };
 export type { SliderSize } from "@moderno-ui/core";
 
+/**
+ * NumberInput — a text box for a number, with buttons that step it up and
+ * down. Ark renders the `Input` as a `role="spinbutton"` with
+ * `aria-valuenow`, `aria-valuemin` and `aria-valuemax`; the arrow keys, the
+ * steppers and an optional `Scrubber` change the value by `step`; Ark formats
+ * it with `formatOptions` and clamps it to `min`/`max` on blur. `Root` is
+ * wrapped to inject the `size` recipe; every other part is Ark's verbatim.
+ * Annotated so the emitted `.d.ts` doesn't inline an un-nameable `@zag-js`
+ * type (TS2742).
+ */
+export const NumberInput: Omit<typeof ArkNumberInput, "Root"> & {
+  Root: typeof NumberInputRoot;
+} = {
+  ...ArkNumberInput,
+  Root: NumberInputRoot,
+};
+export type { NumberInputSize } from "@moderno-ui/core";
+
 export { createListCollection } from "@ark-ui/svelte";
 
 export type {
@@ -394,4 +414,7 @@ export type {
   ProgressValueChangeDetails,
   SliderValueChangeDetails,
   SliderFocusChangeDetails,
+  NumberInputValueChangeDetails,
+  NumberInputFocusChangeDetails,
+  NumberInputValueInvalidDetails,
 } from "@ark-ui/svelte";

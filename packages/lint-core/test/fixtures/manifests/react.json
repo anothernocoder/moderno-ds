@@ -302,6 +302,29 @@
       }
     },
     {
+      "name": "NumberInput",
+      "scope": "number-input",
+      "import": "import { NumberInput } from \"@moderno-ui/react\"",
+      "propsHash": "sha256:fixture-number-input",
+      "props": [{ "name": "size", "type": "\"sm\" | \"md\" | \"lg\"", "required": false }],
+      "propsComplete": false,
+      "parts": [
+        { "name": "root" },
+        { "name": "label" },
+        { "name": "control" },
+        { "name": "input" },
+        { "name": "decrement-trigger" },
+        { "name": "increment-trigger" },
+        { "name": "scrubber" },
+        { "name": "value-text" }
+      ],
+      "variants": { "size": ["sm", "md", "lg"] },
+      "guidance": {
+        "intent": "Let the user type a number, or step it up and down with buttons.",
+        "whenToUse": "Quantities, amounts, counts: an exact number with bounds, maybe formatted as money or a percent."
+      }
+    },
+    {
       "name": "Callout",
       "scope": "callout",
       "import": "import { Callout } from \"@moderno-ui/react\"",

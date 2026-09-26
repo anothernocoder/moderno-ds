@@ -28,6 +28,7 @@ import { Tabs } from "../src/tabs.jsx";
 import { Accordion } from "../src/accordion.jsx";
 import { Progress } from "../src/progress.jsx";
 import { Slider } from "../src/slider.jsx";
+import { NumberInput } from "../src/number-input.jsx";
 import { Dialog, Portal } from "../src/dialog.js";
 import { Select, createListCollection } from "../src/select.jsx";
 import { PinInput } from "../src/pin-input.jsx";
@@ -417,6 +418,29 @@ export function App(props: { open?: boolean }) {
             </Slider.Thumb>
           </Slider.Control>
         </Slider.Root>
+      </section>
+
+      <section aria-label="number-input">
+        <NumberInput.Root defaultValue="10" min={0} max={10}>
+          <NumberInput.Label>Quantity</NumberInput.Label>
+          <NumberInput.Control>
+            <NumberInput.Input />
+            <NumberInput.DecrementTrigger>−</NumberInput.DecrementTrigger>
+            <NumberInput.IncrementTrigger>+</NumberInput.IncrementTrigger>
+          </NumberInput.Control>
+        </NumberInput.Root>
+        <NumberInput.Root
+          size="sm"
+          defaultValue="1234.5"
+          formatOptions={{ style: "currency", currency: "USD" }}
+        >
+          <NumberInput.Label>Price</NumberInput.Label>
+          <NumberInput.Control>
+            <NumberInput.Input />
+            <NumberInput.DecrementTrigger>−</NumberInput.DecrementTrigger>
+            <NumberInput.IncrementTrigger>+</NumberInput.IncrementTrigger>
+          </NumberInput.Control>
+        </NumberInput.Root>
       </section>
 
       <Dialog.Root defaultOpen={props.open}>

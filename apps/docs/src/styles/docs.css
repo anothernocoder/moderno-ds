@@ -1142,7 +1142,7 @@ main.main--wide {
    intrinsic ~20ch, without the example having to carry a docs-only class. */
 .preview-panel--demo
   > astro-island
-  > :is([data-scope="field"], [data-scope="select"])[data-part="root"],
+  > :is([data-scope="field"], [data-scope="select"], [data-scope="number-input"])[data-part="root"],
 .demo-row > :is([data-scope="field"], [data-scope="select"])[data-part="root"] {
   width: min(100%, 20rem);
 }

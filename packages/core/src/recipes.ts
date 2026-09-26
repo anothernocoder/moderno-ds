@@ -310,6 +310,20 @@ export const sliderRecipe = cva({
   defaultVariants: { size: "md" },
 });
 
+/**
+ * NumberInput: control `size` — the height of the bordered box, the width of
+ * its stepper buttons and the type of the label and value. The value, min,
+ * max, step and number format are Ark's own props; focus, disabled, invalid
+ * and scrubbing surface as Ark's `data-*`, and a stepper at its bound is
+ * disabled by Ark.
+ */
+export const numberInputRecipe = cva({
+  variants: {
+    size: ["sm", "md", "lg"],
+  },
+  defaultVariants: { size: "md" },
+});
+
 /*
  * The variant unions, derived once beside the recipes. Bindings import these
  * names instead of re-deriving them from the recipe tables — a recipe change
@@ -489,3 +503,6 @@ export type ProgressSize = NonNullable<VariantProps<typeof progressRecipe.varian
 
 /** Slider's density (track thickness, thumb size, type), shared by every part. */
 export type SliderSize = NonNullable<VariantProps<typeof sliderRecipe.variants>["size"]>;
+
+/** NumberInput's density (box height, stepper width, type), shared by every part. */
+export type NumberInputSize = NonNullable<VariantProps<typeof numberInputRecipe.variants>["size"]>;

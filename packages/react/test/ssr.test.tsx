@@ -308,6 +308,23 @@ describe("SSR + hydration (React 19)", () => {
     expect(html).toMatch(
       /data-scope="slider"[^>]*data-part="value-text"[^>]*>(?:<!--[^>]*-->)*40</,
     );
+    // NumberInput: Ark's number-input machine. The recipe lands on each root,
+    // each input reaches the server as a spinbutton with its value, bounds and
+    // formatted text, named by its label, and a stepper at its bound is
+    // already disabled.
+    expect(partAttrs(html, "number-input", "root", "data-size")).toEqual(["md", "sm"]);
+    expect(partAttrs(html, "number-input", "input", "role")).toEqual(["spinbutton", "spinbutton"]);
+    expect(partAttrs(html, "number-input", "input", "aria-valuenow")).toEqual(["10", "1234.5"]);
+    expect(partAttrs(html, "number-input", "input", "aria-valuemin")[0]).toBe("0");
+    expect(partAttrs(html, "number-input", "input", "aria-valuemax")[0]).toBe("10");
+    expect(partAttrs(html, "number-input", "input", "value")).toEqual(["10", "$1,234.50"]);
+    expect(partAttrs(html, "number-input", "label", "for")).toEqual(
+      partAttrs(html, "number-input", "input", "id"),
+    );
+    const steppersDisabled = (part: string) =>
+      partTags(html, "number-input", part).map((tag) => /\sdisabled(?:=""|[\s>])/.test(tag));
+    expect(steppersDisabled("increment-trigger")).toEqual([true, false]);
+    expect(steppersDisabled("decrement-trigger")).toEqual([false, false]);
     expect(html).toContain('data-scope="pin-input"');
     // Every code cell is on the server, and `count` makes the server's aria
     // labels agree with the client's — the PinInput-specific SSR hazard.

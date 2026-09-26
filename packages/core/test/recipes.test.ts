@@ -10,6 +10,7 @@ import {
   accordionRecipe,
   progressRecipe,
   sliderRecipe,
+  numberInputRecipe,
   alertRole,
   badgeRecipe,
   buttonRecipe,
@@ -515,5 +516,26 @@ describe("sliderRecipe", () => {
   it("rejects values outside the schema", () => {
     // @ts-expect-error — "xl" is not a slider size
     expect(() => sliderRecipe({ size: "xl" })).toThrow(/invalid value/);
+  });
+});
+
+describe("numberInputRecipe", () => {
+  it("defaults to size md", () => {
+    expect(numberInputRecipe()).toEqual({ "data-size": "md" });
+  });
+
+  it("maps size to a data-attribute", () => {
+    expect(numberInputRecipe({ size: "lg" })).toEqual({ "data-size": "lg" });
+  });
+
+  it("carries no variant for what Ark already decides", () => {
+    // min, max, step and the number format are Ark's props; focus, disabled,
+    // invalid and scrubbing are Ark's data-*.
+    expect(Object.keys(numberInputRecipe.variants)).toEqual(["size"]);
+  });
+
+  it("rejects values outside the schema", () => {
+    // @ts-expect-error — "xl" is not a number-input size
+    expect(() => numberInputRecipe({ size: "xl" })).toThrow(/invalid value/);
   });
 });

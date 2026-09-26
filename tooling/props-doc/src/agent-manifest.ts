@@ -50,6 +50,7 @@ import {
   accordionRecipe,
   progressRecipe,
   sliderRecipe,
+  numberInputRecipe,
 } from "@moderno-ui/core";
 import { extractProps, type ComponentDoc, type ComponentEntry, type PropDoc } from "./index.ts";
 import { ENTRIES } from "./manifest.ts";
@@ -430,6 +431,26 @@ export const AGENT_COMPONENTS: AgentComponentSpec[] = [
       { name: "marker", description: "A mark at one value, with its own text." },
     ],
     variants: sliderRecipe.variants,
+  },
+  {
+    name: "NumberInput",
+    slug: "number-input",
+    scope: "number-input",
+    propsEntry: findEntry("NumberInput"),
+    parts: [
+      { name: "root", description: "Carries size; holds one number field." },
+      { name: "label", description: "Optional; names the field. Clicking it focuses the input." },
+      { name: "control", description: "The bordered box; holds the input and the steppers." },
+      { name: "input", description: "The text box, role=spinbutton; arrow keys step it." },
+      { name: "decrement-trigger", description: "A button that steps the value down." },
+      { name: "increment-trigger", description: "A button that steps the value up." },
+      {
+        name: "scrubber",
+        description: "Optional; a handle the user drags sideways to change the value.",
+      },
+      { name: "value-text", description: "Optional; the formatted value, outside the box." },
+    ],
+    variants: numberInputRecipe.variants,
   },
   {
     name: "LineChart",

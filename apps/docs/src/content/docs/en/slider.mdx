@@ -11,7 +11,7 @@ agent:
   whenToUse: A value where the rough position matters more than the exact digit — volume, brightness, a price range in a filter — and the user benefits from seeing it against its limits.
   whenNotToUse:
     - case: An exact number the user types, like a quantity or an age
-      use: Field
+      use: NumberInput
     - case: A choice between two states
       use: Switch
     - case: Showing how far a task has come, not a value the user sets
@@ -327,4 +327,4 @@ Put `Slider.DraggingIndicator` in a thumb to show its value in a bubble while th
 - Each thumb is named by `Slider.Label`. A range's two thumbs share it; pass `aria-label` as an array to name each one.
 - Ark hides a thumb until it has measured it, so the thumb stays inside the track at both ends.
 - In Solid, `Slider.ValueText` joins a range's values with a bare comma (`20,80`); the other frameworks add a space.
-- For an exact number the user types, use a Field with a number input.
+- For an exact number the user types, use a Number Input.

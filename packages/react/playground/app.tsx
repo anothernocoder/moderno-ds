@@ -49,6 +49,9 @@
  *   - Slider   — Ark's slider machine: each thumb's slider role, value, bounds
  *                and ids, the root's inline range and thumb offsets, and the
  *                markers' state must match both ways.
+ *   - NumberInput — Ark's number-input machine: the spinbutton's value,
+ *                bounds, formatted text and ids, and a stepper disabled at
+ *                its bound must match both ways.
  *   - Dialog   — a Portal + focus-trap machine that must emit a stable,
  *                hydration-safe trigger while its content stays unmounted-visible.
  *   - Select   — a collection + popover whose hidden native <select> and ids
@@ -83,6 +86,7 @@ import { Tabs } from "../src/tabs.js";
 import { Accordion } from "../src/accordion.js";
 import { Progress } from "../src/progress.js";
 import { Slider } from "../src/slider.js";
+import { NumberInput } from "../src/number-input.js";
 import { Dialog, Portal } from "../src/dialog.js";
 import { Select, createListCollection } from "../src/select.js";
 import { PinInput } from "../src/pin-input.js";
@@ -477,6 +481,29 @@ export function App({ open = false }: AppProps) {
             </Slider.Thumb>
           </Slider.Control>
         </Slider.Root>
+      </section>
+
+      <section aria-label="number-input">
+        <NumberInput.Root defaultValue="10" min={0} max={10}>
+          <NumberInput.Label>Quantity</NumberInput.Label>
+          <NumberInput.Control>
+            <NumberInput.Input />
+            <NumberInput.DecrementTrigger>−</NumberInput.DecrementTrigger>
+            <NumberInput.IncrementTrigger>+</NumberInput.IncrementTrigger>
+          </NumberInput.Control>
+        </NumberInput.Root>
+        <NumberInput.Root
+          size="sm"
+          defaultValue="1234.5"
+          formatOptions={{ style: "currency", currency: "USD" }}
+        >
+          <NumberInput.Label>Price</NumberInput.Label>
+          <NumberInput.Control>
+            <NumberInput.Input />
+            <NumberInput.DecrementTrigger>−</NumberInput.DecrementTrigger>
+            <NumberInput.IncrementTrigger>+</NumberInput.IncrementTrigger>
+          </NumberInput.Control>
+        </NumberInput.Root>
       </section>
 
       <Dialog.Root defaultOpen={open}>
