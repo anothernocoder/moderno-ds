@@ -1,0 +1,167 @@
+---
+title: Lista de descripción
+description: Términos y sus valores, uno por fila, apilados en contenedores estrechos y lado a lado en los anchos.
+group: Bloques
+order: 111
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import DescriptionListBlockDemo from "../../../islands/DescriptionListBlockDemo.svelte";
+import descriptionListReact from "../../../../../../registry/blocks/description-list/react/description-list.tsx?raw";
+import descriptionListVue from "../../../../../../registry/blocks/description-list/vue/DescriptionList.vue?raw";
+import descriptionListSolid from "../../../../../../registry/blocks/description-list/solid/description-list.tsx?raw";
+import descriptionListSvelte from "../../../../../../registry/blocks/description-list/svelte/DescriptionList.svelte?raw";
+
+export const examples = {
+  react: descriptionListReact,
+  vue: descriptionListVue,
+  solid: descriptionListSolid,
+  svelte: descriptionListSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <DescriptionListBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="description-list" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { DescriptionList } from "@/components/blocks/description-list";
+```
+
+```tsx
+<DescriptionList heading="Pedido #1042" items={details} onAction={(id) => openEditor(id)} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import DescriptionList from "@/components/blocks/DescriptionList.vue";
+</script>
+```
+
+```vue
+<DescriptionList heading="Pedido #1042" :items="details" @action="openEditor" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import DescriptionList from "@/components/blocks/DescriptionList.svelte";
+</script>
+```
+
+```svelte
+<DescriptionList heading="Pedido #1042" items={details} onaction={openEditor} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { DescriptionList } from "@/components/blocks/description-list";
+```
+
+```tsx
+<DescriptionList heading="Pedido #1042" items={details()} onAction={(id) => openEditor(id)} />
+```
+
+</ForFramework>
+
+## Referencia de API
+
+### Props
+
+| Prop          | Tipo                    | Por defecto           | Descripción                                                              |
+| ------------- | ----------------------- | --------------------- | ------------------------------------------------------------------------ |
+| `items`       | `DescriptionListItem[]` | un cliente de muestra | Las filas, en el orden en que se muestran. `[]` muestra el estado vacío. |
+| `heading`     | `string`                | `"Customer details"`  | El título sobre la lista.                                                |
+| `description` | `string`                | una frase             | La línea bajo el título; `""` la oculta.                                 |
+| `error`       | `string`                | —                     | Los detalles no cargaron; una alerta con reintento los sustituye.        |
+| `loading`     | `boolean`               | `false`               | Filas esqueleto en una región ocupada sustituyen la lista.               |
+| `disabled`    | `boolean`               | `false`               | Las filas siguen legibles y todas las acciones quedan deshabilitadas.    |
+| `onAction`    | `(id: string) => void`  | —                     | El botón de acción de una fila. Svelte: `onaction`. Vue: `@action`.      |
+| `onRetry`     | `() => void`            | —                     | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.              |
+
+### DescriptionListItem
+
+| Campo    | Tipo                                                       | Descripción                                                |
+| -------- | ---------------------------------------------------------- | ---------------------------------------------------------- |
+| `id`     | `string`                                                   | Identidad estable, la que devuelve `onAction`.             |
+| `term`   | `string`                                                   | La etiqueta, como "Email".                                 |
+| `value`  | `string`                                                   | El dato. El texto largo se ajusta.                         |
+| `badge`  | `"neutral" \| "info" \| "success" \| "warning" \| "error"` | Opcional. Muestra el valor como una insignia de ese color. |
+| `action` | `string`                                                   | Opcional. El texto de un botón en la fila, como "Change".  |
+
+### Estados
+
+| Estado        | Prop         | Qué se muestra                                                      |
+| ------------- | ------------ | ------------------------------------------------------------------- |
+| Por defecto   | —            | Una fila por elemento.                                              |
+| Vacío         | `items={[]}` | Una tarjeta "No details yet".                                       |
+| Cargando      | `loading`    | Cuatro filas esqueleto en una región `status` ocupada.              |
+| Error         | `error`      | Una alerta de error con el botón "Try again" en lugar de las filas. |
+| Deshabilitado | `disabled`   | Las filas con todas las acciones deshabilitadas.                    |
+
+### Tamaño
+
+| Paso del contenedor      | Qué cambia                                                                             |
+| ------------------------ | -------------------------------------------------------------------------------------- |
+| bajo `@sm`               | Cada término va sobre su valor, y la acción debajo de ambos.                           |
+| `@sm` (`--container-sm`) | La acción de una fila pasa junto a su valor.                                           |
+| `@md` (`--container-md`) | El término va junto a su valor, en una columna de un tercio; el título sube un tamaño. |
+| `@lg` (`--container-lg`) | La columna de términos se estrecha a un cuarto.                                        |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+La misma lista a 18rem, 30rem, 40rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <DescriptionListBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Vacío
+
+<Preview examples={examples} layout="fill">
+  <DescriptionListBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <DescriptionListBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+<Preview examples={examples} layout="fill">
+  <DescriptionListBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+<Preview examples={examples} layout="fill">
+  <DescriptionListBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
+
+## Notas
+
+- Presentacional: no edita nada. `onAction` indica qué fila quiere cambiar el lector.
+- El nombre accesible de cada acción de fila incluye su término.

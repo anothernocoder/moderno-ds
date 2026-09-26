@@ -1,0 +1,189 @@
+---
+title: Description list
+description: Terms and their values, one per row, stacked in narrow containers and side by side in wide ones.
+group: Blocks
+order: 111
+agent:
+  intent: A read-only list of labelled details — a record's fields shown as term and value pairs, with an optional action per row.
+  whenToUse: "The details of one record the reader reads, not edits in place: a customer's account, an order, an applicant, an invoice's billing info or a project's settings summary."
+  whenNotToUse:
+    - case: Many records compared side by side
+      use: a table — a description list shows one record at a time
+    - case: Editing the fields in place
+      use: FormLayout — this block reads; a row action only reports which field the reader wants to change
+    - case: Two or three headline numbers
+      use: StatRow — a description list is for labelled facts, not metrics
+  gotchas:
+    - "Real `<dl>`, `<dt>` and `<dd>` markup: screen readers announce each term with its value. Keep one value per term."
+    - "Presentational: `onAction` reports the row whose action was pressed; opening an editor or a dialog stays yours."
+    - "`items` defaults to a sample customer so the block renders standalone. Pass your own array — or edit the constant, the file is yours after `moderno add`."
+    - "A row with `badge` shows its value as a Badge of that colour, for a status such as Active or Overdue."
+    - 'Every row action''s accessible name is its label followed by the term, like "Change Email", so a list of Change buttons stays distinct.'
+    - "`loading` replaces the rows with skeleton rows inside a busy `status` region; `error` replaces them with one alert and a retry; `items={[]}` shows the empty card."
+    - "The layout follows the block's own width, not the viewport: stacked below `--container-md`, the term beside its value from there on."
+  theming:
+    - "Nothing is painted here. The rule under the header is Divider, the rows share its --border hairline, a status is a Badge, the row actions are ghost Buttons, the loading rows are Skeleton and the failed load is an error Alert."
+    - "The heading and its sentence are props, defaulting to a customer record: the same list shows an order, an invoice or a profile."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import DescriptionListBlockDemo from "../../../islands/DescriptionListBlockDemo.svelte";
+import descriptionListReact from "../../../../../../registry/blocks/description-list/react/description-list.tsx?raw";
+import descriptionListVue from "../../../../../../registry/blocks/description-list/vue/DescriptionList.vue?raw";
+import descriptionListSolid from "../../../../../../registry/blocks/description-list/solid/description-list.tsx?raw";
+import descriptionListSvelte from "../../../../../../registry/blocks/description-list/svelte/DescriptionList.svelte?raw";
+
+export const examples = {
+  react: descriptionListReact,
+  vue: descriptionListVue,
+  solid: descriptionListSolid,
+  svelte: descriptionListSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <DescriptionListBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="description-list" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { DescriptionList } from "@/components/blocks/description-list";
+```
+
+```tsx
+<DescriptionList heading="Order #1042" items={details} onAction={(id) => openEditor(id)} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import DescriptionList from "@/components/blocks/DescriptionList.vue";
+</script>
+```
+
+```vue
+<DescriptionList heading="Order #1042" :items="details" @action="openEditor" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import DescriptionList from "@/components/blocks/DescriptionList.svelte";
+</script>
+```
+
+```svelte
+<DescriptionList heading="Order #1042" items={details} onaction={openEditor} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { DescriptionList } from "@/components/blocks/description-list";
+```
+
+```tsx
+<DescriptionList heading="Order #1042" items={details()} onAction={(id) => openEditor(id)} />
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+| Prop          | Type                    | Default              | Description                                                      |
+| ------------- | ----------------------- | -------------------- | ---------------------------------------------------------------- |
+| `items`       | `DescriptionListItem[]` | a sample customer    | The rows, in the order shown. `[]` renders the empty state.      |
+| `heading`     | `string`                | `"Customer details"` | The heading over the list.                                       |
+| `description` | `string`                | a sentence           | The line under the heading; `""` hides it.                       |
+| `error`       | `string`                | —                    | The details failed to load; an alert with a retry replaces them. |
+| `loading`     | `boolean`               | `false`              | Skeleton rows in a busy region replace the list.                 |
+| `disabled`    | `boolean`               | `false`              | The rows stay readable and every row action is disabled.         |
+| `onAction`    | `(id: string) => void`  | —                    | A row's action button. Svelte: `onaction`. Vue: `@action`.       |
+| `onRetry`     | `() => void`            | —                    | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.     |
+
+### DescriptionListItem
+
+| Field    | Type                                                       | Description                                                |
+| -------- | ---------------------------------------------------------- | ---------------------------------------------------------- |
+| `id`     | `string`                                                   | Stable identity, reported by `onAction`.                   |
+| `term`   | `string`                                                   | The label, like "Email".                                   |
+| `value`  | `string`                                                   | The detail. Long text wraps.                               |
+| `badge`  | `"neutral" \| "info" \| "success" \| "warning" \| "error"` | Optional. Shows the value as a Badge of this colour.       |
+| `action` | `string`                                                   | Optional. The label of a button on the row, like "Change". |
+
+### States
+
+| State    | Prop         | What renders                                                    |
+| -------- | ------------ | --------------------------------------------------------------- |
+| Default  | —            | One row per item.                                               |
+| Empty    | `items={[]}` | A "No details yet" card.                                        |
+| Loading  | `loading`    | Four skeleton rows in a busy `status` region.                   |
+| Error    | `error`      | One error alert with a "Try again" button in place of the rows. |
+| Disabled | `disabled`   | The rows with every action disabled.                            |
+
+### Sizing
+
+| Container step           | What changes                                                                           |
+| ------------------------ | -------------------------------------------------------------------------------------- |
+| below `@sm`              | Each term sits above its value, and the action below both.                             |
+| `@sm` (`--container-sm`) | A row's action moves beside its value.                                                 |
+| `@md` (`--container-md`) | The term sits beside its value, in a column a third wide; the heading steps up a size. |
+| `@lg` (`--container-lg`) | The term column narrows to a quarter.                                                  |
+
+## Examples
+
+### Container widths
+
+The same list at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <DescriptionListBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Empty
+
+<Preview examples={examples} layout="fill">
+  <DescriptionListBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <DescriptionListBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+<Preview examples={examples} layout="fill">
+  <DescriptionListBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <DescriptionListBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Presentational: it edits nothing. `onAction` reports which row the reader wants to change.
+- Every row action's accessible name includes its term.

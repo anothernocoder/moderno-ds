@@ -1,0 +1,37 @@
+{
+  "title": "Description List",
+  "description": "Key/value detail list composing the @moderno-ui/{framework} Divider, Badge, Button, Card, Skeleton and Alert primitives: one term and value per row, a status value as a Badge and an optional row action, with its own empty, loading and error renders; responds to its container (@container) — stacked below @md, the row action moves beside its value at @sm, the term sits beside its value at @md and the term column narrows at @lg.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": [],
+  "files": {
+    "react": [
+      {
+        "path": "blocks/description-list/react/description-list.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/description-list.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "blocks/description-list/vue/DescriptionList.vue",
+        "type": "registry:block",
+        "target": "src/components/blocks/DescriptionList.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "blocks/description-list/svelte/DescriptionList.svelte",
+        "type": "registry:block",
+        "target": "src/components/blocks/DescriptionList.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "blocks/description-list/solid/description-list.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/description-list.tsx"
+      }
+    ]
+  }
+}

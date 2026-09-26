@@ -210,6 +210,78 @@
       ]
     },
     {
+      "name": "description-list-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Description List (React)",
+      "description": "Key/value detail list composing the @moderno-ui/react Divider, Badge, Button, Card, Skeleton and Alert primitives: one term and value per row, a status value as a Badge and an optional row action, with its own empty, loading and error renders; responds to its container (@container) — stacked below @md, the row action moves beside its value at @sm, the term sits beside its value at @md and the term column narrows at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/description-list/react/description-list.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/description-list.tsx"
+        }
+      ]
+    },
+    {
+      "name": "description-list-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Description List (Vue)",
+      "description": "Key/value detail list composing the @moderno-ui/vue Divider, Badge, Button, Card, Skeleton and Alert primitives: one term and value per row, a status value as a Badge and an optional row action, with its own empty, loading and error renders; responds to its container (@container) — stacked below @md, the row action moves beside its value at @sm, the term sits beside its value at @md and the term column narrows at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/description-list/vue/DescriptionList.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/DescriptionList.vue"
+        }
+      ]
+    },
+    {
+      "name": "description-list-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Description List (Svelte)",
+      "description": "Key/value detail list composing the @moderno-ui/svelte Divider, Badge, Button, Card, Skeleton and Alert primitives: one term and value per row, a status value as a Badge and an optional row action, with its own empty, loading and error renders; responds to its container (@container) — stacked below @md, the row action moves beside its value at @sm, the term sits beside its value at @md and the term column narrows at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/description-list/svelte/DescriptionList.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/DescriptionList.svelte"
+        }
+      ]
+    },
+    {
+      "name": "description-list-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Description List (Solid)",
+      "description": "Key/value detail list composing the @moderno-ui/solid Divider, Badge, Button, Card, Skeleton and Alert primitives: one term and value per row, a status value as a Badge and an optional row action, with its own empty, loading and error renders; responds to its container (@container) — stacked below @md, the row action moves beside its value at @sm, the term sits beside its value at @md and the term column narrows at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/description-list/solid/description-list.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/description-list.tsx"
+        }
+      ]
+    },
+    {
       "name": "empty-state-react",
       "type": "registry:block",
       "version": "0.1.0",
