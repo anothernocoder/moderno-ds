@@ -934,12 +934,13 @@
     font-size: var(--text-ui-lg);
   }
   /*
-   * Ark stamps data-disabled on the root and every item of a disabled group,
-   * and both the base layer and the :disabled rule above dim them — nesting
-   * would multiply the opacity. Dim the root once and leave its items opaque.
-   * This rule must stay after the :disabled one: same specificity, so order
-   * decides.
+   * Ark stamps data-disabled on a disabled Toggle's Indicator and on the root
+   * and every item of a disabled group, and both the base layer and the
+   * :disabled rule above dim them — nesting would multiply the opacity. Dim
+   * the root once and leave its parts opaque. This rule must stay after the
+   * :disabled one: same specificity, so order decides.
    */
+  [data-scope="toggle"][data-part="root"][data-disabled] :where([data-part]),
   [data-scope="toggle-group"][data-part="root"][data-disabled] :where([data-part]) {
     opacity: 1;
   }

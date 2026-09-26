@@ -189,15 +189,29 @@ describe("@moderno-ui/core components.css — Toggle and ToggleGroup buttons ove
     });
   }
 
-  it("dims a disabled group once: its items are reset after the :disabled rule", () => {
-    const selectorsInOrder: string[] = [];
-    root.walkRules((r: Rule) => {
-      selectorsInOrder.push(...r.selectors.map((s) => s.trim()));
-    });
-    const reset = `[data-scope="toggle-group"][data-part="root"][data-disabled] :where([data-part])`;
-    expect(prop(ruleDecls(reset), "opacity")).toBe("1");
-    expect(selectorsInOrder.indexOf(reset)).toBeGreaterThan(
-      selectorsInOrder.indexOf(`[data-scope="toggle-group"][data-part="item"]:disabled`),
-    );
+  const selectorsInOrder: string[] = [];
+  root.walkRules((r: Rule) => {
+    selectorsInOrder.push(...r.selectors.map((s) => s.trim()));
   });
+
+  for (const { name, rootSelector, disabledSelector } of [
+    {
+      name: "Toggle",
+      rootSelector: `[data-scope="toggle"][data-part="root"]`,
+      disabledSelector: `[data-scope="toggle"][data-part="root"]:disabled`,
+    },
+    {
+      name: "ToggleGroup",
+      rootSelector: `[data-scope="toggle-group"][data-part="root"]`,
+      disabledSelector: `[data-scope="toggle-group"][data-part="item"]:disabled`,
+    },
+  ]) {
+    it(`dims a disabled ${name} once: its parts are reset after the :disabled rule`, () => {
+      const reset = `${rootSelector}[data-disabled] :where([data-part])`;
+      expect(prop(ruleDecls(reset), "opacity")).toBe("1");
+      expect(selectorsInOrder.indexOf(reset)).toBeGreaterThan(
+        selectorsInOrder.indexOf(disabledSelector),
+      );
+    });
+  }
 });
