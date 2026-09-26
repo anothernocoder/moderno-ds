@@ -1,0 +1,193 @@
+---
+title: Logo Strip
+description: A row of customer logos under a short heading — the "trusted by" line of a landing page.
+group: Blocks
+order: 119
+agent:
+  intent: A trusted-by row on a marketing page — a short muted heading over a grid of monochrome customer logos, each a mark and a wordmark that links to the customer's story.
+  whenToUse: "Under a hero or near a pricing table, to show which companies already use the product."
+  whenNotToUse:
+    - case: Quotes from named customers
+      use: A testimonial block — a logo proves who, a quote says why
+    - case: Numbers about the product, like uptime or customers served
+      use: StatRow — it pairs each figure with its label
+    - case: The site's own logo and navigation
+      use: SectionHeader or the app shell — a logo strip shows other companies
+  gotchas:
+    - "`logos` is an array of `{ id, name, mark, href }`. Six logos fill one row at the widest step; three, four or six read best."
+    - "`mark` is one of `circle`, `ring`, `square`, `triangle`, `diamond` or `hexagon`. For your customers' real marks, add their paths to `markPaths` in the copied file, or swap the `<svg>` for their own."
+    - "Every logo is a link to `href`, named by its wordmark. The mark is hidden from assistive technology."
+    - '`logos={[]}` is the empty state: the heading stays over a dashed box that reads "No logos to show yet."'
+    - 'Presentational: `onRetry` reports that "Try again" was pressed. The logos are plain anchors.'
+    - "`loading` keeps the heading and replaces the logos with six skeleton lines in one busy `status` region."
+    - '`error` keeps the heading and puts an error Alert with your message and a "Try again" button where the logos were. An empty string counts as no error.'
+    - "`disabled` keeps the logos and makes each link inert: it drops its `href` and carries `aria-disabled`. The retry button is disabled too."
+    - "The layout follows the block's own width, not the viewport: two logos per row below `--container-sm`, three from there, larger marks from `--container-md`, and all six on one row from `--container-lg`."
+  theming:
+    - "It paints no surface of its own: it sits on the page's --background. The error is Alert's error variant, the retry is Button's outline variant and the loading placeholders are Skeleton."
+    - "The heading and every logo read --muted-foreground; a logo turns --foreground on hover and focus and shows a --ring outline on focus-visible."
+    - "The empty box is a dashed --border."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg. The heading is capped at --container-md and the logos at --container-lg."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import LogoStripBlockDemo from "../../../islands/LogoStripBlockDemo.svelte";
+import logoStripReact from "../../../../../../registry/blocks/logo-strip/react/logo-strip.tsx?raw";
+import logoStripVue from "../../../../../../registry/blocks/logo-strip/vue/LogoStrip.vue?raw";
+import logoStripSolid from "../../../../../../registry/blocks/logo-strip/solid/logo-strip.tsx?raw";
+import logoStripSvelte from "../../../../../../registry/blocks/logo-strip/svelte/LogoStrip.svelte?raw";
+
+export const examples = {
+  react: logoStripReact,
+  vue: logoStripVue,
+  solid: logoStripSolid,
+  svelte: logoStripSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <LogoStripBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="logo-strip" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { LogoStrip } from "@/components/blocks/logo-strip";
+```
+
+```tsx
+<LogoStrip heading="Trusted by teams at" logos={logos} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import LogoStrip from "@/components/blocks/LogoStrip.vue";
+</script>
+```
+
+```vue
+<LogoStrip heading="Trusted by teams at" :logos="logos" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import LogoStrip from "@/components/blocks/LogoStrip.svelte";
+</script>
+```
+
+```svelte
+<LogoStrip heading="Trusted by teams at" {logos} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { LogoStrip } from "@/components/blocks/logo-strip";
+```
+
+```tsx
+<LogoStrip heading="Trusted by teams at" logos={logos} />
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+| Prop       | Type              | Default          | Description                                                          |
+| ---------- | ----------------- | ---------------- | -------------------------------------------------------------------- |
+| `heading`  | `string`          | a sentence       | The short line above the logos. Rendered as an `h2`.                 |
+| `logos`    | `LogoStripLogo[]` | six sample logos | The logos, in order. `[]` shows the empty message.                   |
+| `error`    | `string`          | —                | Loading the logos failed; an error Alert with a retry replaces them. |
+| `loading`  | `boolean`         | `false`          | Skeleton lines in a busy region replace the logos.                   |
+| `disabled` | `boolean`         | `false`          | The logos stay; every link is inert and the retry button disabled.   |
+| `onRetry`  | `() => void`      | —                | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.         |
+
+### Logo
+
+| Field  | Type                                                                     | Description                                  |
+| ------ | ------------------------------------------------------------------------ | -------------------------------------------- |
+| `id`   | `string`                                                                 | A stable key for the logo.                   |
+| `name` | `string`                                                                 | The wordmark. It is also the link's name.    |
+| `mark` | `"circle" \| "ring" \| "square" \| "triangle" \| "diamond" \| "hexagon"` | The shape drawn before the wordmark.         |
+| `href` | `string`                                                                 | Where the logo links, like a customer story. |
+
+### States
+
+| State    | Prop         | What renders                                             |
+| -------- | ------------ | -------------------------------------------------------- |
+| Default  | —            | The heading and every logo.                              |
+| Empty    | `logos={[]}` | The heading and "No logos to show yet." in a dashed box. |
+| Loading  | `loading`    | The heading and six placeholder lines.                   |
+| Error    | `error`      | The heading and an error Alert with "Try again".         |
+| Disabled | `disabled`   | The same logos, each link inert.                         |
+
+### Sizing
+
+| Container step           | What changes                                          |
+| ------------------------ | ----------------------------------------------------- |
+| below `@sm`              | Two logos per row.                                    |
+| `@sm` (`--container-sm`) | Three logos per row.                                  |
+| `@md` (`--container-md`) | The marks and wordmarks step up one size.             |
+| `@lg` (`--container-lg`) | Six logos on one row, with more room above and below. |
+
+## Examples
+
+### Container widths
+
+The same block at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <LogoStripBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Empty
+
+Pass an empty `logos` array.
+
+<Preview examples={examples} layout="fill">
+  <LogoStripBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <LogoStripBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+Press "Try again" to clear the message and bring the logos back.
+
+<Preview examples={examples} layout="fill">
+  <LogoStripBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <LogoStripBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Show logos only with each customer's permission.
+- Keep them all one colour. A single logo in full colour pulls the eye away from the rest.

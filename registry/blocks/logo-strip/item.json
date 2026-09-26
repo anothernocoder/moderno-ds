@@ -1,0 +1,37 @@
+{
+  "title": "Logo Strip",
+  "description": "A trusted-by row of customer logos, composing the @moderno-ui/{framework} Alert, Button and Skeleton primitives: a short muted heading over a grid of monochrome logos, each a mark and a wordmark that links to the customer's story, with its own loading, empty and error renders; responds to its container (@container) — three logos per row at @sm, larger marks at @md, and all six on one row with more room above and below at @lg.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": [],
+  "files": {
+    "react": [
+      {
+        "path": "blocks/logo-strip/react/logo-strip.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/logo-strip.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "blocks/logo-strip/vue/LogoStrip.vue",
+        "type": "registry:block",
+        "target": "src/components/blocks/LogoStrip.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "blocks/logo-strip/svelte/LogoStrip.svelte",
+        "type": "registry:block",
+        "target": "src/components/blocks/LogoStrip.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "blocks/logo-strip/solid/logo-strip.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/logo-strip.tsx"
+      }
+    ]
+  }
+}

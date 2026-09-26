@@ -1506,6 +1506,78 @@
       ]
     },
     {
+      "name": "logo-strip-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Logo Strip (React)",
+      "description": "A trusted-by row of customer logos, composing the @moderno-ui/react Alert, Button and Skeleton primitives: a short muted heading over a grid of monochrome logos, each a mark and a wordmark that links to the customer's story, with its own loading, empty and error renders; responds to its container (@container) — three logos per row at @sm, larger marks at @md, and all six on one row with more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/logo-strip/react/logo-strip.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/logo-strip.tsx"
+        }
+      ]
+    },
+    {
+      "name": "logo-strip-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Logo Strip (Vue)",
+      "description": "A trusted-by row of customer logos, composing the @moderno-ui/vue Alert, Button and Skeleton primitives: a short muted heading over a grid of monochrome logos, each a mark and a wordmark that links to the customer's story, with its own loading, empty and error renders; responds to its container (@container) — three logos per row at @sm, larger marks at @md, and all six on one row with more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/logo-strip/vue/LogoStrip.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/LogoStrip.vue"
+        }
+      ]
+    },
+    {
+      "name": "logo-strip-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Logo Strip (Svelte)",
+      "description": "A trusted-by row of customer logos, composing the @moderno-ui/svelte Alert, Button and Skeleton primitives: a short muted heading over a grid of monochrome logos, each a mark and a wordmark that links to the customer's story, with its own loading, empty and error renders; responds to its container (@container) — three logos per row at @sm, larger marks at @md, and all six on one row with more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/logo-strip/svelte/LogoStrip.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/LogoStrip.svelte"
+        }
+      ]
+    },
+    {
+      "name": "logo-strip-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Logo Strip (Solid)",
+      "description": "A trusted-by row of customer logos, composing the @moderno-ui/solid Alert, Button and Skeleton primitives: a short muted heading over a grid of monochrome logos, each a mark and a wordmark that links to the customer's story, with its own loading, empty and error renders; responds to its container (@container) — three logos per row at @sm, larger marks at @md, and all six on one row with more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/logo-strip/solid/logo-strip.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/logo-strip.tsx"
+        }
+      ]
+    },
+    {
       "name": "media-object-react",
       "type": "registry:block",
       "version": "0.1.0",
