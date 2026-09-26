@@ -1,0 +1,168 @@
+---
+title: Objeto multimedia
+description: Un avatar junto a un título y un texto, para un comentario, una nota o una reseña.
+group: Bloques
+order: 116
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import MediaObjectBlockDemo from "../../../islands/MediaObjectBlockDemo.svelte";
+import mediaObjectReact from "../../../../../../registry/blocks/media-object/react/media-object.tsx?raw";
+import mediaObjectVue from "../../../../../../registry/blocks/media-object/vue/MediaObject.vue?raw";
+import mediaObjectSolid from "../../../../../../registry/blocks/media-object/solid/media-object.tsx?raw";
+import mediaObjectSvelte from "../../../../../../registry/blocks/media-object/svelte/MediaObject.svelte?raw";
+
+export const examples = {
+  react: mediaObjectReact,
+  vue: mediaObjectVue,
+  solid: mediaObjectSolid,
+  svelte: mediaObjectSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <MediaObjectBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="media-object" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { MediaObject } from "@/components/blocks/media-object";
+```
+
+```tsx
+<MediaObject heading="Ada Lovelace" initials="AL" body={comentario} onAction={responder} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import MediaObject from "@/components/blocks/MediaObject.vue";
+</script>
+```
+
+```vue
+<MediaObject heading="Ada Lovelace" initials="AL" :body="comentario" @action="responder" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import MediaObject from "@/components/blocks/MediaObject.svelte";
+</script>
+```
+
+```svelte
+<MediaObject heading="Ada Lovelace" initials="AL" body={comentario} onaction={responder} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { MediaObject } from "@/components/blocks/media-object";
+```
+
+```tsx
+<MediaObject heading="Ada Lovelace" initials="AL" body={comentario()} onAction={responder} />
+```
+
+</ForFramework>
+
+## Referencia de API
+
+### Props
+
+| Prop            | Tipo               | Por defecto               | Descripción                                                     |
+| --------------- | ------------------ | ------------------------- | --------------------------------------------------------------- |
+| `heading`       | `string`           | `"Ada Lovelace"`          | De quién o de qué trata el objeto. Se muestra como un h3.       |
+| `meta`          | `string`           | `"Commented 2 hours ago"` | Una línea corta junto al título, como una hora; `""` la oculta. |
+| `body`          | `string`           | un comentario de muestra  | El texto bajo el título. `""` muestra el estado vacío.          |
+| `initials`      | `string`           | `"AL"`                    | Se ven en el avatar mientras no hay foto.                       |
+| `avatarUrl`     | `string`           | —                         | La foto. Si no carga, se quedan las iniciales.                  |
+| `mediaPosition` | `"start" \| "end"` | `"start"`                 | A qué lado del texto va el avatar, desde `@sm`.                 |
+| `actionLabel`   | `string`           | `"Reply"`                 | El botón fantasma bajo el texto; `""` lo oculta.                |
+| `error`         | `string`           | —                         | El texto no cargó; una alerta con reintento lo sustituye.       |
+| `loading`       | `boolean`          | `false`                   | Marcadores en una región ocupada sustituyen todo el objeto.     |
+| `disabled`      | `boolean`          | `false`                   | Todo sigue legible y los botones quedan deshabilitados.         |
+| `onAction`      | `() => void`       | —                         | Se pulsó la acción. Svelte: `onaction`. Vue: `@action`.         |
+| `onRetry`       | `() => void`       | —                         | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.     |
+
+### Estados
+
+| Estado        | Prop       | Qué se muestra                                                         |
+| ------------- | ---------- | ---------------------------------------------------------------------- |
+| Por defecto   | —          | El avatar, el título y la meta, el texto y la acción.                  |
+| Vacío         | `body=""`  | El avatar y el título, y una línea tenue "Nothing written yet.".       |
+| Cargando      | `loading`  | Un marcador redondo y tres líneas en una región `status` ocupada.      |
+| Error         | `error`    | El avatar y el título, y una alerta de error con el botón "Try again". |
+| Deshabilitado | `disabled` | Todo legible; la acción queda deshabilitada.                           |
+
+### Tamaño
+
+| Paso del contenedor      | Qué cambia                                                          |
+| ------------------------ | ------------------------------------------------------------------- |
+| bajo `@sm`               | El avatar va sobre el texto.                                        |
+| `@sm` (`--container-sm`) | El avatar pasa junto al texto, del lado que indica `mediaPosition`. |
+| `@md` (`--container-md`) | El título y el texto suben un tamaño.                               |
+| `@lg` (`--container-lg`) | La meta pasa al extremo de la línea del título.                     |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+El mismo objeto a 18rem, 30rem, 40rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <MediaObjectBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Avatar al final
+
+Pasa `mediaPosition="end"` para poner el avatar al otro lado del texto.
+
+<Preview examples={examples} layout="fill">
+  <MediaObjectBlockDemo client:visible locale="es" state="end" />
+</Preview>
+
+### Vacío
+
+<Preview examples={examples} layout="fill">
+  <MediaObjectBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <MediaObjectBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+<Preview examples={examples} layout="fill">
+  <MediaObjectBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+<Preview examples={examples} layout="fill">
+  <MediaObjectBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
+
+## Notas
+
+- Para un hilo, apila varios objetos en una lista. Para las respuestas, sangra una lista anidada bajo el texto.

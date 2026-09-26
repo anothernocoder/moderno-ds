@@ -858,6 +858,78 @@
       ]
     },
     {
+      "name": "media-object-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Media Object (React)",
+      "description": "An avatar beside a heading and a body, composing the @moderno-ui/react Avatar, Button, Skeleton and Alert primitives: a comment, a note or a review with an optional line of meta and one quiet action, the avatar at the start or the end, and its own empty, loading and error renders; responds to its container (@container) — the avatar moves beside the text at @sm, the heading and body step up at @md and the meta moves to the heading's far edge at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/media-object/react/media-object.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/media-object.tsx"
+        }
+      ]
+    },
+    {
+      "name": "media-object-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Media Object (Vue)",
+      "description": "An avatar beside a heading and a body, composing the @moderno-ui/vue Avatar, Button, Skeleton and Alert primitives: a comment, a note or a review with an optional line of meta and one quiet action, the avatar at the start or the end, and its own empty, loading and error renders; responds to its container (@container) — the avatar moves beside the text at @sm, the heading and body step up at @md and the meta moves to the heading's far edge at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/media-object/vue/MediaObject.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/MediaObject.vue"
+        }
+      ]
+    },
+    {
+      "name": "media-object-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Media Object (Svelte)",
+      "description": "An avatar beside a heading and a body, composing the @moderno-ui/svelte Avatar, Button, Skeleton and Alert primitives: a comment, a note or a review with an optional line of meta and one quiet action, the avatar at the start or the end, and its own empty, loading and error renders; responds to its container (@container) — the avatar moves beside the text at @sm, the heading and body step up at @md and the meta moves to the heading's far edge at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/media-object/svelte/MediaObject.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/MediaObject.svelte"
+        }
+      ]
+    },
+    {
+      "name": "media-object-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Media Object (Solid)",
+      "description": "An avatar beside a heading and a body, composing the @moderno-ui/solid Avatar, Button, Skeleton and Alert primitives: a comment, a note or a review with an optional line of meta and one quiet action, the avatar at the start or the end, and its own empty, loading and error renders; responds to its container (@container) — the avatar moves beside the text at @sm, the heading and body step up at @md and the meta moves to the heading's far edge at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/media-object/solid/media-object.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/media-object.tsx"
+        }
+      ]
+    },
+    {
       "name": "panel-react",
       "type": "registry:block",
       "version": "0.1.0",
