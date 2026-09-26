@@ -8,6 +8,7 @@ const COMMENT_BY_FILE_TYPE: Record<string, (text: string) => string> = {
   ".js": (text) => `// ${text}`,
   ".css": (text) => `/* ${text} */`,
   ".md": (text) => `<!-- ${text} -->`,
+  ".svelte": (text) => `<!-- ${text} -->`,
 };
 
 /**

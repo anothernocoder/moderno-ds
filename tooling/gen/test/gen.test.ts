@@ -94,6 +94,7 @@ describe("generatedBanner", () => {
     ["a/b.ts", "// "],
     ["a/b.css", "/* "],
     ["a/b.md", "<!-- "],
+    ["a/B.svelte", "<!-- "],
   ])("comments the banner in %s's own syntax", (output, opener) => {
     expect(generatedBanner("name", "src/*", output).startsWith(opener)).toBe(true);
   });

@@ -6,6 +6,7 @@ packages/react/playground/app.tsx linguist-generated=true
 packages/react/src/index.ts linguist-generated=true
 packages/solid/playground/app.tsx linguist-generated=true
 packages/solid/src/index.tsx linguist-generated=true
+packages/svelte/playground/App.svelte linguist-generated=true
 packages/svelte/src/index.ts linguist-generated=true
 packages/vue/playground/app.ts linguist-generated=true
 packages/vue/src/index.ts linguist-generated=true
