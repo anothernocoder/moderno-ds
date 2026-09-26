@@ -1,0 +1,167 @@
+---
+title: Not Found
+description: Una sección 404 — el código de error, un título con serifa, un camino a casa y una lista corta de páginas populares.
+group: Bloques
+order: 119
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import NotFoundBlockDemo from "../../../islands/NotFoundBlockDemo.svelte";
+import notFoundReact from "../../../../../../registry/blocks/not-found/react/not-found.tsx?raw";
+import notFoundVue from "../../../../../../registry/blocks/not-found/vue/NotFound.vue?raw";
+import notFoundSolid from "../../../../../../registry/blocks/not-found/solid/not-found.tsx?raw";
+import notFoundSvelte from "../../../../../../registry/blocks/not-found/svelte/NotFound.svelte?raw";
+
+export const examples = {
+  react: notFoundReact,
+  vue: notFoundVue,
+  solid: notFoundSolid,
+  svelte: notFoundSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <NotFoundBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="not-found" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { NotFound } from "@/components/blocks/not-found";
+```
+
+```tsx
+<NotFound links={[]} onPrimaryAction={goHome} onSecondaryAction={openSupport} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import NotFound from "@/components/blocks/NotFound.vue";
+</script>
+```
+
+```vue
+<NotFound :links="[]" @primary-action="goHome" @secondary-action="openSupport" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import NotFound from "@/components/blocks/NotFound.svelte";
+</script>
+```
+
+```svelte
+<NotFound links={[]} onprimaryaction={goHome} onsecondaryaction={openSupport} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { NotFound } from "@/components/blocks/not-found";
+```
+
+```tsx
+<NotFound links={[]} onPrimaryAction={goHome} onSecondaryAction={openSupport} />
+```
+
+</ForFramework>
+
+## Referencia de la API
+
+### Props
+
+| Prop                | Tipo             | Por defecto         | Descripción                                                                            |
+| ------------------- | ---------------- | ------------------- | -------------------------------------------------------------------------------------- |
+| `code`              | `string`         | `"404"`             | El código de error, en una insignia sobre el título; `""` lo oculta.                   |
+| `title`             | `string`         | `"Page not found"`  | Qué pasó, en pocas palabras. Un `h1` en la fuente con serifa.                          |
+| `description`       | `string`         | una frase           | Una línea bajo el título; `""` la oculta.                                              |
+| `primaryAction`     | `string`         | `"Back to home"`    | La etiqueta del botón principal; `""` lo oculta.                                       |
+| `secondaryAction`   | `string`         | `"Contact support"` | La etiqueta del botón con contorno; `""` lo oculta.                                    |
+| `linksTitle`        | `string`         | `"Popular pages"`   | El encabezado sobre las páginas populares y el nombre de su `nav`.                     |
+| `links`             | `NotFoundLink[]` | tres páginas        | `{ label, description?, href }` por página; `[]` oculta la lista.                      |
+| `error`             | `string`         | —                   | Las páginas populares no cargaron; un Alert de error con reintento las sustituye.      |
+| `loading`           | `boolean`        | `false`             | Marcadores en una región ocupada sustituyen a las páginas populares.                   |
+| `disabled`          | `boolean`        | `false`             | El contenido se queda y todos los botones se deshabilitan.                             |
+| `onPrimaryAction`   | `() => void`     | —                   | Se pulsó el botón principal. Svelte: `onprimaryaction`. Vue: `@primary-action`.        |
+| `onSecondaryAction` | `() => void`     | —                   | Se pulsó el botón con contorno. Svelte: `onsecondaryaction`. Vue: `@secondary-action`. |
+| `onRetry`           | `() => void`     | —                   | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.                            |
+
+### Estados
+
+| Estado        | Prop       | Qué se muestra                                                               |
+| ------------- | ---------- | ---------------------------------------------------------------------------- |
+| Por defecto   | —          | El código, el título, la descripción, las dos acciones y las páginas.        |
+| Vacío         | `links`    | El mensaje y las acciones solos, centrados, cuando pasas `[]`.               |
+| Cargando      | `loading`  | El mensaje y las acciones, con marcadores en lugar de las páginas populares. |
+| Error         | `error`    | El mensaje y las acciones, con un Alert de error y "Try again".              |
+| Deshabilitado | `disabled` | El mismo contenido con todos los botones deshabilitados.                     |
+
+### Tamaño
+
+| Paso del contenedor      | Qué cambia                                                                     |
+| ------------------------ | ------------------------------------------------------------------------------ |
+| bajo `@sm`               | Todo va centrado; las acciones se apilan, cada una tan ancha como el mensaje.  |
+| `@sm` (`--container-sm`) | Las acciones van una junto a otra, centradas, con su propio ancho.             |
+| `@md` (`--container-md`) | El título sube un tamaño.                                                      |
+| `@lg` (`--container-lg`) | El mensaje pasa al inicio y las páginas populares a su lado, en una sola fila. |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+El mismo bloque a 18rem, 30rem, 40rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <NotFoundBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Sin páginas populares
+
+Pasa `[]` a `links`.
+
+<Preview examples={examples} layout="fill">
+  <NotFoundBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <NotFoundBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+Pulsa "Try again" para quitar el mensaje y recuperar las páginas populares.
+
+<Preview examples={examples} layout="fill">
+  <NotFoundBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+<Preview examples={examples} layout="fill">
+  <NotFoundBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
+
+## Notas
+
+- Di qué pasó y da una salida clara. Volver al inicio es la opción segura.
+- Elige páginas populares que respondan a por qué la gente llega aquí: precios, ayuda, los últimos cambios.
+- Envía también el estado 404 desde tu servidor. El bloque solo pinta la página.

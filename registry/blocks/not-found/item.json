@@ -1,0 +1,37 @@
+{
+  "title": "Not Found",
+  "description": "A 404 section composing the @moderno-ui/{framework} Alert, Badge, Button and Skeleton primitives: the error code, a serif title, one line of description, a way home and a way to support, then a short list of popular pages, with its own empty, loading and error renders for that list; responds to its container (@container) — the actions move side by side at @sm, the title steps up at @md and the message and the list split into two columns at @lg.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": [],
+  "files": {
+    "react": [
+      {
+        "path": "blocks/not-found/react/not-found.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/not-found.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "blocks/not-found/vue/NotFound.vue",
+        "type": "registry:block",
+        "target": "src/components/blocks/NotFound.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "blocks/not-found/svelte/NotFound.svelte",
+        "type": "registry:block",
+        "target": "src/components/blocks/NotFound.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "blocks/not-found/solid/not-found.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/not-found.tsx"
+      }
+    ]
+  }
+}

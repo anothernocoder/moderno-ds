@@ -1,0 +1,189 @@
+---
+title: Not Found
+description: A 404 section — the error code, a serif title, a way home and a short list of popular pages.
+group: Blocks
+order: 119
+agent:
+  intent: The body of a 404 page — the error code, a serif title, one line on what happened, a way home and a way to support, then a short list of popular pages to try instead.
+  whenToUse: "The page a router shows when no route matches, or when a record the URL points to no longer exists."
+  whenNotToUse:
+    - case: A list or search with nothing in it yet
+      use: EmptyState — it says what is missing and leads to the first item
+    - case: A section of a working page that failed to load
+      use: The failing block's own `error` prop — an error Alert with a retry, where the content was
+    - case: A call to action between two sections of a working page
+      use: CTA — a serif title, one line and two buttons in a bordered panel
+  gotchas:
+    - "The title is an `h1`: on a 404 page the block is the page's main content. The popular pages sit under an `h2` inside a `nav` named by `linksTitle`."
+    - '`code`, `description`, `primaryAction` and `secondaryAction` hide when you pass `""`. Pass `links={[]}` to hide the popular pages; the message then stays centred at every width.'
+    - "Presentational: `onPrimaryAction`, `onSecondaryAction` and `onRetry` report which button was pressed. Going home, opening support and reloading the pages stay yours. The popular pages are plain links with your `href`."
+    - '`loading` and `error` are about the popular pages only: the message and the actions stay. `loading` puts placeholders in one busy `status` region; `error` puts an error Alert with your message and a "Try again" button. An empty string counts as no error.'
+    - "`disabled` disables every button; the popular pages stay links."
+    - "The layout follows the block's own width, not the viewport: the message and the pages are centred and stacked until `--container-lg`, then share one row in two columns."
+  theming:
+    - "The code is Badge's neutral variant, the actions are Button's primary and outline variants, the error is Alert's error variant and the loading placeholders are Skeleton."
+    - "The title reads --font-serif and --foreground; the description and the list title read --muted-foreground."
+    - "The list of popular pages is --card and --card-foreground with a --border hairline, --border rules between the pages and the --radius corner. A page takes --muted on hover and a --ring outline on keyboard focus."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg, and the message and the list are capped at --container-md until they split."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import NotFoundBlockDemo from "../../../islands/NotFoundBlockDemo.svelte";
+import notFoundReact from "../../../../../../registry/blocks/not-found/react/not-found.tsx?raw";
+import notFoundVue from "../../../../../../registry/blocks/not-found/vue/NotFound.vue?raw";
+import notFoundSolid from "../../../../../../registry/blocks/not-found/solid/not-found.tsx?raw";
+import notFoundSvelte from "../../../../../../registry/blocks/not-found/svelte/NotFound.svelte?raw";
+
+export const examples = {
+  react: notFoundReact,
+  vue: notFoundVue,
+  solid: notFoundSolid,
+  svelte: notFoundSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <NotFoundBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="not-found" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { NotFound } from "@/components/blocks/not-found";
+```
+
+```tsx
+<NotFound links={[]} onPrimaryAction={goHome} onSecondaryAction={openSupport} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import NotFound from "@/components/blocks/NotFound.vue";
+</script>
+```
+
+```vue
+<NotFound :links="[]" @primary-action="goHome" @secondary-action="openSupport" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import NotFound from "@/components/blocks/NotFound.svelte";
+</script>
+```
+
+```svelte
+<NotFound links={[]} onprimaryaction={goHome} onsecondaryaction={openSupport} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { NotFound } from "@/components/blocks/not-found";
+```
+
+```tsx
+<NotFound links={[]} onPrimaryAction={goHome} onSecondaryAction={openSupport} />
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+| Prop                | Type             | Default             | Description                                                                            |
+| ------------------- | ---------------- | ------------------- | -------------------------------------------------------------------------------------- |
+| `code`              | `string`         | `"404"`             | The error code, in a badge above the title; `""` hides it.                             |
+| `title`             | `string`         | `"Page not found"`  | What happened, in a few words. An `h1` in the serif face.                              |
+| `description`       | `string`         | a sentence          | One line under the title; `""` hides it.                                               |
+| `primaryAction`     | `string`         | `"Back to home"`    | The primary button's label; `""` hides it.                                             |
+| `secondaryAction`   | `string`         | `"Contact support"` | The outline button's label; `""` hides it.                                             |
+| `linksTitle`        | `string`         | `"Popular pages"`   | The heading over the popular pages, and the name of their `nav`.                       |
+| `links`             | `NotFoundLink[]` | three sample pages  | `{ label, description?, href }` per page; `[]` hides the list.                         |
+| `error`             | `string`         | —                   | The popular pages failed to load; an error Alert with a retry replaces them.           |
+| `loading`           | `boolean`        | `false`             | Placeholders in a busy region replace the popular pages.                               |
+| `disabled`          | `boolean`        | `false`             | The content stays and every button is disabled.                                        |
+| `onPrimaryAction`   | `() => void`     | —                   | The primary button was pressed. Svelte: `onprimaryaction`. Vue: `@primary-action`.     |
+| `onSecondaryAction` | `() => void`     | —                   | The outline button was pressed. Svelte: `onsecondaryaction`. Vue: `@secondary-action`. |
+| `onRetry`           | `() => void`     | —                   | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.                           |
+
+### States
+
+| State    | Prop       | What renders                                                          |
+| -------- | ---------- | --------------------------------------------------------------------- |
+| Default  | —          | The code, title, description, both actions and the popular pages.     |
+| Empty    | `links`    | The message and the actions alone, centred, when you pass `[]`.       |
+| Loading  | `loading`  | The message and the actions, with placeholders for the popular pages. |
+| Error    | `error`    | The message and the actions, with an error Alert and "Try again".     |
+| Disabled | `disabled` | The same content with every button disabled.                          |
+
+### Sizing
+
+| Container step           | What changes                                                              |
+| ------------------------ | ------------------------------------------------------------------------- |
+| below `@sm`              | Everything is centred; the actions stack, each as wide as the message.    |
+| `@sm` (`--container-sm`) | The actions sit side by side, centred, at their own width.                |
+| `@md` (`--container-md`) | The title steps up a size.                                                |
+| `@lg` (`--container-lg`) | The message moves to the start and the popular pages beside it, in a row. |
+
+## Examples
+
+### Container widths
+
+The same block at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <NotFoundBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Without popular pages
+
+Pass `[]` to `links`.
+
+<Preview examples={examples} layout="fill">
+  <NotFoundBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <NotFoundBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+Press "Try again" to clear the message and bring the popular pages back.
+
+<Preview examples={examples} layout="fill">
+  <NotFoundBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <NotFoundBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Say what happened and give one clear way out. Home is the safe default.
+- Pick popular pages that answer why people land here: pricing, help, the latest changes.
+- Send the 404 status from your server too. The block only paints the page.
