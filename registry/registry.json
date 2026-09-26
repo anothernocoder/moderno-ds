@@ -930,6 +930,78 @@
       ]
     },
     {
+      "name": "modal-actions-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Modal Actions (React)",
+      "description": "A list of account actions composing the @moderno-ui/react Dialog, Button, Field, Badge, Card, Skeleton and Alert primitives: one row per action, each with a title, a line of description and a Button that opens a Dialog — a confirmation, a destructive alertdialog marked Irreversible, or a one-field form that checks its value before it closes — with its own empty, loading and error renders; responds to its container (@container) — each row's button moves beside its text at @sm, the heading steps up at @md and the heading moves beside the list at @lg, and each dialog sets its buttons in a row once its own width allows.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/modal-actions/react/modal-actions.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/modal-actions.tsx"
+        }
+      ]
+    },
+    {
+      "name": "modal-actions-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Modal Actions (Vue)",
+      "description": "A list of account actions composing the @moderno-ui/vue Dialog, Button, Field, Badge, Card, Skeleton and Alert primitives: one row per action, each with a title, a line of description and a Button that opens a Dialog — a confirmation, a destructive alertdialog marked Irreversible, or a one-field form that checks its value before it closes — with its own empty, loading and error renders; responds to its container (@container) — each row's button moves beside its text at @sm, the heading steps up at @md and the heading moves beside the list at @lg, and each dialog sets its buttons in a row once its own width allows.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/modal-actions/vue/ModalActions.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/ModalActions.vue"
+        }
+      ]
+    },
+    {
+      "name": "modal-actions-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Modal Actions (Svelte)",
+      "description": "A list of account actions composing the @moderno-ui/svelte Dialog, Button, Field, Badge, Card, Skeleton and Alert primitives: one row per action, each with a title, a line of description and a Button that opens a Dialog — a confirmation, a destructive alertdialog marked Irreversible, or a one-field form that checks its value before it closes — with its own empty, loading and error renders; responds to its container (@container) — each row's button moves beside its text at @sm, the heading steps up at @md and the heading moves beside the list at @lg, and each dialog sets its buttons in a row once its own width allows.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/modal-actions/svelte/ModalActions.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/ModalActions.svelte"
+        }
+      ]
+    },
+    {
+      "name": "modal-actions-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Modal Actions (Solid)",
+      "description": "A list of account actions composing the @moderno-ui/solid Dialog, Button, Field, Badge, Card, Skeleton and Alert primitives: one row per action, each with a title, a line of description and a Button that opens a Dialog — a confirmation, a destructive alertdialog marked Irreversible, or a one-field form that checks its value before it closes — with its own empty, loading and error renders; responds to its container (@container) — each row's button moves beside its text at @sm, the heading steps up at @md and the heading moves beside the list at @lg, and each dialog sets its buttons in a row once its own width allows.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/modal-actions/solid/modal-actions.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/modal-actions.tsx"
+        }
+      ]
+    },
+    {
       "name": "panel-react",
       "type": "registry:block",
       "version": "0.1.0",
