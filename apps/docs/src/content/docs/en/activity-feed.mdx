@@ -1,0 +1,190 @@
+---
+title: Activity feed
+description: A timeline of events with avatars and timestamps, with empty, loading and error states.
+group: Blocks
+order: 104
+agent:
+  intent: A timeline of who did what and when — the activity feed of a workspace, project or record.
+  whenToUse: "Anywhere recent events are shown in order: a dashboard's recent-activity panel, a project or document history, the audit trail on a settings page, the timeline beside a ticket."
+  whenNotToUse:
+    - case: Statuses the reader must act on or dismiss
+      use: AlertList — its rows are alerts with a severity; a feed row is a plain event
+    - case: A single message about what the reader just did
+      use: the Alert primitive on its own
+    - case: A view with no data yet, for a feature that has never been used
+      use: EmptyState — this block's empty render is for a feed that has nothing in it yet
+  gotchas:
+    - "Presentational: it fetches nothing and pages nothing. `onViewAll`, `onAction` and `onRetry` report what the reader asked for; the events stay yours."
+    - "`events` defaults to a sample feed so the block renders standalone. Pass your own array — or edit the constant, the file is yours after `moderno add`."
+    - "`events={[]}` is the empty state, not a bug: the feed loaded and there is nothing in it."
+    - '`time` is shown as written ("2 min ago"); `datetime` goes into the `<time>` element''s `datetime` attribute for machines. Format both in your app — the block formats nothing.'
+    - "`loading` replaces the feed with skeleton rows, and `error` replaces it with an alert and a retry: an empty feed and a feed that failed to load are different facts."
+    - 'Each row action''s accessible name carries the whole event ("Reply — Ada Lovelace commented on Q3 roadmap"), so a screen reader knows which row it acts on.'
+    - "An actor without `avatarUrl` shows their `initials`; with one, the initials show until the image loads, and stay if it fails."
+  theming:
+    - "Nothing is painted here. The avatars are Avatar, the controls are Button's secondary and outline variants, the empty render is Card, the failed render is Alert's error variant and the loading render is Skeleton."
+    - "The rail between avatars and each comment's frame use --border; the timestamps use --muted-foreground."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ActivityFeedBlockDemo from "../../../islands/ActivityFeedBlockDemo.svelte";
+import activityFeedReact from "../../../../../../registry/blocks/activity-feed/react/activity-feed.tsx?raw";
+import activityFeedVue from "../../../../../../registry/blocks/activity-feed/vue/ActivityFeed.vue?raw";
+import activityFeedSolid from "../../../../../../registry/blocks/activity-feed/solid/activity-feed.tsx?raw";
+import activityFeedSvelte from "../../../../../../registry/blocks/activity-feed/svelte/ActivityFeed.svelte?raw";
+
+export const examples = {
+  react: activityFeedReact,
+  vue: activityFeedVue,
+  solid: activityFeedSolid,
+  svelte: activityFeedSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <ActivityFeedBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="activity-feed" />
+
+## Usage
+
+Use an activity feed to show what happened, who did it and when, newest first.
+
+<ForFramework fw="react">
+
+```tsx
+import { ActivityFeed } from "@/components/blocks/activity-feed";
+```
+
+```tsx
+<ActivityFeed events={events} onAction={(id) => open(id)} onViewAll={showHistory} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import ActivityFeed from "@/components/blocks/ActivityFeed.vue";
+</script>
+```
+
+```vue
+<ActivityFeed :events="events" @action="open" @view-all="showHistory" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import ActivityFeed from "@/components/blocks/ActivityFeed.svelte";
+</script>
+```
+
+```svelte
+<ActivityFeed {events} onaction={open} onviewall={showHistory} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { ActivityFeed } from "@/components/blocks/activity-feed";
+```
+
+```tsx
+<ActivityFeed events={events()} onAction={(id) => open(id)} onViewAll={showHistory} />
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+| Prop          | Type                   | Default       | Description                                                  |
+| ------------- | ---------------------- | ------------- | ------------------------------------------------------------ |
+| `events`      | `ActivityFeedEvent[]`  | a sample feed | The events, newest first. `[]` renders the empty state.      |
+| `heading`     | `string`               | `"Activity"`  | The heading over the feed.                                   |
+| `description` | `string`               | a sentence    | The line under the heading; `""` hides it.                   |
+| `error`       | `string`               | —             | The feed failed to load; an alert with a retry replaces it.  |
+| `loading`     | `boolean`              | `false`       | Skeleton rows replace the feed.                              |
+| `disabled`    | `boolean`              | `false`       | The events stay readable and every control is disabled.      |
+| `onViewAll`   | `() => void`           | —             | "View all". Svelte: `onviewall`. Vue: `@view-all`.           |
+| `onAction`    | `(id: string) => void` | —             | A row's action button. Svelte: `onaction`. Vue: `@action`.   |
+| `onRetry`     | `() => void`           | —             | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`. |
+
+### ActivityFeedEvent
+
+| Field         | Type                                                     | Description                                              |
+| ------------- | -------------------------------------------------------- | -------------------------------------------------------- |
+| `id`          | `string`                                                 | Stable identity, reported by `onAction`.                 |
+| `actor`       | `{ name: string; initials: string; avatarUrl?: string }` | Who did it. The initials show when there is no image.    |
+| `action`      | `string`                                                 | What they did, as a verb phrase: `"commented on"`.       |
+| `target`      | `string`                                                 | Optional thing they did it to: `"Q3 roadmap"`.           |
+| `time`        | `string`                                                 | When, already phrased for a reader: `"2 min ago"`.       |
+| `datetime`    | `string`                                                 | Optional machine-readable time for the `<time>` element. |
+| `comment`     | `string`                                                 | Optional quoted text, shown in a frame under the event.  |
+| `actionLabel` | `string`                                                 | Optional row action; fires `onAction`.                   |
+
+### States
+
+| State        | Prop          | What renders                                                   |
+| ------------ | ------------- | -------------------------------------------------------------- |
+| Default      | —             | One row per event, joined by a rail.                           |
+| Hover, focus | —             | Button's own hover and focus ring, on every control.           |
+| Empty        | `events={[]}` | A "No activity yet" card.                                      |
+| Loading      | `loading`     | Three skeleton rows in a busy `status` region.                 |
+| Error        | `error`       | An error alert with a "Try again" button in place of the feed. |
+| Disabled     | `disabled`    | The feed with every control disabled.                          |
+
+### Sizing
+
+| Container step           | What changes                                                        |
+| ------------------------ | ------------------------------------------------------------------- |
+| `@sm` (`--container-sm`) | The heading and "View all" share a row; comments are no longer cut. |
+| `@md` (`--container-md`) | Each timestamp moves to the trailing edge of its row.               |
+| `@lg` (`--container-lg`) | Each timestamp moves into a time column before the avatars.         |
+
+## Examples
+
+### Container widths
+
+The same feed at 18rem, 30rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <ActivityFeedBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Empty
+
+<Preview examples={examples} layout="fill">
+  <ActivityFeedBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <ActivityFeedBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+<Preview examples={examples} layout="fill">
+  <ActivityFeedBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <ActivityFeedBlockDemo client:visible locale="en" state="disabled" />
+</Preview>

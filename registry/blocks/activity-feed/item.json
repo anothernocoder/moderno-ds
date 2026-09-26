@@ -1,0 +1,42 @@
+{
+  "title": "Activity Feed",
+  "description": "Timeline of events composing the @moderno-ui/{framework} Avatar, Button, Card, Alert and Skeleton primitives: one row per event with the actor's avatar, what they did and when, an optional comment and row action, joined by a rail; with its own empty, loading and error renders; responds to its container (@container) across all three contract steps — the header lines up and comments stop being cut at @sm, each timestamp moves to the trailing edge at @md, and into a leading time column at @lg.",
+  "version": {
+    "react": "0.1.0",
+    "vue": "0.1.0",
+    "svelte": "0.1.0",
+    "solid": "0.1.0"
+  },
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": [],
+  "files": {
+    "react": [
+      {
+        "path": "blocks/activity-feed/react/activity-feed.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/activity-feed.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "blocks/activity-feed/vue/ActivityFeed.vue",
+        "type": "registry:block",
+        "target": "src/components/blocks/ActivityFeed.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "blocks/activity-feed/svelte/ActivityFeed.svelte",
+        "type": "registry:block",
+        "target": "src/components/blocks/ActivityFeed.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "blocks/activity-feed/solid/activity-feed.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/activity-feed.tsx"
+      }
+    ]
+  }
+}

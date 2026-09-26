@@ -66,6 +66,78 @@
       ]
     },
     {
+      "name": "activity-feed-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Activity Feed (React)",
+      "description": "Timeline of events composing the @moderno-ui/react Avatar, Button, Card, Alert and Skeleton primitives: one row per event with the actor's avatar, what they did and when, an optional comment and row action, joined by a rail; with its own empty, loading and error renders; responds to its container (@container) across all three contract steps — the header lines up and comments stop being cut at @sm, each timestamp moves to the trailing edge at @md, and into a leading time column at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/activity-feed/react/activity-feed.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/activity-feed.tsx"
+        }
+      ]
+    },
+    {
+      "name": "activity-feed-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Activity Feed (Vue)",
+      "description": "Timeline of events composing the @moderno-ui/vue Avatar, Button, Card, Alert and Skeleton primitives: one row per event with the actor's avatar, what they did and when, an optional comment and row action, joined by a rail; with its own empty, loading and error renders; responds to its container (@container) across all three contract steps — the header lines up and comments stop being cut at @sm, each timestamp moves to the trailing edge at @md, and into a leading time column at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/activity-feed/vue/ActivityFeed.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/ActivityFeed.vue"
+        }
+      ]
+    },
+    {
+      "name": "activity-feed-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Activity Feed (Svelte)",
+      "description": "Timeline of events composing the @moderno-ui/svelte Avatar, Button, Card, Alert and Skeleton primitives: one row per event with the actor's avatar, what they did and when, an optional comment and row action, joined by a rail; with its own empty, loading and error renders; responds to its container (@container) across all three contract steps — the header lines up and comments stop being cut at @sm, each timestamp moves to the trailing edge at @md, and into a leading time column at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/activity-feed/svelte/ActivityFeed.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/ActivityFeed.svelte"
+        }
+      ]
+    },
+    {
+      "name": "activity-feed-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Activity Feed (Solid)",
+      "description": "Timeline of events composing the @moderno-ui/solid Avatar, Button, Card, Alert and Skeleton primitives: one row per event with the actor's avatar, what they did and when, an optional comment and row action, joined by a rail; with its own empty, loading and error renders; responds to its container (@container) across all three contract steps — the header lines up and comments stop being cut at @sm, each timestamp moves to the trailing edge at @md, and into a leading time column at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/activity-feed/solid/activity-feed.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/activity-feed.tsx"
+        }
+      ]
+    },
+    {
       "name": "alert-list-react",
       "type": "registry:block",
       "version": "0.2.0",
