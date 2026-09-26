@@ -1,0 +1,209 @@
+---
+title: Post Grid
+description: The latest blog posts as a grid of cards — each with a category, a date, a title, an excerpt and its author, under a serif heading.
+group: Blocks
+order: 119
+agent:
+  intent: A section of a landing page or a blog index that lists recent posts as cards — a serif heading, a sentence of introduction and a link to every post, then one card per post with its category, date, title, excerpt and author.
+  whenToUse: "A landing page, a blog index or a resources page that points readers at your latest articles."
+  whenNotToUse:
+    - case: The text of one article or guide
+      use: Content — it sets one piece of writing in a reading column
+    - case: Projects or records in an app, each with a status and an Open action
+      use: GridList — its cards carry a status and an action each
+    - case: Quotes from customers
+      use: Testimonials — it shows what customers say
+  gotchas:
+    - "`posts` is an array of `{ id, title, excerpt, category, date, dateLabel, author: { name, initials, avatarUrl? }, href? }`."
+    - "`date` is the machine date (`2026-09-18`) that goes in `<time datetime>`; `dateLabel` is the text people read (`Sep 18, 2026`). Format it in the reader's language before you pass it."
+    - "With `href`, the post's title is a link to it. Without it, the title is plain text."
+    - "Each title is an `h3` under the block's `h2`, so the posts show in the page outline."
+    - "The author's avatar shows `initials` until `avatarUrl` loads, and keeps them when there is no `avatarUrl` or the image fails."
+    - '`description` hides when you pass `""`, and so does the "View all posts" link when `allPostsHref` is `""`.'
+    - '`posts={[]}` shows "No posts to show yet." in place of the grid.'
+    - '`disabled` keeps every post and makes each title link and the "View all posts" link inert: they drop their `href` and carry `aria-disabled`. The retry button is disabled too.'
+    - 'Presentational: `onRetry` reports that "Try again" was pressed. Loading the posts again stays yours.'
+    - "`loading` keeps the heading and replaces the grid with three placeholder cards in one busy `status` region."
+    - '`error` keeps the heading and puts an error Alert with your message and a "Try again" button where the grid was. An empty string counts as no error.'
+    - 'The layout follows the block''s own width, not the viewport: the "View all posts" link sits under the introduction below `--container-sm` and beside the heading from there; one column below `--container-md`, two from there and three from `--container-lg`.'
+  theming:
+    - "The block paints only its dashed empty box (--border). Each post is Card's outline variant, the category is Badge's neutral variant, the author is Avatar's sm size, the error is Alert's error variant, the retry is Button's outline variant and the loading cards are Skeleton."
+    - "The heading reads --font-serif and --foreground; the introduction, each date and each excerpt read --muted-foreground; the title links and the View all posts link read --foreground, and their focus ring --ring."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg. The heading block is capped at --container-md."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import PostGridBlockDemo from "../../../islands/PostGridBlockDemo.svelte";
+import postGridReact from "../../../../../../registry/blocks/post-grid/react/post-grid.tsx?raw";
+import postGridVue from "../../../../../../registry/blocks/post-grid/vue/PostGrid.vue?raw";
+import postGridSolid from "../../../../../../registry/blocks/post-grid/solid/post-grid.tsx?raw";
+import postGridSvelte from "../../../../../../registry/blocks/post-grid/svelte/PostGrid.svelte?raw";
+
+export const examples = {
+  react: postGridReact,
+  vue: postGridVue,
+  solid: postGridSolid,
+  svelte: postGridSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <PostGridBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="post-grid" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { PostGrid } from "@/components/blocks/post-grid";
+```
+
+```tsx
+<PostGrid heading="Latest articles" posts={posts} allPostsHref="/blog" />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import PostGrid from "@/components/blocks/PostGrid.vue";
+</script>
+```
+
+```vue
+<PostGrid heading="Latest articles" :posts="posts" all-posts-href="/blog" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import PostGrid from "@/components/blocks/PostGrid.svelte";
+</script>
+```
+
+```svelte
+<PostGrid heading="Latest articles" {posts} allPostsHref="/blog" />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { PostGrid } from "@/components/blocks/post-grid";
+```
+
+```tsx
+<PostGrid heading="Latest articles" posts={posts} allPostsHref="/blog" />
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+| Prop           | Type            | Default           | Description                                                              |
+| -------------- | --------------- | ----------------- | ------------------------------------------------------------------------ |
+| `heading`      | `string`        | `"From the blog"` | The section's heading. Set in the serif face.                            |
+| `description`  | `string`        | a sentence        | One sentence under the heading; `""` hides it.                           |
+| `allPostsHref` | `string`        | `"#"`             | Where "View all posts" goes, like your blog index; `""` hides the link.  |
+| `posts`        | `PostSummary[]` | six sample posts  | The posts, newest first. `[]` shows the empty message.                   |
+| `error`        | `string`        | —                 | Loading the posts failed; an error Alert with a retry replaces the grid. |
+| `loading`      | `boolean`       | `false`           | Placeholder cards in a busy region replace the grid.                     |
+| `disabled`     | `boolean`       | `false`           | The posts stay; every link is inert and the retry button disabled.       |
+| `onRetry`      | `() => void`    | —                 | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.             |
+
+### PostSummary
+
+| Field       | Type         | Description                                              |
+| ----------- | ------------ | -------------------------------------------------------- |
+| `id`        | `string`     | A stable key for the post.                               |
+| `title`     | `string`     | The post's title.                                        |
+| `excerpt`   | `string`     | One or two sentences from the post.                      |
+| `category`  | `string`     | A short label, like `"Guides"`. Shown in a Badge.        |
+| `date`      | `string`     | The publish date as `YYYY-MM-DD`, for `<time datetime>`. |
+| `dateLabel` | `string`     | The same date as people read it, like `"Sep 18, 2026"`.  |
+| `author`    | `PostAuthor` | Who wrote it: `{ name, initials, avatarUrl? }`.          |
+| `href`      | `string`     | Optional. Turns the title into a link to the post.       |
+
+### PostAuthor
+
+| Field       | Type     | Description                                                    |
+| ----------- | -------- | -------------------------------------------------------------- |
+| `name`      | `string` | The author's name.                                             |
+| `initials`  | `string` | One or two letters. The avatar shows them until a photo loads. |
+| `avatarUrl` | `string` | Optional. Their photo.                                         |
+
+### States
+
+| State    | Prop         | What renders                                                 |
+| -------- | ------------ | ------------------------------------------------------------ |
+| Default  | —            | Heading, introduction and one card per post.                 |
+| Empty    | `posts={[]}` | Heading, introduction and "No posts to show yet."            |
+| Loading  | `loading`    | Heading, introduction and three placeholder cards.           |
+| Error    | `error`      | Heading, introduction, then an error Alert with "Try again". |
+| Disabled | `disabled`   | The same posts with every link inert.                        |
+
+### Sizing
+
+| Container step           | What changes                                         |
+| ------------------------ | ---------------------------------------------------- |
+| below `@sm`              | One column; "View all posts" under the introduction. |
+| `@sm` (`--container-sm`) | "View all posts" moves beside the heading.           |
+| `@md` (`--container-md`) | Two columns, and the heading steps up.               |
+| `@lg` (`--container-lg`) | Three columns, with more room between and around.    |
+
+## Examples
+
+### Container widths
+
+The same block at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <PostGridBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Empty
+
+Pass an empty `posts` array.
+
+<Preview examples={examples} layout="fill">
+  <PostGridBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <PostGridBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+Press "Try again" to clear the message and bring the posts back.
+
+<Preview examples={examples} layout="fill">
+  <PostGridBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <PostGridBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Keep each excerpt to one or two sentences, so the cards in a row stay close in height.
+- Six posts fill two or three columns evenly.

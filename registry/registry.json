@@ -1866,6 +1866,78 @@
       ]
     },
     {
+      "name": "post-grid-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Post Grid (React)",
+      "description": "A grid of blog post cards, composing the @moderno-ui/react Alert, Avatar, Badge, Button, Card and Skeleton primitives: a serif heading, a sentence of introduction and a link to every post, then one Card per post with its category Badge, date, linked title, excerpt and author Avatar, with its own loading, empty and error renders; responds to its container (@container) — the link to every post moves beside the heading at @sm, the posts sit in two columns and the heading steps up at @md, and three columns with more room at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/post-grid/react/post-grid.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/post-grid.tsx"
+        }
+      ]
+    },
+    {
+      "name": "post-grid-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Post Grid (Vue)",
+      "description": "A grid of blog post cards, composing the @moderno-ui/vue Alert, Avatar, Badge, Button, Card and Skeleton primitives: a serif heading, a sentence of introduction and a link to every post, then one Card per post with its category Badge, date, linked title, excerpt and author Avatar, with its own loading, empty and error renders; responds to its container (@container) — the link to every post moves beside the heading at @sm, the posts sit in two columns and the heading steps up at @md, and three columns with more room at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/post-grid/vue/PostGrid.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/PostGrid.vue"
+        }
+      ]
+    },
+    {
+      "name": "post-grid-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Post Grid (Svelte)",
+      "description": "A grid of blog post cards, composing the @moderno-ui/svelte Alert, Avatar, Badge, Button, Card and Skeleton primitives: a serif heading, a sentence of introduction and a link to every post, then one Card per post with its category Badge, date, linked title, excerpt and author Avatar, with its own loading, empty and error renders; responds to its container (@container) — the link to every post moves beside the heading at @sm, the posts sit in two columns and the heading steps up at @md, and three columns with more room at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/post-grid/svelte/PostGrid.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/PostGrid.svelte"
+        }
+      ]
+    },
+    {
+      "name": "post-grid-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Post Grid (Solid)",
+      "description": "A grid of blog post cards, composing the @moderno-ui/solid Alert, Avatar, Badge, Button, Card and Skeleton primitives: a serif heading, a sentence of introduction and a link to every post, then one Card per post with its category Badge, date, linked title, excerpt and author Avatar, with its own loading, empty and error renders; responds to its container (@container) — the link to every post moves beside the heading at @sm, the posts sit in two columns and the heading steps up at @md, and three columns with more room at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/post-grid/solid/post-grid.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/post-grid.tsx"
+        }
+      ]
+    },
+    {
       "name": "pricing-react",
       "type": "registry:block",
       "version": "0.3.0",
