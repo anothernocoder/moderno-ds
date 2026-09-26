@@ -19,6 +19,7 @@ import {
   Tabs as ArkTabs,
   Accordion as ArkAccordion,
   Progress as ArkProgress,
+  Slider as ArkSlider,
   Toggle as ArkToggle,
   ToggleGroup as ArkToggleGroup,
 } from "@ark-ui/svelte";
@@ -36,6 +37,7 @@ import ToggleGroupRoot from "./ToggleGroupRoot.svelte";
 import TabsRoot from "./TabsRoot.svelte";
 import AccordionRoot from "./AccordionRoot.svelte";
 import ProgressRoot from "./ProgressRoot.svelte";
+import SliderRoot from "./SliderRoot.svelte";
 import type { AlertPartProps, AlertRootProps } from "./alert-props.js";
 import AlertRoot from "./AlertRoot.svelte";
 import AlertIcon from "./AlertIcon.svelte";
@@ -359,6 +361,22 @@ export const Progress: Omit<typeof ArkProgress, "Root"> & { Root: typeof Progres
 };
 export type { ProgressSize } from "@moderno-ui/core";
 
+/**
+ * Slider — pick a number, or a range between two, by dragging a thumb along
+ * a track. Ark renders each `Thumb` as a `role="slider"` with
+ * `aria-valuenow`, `aria-valuemin` and `aria-valuemax`, moved by pointer or
+ * keyboard; the `value` array holds one number per thumb, so two values make
+ * a range; Ark places the thumbs, the `Range` and each `Marker` inline.
+ * `Root` is wrapped to inject the `size` recipe; every other part is Ark's
+ * verbatim. Annotated so the emitted `.d.ts` doesn't inline an un-nameable
+ * `@zag-js` type (TS2742).
+ */
+export const Slider: Omit<typeof ArkSlider, "Root"> & { Root: typeof SliderRoot } = {
+  ...ArkSlider,
+  Root: SliderRoot,
+};
+export type { SliderSize } from "@moderno-ui/core";
+
 export { createListCollection } from "@ark-ui/svelte";
 
 export type {
@@ -374,4 +392,6 @@ export type {
   TabsValueChangeDetails,
   AccordionValueChangeDetails,
   ProgressValueChangeDetails,
+  SliderValueChangeDetails,
+  SliderFocusChangeDetails,
 } from "@ark-ui/svelte";

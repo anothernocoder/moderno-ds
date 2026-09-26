@@ -49,6 +49,7 @@ import {
   tabsRecipe,
   accordionRecipe,
   progressRecipe,
+  sliderRecipe,
 } from "@moderno-ui/core";
 import { extractProps, type ComponentDoc, type ComponentEntry, type PropDoc } from "./index.ts";
 import { ENTRIES } from "./manifest.ts";
@@ -407,6 +408,28 @@ export const AGENT_COMPONENTS: AgentComponentSpec[] = [
       { name: "view", description: "Optional; shows its children in one state only." },
     ],
     variants: progressRecipe.variants,
+  },
+  {
+    name: "Slider",
+    slug: "slider",
+    scope: "slider",
+    propsEntry: findEntry("Slider"),
+    parts: [
+      { name: "root", description: "Carries size; holds one slider, single or range." },
+      { name: "label", description: "Optional; names the value. Clicking it focuses the thumb." },
+      { name: "value-text", description: "Optional; the value, or both ends of a range." },
+      { name: "control", description: "The area you click or drag in; holds track and thumbs." },
+      { name: "track", description: "The full line of possible values; holds the range." },
+      { name: "range", description: "The filled part of the track, up to or between thumbs." },
+      { name: "thumb", description: "The handle, role=slider; one per value, with its index." },
+      {
+        name: "dragging-indicator",
+        description: "Optional, inside a thumb; the value in a bubble while dragging.",
+      },
+      { name: "marker-group", description: "Optional; holds the marks under the track." },
+      { name: "marker", description: "A mark at one value, with its own text." },
+    ],
+    variants: sliderRecipe.variants,
   },
   {
     name: "LineChart",

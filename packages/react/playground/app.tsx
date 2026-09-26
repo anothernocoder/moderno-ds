@@ -46,6 +46,9 @@
  *   - Progress — Ark's progress machine: the progressbar's value and ids, the
  *                range's inline width, the circle's inline geometry and the
  *                loading / indeterminate state must match both ways.
+ *   - Slider   — Ark's slider machine: each thumb's slider role, value, bounds
+ *                and ids, the root's inline range and thumb offsets, and the
+ *                markers' state must match both ways.
  *   - Dialog   — a Portal + focus-trap machine that must emit a stable,
  *                hydration-safe trigger while its content stays unmounted-visible.
  *   - Select   — a collection + popover whose hidden native <select> and ids
@@ -79,6 +82,7 @@ import { ToggleGroup } from "../src/toggle-group.js";
 import { Tabs } from "../src/tabs.js";
 import { Accordion } from "../src/accordion.js";
 import { Progress } from "../src/progress.js";
+import { Slider } from "../src/slider.js";
 import { Dialog, Portal } from "../src/dialog.js";
 import { Select, createListCollection } from "../src/select.js";
 import { PinInput } from "../src/pin-input.js";
@@ -439,6 +443,40 @@ export function App({ open = false }: AppProps) {
             <Progress.Range />
           </Progress.Track>
         </Progress.Root>
+      </section>
+
+      <section aria-label="slider">
+        <Slider.Root defaultValue={[40]}>
+          <Slider.Label>Volume</Slider.Label>
+          <Slider.ValueText />
+          <Slider.Control>
+            <Slider.Track>
+              <Slider.Range />
+            </Slider.Track>
+            <Slider.Thumb index={0}>
+              <Slider.HiddenInput />
+            </Slider.Thumb>
+          </Slider.Control>
+          <Slider.MarkerGroup>
+            <Slider.Marker value={0}>0</Slider.Marker>
+            <Slider.Marker value={50}>50</Slider.Marker>
+            <Slider.Marker value={100}>100</Slider.Marker>
+          </Slider.MarkerGroup>
+        </Slider.Root>
+        <Slider.Root size="sm" defaultValue={[20, 80]}>
+          <Slider.Label>Price</Slider.Label>
+          <Slider.Control>
+            <Slider.Track>
+              <Slider.Range />
+            </Slider.Track>
+            <Slider.Thumb index={0}>
+              <Slider.HiddenInput />
+            </Slider.Thumb>
+            <Slider.Thumb index={1}>
+              <Slider.HiddenInput />
+            </Slider.Thumb>
+          </Slider.Control>
+        </Slider.Root>
       </section>
 
       <Dialog.Root defaultOpen={open}>

@@ -1173,6 +1173,12 @@ main.main--wide {
   ) {
   width: min(100%, 24rem);
 }
+/* A lone slider gets a card's width too; a standing one keeps its own. */
+.preview-panel--demo
+  > astro-island
+  > [data-scope="slider"][data-part="root"][data-orientation="horizontal"] {
+  width: min(100%, 24rem);
+}
 /* Rows and grids take the stage's width, so their items can sit side by side
    instead of shrink-wrapping to one column; the row still centres them. */
 .preview-panel--demo > astro-island > :is(.demo-row, .demo-grid) {

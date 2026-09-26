@@ -35,6 +35,7 @@ describe("AGENT_COMPONENTS", () => {
       "Tabs",
       "Accordion",
       "Progress",
+      "Slider",
       "LineChart",
       "AreaChart",
       "BarChart",
@@ -324,6 +325,27 @@ describe("buildComponentsManifest", () => {
     ]);
     // Ark's own Root props (value, min, max, …) live under node_modules.
     expect(progress.propsComplete).toBe(false);
+  });
+
+  it("carries Slider's recipe prop, size and Ark parts", () => {
+    const slider = manifest.components.find((c) => c.name === "Slider")!;
+    expect(slider.scope).toBe("slider");
+    expect(slider.props.map((p) => p.name)).toEqual(["size"]);
+    expect(slider.variants).toEqual({ size: ["sm", "md", "lg"] });
+    expect(slider.parts.map((p) => p.name)).toEqual([
+      "root",
+      "label",
+      "value-text",
+      "control",
+      "track",
+      "range",
+      "thumb",
+      "dragging-indicator",
+      "marker-group",
+      "marker",
+    ]);
+    // Ark's own Root props (value, min, max, step, …) live under node_modules.
+    expect(slider.propsComplete).toBe(false);
   });
 
   it("reads variants straight off the shared @moderno-ui/core recipes", () => {

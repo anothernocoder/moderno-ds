@@ -282,3 +282,23 @@ describe("moderno/valid-props over the real Progress manifest", () => {
     ]);
   });
 });
+
+describe("moderno/valid-props over the real Slider manifest", () => {
+  const manifests = manifestsFor("react");
+  const check = (code: string) =>
+    validProps.check({ code, framework: "react", manifests }).map((f) => f.message);
+
+  it("accepts the recipe prop and Ark's own props on the root", { timeout: 30_000 }, () => {
+    expect(
+      check(
+        '<Slider.Root size="sm" defaultValue={[20, 80]} min={0} max={200} step={5} orientation="vertical" />',
+      ),
+    ).toEqual([]);
+  });
+
+  it("rejects a size outside the recipe", () => {
+    expect(check('<Slider.Root size="xl" />')).toEqual([
+      expect.stringContaining('Invalid value "xl"'),
+    ]);
+  });
+});

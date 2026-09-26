@@ -27,6 +27,7 @@ import { ToggleGroup } from "../src/toggle-group.jsx";
 import { Tabs } from "../src/tabs.jsx";
 import { Accordion } from "../src/accordion.jsx";
 import { Progress } from "../src/progress.jsx";
+import { Slider } from "../src/slider.jsx";
 import { Dialog, Portal } from "../src/dialog.js";
 import { Select, createListCollection } from "../src/select.jsx";
 import { PinInput } from "../src/pin-input.jsx";
@@ -382,6 +383,40 @@ export function App(props: { open?: boolean }) {
             <Progress.Range />
           </Progress.Track>
         </Progress.Root>
+      </section>
+
+      <section aria-label="slider">
+        <Slider.Root defaultValue={[40]}>
+          <Slider.Label>Volume</Slider.Label>
+          <Slider.ValueText />
+          <Slider.Control>
+            <Slider.Track>
+              <Slider.Range />
+            </Slider.Track>
+            <Slider.Thumb index={0}>
+              <Slider.HiddenInput />
+            </Slider.Thumb>
+          </Slider.Control>
+          <Slider.MarkerGroup>
+            <Slider.Marker value={0}>0</Slider.Marker>
+            <Slider.Marker value={50}>50</Slider.Marker>
+            <Slider.Marker value={100}>100</Slider.Marker>
+          </Slider.MarkerGroup>
+        </Slider.Root>
+        <Slider.Root size="sm" defaultValue={[20, 80]}>
+          <Slider.Label>Price</Slider.Label>
+          <Slider.Control>
+            <Slider.Track>
+              <Slider.Range />
+            </Slider.Track>
+            <Slider.Thumb index={0}>
+              <Slider.HiddenInput />
+            </Slider.Thumb>
+            <Slider.Thumb index={1}>
+              <Slider.HiddenInput />
+            </Slider.Thumb>
+          </Slider.Control>
+        </Slider.Root>
       </section>
 
       <Dialog.Root defaultOpen={props.open}>

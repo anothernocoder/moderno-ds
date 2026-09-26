@@ -34,6 +34,7 @@ export const ENTRIES: ComponentEntry[] = [
   { name: "Tabs", file: "src/tabs.tsx", type: "ModernoTabsRootProps" },
   { name: "Accordion", file: "src/accordion.tsx", type: "ModernoAccordionRootProps" },
   { name: "Progress", file: "src/progress.tsx", type: "ModernoProgressRootProps" },
+  { name: "Slider", file: "src/slider.tsx", type: "ModernoSliderRootProps" },
   { name: "LineChart", file: "src/charts.tsx", type: "LineChartProps" },
   { name: "AreaChart", file: "src/charts.tsx", type: "AreaChartProps" },
   { name: "BarChart", file: "src/charts.tsx", type: "BarChartProps" },

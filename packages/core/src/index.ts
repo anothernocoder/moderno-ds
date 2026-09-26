@@ -37,6 +37,7 @@ export {
   tabsRecipe,
   accordionRecipe,
   progressRecipe,
+  sliderRecipe,
 } from "./recipes.js";
 export type {
   ButtonVariant,
@@ -75,4 +76,5 @@ export type {
   AccordionVariant,
   AccordionSize,
   ProgressSize,
+  SliderSize,
 } from "./recipes.js";

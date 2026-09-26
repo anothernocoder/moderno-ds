@@ -151,6 +151,25 @@ export type {
   ProgressValueChangeDetails,
 } from "./progress.js";
 
+export { Slider } from "./slider.js";
+export type {
+  SliderSize,
+  ModernoSliderRootProps,
+  SliderRootProps,
+  SliderLabelProps,
+  SliderValueTextProps,
+  SliderControlProps,
+  SliderTrackProps,
+  SliderRangeProps,
+  SliderThumbProps,
+  SliderHiddenInputProps,
+  SliderMarkerGroupProps,
+  SliderMarkerProps,
+  SliderDraggingIndicatorProps,
+  SliderValueChangeDetails,
+  SliderFocusChangeDetails,
+} from "./slider.js";
+
 export { Avatar } from "./avatar.js";
 export type {
   AvatarSize,

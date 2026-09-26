@@ -29,6 +29,7 @@ import { ToggleGroup } from "../src/toggle-group.js";
 import { Tabs } from "../src/tabs.js";
 import { Accordion } from "../src/accordion.js";
 import { Progress } from "../src/progress.js";
+import { Slider } from "../src/slider.js";
 import { Dialog, Portal } from "../src/dialog.js";
 import { Select, createListCollection } from "../src/select.js";
 import { PinInput } from "../src/pin-input.js";
@@ -375,6 +376,30 @@ export const App = defineComponent({
           ]),
           h(Progress.Root, { size: "lg", modelValue: null }, () => [
             h(Progress.Track, {}, () => h(Progress.Range)),
+          ]),
+        ]),
+
+        h("section", { "aria-label": "slider" }, [
+          h(Slider.Root, { defaultValue: [40] }, () => [
+            h(Slider.Label, {}, () => "Volume"),
+            h(Slider.ValueText),
+            h(Slider.Control, {}, () => [
+              h(Slider.Track, {}, () => h(Slider.Range)),
+              h(Slider.Thumb, { index: 0 }, () => h(Slider.HiddenInput)),
+            ]),
+            h(Slider.MarkerGroup, {}, () => [
+              h(Slider.Marker, { value: 0 }, () => "0"),
+              h(Slider.Marker, { value: 50 }, () => "50"),
+              h(Slider.Marker, { value: 100 }, () => "100"),
+            ]),
+          ]),
+          h(Slider.Root, { size: "sm", defaultValue: [20, 80] }, () => [
+            h(Slider.Label, {}, () => "Price"),
+            h(Slider.Control, {}, () => [
+              h(Slider.Track, {}, () => h(Slider.Range)),
+              h(Slider.Thumb, { index: 0 }, () => h(Slider.HiddenInput)),
+              h(Slider.Thumb, { index: 1 }, () => h(Slider.HiddenInput)),
+            ]),
           ]),
         ]),
 

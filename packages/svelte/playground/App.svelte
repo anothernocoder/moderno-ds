@@ -21,6 +21,7 @@
   import { Tabs } from "../src/index.js";
   import { Accordion } from "../src/index.js";
   import { Progress } from "../src/index.js";
+  import { Slider } from "../src/index.js";
   import { Dialog, Portal } from "../src/index.js";
   import { Select, createListCollection } from "../src/index.js";
   import { PinInput } from "../src/index.js";
@@ -352,6 +353,40 @@
         <Progress.Range />
       </Progress.Track>
     </Progress.Root>
+  </section>
+
+  <section aria-label="slider">
+    <Slider.Root defaultValue={[40]}>
+      <Slider.Label>Volume</Slider.Label>
+      <Slider.ValueText />
+      <Slider.Control>
+        <Slider.Track>
+          <Slider.Range />
+        </Slider.Track>
+        <Slider.Thumb index={0}>
+          <Slider.HiddenInput />
+        </Slider.Thumb>
+      </Slider.Control>
+      <Slider.MarkerGroup>
+        <Slider.Marker value={0}>0</Slider.Marker>
+        <Slider.Marker value={50}>50</Slider.Marker>
+        <Slider.Marker value={100}>100</Slider.Marker>
+      </Slider.MarkerGroup>
+    </Slider.Root>
+    <Slider.Root size="sm" defaultValue={[20, 80]}>
+      <Slider.Label>Price</Slider.Label>
+      <Slider.Control>
+        <Slider.Track>
+          <Slider.Range />
+        </Slider.Track>
+        <Slider.Thumb index={0}>
+          <Slider.HiddenInput />
+        </Slider.Thumb>
+        <Slider.Thumb index={1}>
+          <Slider.HiddenInput />
+        </Slider.Thumb>
+      </Slider.Control>
+    </Slider.Root>
   </section>
 
   <Dialog.Root defaultOpen={open}>
