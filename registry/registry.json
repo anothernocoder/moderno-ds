@@ -858,6 +858,78 @@
       ]
     },
     {
+      "name": "footer-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Footer (React)",
+      "description": "The closing section of a site, composing the @moderno-ui/react Alert, Button, Divider and Skeleton primitives: the brand in the serif face with a tagline and one action, columns of navigation links, then a rule over the copyright, the legal links and the social links, with its own loading, empty and error renders for the columns; responds to its container (@container) — three link columns at @sm, the bottom row on one line at @md, and the brand beside the columns with more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/footer/react/footer.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/footer.tsx"
+        }
+      ]
+    },
+    {
+      "name": "footer-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Footer (Vue)",
+      "description": "The closing section of a site, composing the @moderno-ui/vue Alert, Button, Divider and Skeleton primitives: the brand in the serif face with a tagline and one action, columns of navigation links, then a rule over the copyright, the legal links and the social links, with its own loading, empty and error renders for the columns; responds to its container (@container) — three link columns at @sm, the bottom row on one line at @md, and the brand beside the columns with more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/footer/vue/Footer.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/Footer.vue"
+        }
+      ]
+    },
+    {
+      "name": "footer-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Footer (Svelte)",
+      "description": "The closing section of a site, composing the @moderno-ui/svelte Alert, Button, Divider and Skeleton primitives: the brand in the serif face with a tagline and one action, columns of navigation links, then a rule over the copyright, the legal links and the social links, with its own loading, empty and error renders for the columns; responds to its container (@container) — three link columns at @sm, the bottom row on one line at @md, and the brand beside the columns with more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/footer/svelte/Footer.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/Footer.svelte"
+        }
+      ]
+    },
+    {
+      "name": "footer-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Footer (Solid)",
+      "description": "The closing section of a site, composing the @moderno-ui/solid Alert, Button, Divider and Skeleton primitives: the brand in the serif face with a tagline and one action, columns of navigation links, then a rule over the copyright, the legal links and the social links, with its own loading, empty and error renders for the columns; responds to its container (@container) — three link columns at @sm, the bottom row on one line at @md, and the brand beside the columns with more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/footer/solid/footer.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/footer.tsx"
+        }
+      ]
+    },
+    {
       "name": "form-layout-react",
       "type": "registry:block",
       "version": "0.1.0",

@@ -1,0 +1,181 @@
+---
+title: Footer
+description: La última sección de un sitio — la marca, columnas de enlaces y, bajo una línea, los enlaces legales y sociales.
+group: Bloques
+order: 119
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import FooterBlockDemo from "../../../islands/FooterBlockDemo.svelte";
+import footerReact from "../../../../../../registry/blocks/footer/react/footer.tsx?raw";
+import footerVue from "../../../../../../registry/blocks/footer/vue/Footer.vue?raw";
+import footerSolid from "../../../../../../registry/blocks/footer/solid/footer.tsx?raw";
+import footerSvelte from "../../../../../../registry/blocks/footer/svelte/Footer.svelte?raw";
+
+export const examples = {
+  react: footerReact,
+  vue: footerVue,
+  solid: footerSolid,
+  svelte: footerSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <FooterBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="footer" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { Footer } from "@/components/blocks/footer";
+```
+
+```tsx
+<Footer brand="Acme" columns={columns} social={social} onAction={openContact} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import Footer from "@/components/blocks/Footer.vue";
+</script>
+```
+
+```vue
+<Footer brand="Acme" :columns="columns" :social="social" @action="openContact" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import Footer from "@/components/blocks/Footer.svelte";
+</script>
+```
+
+```svelte
+<Footer brand="Acme" {columns} {social} onaction={openContact} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { Footer } from "@/components/blocks/footer";
+```
+
+```tsx
+<Footer brand="Acme" columns={columns} social={social} onAction={openContact} />
+```
+
+</ForFramework>
+
+## Referencia de la API
+
+### Props
+
+| Prop        | Tipo                 | Por defecto              | Descripción                                                                            |
+| ----------- | -------------------- | ------------------------ | -------------------------------------------------------------------------------------- |
+| `brand`     | `string`             | `"Northwind"`            | El nombre de arriba. Va en la fuente con serifa.                                       |
+| `tagline`   | `string`             | una frase                | Una frase bajo la marca; `""` la oculta.                                               |
+| `action`    | `string`             | `"Contact us"`           | La etiqueta del botón con contorno bajo la frase; `""` lo oculta.                      |
+| `columns`   | `FooterColumn[]`     | tres columnas de ejemplo | Las columnas de enlaces, en orden. `[]` las quita.                                     |
+| `legal`     | `FooterLink[]`       | Privacy, Terms y Cookies | Los enlaces junto al copyright. `[]` los oculta.                                       |
+| `social`    | `FooterSocialLink[]` | cuatro redes de ejemplo  | Los enlaces con icono al final de la fila inferior. `[]` los oculta.                   |
+| `copyright` | `string`             | un aviso de ejemplo      | La línea al inicio de la fila inferior.                                                |
+| `error`     | `string`             | —                        | Falló la carga de los enlaces; un Alert de error con reintento sustituye las columnas. |
+| `loading`   | `boolean`            | `false`                  | Columnas de esqueleto en una región ocupada sustituyen a las columnas.                 |
+| `disabled`  | `boolean`            | `false`                  | Todos los botones se deshabilitan. Los enlaces siguen activos.                         |
+| `onAction`  | `() => void`         | —                        | Se pulsó el botón bajo la frase. Svelte: `onaction`. Vue: `@action`.                   |
+| `onRetry`   | `() => void`         | —                        | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.                            |
+
+### Columna
+
+| Campo     | Tipo           | Descripción                                             |
+| --------- | -------------- | ------------------------------------------------------- |
+| `id`      | `string`       | Una clave estable para la columna.                      |
+| `heading` | `string`       | Una o dos palabras. Se muestra como `h2`.               |
+| `links`   | `FooterLink[]` | Los enlaces de la columna, en orden: `{ label, href }`. |
+
+### Enlace social
+
+| Campo     | Tipo                                         | Descripción                                            |
+| --------- | -------------------------------------------- | ------------------------------------------------------ |
+| `network` | `"github" \| "x" \| "linkedin" \| "youtube"` | La marca que se dibuja en el enlace.                   |
+| `label`   | `string`                                     | El nombre accesible del enlace, como "Acme en GitHub". |
+| `href`    | `string`                                     | Adónde lleva el enlace.                                |
+
+### Estados
+
+| Estado        | Prop           | Qué se muestra                                                              |
+| ------------- | -------------- | --------------------------------------------------------------------------- |
+| Por defecto   | —              | Marca, frase, acción, todas las columnas y la fila inferior.                |
+| Vacío         | `columns={[]}` | Marca, frase, acción y la fila inferior, sin columnas.                      |
+| Cargando      | `loading`      | Marca, frase, acción, tres columnas de marcador y la fila inferior.         |
+| Error         | `error`        | Marca, frase, acción, un Alert de error con "Try again" y la fila inferior. |
+| Deshabilitado | `disabled`     | El mismo contenido con todos los botones deshabilitados.                    |
+
+### Tamaño
+
+| Paso del contenedor      | Qué cambia                                                                   |
+| ------------------------ | ---------------------------------------------------------------------------- |
+| bajo `@sm`               | Dos columnas de enlaces; el copyright, los legales y los sociales se apilan. |
+| `@sm` (`--container-sm`) | Tres columnas de enlaces; el copyright y los legales comparten línea.        |
+| `@md` (`--container-md`) | La fila inferior va en una línea, con los sociales al final.                 |
+| `@lg` (`--container-lg`) | La marca se pone junto a las columnas, con más espacio arriba y abajo.       |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+El mismo bloque a 18rem, 30rem, 40rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <FooterBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Vacío
+
+Pasa un array `columns` vacío para un pie corto.
+
+<Preview examples={examples} layout="fill">
+  <FooterBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <FooterBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+Pulsa "Try again" para quitar el mensaje y recuperar las columnas.
+
+<Preview examples={examples} layout="fill">
+  <FooterBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+<Preview examples={examples} layout="fill">
+  <FooterBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
+
+## Notas
+
+- Deja cada columna en cuatro o cinco enlaces. Pon el resto en las páginas a las que llevan.
+- Da a cada enlace social un `label` que nombre la empresa y la red: la marca sola no tiene texto.
