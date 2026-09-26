@@ -2,6 +2,7 @@
 .gitattributes linguist-generated=true
 packages/core/src/recipes.ts linguist-generated=true
 packages/core/src/styles/components.css linguist-generated=true
+packages/react/playground/app.tsx linguist-generated=true
 packages/react/src/index.ts linguist-generated=true
 packages/solid/src/index.tsx linguist-generated=true
 packages/svelte/src/index.ts linguist-generated=true
