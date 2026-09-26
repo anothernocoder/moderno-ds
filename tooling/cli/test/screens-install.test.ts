@@ -21,6 +21,9 @@ import { createRegistry } from "../src/registry.ts";
  */
 const registryDir = fileURLToPath(new URL("../../../registry", import.meta.url));
 
+/** A link handing its destination back: `onNavigate?.(…)`, or Vue's `emit('navigate', …)`. */
+const NAVIGATE_CALL = /on[Nn]avigate\?\.\([^)]*\)|emit\("navigate"[^)]*\)|emit\('navigate'[^)]*\)/g;
+
 let project: string;
 beforeEach(async () => {
   project = await mkdtemp(join(tmpdir(), "moderno-proj-"));
@@ -30,7 +33,7 @@ afterEach(async () => {
 });
 
 describe("moderno add sign-up-<framework>", () => {
-  /** React and Svelte are the two frameworks screens are authored in (spec #69). */
+  /** Screens are authored in all four frameworks, one registry item each. */
   const variants = [
     {
       item: "sign-up-react",
@@ -39,10 +42,22 @@ describe("moderno add sign-up-<framework>", () => {
       import: "@/components/blocks/login-form",
     },
     {
+      item: "sign-up-vue",
+      target: "src/components/screens/SignUp.vue",
+      block: { item: "login-form-vue", target: "src/components/blocks/LoginForm.vue" },
+      import: "@/components/blocks/LoginForm.vue",
+    },
+    {
       item: "sign-up-svelte",
       target: "src/components/screens/SignUp.svelte",
       block: { item: "login-form-svelte", target: "src/components/blocks/LoginForm.svelte" },
       import: "@/components/blocks/LoginForm.svelte",
+    },
+    {
+      item: "sign-up-solid",
+      target: "src/components/screens/sign-up.tsx",
+      block: { item: "login-form-solid", target: "src/components/blocks/login-form.tsx" },
+      import: "@/components/blocks/login-form",
     },
   ];
 
@@ -74,8 +89,9 @@ describe("moderno add sign-up-<framework>", () => {
       // Every link the screen draws itself hands the click event back with the
       // destination, or the `preventDefault()` the docs promise a router is
       // unwritable: a consumer would get the callback *and* a full document
-      // navigation on every masthead and footer link.
-      const navigateCalls = written.match(/on[Nn]avigate\?\.\([^)]*\)/g) ?? [];
+      // navigation on every masthead and footer link. Vue emits `navigate`;
+      // the other three call `onNavigate`.
+      const navigateCalls = written.match(NAVIGATE_CALL) ?? [];
       expect(navigateCalls).toHaveLength(4);
       for (const call of navigateCalls) expect(call).toContain("event");
 
@@ -116,7 +132,7 @@ describe("moderno add sign-up-<framework>", () => {
 });
 
 describe("moderno add sign-in-<framework>", () => {
-  /** React and Svelte are the two frameworks screens are authored in (spec #69). */
+  /** Screens are authored in all four frameworks, one registry item each. */
   const variants = [
     {
       item: "sign-in-react",
@@ -128,6 +144,15 @@ describe("moderno add sign-in-<framework>", () => {
       imports: ["@/components/blocks/login-form", "@/components/blocks/alert-list"],
     },
     {
+      item: "sign-in-vue",
+      target: "src/components/screens/SignIn.vue",
+      blocks: [
+        { item: "login-form-vue", target: "src/components/blocks/LoginForm.vue" },
+        { item: "alert-list-vue", target: "src/components/blocks/AlertList.vue" },
+      ],
+      imports: ["@/components/blocks/LoginForm.vue", "@/components/blocks/AlertList.vue"],
+    },
+    {
       item: "sign-in-svelte",
       target: "src/components/screens/SignIn.svelte",
       blocks: [
@@ -135,6 +160,15 @@ describe("moderno add sign-in-<framework>", () => {
         { item: "alert-list-svelte", target: "src/components/blocks/AlertList.svelte" },
       ],
       imports: ["@/components/blocks/LoginForm.svelte", "@/components/blocks/AlertList.svelte"],
+    },
+    {
+      item: "sign-in-solid",
+      target: "src/components/screens/sign-in.tsx",
+      blocks: [
+        { item: "login-form-solid", target: "src/components/blocks/login-form.tsx" },
+        { item: "alert-list-solid", target: "src/components/blocks/alert-list.tsx" },
+      ],
+      imports: ["@/components/blocks/login-form", "@/components/blocks/alert-list"],
     },
   ];
 
@@ -162,8 +196,9 @@ describe("moderno add sign-in-<framework>", () => {
       // Every link the screen draws itself hands the click event back with the
       // destination, or the `preventDefault()` the docs promise a router is
       // unwritable: a consumer would get the callback *and* a full document
-      // navigation on every masthead and footer link.
-      const navigateCalls = written.match(/on[Nn]avigate\?\.\([^)]*\)/g) ?? [];
+      // navigation on every masthead and footer link. Vue emits `navigate`;
+      // the other three call `onNavigate`.
+      const navigateCalls = written.match(NAVIGATE_CALL) ?? [];
       expect(navigateCalls).toHaveLength(4);
       for (const call of navigateCalls) expect(call).toContain("event");
 
@@ -198,7 +233,7 @@ describe("moderno add sign-in-<framework>", () => {
 });
 
 describe("moderno add forgot-password-<framework>", () => {
-  /** React and Svelte are the two frameworks screens are authored in (spec #69). */
+  /** Screens are authored in all four frameworks, one registry item each. */
   const variants = [
     {
       item: "forgot-password-react",
@@ -211,6 +246,16 @@ describe("moderno add forgot-password-<framework>", () => {
       card: "src/components/blocks/login-form.tsx",
     },
     {
+      item: "forgot-password-vue",
+      target: "src/components/screens/ForgotPassword.vue",
+      blocks: [
+        { item: "login-form-vue", target: "src/components/blocks/LoginForm.vue" },
+        { item: "alert-list-vue", target: "src/components/blocks/AlertList.vue" },
+      ],
+      imports: ["@/components/blocks/LoginForm.vue", "@/components/blocks/AlertList.vue"],
+      card: "src/components/blocks/LoginForm.vue",
+    },
+    {
       item: "forgot-password-svelte",
       target: "src/components/screens/ForgotPassword.svelte",
       blocks: [
@@ -219,6 +264,16 @@ describe("moderno add forgot-password-<framework>", () => {
       ],
       imports: ["@/components/blocks/LoginForm.svelte", "@/components/blocks/AlertList.svelte"],
       card: "src/components/blocks/LoginForm.svelte",
+    },
+    {
+      item: "forgot-password-solid",
+      target: "src/components/screens/forgot-password.tsx",
+      blocks: [
+        { item: "login-form-solid", target: "src/components/blocks/login-form.tsx" },
+        { item: "alert-list-solid", target: "src/components/blocks/alert-list.tsx" },
+      ],
+      imports: ["@/components/blocks/login-form", "@/components/blocks/alert-list"],
+      card: "src/components/blocks/login-form.tsx",
     },
   ];
 
@@ -246,8 +301,9 @@ describe("moderno add forgot-password-<framework>", () => {
       // Every link the screen draws itself hands the click event back with the
       // destination, or the `preventDefault()` the docs promise a router is
       // unwritable: a consumer would get the callback *and* a full document
-      // navigation on every masthead and footer link.
-      const navigateCalls = written.match(/on[Nn]avigate\?\.\([^)]*\)/g) ?? [];
+      // navigation on every masthead and footer link. Vue emits `navigate`;
+      // the other three call `onNavigate`.
+      const navigateCalls = written.match(NAVIGATE_CALL) ?? [];
       expect(navigateCalls).toHaveLength(4);
       for (const call of navigateCalls) expect(call).toContain("event");
 
@@ -271,8 +327,9 @@ describe("moderno add forgot-password-<framework>", () => {
       expect(cardSource).toContain("titleLevel");
       expect(cardSource).toContain("aria-level");
       // The confirmation rewrites the header in place; the live region is the
-      // only thing that tells a screen reader it happened.
-      expect(cardSource).toContain('"status"');
+      // only thing that tells a screen reader it happened. (Vue binds it inside
+      // a double-quoted attribute, so its literal is single-quoted.)
+      expect(cardSource).toMatch(/["']status["']/);
 
       const recorded = await readManifest(project);
       expect(recorded.items[item]!.type).toBe("registry:screen");
@@ -301,7 +358,7 @@ describe("moderno add forgot-password-<framework>", () => {
 });
 
 describe("moderno add reset-password-<framework>", () => {
-  /** React and Svelte are the two frameworks screens are authored in (spec #69). */
+  /** Screens are authored in all four frameworks, one registry item each. */
   const variants = [
     {
       item: "reset-password-react",
@@ -314,6 +371,16 @@ describe("moderno add reset-password-<framework>", () => {
       card: "src/components/blocks/login-form.tsx",
     },
     {
+      item: "reset-password-vue",
+      target: "src/components/screens/ResetPassword.vue",
+      blocks: [
+        { item: "login-form-vue", target: "src/components/blocks/LoginForm.vue" },
+        { item: "alert-list-vue", target: "src/components/blocks/AlertList.vue" },
+      ],
+      imports: ["@/components/blocks/LoginForm.vue", "@/components/blocks/AlertList.vue"],
+      card: "src/components/blocks/LoginForm.vue",
+    },
+    {
       item: "reset-password-svelte",
       target: "src/components/screens/ResetPassword.svelte",
       blocks: [
@@ -322,6 +389,16 @@ describe("moderno add reset-password-<framework>", () => {
       ],
       imports: ["@/components/blocks/LoginForm.svelte", "@/components/blocks/AlertList.svelte"],
       card: "src/components/blocks/LoginForm.svelte",
+    },
+    {
+      item: "reset-password-solid",
+      target: "src/components/screens/reset-password.tsx",
+      blocks: [
+        { item: "login-form-solid", target: "src/components/blocks/login-form.tsx" },
+        { item: "alert-list-solid", target: "src/components/blocks/alert-list.tsx" },
+      ],
+      imports: ["@/components/blocks/login-form", "@/components/blocks/alert-list"],
+      card: "src/components/blocks/login-form.tsx",
     },
   ];
 
@@ -349,8 +426,9 @@ describe("moderno add reset-password-<framework>", () => {
       // Every link the screen draws itself hands the click event back with the
       // destination, or the `preventDefault()` the docs promise a router is
       // unwritable: a consumer would get the callback *and* a full document
-      // navigation on every masthead and footer link.
-      const navigateCalls = written.match(/on[Nn]avigate\?\.\([^)]*\)/g) ?? [];
+      // navigation on every masthead and footer link. Vue emits `navigate`;
+      // the other three call `onNavigate`.
+      const navigateCalls = written.match(NAVIGATE_CALL) ?? [];
       expect(navigateCalls).toHaveLength(4);
       for (const call of navigateCalls) expect(call).toContain("event");
 
@@ -408,7 +486,7 @@ describe("moderno add reset-password-<framework>", () => {
 });
 
 describe("moderno add verify-<framework>", () => {
-  /** React and Svelte are the two frameworks screens are authored in (spec #69). */
+  /** Screens are authored in all four frameworks, one registry item each. */
   const variants = [
     {
       item: "verify-react",
@@ -421,6 +499,16 @@ describe("moderno add verify-<framework>", () => {
       card: "src/components/blocks/login-form.tsx",
     },
     {
+      item: "verify-vue",
+      target: "src/components/screens/Verify.vue",
+      blocks: [
+        { item: "login-form-vue", target: "src/components/blocks/LoginForm.vue" },
+        { item: "alert-list-vue", target: "src/components/blocks/AlertList.vue" },
+      ],
+      imports: ["@/components/blocks/LoginForm.vue", "@/components/blocks/AlertList.vue"],
+      card: "src/components/blocks/LoginForm.vue",
+    },
+    {
       item: "verify-svelte",
       target: "src/components/screens/Verify.svelte",
       blocks: [
@@ -429,6 +517,16 @@ describe("moderno add verify-<framework>", () => {
       ],
       imports: ["@/components/blocks/LoginForm.svelte", "@/components/blocks/AlertList.svelte"],
       card: "src/components/blocks/LoginForm.svelte",
+    },
+    {
+      item: "verify-solid",
+      target: "src/components/screens/verify.tsx",
+      blocks: [
+        { item: "login-form-solid", target: "src/components/blocks/login-form.tsx" },
+        { item: "alert-list-solid", target: "src/components/blocks/alert-list.tsx" },
+      ],
+      imports: ["@/components/blocks/login-form", "@/components/blocks/alert-list"],
+      card: "src/components/blocks/login-form.tsx",
     },
   ];
 
@@ -456,8 +554,9 @@ describe("moderno add verify-<framework>", () => {
       // Every link the screen draws itself hands the click event back with the
       // destination, or the `preventDefault()` the docs promise a router is
       // unwritable: a consumer would get the callback *and* a full document
-      // navigation on every masthead and footer link.
-      const navigateCalls = written.match(/on[Nn]avigate\?\.\([^)]*\)/g) ?? [];
+      // navigation on every masthead and footer link. Vue emits `navigate`;
+      // the other three call `onNavigate`.
+      const navigateCalls = written.match(NAVIGATE_CALL) ?? [];
       expect(navigateCalls).toHaveLength(4);
       for (const call of navigateCalls) expect(call).toContain("event");
 
