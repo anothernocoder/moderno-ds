@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent, type MouseEvent } from "react";
-import { ForgotPassword, type ForgotPasswordProps } from "@/components/screens/forgot-password";
+import { ForgotPassword } from "@/components/screens/forgot-password";
 import { ResetPassword } from "@/components/screens/reset-password";
 import { SignIn } from "@/components/screens/sign-in";
 import { SignUp } from "@/components/screens/sign-up";
@@ -16,25 +16,6 @@ export const AUTH_STEPS: readonly AuthStep[] = [
   "reset-password",
   "verify",
 ];
-
-/** One row of the notes a screen shows beside its card, as its block renders them. */
-type Notice = NonNullable<ForgotPasswordProps["notices"]>[number];
-
-/**
- * The stand-in for the email, and the only thing in this file that exists
- * because an example has no server. In your product the reader leaves for their
- * inbox here and comes back on a URL, so this row goes away and
- * `initialStep="reset-password"` takes over.
- */
-const openTheLink: Notice = {
-  id: "open-link",
-  variant: "success",
-  title: "The link is on its way",
-  description:
-    "In your product this arrives by email and re-enters the flow at reset-password with a token from the URL. There is no mail server behind this example, so open it from here.",
-  meta: "Example only",
-  actionLabel: "Open the reset link",
-};
 
 export interface AuthFlowProps {
   /** Which screen the flow opens on — in a real app, whatever the route says. */
@@ -123,9 +104,10 @@ export interface AuthFlowProps {
  * **The one edge it cannot own is the email.** `reset-password` is reached in
  * real life by opening a link in an inbox, i.e. by *entering* the flow at that
  * step with a token out of the URL — which is what `initialStep` and
- * `resetToken` are for. With no mail server behind an example, the confirmation
- * offers the link as a notice instead; deleting that notice and the branch of
- * `noticeAction` it feeds is the first edit most projects will make.
+ * `resetToken` are for. With no mail server behind an example, the flow puts an
+ * example-only banner over the confirmation with a button that opens the link;
+ * deleting that banner and `openResetLink` is the first edit most projects will
+ * make.
  *
  * **Where the flow ends.** A finished sign-in, a checked code and a saved
  * password all call `onAuthenticated` with the address and return to the first
@@ -271,9 +253,13 @@ export function AuthFlow({
     }
   }
 
-  /** A note's own action. Only the stand-in for the email has one here. */
-  function noticeAction(id: string) {
-    if (id !== openTheLink.id) return;
+  /**
+   * The stand-in for the email, and the only thing in this file that exists
+   * because an example has no server. In your product the reader leaves for their
+   * inbox here and comes back on a URL, so this handler and the banner that calls
+   * it go away and `initialStep="reset-password"` takes over.
+   */
+  function openResetLink() {
     setToken(token || "example-token");
     go("reset-password");
   }
@@ -303,14 +289,25 @@ export function AuthFlow({
         />
       ) : null}
 
+      {step === "forgot-password" && sent ? (
+        <aside className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-border bg-muted p-3 text-ui-md text-muted-foreground">
+          <p>Example only: there is no mail server behind this flow.</p>
+          <button
+            type="button"
+            className="rounded-sm border border-border bg-background px-3 py-2 text-ui-md font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            onClick={openResetLink}
+          >
+            Open the reset link
+          </button>
+        </aside>
+      ) : null}
+
       {step === "forgot-password" ? (
         <ForgotPassword
           sent={sent}
           sentTo={email}
           errors={errors}
-          notices={sent ? [openTheLink] : undefined}
           onSubmit={submit}
-          onNoticeAction={noticeAction}
           signInHref={hrefFor("sign-in")}
           homeHref={homeHref}
           supportHref={supportHref}

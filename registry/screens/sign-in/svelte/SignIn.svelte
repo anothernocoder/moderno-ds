@@ -1,16 +1,14 @@
 <!--
-  SignIn — the full-viewport sign-in screen: the credential form, and beside it
-  the notices a person needs before they try to sign in (an incident, a
-  migration window, a password policy that changed). Copy it into your project
-  with `moderno add sign-in-svelte`; the blocks it composes arrive with it, and
-  every file is yours from that moment.
+  SignIn — the full-viewport sign-in screen: the credential form, centred
+  between a masthead and a footer. Copy it into your project with
+  `moderno add sign-in-svelte`; the block it composes arrives with it, and every
+  file is yours from that moment.
 
   Presentational. The screen owns the viewport and nothing else: no credentials,
-  no request, no router. It renders the `error` / `loading` / `notices` it is
-  handed and reports what the reader did — `onsubmit` for the credentials,
-  `onnavigate` for every link it draws itself. Which route those destinations
-  map to, and what happens after a successful sign-in, stay in the page that
-  mounts this.
+  no request, no router. It renders the `error` / `loading` it is handed and
+  reports what the reader did — `onsubmit` for the credentials, `onnavigate` for
+  every link it draws itself. Which route those destinations map to, and what
+  happens after a successful sign-in, stay in the page that mounts this.
 
   Both links inside the form (recovery and sign-up) are `href`s rather than
   callbacks — a credential-recovery link has to work when hydration fails, which
@@ -20,10 +18,6 @@
   the destination, so a client router can `preventDefault()` — and read
   `metaKey` before it does, to leave a ctrl/cmd-click to the browser — while the
   markup keeps its meaning without JavaScript.
-
-  The notices sit in an <aside>, deliberately unlabelled: the block's own
-  `heading` is the h2 inside it, and an `aria-label` repeating that string would
-  make a screen reader announce the same sentence twice.
 
   The root is a <div>, not a <main>: the screen is the page's content, but
   whether it is the `main` landmark depends on the route that mounts it — most
@@ -37,37 +31,19 @@
   `@container`: at `@sm` (--container-sm, 24rem) the masthead stops stacking and
   the wordmark shares a row with the support link; at `@md` (--container-md,
   36rem) the footer stops stacking and the copyright shares a row with the legal
-  links; at `@lg` (--container-lg, 48rem) the notices leave their place under
-  the card and stand beside it, so the form is at eye level and the notices are
-  read on the way to it rather than after it.
+  links.
 
   States. `loading` and `disabled` make the form inert; `error` raises the
-  form-level alert (both credential fields invalid, neither named). The notices
-  carry their own three: `noticesLoading` stands a busy region in for the list,
-  `noticesError` says the notices could not be loaded rather than pretending
-  there are none, and the empty case is the screen's own — with `notices={[]}`
-  the aside is not rendered at all and the card sits centred and alone, because
-  "nothing is wrong today" is best said by showing nothing.
+  form-level alert (both credential fields invalid, neither named).
 
   Class strings are written out in full rather than shared through a variable:
   the docs compile the previews' Tailwind from `class` attributes, so a class
   assembled in JS would render here and vanish in the preview.
 -->
 <script lang="ts">
-  import AlertList from "@/components/blocks/AlertList.svelte";
   import LoginForm from "@/components/blocks/LoginForm.svelte";
 
   type SignInDestination = "home" | "support" | "privacy" | "terms";
-
-  /** One notice, in the shape the AlertList block reads. */
-  interface Notice {
-    id: string;
-    variant: "info" | "success" | "warning" | "error";
-    title: string;
-    description?: string;
-    meta?: string;
-    actionLabel?: string;
-  }
 
   interface Props {
     /** Sign-in failed. Raises the form-level alert and invalidates both fields. */
@@ -76,12 +52,6 @@
     loading?: boolean;
     /** Sign-in is unavailable (an SSO-only workspace, a locked account). */
     disabled?: boolean;
-    /** Service notices to show beside the form. `[]` renders the form alone. */
-    notices?: Notice[];
-    /** The notices could not be loaded; that message replaces the list. */
-    noticesError?: string;
-    /** The notices are still loading: a busy region stands in for the list. */
-    noticesLoading?: boolean;
     /** Native submit; call `event.preventDefault()` and read the form yourself. */
     onsubmit?: (event: SubmitEvent) => void;
     /**
@@ -90,14 +60,6 @@
      * and read `metaKey` / `ctrlKey` first to leave a new-tab click alone.
      */
     onnavigate?: (destination: SignInDestination, event: MouseEvent) => void;
-    /** A notice's own action (`actionLabel`), reported with that notice's id. */
-    onnoticeaction?: (id: string) => void;
-    /** A notice was dismissed; you drop it from your own state. */
-    ondismissnotice?: (id: string) => void;
-    /** Every notice was dismissed at once. */
-    ondismissnotices?: () => void;
-    /** Retry after `noticesError`. */
-    onretrynotices?: () => void;
     /** Where "Forgot your password?" points. */
     forgotHref?: string;
     /** Where "Create an account" points. */
@@ -112,42 +74,12 @@
     termsHref?: string;
   }
 
-  /**
-   * The notices this screen shows by default: what a person hitting a sign-in
-   * page actually needs to know before typing. Delete it and pass your own
-   * `notices` — or rewrite it in place, the file is yours.
-   */
-  const serviceNotices: Notice[] = [
-    {
-      id: "incident",
-      variant: "warning",
-      title: "Sign-in is slower than usual",
-      description: "Our identity provider is degraded. Signing in can take up to a minute.",
-      meta: "Updated 10 min ago",
-      actionLabel: "Status page",
-    },
-    {
-      id: "maintenance",
-      variant: "info",
-      title: "Maintenance on Sunday 02:00–04:00 UTC",
-      description: "The workspace is read-only for the window. No action is needed from you.",
-      meta: "Yesterday",
-    },
-  ];
-
   let {
     error,
     loading = false,
     disabled = false,
-    notices = serviceNotices,
-    noticesError,
-    noticesLoading = false,
     onsubmit,
     onnavigate,
-    onnoticeaction,
-    ondismissnotice,
-    ondismissnotices,
-    onretrynotices,
     forgotHref = "#",
     signUpHref = "#",
     homeHref = "#",
@@ -155,8 +87,6 @@
     privacyHref = "#",
     termsHref = "#",
   }: Props = $props();
-
-  const showNotices = $derived(Boolean(noticesError) || noticesLoading || notices.length > 0);
 </script>
 
 <div class="@container moderno-screen-sign-in min-h-dvh bg-background text-foreground">
@@ -181,34 +111,16 @@
       </p>
     </header>
 
-    <div class="grid content-center gap-8 @lg:grid-cols-2 @lg:items-start @lg:gap-10">
-      <div class="mx-auto w-full max-w-sm">
-        <LoginForm
-          titleLevel={1}
-          {error}
-          {loading}
-          {disabled}
-          {onsubmit}
-          {forgotHref}
-          {signUpHref}
-        />
-      </div>
-
-      {#if showNotices}
-        <aside class="mx-auto w-full max-w-md">
-          <AlertList
-            heading="Before you sign in"
-            description="Anything affecting access right now."
-            alerts={notices}
-            error={noticesError}
-            loading={noticesLoading}
-            onaction={onnoticeaction}
-            ondismiss={ondismissnotice}
-            ondismissall={ondismissnotices}
-            onretry={onretrynotices}
-          />
-        </aside>
-      {/if}
+    <div class="mx-auto grid w-full max-w-sm content-center">
+      <LoginForm
+        titleLevel={1}
+        {error}
+        {loading}
+        {disabled}
+        {onsubmit}
+        {forgotHref}
+        {signUpHref}
+      />
     </div>
 
     <footer

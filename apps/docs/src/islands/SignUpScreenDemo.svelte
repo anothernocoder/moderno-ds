@@ -11,34 +11,30 @@
   (astro.config.mjs resolves the screen's `@/components/blocks/…` import back to
   it), so nothing here can drift from what ships.
 
-  A screen owns the viewport, so its root is `min-h-dvh`: each frame below caps
-  its height and scrolls, the way a phone or a laptop crops a page. Every width
+  A screen owns the viewport, so its root is `min-h-dvh`: each device below
+  (DeviceFrame) makes its own screen the viewport. Every width
   decision is read off the screen's own container (ADR-0005), which is why the
-  three width tabs disagree with each other on one screen — and why the widest
-  one scrolls sideways inside the docs column rather than waiting for a wide
-  monitor.
+  three width tabs disagree with each other on one screen.
 -->
 <script lang="ts">
   import SignUp from "../../../../registry/screens/sign-up/svelte/SignUp.svelte";
   import DemoTabs from "./DemoTabs.svelte";
+  import DeviceFrame from "./DeviceFrame.svelte";
 
   /** Mount one state on its own (an Examples preview) instead of the width tabs. */
   type State = "error" | "field-errors" | "loading" | "empty";
 
   let { locale = "en", state }: { locale?: "en" | "es"; state?: State } = $props();
 
-  /** One frame width in each band of the screen's three container steps. */
-  const widths = { phone: "22rem", tablet: "42rem", desktop: "62rem" } as const;
-  type Frame = keyof typeof widths;
+  type Frame = "phone" | "tablet" | "desktop";
 
   const copy = {
     en: {
       label: "Sign-up screen widths",
-      frames: { phone: "phone", tablet: "tablet", desktop: "desktop" },
       tabs: [
-        { id: "phone", icon: "phone", label: "Phone", caption: "Under --container-sm the masthead, the footer and the highlights all stack under the card." },
-        { id: "tablet", icon: "tablet", label: "Tablet", caption: "Past --container-md and under --container-lg the masthead and the footer each sit on one row, the highlights still under the card." },
-        { id: "desktop", icon: "desktop", label: "Desktop", caption: "Past --container-lg the highlights stand beside the card; this frame is wider than the docs column, so scroll it sideways." },
+        { id: "phone", icon: "phone", label: "Phone" },
+        { id: "tablet", icon: "tablet", label: "Tablet" },
+        { id: "desktop", icon: "desktop", label: "Desktop" },
       ],
       error: "We could not create the account. Try again in a moment.",
       errors: {
@@ -48,11 +44,10 @@
     },
     es: {
       label: "Anchos de la pantalla de registro",
-      frames: { phone: "teléfono", tablet: "tableta", desktop: "escritorio" },
       tabs: [
-        { id: "phone", icon: "phone", label: "Teléfono", caption: "Por debajo de --container-sm la cabecera, el pie y las razones se apilan bajo la tarjeta." },
-        { id: "tablet", icon: "tablet", label: "Tableta", caption: "Entre --container-md y --container-lg la cabecera y el pie ocupan una fila cada uno, y las razones siguen bajo la tarjeta." },
-        { id: "desktop", icon: "desktop", label: "Escritorio", caption: "Por encima de --container-lg las razones se ponen junto a la tarjeta; este marco es más ancho que la columna de la documentación, así que desplázalo en horizontal." },
+        { id: "phone", icon: "phone", label: "Teléfono" },
+        { id: "tablet", icon: "tablet", label: "Tableta" },
+        { id: "desktop", icon: "desktop", label: "Escritorio" },
       ],
       error: "No pudimos crear la cuenta. Inténtalo de nuevo en un momento.",
       errors: {
@@ -70,27 +65,19 @@
 
 {#snippet screen(id: string)}
   {@const frame = frameOf(id)}
-  <div class="screen-scroll">
-    <div
-      class="demo-viewport screen-frame"
-      style="--viewport-width: {widths[frame]}"
-      data-label="{widths[frame]} · {copy.frames[frame]}"
-    >
-      <div class="screen-window">
-        {#if id === "error"}
-          <SignUp error={copy.error} />
-        {:else if id === "field-errors"}
-          <SignUp errors={copy.errors} />
-        {:else if id === "loading"}
-          <SignUp loading />
-        {:else if id === "empty"}
-          <SignUp highlights={[]} />
-        {:else}
-          <SignUp />
-        {/if}
-      </div>
-    </div>
-  </div>
+  <DeviceFrame device={frame}>
+    {#if id === "error"}
+      <SignUp error={copy.error} />
+    {:else if id === "field-errors"}
+      <SignUp errors={copy.errors} />
+    {:else if id === "loading"}
+      <SignUp loading />
+    {:else if id === "empty"}
+      <SignUp highlights={[]} />
+    {:else}
+      <SignUp />
+    {/if}
+  </DeviceFrame>
 {/snippet}
 
 {#if state}
@@ -105,38 +92,14 @@
 {/if}
 
 <style>
-  /* Each frame keeps the width its label names at every viewport — that is the
-     whole claim of ADR-0005 — so a frame wider than the docs column scrolls
-     inside the stage rather than being squeezed or pushing the page sideways.
-     The block padding leaves room for the label straddling the frame's top
-     edge, which the scroll box would otherwise clip. */
-  .screen-scroll {
-    overflow-x: auto;
-    padding-block: 0.75rem 0.25rem;
-  }
-  /* The global dashed viewport, at exactly its content width: no inner padding
-     and no `min(100%, …)` cap, because the screen reads its container and a
-     capped frame would quietly move it into another band. */
-  .screen-frame {
-    width: calc(var(--viewport-width) + 2px);
-    padding: 0;
-  }
-  /* The window the screen owns. The height is the demo's, not the design
-     system's — the screen itself sizes only from contract slots and its own
-     container. */
-  .screen-window {
-    block-size: 38rem;
-    overflow: auto;
-    border-radius: inherit;
-  }
   /* The one thing the docs override on the shipped file, and only here: the
      screen's root is `min-h-dvh`, because a screen is as tall as the window it
      owns. A browser window's worth of screen inside a docs page would bury the
      prose, so inside this frame "the window" is the frame. Nothing in
      `registry/screens/sign-up` changes — this rule is the frame telling the
      screen how big the window is, which is exactly what a real viewport does. */
-  .screen-window :global(.moderno-screen-sign-up),
-  .screen-window :global(.moderno-screen-sign-up > div) {
+  :global(.screen-window .moderno-screen-sign-up),
+  :global(.screen-window .moderno-screen-sign-up > div) {
     min-block-size: 100%;
   }
 </style>
