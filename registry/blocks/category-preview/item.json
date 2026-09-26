@@ -1,0 +1,37 @@
+{
+  "title": "Category Preview",
+  "description": "A storefront's categories as a grid of tiles, composing the @moderno-ui/{framework} Alert, Button, Card and Skeleton primitives: a serif heading, a sentence of introduction and a link to every category, then one Card per category with its picture (or its initial, set large, when there is none), its linked name, one line about it and how many products it holds, with its own loading, empty and error renders; responds to its container (@container) — the tiles sit in two columns and the link to every category moves beside the heading at @sm, the heading steps up at @md, and four columns with more room at @lg.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": [],
+  "files": {
+    "react": [
+      {
+        "path": "blocks/category-preview/react/category-preview.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/category-preview.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "blocks/category-preview/vue/CategoryPreview.vue",
+        "type": "registry:block",
+        "target": "src/components/blocks/CategoryPreview.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "blocks/category-preview/svelte/CategoryPreview.svelte",
+        "type": "registry:block",
+        "target": "src/components/blocks/CategoryPreview.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "blocks/category-preview/solid/category-preview.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/category-preview.tsx"
+      }
+    ]
+  }
+}
