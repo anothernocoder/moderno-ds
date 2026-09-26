@@ -1,0 +1,37 @@
+{
+  "title": "Blog post header",
+  "description": "The header of a blog post or article, composing the @moderno-ui/{framework} Alert, Avatar, Badge, Button and Skeleton primitives: a category Badge with the date and reading time, the post's title as a serif h1, a short excerpt, then a byline with the author's Avatar, name and role, with its own loading, empty and error renders; responds to its container (@container) — the excerpt steps up at @sm, the title steps up and everything centres at @md, and the header gets more room at @lg.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": [],
+  "files": {
+    "react": [
+      {
+        "path": "blocks/blog-post-header/react/blog-post-header.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/blog-post-header.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "blocks/blog-post-header/vue/BlogPostHeader.vue",
+        "type": "registry:block",
+        "target": "src/components/blocks/BlogPostHeader.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "blocks/blog-post-header/svelte/BlogPostHeader.svelte",
+        "type": "registry:block",
+        "target": "src/components/blocks/BlogPostHeader.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "blocks/blog-post-header/solid/blog-post-header.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/blog-post-header.tsx"
+      }
+    ]
+  }
+}

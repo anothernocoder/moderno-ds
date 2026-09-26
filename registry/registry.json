@@ -498,6 +498,78 @@
       ]
     },
     {
+      "name": "blog-post-header-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Blog post header (React)",
+      "description": "The header of a blog post or article, composing the @moderno-ui/react Alert, Avatar, Badge, Button and Skeleton primitives: a category Badge with the date and reading time, the post's title as a serif h1, a short excerpt, then a byline with the author's Avatar, name and role, with its own loading, empty and error renders; responds to its container (@container) — the excerpt steps up at @sm, the title steps up and everything centres at @md, and the header gets more room at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/blog-post-header/react/blog-post-header.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/blog-post-header.tsx"
+        }
+      ]
+    },
+    {
+      "name": "blog-post-header-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Blog post header (Vue)",
+      "description": "The header of a blog post or article, composing the @moderno-ui/vue Alert, Avatar, Badge, Button and Skeleton primitives: a category Badge with the date and reading time, the post's title as a serif h1, a short excerpt, then a byline with the author's Avatar, name and role, with its own loading, empty and error renders; responds to its container (@container) — the excerpt steps up at @sm, the title steps up and everything centres at @md, and the header gets more room at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/blog-post-header/vue/BlogPostHeader.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/BlogPostHeader.vue"
+        }
+      ]
+    },
+    {
+      "name": "blog-post-header-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Blog post header (Svelte)",
+      "description": "The header of a blog post or article, composing the @moderno-ui/svelte Alert, Avatar, Badge, Button and Skeleton primitives: a category Badge with the date and reading time, the post's title as a serif h1, a short excerpt, then a byline with the author's Avatar, name and role, with its own loading, empty and error renders; responds to its container (@container) — the excerpt steps up at @sm, the title steps up and everything centres at @md, and the header gets more room at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/blog-post-header/svelte/BlogPostHeader.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/BlogPostHeader.svelte"
+        }
+      ]
+    },
+    {
+      "name": "blog-post-header-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Blog post header (Solid)",
+      "description": "The header of a blog post or article, composing the @moderno-ui/solid Alert, Avatar, Badge, Button and Skeleton primitives: a category Badge with the date and reading time, the post's title as a serif h1, a short excerpt, then a byline with the author's Avatar, name and role, with its own loading, empty and error renders; responds to its container (@container) — the excerpt steps up at @sm, the title steps up and everything centres at @md, and the header gets more room at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/blog-post-header/solid/blog-post-header.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/blog-post-header.tsx"
+        }
+      ]
+    },
+    {
       "name": "careers-react",
       "type": "registry:block",
       "version": "0.1.0",
