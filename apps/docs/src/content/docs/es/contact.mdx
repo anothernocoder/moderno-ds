@@ -1,0 +1,179 @@
+---
+title: Contact
+description: Una sección de contacto — un correo, un teléfono y una dirección de oficina junto a un formulario de mensaje corto, bajo un encabezado con serifa.
+group: Bloques
+order: 120
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ContactBlockDemo from "../../../islands/ContactBlockDemo.svelte";
+import contactReact from "../../../../../../registry/blocks/contact/react/contact.tsx?raw";
+import contactVue from "../../../../../../registry/blocks/contact/vue/Contact.vue?raw";
+import contactSolid from "../../../../../../registry/blocks/contact/solid/contact.tsx?raw";
+import contactSvelte from "../../../../../../registry/blocks/contact/svelte/Contact.svelte?raw";
+
+export const examples = {
+  react: contactReact,
+  vue: contactVue,
+  solid: contactSolid,
+  svelte: contactSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <ContactBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="contact" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { Contact } from "@/components/blocks/contact";
+```
+
+```tsx
+<Contact heading="Habla con nosotros" onSubmit={send} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import Contact from "@/components/blocks/Contact.vue";
+</script>
+```
+
+```vue
+<Contact heading="Habla con nosotros" @submit="send" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import Contact from "@/components/blocks/Contact.svelte";
+</script>
+```
+
+```svelte
+<Contact heading="Habla con nosotros" onsubmit={send} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { Contact } from "@/components/blocks/contact";
+```
+
+```tsx
+<Contact heading="Habla con nosotros" onSubmit={send} />
+```
+
+</ForFramework>
+
+## Referencia de la API
+
+### Props
+
+| Prop          | Tipo                     | Por defecto                | Descripción                                                            |
+| ------------- | ------------------------ | -------------------------- | ---------------------------------------------------------------------- |
+| `heading`     | `string`                 | `"Get in touch"`           | El encabezado de la sección. Va en la fuente con serifa.               |
+| `description` | `string`                 | una frase                  | Una frase bajo el encabezado; `""` la oculta.                          |
+| `channels`    | `ContactChannel[]`       | correo, teléfono y oficina | Las formas de contactarte, en orden. `[]` las oculta.                  |
+| `error`       | `string`                 | —                          | Falló el envío; un Alert de error va arriba del formulario.            |
+| `errors`      | `Record<string, string>` | —                          | Un mensaje por campo, bajo `name`, `email` o `message`.                |
+| `loading`     | `boolean`                | `false`                    | Todos los campos deshabilitados y el botón ocupado en "Sending".       |
+| `disabled`    | `boolean`                | `false`                    | Todos los campos y el botón deshabilitados. Los enlaces siguen vivos.  |
+| `sent`        | `boolean`                | `false`                    | Un Alert de éxito sustituye al formulario.                             |
+| `onSubmit`    | `(event) => void`        | —                          | El evento de envío del formulario. Svelte: `onsubmit`. Vue: `@submit`. |
+
+### Canal
+
+| Campo   | Tipo                             | Descripción                                                  |
+| ------- | -------------------------------- | ------------------------------------------------------------ |
+| `id`    | `string`                         | Una clave estable para el canal.                             |
+| `kind`  | `"email" \| "phone" \| "office"` | Elige el icono: un sobre, un teléfono o un marcador de mapa. |
+| `label` | `string`                         | La línea pequeña sobre el valor, como `"Email"`.             |
+| `value` | `string`                         | Lo que lee el visitante, como `"hello@example.com"`.         |
+| `href`  | `string`                         | Opcional. El valor pasa a ser un enlace, como `"mailto:…"`.  |
+
+### Estados
+
+| Estado        | Prop             | Qué se muestra                                                 |
+| ------------- | ---------------- | -------------------------------------------------------------- |
+| Por defecto   | —                | Encabezado, introducción, los canales y el formulario.         |
+| Vacío         | `channels={[]}`  | Encabezado, introducción y el formulario solo.                 |
+| Cargando      | `loading`        | El mismo formulario con los campos deshabilitados y "Sending". |
+| Error         | `error`/`errors` | Un Alert de error arriba del formulario y campos no válidos.   |
+| Deshabilitado | `disabled`       | El mismo formulario con los campos y el botón deshabilitados.  |
+| Enviado       | `sent`           | Los canales y "Message sent" en lugar del formulario.          |
+
+### Tamaño
+
+| Paso del contenedor      | Qué cambia                                                           |
+| ------------------------ | -------------------------------------------------------------------- |
+| bajo `@sm`               | Todo se apila. El botón de envío ocupa todo el ancho.                |
+| `@sm` (`--container-sm`) | La nota de respuesta va junto al botón de envío.                     |
+| `@md` (`--container-md`) | El encabezado sube un tamaño. Nombre y correo van lado a lado.       |
+| `@lg` (`--container-lg`) | Los canales van junto al formulario, con más espacio arriba y abajo. |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+El mismo bloque a 18rem, 30rem, 40rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <ContactBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Vacío
+
+Pasa un array `channels` vacío para mostrar el formulario solo.
+
+<Preview examples={examples} layout="fill">
+  <ContactBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <ContactBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+Pulsa "Send message" para quitar los mensajes.
+
+<Preview examples={examples} layout="fill">
+  <ContactBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+<Preview examples={examples} layout="fill">
+  <ContactBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
+
+### Enviado
+
+<Preview examples={examples} layout="fill">
+  <ContactBlockDemo client:visible locale="es" state="sent" />
+</Preview>
+
+## Notas
+
+- Deja `error` corto y di qué falló. El formulario conserva lo que escribió el visitante, así puede enviarlo otra vez.
+- Muestra solo los canales que alguien atiende. Un correo que nadie lee es peor que ninguno.
