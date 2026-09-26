@@ -73,7 +73,7 @@ describe("the docs Tailwind build compiles what blocks are written with", () => 
   });
 
   it("emits the layout utilities the pricing block uses", () => {
-    for (const utility of ["grid", "gap-4", "p-6", "mt-6", "flex-col"]) {
+    for (const utility of ["grid", "flex", "gap-4", "py-12", "max-w-md", "w-full"]) {
       expect(css, utility).toMatch(new RegExp(`\\.${utility}\\s*\\{`));
     }
     // `@container` reaches the stylesheet CSS-escaped: `.\@container`.
@@ -81,10 +81,10 @@ describe("the docs Tailwind build compiles what blocks are written with", () => 
   });
 
   it("keeps every colour utility pointed at a contract slot, so a theme re-skins the block", () => {
-    expect(css).toMatch(/\.bg-card\s*\{[^}]*var\(--card\)/s);
+    expect(css).toMatch(/\.border-primary\s*\{[^}]*var\(--primary\)/s);
+    expect(css).toMatch(/\.text-primary\s*\{[^}]*var\(--primary\)/s);
     expect(css).toMatch(/\.text-muted-foreground\s*\{[^}]*var\(--muted-foreground\)/s);
-    expect(css).toMatch(/\.rounded-lg\s*\{[^}]*var\(--radius\)/s);
-    expect(css).toMatch(/\.shadow-sm\s*\{[^}]*var\(--shadow-sm\)/s);
+    expect(css).toMatch(/\.font-serif\s*\{[^}]*var\(--font-serif\)/s);
   });
 
   /**

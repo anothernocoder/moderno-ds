@@ -7,7 +7,7 @@ order: 3
 
 import Preview from "../../../components/Preview.astro";
 import FrameworkSelect from "../../../components/FrameworkSelect.astro";
-import PricingBlockDemo from "../../../islands/PricingBlockDemo.svelte";
+import PricingContainersDemo from "../../../islands/PricingContainersDemo.svelte";
 import pricingReact from "../../../../../../registry/blocks/pricing/react/pricing.tsx?raw";
 import pricingVue from "../../../../../../registry/blocks/pricing/vue/Pricing.vue?raw";
 import pricingSolid from "../../../../../../registry/blocks/pricing/solid/pricing.tsx?raw";
@@ -19,7 +19,7 @@ import pricingSvelte from "../../../../../../registry/blocks/pricing/svelte/Pric
   examples={{ react: pricingReact, vue: pricingVue, solid: pricingSolid, svelte: pricingSvelte }}
   layout="fill"
 >
-  <PricingBlockDemo client:visible locale="en" />
+  <PricingContainersDemo client:visible locale="en" />
 </Preview>
 
 ## Container breakpoints

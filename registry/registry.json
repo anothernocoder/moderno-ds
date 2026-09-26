@@ -1364,9 +1364,9 @@
     {
       "name": "pricing-react",
       "type": "registry:block",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "title": "Pricing (React)",
-      "description": "Three-plan pricing section composing the @moderno-ui/react Button primitive; responds to its container (@container) rather than the viewport.",
+      "description": "Plan comparison composing the @moderno-ui/react Card, Badge, Button, Alert and Skeleton primitives: a serif title and one card per plan with its price, features and a call to action, the recommended plan outlined in --primary with a badge and the primary button, with its own empty, loading and error renders; responds to its container (@container) — stacked plans list their features in two columns at @sm, the plans sit side by side and the title steps up at @md, and the block takes more room at @lg.",
       "dependencies": [
         "@moderno-ui/react"
       ],
@@ -1382,9 +1382,9 @@
     {
       "name": "pricing-vue",
       "type": "registry:block",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "title": "Pricing (Vue)",
-      "description": "Three-plan pricing section composing the @moderno-ui/vue Button primitive; responds to its container (@container) rather than the viewport.",
+      "description": "Plan comparison composing the @moderno-ui/vue Card, Badge, Button, Alert and Skeleton primitives: a serif title and one card per plan with its price, features and a call to action, the recommended plan outlined in --primary with a badge and the primary button, with its own empty, loading and error renders; responds to its container (@container) — stacked plans list their features in two columns at @sm, the plans sit side by side and the title steps up at @md, and the block takes more room at @lg.",
       "dependencies": [
         "@moderno-ui/vue"
       ],
@@ -1400,9 +1400,9 @@
     {
       "name": "pricing-svelte",
       "type": "registry:block",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "title": "Pricing (Svelte)",
-      "description": "Three-plan pricing section composing the @moderno-ui/svelte Button primitive; responds to its container (@container) rather than the viewport.",
+      "description": "Plan comparison composing the @moderno-ui/svelte Card, Badge, Button, Alert and Skeleton primitives: a serif title and one card per plan with its price, features and a call to action, the recommended plan outlined in --primary with a badge and the primary button, with its own empty, loading and error renders; responds to its container (@container) — stacked plans list their features in two columns at @sm, the plans sit side by side and the title steps up at @md, and the block takes more room at @lg.",
       "dependencies": [
         "@moderno-ui/svelte"
       ],
@@ -1418,9 +1418,9 @@
     {
       "name": "pricing-solid",
       "type": "registry:block",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "title": "Pricing (Solid)",
-      "description": "Three-plan pricing section composing the @moderno-ui/solid Button primitive; responds to its container (@container) rather than the viewport.",
+      "description": "Plan comparison composing the @moderno-ui/solid Card, Badge, Button, Alert and Skeleton primitives: a serif title and one card per plan with its price, features and a call to action, the recommended plan outlined in --primary with a badge and the primary button, with its own empty, loading and error renders; responds to its container (@container) — stacked plans list their features in two columns at @sm, the plans sit side by side and the title steps up at @md, and the block takes more room at @lg.",
       "dependencies": [
         "@moderno-ui/solid"
       ],

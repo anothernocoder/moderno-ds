@@ -19,11 +19,15 @@ import { expect, test, type Page } from "@playwright/test";
 const CONTAINER_MD = 576;
 
 /** The type steps the pricing block asks for, resolved from the contract. */
-const TEXT_BODY_LG = "18px";
-const TEXT_HEADING_SM = "20px";
-const TEXT_UI_MD = "14px";
-/** `p-6` — what a plan card's padding alone should put above its title. */
-const CARD_PADDING = 24;
+const TEXT_HEADING = "24px";
+const TEXT_HEADING_LG = "36px";
+/** The Card primitive's title step (`--text-body`). */
+const TEXT_BODY = "16px";
+/**
+ * A size-sm Card's 1px border plus its header's `--spacing-4` padding: all that
+ * should sit above a plan's name.
+ */
+const CARD_INSET = 17;
 
 interface FigureMetrics {
   containerWidth: number;
@@ -38,7 +42,7 @@ interface FigureMetrics {
 }
 
 /**
- * The demo's two tabs (islands/PricingBlockDemo.svelte), in order: the block
+ * The demo's two tabs (islands/PricingContainersDemo.svelte), in order: the block
  * framed at 24rem, then the same block at the stage's full width. Only the
  * active tab's copy is mounted.
  */
@@ -75,9 +79,9 @@ async function mountedMetrics(page: Page): Promise<FigureMetrics[]> {
     if (!panel) throw new Error("no demo tab panel on the page");
     return [...panel.querySelectorAll("section.moderno-block-pricing")].map((section) => {
       const heading = section.querySelector("h2");
-      const card = section.querySelector("li");
+      const card = section.querySelector('li > [data-scope="card"]');
       const planName = card?.querySelector("h3") ?? null;
-      const price = card?.querySelector("p") ?? null;
+      const price = card?.querySelector('[data-part="content"] > p') ?? null;
       if (!heading || !card || !planName || !price) {
         throw new Error("the pricing block did not render its own markup");
       }
@@ -117,25 +121,25 @@ test.describe("the preview panel renders a block the way a consumer would see it
         const where = `${path} figure ${index + 1} (${figure.containerWidth}px)`;
 
         // The block's own type step, and nothing inherited from the prose.
-        // `@md:text-heading-sm` fires from the *container's* width, so which of the two
+        // `@md:text-heading-lg` fires from the *container's* width, so which of the two
         // sizes is correct depends on the tab, not on the viewport — that
         // asymmetry is what the page exists to demonstrate.
-        const expected = figure.containerWidth >= CONTAINER_MD ? TEXT_HEADING_SM : TEXT_BODY_LG;
+        const expected = figure.containerWidth >= CONTAINER_MD ? TEXT_HEADING_LG : TEXT_HEADING;
         expect(figure.headingFontSize, `${where}: heading size`).toBe(expected);
-        expect(figure.planNameFontSize, `${where}: plan name size`).toBe(TEXT_UI_MD);
+        expect(figure.planNameFontSize, `${where}: plan name size`).toBe(TEXT_BODY);
 
         // Preflight is scoped to this panel precisely so the prose margins
         // (`main h2` 3.5rem, `main h3` 2.25rem, `main p` 0.75rem) stop at its edge.
         expect(figure.headingMarginTop, `${where}: heading margin-top`).toBe("0px");
         expect(figure.headingMarginBottom, `${where}: heading margin-bottom`).toBe("0px");
         expect(figure.planNameMarginTop, `${where}: plan name margin-top`).toBe("0px");
-        // `mt-1`, the block's own spacing between plan name and price.
-        expect(figure.priceMarginTop, `${where}: price margin-top`).toBe("4px");
+        // The price opens the card's content, which spaces it with a gap, not a margin.
+        expect(figure.priceMarginTop, `${where}: price margin-top`).toBe("0px");
 
-        // The visible consequence of all of the above: a `p-6` card whose title
-        // sits exactly its padding from the top edge.
+        // The visible consequence of all of the above: a plan card whose title
+        // sits exactly its border and header padding from the top edge.
         expect(figure.titleOffsetInCard, `${where}: title offset in card`).toBeCloseTo(
-          CARD_PADDING,
+          CARD_INSET,
           1,
         );
       }
@@ -149,13 +153,13 @@ test.describe("the preview panel renders a block the way a consumer would see it
     const [narrow, wide] = await figureMetrics(page);
     // The 24rem frame caps the narrow tab below `--container-md` at every viewport.
     expect(narrow!.containerWidth).toBeLessThan(CONTAINER_MD);
-    expect(narrow!.headingFontSize).toBe(TEXT_BODY_LG);
+    expect(narrow!.headingFontSize).toBe(TEXT_HEADING);
     // Above the step the wide tab must differ; below it, both stack and
-    // both read `text-body-lg` — the demo is width-honest either way.
+    // both read `text-heading` — the demo is width-honest either way.
     if (wide!.containerWidth >= CONTAINER_MD) {
-      expect(wide!.headingFontSize).toBe(TEXT_HEADING_SM);
+      expect(wide!.headingFontSize).toBe(TEXT_HEADING_LG);
     } else {
-      expect(wide!.headingFontSize).toBe(TEXT_BODY_LG);
+      expect(wide!.headingFontSize).toBe(TEXT_HEADING);
     }
   });
 
