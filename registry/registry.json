@@ -66,6 +66,78 @@
       ]
     },
     {
+      "name": "action-panel-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Action Panel (React)",
+      "description": "A settings panel composing the @moderno-ui/react Switch, Button, Card, Skeleton and Alert primitives: one row per setting, each with a title, a line of description and either a Switch that applies at once or a Button, with a destructive variant for a danger zone and its own empty, loading and error renders; responds to its container (@container) — each row's control moves beside its text at @sm, the heading steps up at @md and the heading moves beside the panel at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/action-panel/react/action-panel.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/action-panel.tsx"
+        }
+      ]
+    },
+    {
+      "name": "action-panel-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Action Panel (Vue)",
+      "description": "A settings panel composing the @moderno-ui/vue Switch, Button, Card, Skeleton and Alert primitives: one row per setting, each with a title, a line of description and either a Switch that applies at once or a Button, with a destructive variant for a danger zone and its own empty, loading and error renders; responds to its container (@container) — each row's control moves beside its text at @sm, the heading steps up at @md and the heading moves beside the panel at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/action-panel/vue/ActionPanel.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/ActionPanel.vue"
+        }
+      ]
+    },
+    {
+      "name": "action-panel-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Action Panel (Svelte)",
+      "description": "A settings panel composing the @moderno-ui/svelte Switch, Button, Card, Skeleton and Alert primitives: one row per setting, each with a title, a line of description and either a Switch that applies at once or a Button, with a destructive variant for a danger zone and its own empty, loading and error renders; responds to its container (@container) — each row's control moves beside its text at @sm, the heading steps up at @md and the heading moves beside the panel at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/action-panel/svelte/ActionPanel.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/ActionPanel.svelte"
+        }
+      ]
+    },
+    {
+      "name": "action-panel-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Action Panel (Solid)",
+      "description": "A settings panel composing the @moderno-ui/solid Switch, Button, Card, Skeleton and Alert primitives: one row per setting, each with a title, a line of description and either a Switch that applies at once or a Button, with a destructive variant for a danger zone and its own empty, loading and error renders; responds to its container (@container) — each row's control moves beside its text at @sm, the heading steps up at @md and the heading moves beside the panel at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/action-panel/solid/action-panel.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/action-panel.tsx"
+        }
+      ]
+    },
+    {
       "name": "activity-feed-react",
       "type": "registry:block",
       "version": "0.1.0",
