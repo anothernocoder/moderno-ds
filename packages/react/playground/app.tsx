@@ -39,6 +39,10 @@
  *                wired by aria-controls / aria-labelledby, the selected tab
  *                (aria-selected, data-selected), the hidden panels, the
  *                orientation and a disabled tab must match both ways.
+ *   - Accordion — Ark's accordion machine over collapsible items: trigger and
+ *                content ids from `useId` wired by aria-controls /
+ *                aria-labelledby, the open items (aria-expanded, data-state),
+ *                the hidden contents and a disabled item must match both ways.
  *   - Dialog   — a Portal + focus-trap machine that must emit a stable,
  *                hydration-safe trigger while its content stays unmounted-visible.
  *   - Select   — a collection + popover whose hidden native <select> and ids
@@ -70,6 +74,7 @@ import { RadioGroup } from "../src/radio-group.js";
 import { Toggle } from "../src/toggle.js";
 import { ToggleGroup } from "../src/toggle-group.js";
 import { Tabs } from "../src/tabs.js";
+import { Accordion } from "../src/accordion.js";
 import { Dialog, Portal } from "../src/dialog.js";
 import { Select, createListCollection } from "../src/select.js";
 import { PinInput } from "../src/pin-input.js";
@@ -373,6 +378,41 @@ export function App({ open = false }: AppProps) {
           <Tabs.Content value="billing">Billing panel</Tabs.Content>
           <Tabs.Content value="team">Team panel</Tabs.Content>
         </Tabs.Root>
+      </section>
+
+      <section aria-label="accordion">
+        <Accordion.Root defaultValue={["shipping"]}>
+          <Accordion.Item value="shipping">
+            <Accordion.ItemTrigger>
+              Shipping
+              <Accordion.ItemIndicator>⌄</Accordion.ItemIndicator>
+            </Accordion.ItemTrigger>
+            <Accordion.ItemContent>Shipping answer</Accordion.ItemContent>
+          </Accordion.Item>
+          <Accordion.Item value="returns">
+            <Accordion.ItemTrigger>
+              Returns
+              <Accordion.ItemIndicator>⌄</Accordion.ItemIndicator>
+            </Accordion.ItemTrigger>
+            <Accordion.ItemContent>Returns answer</Accordion.ItemContent>
+          </Accordion.Item>
+        </Accordion.Root>
+        <Accordion.Root variant="enclosed" size="sm" multiple defaultValue={["support"]}>
+          <Accordion.Item value="warranty" disabled>
+            <Accordion.ItemTrigger>
+              Warranty
+              <Accordion.ItemIndicator>⌄</Accordion.ItemIndicator>
+            </Accordion.ItemTrigger>
+            <Accordion.ItemContent>Warranty answer</Accordion.ItemContent>
+          </Accordion.Item>
+          <Accordion.Item value="support">
+            <Accordion.ItemTrigger>
+              Support
+              <Accordion.ItemIndicator>⌄</Accordion.ItemIndicator>
+            </Accordion.ItemTrigger>
+            <Accordion.ItemContent>Support answer</Accordion.ItemContent>
+          </Accordion.Item>
+        </Accordion.Root>
       </section>
 
       <Dialog.Root defaultOpen={open}>

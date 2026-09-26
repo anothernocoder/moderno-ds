@@ -257,6 +257,20 @@ shared stylesheet keys on.
 | disabled tab → native `disabled` + `data-disabled`, inert |  ✅   | ✅  |   ✅   |  ✅   |
 | native props forwarded to the root                        |  ✅   | ✅  |   ✅   |  ✅   |
 
+### Accordion (`accordionRecipe`: `data-variant` × `data-size`; Ark accordion machine)
+
+| State                                                        | React | Vue | Svelte | Solid |
+| ------------------------------------------------------------ | :---: | :-: | :----: | :---: |
+| variant × size → root `data-*` (+ `line`, `md`)              |  ✅   | ✅  |   ✅   |  ✅   |
+| every Ark part exposed                                       |  ✅   | ✅  |   ✅   |  ✅   |
+| native `button` trigger (`aria-expanded`) labels its region  |  ✅   | ✅  |   ✅   |  ✅   |
+| click opens one item → `data-state` + `onValueChange`        |  ✅   | ✅  |   ✅   |  ✅   |
+| `multiple` → several items open                              |  ✅   | ✅  |   ✅   |  ✅   |
+| `collapsible` → the open item closes                         |  ✅   | ✅  |   ✅   |  ✅   |
+| arrow keys / Home / End move focus, skipping a disabled item |  ✅   | ✅  |   ✅   |  ✅   |
+| disabled item → native `disabled` + `data-disabled`, inert   |  ✅   | ✅  |   ✅   |  ✅   |
+| native props forwarded to the root                           |  ✅   | ✅  |   ✅   |  ✅   |
+
 ### Dialog (Ark portal + focus trap + ids)
 
 | State                    | React | Vue | Svelte | Solid |
@@ -313,6 +327,7 @@ shared stylesheet keys on.
 | RadioGroup checked item + orientation on SSR |  ✅   | ✅  |   ✅   |  ✅   |
 | Toggle / ToggleGroup pressed state + roles   |  ✅   | ✅  |   ✅   |  ✅   |
 | Tabs selected tab, hidden panels + tab ids   |  ✅   | ✅  |   ✅   |  ✅   |
+| Accordion open items, hidden contents + ids  |  ✅   | ✅  |   ✅   |  ✅   |
 
 ¹ Vue hydration is verified on the portal-free primitives (Button, Card, Field
 and Checkbox), the deterministic `useId` hazard; Ark's portaled popovers

@@ -27,6 +27,7 @@ import { RadioGroup } from "../src/radio-group.js";
 import { Toggle } from "../src/toggle.js";
 import { ToggleGroup } from "../src/toggle-group.js";
 import { Tabs } from "../src/tabs.js";
+import { Accordion } from "../src/accordion.js";
 import { Dialog, Portal } from "../src/dialog.js";
 import { Select, createListCollection } from "../src/select.js";
 import { PinInput } from "../src/pin-input.js";
@@ -318,6 +319,45 @@ export const App = defineComponent({
               ]),
               h(Tabs.Content, { value: "billing" }, () => "Billing panel"),
               h(Tabs.Content, { value: "team" }, () => "Team panel"),
+            ],
+          ),
+        ]),
+
+        h("section", { "aria-label": "accordion" }, [
+          h(Accordion.Root, { defaultValue: ["shipping"] }, () => [
+            h(Accordion.Item, { value: "shipping" }, () => [
+              h(Accordion.ItemTrigger, {}, () => [
+                "Shipping",
+                h(Accordion.ItemIndicator, {}, () => "⌄"),
+              ]),
+              h(Accordion.ItemContent, {}, () => "Shipping answer"),
+            ]),
+            h(Accordion.Item, { value: "returns" }, () => [
+              h(Accordion.ItemTrigger, {}, () => [
+                "Returns",
+                h(Accordion.ItemIndicator, {}, () => "⌄"),
+              ]),
+              h(Accordion.ItemContent, {}, () => "Returns answer"),
+            ]),
+          ]),
+          h(
+            Accordion.Root,
+            { variant: "enclosed", size: "sm", multiple: true, defaultValue: ["support"] },
+            () => [
+              h(Accordion.Item, { value: "warranty", disabled: true }, () => [
+                h(Accordion.ItemTrigger, {}, () => [
+                  "Warranty",
+                  h(Accordion.ItemIndicator, {}, () => "⌄"),
+                ]),
+                h(Accordion.ItemContent, {}, () => "Warranty answer"),
+              ]),
+              h(Accordion.Item, { value: "support" }, () => [
+                h(Accordion.ItemTrigger, {}, () => [
+                  "Support",
+                  h(Accordion.ItemIndicator, {}, () => "⌄"),
+                ]),
+                h(Accordion.ItemContent, {}, () => "Support answer"),
+              ]),
             ],
           ),
         ]),

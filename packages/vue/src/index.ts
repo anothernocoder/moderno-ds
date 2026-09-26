@@ -125,6 +125,19 @@ export type {
   TabsValueChangeDetails,
 } from "./tabs.js";
 
+export { Accordion } from "./accordion.js";
+export type {
+  AccordionVariant,
+  AccordionSize,
+  ModernoAccordionRootProps,
+  AccordionRootProps,
+  AccordionItemProps,
+  AccordionItemTriggerProps,
+  AccordionItemIndicatorProps,
+  AccordionItemContentProps,
+  AccordionValueChangeDetails,
+} from "./accordion.js";
+
 export { Avatar } from "./avatar.js";
 export type {
   AvatarSize,

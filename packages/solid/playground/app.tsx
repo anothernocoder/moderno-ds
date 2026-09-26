@@ -25,6 +25,7 @@ import { RadioGroup } from "../src/radio-group.jsx";
 import { Toggle } from "../src/toggle.jsx";
 import { ToggleGroup } from "../src/toggle-group.jsx";
 import { Tabs } from "../src/tabs.jsx";
+import { Accordion } from "../src/accordion.jsx";
 import { Dialog, Portal } from "../src/dialog.js";
 import { Select, createListCollection } from "../src/select.jsx";
 import { PinInput } from "../src/pin-input.jsx";
@@ -323,6 +324,41 @@ export function App(props: { open?: boolean }) {
           <Tabs.Content value="billing">Billing panel</Tabs.Content>
           <Tabs.Content value="team">Team panel</Tabs.Content>
         </Tabs.Root>
+      </section>
+
+      <section aria-label="accordion">
+        <Accordion.Root defaultValue={["shipping"]}>
+          <Accordion.Item value="shipping">
+            <Accordion.ItemTrigger>
+              Shipping
+              <Accordion.ItemIndicator>⌄</Accordion.ItemIndicator>
+            </Accordion.ItemTrigger>
+            <Accordion.ItemContent>Shipping answer</Accordion.ItemContent>
+          </Accordion.Item>
+          <Accordion.Item value="returns">
+            <Accordion.ItemTrigger>
+              Returns
+              <Accordion.ItemIndicator>⌄</Accordion.ItemIndicator>
+            </Accordion.ItemTrigger>
+            <Accordion.ItemContent>Returns answer</Accordion.ItemContent>
+          </Accordion.Item>
+        </Accordion.Root>
+        <Accordion.Root variant="enclosed" size="sm" multiple defaultValue={["support"]}>
+          <Accordion.Item value="warranty" disabled>
+            <Accordion.ItemTrigger>
+              Warranty
+              <Accordion.ItemIndicator>⌄</Accordion.ItemIndicator>
+            </Accordion.ItemTrigger>
+            <Accordion.ItemContent>Warranty answer</Accordion.ItemContent>
+          </Accordion.Item>
+          <Accordion.Item value="support">
+            <Accordion.ItemTrigger>
+              Support
+              <Accordion.ItemIndicator>⌄</Accordion.ItemIndicator>
+            </Accordion.ItemTrigger>
+            <Accordion.ItemContent>Support answer</Accordion.ItemContent>
+          </Accordion.Item>
+        </Accordion.Root>
       </section>
 
       <Dialog.Root defaultOpen={props.open}>

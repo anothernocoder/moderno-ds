@@ -20,6 +20,7 @@ import { RadioGroup } from "../src/radio-group.js";
 import { Toggle } from "../src/toggle.js";
 import { ToggleGroup } from "../src/toggle-group.js";
 import { Tabs } from "../src/tabs.js";
+import { Accordion } from "../src/accordion.js";
 import { attrOf, partAttrs, partTags } from "../../core/test/ssr-parts.ts";
 import { PinInput } from "../src/pin-input.js";
 
@@ -191,10 +192,7 @@ describe("SSR (Vue)", () => {
     // unselected tabs are hidden, and a disabled tab is a disabled button.
     expect(partAttrs(html, "tabs", "root", "data-variant")).toEqual(["line", "enclosed"]);
     expect(partAttrs(html, "tabs", "root", "data-size")).toEqual(["md", "sm"]);
-    expect(partAttrs(html, "tabs", "root", "data-orientation")).toEqual([
-      "horizontal",
-      "vertical",
-    ]);
+    expect(partAttrs(html, "tabs", "root", "data-orientation")).toEqual(["horizontal", "vertical"]);
     expect(partAttrs(html, "tabs", "list", "role")).toEqual(["tablist", "tablist"]);
     expect(partTags(html, "tabs", "indicator")).toHaveLength(2);
     const tabTriggers = partTags(html, "tabs", "trigger");
@@ -234,6 +232,51 @@ describe("SSR (Vue)", () => {
     ]);
     expect(html).toContain("Account panel");
     expect(html).toContain("Team panel");
+    // Accordion: Ark's accordion machine over collapsible items. The recipe
+    // lands on each root, the open items reach the server string
+    // (aria-expanded + data-state), every content is a region labelled by its
+    // own trigger's id, the contents of closed items are hidden, and a disabled
+    // item's trigger is a disabled button.
+    expect(partAttrs(html, "accordion", "root", "data-variant")).toEqual(["line", "enclosed"]);
+    expect(partAttrs(html, "accordion", "root", "data-size")).toEqual(["md", "sm"]);
+    expect(partAttrs(html, "accordion", "item", "data-state")).toEqual([
+      "open",
+      "closed",
+      "closed",
+      "open",
+    ]);
+    expect(partTags(html, "accordion", "item-indicator")).toHaveLength(4);
+    const accordionTriggers = partTags(html, "accordion", "item-trigger");
+    expect(accordionTriggers.map((tag) => attrOf(tag, "aria-expanded"))).toEqual([
+      "true",
+      "false",
+      "false",
+      "true",
+    ]);
+    expect(accordionTriggers.map((tag) => /\sdisabled(?:=""|[\s>])/.test(tag))).toEqual([
+      false,
+      false,
+      true,
+      false,
+    ]);
+    const accordionContents = partTags(html, "accordion", "item-content");
+    expect(accordionContents.map((tag) => attrOf(tag, "role"))).toEqual([
+      "region",
+      "region",
+      "region",
+      "region",
+    ]);
+    expect(accordionContents.map((tag) => attrOf(tag, "aria-labelledby"))).toEqual(
+      accordionTriggers.map((tag) => attrOf(tag, "id")),
+    );
+    expect(accordionContents.map((tag) => /\shidden(?:=""|[\s>])/.test(tag))).toEqual([
+      false,
+      true,
+      true,
+      false,
+    ]);
+    expect(html).toContain("Shipping answer");
+    expect(html).toContain("Support answer");
     expect(html).toContain('data-scope="pin-input"');
     // Every code cell is on the server, and `count` makes the server's aria
     // labels agree with the client's — the PinInput-specific SSR hazard.
@@ -364,6 +407,26 @@ const HydrationApp = defineComponent({
           h(Tabs.Content, { value: "account" }, () => "Account panel"),
           h(Tabs.Content, { value: "password" }, () => "Password panel"),
           h(Tabs.Content, { value: "billing" }, () => "Billing panel"),
+        ]),
+        h(Accordion.Root, { defaultValue: ["returns"], variant: "enclosed" }, () => [
+          h(Accordion.Item, { value: "shipping" }, () => [
+            h(Accordion.ItemTrigger, {}, () => [
+              "Shipping",
+              h(Accordion.ItemIndicator, {}, () => "⌄"),
+            ]),
+            h(Accordion.ItemContent, {}, () => "Shipping answer"),
+          ]),
+          h(Accordion.Item, { value: "returns" }, () => [
+            h(Accordion.ItemTrigger, {}, () => [
+              "Returns",
+              h(Accordion.ItemIndicator, {}, () => "⌄"),
+            ]),
+            h(Accordion.ItemContent, {}, () => "Returns answer"),
+          ]),
+          h(Accordion.Item, { value: "warranty", disabled: true }, () => [
+            h(Accordion.ItemTrigger, {}, () => "Warranty"),
+            h(Accordion.ItemContent, {}, () => "Warranty answer"),
+          ]),
         ]),
         h(Alert.Root, { variant: "error" }, () => [
           h(Alert.Icon, {}, () => "!"),

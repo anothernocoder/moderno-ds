@@ -1150,13 +1150,19 @@ main.main--wide {
   flex: 1 1 10rem;
   max-width: 13rem;
 }
-/* A lone card or message gets its natural reading width, not the whole stage. */
+/* A lone card, message or accordion gets its natural reading width, not the
+   whole stage. */
 .preview-panel--demo > astro-island > [data-scope="card"][data-part="root"] {
   width: min(100%, 24rem);
 }
 .preview-panel--demo
   > astro-island
-  > :is([data-scope="alert"], [data-scope="callout"], [data-scope="divider"])[data-part="root"] {
+  > :is(
+    [data-scope="alert"],
+    [data-scope="callout"],
+    [data-scope="divider"],
+    [data-scope="accordion"]
+  )[data-part="root"] {
   width: min(100%, 32rem);
 }
 /* Rows and grids take the stage's width, so their items can sit side by side
@@ -1316,9 +1322,16 @@ main.main--wide {
   width: 100%;
   max-width: 22rem;
 }
-/* Full-width items (alerts, callouts, dividers) compared one under another
-   need a wider column than a form does. */
-.demo-stack:has(> :is([data-scope="alert"], [data-scope="callout"], [data-scope="divider"])) {
+/* Full-width items (alerts, callouts, dividers, accordions) compared one
+   under another need a wider column than a form does. */
+.demo-stack:has(
+  > :is(
+    [data-scope="alert"],
+    [data-scope="callout"],
+    [data-scope="divider"],
+    [data-scope="accordion"]
+  )
+) {
   max-width: 32rem;
 }
 /* Skeleton lines stand in for lines of text, so they sit as close as text

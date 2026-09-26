@@ -47,6 +47,7 @@ import {
   toggleRecipe,
   toggleGroupRecipe,
   tabsRecipe,
+  accordionRecipe,
 } from "@moderno-ui/core";
 import { extractProps, type ComponentDoc, type ComponentEntry, type PropDoc } from "./index.ts";
 import { ENTRIES } from "./manifest.ts";
@@ -364,6 +365,29 @@ export const AGENT_COMPONENTS: AgentComponentSpec[] = [
       { name: "content", description: "One tabpanel; hidden unless its tab is selected." },
     ],
     variants: tabsRecipe.variants,
+  },
+  {
+    name: "Accordion",
+    slug: "accordion",
+    scope: "accordion",
+    propsEntry: findEntry("Accordion"),
+    parts: [
+      { name: "root", description: "Carries variant and size for every item." },
+      { name: "item", description: "One section; holds its trigger and its content." },
+      {
+        name: "item-trigger",
+        description: "The native <button> header that opens and closes its item.",
+      },
+      {
+        name: "item-indicator",
+        description: "Optional icon inside the trigger; turns when the item opens.",
+      },
+      {
+        name: "item-content",
+        description: "The item's region; its height animates open and closed.",
+      },
+    ],
+    variants: accordionRecipe.variants,
   },
   {
     name: "LineChart",

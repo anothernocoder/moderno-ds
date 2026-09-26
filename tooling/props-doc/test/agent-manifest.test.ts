@@ -33,6 +33,7 @@ describe("AGENT_COMPONENTS", () => {
       "Toggle",
       "ToggleGroup",
       "Tabs",
+      "Accordion",
       "LineChart",
       "AreaChart",
       "BarChart",
@@ -283,6 +284,25 @@ describe("buildComponentsManifest", () => {
     ]);
     // Ark's own Root props (value, orientation, activationMode, …) live under node_modules.
     expect(tabs.propsComplete).toBe(false);
+  });
+
+  it("carries Accordion's recipe props, variants and Ark parts", () => {
+    const accordion = manifest.components.find((c) => c.name === "Accordion")!;
+    expect(accordion.scope).toBe("accordion");
+    expect(accordion.props.map((p) => p.name)).toEqual(["size", "variant"]);
+    expect(accordion.variants).toEqual({
+      variant: ["line", "enclosed"],
+      size: ["sm", "md", "lg"],
+    });
+    expect(accordion.parts.map((p) => p.name)).toEqual([
+      "root",
+      "item",
+      "item-trigger",
+      "item-indicator",
+      "item-content",
+    ]);
+    // Ark's own Root props (value, multiple, collapsible, …) live under node_modules.
+    expect(accordion.propsComplete).toBe(false);
   });
 
   it("reads variants straight off the shared @moderno-ui/core recipes", () => {

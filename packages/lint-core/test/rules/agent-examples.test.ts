@@ -241,3 +241,26 @@ describe("moderno/valid-props over the real Tabs manifest", () => {
     ]);
   });
 });
+
+describe("moderno/valid-props over the real Accordion manifest", () => {
+  const manifests = manifestsFor("react");
+  const check = (code: string) =>
+    validProps.check({ code, framework: "react", manifests }).map((f) => f.message);
+
+  it("accepts the recipe props and Ark's own props on the root", { timeout: 30_000 }, () => {
+    expect(
+      check(
+        '<Accordion.Root variant="enclosed" size="sm" multiple collapsible value={open} onValueChange={setOpen} />',
+      ),
+    ).toEqual([]);
+  });
+
+  it("rejects a variant or size outside the recipe", () => {
+    expect(check('<Accordion.Root variant="card" />')).toEqual([
+      expect.stringContaining('Invalid value "card"'),
+    ]);
+    expect(check('<Accordion.Root size="xl" />')).toEqual([
+      expect.stringContaining('Invalid value "xl"'),
+    ]);
+  });
+});

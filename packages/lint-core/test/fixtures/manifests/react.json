@@ -230,6 +230,29 @@
       }
     },
     {
+      "name": "Accordion",
+      "scope": "accordion",
+      "import": "import { Accordion } from \"@moderno-ui/react\"",
+      "propsHash": "sha256:fixture-accordion",
+      "props": [
+        { "name": "size", "type": "\"sm\" | \"md\" | \"lg\"", "required": false },
+        { "name": "variant", "type": "\"line\" | \"enclosed\"", "required": false }
+      ],
+      "propsComplete": false,
+      "parts": [
+        { "name": "root" },
+        { "name": "item" },
+        { "name": "item-trigger" },
+        { "name": "item-indicator" },
+        { "name": "item-content" }
+      ],
+      "variants": { "variant": ["line", "enclosed"], "size": ["sm", "md", "lg"] },
+      "guidance": {
+        "intent": "Show a stack of sections the reader opens one header at a time.",
+        "whenToUse": "Long pages of optional detail: an FAQ, settings groups, product specs."
+      }
+    },
+    {
       "name": "Callout",
       "scope": "callout",
       "import": "import { Callout } from \"@moderno-ui/react\"",
