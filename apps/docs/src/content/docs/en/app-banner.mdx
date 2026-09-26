@@ -1,0 +1,186 @@
+---
+title: App banner
+description: Banners at the top of an app — impersonation, trial and incident notices, each with one action.
+group: Blocks
+order: 117
+agent:
+  intent: A stack of banners at the top of an app — an impersonation notice, a trial countdown and an incident notice — each a tinted Alert with a title, one line of description, an action and an optional dismiss.
+  whenToUse: "Something about the whole session the user should see on every page: they are viewing as someone else, their trial is ending, or the service has an incident."
+  whenNotToUse:
+    - case: A list of past notifications the user reads and clears
+      use: AlertList — it has a heading and a dismiss-all
+    - case: A message about one form or one section of a page
+      use: Alert — compose the primitive where the message belongs
+  gotchas:
+    - "`kind` picks the tint and the icon: `impersonation` is a warning, `trial` is info and `incident` is an error. A `trial` action is a primary Button; the others are outline."
+    - "Only a banner with `dismissible: true` gets a dismiss button. The sample impersonation banner has none: the way out is its action."
+    - "Presentational: `onAction(id)` and `onDismiss(id)` report what was pressed. Removing a dismissed banner, or stopping an impersonation, stays yours."
+    - "Each banner is an Alert, so it keeps the Alert's role: `incident` and `impersonation` announce as `alert`, `trial` as `status`."
+    - "`banners` defaults to a sample list so the block renders standalone. Pass your own array — or edit the constant, the file is yours after `moderno add`."
+    - "`banners={[]}` renders nothing, so the page keeps its space. `loading` shows one skeleton banner inside a busy `status` region; `error` shows one alert with a retry."
+    - "The layout follows the block's own width, not the viewport: the actions sit under the message below `--container-sm` and beside it from there on, the title and description share one line from `--container-md`, and each dismiss button shows its label from `--container-lg`."
+  theming:
+    - "Nothing is painted here. Each banner is an Alert tinted by its status slot (--warning, --info, --destructive), the actions are Buttons and the loading banner is Skeleton on --card."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import AppBannerBlockDemo from "../../../islands/AppBannerBlockDemo.svelte";
+import appBannerReact from "../../../../../../registry/blocks/app-banner/react/app-banner.tsx?raw";
+import appBannerVue from "../../../../../../registry/blocks/app-banner/vue/AppBanner.vue?raw";
+import appBannerSolid from "../../../../../../registry/blocks/app-banner/solid/app-banner.tsx?raw";
+import appBannerSvelte from "../../../../../../registry/blocks/app-banner/svelte/AppBanner.svelte?raw";
+
+export const examples = {
+  react: appBannerReact,
+  vue: appBannerVue,
+  solid: appBannerSolid,
+  svelte: appBannerSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <AppBannerBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="app-banner" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { AppBanner } from "@/components/blocks/app-banner";
+```
+
+```tsx
+<AppBanner banners={banners} onAction={(id) => open(id)} onDismiss={(id) => hide(id)} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import AppBanner from "@/components/blocks/AppBanner.vue";
+</script>
+```
+
+```vue
+<AppBanner :banners="banners" @action="open" @dismiss="hide" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import AppBanner from "@/components/blocks/AppBanner.svelte";
+</script>
+```
+
+```svelte
+<AppBanner {banners} onaction={open} ondismiss={hide} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { AppBanner } from "@/components/blocks/app-banner";
+```
+
+```tsx
+<AppBanner banners={banners()} onAction={(id) => open(id)} onDismiss={(id) => hide(id)} />
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+| Prop        | Type                   | Default       | Description                                                           |
+| ----------- | ---------------------- | ------------- | --------------------------------------------------------------------- |
+| `banners`   | `AppBannerItem[]`      | a sample list | The banners, top to bottom. `[]` renders nothing.                     |
+| `error`     | `string`               | —             | The banners failed to load; an alert with a retry replaces them.      |
+| `loading`   | `boolean`              | `false`       | One skeleton banner in a busy region replaces them.                   |
+| `disabled`  | `boolean`              | `false`       | The banners stay readable and every button is disabled.               |
+| `onAction`  | `(id: string) => void` | —             | A banner's action was pressed. Svelte: `onaction`. Vue: `@action`.    |
+| `onDismiss` | `(id: string) => void` | —             | A banner's dismiss was pressed. Svelte: `ondismiss`. Vue: `@dismiss`. |
+| `onRetry`   | `() => void`           | —             | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.          |
+
+### AppBannerItem
+
+| Field         | Type                                       | Description                                               |
+| ------------- | ------------------------------------------ | --------------------------------------------------------- |
+| `id`          | `string`                                   | Stable identity, reported by `onAction` and `onDismiss`.  |
+| `kind`        | `"impersonation" \| "trial" \| "incident"` | The tint and the icon: warning, info or error.            |
+| `title`       | `string`                                   | The banner's message, like "12 days left in your trial".  |
+| `description` | `string`                                   | Optional. One line more, like what happens when it ends.  |
+| `actionLabel` | `string`                                   | Optional. The action button's label, like "Upgrade".      |
+| `dismissible` | `boolean`                                  | Optional. Adds a dismiss button labelled with the banner. |
+
+### States
+
+| State    | Prop           | What renders                                                   |
+| -------- | -------------- | -------------------------------------------------------------- |
+| Default  | —              | One tinted banner per item, each with its action and dismiss.  |
+| Empty    | `banners={[]}` | Nothing: the block takes no space.                             |
+| Loading  | `loading`      | One skeleton banner in a busy `status` region.                 |
+| Error    | `error`        | One error alert with a "Try again" button in place of banners. |
+| Disabled | `disabled`     | The banners with every button disabled.                        |
+
+### Sizing
+
+| Container step           | What changes                                                 |
+| ------------------------ | ------------------------------------------------------------ |
+| below `@sm`              | The action and dismiss buttons sit under the message.        |
+| `@sm` (`--container-sm`) | The buttons move beside the message.                         |
+| `@md` (`--container-md`) | The title and description share one line.                    |
+| `@lg` (`--container-lg`) | Each dismiss button shows its "Dismiss" label next to the ×. |
+
+## Examples
+
+### Container widths
+
+The same banners at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <AppBannerBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Empty
+
+<Preview examples={examples} layout="fill">
+  <AppBannerBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <AppBannerBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+<Preview examples={examples} layout="fill">
+  <AppBannerBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <AppBannerBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Presentational: it changes nothing itself. Remove a banner in `onDismiss`.
+- Put it once, above the page content, so every page shows the same banners.

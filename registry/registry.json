@@ -282,6 +282,78 @@
       ]
     },
     {
+      "name": "app-banner-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "App Banner (React)",
+      "description": "Top-of-app banners composing the @moderno-ui/react Alert, Button and Skeleton primitives: an impersonation notice with a way out, a trial countdown with an upgrade and an incident notice with a status link, each tinted by its kind, with an optional dismiss, and its own empty, loading and error renders; responds to its container (@container) — the actions move beside the message at @sm, the title and description share one line at @md and each dismiss control grows its label at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/app-banner/react/app-banner.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/app-banner.tsx"
+        }
+      ]
+    },
+    {
+      "name": "app-banner-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "App Banner (Vue)",
+      "description": "Top-of-app banners composing the @moderno-ui/vue Alert, Button and Skeleton primitives: an impersonation notice with a way out, a trial countdown with an upgrade and an incident notice with a status link, each tinted by its kind, with an optional dismiss, and its own empty, loading and error renders; responds to its container (@container) — the actions move beside the message at @sm, the title and description share one line at @md and each dismiss control grows its label at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/app-banner/vue/AppBanner.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/AppBanner.vue"
+        }
+      ]
+    },
+    {
+      "name": "app-banner-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "App Banner (Svelte)",
+      "description": "Top-of-app banners composing the @moderno-ui/svelte Alert, Button and Skeleton primitives: an impersonation notice with a way out, a trial countdown with an upgrade and an incident notice with a status link, each tinted by its kind, with an optional dismiss, and its own empty, loading and error renders; responds to its container (@container) — the actions move beside the message at @sm, the title and description share one line at @md and each dismiss control grows its label at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/app-banner/svelte/AppBanner.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/AppBanner.svelte"
+        }
+      ]
+    },
+    {
+      "name": "app-banner-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "App Banner (Solid)",
+      "description": "Top-of-app banners composing the @moderno-ui/solid Alert, Button and Skeleton primitives: an impersonation notice with a way out, a trial countdown with an upgrade and an incident notice with a status link, each tinted by its kind, with an optional dismiss, and its own empty, loading and error renders; responds to its container (@container) — the actions move beside the message at @sm, the title and description share one line at @md and each dismiss control grows its label at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/app-banner/solid/app-banner.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/app-banner.tsx"
+        }
+      ]
+    },
+    {
       "name": "container-react",
       "type": "registry:block",
       "version": "0.1.0",
