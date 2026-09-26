@@ -1,0 +1,3 @@
+value Progress
+type ProgressSize
+type ProgressValueChangeDetails

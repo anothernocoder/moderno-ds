@@ -1,0 +1,2 @@
+value BarChart
+type BarChartProps

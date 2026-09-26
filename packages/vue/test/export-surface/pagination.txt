@@ -1,0 +1,13 @@
+value Pagination
+type ModernoPaginationRootProps
+type PaginationEllipsisProps
+type PaginationFirstTriggerProps
+type PaginationItemProps
+type PaginationLastTriggerProps
+type PaginationNextTriggerProps
+type PaginationPageChangeDetails
+type PaginationPageSizeChangeDetails
+type PaginationPageUrlDetails
+type PaginationPrevTriggerProps
+type PaginationRootProps
+type PaginationSize

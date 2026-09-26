@@ -16,6 +16,8 @@
  * - `<ContractTable table="X" />` → the same slot table as Markdown (when a
  *   `resolve.contractTable` reader is given).
  * - `<Install pkg|item … />` → the npm command.
+ * - `<TierIndex />` → a link list of the pages it stands for (when a
+ *   `resolve.tierIndex` reader is given).
  * - Anything else (`<FrameworkSelect>`, islands) is dropped.
  *
  * Fenced code is passed through untouched.
@@ -37,6 +39,8 @@ export interface MarkdownResolvers {
   props?: (component: string) => PropRow[] | undefined;
   /** A token-contract slot table as Markdown, by its `table` name. */
   contractTable?: (table: string) => string | undefined;
+  /** The pages a tier's index page lists, as `tierIndexMarkdown` renders them. */
+  tierIndex?: () => string | undefined;
 }
 
 const FRAMEWORK_LABEL: Record<string, string> = {
@@ -151,6 +155,7 @@ function componentMarkdown(
     return (table && resolve.contractTable?.(table)) ?? "";
   }
   if (name === "Install") return installMarkdown(tag) ?? "";
+  if (name === "TierIndex") return resolve.tierIndex?.() ?? "";
   return "";
 }
 
@@ -220,6 +225,14 @@ export interface PageInput {
 /** A full page rendered as Markdown: H1 + description + cleaned body. */
 export function pageMarkdown({ title, description, body, resolve }: PageInput): string {
   return `# ${title}\n\n${description}\n\n${mdxToMarkdown(body, resolve)}\n`;
+}
+
+/** A tier's index list as Markdown: one `- [Title](/<locale>/<slug>/) — description` line per page. */
+export function tierIndexMarkdown(
+  locale: string,
+  pages: readonly { slug: string; title: string; description: string }[],
+): string {
+  return pages.map((p) => `- [${p.title}](/${locale}/${p.slug}/) — ${p.description}`).join("\n");
 }
 
 export interface LlmsInput {

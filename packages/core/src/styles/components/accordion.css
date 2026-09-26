@@ -1,0 +1,177 @@
+/* ────────────────────────── Accordion ────────────────────────── *
+ * Ark's accordion machine: root > item > item-trigger (a native <button>
+ * with aria-expanded, holding the item-indicator) + item-content
+ * (role="region", labelled by its trigger). Ark stamps data-state="open" or
+ * "closed" on the item and its parts, data-disabled on a disabled item and
+ * its content and indicator, and hides a closed content with `hidden`. The
+ * content is Ark's collapsible: it measures its own height into --height
+ * and keeps a closing content shown until its animation ends, so the
+ * height animates both ways. `accordionRecipe` puts variant × size on the
+ * root; the items and their parts follow it through child combinators
+ * (root > item > part), so an Accordion nested in a content keeps its own
+ * variant and size.                                                      */
+/* @runtime-vars --height — the content's measured height, set by Ark. */
+[data-scope="accordion"][data-part="root"] {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+[data-scope="accordion"][data-part="item"] {
+  border-bottom: 1px solid var(--border);
+}
+[data-scope="accordion"][data-part="item"]:last-child {
+  border-bottom: 0;
+}
+[data-scope="accordion"][data-part="item-trigger"] {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-3);
+  padding-block: var(--spacing-4);
+  padding-inline: 0;
+  border: 0;
+  border-radius: var(--radius);
+  /* Clears the UA `buttonface` grey: a trigger has no fill of its own. */
+  background-color: transparent;
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-size: var(--text-ui-md);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--leading-ui-md);
+  text-align: start;
+  cursor: pointer;
+}
+/* The trigger has no border and, in `line`, no inline padding: an inset
+   ring would sit on its first letter, so the ring stands just outside it. */
+[data-scope="accordion"][data-part="item-trigger"]:focus-visible {
+  outline-color: var(--ring);
+  outline-style: solid;
+  outline-width: 2px;
+  outline-offset: 2px;
+}
+/* Disabled — the base layer dims `[data-disabled]`, which Ark stamps on the
+   item; a native `disabled` set without Ark (or before it hydrates) gets the
+   same dimmed, inert look here, like Button. */
+[data-scope="accordion"][data-part="item-trigger"]:disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+/* Ark stamps data-disabled on a disabled item and on its content and
+   indicator, and the trigger inside it is :disabled — the base layer and
+   the rule above would dim each of them again inside an item already at
+   0.5. Dim the item once and leave its parts opaque. This rule must stay
+   after the :disabled one: same specificity, so order decides. */
+[data-scope="accordion"][data-part="item"][data-disabled] :where([data-part]) {
+  opacity: 1;
+}
+/* The indicator holds the consumer's icon (a chevron) and turns half a
+   circle when its item opens. */
+[data-scope="accordion"][data-part="item-indicator"] {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted-foreground);
+  transition:
+    rotate var(--motion-fast),
+    color var(--motion-fast);
+}
+[data-scope="accordion"][data-part="item-indicator"][data-state="open"] {
+  rotate: 180deg;
+}
+[data-scope="accordion"][data-part="item-trigger"]:hover > [data-part="item-indicator"] {
+  color: var(--foreground);
+}
+/* The content clips while its height animates; the gap under its text is
+   its own end padding, so it folds away with the height. */
+[data-scope="accordion"][data-part="item-content"] {
+  overflow: hidden;
+  padding-block-end: var(--spacing-4);
+  color: var(--foreground);
+  font-size: var(--text-ui-md);
+  line-height: var(--leading-ui-md);
+}
+[data-scope="accordion"][data-part="item-content"][data-state="open"] {
+  animation: moderno-accordion-expand var(--motion-normal) ease-out;
+}
+[data-scope="accordion"][data-part="item-content"][data-state="closed"] {
+  animation: moderno-accordion-collapse var(--motion-normal) ease-out;
+}
+/* --height is the content's own border-box height, measured by Ark. The
+   end padding animates with it; its resting value is the size's. */
+@keyframes moderno-accordion-expand {
+  from {
+    height: 0;
+    padding-block-end: 0;
+  }
+  to {
+    height: var(--height);
+  }
+}
+@keyframes moderno-accordion-collapse {
+  from {
+    height: var(--height);
+  }
+  to {
+    height: 0;
+    padding-block-end: 0;
+  }
+}
+
+/* Enclosed — the items sit in one bordered box, inset from its edge. */
+[data-scope="accordion"][data-part="root"][data-variant="enclosed"] {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+[data-scope="accordion"][data-part="root"][data-variant="enclosed"] > [data-part="item"] {
+  padding-inline: var(--spacing-4);
+}
+
+/* Density driven by the recipe's data-size on the root: the trigger's
+   padding and type, and the gap under the content's text. */
+[data-scope="accordion"][data-part="root"][data-size="sm"]
+  > [data-part="item"]
+  > [data-part="item-trigger"] {
+  padding-block: var(--spacing-3);
+  font-size: var(--text-ui-sm);
+  line-height: var(--leading-ui-sm);
+}
+[data-scope="accordion"][data-part="root"][data-size="sm"]
+  > [data-part="item"]
+  > [data-part="item-content"] {
+  padding-block-end: var(--spacing-3);
+  font-size: var(--text-ui-sm);
+  line-height: var(--leading-ui-sm);
+}
+[data-scope="accordion"][data-part="root"][data-size="lg"]
+  > [data-part="item"]
+  > [data-part="item-trigger"] {
+  padding-block: var(--spacing-5);
+  font-size: var(--text-ui-lg);
+  line-height: var(--leading-ui-lg);
+}
+[data-scope="accordion"][data-part="root"][data-size="lg"]
+  > [data-part="item"]
+  > [data-part="item-content"] {
+  padding-block-end: var(--spacing-5);
+  font-size: var(--text-ui-lg);
+  line-height: var(--leading-ui-lg);
+}
+[data-scope="accordion"][data-part="root"][data-variant="enclosed"][data-size="sm"]
+  > [data-part="item"] {
+  padding-inline: var(--spacing-3);
+}
+[data-scope="accordion"][data-part="root"][data-variant="enclosed"][data-size="lg"]
+  > [data-part="item"] {
+  padding-inline: var(--spacing-5);
+}
+/* Ark ends the closing step at once when the content has no animation. */
+@media (prefers-reduced-motion: reduce) {
+  [data-scope="accordion"][data-part="item-indicator"] {
+    transition: none;
+  }
+  [data-scope="accordion"][data-part="item-content"][data-state] {
+    animation: none;
+  }
+}

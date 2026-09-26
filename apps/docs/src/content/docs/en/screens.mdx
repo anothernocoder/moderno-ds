@@ -5,12 +5,10 @@ group: Screens
 order: 110
 ---
 
+import TierIndex from "../../../components/TierIndex.astro";
+
 Screens are presentational and respond to their container, not the window. Installing one brings its blocks and primitives, never the flow it belongs to, such as [auth](/en/auth/).
 
 ## Available screens
 
-- [Sign in](/en/sign-in/) — the login form, centred. Uses `login-form`.
-- [Sign up](/en/sign-up/) — the account-creation card beside the reasons to join. Uses `login-form`.
-- [Forgot password](/en/forgot-password/) — asks for an address, then confirms in place. Uses `login-form`.
-- [Reset password](/en/reset-password/) — a new password checked against visible rules. Uses `login-form`.
-- [Verify](/en/verify/) — a one-time code with a resend. Uses `login-form`.
+<TierIndex />

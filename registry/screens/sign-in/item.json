@@ -1,0 +1,42 @@
+{
+  "title": "Sign in",
+  "description": "Full-viewport sign-in screen composing the login-form block: the credential form with its error, loading and disabled states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm and the footer at @md.",
+  "version": {
+    "react": "0.1.1",
+    "vue": "0.1.2",
+    "svelte": "0.1.1",
+    "solid": "0.1.1"
+  },
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": ["login-form-{framework}"],
+  "files": {
+    "react": [
+      {
+        "path": "screens/sign-in/react/sign-in.tsx",
+        "type": "registry:screen",
+        "target": "src/components/screens/sign-in.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "screens/sign-in/vue/SignIn.vue",
+        "type": "registry:screen",
+        "target": "src/components/screens/SignIn.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "screens/sign-in/svelte/SignIn.svelte",
+        "type": "registry:screen",
+        "target": "src/components/screens/SignIn.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "screens/sign-in/solid/sign-in.tsx",
+        "type": "registry:screen",
+        "target": "src/components/screens/sign-in.tsx"
+      }
+    ]
+  }
+}

@@ -23,8 +23,8 @@
  *    overrides `min-h-dvh` to the frame's height so a browser window's worth of
  *    screen does not bury the page — so what is asserted here is that the
  *    screen fills whatever it was told the window is. That the shipped file says
- *    `min-h-dvh` is held by `tooling/cli/test/screens-install.test.ts`, against
- *    the bytes the CLI writes.
+ *    `min-h-dvh` is held by `tooling/cli/test/install/reset-password.test.ts`,
+ *    against the bytes the CLI writes.
  * 3. **It asks for a new password, twice, and carries the token.** Whatever the
  *    width, the named controls the form submits are exactly `token`, `password`
  *    and `confirmPassword` — no email, and above all no *current* password:

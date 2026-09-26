@@ -11,15 +11,21 @@
  * flow, a dependency cycle, an unknown type) must never reach `/r/`. Validate
  * with the CLI's own rules — the same ones the registry integrity test runs —
  * so the docs build fails before a consumer's install does.
+ *
+ * Each unit's `item.json` stays behind: it is the source `pnpm gen` expands
+ * into `registry.json`, not something the CLI reads.
  */
 import { checkTiers, type Registry } from "@moderno-ui/cli";
 import { cpSync, mkdirSync, readFileSync, rmSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { basename, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const here = resolve(fileURLToPath(import.meta.url), "..");
 const src = resolve(here, "../../../registry");
 const dest = resolve(here, "../public/r");
+
+/** The per-unit source of `registry.json` (ADR-0009); never published. */
+const UNIT_FILE = "item.json";
 
 const registry = JSON.parse(readFileSync(join(src, "registry.json"), "utf8")) as Registry;
 const violations = checkTiers(registry.items);
@@ -32,7 +38,7 @@ if (violations.length > 0) {
 
 rmSync(dest, { recursive: true, force: true });
 mkdirSync(dest, { recursive: true });
-cpSync(src, dest, { recursive: true });
+cpSync(src, dest, { recursive: true, filter: (path) => basename(path) !== UNIT_FILE });
 
 const tiers = new Map<string, number>();
 for (const item of registry.items) tiers.set(item.type, (tiers.get(item.type) ?? 0) + 1);

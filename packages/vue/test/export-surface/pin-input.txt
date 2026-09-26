@@ -1,0 +1,10 @@
+value PinInput
+type ModernoPinInputRootProps
+type PinInputControlProps
+type PinInputHiddenInputProps
+type PinInputInputProps
+type PinInputLabelProps
+type PinInputRootProps
+type PinInputSize
+type PinInputValueChangeDetails
+type PinInputValueInvalidDetails

@@ -1,0 +1,37 @@
+{
+  "title": "Form Layout",
+  "description": "Grouped settings form composing the @moderno-ui/{framework} Field, Checkbox, Divider, Button and Alert primitives; responds to its container (@container) across all three contract steps — actions row at @sm, two-up field grid at @md, group headings beside their fields at @lg — and renders its default, disabled, loading and error states from props.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": [],
+  "files": {
+    "react": [
+      {
+        "path": "blocks/form-layout/react/form-layout.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/form-layout.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "blocks/form-layout/vue/FormLayout.vue",
+        "type": "registry:block",
+        "target": "src/components/blocks/FormLayout.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "blocks/form-layout/svelte/FormLayout.svelte",
+        "type": "registry:block",
+        "target": "src/components/blocks/FormLayout.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "blocks/form-layout/solid/form-layout.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/form-layout.tsx"
+      }
+    ]
+  }
+}

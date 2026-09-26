@@ -41,9 +41,12 @@ describe("getComponentApi", () => {
   });
 
   it("throws with the available component names when asked for one that doesn't exist", () => {
-    expect(() => getComponentApi(manifests, { name: "Toggle", framework: "react" })).toThrow(
-      /Button, Card, Checkbox, Dialog/,
-    );
+    // The fixture lists its components in slug order, one file each, so a new
+    // one can sort between these: check each name, not who its neighbours are.
+    const lookup = () => getComponentApi(manifests, { name: "Sheet", framework: "react" });
+    for (const name of ["Button", "Card", "Checkbox", "Dialog"]) {
+      expect(lookup).toThrow(new RegExp(`Available: .*\\b${name}\\b`));
+    }
   });
 
   it("throws a ModernoMcpError for a framework that isn't installed", () => {

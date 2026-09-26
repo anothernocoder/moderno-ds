@@ -1,0 +1,211 @@
+---
+title: Switch
+description: Un interruptor con etiqueta para activar o desactivar un ajuste que se aplica al momento.
+group: Componentes
+order: 26
+component: Switch
+pkg: "@moderno-ui/react"
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import SwitchDemo from "../../../examples/switch/switch.svelte";
+import baseReact from "../../../examples/switch/react.tsx?raw";
+import baseVue from "../../../examples/switch/vue.vue?raw";
+import baseSolid from "../../../examples/switch/solid.tsx?raw";
+import baseSvelte from "../../../examples/switch/switch.svelte?raw";
+import SwitchStatesDemo from "../../../examples/switch/states/switch-states.svelte";
+import statesReact from "../../../examples/switch/states/react.tsx?raw";
+import statesVue from "../../../examples/switch/states/vue.vue?raw";
+import statesSolid from "../../../examples/switch/states/solid.tsx?raw";
+import statesSvelte from "../../../examples/switch/states/switch-states.svelte?raw";
+import SwitchSizesDemo from "../../../examples/switch/sizes/switch-sizes.svelte";
+import sizesReact from "../../../examples/switch/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/switch/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/switch/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/switch/sizes/switch-sizes.svelte?raw";
+import SwitchDisabledDemo from "../../../examples/switch/disabled/switch-disabled.svelte";
+import disabledReact from "../../../examples/switch/disabled/react.tsx?raw";
+import disabledVue from "../../../examples/switch/disabled/vue.vue?raw";
+import disabledSolid from "../../../examples/switch/disabled/solid.tsx?raw";
+import disabledSvelte from "../../../examples/switch/disabled/switch-disabled.svelte?raw";
+import SwitchInvalidDemo from "../../../examples/switch/invalid/switch-invalid.svelte";
+import invalidReact from "../../../examples/switch/invalid/react.tsx?raw";
+import invalidVue from "../../../examples/switch/invalid/vue.vue?raw";
+import invalidSolid from "../../../examples/switch/invalid/solid.tsx?raw";
+import invalidSvelte from "../../../examples/switch/invalid/switch-invalid.svelte?raw";
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
+  <SwitchDemo client:visible />
+</Preview>
+
+## Instalación
+
+<Install pkg="@moderno-ui/react" />
+
+## Uso
+
+Un switch activa o desactiva un ajuste, y el cambio se aplica al instante. Úsalo para preferencias, no para respuestas que se envían con un formulario.
+
+<ForFramework fw="react">
+
+```tsx
+import { Switch } from "@moderno-ui/react";
+```
+
+```tsx
+<Switch.Root>
+  <Switch.Control>
+    <Switch.Thumb />
+  </Switch.Control>
+  <Switch.Label>Notificaciones por correo</Switch.Label>
+  <Switch.HiddenInput />
+</Switch.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Switch } from "@moderno-ui/vue";
+```
+
+```vue
+<Switch.Root>
+  <Switch.Control>
+    <Switch.Thumb />
+  </Switch.Control>
+  <Switch.Label>Notificaciones por correo</Switch.Label>
+  <Switch.HiddenInput />
+</Switch.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Switch } from "@moderno-ui/svelte";
+```
+
+```svelte
+<Switch.Root>
+  <Switch.Control>
+    <Switch.Thumb />
+  </Switch.Control>
+  <Switch.Label>Notificaciones por correo</Switch.Label>
+  <Switch.HiddenInput />
+</Switch.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Switch } from "@moderno-ui/solid";
+```
+
+```tsx
+<Switch.Root>
+  <Switch.Control>
+    <Switch.Thumb />
+  </Switch.Control>
+  <Switch.Label>Notificaciones por correo</Switch.Label>
+  <Switch.HiddenInput />
+</Switch.Root>
+```
+
+</ForFramework>
+
+## Referencia de API
+
+### Switch.Root
+
+`size` es el añadido de Moderno y vale `md` por defecto; el resto de props vienen del Switch de Ark.
+
+<PropsTable component="Switch" />
+
+| Prop              | Tipo                             | Por defecto | Descripción                                                |
+| ----------------- | -------------------------------- | ----------- | ---------------------------------------------------------- |
+| `checked`         | `boolean`                        | —           | Estado controlado. Úsalo con `onCheckedChange`.            |
+| `defaultChecked`  | `boolean`                        | `false`     | Estado inicial cuando no está controlado.                  |
+| `onCheckedChange` | `(details: { checked }) => void` | —           | Se llama cuando el switch se activa o se desactiva.        |
+| `disabled`        | `boolean`                        | `false`     | Deshabilita el input oculto y atenúa todas las partes.     |
+| `invalid`         | `boolean`                        | `false`     | Pone `aria-invalid` y rodea el riel con `--destructive`.   |
+| `readOnly`        | `boolean`                        | `false`     | Muestra el estado pero ignora los clics.                   |
+| `required`        | `boolean`                        | `false`     | Marca el input como obligatorio.                           |
+| `name`            | `string`                         | —           | Nombre del campo en el formulario.                         |
+| `value`           | `string`                         | `"on"`      | Valor que se envía con el formulario cuando está activado. |
+
+### Partes
+
+| Parte                | Elemento                  | Descripción                                                                                    |
+| -------------------- | ------------------------- | ---------------------------------------------------------------------------------------------- |
+| `Switch.Root`        | `<label>`                 | Lleva `data-size`; un clic en cualquier punto alterna el switch.                               |
+| `Switch.Control`     | `<span>`                  | El riel.                                                                                       |
+| `Switch.Thumb`       | `<span>`                  | La perilla dentro del riel; se desliza al otro extremo cuando está activado.                   |
+| `Switch.Label`       | `<span>`                  | El texto junto al riel.                                                                        |
+| `Switch.HiddenInput` | `<input type="checkbox">` | Input nativo oculto con `role="switch"`; lleva el foco, `name` y `value`. Renderízalo siempre. |
+
+### Atributos data
+
+| Atributo        | Valores                                          |
+| --------------- | ------------------------------------------------ |
+| `data-state`    | `"checked"` o `"unchecked"`, en todas las partes |
+| `data-disabled` | Presente con `disabled`                          |
+| `data-invalid`  | Presente con `invalid`                           |
+| `data-readonly` | Presente con `readOnly`                          |
+| `data-size`     | En la raíz: `"sm"`, `"md"` o `"lg"`              |
+
+## Ejemplos
+
+### Estados
+
+<Preview
+  examples={{ react: statesReact, vue: statesVue, solid: statesSolid, svelte: statesSvelte }}
+>
+  <SwitchStatesDemo client:visible />
+</Preview>
+
+### Tamaños
+
+<Preview examples={{ react: sizesReact, vue: sizesVue, solid: sizesSolid, svelte: sizesSvelte }}>
+  <SwitchSizesDemo client:visible />
+</Preview>
+
+### Deshabilitado
+
+<Preview
+  examples={{
+    react: disabledReact,
+    vue: disabledVue,
+    solid: disabledSolid,
+    svelte: disabledSvelte,
+  }}
+>
+  <SwitchDisabledDemo client:visible />
+</Preview>
+
+### Inválido
+
+Switch no tiene una parte para el texto de error, así que pon el mensaje junto a él en tu formulario.
+
+<Preview
+  examples={{ react: invalidReact, vue: invalidVue, solid: invalidSolid, svelte: invalidSvelte }}
+>
+  <SwitchInvalidDemo client:visible />
+</Preview>
+
+## Notas
+
+- `Switch.Root` está envuelto para añadir `size`, y `Switch.HiddenInput` para añadir `role="switch"`; el resto de partes son las de Ark sin cambios.
+- Estiliza el estado desde `data-state` y los atributos `data-*`; `size` es la única prop visual.
+- La perilla se desliza con `margin-inline-start`, así que se mueve al revés en páginas de derecha a izquierda.
+- Switch reemplaza al Toggle del predecesor.

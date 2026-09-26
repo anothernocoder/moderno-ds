@@ -1,0 +1,20 @@
+{
+  "name": "Button",
+  "scope": "button",
+  "import": "import { Button } from \"@moderno-ui/react\"",
+  "propsHash": "sha256:fixture-button",
+  "props": [{ "name": "variant", "type": "\"primary\" | \"outline\"", "required": false }],
+  "propsComplete": true,
+  "parts": [{ "name": "root" }],
+  "variants": { "variant": ["primary", "outline"] },
+  "examples": [
+    {
+      "title": "Primary",
+      "code": "import { Button } from \"@moderno-ui/react\";\n\n<Button variant=\"primary\">Save</Button>"
+    }
+  ],
+  "guidance": {
+    "intent": "A single click action.",
+    "whenToUse": "Any imperative action: submit, open, delete."
+  }
+}

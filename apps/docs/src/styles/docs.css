@@ -1138,27 +1138,6 @@ main.main--wide {
      at. */
   background: var(--background);
 }
-/* A lone form control centred on the stage gets a reading width instead of its
-   intrinsic ~20ch, without the example having to carry a docs-only class. */
-.preview-panel--demo
-  > astro-island
-  > :is([data-scope="field"], [data-scope="select"])[data-part="root"],
-.demo-row > :is([data-scope="field"], [data-scope="select"])[data-part="root"] {
-  width: min(100%, 20rem);
-}
-.demo-row > :is([data-scope="field"], [data-scope="select"])[data-part="root"] {
-  flex: 1 1 10rem;
-  max-width: 13rem;
-}
-/* A lone card or message gets its natural reading width, not the whole stage. */
-.preview-panel--demo > astro-island > [data-scope="card"][data-part="root"] {
-  width: min(100%, 24rem);
-}
-.preview-panel--demo
-  > astro-island
-  > :is([data-scope="alert"], [data-scope="divider"])[data-part="root"] {
-  width: min(100%, 32rem);
-}
 /* Rows and grids take the stage's width, so their items can sit side by side
    instead of shrink-wrapping to one column; the row still centres them. */
 .preview-panel--demo > astro-island > :is(.demo-row, .demo-grid) {
@@ -1316,14 +1295,14 @@ main.main--wide {
   width: 100%;
   max-width: 22rem;
 }
-/* Full-width items (alerts, dividers) compared one under another need a wider
-   column than a form does. */
-.demo-stack:has(> :is([data-scope="alert"], [data-scope="divider"])) {
-  max-width: 32rem;
-}
-/* A row of actions inside a dialog is its footer: it sits at the end. */
-[data-scope="dialog"] .demo-row {
-  justify-content: flex-end;
+/* A media object: a fixed item (an avatar) beside text that takes the rest of
+   the width. */
+.demo-media {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  max-width: 22rem;
 }
 
 /*

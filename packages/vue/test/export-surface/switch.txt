@@ -1,0 +1,9 @@
+value Switch
+type ModernoSwitchRootProps
+type SwitchCheckedChangeDetails
+type SwitchControlProps
+type SwitchHiddenInputProps
+type SwitchLabelProps
+type SwitchRootProps
+type SwitchSize
+type SwitchThumbProps

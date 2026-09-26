@@ -1,0 +1,237 @@
+/* ────────────────────────── Progress ────────────────────────── *
+ * Ark's progress machine: root > label + value-text, then either a linear
+ * track > range, or a circle (an <svg>) > circle-track + circle-range.
+ * Ark stamps data-state="loading" | "complete" | "indeterminate" on the
+ * root, track, range and circle-range, data-orientation on the root,
+ * label, track and range, and hands the percentage over inline: the
+ * range's width (its height when vertical) and the circle-range's stroke
+ * offset. A null value is indeterminate: Ark sets no size, and the rules
+ * below slide a bar or turn an arc instead. The circle reads its diameter
+ * and stroke from --size and --thickness, which the size rules set.
+ * `progressRecipe` puts size on the root; the parts follow it through
+ * child combinators (root > part).                                     */
+/* @runtime-vars --circumference — the circle range's length, set by Ark. */
+[data-scope="progress"][data-part="root"] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--spacing-2) var(--spacing-3);
+  width: 100%;
+}
+[data-scope="progress"][data-part="label"] {
+  grid-column: 1;
+  color: var(--foreground);
+  font-size: var(--text-ui-md);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--leading-ui-md);
+}
+/* The number ends the label's row; tabular figures keep it from jittering
+   while it counts. */
+[data-scope="progress"][data-part="value-text"] {
+  grid-column: 2;
+  justify-self: end;
+  color: var(--muted-foreground);
+  font-size: var(--text-ui-md);
+  line-height: var(--leading-ui-md);
+  font-variant-numeric: tabular-nums;
+}
+[data-scope="progress"][data-part="track"] {
+  grid-column: 1 / -1;
+  overflow: hidden;
+  border-radius: var(--radius-full);
+  background-color: var(--muted);
+}
+[data-scope="progress"][data-part="track"][data-orientation="horizontal"] {
+  height: var(--spacing-2);
+}
+[data-scope="progress"][data-part="range"] {
+  height: 100%;
+  border-radius: var(--radius-full);
+  background-color: var(--primary);
+  transition:
+    width var(--motion-normal) ease-out,
+    height var(--motion-normal) ease-out;
+}
+/* Indeterminate — no width from Ark: a short bar slides across the track,
+   entering off the start edge and leaving off the end edge. */
+[data-scope="progress"][data-part="range"][data-state="indeterminate"] {
+  width: 40%;
+  animation: moderno-progress-slide calc(var(--motion-normal) * 5) ease-in-out infinite;
+}
+@keyframes moderno-progress-slide {
+  from {
+    translate: -100% 0;
+  }
+  to {
+    translate: 250% 0;
+  }
+}
+/* Right-to-left — the bar sits at the track's right edge, so it needs the
+   mirrored motion; replaying the left-to-right one backwards would stop it
+   partway across. */
+[data-scope="progress"][data-part="range"][data-orientation="horizontal"][data-state="indeterminate"][dir="rtl"] {
+  animation-name: moderno-progress-slide-rtl;
+}
+@keyframes moderno-progress-slide-rtl {
+  from {
+    translate: 100% 0;
+  }
+  to {
+    translate: -250% 0;
+  }
+}
+
+/* Vertical — the track stands up and fills from the bottom; the label and
+   value text stack above and below it. */
+[data-scope="progress"][data-part="root"][data-orientation="vertical"] {
+  display: inline-grid;
+  grid-template-columns: auto;
+  justify-items: center;
+  width: auto;
+}
+[data-scope="progress"][data-part="root"][data-orientation="vertical"] > [data-part="label"],
+[data-scope="progress"][data-part="root"][data-orientation="vertical"] > [data-part="value-text"] {
+  grid-column: 1;
+  justify-self: center;
+}
+[data-scope="progress"][data-part="track"][data-orientation="vertical"] {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  width: var(--spacing-2);
+  height: calc(var(--spacing-8) * 4);
+}
+[data-scope="progress"][data-part="range"][data-orientation="vertical"] {
+  width: 100%;
+}
+[data-scope="progress"][data-part="range"][data-orientation="vertical"][data-state="indeterminate"] {
+  height: 40%;
+  animation-name: moderno-progress-climb;
+}
+@keyframes moderno-progress-climb {
+  from {
+    translate: 0 100%;
+  }
+  to {
+    translate: 0 -250%;
+  }
+}
+
+/* Circular — the value text sits in the middle of the ring, and the label
+   above it. Ark draws both circles from --size and --thickness; its range
+   starts at the top and runs clockwise. */
+[data-scope="progress"][data-part="root"]:has(> [data-part="circle"]) {
+  display: inline-grid;
+  grid-template-columns: auto;
+  grid-template-areas:
+    "label"
+    "circle";
+  justify-items: center;
+  row-gap: 0;
+  width: auto;
+}
+[data-scope="progress"][data-part="root"]:has(> [data-part="circle"]) > [data-part="label"] {
+  grid-area: label;
+  margin-block-end: var(--spacing-2);
+}
+[data-scope="progress"][data-part="root"]:has(> [data-part="circle"]) > [data-part="circle"],
+[data-scope="progress"][data-part="root"]:has(> [data-part="circle"]) > [data-part="value-text"] {
+  grid-area: circle;
+}
+[data-scope="progress"][data-part="root"]:has(> [data-part="circle"]) > [data-part="value-text"] {
+  justify-self: center;
+  color: var(--foreground);
+  font-size: var(--text-ui-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--leading-ui-sm);
+}
+[data-scope="progress"][data-part="circle"] {
+  --size: calc(var(--spacing-8) + var(--spacing-6));
+  --thickness: var(--spacing-1);
+}
+[data-scope="progress"][data-part="circle-track"] {
+  stroke: var(--muted);
+}
+[data-scope="progress"][data-part="circle-range"] {
+  stroke: var(--primary);
+  stroke-linecap: round;
+  transition: stroke-dashoffset var(--motion-normal) ease-out;
+}
+/* Indeterminate — a quarter of the ring turns. --circumference is Ark's,
+   set inline on the range. */
+[data-scope="progress"][data-part="circle-range"][data-state="indeterminate"] {
+  stroke-dasharray: calc(var(--circumference) / 4) var(--circumference);
+  animation: moderno-progress-spin calc(var(--motion-normal) * 2.5) linear infinite;
+}
+/* Ark turns the range a quarter back so it starts at the top; the spin
+   keeps that start. */
+@keyframes moderno-progress-spin {
+  from {
+    transform: rotate(-90deg);
+  }
+  to {
+    transform: rotate(270deg);
+  }
+}
+
+/* Density driven by the recipe's data-size on the root: the track's
+   thickness, the circle's diameter and stroke, and the type. */
+[data-scope="progress"][data-part="root"][data-size="sm"] > [data-part="label"],
+[data-scope="progress"][data-part="root"][data-size="sm"] > [data-part="value-text"] {
+  font-size: var(--text-ui-sm);
+  line-height: var(--leading-ui-sm);
+}
+[data-scope="progress"][data-part="root"][data-size="lg"] > [data-part="label"],
+[data-scope="progress"][data-part="root"][data-size="lg"] > [data-part="value-text"] {
+  font-size: var(--text-ui-lg);
+  line-height: var(--leading-ui-lg);
+}
+[data-scope="progress"][data-part="root"][data-size="sm"]
+  > [data-part="track"][data-orientation="horizontal"] {
+  height: var(--spacing-1);
+}
+[data-scope="progress"][data-part="root"][data-size="lg"]
+  > [data-part="track"][data-orientation="horizontal"] {
+  height: var(--spacing-3);
+}
+[data-scope="progress"][data-part="root"][data-size="sm"]
+  > [data-part="track"][data-orientation="vertical"] {
+  width: var(--spacing-1);
+}
+[data-scope="progress"][data-part="root"][data-size="lg"]
+  > [data-part="track"][data-orientation="vertical"] {
+  width: var(--spacing-3);
+}
+[data-scope="progress"][data-part="root"][data-size="sm"] > [data-part="circle"] {
+  --size: calc(var(--spacing-8) + var(--spacing-2));
+  --thickness: calc(var(--spacing-1) * 0.75);
+}
+[data-scope="progress"][data-part="root"][data-size="lg"] > [data-part="circle"] {
+  --size: calc(var(--spacing-8) * 2 + var(--spacing-2));
+  --thickness: calc(var(--spacing-1) * 1.5);
+}
+[data-scope="progress"][data-part="root"][data-size="sm"]:has(> [data-part="circle"])
+  > [data-part="value-text"] {
+  font-size: var(--text-ui-xs);
+  line-height: var(--leading-ui-xs);
+}
+[data-scope="progress"][data-part="root"][data-size="lg"]:has(> [data-part="circle"])
+  > [data-part="value-text"] {
+  font-size: var(--text-ui-md);
+  line-height: var(--leading-ui-md);
+}
+/* Less motion: the value no longer glides, and the indeterminate bar and
+   arc move four times slower instead of stopping, because a still mark
+   would no longer say that work is going on (like Spinner). */
+@media (prefers-reduced-motion: reduce) {
+  [data-scope="progress"][data-part="range"],
+  [data-scope="progress"][data-part="circle-range"] {
+    transition: none;
+  }
+  [data-scope="progress"][data-part="range"][data-state="indeterminate"] {
+    animation-duration: calc(var(--motion-normal) * 20);
+  }
+  [data-scope="progress"][data-part="circle-range"][data-state="indeterminate"] {
+    animation-duration: calc(var(--motion-normal) * 10);
+  }
+}

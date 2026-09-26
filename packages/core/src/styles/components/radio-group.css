@@ -1,0 +1,134 @@
+/* ───────────────────────── RadioGroup ───────────────────────── *
+ * `radioGroupRecipe` size on the root part; layout follows Ark's
+ * data-orientation, and every state is Ark's own attribute —
+ * data-state="checked|unchecked" plus data-disabled / data-invalid /
+ * data-readonly / data-focus-visible on each item and its parts. Parts
+ * root > label + item (> item-control + item-text + item-hidden-input);
+ * item-description is Moderno's, nested in item-text. Ark's indicator (a
+ * sliding highlight for segmented looks) is left unstyled. The hidden
+ * native input carries focus, so the ring is drawn on the radio circle.  */
+[data-scope="radio-group"][data-part="root"] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+/* Horizontal: items share a wrapping row; the group label keeps its own. */
+[data-scope="radio-group"][data-part="root"][data-orientation="horizontal"] {
+  flex-direction: row;
+  flex-wrap: wrap;
+  column-gap: var(--spacing-5);
+}
+[data-scope="radio-group"][data-part="root"][data-orientation="horizontal"] > [data-part="label"] {
+  flex-basis: 100%;
+}
+/*
+ * Ark stamps data-disabled on every part of a disabled item (and on every
+ * part of a disabled group), and the base layer dims anything carrying it —
+ * nesting would multiply the opacity. Dim the outermost disabled part once
+ * and leave what is inside it opaque.
+ */
+[data-scope="radio-group"][data-part="root"][data-disabled] :where([data-part]),
+[data-scope="radio-group"][data-part="item"][data-disabled] :where([data-part]) {
+  opacity: 1;
+}
+[data-scope="radio-group"][data-part="label"] {
+  font-size: var(--text-ui-md);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--leading-ui-md);
+  color: var(--foreground);
+}
+[data-scope="radio-group"][data-part="item"] {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-2);
+  cursor: pointer;
+}
+[data-scope="radio-group"][data-part="item"][data-readonly] {
+  cursor: default;
+}
+/* The circle sits centred on the first line of the item text, so it stays
+   beside the label when a description wraps below it. Its ring is
+   --muted-foreground, not --input: an --input ring all but vanishes on a
+   dark --background, and an empty radio is only its ring. */
+[data-scope="radio-group"][data-part="item-control"] {
+  flex: none;
+  width: var(--spacing-4);
+  height: var(--spacing-4);
+  margin-block-start: calc((var(--leading-ui-md) - var(--spacing-4)) / 2);
+  border: 1px solid var(--muted-foreground);
+  border-radius: var(--radius-full);
+  background-color: var(--background);
+  transition:
+    border-color var(--motion-instant),
+    border-width var(--motion-instant);
+}
+/* Checked: a --primary ring a quarter of the circle thick around a
+   --primary-foreground dot, the pair the contract makes legible together. */
+[data-scope="radio-group"][data-part="item-control"][data-state="checked"] {
+  border-width: calc(var(--spacing-4) / 4);
+  border-color: var(--primary);
+  background-color: var(--primary-foreground);
+}
+[data-scope="radio-group"][data-part="item-control"][data-invalid] {
+  border-color: var(--destructive);
+}
+/* Focus lives on the visually hidden input, so the ring is drawn here. */
+[data-scope="radio-group"][data-part="item-control"][data-focus-visible] {
+  outline-color: var(--ring);
+  outline-style: solid;
+  outline-width: 2px;
+  outline-offset: 2px;
+}
+[data-scope="radio-group"][data-part="item-text"] {
+  display: flex;
+  flex-direction: column;
+  font-size: var(--text-ui-md);
+  line-height: var(--leading-ui-md);
+  color: var(--foreground);
+  user-select: none;
+}
+[data-scope="radio-group"][data-part="item-description"] {
+  font-size: var(--text-ui-sm);
+  line-height: var(--leading-ui-sm);
+  color: var(--muted-foreground);
+}
+/* Density driven by the recipe's data-size on the root part. */
+[data-scope="radio-group"][data-size="sm"] [data-part="label"],
+[data-scope="radio-group"][data-size="sm"] [data-part="item-text"] {
+  font-size: var(--text-ui-sm);
+  line-height: var(--leading-ui-sm);
+}
+[data-scope="radio-group"][data-size="sm"] [data-part="item-control"] {
+  width: var(--spacing-3);
+  height: var(--spacing-3);
+  margin-block-start: calc((var(--leading-ui-sm) - var(--spacing-3)) / 2);
+}
+[data-scope="radio-group"][data-size="sm"] [data-part="item-control"][data-state="checked"] {
+  border-width: calc(var(--spacing-3) / 4);
+}
+[data-scope="radio-group"][data-size="sm"] [data-part="item-description"] {
+  font-size: var(--text-ui-xs);
+  line-height: var(--leading-ui-xs);
+}
+[data-scope="radio-group"][data-size="lg"] [data-part="label"],
+[data-scope="radio-group"][data-size="lg"] [data-part="item-text"] {
+  font-size: var(--text-ui-lg);
+  line-height: var(--leading-ui-lg);
+}
+[data-scope="radio-group"][data-size="lg"] [data-part="item-control"] {
+  width: var(--spacing-5);
+  height: var(--spacing-5);
+  margin-block-start: calc((var(--leading-ui-lg) - var(--spacing-5)) / 2);
+}
+[data-scope="radio-group"][data-size="lg"] [data-part="item-control"][data-state="checked"] {
+  border-width: calc(var(--spacing-5) / 4);
+}
+[data-scope="radio-group"][data-size="lg"] [data-part="item-description"] {
+  font-size: var(--text-ui-md);
+  line-height: var(--leading-ui-md);
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-scope="radio-group"][data-part="item-control"] {
+    transition: none;
+  }
+}

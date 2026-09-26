@@ -1,0 +1,7 @@
+value ToggleGroup
+type ModernoToggleGroupRootProps
+type ToggleGroupItemProps
+type ToggleGroupRootProps
+type ToggleGroupSize
+type ToggleGroupValueChangeDetails
+type ToggleGroupVariant

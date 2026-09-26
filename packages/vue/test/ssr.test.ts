@@ -1,66 +1,44 @@
+import { readdirSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { createSSRApp, defineComponent, h, type Component } from "vue";
+import { createSSRApp, defineComponent, h } from "vue";
 import { renderToString } from "@vue/server-renderer";
 import { App } from "../playground/app.js";
-import { Alert } from "../src/alert.js";
-import { Button } from "../src/button.js";
-import { Card } from "../src/card.js";
-import { Divider } from "../src/divider.js";
-import { Field } from "../src/field.js";
-import { Checkbox } from "../src/checkbox.js";
-import { partAttrs, partTags } from "../../core/test/ssr-parts.ts";
-import { PinInput } from "../src/pin-input.js";
+import type { Section } from "../playground/section.js";
+
+/**
+ * Whole-app checks. Each component's server string is asserted on its own, in
+ * `ssr/<slug>.test.ts`, over its playground section alone; what needs every
+ * section at once stays here: the open popovers' teleported markup and a
+ * warning-free hydration.
+ */
 
 afterEach(() => {
   document.body.replaceChildren();
 });
 
+/** Modules in `src/` that are not components, so they have no section. */
+const NOT_COMPONENTS = ["index", "slot-content"];
+
+/** The slugs of the files in `dir` (relative to this test) ending in `suffix`, sorted. */
+function slugsIn(dir: string, suffix: string): string[] {
+  return readdirSync(fileURLToPath(new URL(dir, import.meta.url)))
+    .filter((file) => file.endsWith(suffix))
+    .map((file) => file.slice(0, -suffix.length))
+    .sort();
+}
+
 describe("SSR (Vue)", () => {
-  it("server-renders the primitives to a stable HTML string", async () => {
+  it("gives every component a playground section and its own SSR test", () => {
+    const components = slugsIn("../src/", ".ts").filter((slug) => !NOT_COMPONENTS.includes(slug));
+    expect(slugsIn("../playground/sections/", ".ts")).toEqual(components);
+    expect(slugsIn("./ssr/", ".test.ts")).toEqual(components);
+  });
+
+  it("mounts every section in the playground", async () => {
     const html = await renderToString(createSSRApp({ render: () => h(App) }));
-    expect(html).toContain('data-scope="button"');
-    expect(html).toContain('data-scope="card"');
-    expect(html).toContain('data-scope="field"');
-    expect(html).toContain('data-scope="checkbox"');
-    expect(html).toContain('data-scope="alert"');
-    // The CSS-only primitive serialises its anatomy plus the resolved role:
-    // "info" reports politely, "error" interrupts.
-    expect(html).toContain("Payment failed");
-    expect(html).toContain('role="status"');
-    expect(html).toContain('role="alert"');
-    // The card's compound anatomy survives serialisation part by part.
-    expect(html).toContain('data-part="title"');
-    expect(html).toContain('data-part="footer"');
-    expect(html).toContain('data-scope="divider"');
-    // Both divider shapes survive serialisation: the bare rule keeps its
-    // separator role, the captioned one its label part.
-    expect(html).toContain('role="separator"');
-    expect(html).toMatch(/data-scope="divider"[^>]*data-part="label"/);
-    // …including the captioned *vertical* rule: that combination is the one
-    // whose gap depends on the label's rotated writing mode, so orientation and
-    // label have to serialise onto the same root.
-    expect(html).toMatch(/data-orientation="vertical"(?:(?!<\/div>)[\s\S])*?data-part="label"/);
-    expect(html).toContain('data-scope="pin-input"');
-    // Every code cell is on the server, and `count` makes the server's aria
-    // labels agree with the client's — the PinInput-specific SSR hazard.
-    expect(html.match(/data-index="/g) ?? []).toHaveLength(6);
-    expect(html).toContain('aria-label="pin code 6 of 6"');
-    // Triggers are present even while the dialog/select popovers are closed.
-    expect(html).toContain("Open dialog");
-    expect(html).toContain("Framework");
-    // The recipe attributes survive serialisation.
-    expect(html).toContain('data-variant="destructive"');
-    expect(html).toContain('data-size="md"');
-    // Checkbox serialises its Ark state, not just its scope.
-    expect(html).toMatch(/data-part="control"[^>]*data-state="checked"/);
-    expect(html).toMatch(/data-part="control"[^>]*data-state="indeterminate"/);
-    // Field's own recipe, read off the field roots themselves — a whole-document
-    // match would be satisfied by the Buttons' `data-size` and would survive a
-    // Root that stopped applying the recipe (Vue's attrs forwarding is exactly
-    // the kind of thing that can drop it).
-    expect(partAttrs(html, "field", "root", "data-size")).toEqual(["sm", "lg"]);
-    // The second field's control is Field's own Textarea part.
-    expect(partTags(html, "field", "textarea")).toHaveLength(1);
+    const mounted = html.match(/<section aria-label="/g) ?? [];
+    expect(mounted).toHaveLength(slugsIn("../playground/sections/", ".ts").length);
   });
 
   it("server-renders the dialog/select popover markup when open", async () => {
@@ -79,70 +57,43 @@ describe("SSR (Vue)", () => {
 /**
  * Hydration safety — the genuine, deterministic SSR hazard is `useId`: the
  * Field's label/control ids and the Checkbox's label ↔ hidden-input pairing
- * must match across server and client render. The portal-free primitives
- * (Button + Field + Checkbox + Alert) exercise exactly that, so a warning-free
- * (Button, Card, Field and Checkbox) exercise exactly that, so a warning-free
  * must match across server and client render, and PinInput derives every cell
- * id (plus the label's `for`) from the same root id. The portal-free primitives
- * (Button + Field + Checkbox + PinInput) exercise exactly that, so a warning-free
- * hydration here proves the id path is stable. Ark's portaled popovers
- * (Dialog/Select) position via floating-ui measurement that jsdom does not
- * provide, so their hydration is covered by the string + interaction suites
- * (Button + Divider + Field + Checkbox) exercise exactly that, so a
- * warning-free hydration here proves the id path is stable. Ark's portaled
- * popovers (Dialog/Select) position via floating-ui measurement that jsdom does
- * not provide, so their hydration is covered by the string + interaction suites
- * instead.
+ * id (plus the label's `for`) from the same root id. Every playground section
+ * hydrates together in one tree, so the ids of one component cannot shift
+ * another's. A section that teleports (Ark's portaled popovers, Dialog and
+ * Select) is left out: it positions via floating-ui measurement that jsdom
+ * does not provide, so its hydration is covered by the string + interaction
+ * suites instead. Which sections teleport is read from their server render,
+ * so a new component adds a section and edits nothing here.
  */
-const HydrationApp = defineComponent({
-  name: "VueHydrationApp",
-  setup() {
-    return () =>
-      h("main", {}, [
-        h(Button, { variant: "primary" }, () => "Primary"),
-        h(Button, { variant: "destructive", size: "lg" }, () => "Destructive"),
-        h(Card.Root, { variant: "muted", size: "sm" }, () => [
-          h(Card.Header, {}, () => [
-            h(Card.Title, {}, () => "Monthly report"),
-            h(Card.Description, {}, () => "Revenue across every channel."),
-          ]),
-          h(Card.Content, {}, () => "Up 12% on last month."),
-          h(Card.Footer, {}, () => h(Button, { size: "sm" }, () => "Export")),
-        ]),
-        h(Divider),
-        h(Divider, { align: "start" }, () => "Or"),
-        h(Divider, { orientation: "vertical" }, () => "Or"),
-        h(Field.Root, {}, () => [
-          h(Field.Label, {}, () => "Email"),
-          h(Field.Input, { placeholder: "you@example.com" }),
-          h(Field.HelperText, {}, () => "We never share it."),
-        ]),
-        h(Checkbox.Root as unknown as Component, { defaultChecked: true }, () => [
-          h(Checkbox.Control, {}, () => h(Checkbox.Indicator, {}, () => "✓")),
-          h(Checkbox.Label, {}, () => "Email me updates"),
-          h(Checkbox.HiddenInput),
-        ]),
-        h(Alert.Root, { variant: "error" }, () => [
-          h(Alert.Icon, {}, () => "!"),
-          h(Alert.Content, {}, () => [
-            h(Alert.Title, {}, () => "Payment failed"),
-            h(Alert.Description, {}, () => "We could not charge your card."),
-          ]),
-        ]),
-        h(PinInput.Root, { count: 4, otp: true }, () => [
-          h(PinInput.Label, {}, () => "Verification code"),
-          h(PinInput.Control, {}, () =>
-            [0, 1, 2, 3].map((index) => h(PinInput.Input, { key: index, index })),
-          ),
-          h(PinInput.HiddenInput),
-        ]),
-      ]);
-  },
-});
+const sections = Object.values(
+  import.meta.glob<{ default: Section }>("../playground/sections/*.ts", { eager: true }),
+).map((module) => module.default);
+
+/** Whether `section`'s server render sends any markup through a `<Teleport>`. */
+async function teleports(section: Section): Promise<boolean> {
+  const ctx: { teleports?: Record<string, string> } = {};
+  await renderToString(createSSRApp({ render: () => h(section, { open: false }) }), ctx);
+  return Object.keys(ctx.teleports ?? {}).length > 0;
+}
 
 describe("Hydration (Vue)", () => {
-  it("hydrates the portal-free primitives with zero Vue warnings", async () => {
+  it("hydrates every portal-free section together with zero Vue warnings", async () => {
+    const portalFree: Section[] = [];
+    for (const section of sections) {
+      if (!(await teleports(section))) portalFree.push(section);
+    }
+    const HydrationApp = defineComponent({
+      name: "VueHydrationApp",
+      setup: () => () =>
+        h(
+          "main",
+          {},
+          portalFree.map((section) => h(section, { open: false })),
+        ),
+    });
     const html = await renderToString(createSSRApp({ render: () => h(HydrationApp) }));
+    expect(html.match(/<section aria-label="/g)).toHaveLength(portalFree.length);
     const container = document.createElement("div");
     document.body.appendChild(container);
     container.insertAdjacentHTML("afterbegin", html);

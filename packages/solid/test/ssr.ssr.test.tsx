@@ -1,56 +1,39 @@
+import { readdirSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { renderToString } from "solid-js/web";
 import { App } from "../playground/app.jsx";
-import { partAttrs, partTags } from "../../core/test/ssr-parts.ts";
 
 /**
- * SSR smoke — Solid compiles this file in server mode (see vitest.ssr.config.ts)
- * so `solid-js/web`'s `renderToString` is the real isomorphic renderer. Proves
- * the primitives serialise to stable HTML with the contract attributes intact;
- * Ark's portaled popovers render inline under SSR.
+ * Whole-app checks. Solid compiles this file in server mode (see
+ * vitest.ssr.config.ts) so `solid-js/web`'s `renderToString` is the real
+ * isomorphic renderer. Each component's server string is asserted on its own,
+ * in `ssr/<slug>.ssr.test.tsx`, over its playground section alone; this file
+ * checks the playground as a whole.
  */
+
+/** The slugs of the files in `dir` (relative to this test) ending in one of `suffixes`, sorted. */
+function slugsIn(dir: string, ...suffixes: string[]): string[] {
+  return readdirSync(fileURLToPath(new URL(dir, import.meta.url)))
+    .flatMap((file) => {
+      const suffix = suffixes.find((ending) => file.endsWith(ending));
+      return suffix ? [file.slice(0, -suffix.length)] : [];
+    })
+    .sort();
+}
+
 describe("SSR (Solid)", () => {
-  it("server-renders the primitives to a stable HTML string", () => {
+  it("gives every component a playground section and its own SSR test", () => {
+    // `dialog.ts` re-exports Ark's Dialog, so components end in `.ts` or `.tsx`.
+    const components = slugsIn("../src/", ".tsx", ".ts").filter((slug) => slug !== "index");
+    expect(slugsIn("../playground/sections/", ".tsx")).toEqual(components);
+    expect(slugsIn("./ssr/", ".ssr.test.tsx")).toEqual(components);
+  });
+
+  it("server-renders every section of the playground once", () => {
     const html = renderToString(() => <App />);
-    expect(html).toContain('data-scope="button"');
-    expect(html).toContain('data-scope="card"');
-    expect(html).toContain('data-scope="field"');
-    expect(html).toContain('data-scope="checkbox"');
-    expect(html).toContain('data-scope="alert"');
-    // The CSS-only primitive serialises its anatomy plus the resolved role:
-    // "info" reports politely, "error" interrupts.
-    expect(html).toContain("Payment failed");
-    expect(html).toContain('role="status"');
-    expect(html).toContain('role="alert"');
-    // The card's compound anatomy survives serialisation part by part.
-    expect(html).toContain('data-part="title"');
-    expect(html).toContain('data-part="footer"');
-    expect(html).toContain('data-scope="divider"');
-    // Both divider shapes survive serialisation: the bare rule keeps its
-    // separator role, the captioned one its label part.
-    expect(html).toContain('role="separator"');
-    expect(html).toMatch(/data-scope="divider"[^>]*data-part="label"/);
-    // …including the captioned *vertical* rule: that combination is the one
-    // whose gap depends on the label's rotated writing mode, so orientation and
-    // label have to serialise onto the same root.
-    expect(html).toMatch(/data-orientation="vertical"(?:(?!<\/div>)[\s\S])*?data-part="label"/);
-    expect(html).toContain('data-scope="pin-input"');
-    // Every code cell is on the server, and `count` makes the server's aria
-    // labels agree with the client's — the PinInput-specific SSR hazard.
-    expect(html.match(/data-index="/g) ?? []).toHaveLength(6);
-    expect(html).toContain('aria-label="pin code 6 of 6"');
-    expect(html).toContain("Open dialog");
-    expect(html).toContain("Framework");
-    expect(html).toContain('data-variant="destructive"');
-    expect(html).toContain('data-size="md"');
-    expect(html).toMatch(/data-part="control"[^>]*data-state="checked"/);
-    expect(html).toMatch(/data-part="control"[^>]*data-state="indeterminate"/);
-    // Field's own recipe, read off the field roots themselves — a whole-document
-    // match would be satisfied by the Buttons' `data-size` and would survive a
-    // Root that stopped applying the recipe.
-    expect(partAttrs(html, "field", "root", "data-size")).toEqual(["sm", "lg"]);
-    // The second field's control is Field's own Textarea part.
-    expect(partTags(html, "field", "textarea")).toHaveLength(1);
+    const sections = html.match(/<section\b/g) ?? [];
+    expect(sections).toHaveLength(slugsIn("../playground/sections/", ".tsx").length);
   });
 
   it("propagates defaultOpen through to the (non-portaled) trigger state", () => {

@@ -1,0 +1,2 @@
+value ScatterChart
+type ScatterChartProps

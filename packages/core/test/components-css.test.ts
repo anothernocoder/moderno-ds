@@ -1,12 +1,12 @@
-import { readFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import postcss, { type Declaration, type Rule } from "postcss";
+import postcss, { type AtRule, type Declaration, type Rule } from "postcss";
+import { partialNames, prop, readComponentsCss, readPartial, ruleDecls } from "./stylesheet.ts";
 
-const css = readFileSync(
-  fileURLToPath(new URL("../src/styles/components.css", import.meta.url)),
-  "utf8",
-);
+/*
+ * Guards over the whole published stylesheet. A scope's own contract lives in
+ * `components-css.<scope>.test.ts`, next to its partial.
+ */
+const css = readComponentsCss();
 const root = postcss.parse(css);
 
 const decls: Declaration[] = [];
@@ -39,6 +39,27 @@ describe("@moderno-ui/core components.css — Ark scope/part convention (F1.2)",
 
   it("declares the cascade layers (skeleton: base + components)", () => {
     expect(css).toMatch(/@layer\s+moderno\.base\s*,\s*moderno\.components/);
+  });
+});
+
+/*
+ * `pnpm gen` (the components-css aggregator) wraps every scope partial in
+ * `@layer moderno.components` and closes the layer with `_hidden.css`. A
+ * partial that opened a layer of its own would leave the components layer,
+ * and a part rule after the `[hidden]` one could re-show a hidden part.
+ */
+describe("@moderno-ui/core components.css — one partial per scope, assembled", () => {
+  it.each(partialNames().filter((name) => name !== "_base"))(
+    "%s.css holds bare rules: no @layer of its own",
+    (name) => {
+      expect(readPartial(name)).not.toMatch(/@layer\b/);
+    },
+  );
+
+  it("closes the components layer with the [hidden] rule", () => {
+    const layer = root.last as AtRule;
+    expect(`@${layer.name} ${layer.params}`).toBe("@layer moderno.components");
+    expect((layer.last as Rule).selector).toBe("[data-scope][data-part][hidden]");
   });
 });
 
@@ -80,77 +101,20 @@ describe("@moderno-ui/core components.css — zero baked brand values (F1.2)", (
 });
 
 /*
- * Divider's label gap is the one place in the sheet where a flow-relative
- * margin is read under a *rotated* writing mode. `margin-block`/`margin-inline`
- * resolve against the element's own writing mode, and the vertical divider's
- * label is `vertical-rl`, so its inline axis is the page's vertical one:
- * `margin-inline` is the along-the-rule axis in both orientations. Getting this
- * backwards costs nothing at build time and everything at render time — the
- * stroke butts into the caption's glyphs and the rule widens by two spacing
- * steps — so the axis is pinned here rather than left to a screenshot.
+ * A bordered control draws its focus ring INSIDE its box: a 2px ring offset
+ * by -2px covers the 1px resting border. An outset ring would leave that
+ * border visible inside it, a double border (7ea4320).
  */
-describe("@moderno-ui/core components.css — Divider label gap opens along the rule", () => {
-  /** Declarations of the `[data-orientation="…"] [data-part="label"]` rule. */
-  const labelRule = (orientation: "horizontal" | "vertical"): Declaration[] => {
-    const found: Declaration[] = [];
-    root.walkRules((r: Rule) => {
-      if (!r.selector.includes(`[data-scope="divider"][data-orientation="${orientation}"]`)) return;
-      if (!r.selector.includes(`[data-part="label"]`)) return;
-      r.walkDecls((d: Declaration) => {
-        found.push(d);
-      });
-    });
-    return found;
-  };
-  const prop = (decls: Declaration[], name: string) => decls.find((d) => d.prop === name)?.value;
-
-  it("rotates the vertical label so its inline axis runs along the rule", () => {
-    expect(prop(labelRule("vertical"), "writing-mode")).toBe("vertical-rl");
-    expect(prop(labelRule("horizontal"), "writing-mode")).toBeUndefined();
-  });
-
-  it("opens the gap with margin-inline in both orientations", () => {
-    for (const orientation of ["horizontal", "vertical"] as const) {
-      const decls = labelRule(orientation);
-      expect(prop(decls, "margin-inline"), `${orientation} label`).toMatch(/var\(--spacing-/);
-      // `margin-block` here is the across-the-rule axis: it would pad the
-      // label's sides and leave the two halves of the stroke touching it.
-      for (const across of ["margin-block", "margin-block-start", "margin-block-end"]) {
-        expect(prop(decls, across), `${orientation} label sets ${across}`).toBeUndefined();
-      }
-    }
-  });
-});
-
-/*
- * Button is a plain native <button> in every binding — no Ark machine — so two
- * browser defaults leak through unless the sheet overrides them: the UA grey
- * `buttonface` fill (visible on `ghost`, the one variant with no fill of its
- * own), and a native `disabled` that no one turns into `data-disabled`, so the
- * shared base affordance (`[data-disabled]` → dimmed, inert) never reaches it.
- */
-describe("@moderno-ui/core components.css — Button overrides the native defaults", () => {
-  /** Declarations of the rules whose selector is exactly `selector`. */
-  const ruleDecls = (selector: string): Declaration[] => {
-    const found: Declaration[] = [];
-    root.walkRules((r: Rule) => {
-      if (!r.selectors.map((s) => s.trim()).includes(selector)) return;
-      r.walkDecls((d: Declaration) => {
-        found.push(d);
-      });
-    });
-    return found;
-  };
-  const prop = (decls: Declaration[], name: string) => decls.find((d) => d.prop === name)?.value;
-  const BUTTON = `[data-scope="button"][data-part="root"]`;
-
-  it("clears the UA button fill on the root, so ghost is transparent anywhere", () => {
-    expect(prop(ruleDecls(BUTTON), "background-color")).toBe("transparent");
-  });
-
-  it("dims and disables a native :disabled button like [data-disabled]", () => {
-    const decls = ruleDecls(`${BUTTON}:disabled`);
-    expect(prop(decls, "opacity")).toBe("0.5");
-    expect(prop(decls, "pointer-events")).toBe("none");
+describe("@moderno-ui/core components.css — bordered controls ring inset", () => {
+  it.each([
+    `[data-scope="field"][data-part="input"]:focus-visible`,
+    `[data-scope="field"][data-part="textarea"]:focus-visible`,
+    `[data-scope="select"][data-part="trigger"]:focus-visible`,
+    `[data-scope="pin-input"][data-part="input"]:focus-visible`,
+    `[data-scope="number-input"][data-part="control"]:focus-within`,
+  ])("%s", (selector) => {
+    const decls = ruleDecls(root, selector);
+    expect(prop(decls, "outline")).toBe("2px solid var(--ring)");
+    expect(prop(decls, "outline-offset")).toBe("-2px");
   });
 });

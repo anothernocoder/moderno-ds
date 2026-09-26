@@ -1,0 +1,16 @@
+value Slider
+type ModernoSliderRootProps
+type SliderControlProps
+type SliderDraggingIndicatorProps
+type SliderFocusChangeDetails
+type SliderHiddenInputProps
+type SliderLabelProps
+type SliderMarkerGroupProps
+type SliderMarkerProps
+type SliderRangeProps
+type SliderRootProps
+type SliderSize
+type SliderThumbProps
+type SliderTrackProps
+type SliderValueChangeDetails
+type SliderValueTextProps

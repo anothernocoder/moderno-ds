@@ -1,0 +1,42 @@
+{
+  "title": "Sign up",
+  "description": "Full-viewport sign-up screen composing the login-form block in its sign-up mode: full name, email, a new password and the consent box, with the reasons to create an account beside the card. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the highlights move beside the card at @lg.",
+  "version": {
+    "react": "0.1.1",
+    "vue": "0.1.2",
+    "svelte": "0.1.1",
+    "solid": "0.1.1"
+  },
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": ["login-form-{framework}"],
+  "files": {
+    "react": [
+      {
+        "path": "screens/sign-up/react/sign-up.tsx",
+        "type": "registry:screen",
+        "target": "src/components/screens/sign-up.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "screens/sign-up/vue/SignUp.vue",
+        "type": "registry:screen",
+        "target": "src/components/screens/SignUp.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "screens/sign-up/svelte/SignUp.svelte",
+        "type": "registry:screen",
+        "target": "src/components/screens/SignUp.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "screens/sign-up/solid/sign-up.tsx",
+        "type": "registry:screen",
+        "target": "src/components/screens/sign-up.tsx"
+      }
+    ]
+  }
+}

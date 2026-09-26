@@ -129,6 +129,14 @@ describe("moderno/valid-props", () => {
       expect(messages(checkVue('<LineChart :series="data" :x-ticks="3" />'))).toEqual([]);
     });
 
+    it("keeps aria-*/data-* as attributes instead of folding them to camelCase", () => {
+      // Folding `aria-label` to `ariaLabel` would take it out of the
+      // passthrough and report a real attribute as an unknown prop.
+      expect(
+        messages(checkVue('<Button aria-label="Close" :data-state="state">×</Button>')),
+      ).toEqual([]);
+    });
+
     it("still flags a kebab-case attribute that folds to no known prop", () => {
       const findings = checkVue('<LineChart :series="data" :x-tick="3" />');
       expect(messages(findings)).toEqual([

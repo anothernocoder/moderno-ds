@@ -9,44 +9,16 @@
  * shipped framework is the check that keeps a manifest change, a new snippet or
  * a rule tweak from making the DS fail its own linter.
  *
- * Deliberately built from source rather than read out of a package's built
- * `dist`: the manifest a consumer installs is exactly what
- * `buildComponentsManifest` produces, and building it here means the test
- * doesn't need a prior `pnpm -r build` to be meaningful.
+ * Each component's own cases live beside this file, in
+ * `agent-examples/<slug>.test.ts`; the manifest they all read is built once per
+ * run (see `../helpers/build-agent-manifests.ts`).
  */
-import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { buildComponentsManifest } from "../../../../tooling/props-doc/src/agent-manifest.ts";
 import { validProps } from "../../src/rules/valid-props.ts";
-import type { AggregatedManifests, Framework } from "../../src/manifests.ts";
-
-const reactTsConfig = fileURLToPath(
-  new URL("../../../../packages/react/tsconfig.json", import.meta.url),
-);
-
-/** Every framework `AGENT_EXAMPLES` ships snippets for. */
-const FRAMEWORKS: Framework[] = ["react", "vue", "svelte", "solid"];
-
-function manifestsFor(framework: Framework): AggregatedManifests {
-  return {
-    components: [
-      buildComponentsManifest({
-        packageName: `@moderno-ui/${framework}`,
-        version: "0.0.0",
-        framework,
-        reactTsConfigFilePath: reactTsConfig,
-        guidance: {},
-      }),
-    ],
-    contract: null,
-    scopeDir: null,
-  };
-}
+import { FRAMEWORKS, manifestsFor } from "../helpers/agent-manifests.ts";
 
 describe("moderno/valid-props over the shipped examples", () => {
-  // Four ts-morph manifest builds in one test; the 5s default is not enough
-  // under the full parallel run (see the root vitest.config.ts note).
-  it("reports nothing on any component's example in any framework", { timeout: 60_000 }, () => {
+  it("reports nothing on any component's example in any framework", () => {
     const reported: string[] = [];
 
     for (const framework of FRAMEWORKS) {

@@ -5,6 +5,8 @@ group: Blocks
 order: 100
 ---
 
+import TierIndex from "../../../components/TierIndex.astro";
+
 A block is a page section composed only of primitives. The CLI copies it into your project, where you own it, and it sizes itself from its container rather than the viewport.
 
 ```sh
@@ -13,12 +15,6 @@ npx @moderno-ui/cli add <block>-<framework>
 
 ## Available blocks
 
-| Block                           | Description                                                                           |
-| ------------------------------- | ------------------------------------------------------------------------------------- |
-| [Login form](/en/login-form/)   | The credential card for sign in, sign up, forgot password, reset password and verify. |
-| [Form layout](/en/form-layout/) | A settings form with titled groups of fields and one actions row.                     |
-| [Alert list](/en/alert-list/)   | A notification centre of dismissible status alerts.                                   |
-| Pricing                         | A three-plan pricing section.                                                         |
-| Empty state                     | A centred no-data placeholder with one call to action.                                |
+<TierIndex />
 
 For the container rules every block follows, see [Blocks and containers](/en/blocks-and-containers/).

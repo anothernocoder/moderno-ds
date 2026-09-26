@@ -34,6 +34,6 @@ describe("getExamples", () => {
   });
 
   it("throws for an unknown component", () => {
-    expect(() => getExamples(manifests, { name: "Toggle", framework: "react" })).toThrow();
+    expect(() => getExamples(manifests, { name: "Sheet", framework: "react" })).toThrow();
   });
 });

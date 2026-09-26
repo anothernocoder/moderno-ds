@@ -12,7 +12,7 @@ import { readdirSync, readFileSync } from "node:fs";
 import { basename, dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { expect, test } from "@playwright/test";
-import { allPages, previewPages } from "./pages.ts";
+import { allPages, distDir, previewPages } from "./pages.ts";
 
 const srcDir = resolve(fileURLToPath(import.meta.url), "../../../src");
 const LOCALES = ["en", "es"] as const;
@@ -119,5 +119,13 @@ test.describe("built docs", () => {
       (name) => !new RegExp(`component-url="[^"]*/${name}\\.[^"]*"`).test(rendered),
     );
     expect(missing, "islands that no preview page hydrates").toEqual([]);
+  });
+
+  test("the registry deploy serves registry.json, not the item.json it is generated from", () => {
+    // `pnpm gen` expands each unit's `item.json` into `registry.json`; the CLI
+    // reads only the latter, so the copy to `/r/` leaves the sources behind.
+    const published = readdirSync(resolve(distDir, "r"), { recursive: true }) as string[];
+    expect(published, "/r/ has no registry.json").toContain("registry.json");
+    expect(published.filter((path) => basename(path) === "item.json")).toEqual([]);
   });
 });

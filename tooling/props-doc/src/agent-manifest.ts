@@ -21,30 +21,20 @@
  *
  * `parts` has no machine-readable source yet (Ark/Zag's own anatomy lists every
  * part the headless machine *could* render, not the subset `components.css`
- * actually styles), so `AGENT_COMPONENTS` hand-curates it — mirroring
+ * actually styles), so each component's file hand-curates it — mirroring
  * `components.css`'s `[data-scope][data-part]` selectors is the contributor's
  * job when a part gains or loses styling.
+ *
+ * Adding a primitive means one file, `src/components/<slug>.ts` (its props
+ * entry, parts, variants and examples), plus a docs `agent:` block; `pnpm gen`
+ * adds it to `AGENT_COMPONENTS`, sorted by slug. The schema and build wiring
+ * don't change.
  */
 import { createHash } from "node:crypto";
-import {
-  alertRecipe,
-  buttonRecipe,
-  cardRecipe,
-  checkboxRecipe,
-  dividerRecipe,
-  fieldRecipe,
-  pinInputRecipe,
-  selectRecipe,
-} from "@moderno-ui/core";
 import { extractProps, type ComponentDoc, type ComponentEntry, type PropDoc } from "./index.ts";
-import { ENTRIES } from "./manifest.ts";
-import { AGENT_EXAMPLES } from "./agent-examples.ts";
+import { AGENT_COMPONENTS, AGENT_EXAMPLES } from "./components.generated.ts";
 
-function findEntry(name: string): ComponentEntry {
-  const entry = ENTRIES.find((e) => e.name === name);
-  if (!entry) throw new Error(`props-doc manifest.ts has no ENTRIES row for "${name}"`);
-  return entry;
-}
+export { AGENT_COMPONENTS };
 
 export type Framework = "react" | "vue" | "svelte" | "solid" | "astro";
 
@@ -76,162 +66,6 @@ export interface AgentComponentSpec {
   /** The shared `@moderno-ui/core` recipe's variant table, when one exists. */
   variants?: Record<string, readonly string[]>;
 }
-
-/**
- * Every chart type shares this frame — `frameNodes`/`chartRoot`/`seriesGroup`
- * in `@moderno-ui/charts-core`'s `render.ts` — and adds only its own mark part
- * (`line`, `area`, `bar`, `point`) on top.
- */
-const CHART_FRAME_PARTS: AgentPart[] = [
-  { name: "root" },
-  { name: "grid" },
-  { name: "grid-line" },
-  { name: "axis-line" },
-  { name: "tick-label" },
-  { name: "series" },
-];
-
-/**
- * Adding a primitive later means one entry here plus a docs `agent:` block —
- * the schema and build wiring don't change (issue #41 proved this on the
- * vertical slice; issue #46 fanned it out to the rest).
- */
-export const AGENT_COMPONENTS: AgentComponentSpec[] = [
-  {
-    name: "Button",
-    slug: "button",
-    scope: "button",
-    propsEntry: findEntry("Button"),
-    parts: [{ name: "root" }],
-    variants: buttonRecipe.variants,
-  },
-  {
-    name: "Alert",
-    slug: "alert",
-    scope: "alert",
-    propsEntry: findEntry("Alert"),
-    parts: [
-      { name: "root" },
-      { name: "icon" },
-      { name: "content" },
-      { name: "title" },
-      { name: "description" },
-      { name: "action" },
-    ],
-    variants: alertRecipe.variants,
-  },
-  {
-    name: "Card",
-    slug: "card",
-    scope: "card",
-    propsEntry: findEntry("Card"),
-    parts: [
-      { name: "root" },
-      { name: "header" },
-      { name: "title" },
-      { name: "description" },
-      { name: "content" },
-      { name: "footer" },
-    ],
-    variants: cardRecipe.variants,
-  },
-  {
-    name: "Divider",
-    slug: "divider",
-    scope: "divider",
-    propsEntry: findEntry("Divider"),
-    // The rule itself is drawn with the root's ::before/::after, so `label` is
-    // the only part `components.css` targets besides the root.
-    parts: [{ name: "root" }, { name: "label" }],
-    variants: dividerRecipe.variants,
-  },
-  {
-    name: "Field",
-    slug: "field",
-    scope: "field",
-    propsEntry: findEntry("Field"),
-    parts: [
-      { name: "root" },
-      { name: "label" },
-      { name: "input" },
-      { name: "textarea" },
-      { name: "helper-text" },
-      { name: "error-text" },
-      { name: "required-indicator" },
-    ],
-    variants: fieldRecipe.variants,
-  },
-  {
-    name: "Checkbox",
-    slug: "checkbox",
-    scope: "checkbox",
-    propsEntry: findEntry("Checkbox"),
-    parts: [{ name: "root" }, { name: "control" }, { name: "indicator" }, { name: "label" }],
-    variants: checkboxRecipe.variants,
-  },
-  {
-    name: "Dialog",
-    slug: "dialog",
-    scope: "dialog",
-    parts: [
-      { name: "backdrop" },
-      { name: "positioner" },
-      { name: "content" },
-      { name: "title" },
-      { name: "description" },
-    ],
-  },
-  {
-    name: "Select",
-    slug: "select",
-    scope: "select",
-    propsEntry: findEntry("Select"),
-    parts: [
-      { name: "root" },
-      { name: "label" },
-      { name: "trigger" },
-      { name: "content" },
-      { name: "item" },
-    ],
-    variants: selectRecipe.variants,
-  },
-  {
-    name: "PinInput",
-    slug: "pin-input",
-    scope: "pin-input",
-    propsEntry: findEntry("PinInput"),
-    parts: [{ name: "root" }, { name: "label" }, { name: "control" }, { name: "input" }],
-    variants: pinInputRecipe.variants,
-  },
-  {
-    name: "LineChart",
-    slug: "line-chart",
-    scope: "chart",
-    propsEntry: findEntry("LineChart"),
-    parts: CHART_FRAME_PARTS.concat({ name: "line" }),
-  },
-  {
-    name: "AreaChart",
-    slug: "area-chart",
-    scope: "chart",
-    propsEntry: findEntry("AreaChart"),
-    parts: CHART_FRAME_PARTS.concat({ name: "area" }, { name: "line" }),
-  },
-  {
-    name: "BarChart",
-    slug: "bar-chart",
-    scope: "chart",
-    propsEntry: findEntry("BarChart"),
-    parts: CHART_FRAME_PARTS.concat({ name: "bar" }),
-  },
-  {
-    name: "ScatterChart",
-    slug: "scatter-chart",
-    scope: "chart",
-    propsEntry: findEntry("ScatterChart"),
-    parts: CHART_FRAME_PARTS.concat({ name: "point" }),
-  },
-];
 
 export interface AgentProp {
   name: string;
@@ -314,13 +148,20 @@ export interface BuildComponentsManifestOptions {
   /** Always `packages/react/tsconfig.json` — the canonical prop source for every binding. */
   reactTsConfigFilePath: string;
   components?: AgentComponentSpec[];
+  /**
+   * Props already resolved by `resolveComponentProps` for these components.
+   * Pass them to build several frameworks' manifests from one ts-morph
+   * extraction; without them, each build runs its own.
+   */
+  resolvedProps?: Map<string, ComponentDoc>;
   /** Curated guidance per component name, from each component's docs `agent:` block. */
   guidance: Record<string, AgentGuidance | undefined>;
 }
 
 export function buildComponentsManifest(opts: BuildComponentsManifestOptions): ComponentsManifest {
   const components = opts.components ?? AGENT_COMPONENTS;
-  const docsByName = resolveComponentProps(components, opts.reactTsConfigFilePath);
+  const docsByName =
+    opts.resolvedProps ?? resolveComponentProps(components, opts.reactTsConfigFilePath);
 
   const built = components.map((c): AgentComponent => {
     const doc = docsByName.get(c.name);

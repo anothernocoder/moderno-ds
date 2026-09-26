@@ -14,7 +14,8 @@
   ],
   "files": [
     "dist",
-    "src/styles"
+    "src/styles",
+    "!src/styles/components"
   ],
   "exports": {
     ".": {

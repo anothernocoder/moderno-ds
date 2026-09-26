@@ -1,0 +1,290 @@
+---
+title: Pagination
+description: A row of page buttons with previous and next, that skips far pages behind an ellipsis.
+group: Components
+order: 36
+component: Pagination
+pkg: "@moderno-ui/react"
+agentPropsHash: "sha256:0809fbbcc6ffa7d1ada9b094385d95a35e48d9d650f27686e65aae0e432df2b6"
+agent:
+  intent: Let the user move between the pages of a long list, one page at a time or straight to a page.
+  whenToUse: A list too long for one screen — search results, table rows, orders, posts — shown a page at a time.
+  whenNotToUse:
+    - case: A short set of views the user switches between, like Overview and Settings
+      use: Tabs
+    - case: Picking one exact number, like a quantity
+      use: NumberInput
+  gotchas:
+    - "Render the page list from Pagination.Context: map pages to Pagination.Item for a page and Pagination.Ellipsis for a gap. Spread the page onto the Item ({...page})."
+    - "count is the number of items, not pages. Ark divides it by pageSize (10 by default) to get the pages."
+    - "Pages start at 1, not 0."
+    - "The triggers have no content of their own: pass a glyph or an icon, like ‹ and ›. Ark names every button for screen readers."
+    - "In Vue, bind the page with v-model:page; boundaryCount is not a prop of Ark's Vue Pagination."
+  theming:
+    - "The buttons are --foreground on no fill and fill with --accent on hover. Do not pass a hex."
+    - "The current page has an --border outline on --background; the focus ring is --ring, drawn inside the button."
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import PaginationDemo from "../../../examples/pagination/pagination.svelte";
+import baseReact from "../../../examples/pagination/react.tsx?raw";
+import baseVue from "../../../examples/pagination/vue.vue?raw";
+import baseSolid from "../../../examples/pagination/solid.tsx?raw";
+import baseSvelte from "../../../examples/pagination/pagination.svelte?raw";
+import PaginationFirstLastDemo from "../../../examples/pagination/first-last/pagination-first-last.svelte";
+import firstLastReact from "../../../examples/pagination/first-last/react.tsx?raw";
+import firstLastVue from "../../../examples/pagination/first-last/vue.vue?raw";
+import firstLastSolid from "../../../examples/pagination/first-last/solid.tsx?raw";
+import firstLastSvelte from "../../../examples/pagination/first-last/pagination-first-last.svelte?raw";
+import PaginationSiblingsDemo from "../../../examples/pagination/siblings/pagination-siblings.svelte";
+import siblingsReact from "../../../examples/pagination/siblings/react.tsx?raw";
+import siblingsVue from "../../../examples/pagination/siblings/vue.vue?raw";
+import siblingsSolid from "../../../examples/pagination/siblings/solid.tsx?raw";
+import siblingsSvelte from "../../../examples/pagination/siblings/pagination-siblings.svelte?raw";
+import PaginationSizesDemo from "../../../examples/pagination/sizes/pagination-sizes.svelte";
+import sizesReact from "../../../examples/pagination/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/pagination/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/pagination/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/pagination/sizes/pagination-sizes.svelte?raw";
+
+<FrameworkSelect locale="en" />
+
+<Preview
+  examples={{
+    react: baseReact,
+    vue: baseVue,
+    solid: baseSolid,
+    svelte: baseSvelte,
+  }}
+>
+  <PaginationDemo client:visible />
+</Preview>
+
+## Installation
+
+<Install pkg="@moderno-ui/react" />
+
+## Usage
+
+Pagination is a row of page buttons with previous and next. Use it when a list is too long for one screen and you show it a page at a time. Far pages hide behind an ellipsis, so the row stays short.
+
+<ForFramework fw="react">
+
+```tsx
+import { Pagination } from "@moderno-ui/react";
+```
+
+```tsx
+<Pagination.Root
+  count={120}
+  pageSize={10}
+  page={page}
+  onPageChange={(details) => setPage(details.page)}
+>
+  <Pagination.PrevTrigger>‹</Pagination.PrevTrigger>
+  <Pagination.Context>
+    {(pagination) =>
+      pagination.pages.map((page, index) =>
+        page.type === "page" ? (
+          <Pagination.Item key={index} {...page}>
+            {page.value}
+          </Pagination.Item>
+        ) : (
+          <Pagination.Ellipsis key={index} index={index}>
+            …
+          </Pagination.Ellipsis>
+        ),
+      )
+    }
+  </Pagination.Context>
+  <Pagination.NextTrigger>›</Pagination.NextTrigger>
+</Pagination.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Pagination } from "@moderno-ui/vue";
+```
+
+```vue
+<Pagination.Root v-model:page="page" :count="120" :page-size="10">
+  <Pagination.PrevTrigger>‹</Pagination.PrevTrigger>
+  <Pagination.Context v-slot="{ pages }">
+    <template v-for="(page, index) in pages" :key="index">
+      <Pagination.Item v-if="page.type === 'page'" v-bind="page">{{ page.value }}</Pagination.Item>
+      <Pagination.Ellipsis v-else :index="index">…</Pagination.Ellipsis>
+    </template>
+  </Pagination.Context>
+  <Pagination.NextTrigger>›</Pagination.NextTrigger>
+</Pagination.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Pagination } from "@moderno-ui/svelte";
+```
+
+```svelte
+<Pagination.Root count={120} pageSize={10} {page} onPageChange={(details) => (page = details.page)}>
+  <Pagination.PrevTrigger>‹</Pagination.PrevTrigger>
+  <Pagination.Context>
+    {#snippet render(pagination)}
+      {#each pagination().pages as page, index (index)}
+        {#if page.type === "page"}
+          <Pagination.Item {...page}>{page.value}</Pagination.Item>
+        {:else}
+          <Pagination.Ellipsis {index}>…</Pagination.Ellipsis>
+        {/if}
+      {/each}
+    {/snippet}
+  </Pagination.Context>
+  <Pagination.NextTrigger>›</Pagination.NextTrigger>
+</Pagination.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { For } from "solid-js";
+import { Pagination } from "@moderno-ui/solid";
+```
+
+```tsx
+<Pagination.Root
+  count={120}
+  pageSize={10}
+  page={page()}
+  onPageChange={(details) => setPage(details.page)}
+>
+  <Pagination.PrevTrigger>‹</Pagination.PrevTrigger>
+  <Pagination.Context>
+    {(pagination) => (
+      <For each={pagination().pages}>
+        {(page, index) =>
+          page.type === "page" ? (
+            <Pagination.Item {...page}>{page.value}</Pagination.Item>
+          ) : (
+            <Pagination.Ellipsis index={index()}>…</Pagination.Ellipsis>
+          )
+        }
+      </For>
+    )}
+  </Pagination.Context>
+  <Pagination.NextTrigger>›</Pagination.NextTrigger>
+</Pagination.Root>
+```
+
+</ForFramework>
+
+`count` is the number of items, not pages. With 120 items and 10 per page, there are 12 pages. Pages start at 1.
+
+## API Reference
+
+### Pagination.Root
+
+`size` is the Moderno addition; every button follows it. The other props come from Ark's Pagination.
+
+<PropsTable component="Pagination" />
+
+| Prop               | Type                                                      | Default    | Description                                                   |
+| ------------------ | --------------------------------------------------------- | ---------- | ------------------------------------------------------------- |
+| `count`            | `number`                                                  | `1`        | How many items there are in all.                              |
+| `pageSize`         | `number`                                                  | —          | Controlled number of items on one page.                       |
+| `defaultPageSize`  | `number`                                                  | `10`       | Items on one page at first, when uncontrolled.                |
+| `page`             | `number`                                                  | —          | Controlled current page, from 1.                              |
+| `defaultPage`      | `number`                                                  | `1`        | Page at first, when uncontrolled.                             |
+| `onPageChange`     | `(details: { page: number; pageSize: number }) => void`   | —          | Called when the page changes.                                 |
+| `onPageSizeChange` | `(details: { pageSize: number }) => void`                 | —          | Called when the page size changes.                            |
+| `siblingCount`     | `number`                                                  | `1`        | How many pages to show on each side of the current one.       |
+| `boundaryCount`    | `number`                                                  | `1`        | How many pages to show at each end. Not in Vue.               |
+| `type`             | `"button" \| "link"`                                      | `"button"` | `"link"` gives each button an `href` from `getPageUrl`.       |
+| `getPageUrl`       | `(details: { page: number; pageSize: number }) => string` | —          | Builds the `href` of a page, when `type` is `"link"`.         |
+| `translations`     | `IntlTranslations`                                        | —          | What a screen reader says for the row, each page and trigger. |
+
+In Vue, bind the page with `v-model:page`, and listen with `@page-change`.
+
+### Parts
+
+| Part                      | Element    | Description                                                    |
+| ------------------------- | ---------- | -------------------------------------------------------------- |
+| `Pagination.Root`         | `<nav>`    | The landmark. Carries `data-size`.                             |
+| `Pagination.Context`      | —          | Hands you `pages`, the list to render, and the current `page`. |
+| `Pagination.Item`         | `<button>` | One page. Takes `type="page"` and `value`; spread the page.    |
+| `Pagination.Ellipsis`     | `<div>`    | Stands for the pages skipped. Takes its `index` in `pages`.    |
+| `Pagination.PrevTrigger`  | `<button>` | Goes one page back. Off on the first page.                     |
+| `Pagination.NextTrigger`  | `<button>` | Goes one page on. Off on the last page.                        |
+| `Pagination.FirstTrigger` | `<button>` | Optional. Goes to the first page.                              |
+| `Pagination.LastTrigger`  | `<button>` | Optional. Goes to the last page.                               |
+
+### Data attributes
+
+| Attribute       | Values                                                 |
+| --------------- | ------------------------------------------------------ |
+| `data-selected` | On the current page's item, with `aria-current="page"` |
+| `data-index`    | On each item: its page number                          |
+| `data-disabled` | On a trigger with nowhere to go                        |
+| `data-size`     | On the root: `"sm"`, `"md"` or `"lg"`                  |
+
+## Examples
+
+### First and last
+
+Add `Pagination.FirstTrigger` and `Pagination.LastTrigger` to jump to either end.
+
+<Preview
+  examples={{
+    react: firstLastReact,
+    vue: firstLastVue,
+    solid: firstLastSolid,
+    svelte: firstLastSvelte,
+  }}
+>
+  <PaginationFirstLastDemo client:visible />
+</Preview>
+
+### More pages near the current one
+
+`siblingCount` sets how many pages show on each side of the current page.
+
+<Preview
+  examples={{
+    react: siblingsReact,
+    vue: siblingsVue,
+    solid: siblingsSolid,
+    svelte: siblingsSvelte,
+  }}
+>
+  <PaginationSiblingsDemo client:visible />
+</Preview>
+
+### Sizes
+
+<Preview
+  examples={{
+    react: sizesReact,
+    vue: sizesVue,
+    solid: sizesSolid,
+    svelte: sizesSvelte,
+  }}
+>
+  <PaginationSizesDemo client:visible />
+</Preview>
+
+## Notes
+
+- `Pagination.Root` is wrapped to add `size`; every other part is Ark's unchanged.
+- The row keeps the same length as the page changes: near an end, Ark fills in more pages instead of an ellipsis.
+- In a right-to-left page the row runs from the right. Pass the mirrored glyphs, `›` for previous and `‹` for next.
+- To pick one exact number, use a NumberInput.

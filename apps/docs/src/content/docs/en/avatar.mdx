@@ -1,0 +1,203 @@
+---
+title: Avatar
+description: A small picture of a person or a team, with their initials when there is no picture.
+group: Components
+order: 23
+component: Avatar
+pkg: "@moderno-ui/react"
+agentPropsHash: "sha256:871593fb7aba40aae5a2ca23f41006f9af86934f9031efcb1361d8fa7136bef2"
+agent:
+  intent: Show who a person or a team is with a small picture, or their initials when there is no picture.
+  whenToUse: "Next to a name in a list, a comment, a header or a menu: anywhere a face or a logo helps people recognise who is who."
+  whenNotToUse:
+    - case: A decorative image or a large photo
+      use: A plain img
+    - case: A status next to a name (online, busy)
+      use: Indicator
+  gotchas:
+    - "Always render Avatar.Fallback: it shows while the image loads and when it fails. Put the initials inside it."
+    - "Give Avatar.Image an alt with the person's name. The fallback initials are not a name."
+    - "Ark hides the part that is not shown with the hidden attribute (data-state=hidden). Do not show or hide the parts yourself."
+    - "size and shape go on Avatar.Root, not on Image or Fallback."
+  theming:
+    - "The fallback paints --muted-foreground on --muted. Never pass a colour."
+    - "A circle uses --radius-full and a square uses --radius. Sizes come from --spacing-*."
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import AvatarDemo from "../../../examples/avatar/avatar.svelte";
+import baseReact from "../../../examples/avatar/react.tsx?raw";
+import baseVue from "../../../examples/avatar/vue.vue?raw";
+import baseSolid from "../../../examples/avatar/solid.tsx?raw";
+import baseSvelte from "../../../examples/avatar/avatar.svelte?raw";
+import AvatarSizesDemo from "../../../examples/avatar/sizes/avatar-sizes.svelte";
+import sizesReact from "../../../examples/avatar/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/avatar/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/avatar/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/avatar/sizes/avatar-sizes.svelte?raw";
+import AvatarShapesDemo from "../../../examples/avatar/shapes/avatar-shapes.svelte";
+import shapesReact from "../../../examples/avatar/shapes/react.tsx?raw";
+import shapesVue from "../../../examples/avatar/shapes/vue.vue?raw";
+import shapesSolid from "../../../examples/avatar/shapes/solid.tsx?raw";
+import shapesSvelte from "../../../examples/avatar/shapes/avatar-shapes.svelte?raw";
+import AvatarFallbackDemo from "../../../examples/avatar/fallback/avatar-fallback.svelte";
+import fallbackReact from "../../../examples/avatar/fallback/react.tsx?raw";
+import fallbackVue from "../../../examples/avatar/fallback/vue.vue?raw";
+import fallbackSolid from "../../../examples/avatar/fallback/solid.tsx?raw";
+import fallbackSvelte from "../../../examples/avatar/fallback/avatar-fallback.svelte?raw";
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
+  <AvatarDemo client:visible />
+</Preview>
+
+## Installation
+
+<Install pkg="@moderno-ui/react" />
+
+## Usage
+
+Use an avatar to show who someone is: next to a name, in a comment or in a menu. Put the initials in `Avatar.Fallback`; they show until the image loads, and stay if it fails.
+
+<ForFramework fw="react">
+
+```tsx
+import { Avatar } from "@moderno-ui/react";
+```
+
+```tsx
+<Avatar.Root>
+  <Avatar.Fallback>AL</Avatar.Fallback>
+  <Avatar.Image src="/ada.png" alt="Ada Lovelace" />
+</Avatar.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Avatar } from "@moderno-ui/vue";
+```
+
+```vue
+<Avatar.Root>
+  <Avatar.Fallback>AL</Avatar.Fallback>
+  <Avatar.Image src="/ada.png" alt="Ada Lovelace" />
+</Avatar.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Avatar } from "@moderno-ui/svelte";
+```
+
+```svelte
+<Avatar.Root>
+  <Avatar.Fallback>AL</Avatar.Fallback>
+  <Avatar.Image src="/ada.png" alt="Ada Lovelace" />
+</Avatar.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Avatar } from "@moderno-ui/solid";
+```
+
+```tsx
+<Avatar.Root>
+  <Avatar.Fallback>AL</Avatar.Fallback>
+  <Avatar.Image src="/ada.png" alt="Ada Lovelace" />
+</Avatar.Root>
+```
+
+</ForFramework>
+
+## API Reference
+
+### Avatar.Root
+
+<PropsTable component="Avatar" />
+
+Behaviour props come from Ark. The one you may need:
+
+| Prop             | Type                                                 | Default | Description                           |
+| ---------------- | ---------------------------------------------------- | ------- | ------------------------------------- |
+| `onStatusChange` | `(details: { status: "loaded" \| "error" }) => void` | —       | Called when the image loads or fails. |
+
+### Parts
+
+| Part              | Element  | Description                                                                 |
+| ----------------- | -------- | --------------------------------------------------------------------------- |
+| `Avatar.Root`     | `<div>`  | The box. Takes `size`, `shape` and the behaviour props.                     |
+| `Avatar.Image`    | `<img>`  | The picture. Shown once it has loaded. Needs `src` and `alt`.               |
+| `Avatar.Fallback` | `<span>` | The initials. Shown while the image loads, when it fails, or with no image. |
+
+### Data attributes
+
+| Attribute    | On              | Meaning                                                    |
+| ------------ | --------------- | ---------------------------------------------------------- |
+| `data-size`  | Root            | `sm`, `md` (default), `lg`                                 |
+| `data-shape` | Root            | `circle` (default), `square`                               |
+| `data-state` | Image, Fallback | `visible` or `hidden`. The hidden part also gets `hidden`. |
+
+## Examples
+
+### Sizes
+
+<Preview
+  examples={{
+    react: sizesReact,
+    vue: sizesVue,
+    solid: sizesSolid,
+    svelte: sizesSvelte,
+  }}
+>
+  <AvatarSizesDemo client:visible />
+</Preview>
+
+### Shapes
+
+Use `circle` for a person and `square` for a team, a workspace or a product.
+
+<Preview
+  examples={{
+    react: shapesReact,
+    vue: shapesVue,
+    solid: shapesSolid,
+    svelte: shapesSvelte,
+  }}
+>
+  <AvatarShapesDemo client:visible />
+</Preview>
+
+### Initials
+
+With no image, the avatar shows its fallback. Keep it to one or two letters.
+
+<Preview
+  examples={{
+    react: fallbackReact,
+    vue: fallbackVue,
+    solid: fallbackSolid,
+    svelte: fallbackSvelte,
+  }}
+>
+  <AvatarFallbackDemo client:visible />
+</Preview>
+
+## Notes
+
+- Only `Avatar.Root` is wrapped, to add `size` and `shape`. Every other part is Ark's.
+- The image and the fallback never show together. Ark swaps them when the image loads.

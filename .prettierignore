@@ -11,3 +11,5 @@ packages/css/src/tokens.css
 .vercel
 apps/docs/public/r
 apps/docs/src/generated
+packages/core/src/styles/components.css
+registry/registry.json

@@ -1,0 +1,37 @@
+{
+  "title": "Reset password",
+  "description": "Full-viewport screen at the end of a password-reset link, composing the login-form block in its reset-password mode: the new password and its confirmation, the rules said out loud as they are met, and the emailed token carried in a hidden input. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm and the footer at @md.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": ["login-form-{framework}"],
+  "files": {
+    "react": [
+      {
+        "path": "screens/reset-password/react/reset-password.tsx",
+        "type": "registry:screen",
+        "target": "src/components/screens/reset-password.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "screens/reset-password/vue/ResetPassword.vue",
+        "type": "registry:screen",
+        "target": "src/components/screens/ResetPassword.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "screens/reset-password/svelte/ResetPassword.svelte",
+        "type": "registry:screen",
+        "target": "src/components/screens/ResetPassword.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "screens/reset-password/solid/reset-password.tsx",
+        "type": "registry:screen",
+        "target": "src/components/screens/reset-password.tsx"
+      }
+    ]
+  }
+}

@@ -1,0 +1,4 @@
+value Callout
+type CalloutPartProps
+type CalloutRootProps
+type CalloutVariant

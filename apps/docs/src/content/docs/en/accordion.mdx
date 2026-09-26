@@ -1,0 +1,304 @@
+---
+title: Accordion
+description: A stack of sections that open and close under their own headers.
+group: Components
+order: 32
+component: Accordion
+pkg: "@moderno-ui/react"
+agentPropsHash: "sha256:b6084a9ee72b3570ed4f8b28349fb1f24e06cd75c07f11ca421af26c63e99372"
+agent:
+  intent: Show a stack of sections the reader opens one header at a time.
+  whenToUse: Long pages of optional detail — an FAQ, groups of settings, product specs — where the headers alone let the reader find what they need.
+  whenNotToUse:
+    - case: Sibling views of one subject where exactly one is always shown
+      use: Tabs
+    - case: Content every reader needs to see
+      use: Plain headings and text
+    - case: A short choice the user submits
+      use: Radio Group
+  gotchas:
+    - "Accordion.Root value and defaultValue are arrays of item values, even when only one item can be open."
+    - "One item opens at a time; pass multiple to let several stay open, and collapsible to let the open one close."
+    - "Put Accordion.ItemIndicator inside Accordion.ItemTrigger, after the label; pass it the icon, it turns when the item opens."
+    - "Accordion.Item goes directly inside Accordion.Root, and its trigger and content directly inside the item; variant and size reach them through the root."
+  theming:
+    - "Items are ruled apart with --border; enclosed also draws a --border box with --radius corners."
+    - "The trigger is --foreground and the indicator --muted-foreground; the content height animates over --motion-normal. Do not pass a hex."
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import AccordionDemo from "../../../examples/accordion/accordion.svelte";
+import baseReact from "../../../examples/accordion/react.tsx?raw";
+import baseVue from "../../../examples/accordion/vue.vue?raw";
+import baseSolid from "../../../examples/accordion/solid.tsx?raw";
+import baseSvelte from "../../../examples/accordion/accordion.svelte?raw";
+import AccordionEnclosedDemo from "../../../examples/accordion/enclosed/accordion-enclosed.svelte";
+import enclosedReact from "../../../examples/accordion/enclosed/react.tsx?raw";
+import enclosedVue from "../../../examples/accordion/enclosed/vue.vue?raw";
+import enclosedSolid from "../../../examples/accordion/enclosed/solid.tsx?raw";
+import enclosedSvelte from "../../../examples/accordion/enclosed/accordion-enclosed.svelte?raw";
+import AccordionMultipleDemo from "../../../examples/accordion/multiple/accordion-multiple.svelte";
+import multipleReact from "../../../examples/accordion/multiple/react.tsx?raw";
+import multipleVue from "../../../examples/accordion/multiple/vue.vue?raw";
+import multipleSolid from "../../../examples/accordion/multiple/solid.tsx?raw";
+import multipleSvelte from "../../../examples/accordion/multiple/accordion-multiple.svelte?raw";
+import AccordionSizesDemo from "../../../examples/accordion/sizes/accordion-sizes.svelte";
+import sizesReact from "../../../examples/accordion/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/accordion/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/accordion/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/accordion/sizes/accordion-sizes.svelte?raw";
+import AccordionDisabledDemo from "../../../examples/accordion/disabled/accordion-disabled.svelte";
+import disabledReact from "../../../examples/accordion/disabled/react.tsx?raw";
+import disabledVue from "../../../examples/accordion/disabled/vue.vue?raw";
+import disabledSolid from "../../../examples/accordion/disabled/solid.tsx?raw";
+import disabledSvelte from "../../../examples/accordion/disabled/accordion-disabled.svelte?raw";
+
+<FrameworkSelect locale="en" />
+
+<Preview
+  examples={{
+    react: baseReact,
+    vue: baseVue,
+    solid: baseSolid,
+    svelte: baseSvelte,
+  }}
+>
+  <AccordionDemo client:visible />
+</Preview>
+
+## Installation
+
+<Install pkg="@moderno-ui/react" />
+
+## Usage
+
+An accordion is a stack of sections. Each header opens its own section. Use it for optional detail, like an FAQ, so the reader sees the headers first and opens only what they need.
+
+<ForFramework fw="react">
+
+```tsx
+import { Accordion } from "@moderno-ui/react";
+```
+
+```tsx
+<Accordion.Root defaultValue={["shipping"]} collapsible>
+  <Accordion.Item value="shipping">
+    <Accordion.ItemTrigger>
+      How long does shipping take?
+      <Accordion.ItemIndicator>▾</Accordion.ItemIndicator>
+    </Accordion.ItemTrigger>
+    <Accordion.ItemContent>Three to five working days.</Accordion.ItemContent>
+  </Accordion.Item>
+  <Accordion.Item value="returns">
+    <Accordion.ItemTrigger>
+      Can I return an order?
+      <Accordion.ItemIndicator>▾</Accordion.ItemIndicator>
+    </Accordion.ItemTrigger>
+    <Accordion.ItemContent>Yes, within 30 days of delivery.</Accordion.ItemContent>
+  </Accordion.Item>
+</Accordion.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Accordion } from "@moderno-ui/vue";
+```
+
+```vue
+<Accordion.Root :default-value="['shipping']" collapsible>
+  <Accordion.Item value="shipping">
+    <Accordion.ItemTrigger>
+      How long does shipping take?
+      <Accordion.ItemIndicator>▾</Accordion.ItemIndicator>
+    </Accordion.ItemTrigger>
+    <Accordion.ItemContent>Three to five working days.</Accordion.ItemContent>
+  </Accordion.Item>
+  <Accordion.Item value="returns">
+    <Accordion.ItemTrigger>
+      Can I return an order?
+      <Accordion.ItemIndicator>▾</Accordion.ItemIndicator>
+    </Accordion.ItemTrigger>
+    <Accordion.ItemContent>Yes, within 30 days of delivery.</Accordion.ItemContent>
+  </Accordion.Item>
+</Accordion.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Accordion } from "@moderno-ui/svelte";
+```
+
+```svelte
+<Accordion.Root defaultValue={["shipping"]} collapsible>
+  <Accordion.Item value="shipping">
+    <Accordion.ItemTrigger>
+      How long does shipping take?
+      <Accordion.ItemIndicator>▾</Accordion.ItemIndicator>
+    </Accordion.ItemTrigger>
+    <Accordion.ItemContent>Three to five working days.</Accordion.ItemContent>
+  </Accordion.Item>
+  <Accordion.Item value="returns">
+    <Accordion.ItemTrigger>
+      Can I return an order?
+      <Accordion.ItemIndicator>▾</Accordion.ItemIndicator>
+    </Accordion.ItemTrigger>
+    <Accordion.ItemContent>Yes, within 30 days of delivery.</Accordion.ItemContent>
+  </Accordion.Item>
+</Accordion.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Accordion } from "@moderno-ui/solid";
+```
+
+```tsx
+<Accordion.Root defaultValue={["shipping"]} collapsible>
+  <Accordion.Item value="shipping">
+    <Accordion.ItemTrigger>
+      How long does shipping take?
+      <Accordion.ItemIndicator>▾</Accordion.ItemIndicator>
+    </Accordion.ItemTrigger>
+    <Accordion.ItemContent>Three to five working days.</Accordion.ItemContent>
+  </Accordion.Item>
+  <Accordion.Item value="returns">
+    <Accordion.ItemTrigger>
+      Can I return an order?
+      <Accordion.ItemIndicator>▾</Accordion.ItemIndicator>
+    </Accordion.ItemTrigger>
+    <Accordion.ItemContent>Yes, within 30 days of delivery.</Accordion.ItemContent>
+  </Accordion.Item>
+</Accordion.Root>
+```
+
+</ForFramework>
+
+By default one item is open at a time. `collapsible` lets the reader close it again.
+
+## API Reference
+
+### Accordion.Root
+
+`variant` and `size` are the Moderno additions; every item follows them. The other props come from Ark's Accordion.
+
+<PropsTable component="Accordion" />
+
+| Prop            | Type                                     | Default      | Description                                           |
+| --------------- | ---------------------------------------- | ------------ | ----------------------------------------------------- |
+| `value`         | `string[]`                               | —            | Controlled open items. Pair with `onValueChange`.     |
+| `defaultValue`  | `string[]`                               | `[]`         | Items open at first when uncontrolled.                |
+| `onValueChange` | `(details: { value: string[] }) => void` | —            | Called when an item opens or closes.                  |
+| `multiple`      | `boolean`                                | `false`      | Lets several items stay open at once.                 |
+| `collapsible`   | `boolean`                                | `false`      | Lets the open item close, so no item is open.         |
+| `disabled`      | `boolean`                                | `false`      | Disables every item.                                  |
+| `orientation`   | `"horizontal" \| "vertical"`             | `"vertical"` | Sets the arrow keys: up and down, or left and right.  |
+| `lazyMount`     | `boolean`                                | `false`      | Renders a content only the first time its item opens. |
+| `unmountOnExit` | `boolean`                                | `false`      | Removes a content when its item closes.               |
+
+In Vue, listen with `@value-change` or bind the value with `v-model`.
+
+### Accordion.Item
+
+| Prop       | Type      | Default | Description                 |
+| ---------- | --------- | ------- | --------------------------- |
+| `value`    | `string`  | —       | Required. The item's value. |
+| `disabled` | `boolean` | `false` | Disables this item only.    |
+
+### Parts
+
+| Part                      | Element    | Description                                                  |
+| ------------------------- | ---------- | ------------------------------------------------------------ |
+| `Accordion.Root`          | `<div>`    | Carries `data-variant` and `data-size`.                      |
+| `Accordion.Item`          | `<div>`    | One section. Holds its trigger and its content.              |
+| `Accordion.ItemTrigger`   | `<button>` | The header, with `aria-expanded`. Opens and closes its item. |
+| `Accordion.ItemIndicator` | `<div>`    | Optional. Holds your icon and turns when the item opens.     |
+| `Accordion.ItemContent`   | `<div>`    | `role="region"`, named by its trigger. Hidden while closed.  |
+
+### Data attributes
+
+| Attribute          | Values                                                    |
+| ------------------ | --------------------------------------------------------- |
+| `data-state`       | `"open"` or `"closed"`, on the item and its parts         |
+| `data-disabled`    | Present on a disabled item, its content and its indicator |
+| `data-orientation` | `"vertical"` or `"horizontal"`, on every part             |
+| `data-variant`     | On the root: `"line"` or `"enclosed"`                     |
+| `data-size`        | On the root: `"sm"`, `"md"` or `"lg"`                     |
+
+## Examples
+
+### Enclosed
+
+The items sit in one bordered box.
+
+<Preview
+  examples={{
+    react: enclosedReact,
+    vue: enclosedVue,
+    solid: enclosedSolid,
+    svelte: enclosedSvelte,
+  }}
+>
+  <AccordionEnclosedDemo client:visible />
+</Preview>
+
+### Multiple
+
+With `multiple`, opening one item leaves the others open.
+
+<Preview
+  examples={{
+    react: multipleReact,
+    vue: multipleVue,
+    solid: multipleSolid,
+    svelte: multipleSvelte,
+  }}
+>
+  <AccordionMultipleDemo client:visible />
+</Preview>
+
+### Sizes
+
+<Preview
+  examples={{
+    react: sizesReact,
+    vue: sizesVue,
+    solid: sizesSolid,
+    svelte: sizesSvelte,
+  }}
+>
+  <AccordionSizesDemo client:visible />
+</Preview>
+
+### Disabled item
+
+A disabled item can't be opened, and the arrow keys skip it.
+
+<Preview
+  examples={{
+    react: disabledReact,
+    vue: disabledVue,
+    solid: disabledSolid,
+    svelte: disabledSvelte,
+  }}
+>
+  <AccordionDisabledDemo client:visible />
+</Preview>
+
+## Notes
+
+- `Accordion.Root` is wrapped to add `variant` and `size`; every other part is Ark's unchanged.
+- The content's height animates as it opens and closes. It does not animate when the user asks for reduced motion.
+- For sibling views where exactly one is always shown, use Tabs.

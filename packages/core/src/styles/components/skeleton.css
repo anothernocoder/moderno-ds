@@ -1,0 +1,33 @@
+/* ────────────────────────── Skeleton ────────────────────────── *
+ * `skeletonRecipe` shape on the root; one part. A muted block that stands
+ * in for content while it loads. Each shape has a default size on the
+ * spacing scale, and the consumer resizes it like the content it replaces
+ * (a width on a line, a width on a circle — its height follows).        */
+[data-scope="skeleton"][data-part="root"] {
+  display: block;
+  border-radius: var(--radius);
+  background-color: var(--muted);
+  animation: moderno-skeleton-pulse calc(var(--motion-normal) * 3) ease-in-out infinite alternate;
+}
+[data-scope="skeleton"][data-shape="text"] {
+  width: 100%;
+  height: var(--spacing-4);
+}
+[data-scope="skeleton"][data-shape="rect"] {
+  width: 100%;
+  height: calc(var(--spacing-8) * 3);
+}
+/* A circle is as tall as it is wide, so a consumer sets only the width. */
+[data-scope="skeleton"][data-shape="circle"] {
+  flex: none;
+  width: var(--spacing-8);
+  aspect-ratio: 1;
+  border-radius: var(--radius-full);
+}
+/* Fades out and back (`alternate`): one slow breath every six
+   --motion-normal steps. */
+@keyframes moderno-skeleton-pulse {
+  to {
+    opacity: 0.5;
+  }
+}

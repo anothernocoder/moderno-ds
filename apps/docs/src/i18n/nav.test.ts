@@ -2,7 +2,7 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { byReadingOrder, pagerLinks, sidebarSections, type NavPage } from "./nav.ts";
+import { byReadingOrder, groupSiblings, pagerLinks, sidebarSections, type NavPage } from "./nav.ts";
 import { locales, type Locale } from "./ui.ts";
 
 describe("sidebarSections", () => {
@@ -27,6 +27,48 @@ describe("sidebarSections", () => {
   it("breaks an order tie by slug so the sidebar is stable", () => {
     const sections = sidebarSections([page("b", "Guides", 5), page("a", "Guides", 5)]);
     expect(sections[0]!.pages.map((p) => p.slug)).toEqual(["a", "b"]);
+  });
+
+  it("lists two pages that share an order in one group in the same sequence in every locale", () => {
+    // The Spanish titles sort the other way round; the slug keeps the locales in step.
+    const en = sidebarSections([
+      { slug: "pricing", title: "Pricing", group: "Blocks", order: 104 },
+      { slug: "empty-state", title: "Empty state", group: "Blocks", order: 104 },
+    ]);
+    const es = sidebarSections([
+      { slug: "pricing", title: "Precios", group: "Bloques", order: 104 },
+      { slug: "empty-state", title: "Estado vacío", group: "Bloques", order: 104 },
+    ]);
+    expect(en[0]!.pages.map((p) => p.slug)).toEqual(["empty-state", "pricing"]);
+    expect(es[0]!.pages.map((p) => p.slug)).toEqual(["empty-state", "pricing"]);
+  });
+});
+
+describe("groupSiblings", () => {
+  const page = (slug: string, group: string, order: number): NavPage => ({
+    slug,
+    title: slug,
+    group,
+    order,
+  });
+  const pages = [
+    page("alert-list", "Blocks", 103),
+    page("button", "Components", 10),
+    page("blocks", "Blocks", 100),
+    page("login-form", "Blocks", 101),
+    page("form-layout", "Blocks", 101),
+  ];
+
+  it("lists the other pages of the page's own group, in reading order", () => {
+    expect(groupSiblings(pages, "blocks").map((p) => p.slug)).toEqual([
+      "form-layout",
+      "login-form",
+      "alert-list",
+    ]);
+  });
+
+  it("returns nothing for a slug it does not know", () => {
+    expect(groupSiblings(pages, "missing")).toEqual([]);
   });
 });
 
@@ -69,6 +111,17 @@ describe("docs navigation — the registry tiers have their own sections", () =>
     });
   }
 
+  for (const locale of locales) {
+    it(`${locale}: every tier's index page has pages to list`, () => {
+      // The Blocks, Screens and Flows pages render <TierIndex />, the other
+      // pages of their own group; an index with nothing under it is a broken page.
+      const pages = readNavPages(locale);
+      for (const index of ["blocks", "screens", "flows"]) {
+        expect(groupSiblings(pages, index).length, index).toBeGreaterThan(0);
+      }
+    });
+  }
+
   it("gives both locales the same number of sidebar sections", () => {
     const counts = locales.map((l) => sidebarSections(readNavPages(l)).length);
     expect(new Set(counts).size).toBe(1);
@@ -77,13 +130,13 @@ describe("docs navigation — the registry tiers have their own sections", () =>
 
 describe("docs reading order — a property of the content, not of the loader", () => {
   for (const locale of locales) {
-    it(`${locale}: every page claims its own \`order\``, () => {
-      const orders = readNavPages(locale).map((p) => p.order);
-      const duplicated = orders.filter((o, i) => orders.indexOf(o) !== i);
-      expect(
-        duplicated,
-        `pages sharing an \`order\` leave their sequence to the content loader`,
-      ).toEqual([]);
+    it(`${locale}: every page has its own place in the reading order`, () => {
+      // Pages may share an \`order\` (two sibling tickets picking the same one
+      // is not a failure); what must never happen is two pages the comparator
+      // cannot tell apart, which would leave their sequence to the loader.
+      const pages = [...readNavPages(locale)].sort(byReadingOrder);
+      const ties = pages.slice(1).filter((p, i) => byReadingOrder(pages[i]!, p) === 0);
+      expect(ties.map((p) => p.slug)).toEqual([]);
     });
   }
 

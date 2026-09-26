@@ -4,6 +4,7 @@ import svelte from "@astrojs/svelte";
 import vercel from "@astrojs/vercel";
 import { fileURLToPath } from "node:url";
 import { defineConfig, passthroughImageService } from "astro/config";
+import { registryAliases } from "../../packages/lint/src/registry.ts";
 import shikiConfig from "./shiki.config.ts";
 
 // GitHub Pages serves this as a project site under /moderno-ds/, so it needs
@@ -12,6 +13,10 @@ import shikiConfig from "./shiki.config.ts";
 const GH_PAGES = process.env.GH_PAGES === "true";
 const SITE =
   process.env.SITE_URL ?? (GH_PAGES ? "https://anothernocoder.github.io" : "https://moderno.style");
+
+// Every registry file the CLI ships, so a preview can resolve the `@/` paths
+// one registry source imports another through.
+const registryManifest = fileURLToPath(new URL("../../registry/registry.json", import.meta.url));
 
 // https://astro.build/config
 export default defineConfig({
@@ -40,54 +45,26 @@ export default defineConfig({
     // The Svelte islands import the published CSS contract once, globally.
     ssr: { noExternal: ["@moderno-ui/css"] },
     resolve: {
-      alias: {
+      alias: [
         // A block preview mounts the registry source itself (registry/blocks/…)
         // rather than a copy, so the docs can never show markup that has
         // drifted from what the CLI installs. Those files sit outside this app
         // and have no `node_modules` of their own, so their bare import of the
         // framework package has nothing to resolve against — this points it at
         // the same workspace package the islands already use.
-        "@moderno-ui/svelte": fileURLToPath(
-          new URL("./node_modules/@moderno-ui/svelte", import.meta.url),
-        ),
-        // A screen composes blocks the CLI has already installed alongside it,
-        // so its source imports them from where they land in a consumer
-        // project (`@/components/blocks/…`, the shadcn-style alias every
-        // registry target is written against). Mounting that source here means
-        // resolving those two specifiers to the registry files the CLI would
-        // have copied — same reason as the alias above: the preview must be the
-        // shipped file, not a copy that can drift from it.
-        "@/components/blocks/LoginForm.svelte": fileURLToPath(
-          new URL("../../registry/blocks/login-form/svelte/LoginForm.svelte", import.meta.url),
-        ),
-        "@/components/blocks/AlertList.svelte": fileURLToPath(
-          new URL("../../registry/blocks/alert-list/svelte/AlertList.svelte", import.meta.url),
-        ),
-        // And one tier up again: a flow's example assembly composes the five
-        // screens through the path `moderno add` writes them to, for exactly
-        // the same reason — the preview has to be the shipped file.
-        "@/components/screens/SignIn.svelte": fileURLToPath(
-          new URL("../../registry/screens/sign-in/svelte/SignIn.svelte", import.meta.url),
-        ),
-        "@/components/screens/SignUp.svelte": fileURLToPath(
-          new URL("../../registry/screens/sign-up/svelte/SignUp.svelte", import.meta.url),
-        ),
-        "@/components/screens/ForgotPassword.svelte": fileURLToPath(
-          new URL(
-            "../../registry/screens/forgot-password/svelte/ForgotPassword.svelte",
-            import.meta.url,
-          ),
-        ),
-        "@/components/screens/ResetPassword.svelte": fileURLToPath(
-          new URL(
-            "../../registry/screens/reset-password/svelte/ResetPassword.svelte",
-            import.meta.url,
-          ),
-        ),
-        "@/components/screens/Verify.svelte": fileURLToPath(
-          new URL("../../registry/screens/verify/svelte/Verify.svelte", import.meta.url),
-        ),
-      },
+        {
+          find: "@moderno-ui/svelte",
+          replacement: fileURLToPath(new URL("./node_modules/@moderno-ui/svelte", import.meta.url)),
+        },
+        // A screen composes blocks — and a flow composes screens — through the
+        // path `moderno add` writes them to in a consumer project
+        // (`@/components/blocks/…`, `@/components/screens/…`). Mounting that
+        // source here means resolving those specifiers to the registry files the
+        // CLI would have copied, read from registry.json — same reason as the
+        // alias above: the preview must be the shipped file, not a copy that can
+        // drift from it. The Svelte SSR suite resolves them the same way.
+        ...registryAliases(registryManifest, "svelte"),
+      ],
     },
   },
 });

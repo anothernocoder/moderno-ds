@@ -1,0 +1,190 @@
+---
+title: Toggle
+description: Un botón que se queda pulsado hasta que se pulsa otra vez, para una opción que está activada o no.
+group: Componentes
+order: 28
+component: Toggle
+pkg: "@moderno-ui/react"
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ToggleDemo from "../../../examples/toggle/toggle.svelte";
+import baseReact from "../../../examples/toggle/react.tsx?raw";
+import baseVue from "../../../examples/toggle/vue.vue?raw";
+import baseSolid from "../../../examples/toggle/solid.tsx?raw";
+import baseSvelte from "../../../examples/toggle/toggle.svelte?raw";
+import ToggleIndicatorDemo from "../../../examples/toggle/indicator/toggle-indicator.svelte";
+import indicatorReact from "../../../examples/toggle/indicator/react.tsx?raw";
+import indicatorVue from "../../../examples/toggle/indicator/vue.vue?raw";
+import indicatorSolid from "../../../examples/toggle/indicator/solid.tsx?raw";
+import indicatorSvelte from "../../../examples/toggle/indicator/toggle-indicator.svelte?raw";
+import ToggleVariantsDemo from "../../../examples/toggle/variants/toggle-variants.svelte";
+import variantsReact from "../../../examples/toggle/variants/react.tsx?raw";
+import variantsVue from "../../../examples/toggle/variants/vue.vue?raw";
+import variantsSolid from "../../../examples/toggle/variants/solid.tsx?raw";
+import variantsSvelte from "../../../examples/toggle/variants/toggle-variants.svelte?raw";
+import ToggleSizesDemo from "../../../examples/toggle/sizes/toggle-sizes.svelte";
+import sizesReact from "../../../examples/toggle/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/toggle/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/toggle/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/toggle/sizes/toggle-sizes.svelte?raw";
+import ToggleDisabledDemo from "../../../examples/toggle/disabled/toggle-disabled.svelte";
+import disabledReact from "../../../examples/toggle/disabled/react.tsx?raw";
+import disabledVue from "../../../examples/toggle/disabled/vue.vue?raw";
+import disabledSolid from "../../../examples/toggle/disabled/solid.tsx?raw";
+import disabledSvelte from "../../../examples/toggle/disabled/toggle-disabled.svelte?raw";
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
+  <ToggleDemo client:visible />
+</Preview>
+
+## Instalación
+
+<Install pkg="@moderno-ui/react" />
+
+## Uso
+
+Un toggle es un botón que se queda pulsado. Púlsalo una vez para activar una opción y otra vez para desactivarla. Úsalo para una opción de una barra de herramientas; para varias opciones relacionadas, usa Toggle Group.
+
+<ForFramework fw="react">
+
+```tsx
+import { Toggle } from "@moderno-ui/react";
+```
+
+```tsx
+<Toggle.Root>Bold</Toggle.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Toggle } from "@moderno-ui/vue";
+```
+
+```vue
+<Toggle.Root>Bold</Toggle.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Toggle } from "@moderno-ui/svelte";
+```
+
+```svelte
+<Toggle.Root>Bold</Toggle.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Toggle } from "@moderno-ui/solid";
+```
+
+```tsx
+<Toggle.Root>Bold</Toggle.Root>
+```
+
+</ForFramework>
+
+## Referencia de la API
+
+### Toggle.Root
+
+`variant` y `size` son los añadidos de Moderno; el resto de props vienen del Toggle de Ark.
+
+<PropsTable component="Toggle" />
+
+| Prop              | Tipo                         | Por defecto | Descripción                                     |
+| ----------------- | ---------------------------- | ----------- | ----------------------------------------------- |
+| `pressed`         | `boolean`                    | —           | Estado controlado. Úsalo con `onPressedChange`. |
+| `defaultPressed`  | `boolean`                    | `false`     | Estado inicial cuando no está controlado.       |
+| `onPressedChange` | `(pressed: boolean) => void` | —           | Se llama cuando el toggle se pulsa o se suelta. |
+| `disabled`        | `boolean`                    | `false`     | Deshabilita el botón y lo atenúa.               |
+
+En Vue, escucha con `@pressed-change` o enlaza el estado con `v-model:pressed`.
+
+### Partes
+
+| Parte              | Elemento   | Descripción                                                                                                                 |
+| ------------------ | ---------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `Toggle.Root`      | `<button>` | El botón. Lleva `aria-pressed`, `data-variant` y `data-size`.                                                               |
+| `Toggle.Indicator` | `<div>`    | Opcional. Muestra sus hijos cuando está activado y su `fallback` cuando no (en Vue es un `<span>` con un slot `#fallback`). |
+
+### Atributos data
+
+| Atributo        | Valores                                     |
+| --------------- | ------------------------------------------- |
+| `data-state`    | `"on"` u `"off"`, en la raíz y el indicador |
+| `data-pressed`  | Presente mientras está pulsado              |
+| `data-disabled` | Presente con `disabled`                     |
+| `data-variant`  | En la raíz: `"ghost"` u `"outline"`         |
+| `data-size`     | En la raíz: `"sm"`, `"md"` o `"lg"`         |
+
+## Ejemplos
+
+### Indicador
+
+Muestra un icono cuando el toggle está activado y otro cuando no.
+
+<Preview
+  examples={{
+    react: indicatorReact,
+    vue: indicatorVue,
+    solid: indicatorSolid,
+    svelte: indicatorSvelte,
+  }}
+>
+  <ToggleIndicatorDemo client:visible />
+</Preview>
+
+### Variantes
+
+<Preview
+  examples={{
+    react: variantsReact,
+    vue: variantsVue,
+    solid: variantsSolid,
+    svelte: variantsSvelte,
+  }}
+>
+  <ToggleVariantsDemo client:visible />
+</Preview>
+
+### Tamaños
+
+<Preview examples={{ react: sizesReact, vue: sizesVue, solid: sizesSolid, svelte: sizesSvelte }}>
+  <ToggleSizesDemo client:visible />
+</Preview>
+
+### Deshabilitado
+
+<Preview
+  examples={{
+    react: disabledReact,
+    vue: disabledVue,
+    solid: disabledSolid,
+    svelte: disabledSvelte,
+  }}
+>
+  <ToggleDisabledDemo client:visible />
+</Preview>
+
+## Notas
+
+- `Toggle.Root` está envuelto para añadir `variant` y `size`; el resto de partes son las de Ark sin cambios.
+- Estiliza el estado desde `data-state` y los atributos `data-*`; `variant` y `size` son las únicas props visuales.
+- Toggle es un botón que se pulsa. Para un ajuste de encendido y apagado con riel y perilla, usa Switch.

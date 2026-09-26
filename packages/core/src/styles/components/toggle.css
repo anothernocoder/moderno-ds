@@ -1,0 +1,145 @@
+/* ───────────────────── Toggle and ToggleGroup ─────────────────── *
+ * A Toggle is a native <button> that stays pressed: Ark stamps
+ * aria-pressed and data-state="on|off" (+ data-pressed, data-disabled)
+ * on it. Parts: toggle root > indicator (Ark's slot that shows its
+ * children while on and its fallback while off). A ToggleGroup is a row
+ * of the same buttons: toggle-group root > item, with Ark's
+ * data-orientation on both. `toggleRecipe` puts variant × size on a
+ * Toggle's root; `toggleGroupRecipe` puts them on the group's root, and
+ * every item follows it. A Toggle and a group item look the same, so the
+ * shared rules below name both.                                         */
+[data-scope="toggle"][data-part="root"],
+[data-scope="toggle-group"][data-part="item"] {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  height: var(--spacing-8);
+  min-width: var(--spacing-8);
+  padding-inline: var(--spacing-3);
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  /* Clears the UA `buttonface` grey: at rest a toggle has no fill. */
+  background-color: transparent;
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-size: var(--text-ui-md);
+  font-weight: var(--font-weight-medium);
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background-color var(--motion-fast),
+    border-color var(--motion-fast),
+    color var(--motion-fast);
+}
+[data-scope="toggle"][data-part="root"]:hover:not([data-state="on"]),
+[data-scope="toggle-group"][data-part="item"]:hover:not([data-state="on"]) {
+  background-color: var(--muted);
+  color: var(--muted-foreground);
+}
+/* Pressed: the contract's accent pair, the same fill a hovered ghost
+   Button takes, so "on" reads as "held down". */
+[data-scope="toggle"][data-part="root"][data-state="on"],
+[data-scope="toggle-group"][data-part="item"][data-state="on"] {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+/* Disabled — the base layer dims `[data-disabled]`, which Ark stamps; a
+   native `disabled` set without Ark (or before it hydrates) gets the same
+   dimmed, inert look here, like Button. */
+[data-scope="toggle"][data-part="root"]:disabled,
+[data-scope="toggle-group"][data-part="item"]:disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+/* Toggle — outline draws a border on the --background, like an outline
+   Button. */
+[data-scope="toggle"][data-part="root"][data-variant="outline"] {
+  border-color: var(--border);
+  background-color: var(--background);
+}
+[data-scope="toggle"][data-part="root"][data-variant="outline"][data-state="on"] {
+  background-color: var(--accent);
+}
+[data-scope="toggle"][data-part="indicator"] {
+  display: inline-flex;
+  align-items: center;
+}
+/* Sizes — heights match Button's, from the spacing slots; `lg` sums two. */
+[data-scope="toggle"][data-part="root"][data-size="sm"] {
+  height: var(--spacing-7);
+  min-width: var(--spacing-7);
+  padding-inline: var(--spacing-2);
+  font-size: var(--text-ui-sm);
+}
+[data-scope="toggle"][data-part="root"][data-size="lg"] {
+  height: calc(var(--spacing-8) + var(--spacing-2));
+  min-width: calc(var(--spacing-8) + var(--spacing-2));
+  padding-inline: var(--spacing-4);
+  font-size: var(--text-ui-lg);
+}
+
+/* ToggleGroup — a row of items (a column when data-orientation is
+   vertical). Ark makes the root focusable only to hand focus to an item,
+   so the ring is drawn on the item, inside its edge, where a neighbour
+   cannot cover it. */
+[data-scope="toggle-group"][data-part="root"] {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+}
+[data-scope="toggle-group"][data-part="root"][data-orientation="vertical"] {
+  flex-direction: column;
+  align-items: stretch;
+}
+[data-scope="toggle-group"][data-part="item"]:focus-visible {
+  outline-color: var(--ring);
+  outline-style: solid;
+  outline-width: 2px;
+  outline-offset: -2px;
+}
+/* Outline — the items sit in one bordered bar on --background, half a
+   spacing step from its edge; their corners follow the bar's. */
+[data-scope="toggle-group"][data-part="root"][data-variant="outline"] {
+  padding: calc(var(--spacing-1) / 2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background-color: var(--background);
+}
+[data-scope="toggle-group"][data-part="root"][data-variant="outline"] [data-part="item"] {
+  border-radius: calc(var(--radius) - var(--spacing-1) / 2);
+}
+/* Density driven by the recipe's data-size on the group's root. */
+[data-scope="toggle-group"][data-part="root"][data-size="sm"] [data-part="item"] {
+  height: var(--spacing-7);
+  min-width: var(--spacing-7);
+  padding-inline: var(--spacing-2);
+  font-size: var(--text-ui-sm);
+}
+[data-scope="toggle-group"][data-part="root"][data-size="lg"] [data-part="item"] {
+  height: calc(var(--spacing-8) + var(--spacing-2));
+  min-width: calc(var(--spacing-8) + var(--spacing-2));
+  padding-inline: var(--spacing-4);
+  font-size: var(--text-ui-lg);
+}
+/*
+ * Ark stamps data-disabled on a disabled Toggle's Indicator and on the root
+ * and every item of a disabled group, and both the base layer and the
+ * :disabled rule above dim them — nesting would multiply the opacity. Dim
+ * the root once and leave its parts opaque. This rule must stay after the
+ * :disabled one: same specificity, so order decides.
+ */
+[data-scope="toggle"][data-part="root"][data-disabled] :where([data-part]),
+[data-scope="toggle-group"][data-part="root"][data-disabled] :where([data-part]) {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-scope="toggle"][data-part="root"],
+  [data-scope="toggle-group"][data-part="item"] {
+    transition: none;
+  }
+}

@@ -1,0 +1,143 @@
+---
+title: Esqueleto
+description: Un marcador atenuado con la forma del contenido que todavía está cargando.
+group: Componentes
+order: 21
+component: Skeleton
+pkg: "@moderno-ui/react"
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import SkeletonDemo from "../../../examples/skeleton/skeleton.svelte";
+import baseReact from "../../../examples/skeleton/react.tsx?raw";
+import baseVue from "../../../examples/skeleton/vue.vue?raw";
+import baseSolid from "../../../examples/skeleton/solid.tsx?raw";
+import baseSvelte from "../../../examples/skeleton/skeleton.svelte?raw";
+import SkeletonShapesDemo from "../../../examples/skeleton/shapes/skeleton-shapes.svelte";
+import shapesReact from "../../../examples/skeleton/shapes/react.tsx?raw";
+import shapesVue from "../../../examples/skeleton/shapes/vue.vue?raw";
+import shapesSolid from "../../../examples/skeleton/shapes/solid.tsx?raw";
+import shapesSvelte from "../../../examples/skeleton/shapes/skeleton-shapes.svelte?raw";
+import SkeletonProfileDemo from "../../../examples/skeleton/profile/skeleton-profile.svelte";
+import profileReact from "../../../examples/skeleton/profile/react.tsx?raw";
+import profileVue from "../../../examples/skeleton/profile/vue.vue?raw";
+import profileSolid from "../../../examples/skeleton/profile/solid.tsx?raw";
+import profileSvelte from "../../../examples/skeleton/profile/skeleton-profile.svelte?raw";
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
+  <SkeletonDemo client:visible />
+</Preview>
+
+## Instalación
+
+<Install pkg="@moderno-ui/react" />
+
+## Uso
+
+Usa un esqueleto mientras carga un contenido cuya forma ya conoces. Muestra la forma de lo que viene, así la página no salta cuando llega el contenido.
+
+<ForFramework fw="react">
+
+```tsx
+import { Skeleton } from "@moderno-ui/react";
+```
+
+```tsx
+<Skeleton />
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Skeleton } from "@moderno-ui/vue";
+```
+
+```vue
+<Skeleton />
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Skeleton } from "@moderno-ui/svelte";
+```
+
+```svelte
+<Skeleton />
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Skeleton } from "@moderno-ui/solid";
+```
+
+```tsx
+<Skeleton />
+```
+
+</ForFramework>
+
+## Referencia de API
+
+### Skeleton
+
+Renderiza un `<span>` vacío con `aria-hidden="true"`. `shape` vale `text` por defecto. Define el tamaño con `style` o una clase.
+
+<PropsTable component="Skeleton" />
+
+### Partes
+
+| Parte  | Elemento | Descripción                                                                             |
+| ------ | -------- | --------------------------------------------------------------------------------------- |
+| `root` | `<span>` | El marcador. Lleva `data-shape`. Un bloque que ocupa todo el ancho, salvo con `circle`. |
+
+## Ejemplos
+
+### Formas
+
+`text` es una línea, `rect` es un bloque para una imagen o una tarjeta, `circle` es un avatar.
+
+<Preview
+  examples={{
+    react: shapesReact,
+    vue: shapesVue,
+    solid: shapesSolid,
+    svelte: shapesSvelte,
+  }}
+>
+  <SkeletonShapesDemo client:visible />
+</Preview>
+
+### Un perfil cargando
+
+Combina formas con la disposición del contenido real. Marca la región con `aria-busy="true"` mientras carga.
+
+<Preview
+  examples={{
+    react: profileReact,
+    vue: profileVue,
+    solid: profileSolid,
+    svelte: profileSvelte,
+  }}
+>
+  <SkeletonProfileDemo client:visible />
+</Preview>
+
+## Notas
+
+- Skeleton es solo CSS: un `<span>` con `data-scope="skeleton"`, sin máquina de Ark.
+- Un esqueleto no le dice nada a un lector de pantalla. `aria-busy` en la región que carga le pide a la tecnología de asistencia que espere.
+- El esqueleto pulsa despacio. Se queda quieto cuando el usuario pide menos movimiento.

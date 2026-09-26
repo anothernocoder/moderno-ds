@@ -1,0 +1,159 @@
+---
+title: Skeleton
+description: A muted placeholder in the shape of content that is still loading.
+group: Components
+order: 21
+component: Skeleton
+pkg: "@moderno-ui/react"
+agentPropsHash: "sha256:6d878a3b80739321115f1ebcd83eddc535c10b39110325abfe340a212d991dd7"
+agent:
+  intent: A muted placeholder that holds the place of content while it loads.
+  whenToUse: "While a list, a card or a profile loads and you already know its layout: a line for each line of text, a circle for an avatar, a rect for an image."
+  whenNotToUse:
+    - case: A wait with no known layout, or an action in progress
+      use: Spinner
+    - case: Content that failed to load
+      use: Alert
+  gotchas:
+    - 'A skeleton is aria-hidden. Put aria-busy="true" on the region that is loading, and remove it when the content arrives.'
+    - "Size a skeleton like the content it replaces, with style or a class: a width on a line, a width on a circle (its height follows)."
+    - "Replace the skeletons with the real content; do not show both."
+  theming:
+    - "The fill is --muted and the corner is --radius (--radius-full for a circle). Never pass a colour."
+    - "The pulse speed comes from --motion-normal, and it stops for users who ask for reduced motion."
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import SkeletonDemo from "../../../examples/skeleton/skeleton.svelte";
+import baseReact from "../../../examples/skeleton/react.tsx?raw";
+import baseVue from "../../../examples/skeleton/vue.vue?raw";
+import baseSolid from "../../../examples/skeleton/solid.tsx?raw";
+import baseSvelte from "../../../examples/skeleton/skeleton.svelte?raw";
+import SkeletonShapesDemo from "../../../examples/skeleton/shapes/skeleton-shapes.svelte";
+import shapesReact from "../../../examples/skeleton/shapes/react.tsx?raw";
+import shapesVue from "../../../examples/skeleton/shapes/vue.vue?raw";
+import shapesSolid from "../../../examples/skeleton/shapes/solid.tsx?raw";
+import shapesSvelte from "../../../examples/skeleton/shapes/skeleton-shapes.svelte?raw";
+import SkeletonProfileDemo from "../../../examples/skeleton/profile/skeleton-profile.svelte";
+import profileReact from "../../../examples/skeleton/profile/react.tsx?raw";
+import profileVue from "../../../examples/skeleton/profile/vue.vue?raw";
+import profileSolid from "../../../examples/skeleton/profile/solid.tsx?raw";
+import profileSvelte from "../../../examples/skeleton/profile/skeleton-profile.svelte?raw";
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
+  <SkeletonDemo client:visible />
+</Preview>
+
+## Installation
+
+<Install pkg="@moderno-ui/react" />
+
+## Usage
+
+Use a skeleton while content loads and you already know its layout. It shows the shape of what is coming, so the page does not jump when the content arrives.
+
+<ForFramework fw="react">
+
+```tsx
+import { Skeleton } from "@moderno-ui/react";
+```
+
+```tsx
+<Skeleton />
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Skeleton } from "@moderno-ui/vue";
+```
+
+```vue
+<Skeleton />
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Skeleton } from "@moderno-ui/svelte";
+```
+
+```svelte
+<Skeleton />
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Skeleton } from "@moderno-ui/solid";
+```
+
+```tsx
+<Skeleton />
+```
+
+</ForFramework>
+
+## API Reference
+
+### Skeleton
+
+Renders an empty `<span>` with `aria-hidden="true"`. `shape` defaults to `text`. Set the size with `style` or a class.
+
+<PropsTable component="Skeleton" />
+
+### Parts
+
+| Part   | Element  | Description                                                                               |
+| ------ | -------- | ----------------------------------------------------------------------------------------- |
+| `root` | `<span>` | The placeholder. Carries `data-shape`. A block that fills the width, except for `circle`. |
+
+## Examples
+
+### Shapes
+
+`text` is one line, `rect` is a block for an image or a card, `circle` is an avatar.
+
+<Preview
+  examples={{
+    react: shapesReact,
+    vue: shapesVue,
+    solid: shapesSolid,
+    svelte: shapesSvelte,
+  }}
+>
+  <SkeletonShapesDemo client:visible />
+</Preview>
+
+### A loading profile
+
+Compose shapes into the layout of the real content. Mark the region with `aria-busy="true"` while it loads.
+
+<Preview
+  examples={{
+    react: profileReact,
+    vue: profileVue,
+    solid: profileSolid,
+    svelte: profileSvelte,
+  }}
+>
+  <SkeletonProfileDemo client:visible />
+</Preview>
+
+## Notes
+
+- Skeleton is CSS-only: a `<span>` with `data-scope="skeleton"`, no Ark machine.
+- A skeleton says nothing to a screen reader. `aria-busy` on the loading region tells assistive tech to wait.
+- The skeleton pulses slowly. It holds still for users who ask for reduced motion.

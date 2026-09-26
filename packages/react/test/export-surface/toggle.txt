@@ -1,0 +1,6 @@
+value Toggle
+type ModernoToggleRootProps
+type ToggleIndicatorProps
+type ToggleRootProps
+type ToggleSize
+type ToggleVariant

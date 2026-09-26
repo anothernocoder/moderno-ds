@@ -1,0 +1,22 @@
+{
+  "name": "RadioGroup",
+  "scope": "radio-group",
+  "import": "import { RadioGroup } from \"@moderno-ui/react\"",
+  "propsHash": "sha256:fixture-radio-group",
+  "props": [{ "name": "size", "type": "\"sm\" | \"md\" | \"lg\"", "required": false }],
+  "propsComplete": false,
+  "parts": [
+    { "name": "root" },
+    { "name": "label" },
+    { "name": "item" },
+    { "name": "item-control" },
+    { "name": "item-text" },
+    { "name": "item-description" },
+    { "name": "indicator" }
+  ],
+  "variants": { "size": ["sm", "md", "lg"] },
+  "guidance": {
+    "intent": "Pick exactly one option from a short, visible list.",
+    "whenToUse": "Two to five mutually exclusive options the user should compare: shipping speed, plan, payment method."
+  }
+}

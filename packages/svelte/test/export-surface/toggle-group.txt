@@ -1,0 +1,4 @@
+value ToggleGroup
+type ToggleGroupSize
+type ToggleGroupValueChangeDetails
+type ToggleGroupVariant

@@ -1,0 +1,330 @@
+---
+title: Slider
+description: Lets the user pick a number, or a range between two, by dragging along a track.
+group: Components
+order: 34
+component: Slider
+pkg: "@moderno-ui/react"
+agentPropsHash: "sha256:9f3c0988d9cda7fcb1118af894102ecb2abbab7b9b079419276f7b98c5c2922d"
+agent:
+  intent: Let the user pick a number, or a range between two, by dragging a thumb along a track.
+  whenToUse: A value where the rough position matters more than the exact digit — volume, brightness, a price range in a filter — and the user benefits from seeing it against its limits.
+  whenNotToUse:
+    - case: An exact number the user types, like a quantity or an age
+      use: NumberInput
+    - case: A choice between two states
+      use: Switch
+    - case: Showing how far a task has come, not a value the user sets
+      use: Progress
+  gotchas:
+    - "The value is always an array, one number per thumb: [40] for one thumb, [20, 80] for a range. Render one Slider.Thumb per value, each with its index."
+    - "Put Slider.Track and every Slider.Thumb inside Slider.Control, and Slider.Range inside Slider.Track. Put Slider.HiddenInput inside each thumb so the value reaches a form."
+    - "Slider.Marker takes the value it marks and your own text for it; the markers go inside Slider.MarkerGroup, after Slider.Control."
+    - "In Vue, bind the value with :model-value or v-model; value is not a Vue prop."
+  theming:
+    - "The track is --muted and the range --primary, with --radius-full ends. Do not pass a hex."
+    - "The thumb is --background with a --primary edge and --shadow-sm; the focus ring is --ring. Invalid turns the range and the edge --destructive."
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import SliderDemo from "../../../examples/slider/slider.svelte";
+import baseReact from "../../../examples/slider/react.tsx?raw";
+import baseVue from "../../../examples/slider/vue.vue?raw";
+import baseSolid from "../../../examples/slider/solid.tsx?raw";
+import baseSvelte from "../../../examples/slider/slider.svelte?raw";
+import SliderRangeDemo from "../../../examples/slider/range/slider-range.svelte";
+import rangeReact from "../../../examples/slider/range/react.tsx?raw";
+import rangeVue from "../../../examples/slider/range/vue.vue?raw";
+import rangeSolid from "../../../examples/slider/range/solid.tsx?raw";
+import rangeSvelte from "../../../examples/slider/range/slider-range.svelte?raw";
+import SliderMarksDemo from "../../../examples/slider/marks/slider-marks.svelte";
+import marksReact from "../../../examples/slider/marks/react.tsx?raw";
+import marksVue from "../../../examples/slider/marks/vue.vue?raw";
+import marksSolid from "../../../examples/slider/marks/solid.tsx?raw";
+import marksSvelte from "../../../examples/slider/marks/slider-marks.svelte?raw";
+import SliderSizesDemo from "../../../examples/slider/sizes/slider-sizes.svelte";
+import sizesReact from "../../../examples/slider/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/slider/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/slider/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/slider/sizes/slider-sizes.svelte?raw";
+import SliderVerticalDemo from "../../../examples/slider/vertical/slider-vertical.svelte";
+import verticalReact from "../../../examples/slider/vertical/react.tsx?raw";
+import verticalVue from "../../../examples/slider/vertical/vue.vue?raw";
+import verticalSolid from "../../../examples/slider/vertical/solid.tsx?raw";
+import verticalSvelte from "../../../examples/slider/vertical/slider-vertical.svelte?raw";
+import SliderDraggingDemo from "../../../examples/slider/dragging/slider-dragging.svelte";
+import draggingReact from "../../../examples/slider/dragging/react.tsx?raw";
+import draggingVue from "../../../examples/slider/dragging/vue.vue?raw";
+import draggingSolid from "../../../examples/slider/dragging/solid.tsx?raw";
+import draggingSvelte from "../../../examples/slider/dragging/slider-dragging.svelte?raw";
+
+<FrameworkSelect locale="en" />
+
+<Preview
+  examples={{
+    react: baseReact,
+    vue: baseVue,
+    solid: baseSolid,
+    svelte: baseSvelte,
+  }}
+>
+  <SliderDemo client:visible />
+</Preview>
+
+## Installation
+
+<Install pkg="@moderno-ui/react" />
+
+## Usage
+
+Slider lets the user pick a number by dragging a thumb along a track. Use it when the rough position matters more than the exact digit, like volume. Two thumbs pick a range.
+
+<ForFramework fw="react">
+
+```tsx
+import { Slider } from "@moderno-ui/react";
+```
+
+```tsx
+<Slider.Root value={volume} onValueChange={(details) => setVolume(details.value)}>
+  <Slider.Label>Volume</Slider.Label>
+  <Slider.ValueText />
+  <Slider.Control>
+    <Slider.Track>
+      <Slider.Range />
+    </Slider.Track>
+    <Slider.Thumb index={0}>
+      <Slider.HiddenInput />
+    </Slider.Thumb>
+  </Slider.Control>
+</Slider.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Slider } from "@moderno-ui/vue";
+```
+
+```vue
+<Slider.Root v-model="volume">
+  <Slider.Label>Volume</Slider.Label>
+  <Slider.ValueText />
+  <Slider.Control>
+    <Slider.Track>
+      <Slider.Range />
+    </Slider.Track>
+    <Slider.Thumb :index="0">
+      <Slider.HiddenInput />
+    </Slider.Thumb>
+  </Slider.Control>
+</Slider.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Slider } from "@moderno-ui/svelte";
+```
+
+```svelte
+<Slider.Root value={volume} onValueChange={(details) => (volume = details.value)}>
+  <Slider.Label>Volume</Slider.Label>
+  <Slider.ValueText />
+  <Slider.Control>
+    <Slider.Track>
+      <Slider.Range />
+    </Slider.Track>
+    <Slider.Thumb index={0}>
+      <Slider.HiddenInput />
+    </Slider.Thumb>
+  </Slider.Control>
+</Slider.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Slider } from "@moderno-ui/solid";
+```
+
+```tsx
+<Slider.Root value={volume()} onValueChange={(details) => setVolume(details.value)}>
+  <Slider.Label>Volume</Slider.Label>
+  <Slider.ValueText />
+  <Slider.Control>
+    <Slider.Track>
+      <Slider.Range />
+    </Slider.Track>
+    <Slider.Thumb index={0}>
+      <Slider.HiddenInput />
+    </Slider.Thumb>
+  </Slider.Control>
+</Slider.Root>
+```
+
+</ForFramework>
+
+The value is an array with one number per thumb. It runs from 0 to 100 by default.
+
+## API Reference
+
+### Slider.Root
+
+`size` is the Moderno addition; every part follows it. The other props come from Ark's Slider.
+
+<PropsTable component="Slider" />
+
+| Prop                    | Type                                                    | Default        | Description                                       |
+| ----------------------- | ------------------------------------------------------- | -------------- | ------------------------------------------------- |
+| `value`                 | `number[]`                                              | —              | Controlled value, one number per thumb.           |
+| `defaultValue`          | `number[]`                                              | `[min]`        | Value at first when uncontrolled.                 |
+| `onValueChange`         | `(details: { value: number[] }) => void`                | —              | Called while the value changes.                   |
+| `onValueChangeEnd`      | `(details: { value: number[] }) => void`                | —              | Called once, when the user lets go.               |
+| `min`                   | `number`                                                | `0`            | The lowest value.                                 |
+| `max`                   | `number`                                                | `100`          | The highest value.                                |
+| `step`                  | `number`                                                | `1`            | How far one move goes.                            |
+| `minStepsBetweenThumbs` | `number`                                                | `0`            | How many steps a range's thumbs keep apart.       |
+| `orientation`           | `"horizontal" \| "vertical"`                            | `"horizontal"` | Lays the track across or stands it up.            |
+| `origin`                | `"start" \| "center" \| "end"`                          | `"start"`      | Where the range of one thumb starts filling from. |
+| `disabled`              | `boolean`                                               | `false`        | Dims the slider and ignores input.                |
+| `readOnly`              | `boolean`                                               | `false`        | Shows the value but ignores input.                |
+| `invalid`               | `boolean`                                               | `false`        | Marks the value as wrong.                         |
+| `name`                  | `string`                                                | —              | The form field name of the hidden inputs.         |
+| `getAriaValueText`      | `(details: { value: number; index: number }) => string` | —              | What a screen reader says for a thumb's value.    |
+
+In Vue, bind the value with `:model-value` or `v-model`, and listen with `@value-change`.
+
+### Slider.Thumb
+
+| Prop    | Type     | Default | Description                              |
+| ------- | -------- | ------- | ---------------------------------------- |
+| `index` | `number` | —       | Required. Which value this thumb moves.  |
+| `name`  | `string` | —       | The form field name of its hidden input. |
+
+### Slider.Marker
+
+| Prop    | Type     | Default | Description                           |
+| ------- | -------- | ------- | ------------------------------------- |
+| `value` | `number` | —       | Required. The value the mark sits at. |
+
+### Parts
+
+| Part                       | Element   | Description                                                     |
+| -------------------------- | --------- | --------------------------------------------------------------- |
+| `Slider.Root`              | `<div>`   | Carries `data-size`.                                            |
+| `Slider.Label`             | `<label>` | Optional. Names the value. Clicking it focuses the thumb.       |
+| `Slider.ValueText`         | `<span>`  | Optional. The value, or both ends of a range.                   |
+| `Slider.Control`           | `<div>`   | The area you click or drag in. Holds the track and thumbs.      |
+| `Slider.Track`             | `<div>`   | The full line of possible values.                               |
+| `Slider.Range`             | `<div>`   | The filled part of the track, up to or between the thumbs.      |
+| `Slider.Thumb`             | `<div>`   | The handle, with `role="slider"` and `aria-valuenow`.           |
+| `Slider.HiddenInput`       | `<input>` | Inside a thumb. Carries its value into a form.                  |
+| `Slider.DraggingIndicator` | `<span>`  | Optional, inside a thumb. The value in a bubble while dragging. |
+| `Slider.MarkerGroup`       | `<div>`   | Optional. Holds the marks, under the track.                     |
+| `Slider.Marker`            | `<span>`  | A mark at one value, with your own text.                        |
+
+### Data attributes
+
+| Attribute          | Values                                                                      |
+| ------------------ | --------------------------------------------------------------------------- |
+| `data-orientation` | `"horizontal"` or `"vertical"`, on every part                               |
+| `data-dragging`    | While a thumb is dragged, on the root, control, track, range and that thumb |
+| `data-focus`       | While a thumb has focus, on the root and its parts                          |
+| `data-disabled`    | When `disabled`, on every part                                              |
+| `data-invalid`     | When `invalid`, on the root and its parts                                   |
+| `data-state`       | On each marker: `"under-value"`, `"at-value"` or `"over-value"`             |
+| `data-size`        | On the root: `"sm"`, `"md"` or `"lg"`                                       |
+
+## Examples
+
+### Range
+
+Pass two values and render two thumbs. The range fills the track between them.
+
+<Preview
+  examples={{
+    react: rangeReact,
+    vue: rangeVue,
+    solid: rangeSolid,
+    svelte: rangeSvelte,
+  }}
+>
+  <SliderRangeDemo client:visible />
+</Preview>
+
+### Marks
+
+Set `step` so the thumb snaps, and label the stops with `Slider.Marker`.
+
+<Preview
+  examples={{
+    react: marksReact,
+    vue: marksVue,
+    solid: marksSolid,
+    svelte: marksSvelte,
+  }}
+>
+  <SliderMarksDemo client:visible />
+</Preview>
+
+### Sizes
+
+<Preview
+  examples={{
+    react: sizesReact,
+    vue: sizesVue,
+    solid: sizesSolid,
+    svelte: sizesSvelte,
+  }}
+>
+  <SliderSizesDemo client:visible />
+</Preview>
+
+### Vertical
+
+With `orientation="vertical"`, the track stands up and fills from the bottom.
+
+<Preview
+  examples={{
+    react: verticalReact,
+    vue: verticalVue,
+    solid: verticalSolid,
+    svelte: verticalSvelte,
+  }}
+>
+  <SliderVerticalDemo client:visible />
+</Preview>
+
+### Value while dragging
+
+Put `Slider.DraggingIndicator` in a thumb to show its value in a bubble while the user drags it.
+
+<Preview
+  examples={{
+    react: draggingReact,
+    vue: draggingVue,
+    solid: draggingSolid,
+    svelte: draggingSvelte,
+  }}
+>
+  <SliderDraggingDemo client:visible />
+</Preview>
+
+## Notes
+
+- `Slider.Root` is wrapped to add `size`; every other part is Ark's unchanged.
+- Each thumb is named by `Slider.Label`. A range's two thumbs share it; pass `aria-label` as an array to name each one.
+- Ark hides a thumb until it has measured it, so the thumb stays inside the track at both ends.
+- In Solid, `Slider.ValueText` joins a range's values with a bare comma (`20,80`); the other frameworks add a space.
+- For an exact number the user types, use a Number Input.

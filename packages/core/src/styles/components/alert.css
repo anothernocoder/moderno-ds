@@ -1,0 +1,101 @@
+/* ─────────────────────────── Alert ──────────────────────────── *
+ * `alertRecipe` variant × size on the root part. No Ark machine — a static
+ * region, so every attribute comes from the recipe. Anatomy:
+ * root > icon + content(> title + description + action).
+ *
+ * Each status tints one surface from its contract slot: the fill is that hue
+ * mixed into --card at low strength, the border at higher strength, and the
+ * icon paints the hue at full strength. `error` reads --destructive so a
+ * destructive action and an error message speak with one voice. */
+[data-scope="alert"][data-part="root"] {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background-color: var(--card);
+  color: var(--card-foreground);
+}
+[data-scope="alert"][data-part="root"][data-size="sm"] {
+  gap: var(--spacing-2);
+  padding: var(--spacing-3);
+}
+
+/* The icon is the consumer's (primitives never depend on an icon set); the
+   part only positions it and hands down the status hue via currentColor. */
+[data-scope="alert"][data-part="icon"] {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  /* Optically centre a 1em glyph on the first line of the title. */
+  height: 1.25rem;
+}
+[data-scope="alert"][data-part="content"] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  /* Let long words wrap instead of stretching the flex row. */
+  min-width: 0;
+  flex: 1;
+}
+[data-scope="alert"][data-part="title"] {
+  font-size: var(--text-ui-md);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--leading-ui-md);
+  color: var(--foreground);
+}
+/* Muted, but not straight `--muted-foreground`: an alert never sits on
+   `--card` itself, it sits on a status tint (8% of a status slot mixed into
+   it, below), and that tint eats the slot's whole AA margin — measured on
+   theme-moderno's light scheme, `--muted-foreground` lands at 4.24–4.46:1 on
+   the four tints, under WCAG AA's 4.5. Mixing a sixth of `--foreground` back
+   in clears 5.5:1 on every tint in both schemes while staying visibly
+   quieter than the title, and it is still two contract slots rather than a
+   literal, so a theme re-maps it like everything else. */
+[data-scope="alert"][data-part="description"] {
+  font-size: var(--text-ui-md);
+  line-height: 1.5;
+  color: color-mix(in oklab, var(--muted-foreground) 85%, var(--foreground));
+}
+[data-scope="alert"][data-part="action"] {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-2);
+}
+[data-scope="alert"][data-size="sm"] [data-part="title"],
+[data-scope="alert"][data-size="sm"] [data-part="description"] {
+  font-size: var(--text-ui-sm);
+}
+
+/* Status tints. Written per variant rather than through one shared custom
+   property so every colour still traces to a contract slot by name. */
+[data-scope="alert"][data-part="root"][data-variant="info"] {
+  border-color: color-mix(in oklab, var(--info) 28%, var(--border));
+  background-color: color-mix(in oklab, var(--info) 8%, var(--card));
+}
+[data-scope="alert"][data-variant="info"] [data-part="icon"] {
+  color: var(--info);
+}
+[data-scope="alert"][data-part="root"][data-variant="success"] {
+  border-color: color-mix(in oklab, var(--success) 28%, var(--border));
+  background-color: color-mix(in oklab, var(--success) 8%, var(--card));
+}
+[data-scope="alert"][data-variant="success"] [data-part="icon"] {
+  color: var(--success);
+}
+[data-scope="alert"][data-part="root"][data-variant="warning"] {
+  border-color: color-mix(in oklab, var(--warning) 28%, var(--border));
+  background-color: color-mix(in oklab, var(--warning) 8%, var(--card));
+}
+[data-scope="alert"][data-variant="warning"] [data-part="icon"] {
+  color: var(--warning);
+}
+[data-scope="alert"][data-part="root"][data-variant="error"] {
+  border-color: color-mix(in oklab, var(--destructive) 28%, var(--border));
+  background-color: color-mix(in oklab, var(--destructive) 8%, var(--card));
+}
+[data-scope="alert"][data-variant="error"] [data-part="icon"] {
+  color: var(--destructive);
+}

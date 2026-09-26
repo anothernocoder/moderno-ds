@@ -1,0 +1,4 @@
+value Accordion
+type AccordionSize
+type AccordionValueChangeDetails
+type AccordionVariant

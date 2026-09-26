@@ -1,0 +1,4 @@
+value Indicator
+type IndicatorProps
+type IndicatorSize
+type IndicatorVariant
