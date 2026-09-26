@@ -34,7 +34,7 @@ const sampleAlerts: AlertListItem[] = [
     id: "sign-in",
     variant: "info",
     title: "New sign-in from Lisbon",
-    description: "Chrome on macOS. If this was not you, end the session and change your password.",
+    description: "Chrome on macOS. Not you? End the session and change your password.",
     meta: "3 hrs ago",
     actionLabel: "Review session",
   },
@@ -183,13 +183,42 @@ const showList = computed(() => !props.error && !props.loading && resolvedAlerts
               </svg>
             </Alert.Icon>
             <Alert.Content>
-              <div class="grid gap-1 @lg:flex @lg:items-baseline @lg:justify-between @lg:gap-4">
-                <Alert.Title>{{ item.title }}</Alert.Title>
-                <Alert.Description v-if="item.meta" class="text-ui-xs">{{
-                  item.meta
-                }}</Alert.Description>
+              <div class="flex items-start justify-between gap-2">
+                <div
+                  class="grid min-w-0 flex-1 gap-1 @lg:flex @lg:items-baseline @lg:justify-between @lg:gap-4"
+                >
+                  <Alert.Title>{{ item.title }}</Alert.Title>
+                  <Alert.Description v-if="item.meta" class="hidden text-ui-xs @sm:block">{{
+                    item.meta
+                  }}</Alert.Description>
+                </div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  class="shrink-0"
+                  :disabled="inert"
+                  :aria-label="`Dismiss — ${item.title}`"
+                  @click="emit('dismiss', item.id)"
+                >
+                  <svg
+                    class="size-4"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M18 6 6 18M6 6l12 12" />
+                  </svg>
+                  <span class="hidden @md:inline">Dismiss</span>
+                </Button>
               </div>
-              <Alert.Description v-if="item.description">{{ item.description }}</Alert.Description>
+              <Alert.Description v-if="item.description" class="line-clamp-2 @md:line-clamp-none">{{
+                item.description
+              }}</Alert.Description>
               <Alert.Action v-if="item.actionLabel">
                 <Button
                   type="button"
@@ -202,29 +231,6 @@ const showList = computed(() => !props.error && !props.loading && resolvedAlerts
                 </Button>
               </Alert.Action>
             </Alert.Content>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              class="shrink-0"
-              :disabled="inert"
-              :aria-label="`Dismiss — ${item.title}`"
-              @click="emit('dismiss', item.id)"
-            >
-              <svg
-                class="size-4"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M18 6 6 18M6 6l12 12" />
-              </svg>
-              <span class="hidden @md:inline">Dismiss</span>
-            </Button>
           </Alert.Root>
         </li>
       </ul>

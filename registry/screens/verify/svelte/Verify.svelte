@@ -1,9 +1,9 @@
 <!--
   Verify — the full-viewport screen between "we sent you a code" and an account
   that is actually usable: the card that takes the code a cell at a time and can
-  ask for a new one, and beside it the notes that answer "it has not arrived".
-  Copy it into your project with `moderno add verify-svelte`; the blocks it
-  composes arrive with it, and every file is yours from that moment.
+  ask for a new one. Copy it into your project with `moderno add verify-svelte`;
+  the blocks it composes arrive with it, and every file is yours from that
+  moment.
 
   The code, not the password. Whoever is here has already given their address
   and is holding — or hunting for — six digits. So the screen asks for exactly
@@ -37,45 +37,27 @@
   after reading metaKey while the markup keeps its meaning without JavaScript.
   The card's "Sign in" link is an href only, forwarded as `signInHref`.
 
-  The notes sit in an <aside>, deliberately unlabelled: the block's own heading
-  is the <h2> inside it, and an aria-label repeating that string would make a
-  screen reader announce the same sentence twice. The root is a <div>, not a
-  <main>: most app shells already provide that landmark and two visible ones in
-  a document is invalid.
+  The root is a <div>, not a <main>: most app shells already provide that
+  landmark and two visible ones in a document is invalid.
 
   Responsive to its container, not the viewport (ADR-0005). Full-viewport is a
   height — min-h-dvh — and every width is read off the screen's own @container:
   at @sm (--container-sm) the masthead stops stacking, at @md (--container-md)
-  the footer does, and at @lg (--container-lg) the notes leave their place under
-  the card and stand beside it, so "look in spam" is read while the inbox is
-  still open rather than after the third failed attempt.
+  the footer does.
 
   States. `loading` and `disabled` make the card inert; `errors.code` marks a
   code that was wrong or has expired; `error` is the form-level failure and the
   place "too many attempts" belongs — with `disabled` beside it. `resendIn`
   locks the resend and says for how long; `resent` rewrites the card's header.
-  The notes carry `noticesLoading` and `noticesError`, and the empty case is the
-  screen's own: with `notices={[]}` the aside is not rendered at all.
 
   Class strings are written out in full rather than shared through a variable:
   the docs compile the previews' Tailwind from `class` attributes, so a class
   assembled in JS would render here and vanish in the preview.
 -->
 <script lang="ts">
-  import AlertList from "@/components/blocks/AlertList.svelte";
   import LoginForm from "@/components/blocks/LoginForm.svelte";
 
   type VerifyDestination = "home" | "support" | "privacy" | "terms";
-
-  /** One note, as the alert-list block renders it. */
-  interface Notice {
-    id: string;
-    variant: "info" | "success" | "warning" | "error";
-    title: string;
-    description?: string;
-    meta?: string;
-    actionLabel?: string;
-  }
 
   interface Props {
     /** The address the code went to: named in the card and submitted from a hidden input, so a resend knows where to send. */
@@ -94,12 +76,6 @@
     loading?: boolean;
     /** No code can be checked here — pair it with `error` when the attempts are spent. */
     disabled?: boolean;
-    /** Notes to show beside the card. `[]` renders the card alone. */
-    notices?: Notice[];
-    /** The notes could not be loaded; that message replaces the list. */
-    noticesError?: string;
-    /** The notes are still loading: a busy region stands in for the list. */
-    noticesLoading?: boolean;
     /** Native submit, from either button; read the form with `event.submitter` so `intent` tells a resend from a check. */
     onsubmit?: (event: SubmitEvent) => void;
     /**
@@ -108,14 +84,6 @@
      * and read `metaKey` / `ctrlKey` first to leave a new-tab click alone.
      */
     onnavigate?: (destination: VerifyDestination, event: MouseEvent) => void;
-    /** A note's own action (`actionLabel`), reported with that note's id. */
-    onnoticeaction?: (id: string) => void;
-    /** A note was dismissed; you drop it from your own state. */
-    ondismissnotice?: (id: string) => void;
-    /** Every note was dismissed at once. */
-    ondismissnotices?: () => void;
-    /** Retry after `noticesError`. */
-    onretrynotices?: () => void;
     /** Where "Sign in" points, in the card's footer. */
     signInHref?: string;
     /** Where the wordmark points. */
@@ -128,38 +96,6 @@
     termsHref?: string;
   }
 
-  /**
-   * What this screen answers before it is asked — all three are versions of "it
-   * has not arrived", which is the only question this page ever gets. Delete it
-   * and pass your own `notices`, or rewrite it in place: the file is yours.
-   */
-  const verifyNotices: Notice[] = [
-    {
-      id: "expiry",
-      variant: "info",
-      title: "The code lasts 10 minutes",
-      description:
-        "After that it stops working and you can ask for a new one from the button under the code.",
-      meta: "10 minutes",
-    },
-    {
-      id: "spam",
-      variant: "warning",
-      title: "Nothing in your inbox?",
-      description:
-        "Look in spam and in any filtered or promotions tab. A code that landed there still works.",
-      meta: "Check spam",
-    },
-    {
-      id: "latest",
-      variant: "info",
-      title: "Only the newest code works",
-      description:
-        "Asking for a new one retires the one before it, so use the most recent mail rather than the first.",
-      meta: "One at a time",
-    },
-  ];
-
   let {
     sentTo = "",
     codeLength = 6,
@@ -169,23 +105,14 @@
     errors,
     loading = false,
     disabled = false,
-    notices = verifyNotices,
-    noticesError,
-    noticesLoading = false,
     onsubmit,
     onnavigate,
-    onnoticeaction,
-    ondismissnotice,
-    ondismissnotices,
-    onretrynotices,
     signInHref = "#",
     homeHref = "#",
     supportHref = "#",
     privacyHref = "#",
     termsHref = "#",
   }: Props = $props();
-
-  const showNotices = $derived(Boolean(noticesError) || noticesLoading || notices.length > 0);
 </script>
 
 <div class="@container moderno-screen-verify min-h-dvh bg-background text-foreground">
@@ -210,39 +137,21 @@
       </p>
     </header>
 
-    <div class="grid content-center gap-8 @lg:grid-cols-2 @lg:items-start @lg:gap-10">
-      <div class="mx-auto w-full max-w-sm">
-        <LoginForm
-          mode="verify"
-          titleLevel={1}
-          {sentTo}
-          {codeLength}
-          {resendIn}
-          {resent}
-          {error}
-          {errors}
-          {loading}
-          {disabled}
-          {onsubmit}
-          {signInHref}
-        />
-      </div>
-
-      {#if showNotices}
-        <aside class="mx-auto w-full max-w-md">
-          <AlertList
-            heading="If the code has not arrived"
-            description="Three things worth trying before asking for another one."
-            alerts={notices}
-            error={noticesError}
-            loading={noticesLoading}
-            onaction={onnoticeaction}
-            ondismiss={ondismissnotice}
-            ondismissall={ondismissnotices}
-            onretry={onretrynotices}
-          />
-        </aside>
-      {/if}
+    <div class="mx-auto grid w-full max-w-sm content-center">
+      <LoginForm
+        mode="verify"
+        titleLevel={1}
+        {sentTo}
+        {codeLength}
+        {resendIn}
+        {resent}
+        {error}
+        {errors}
+        {loading}
+        {disabled}
+        {onsubmit}
+        {signInHref}
+      />
     </div>
 
     <footer

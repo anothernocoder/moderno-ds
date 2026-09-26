@@ -616,7 +616,8 @@
     color: var(--foreground);
   }
   [data-scope="select"][data-part="trigger"] {
-    display: inline-flex;
+    display: flex;
+    width: 100%;
     align-items: center;
     justify-content: space-between;
     gap: var(--spacing-2);

@@ -1,5 +1,5 @@
-import { createEffect, createSignal, mergeProps, Match, onCleanup, Switch } from "solid-js";
-import { ForgotPassword, type ForgotPasswordNotice } from "@/components/screens/forgot-password";
+import { createEffect, createSignal, mergeProps, Match, onCleanup, Show, Switch } from "solid-js";
+import { ForgotPassword } from "@/components/screens/forgot-password";
 import { ResetPassword } from "@/components/screens/reset-password";
 import { SignIn } from "@/components/screens/sign-in";
 import { SignUp } from "@/components/screens/sign-up";
@@ -16,22 +16,6 @@ export const AUTH_STEPS: readonly AuthStep[] = [
   "reset-password",
   "verify",
 ];
-
-/**
- * The stand-in for the email, and the only thing in this file that exists
- * because an example has no server. In your product the reader leaves for their
- * inbox here and comes back on a URL, so this row goes away and
- * `initialStep="reset-password"` takes over.
- */
-const openTheLink: ForgotPasswordNotice = {
-  id: "open-link",
-  variant: "success",
-  title: "The link is on its way",
-  description:
-    "In your product this arrives by email and re-enters the flow at reset-password with a token from the URL. There is no mail server behind this example, so open it from here.",
-  meta: "Example only",
-  actionLabel: "Open the reset link",
-};
 
 export interface AuthFlowProps {
   /** Which screen the flow opens on — in a real app, whatever the route says. */
@@ -241,9 +225,13 @@ export function AuthFlow(props: AuthFlowProps) {
     finish(address);
   };
 
-  /** A note's own action. Only the stand-in for the email has one here. */
-  const noticeAction = (id: string) => {
-    if (id !== openTheLink.id) return;
+  /**
+   * The stand-in for the email, and the only thing in this file that exists
+   * because an example has no server. In your product the reader leaves for their
+   * inbox here and comes back on a URL, so this handler and the banner that calls
+   * it go away and `initialStep="reset-password"` takes over.
+   */
+  const openResetLink = () => {
     setToken(token() || "example-token");
     go("reset-password");
   };
@@ -281,13 +269,23 @@ export function AuthFlow(props: AuthFlowProps) {
         </Match>
 
         <Match when={step() === "forgot-password"}>
+          <Show when={sent()}>
+            <aside class="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-border bg-muted p-3 text-ui-md text-muted-foreground">
+              <p>Example only: there is no mail server behind this flow.</p>
+              <button
+                type="button"
+                class="rounded-sm border border-border bg-background px-3 py-2 text-ui-md font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                onClick={openResetLink}
+              >
+                Open the reset link
+              </button>
+            </aside>
+          </Show>
           <ForgotPassword
             sent={sent()}
             sentTo={email()}
             errors={errors()}
-            notices={sent() ? [openTheLink] : undefined}
             onSubmit={submit}
-            onNoticeAction={noticeAction}
             signInHref={hrefFor("sign-in")}
             homeHref={merged.homeHref}
             supportHref={merged.supportHref}

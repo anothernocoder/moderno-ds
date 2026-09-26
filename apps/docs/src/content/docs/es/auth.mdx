@@ -33,7 +33,7 @@ import authSvelte from "../../../../../../registry/flows/auth/svelte/AuthFlow.sv
 
 <Install item="auth" />
 
-El flujo se instala en `src/components/flows/`, sus cinco pantallas en `screens/` y sus dos bloques compartidos en `blocks/`, cada uno con su propia versión.
+El flujo se instala en `src/components/flows/`, sus cinco pantallas en `screens/` y el bloque que comparten en `blocks/`, cada uno con su propia versión.
 
 ## Uso
 
@@ -154,5 +154,5 @@ Lo que guarda el ensamblaje para que las pantallas no tengan que hacerlo.
 - La navegación intercepta `href` reales: solo clics izquierdos simples; los modificados y los de rueda van al navegador.
 - Los avances son envíos de formulario normales, leídos con `new FormData(form, submitter)`.
 - `sent`, `resent` y `errors` se reinician en cada movimiento.
-- El aviso «Open the reset link» existe solo porque el ejemplo no tiene servidor de correo. Bórralo.
+- El banner «Open the reset link» existe solo porque el ejemplo no tiene servidor de correo. Bórralo.
 - `onAuthenticated` devuelve el flujo al primer paso y no pinta página de éxito; salir es trabajo de tu router.

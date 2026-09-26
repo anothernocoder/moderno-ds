@@ -101,44 +101,34 @@ import { Verify } from "@/components/screens/verify";
 
 Los callbacks son props `on…` en React y Solid, en minúsculas (`onsubmit`) en Svelte y eventos (`submit`, `navigate`) en Vue.
 
-| Prop               | Tipo                     | Por defecto     | Descripción                                                                           |
-| ------------------ | ------------------------ | --------------- | ------------------------------------------------------------------------------------- |
-| `sentTo`           | `string`                 | `""`            | La dirección a la que fue el código; se nombra en la tarjeta y se envía como `email`. |
-| `codeLength`       | `number`                 | `6`             | Número de celdas, y de dígitos que nombra la descripción.                             |
-| `resendIn`         | `number`                 | `0`             | Segundos hasta poder pedir otro código; el temporizador es tuyo.                      |
-| `resent`           | `boolean`                | `false`         | Acaba de salir un código nuevo: la cabecera de la tarjeta lo dice.                    |
-| `error`            | `string`                 | —               | Fallo del formulario: demasiados intentos o una dirección ya verificada.              |
-| `errors`           | `Record<string, string>` | —               | Mensajes por campo; aquí solo `code`.                                                 |
-| `loading`          | `boolean`                | `false`         | Envío en curso: todos los controles inertes, el botón ocupado.                        |
-| `disabled`         | `boolean`                | `false`         | Aquí no se puede comprobar un código; combínalo con `error`.                          |
-| `notices`          | `AlertListItem[]`        | tres de ejemplo | Notas junto a la tarjeta. `[]` oculta el aparte.                                      |
-| `noticesError`     | `string`                 | —               | Las notas no cargaron; este mensaje sustituye a la lista.                             |
-| `noticesLoading`   | `boolean`                | `false`         | Una región ocupada sustituye a las notas.                                             |
-| `onSubmit`         | `(event) => void`        | —               | Envío nativo del formulario, desde cualquiera de los dos botones.                     |
-| `onNavigate`       | `(to, event) => void`    | —               | Se pulsó un enlace de la pantalla: `home`, `support`, `privacy` o `terms`.            |
-| `onNoticeAction`   | `(id) => void`           | —               | El botón de acción de una nota, con su id.                                            |
-| `onDismissNotice`  | `(id) => void`           | —               | Se descartó una nota.                                                                 |
-| `onDismissNotices` | `() => void`             | —               | Se descartaron todas las notas.                                                       |
-| `onRetryNotices`   | `() => void`             | —               | Reintentar tras `noticesError`.                                                       |
-| `signInHref`       | `string`                 | `"#"`           | Destino de «Sign in» en el pie de la tarjeta.                                         |
-| `homeHref`         | `string`                 | `"#"`           | Destino del logotipo.                                                                 |
-| `supportHref`      | `string`                 | `"#"`           | Destino de «Contact support».                                                         |
-| `privacyHref`      | `string`                 | `"#"`           | Destino del enlace de privacidad.                                                     |
-| `termsHref`        | `string`                 | `"#"`           | Destino del enlace de términos.                                                       |
+| Prop          | Tipo                     | Por defecto | Descripción                                                                           |
+| ------------- | ------------------------ | ----------- | ------------------------------------------------------------------------------------- |
+| `sentTo`      | `string`                 | `""`        | La dirección a la que fue el código; se nombra en la tarjeta y se envía como `email`. |
+| `codeLength`  | `number`                 | `6`         | Número de celdas, y de dígitos que nombra la descripción.                             |
+| `resendIn`    | `number`                 | `0`         | Segundos hasta poder pedir otro código; el temporizador es tuyo.                      |
+| `resent`      | `boolean`                | `false`     | Acaba de salir un código nuevo: la cabecera de la tarjeta lo dice.                    |
+| `error`       | `string`                 | —           | Fallo del formulario: demasiados intentos o una dirección ya verificada.              |
+| `errors`      | `Record<string, string>` | —           | Mensajes por campo; aquí solo `code`.                                                 |
+| `loading`     | `boolean`                | `false`     | Envío en curso: todos los controles inertes, el botón ocupado.                        |
+| `disabled`    | `boolean`                | `false`     | Aquí no se puede comprobar un código; combínalo con `error`.                          |
+| `onSubmit`    | `(event) => void`        | —           | Envío nativo del formulario, desde cualquiera de los dos botones.                     |
+| `onNavigate`  | `(to, event) => void`    | —           | Se pulsó un enlace de la pantalla: `home`, `support`, `privacy` o `terms`.            |
+| `signInHref`  | `string`                 | `"#"`       | Destino de «Sign in» en el pie de la tarjeta.                                         |
+| `homeHref`    | `string`                 | `"#"`       | Destino del logotipo.                                                                 |
+| `supportHref` | `string`                 | `"#"`       | Destino de «Contact support».                                                         |
+| `privacyHref` | `string`                 | `"#"`       | Destino del enlace de privacidad.                                                     |
+| `termsHref`   | `string`                 | `"#"`       | Destino del enlace de términos.                                                       |
 
 ### Estados
 
 | Estado            | Props                | Qué se renderiza                                                       |
 | ----------------- | -------------------- | ---------------------------------------------------------------------- |
-| Por defecto       | —                    | Las celdas del código, el reenvío listo, las notas al lado o debajo.   |
+| Por defecto       | —                    | Las celdas del código y el reenvío, listos.                            |
 | Error de campo    | `errors={{ code }}`  | Todas las celdas inválidas, con el motivo debajo como `alert`.         |
 | Reenvío bloqueado | `resendIn > 0`       | El reenvío deshabilitado y con el texto «Send a new code in 42s».      |
 | Reenviado         | `resent`             | La cabecera dice que va un código nuevo y que el anterior ya no sirve. |
 | Error             | `error` + `disabled` | Una alerta, el formulario inerte.                                      |
 | Cargando          | `loading`            | Controles inertes, envío con `aria-busy`.                              |
-| Notas cargando    | `noticesLoading`     | Una región ocupada en lugar de las notas.                              |
-| Error de notas    | `noticesError`       | Una alerta en lugar de las notas.                                      |
-| Vacío             | `notices={[]}`       | Sin aparte; la tarjeta queda centrada y sola.                          |
 
 ### Campos del formulario
 
@@ -150,18 +140,16 @@ Los callbacks son props `on…` en React y Solid, en minúsculas (`onsubmit`) en
 
 ### Tamaño
 
-| Paso del contenedor      | Cambio                                   |
-| ------------------------ | ---------------------------------------- |
-| `@sm` (`--container-sm`) | La cabecera pasa a una sola fila.        |
-| `@md` (`--container-md`) | El pie pasa a una sola fila.             |
-| `@lg` (`--container-lg`) | Las notas se colocan junto a la tarjeta. |
+| Paso del contenedor      | Cambio                            |
+| ------------------------ | --------------------------------- |
+| `@sm` (`--container-sm`) | La cabecera pasa a una sola fila. |
+| `@md` (`--container-md`) | El pie pasa a una sola fila.      |
 
 ### Composición
 
-| Parte                        | Papel                                                    |
-| ---------------------------- | -------------------------------------------------------- |
-| [LoginForm](/es/login-form/) | La tarjeta, en modo `verify`, con `titleLevel={1}`.      |
-| [AlertList](/es/alert-list/) | Las notas, bajo el título «If the code has not arrived». |
+| Parte                        | Papel                                               |
+| ---------------------------- | --------------------------------------------------- |
+| [LoginForm](/es/login-form/) | La tarjeta, en modo `verify`, con `titleLevel={1}`. |
 
 ## Ejemplos
 
@@ -205,20 +193,6 @@ Los callbacks son props `on…` en React y Solid, en minúsculas (`onsubmit`) en
   layout="fill"
 >
   <VerifyScreenDemo client:visible locale="es" state="error" />
-</Preview>
-
-### Vacío
-
-<Preview
-  examples={{
-    react: verifyReact,
-    vue: verifyVue,
-    solid: verifySolid,
-    svelte: verifySvelte,
-  }}
-  layout="fill"
->
-  <VerifyScreenDemo client:visible locale="es" state="empty" />
 </Preview>
 
 ## Notas

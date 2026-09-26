@@ -12,14 +12,12 @@
  *
  * Three claims, per width and per scheme:
  *
- * 1. **Container, not viewport.** All three of the screen's steps are read off
- *    the width of the frame it was mounted in, never the window: the masthead
- *    lines up at `--container-sm`, the footer at `--container-md`, and the
- *    notices move beside the card at `--container-lg`. The demo's Phone, Tablet
- *    and Desktop tabs mount the same file in a phone-, a tablet- and a
- *    desktop-width frame, so at every viewport the three answers differ from
- *    each other — which is the whole of ADR-0005. Each tab mounts one copy, and
- *    every state is reached by selecting its tab.
+ * 1. **Container, not viewport.** Both of the screen's steps are read off the
+ *    width of the frame it was mounted in, never the window: the masthead lines
+ *    up at `--container-sm` and the footer at `--container-md`. The demo's
+ *    Phone, Tablet and Desktop tabs mount the same file in a phone-, a tablet- and a desktop-width frame, so at every viewport the phone copy stacks and
+ *    the other two do not — which is the whole of ADR-0005. Each tab mounts one
+ *    copy, and every state is reached by selecting its tab.
  * 2. **A screen owns the viewport as a height.** Its root fills the window it is
  *    given, top to bottom. On this page each frame *is* that window — the demo
  *    overrides `min-h-dvh` to the frame's height so a browser window's worth of
@@ -28,15 +26,14 @@
  *    `min-h-dvh` is held by `tooling/cli/test/screens-install.test.ts`, against
  *    the bytes the CLI writes.
  * 3. **AA contrast** on every text the screen paints itself — the wordmark, the
- *    support line and its link, the copyright, the legal links — plus the
- *    notices heading it hands the block, in light and in dark.
+ *    support line and its link, the copyright, the legal links — in light and
+ *    in dark.
  */
 import { expect, test, type Page } from "@playwright/test";
 
-/** The contract's three container steps, in px at the default root size. */
+/** The contract's two container steps the screen reads, in px at the default root size. */
 const CONTAINER_SM = 384;
 const CONTAINER_MD = 576;
-const CONTAINER_LG = 768;
 
 /** The responsive policy's three widths (ADR-0005). */
 const WIDTHS = [375, 768, 1280];
@@ -45,11 +42,12 @@ const PAGE = "/en/sign-in/";
 
 /**
  * Every copy of the screen the page mounts (islands/SignInScreenDemo.svelte), in
- * order: the main preview's three width tabs — one frame in each band of the
- * screen's three steps — then the states, each in its own Examples preview at
- * the tablet width. Each is one mounted copy, found by its `data-demo-state`.
+ * order: the main preview's three width tabs — a frame below the screen's first
+ * step and two above its second — then the states, each in its own Examples
+ * preview at the tablet width. Each is one mounted copy, found by its
+ * `data-demo-state`.
  */
-const TABS = ["phone", "tablet", "desktop", "error", "loading", "notices-error", "empty"] as const;
+const TABS = ["phone", "tablet", "desktop", "error", "loading"] as const;
 type Tab = (typeof TABS)[number];
 
 /** The tabs of the main preview; every other entry is a state's own preview. */
@@ -66,10 +64,6 @@ interface ScreenMetrics {
   mastheadDisplay: string;
   /** `display` of the footer: stacked below `@md`, one row at or above it. */
   footerDisplay: string;
-  /** Number of grid tracks in the content region: one column, or two at `@lg`. */
-  contentColumns: number;
-  /** Whether the notices aside is rendered at all (it is not when empty). */
-  hasNotices: boolean;
   /** Every heading's *effective* rank, in document order (`aria-level` wins). */
   headingLevels: number[];
 }
@@ -82,18 +76,17 @@ async function screenMetrics(page: Page, tab: Tab): Promise<ScreenMetrics[]> {
     return [...panel.querySelectorAll("div.moderno-screen-sign-in")].map((root) => {
       const masthead = root.querySelector("header");
       const footer = root.querySelector("footer");
-      const content = root.querySelector("header + div");
-      if (!masthead || !footer || !content) {
+      if (!masthead || !footer) {
         throw new Error("the sign-in screen did not render its own markup");
       }
       return {
-        containerWidth: root.getBoundingClientRect().width,
-        rootHeight: root.getBoundingClientRect().height,
+        // Layout size, not the painted box: the docs scale the device to fit the
+        // column, and that transform never changes what the container reads.
+        containerWidth: (root as HTMLElement).offsetWidth,
+        rootHeight: (root as HTMLElement).offsetHeight,
         frameHeight: (root.parentElement as HTMLElement).clientHeight,
         mastheadDisplay: getComputedStyle(masthead).display,
         footerDisplay: getComputedStyle(footer).display,
-        contentColumns: getComputedStyle(content).gridTemplateColumns.split(/\s+/).length,
-        hasNotices: content.querySelector("aside") !== null,
         headingLevels: [...root.querySelectorAll("h1, h2, h3, h4, h5, h6")].map((h) =>
           Number(h.getAttribute("aria-level") ?? h.tagName.slice(1)),
         ),
@@ -200,8 +193,6 @@ async function contrastRatios(page: Page): Promise<Record<string, number>> {
       wordmark: against(pick("header a")),
       supportLine: against(pick("header p")),
       supportLink: against(pick("header p a")),
-      noticesHeading: against(pick("aside h2")),
-      noticesDescription: against(pick("aside h2 + p")),
       copyright: against(pick("footer p")),
       legalLink: against(pick("footer nav a")),
     };
@@ -234,15 +225,15 @@ for (const scheme of ["light", "dark"] as const) {
         }
 
         // The three frame widths are fixed by the demo, so at every viewport its
-        // width tabs hold one copy in each band of the screen's three steps.
+        // width tabs hold a copy below `@sm` and copies at or above `@md`.
         const widths = screens.map((s) => s.containerWidth);
         expect(
           widths.some((w) => w < CONTAINER_SM),
           `${scheme} ${width}px: a copy below @sm`,
         ).toBe(true);
         expect(
-          widths.some((w) => w >= CONTAINER_LG),
-          `${scheme} ${width}px: a copy at or above @lg`,
+          widths.some((w) => w >= CONTAINER_MD),
+          `${scheme} ${width}px: a copy at or above @md`,
         ).toBe(true);
 
         for (const [index, screen] of screens.entries()) {
@@ -252,9 +243,6 @@ for (const scheme of ["light", "dark"] as const) {
           );
           expect(screen.footerDisplay, `${where}: footer`).toBe(
             screen.containerWidth >= CONTAINER_MD ? "flex" : "grid",
-          );
-          expect(screen.contentColumns, `${where}: content columns`).toBe(
-            screen.containerWidth >= CONTAINER_LG ? 2 : 1,
           );
           // Full-viewport is a height: the screen fills the window it is given.
           // On this page each frame stands in for that window (the demo says so
@@ -276,11 +264,6 @@ for (const scheme of ["light", "dark"] as const) {
             ).toBeLessThanOrEqual(screen.headingLevels[i - 1]! + 1);
           }
         }
-
-        // The last tab is the empty one: nothing is wrong today, so the aside
-        // is not rendered at all rather than rendered with nothing in it.
-        expect(screens.slice(0, -1).every((s) => s.hasNotices)).toBe(true);
-        expect(screens.at(-1)!.hasNotices).toBe(false);
       });
     }
 

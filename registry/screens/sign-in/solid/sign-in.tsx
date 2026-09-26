@@ -1,20 +1,17 @@
-import { Show } from "solid-js";
-import { AlertList, type AlertListItem } from "@/components/blocks/alert-list";
 import { LoginForm } from "@/components/blocks/login-form";
 
 /**
- * SignIn — the full-viewport sign-in screen: the credential form, and beside it
- * the notices a person needs *before* they try to sign in (an incident, a
- * migration window, a password policy that changed). Copy it into your project
- * with `moderno add sign-in-solid`; the blocks it composes arrive with it, and
- * every file is yours from that moment.
+ * SignIn — the full-viewport sign-in screen: the credential form, centred
+ * between a masthead and a footer. Copy it into your project with
+ * `moderno add sign-in-solid`; the block it composes arrives with it, and every
+ * file is yours from that moment.
  *
  * **Presentational.** The screen owns the viewport and nothing else: no
- * credentials, no request, no router. It renders the `error` / `loading` /
- * `notices` it is handed and reports what the reader did — `onSubmit` for the
- * credentials, `onNavigate` for every link it draws itself. Which route those
- * destinations map to, and what happens after a successful sign-in, stay in the
- * page that mounts this.
+ * credentials, no request, no router. It renders the `error` / `loading` it is
+ * handed and reports what the reader did — `onSubmit` for the credentials,
+ * `onNavigate` for every link it draws itself. Which route those destinations
+ * map to, and what happens after a successful sign-in, stay in the page that
+ * mounts this.
  *
  * Both links inside the form (recovery and sign-up) are `href`s rather than
  * callbacks — a credential-recovery link has to work when hydration fails,
@@ -24,10 +21,6 @@ import { LoginForm } from "@/components/blocks/login-form";
  * with the destination, so a client router can `preventDefault()` — and read
  * `metaKey` before it does, to leave a ctrl/cmd-click to the browser — while
  * the markup keeps its meaning without JavaScript.
- *
- * The notices sit in an `<aside>`, deliberately unlabelled: the block's own
- * `heading` is the `h2` inside it, and an `aria-label` repeating that string
- * would make a screen reader announce the same sentence twice.
  *
  * The root is a `<div>`, not a `<main>`: the screen is the page's content, but
  * whether it *is* the `main` landmark depends on the route that mounts it —
@@ -41,46 +34,16 @@ import { LoginForm } from "@/components/blocks/login-form";
  * screen's own `@container`: at `@sm` (`--container-sm`, 24rem) the masthead
  * stops stacking and the wordmark shares a row with the support link; at `@md`
  * (`--container-md`, 36rem) the footer stops stacking and the copyright shares
- * a row with the legal links; at `@lg` (`--container-lg`, 48rem) the notices
- * leave their place under the card and stand beside it, so the form is at eye
- * level and the notices are read on the way to it rather than after it.
+ * a row with the legal links.
  *
  * **States.** `loading` and `disabled` make the form inert; `error` raises the
- * form-level alert (both credential fields invalid, neither named). The notices
- * carry their own three: `noticesLoading` stands a busy region in for the list,
- * `noticesError` says the notices could not be loaded rather than pretending
- * there are none, and the *empty* case is the screen's own — with `notices={[]}`
- * the aside is not rendered at all and the card sits centred and alone, because
- * "nothing is wrong today" is best said by showing nothing.
+ * form-level alert (both credential fields invalid, neither named).
  *
  * Class strings are written out in full rather than shared through a constant:
  * the docs compile the previews' Tailwind from `class` attributes, so a class
  * assembled in JS would render here and vanish in the preview.
  */
 export type SignInDestination = "home" | "support" | "privacy" | "terms";
-
-/**
- * The notices this screen shows by default: what a person hitting a sign-in
- * page actually needs to know before typing. Delete it and pass your own
- * `notices` — or rewrite it in place, the file is yours.
- */
-const serviceNotices: AlertListItem[] = [
-  {
-    id: "incident",
-    variant: "warning",
-    title: "Sign-in is slower than usual",
-    description: "Our identity provider is degraded. Signing in can take up to a minute.",
-    meta: "Updated 10 min ago",
-    actionLabel: "Status page",
-  },
-  {
-    id: "maintenance",
-    variant: "info",
-    title: "Maintenance on Sunday 02:00–04:00 UTC",
-    description: "The workspace is read-only for the window. No action is needed from you.",
-    meta: "Yesterday",
-  },
-];
 
 export interface SignInProps {
   /** Sign-in failed. Raises the form-level alert and invalidates both fields. */
@@ -89,12 +52,6 @@ export interface SignInProps {
   loading?: boolean;
   /** Sign-in is unavailable (an SSO-only workspace, a locked account). */
   disabled?: boolean;
-  /** Service notices to show beside the form. `[]` renders the form alone. */
-  notices?: AlertListItem[];
-  /** The notices could not be loaded; that message replaces the list. */
-  noticesError?: string;
-  /** The notices are still loading: a busy region stands in for the list. */
-  noticesLoading?: boolean;
   /** Native submit; call `event.preventDefault()` and read the form yourself. */
   onSubmit?: (event: SubmitEvent) => void;
   /**
@@ -103,14 +60,6 @@ export interface SignInProps {
    * and read `metaKey` / `ctrlKey` first to leave a new-tab click alone.
    */
   onNavigate?: (destination: SignInDestination, event: MouseEvent) => void;
-  /** A notice's own action (`actionLabel`), reported with that notice's id. */
-  onNoticeAction?: (id: string) => void;
-  /** A notice was dismissed; you drop it from your own state. */
-  onDismissNotice?: (id: string) => void;
-  /** Every notice was dismissed at once. */
-  onDismissNotices?: () => void;
-  /** Retry after `noticesError`. */
-  onRetryNotices?: () => void;
   /** Where "Forgot your password?" points. */
   forgotHref?: string;
   /** Where "Create an account" points. */
@@ -126,10 +75,6 @@ export interface SignInProps {
 }
 
 export function SignIn(props: SignInProps) {
-  const notices = () => props.notices ?? serviceNotices;
-  const showNotices = () =>
-    Boolean(props.noticesError) || Boolean(props.noticesLoading) || notices().length > 0;
-
   return (
     <div class="@container moderno-screen-sign-in min-h-dvh bg-background text-foreground">
       <div class="grid min-h-dvh grid-rows-[auto_1fr_auto] gap-8 p-6">
@@ -153,34 +98,16 @@ export function SignIn(props: SignInProps) {
           </p>
         </header>
 
-        <div class="grid content-center gap-8 @lg:grid-cols-2 @lg:items-start @lg:gap-10">
-          <div class="mx-auto w-full max-w-sm">
-            <LoginForm
-              titleLevel={1}
-              error={props.error}
-              loading={props.loading}
-              disabled={props.disabled}
-              onSubmit={props.onSubmit}
-              forgotHref={props.forgotHref ?? "#"}
-              signUpHref={props.signUpHref ?? "#"}
-            />
-          </div>
-
-          <Show when={showNotices()}>
-            <aside class="mx-auto w-full max-w-md">
-              <AlertList
-                heading="Before you sign in"
-                description="Anything affecting access right now."
-                alerts={notices()}
-                error={props.noticesError}
-                loading={props.noticesLoading}
-                onAction={props.onNoticeAction}
-                onDismiss={props.onDismissNotice}
-                onDismissAll={props.onDismissNotices}
-                onRetry={props.onRetryNotices}
-              />
-            </aside>
-          </Show>
+        <div class="mx-auto grid w-full max-w-sm content-center">
+          <LoginForm
+            titleLevel={1}
+            error={props.error}
+            loading={props.loading}
+            disabled={props.disabled}
+            onSubmit={props.onSubmit}
+            forgotHref={props.forgotHref ?? "#"}
+            signUpHref={props.signUpHref ?? "#"}
+          />
         </div>
 
         <footer class="grid gap-2 text-ui-md text-muted-foreground @md:flex @md:items-center @md:justify-between">

@@ -121,20 +121,14 @@ describe("moderno add sign-in-<framework>", () => {
     {
       item: "sign-in-react",
       target: "src/components/screens/sign-in.tsx",
-      blocks: [
-        { item: "login-form-react", target: "src/components/blocks/login-form.tsx" },
-        { item: "alert-list-react", target: "src/components/blocks/alert-list.tsx" },
-      ],
-      imports: ["@/components/blocks/login-form", "@/components/blocks/alert-list"],
+      blocks: [{ item: "login-form-react", target: "src/components/blocks/login-form.tsx" }],
+      imports: ["@/components/blocks/login-form"],
     },
     {
       item: "sign-in-svelte",
       target: "src/components/screens/SignIn.svelte",
-      blocks: [
-        { item: "login-form-svelte", target: "src/components/blocks/LoginForm.svelte" },
-        { item: "alert-list-svelte", target: "src/components/blocks/AlertList.svelte" },
-      ],
-      imports: ["@/components/blocks/LoginForm.svelte", "@/components/blocks/AlertList.svelte"],
+      blocks: [{ item: "login-form-svelte", target: "src/components/blocks/LoginForm.svelte" }],
+      imports: ["@/components/blocks/LoginForm.svelte"],
     },
   ];
 
@@ -148,15 +142,14 @@ describe("moderno add sign-in-<framework>", () => {
       expect(result.installed).toEqual([...blocks.map((b) => b.item), item]);
 
       const written = await readFile(join(project, target), "utf8");
-      // The screen composes the two blocks from where `add` just put them…
+      // The screen composes its block from where `add` just put them…
       for (const specifier of imports) expect(written).toContain(specifier);
       // …owns the viewport as a height, not as a set of breakpoints…
       expect(written).toContain("min-h-dvh");
-      // …and reads every width off its own container, all three steps (ADR-0005).
+      // …and reads every width off its own container, its @sm and @md steps (ADR-0005).
       expect(written).toContain("@container");
       expect(written).toContain("@sm:");
       expect(written).toContain("@md:");
-      expect(written).toContain("@lg:");
       expect(written).not.toContain("@media");
 
       // Every link the screen draws itself hands the click event back with the
@@ -203,21 +196,15 @@ describe("moderno add forgot-password-<framework>", () => {
     {
       item: "forgot-password-react",
       target: "src/components/screens/forgot-password.tsx",
-      blocks: [
-        { item: "login-form-react", target: "src/components/blocks/login-form.tsx" },
-        { item: "alert-list-react", target: "src/components/blocks/alert-list.tsx" },
-      ],
-      imports: ["@/components/blocks/login-form", "@/components/blocks/alert-list"],
+      blocks: [{ item: "login-form-react", target: "src/components/blocks/login-form.tsx" }],
+      imports: ["@/components/blocks/login-form"],
       card: "src/components/blocks/login-form.tsx",
     },
     {
       item: "forgot-password-svelte",
       target: "src/components/screens/ForgotPassword.svelte",
-      blocks: [
-        { item: "login-form-svelte", target: "src/components/blocks/LoginForm.svelte" },
-        { item: "alert-list-svelte", target: "src/components/blocks/AlertList.svelte" },
-      ],
-      imports: ["@/components/blocks/LoginForm.svelte", "@/components/blocks/AlertList.svelte"],
+      blocks: [{ item: "login-form-svelte", target: "src/components/blocks/LoginForm.svelte" }],
+      imports: ["@/components/blocks/LoginForm.svelte"],
       card: "src/components/blocks/LoginForm.svelte",
     },
   ];
@@ -232,15 +219,14 @@ describe("moderno add forgot-password-<framework>", () => {
       expect(result.installed).toEqual([...blocks.map((b) => b.item), item]);
 
       const written = await readFile(join(project, target), "utf8");
-      // The screen composes the two blocks from where `add` just put them…
+      // The screen composes its block from where `add` just put them…
       for (const specifier of imports) expect(written).toContain(specifier);
       // …owns the viewport as a height, not as a set of breakpoints…
       expect(written).toContain("min-h-dvh");
-      // …and reads every width off its own container, all three steps (ADR-0005).
+      // …and reads every width off its own container, its @sm and @md steps (ADR-0005).
       expect(written).toContain("@container");
       expect(written).toContain("@sm:");
       expect(written).toContain("@md:");
-      expect(written).toContain("@lg:");
       expect(written).not.toContain("@media");
 
       // Every link the screen draws itself hands the click event back with the
@@ -306,21 +292,15 @@ describe("moderno add reset-password-<framework>", () => {
     {
       item: "reset-password-react",
       target: "src/components/screens/reset-password.tsx",
-      blocks: [
-        { item: "login-form-react", target: "src/components/blocks/login-form.tsx" },
-        { item: "alert-list-react", target: "src/components/blocks/alert-list.tsx" },
-      ],
-      imports: ["@/components/blocks/login-form", "@/components/blocks/alert-list"],
+      blocks: [{ item: "login-form-react", target: "src/components/blocks/login-form.tsx" }],
+      imports: ["@/components/blocks/login-form"],
       card: "src/components/blocks/login-form.tsx",
     },
     {
       item: "reset-password-svelte",
       target: "src/components/screens/ResetPassword.svelte",
-      blocks: [
-        { item: "login-form-svelte", target: "src/components/blocks/LoginForm.svelte" },
-        { item: "alert-list-svelte", target: "src/components/blocks/AlertList.svelte" },
-      ],
-      imports: ["@/components/blocks/LoginForm.svelte", "@/components/blocks/AlertList.svelte"],
+      blocks: [{ item: "login-form-svelte", target: "src/components/blocks/LoginForm.svelte" }],
+      imports: ["@/components/blocks/LoginForm.svelte"],
       card: "src/components/blocks/LoginForm.svelte",
     },
   ];
@@ -335,15 +315,14 @@ describe("moderno add reset-password-<framework>", () => {
       expect(result.installed).toEqual([...blocks.map((b) => b.item), item]);
 
       const written = await readFile(join(project, target), "utf8");
-      // The screen composes the two blocks from where `add` just put them…
+      // The screen composes its block from where `add` just put them…
       for (const specifier of imports) expect(written).toContain(specifier);
       // …owns the viewport as a height, not as a set of breakpoints…
       expect(written).toContain("min-h-dvh");
-      // …and reads every width off its own container, all three steps (ADR-0005).
+      // …and reads every width off its own container, its @sm and @md steps (ADR-0005).
       expect(written).toContain("@container");
       expect(written).toContain("@sm:");
       expect(written).toContain("@md:");
-      expect(written).toContain("@lg:");
       expect(written).not.toContain("@media");
 
       // Every link the screen draws itself hands the click event back with the
@@ -413,21 +392,15 @@ describe("moderno add verify-<framework>", () => {
     {
       item: "verify-react",
       target: "src/components/screens/verify.tsx",
-      blocks: [
-        { item: "login-form-react", target: "src/components/blocks/login-form.tsx" },
-        { item: "alert-list-react", target: "src/components/blocks/alert-list.tsx" },
-      ],
-      imports: ["@/components/blocks/login-form", "@/components/blocks/alert-list"],
+      blocks: [{ item: "login-form-react", target: "src/components/blocks/login-form.tsx" }],
+      imports: ["@/components/blocks/login-form"],
       card: "src/components/blocks/login-form.tsx",
     },
     {
       item: "verify-svelte",
       target: "src/components/screens/Verify.svelte",
-      blocks: [
-        { item: "login-form-svelte", target: "src/components/blocks/LoginForm.svelte" },
-        { item: "alert-list-svelte", target: "src/components/blocks/AlertList.svelte" },
-      ],
-      imports: ["@/components/blocks/LoginForm.svelte", "@/components/blocks/AlertList.svelte"],
+      blocks: [{ item: "login-form-svelte", target: "src/components/blocks/LoginForm.svelte" }],
+      imports: ["@/components/blocks/LoginForm.svelte"],
       card: "src/components/blocks/LoginForm.svelte",
     },
   ];
@@ -442,15 +415,14 @@ describe("moderno add verify-<framework>", () => {
       expect(result.installed).toEqual([...blocks.map((b) => b.item), item]);
 
       const written = await readFile(join(project, target), "utf8");
-      // The screen composes the two blocks from where `add` just put them…
+      // The screen composes its block from where `add` just put them…
       for (const specifier of imports) expect(written).toContain(specifier);
       // …owns the viewport as a height, not as a set of breakpoints…
       expect(written).toContain("min-h-dvh");
-      // …and reads every width off its own container, all three steps (ADR-0005).
+      // …and reads every width off its own container, its @sm and @md steps (ADR-0005).
       expect(written).toContain("@container");
       expect(written).toContain("@sm:");
       expect(written).toContain("@md:");
-      expect(written).toContain("@lg:");
       expect(written).not.toContain("@media");
 
       // Every link the screen draws itself hands the click event back with the

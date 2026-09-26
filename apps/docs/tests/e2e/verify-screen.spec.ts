@@ -12,14 +12,12 @@
  *
  * Eight claims, per width and per scheme:
  *
- * 1. **Container, not viewport.** All three of the screen's steps are read off
- *    the width of the frame it was mounted in, never the window: the masthead
- *    lines up at `--container-sm`, the footer at `--container-md`, and the notes
- *    move beside the card at `--container-lg`. The demo's Phone, Tablet and
- *    Desktop tabs mount the same file in a phone-, a tablet- and a
- *    desktop-width frame, so at every viewport the three answers differ from
- *    each other — which is the whole of ADR-0005. Each tab mounts one copy, and
- *    every state is reached by selecting its tab.
+ * 1. **Container, not viewport.** Both of the screen's steps are read off the
+ *    width of the frame it was mounted in, never the window: the masthead lines
+ *    up at `--container-sm` and the footer at `--container-md`. The demo's
+ *    Phone, Tablet and Desktop tabs mount the same file in a phone-, a tablet- and a desktop-width frame, so at every viewport the phone frame stacks
+ *    while the other two do not — which is the whole of ADR-0005. Each tab
+ *    mounts one copy, and every state is reached by selecting its tab.
  * 2. **A screen owns the viewport as a height.** Its root fills the window it is
  *    given, top to bottom. On this page each frame *is* that window — the demo
  *    overrides `min-h-dvh` to the frame's height so a browser window's worth of
@@ -51,14 +49,13 @@
  *    page is called — and no heading after it skips a rank.
  * 8. **AA contrast** on every text the screen paints itself — the wordmark, the
  *    support line and its link, the copyright, the legal links — plus the code's
- *    label and the notes heading it hands the blocks, in light and in dark.
+ *    label it hands the block, in light and in dark.
  */
 import { expect, test, type Page } from "@playwright/test";
 
-/** The contract's three container steps, in px at the default root size. */
+/** The contract's two container steps the screen uses, in px at the default root size. */
 const CONTAINER_SM = 384;
 const CONTAINER_MD = 576;
-const CONTAINER_LG = 768;
 
 /** The responsive policy's three widths (ADR-0005). */
 const WIDTHS = [375, 768, 1280];
@@ -68,18 +65,10 @@ const PAGE = "/en/verify/";
 /**
  * Every copy of the screen the page mounts (islands/VerifyScreenDemo.svelte), in
  * order: the main preview's three width tabs — one frame in each band of the
- * screen's three steps — then the states, each in its own Examples preview at
+ * screen's two steps — then the states, each in its own Examples preview at
  * the tablet width. Each is one mounted copy, found by its `data-demo-state`.
  */
-const TABS = [
-  "phone",
-  "tablet",
-  "desktop",
-  "field-error",
-  "resend-locked",
-  "error",
-  "empty",
-] as const;
+const TABS = ["phone", "tablet", "desktop", "field-error", "resend-locked", "error"] as const;
 type Tab = (typeof TABS)[number];
 
 /** The tabs of the main preview; every other entry is a state's own preview. */
@@ -101,10 +90,9 @@ interface ScreenMetrics {
   mastheadDisplay: string;
   /** `display` of the footer: stacked below `@md`, one row at or above it. */
   footerDisplay: string;
-  /** Number of grid tracks in the content region: one column, or two at `@lg`. */
-  contentColumns: number;
-  /** Whether the notes aside is rendered at all (it is not when empty). */
-  hasNotices: boolean;
+  /** How far the card sits off-centre inside the content region, in px, on each axis. */
+  cardOffCentreX: number;
+  cardOffCentreY: number;
   /** The `name` of every *input* the card submits, in document order. The
    * resend button is named too — that is how it is told apart — so this is
    * deliberately the fields and not every named element.
@@ -138,7 +126,8 @@ async function screenMetrics(page: Page, tab: Tab): Promise<ScreenMetrics[]> {
       const masthead = root.querySelector("header");
       const footer = root.querySelector("footer");
       const content = root.querySelector("header + div");
-      if (!masthead || !footer || !content) {
+      const card = content?.firstElementChild;
+      if (!masthead || !footer || !content || !card) {
         throw new Error("the verify screen did not render its own markup");
       }
       const email = root.querySelector<HTMLInputElement>('form [name="email"]');
@@ -152,13 +141,23 @@ async function screenMetrics(page: Page, tab: Tab): Promise<ScreenMetrics[]> {
       const alert = pinRoot?.parentElement?.querySelector('p[role="alert"]') ?? null;
       const submits = [...root.querySelectorAll<HTMLButtonElement>('form button[type="submit"]')];
       return {
-        containerWidth: root.getBoundingClientRect().width,
-        rootHeight: root.getBoundingClientRect().height,
+        // Layout size, not the painted box: the docs scale the device to fit the
+        // column, and that transform never changes what the container reads.
+        containerWidth: (root as HTMLElement).offsetWidth,
+        rootHeight: (root as HTMLElement).offsetHeight,
         frameHeight: (root.parentElement as HTMLElement).clientHeight,
         mastheadDisplay: getComputedStyle(masthead).display,
         footerDisplay: getComputedStyle(footer).display,
-        contentColumns: getComputedStyle(content).gridTemplateColumns.split(/\s+/).length,
-        hasNotices: content.querySelector("aside") !== null,
+        cardOffCentreX: Math.abs(
+          card.getBoundingClientRect().left -
+            content.getBoundingClientRect().left -
+            (content.getBoundingClientRect().right - card.getBoundingClientRect().right),
+        ),
+        cardOffCentreY: Math.abs(
+          card.getBoundingClientRect().top -
+            content.getBoundingClientRect().top -
+            (content.getBoundingClientRect().bottom - card.getBoundingClientRect().bottom),
+        ),
         fieldNames: [...root.querySelectorAll<HTMLInputElement>("form input[name]")].map(
           (el) => el.name,
         ),
@@ -307,8 +306,6 @@ async function contrastRatios(page: Page): Promise<Record<string, number>> {
       supportLine: against(pick("header p")),
       supportLink: against(pick("header p a")),
       codeLabel: against(pick('[data-scope="pin-input"][data-part="label"]')),
-      noticesHeading: against(pick("aside h2")),
-      noticesDescription: against(pick("aside h2 + p")),
       copyright: against(pick("footer p")),
       legalLink: against(pick("footer nav a")),
     };
@@ -341,15 +338,15 @@ for (const scheme of ["light", "dark"] as const) {
         }
 
         // The three frame widths are fixed by the demo, so at every viewport its
-        // width tabs hold one copy in each band of the screen's three steps.
+        // width tabs hold one copy below the first step and one past the last.
         const widths = screens.map((s) => s.containerWidth);
         expect(
           widths.some((w) => w < CONTAINER_SM),
           `${scheme} ${width}px: a copy below @sm`,
         ).toBe(true);
         expect(
-          widths.some((w) => w >= CONTAINER_LG),
-          `${scheme} ${width}px: a copy at or above @lg`,
+          widths.some((w) => w >= CONTAINER_MD),
+          `${scheme} ${width}px: a copy at or above @md`,
         ).toBe(true);
 
         for (const [index, screen] of screens.entries()) {
@@ -360,9 +357,9 @@ for (const scheme of ["light", "dark"] as const) {
           expect(screen.footerDisplay, `${where}: footer`).toBe(
             screen.containerWidth >= CONTAINER_MD ? "flex" : "grid",
           );
-          expect(screen.contentColumns, `${where}: content columns`).toBe(
-            screen.containerWidth >= CONTAINER_LG ? 2 : 1,
-          );
+          // The card is the only thing in the middle, centred in it both ways.
+          expect(screen.cardOffCentreX, `${where}: card centred across`).toBeLessThanOrEqual(1);
+          expect(screen.cardOffCentreY, `${where}: card centred down`).toBeLessThanOrEqual(1);
           // Full-viewport is a height: the screen fills the window it is given.
           // On this page each frame stands in for that window (the demo says so
           // and overrides `min-h-dvh` to the frame's own height); what is being
@@ -433,11 +430,6 @@ for (const scheme of ["light", "dark"] as const) {
             expect(resend.text, `${where}: resend offers a new code`).toBe("Send a new code");
           }
         }
-
-        // The last tab is the empty one: nothing to say about the code, so the
-        // aside is not rendered at all rather than rendered with nothing in it.
-        expect(screens.slice(0, -1).every((s) => s.hasNotices)).toBe(true);
-        expect(screens.at(-1)!.hasNotices).toBe(false);
       });
     }
 

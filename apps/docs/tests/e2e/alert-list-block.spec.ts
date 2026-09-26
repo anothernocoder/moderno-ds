@@ -16,8 +16,9 @@
  *
  * 1. **Container, not viewport** — per scheme *and* per viewport width, because
  *    the whole claim is that the viewport does not decide. The header lines up
- *    at `--container-sm`, each dismiss control grows its label at
- *    `--container-md`, and each timestamp moves to the trailing edge at
+ *    at `--container-sm` and the timestamps appear there; each dismiss control
+ *    grows its label and each description stops being cut at two lines at
+ *    `--container-md`; and each timestamp moves to the trailing edge at
  *    `--container-lg`. The copy each state of the demo mounts is measured against
  *    its own container width, so the narrow frame stays stacked at 1280 while the
  *    wide frame has already crossed all three steps.
@@ -53,6 +54,10 @@ interface BlockMetrics {
   dismissLabelShown: boolean | null;
   /** Whether the first row's timestamp sits after its title rather than under it. */
   metaBeside: boolean | null;
+  /** Whether the first row's timestamp is shown at all (hidden below `@sm`). */
+  metaShown: boolean | null;
+  /** Whether the first row's description is cut at two lines (below `@md`). */
+  descriptionClamped: boolean | null;
   /** The status variants the rows render, in order. */
   variants: string[];
   /** Whether every control in this copy is disabled. */
@@ -107,22 +112,32 @@ async function blockMetrics(page: Page, state: State): Promise<BlockMetrics[]> {
 
       let dismissLabelShown: boolean | null = null;
       let metaBeside: boolean | null = null;
+      let metaShown: boolean | null = null;
+      let descriptionClamped: boolean | null = null;
       const first = rows[0];
       if (first) {
         const alert = first.querySelector('[data-scope="alert"][data-part="root"]');
         if (!alert) throw new Error("a row rendered no Alert");
-        // The dismiss control is the Alert root's own trailing child; the row's
-        // action, when it has one, lives inside the content column instead.
-        const dismiss = alert.querySelector(':scope > [data-scope="button"]');
+        // The dismiss control closes the title's row; the row's action, when it
+        // has one, sits further down the content column.
+        const dismiss = alert.querySelector('[data-part="content"] > div > [data-scope="button"]');
         const label = dismiss?.lastElementChild;
         if (!label) throw new Error("the row rendered no dismiss control");
         dismissLabelShown = getComputedStyle(label).display !== "none";
 
-        const titleRow = alert.querySelector('[data-part="content"] > div');
+        const titleRow = alert.querySelector('[data-part="content"] > div > div');
         const title = titleRow?.querySelector('[data-part="title"]');
         const meta = titleRow?.querySelector('[data-part="description"]');
         if (!title || !meta) throw new Error("the row rendered no title or timestamp");
-        metaBeside = meta.getBoundingClientRect().left >= title.getBoundingClientRect().right - 1;
+        metaShown = getComputedStyle(meta).display !== "none";
+        metaBeside =
+          metaShown && meta.getBoundingClientRect().left >= title.getBoundingClientRect().right - 1;
+
+        const description = alert.querySelector(
+          '[data-part="content"] > [data-part="description"]',
+        );
+        if (!description) throw new Error("the row rendered no description");
+        descriptionClamped = getComputedStyle(description).webkitLineClamp !== "none";
       }
 
       const alerts = [...section.querySelectorAll('[data-scope="alert"][data-part="root"]')];
@@ -133,6 +148,8 @@ async function blockMetrics(page: Page, state: State): Promise<BlockMetrics[]> {
         hasList: rows.length > 0,
         dismissLabelShown,
         metaBeside,
+        metaShown,
+        descriptionClamped,
         variants: rows.map((row) => {
           const alert = row.querySelector('[data-scope="alert"][data-part="root"]');
           return alert?.getAttribute("data-variant") ?? "";
@@ -276,9 +293,11 @@ async function textRatios(
         pick(alert, '[data-part="content"] > [data-part="description"]'),
       );
       ratios[`${status}Meta`] = against(
-        pick(alert, '[data-part="content"] > div > [data-part="description"]'),
+        pick(alert, '[data-part="content"] > div > div > [data-part="description"]'),
       );
-      ratios[`${status}Dismiss`] = against(pick(alert, ':scope > [data-scope="button"]'));
+      ratios[`${status}Dismiss`] = against(
+        pick(alert, '[data-part="content"] > div > [data-scope="button"]'),
+      );
       const action = alert.querySelector('[data-part="action"] [data-scope="button"]');
       if (action) ratios[`${status}Action`] = against(action);
     }
@@ -321,6 +340,12 @@ for (const scheme of ["light", "dark"] as const) {
           if (block.hasList) {
             expect(block.dismissLabelShown, `${where}: dismiss label`).toBe(
               block.containerWidth >= CONTAINER_MD,
+            );
+            expect(block.metaShown, `${where}: timestamp shown`).toBe(
+              block.containerWidth >= CONTAINER_SM,
+            );
+            expect(block.descriptionClamped, `${where}: description cut`).toBe(
+              block.containerWidth < CONTAINER_MD,
             );
             expect(block.metaBeside, `${where}: timestamp`).toBe(
               block.containerWidth >= CONTAINER_LG,
@@ -411,7 +436,9 @@ for (const scheme of ["light", "dark"] as const) {
         )!;
         return [...section.querySelectorAll("ul li")].map((row) => {
           const alert = row.querySelector('[data-scope="alert"][data-part="root"]')!;
-          const dismiss = alert.querySelector(':scope > [data-scope="button"]')!;
+          const dismiss = alert.querySelector(
+            '[data-part="content"] > div > [data-scope="button"]',
+          )!;
           return {
             name: dismiss.getAttribute("aria-label") ?? "",
             title: alert.querySelector('[data-part="title"]')?.textContent?.trim() ?? "",

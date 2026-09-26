@@ -1,6 +1,6 @@
 ---
 title: Iniciar sesión
-description: Una pantalla de inicio de sesión a viewport completo con el formulario y los avisos previos a entrar.
+description: Una pantalla de inicio de sesión a viewport completo con el formulario centrado entre una cabecera y un pie.
 group: Pantallas
 order: 111
 ---
@@ -110,38 +110,28 @@ import { SignIn } from "@/components/screens/sign-in";
 
 Los callbacks son props `on…` en React y Solid, en minúsculas (`onsubmit`) en Svelte y eventos (`submit`, `navigate`) en Vue.
 
-| Prop               | Tipo                  | Por defecto    | Descripción                                                                |
-| ------------------ | --------------------- | -------------- | -------------------------------------------------------------------------- |
-| `error`            | `string`              | —              | Falló el inicio de sesión: muestra la alerta y marca ambos campos.         |
-| `loading`          | `boolean`             | `false`        | Envío en curso: todos los controles inertes, el botón ocupado.             |
-| `disabled`         | `boolean`             | `false`        | No se puede iniciar sesión (espacio solo SSO, cuenta bloqueada).           |
-| `notices`          | `AlertListItem[]`     | dos de ejemplo | Avisos de servicio junto al formulario. `[]` oculta el aparte.             |
-| `noticesError`     | `string`              | —              | Los avisos no cargaron; este mensaje sustituye a la lista.                 |
-| `noticesLoading`   | `boolean`             | `false`        | Una región ocupada sustituye a los avisos.                                 |
-| `onSubmit`         | `(event) => void`     | —              | Envío nativo del formulario.                                               |
-| `onNavigate`       | `(to, event) => void` | —              | Se pulsó un enlace de la pantalla: `home`, `support`, `privacy` o `terms`. |
-| `onNoticeAction`   | `(id) => void`        | —              | El botón de acción de un aviso, con su id.                                 |
-| `onDismissNotice`  | `(id) => void`        | —              | Se descartó un aviso.                                                      |
-| `onDismissNotices` | `() => void`          | —              | Se descartaron todos los avisos.                                           |
-| `onRetryNotices`   | `() => void`          | —              | Reintentar tras `noticesError`.                                            |
-| `forgotHref`       | `string`              | `"#"`          | Destino de «Forgot your password?».                                        |
-| `signUpHref`       | `string`              | `"#"`          | Destino de «Create an account».                                            |
-| `homeHref`         | `string`              | `"#"`          | Destino del logotipo.                                                      |
-| `supportHref`      | `string`              | `"#"`          | Destino de «Contact support».                                              |
-| `privacyHref`      | `string`              | `"#"`          | Destino del enlace de privacidad.                                          |
-| `termsHref`        | `string`              | `"#"`          | Destino del enlace de términos.                                            |
+| Prop          | Tipo                  | Por defecto | Descripción                                                                |
+| ------------- | --------------------- | ----------- | -------------------------------------------------------------------------- |
+| `error`       | `string`              | —           | Falló el inicio de sesión: muestra la alerta y marca ambos campos.         |
+| `loading`     | `boolean`             | `false`     | Envío en curso: todos los controles inertes, el botón ocupado.             |
+| `disabled`    | `boolean`             | `false`     | No se puede iniciar sesión (espacio solo SSO, cuenta bloqueada).           |
+| `onSubmit`    | `(event) => void`     | —           | Envío nativo del formulario.                                               |
+| `onNavigate`  | `(to, event) => void` | —           | Se pulsó un enlace de la pantalla: `home`, `support`, `privacy` o `terms`. |
+| `forgotHref`  | `string`              | `"#"`       | Destino de «Forgot your password?».                                        |
+| `signUpHref`  | `string`              | `"#"`       | Destino de «Create an account».                                            |
+| `homeHref`    | `string`              | `"#"`       | Destino del logotipo.                                                      |
+| `supportHref` | `string`              | `"#"`       | Destino de «Contact support».                                              |
+| `privacyHref` | `string`              | `"#"`       | Destino del enlace de privacidad.                                          |
+| `termsHref`   | `string`              | `"#"`       | Destino del enlace de términos.                                            |
 
 ### Estados
 
-| Estado          | Props            | Qué se renderiza                                                    |
-| --------------- | ---------------- | ------------------------------------------------------------------- |
-| Por defecto     | —                | La tarjeta con los avisos de servicio al lado o debajo.             |
-| Error           | `error`          | Una alerta de formulario; ambos campos inválidos, ninguno nombrado. |
-| Cargando        | `loading`        | Controles inertes, envío con `aria-busy`.                           |
-| Deshabilitado   | `disabled`       | El formulario se ve pero no se puede usar.                          |
-| Avisos cargando | `noticesLoading` | Una región ocupada educada en lugar de los avisos.                  |
-| Error de avisos | `noticesError`   | Una alerta con reintento en lugar de los avisos.                    |
-| Vacío           | `notices={[]}`   | Sin aparte; la tarjeta queda centrada y sola.                       |
+| Estado        | Props      | Qué se renderiza                                                    |
+| ------------- | ---------- | ------------------------------------------------------------------- |
+| Por defecto   | —          | La tarjeta, centrada entre la cabecera y el pie.                    |
+| Error         | `error`    | Una alerta de formulario; ambos campos inválidos, ninguno nombrado. |
+| Cargando      | `loading`  | Controles inertes, envío con `aria-busy`.                           |
+| Deshabilitado | `disabled` | El formulario se ve pero no se puede usar.                          |
 
 ### Campos del formulario
 
@@ -153,18 +143,16 @@ Los callbacks son props `on…` en React y Solid, en minúsculas (`onsubmit`) en
 
 ### Tamaño
 
-| Paso del contenedor      | Cambio                                    |
-| ------------------------ | ----------------------------------------- |
-| `@sm` (`--container-sm`) | La cabecera pasa a una sola fila.         |
-| `@md` (`--container-md`) | El pie pasa a una sola fila.              |
-| `@lg` (`--container-lg`) | Los avisos se colocan junto a la tarjeta. |
+| Paso del contenedor      | Cambio                            |
+| ------------------------ | --------------------------------- |
+| `@sm` (`--container-sm`) | La cabecera pasa a una sola fila. |
+| `@md` (`--container-md`) | El pie pasa a una sola fila.      |
 
 ### Composición
 
 | Parte                        | Papel                                                                |
 | ---------------------------- | -------------------------------------------------------------------- |
 | [LoginForm](/es/login-form/) | La tarjeta de credenciales, en modo `sign-in`, con `titleLevel={1}`. |
-| [AlertList](/es/alert-list/) | Los avisos, bajo el título «Before you sign in».                     |
 
 ## Ejemplos
 
@@ -184,8 +172,6 @@ Los callbacks son props `on…` en React y Solid, en minúsculas (`onsubmit`) en
 
 ### Cargando
 
-Aquí el formulario y los avisos cargan a la vez: `loading` más `noticesLoading`.
-
 <Preview
   examples={{
     react: signInReact,
@@ -198,34 +184,6 @@ Aquí el formulario y los avisos cargan a la vez: `loading` más `noticesLoading
   <SignInScreenDemo client:visible locale="es" state="loading" />
 </Preview>
 
-### Error de avisos
-
-<Preview
-  examples={{
-    react: signInReact,
-    vue: signInVue,
-    solid: signInSolid,
-    svelte: signInSvelte,
-  }}
-  layout="fill"
->
-  <SignInScreenDemo client:visible locale="es" state="notices-error" />
-</Preview>
-
-### Vacío
-
-<Preview
-  examples={{
-    react: signInReact,
-    vue: signInVue,
-    solid: signInSolid,
-    svelte: signInSvelte,
-  }}
-  layout="fill"
->
-  <SignInScreenDemo client:visible locale="es" state="empty" />
-</Preview>
-
 ## Notas
 
 - Presentacional: sin petición, sin router, sin credenciales guardadas. Los pone la página que la monta.
@@ -233,4 +191,4 @@ Aquí el formulario y los avisos cargan a la vez: `loading` más `noticesLoading
 - Los enlaces de recuperación y de registro son `href` normales, así que funcionan antes de hidratar.
 - `onNavigate` entrega el evento del clic: ignora los clics con `metaKey`/`ctrlKey` y luego `preventDefault()` para enrutar.
 - La raíz es un `<div>`, no un `<main>`. Conviértela en tu `<main>` si la ruta no tiene uno.
-- La pantalla importa sus bloques desde `@/components/blocks/…`; cambia esas líneas si tu alias es otro.
+- La pantalla importa el bloque LoginForm desde `@/components/blocks/…`; cambia esa línea si tu alias es otro.
