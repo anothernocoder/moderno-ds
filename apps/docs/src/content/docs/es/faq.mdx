@@ -1,0 +1,171 @@
+---
+title: FAQ
+description: Preguntas frecuentes bajo un encabezado con serifa — cada pregunta se abre sobre su respuesta, con una línea que lleva a soporte debajo.
+group: Bloques
+order: 119
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import FaqBlockDemo from "../../../islands/FaqBlockDemo.svelte";
+import faqReact from "../../../../../../registry/blocks/faq/react/faq.tsx?raw";
+import faqVue from "../../../../../../registry/blocks/faq/vue/Faq.vue?raw";
+import faqSolid from "../../../../../../registry/blocks/faq/solid/faq.tsx?raw";
+import faqSvelte from "../../../../../../registry/blocks/faq/svelte/Faq.svelte?raw";
+
+export const examples = {
+  react: faqReact,
+  vue: faqVue,
+  solid: faqSolid,
+  svelte: faqSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <FaqBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="faq" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { Faq } from "@/components/blocks/faq";
+```
+
+```tsx
+<Faq heading="Preguntas y respuestas" items={items} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import Faq from "@/components/blocks/Faq.vue";
+</script>
+```
+
+```vue
+<Faq heading="Preguntas y respuestas" :items="items" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import Faq from "@/components/blocks/Faq.svelte";
+</script>
+```
+
+```svelte
+<Faq heading="Preguntas y respuestas" {items} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { Faq } from "@/components/blocks/faq";
+```
+
+```tsx
+<Faq heading="Preguntas y respuestas" items={items} />
+```
+
+</ForFramework>
+
+## Referencia de la API
+
+### Props
+
+| Prop           | Tipo         | Por defecto                    | Descripción                                                                                   |
+| -------------- | ------------ | ------------------------------ | --------------------------------------------------------------------------------------------- |
+| `heading`      | `string`     | `"Frequently asked questions"` | El encabezado de la sección. Va en la fuente con serifa.                                      |
+| `description`  | `string`     | una frase                      | Una frase bajo el encabezado; `""` la oculta.                                                 |
+| `items`        | `FaqItem[]`  | cinco preguntas de ejemplo     | Las preguntas, en orden. `[]` muestra el mensaje de vacío.                                    |
+| `contactText`  | `string`     | una frase                      | La frase de la línea de soporte.                                                              |
+| `contactLabel` | `string`     | `"Contact support"`            | La etiqueta del botón de soporte; `""` oculta la línea de soporte.                            |
+| `error`        | `string`     | —                              | Falló la carga de las preguntas; un Alert de error con reintento las sustituye.               |
+| `loading`      | `boolean`    | `false`                        | Filas de esqueleto en una región ocupada sustituyen a las preguntas.                          |
+| `disabled`     | `boolean`    | `false`                        | Las preguntas se quedan pero no se abren; los botones de soporte y reintento, deshabilitados. |
+| `onContact`    | `() => void` | —                              | Se pulsó el botón de soporte. Svelte: `oncontact`. Vue: `@contact`.                           |
+| `onRetry`      | `() => void` | —                              | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.                                   |
+
+### Pregunta
+
+| Campo      | Tipo     | Descripción                                                           |
+| ---------- | -------- | --------------------------------------------------------------------- |
+| `id`       | `string` | Una clave estable para la pregunta. También su valor en el Accordion. |
+| `question` | `string` | La pregunta. Se muestra como `h3` alrededor de su disparador.         |
+| `answer`   | `string` | La respuesta, visible cuando la pregunta se abre.                     |
+
+### Estados
+
+| Estado        | Prop         | Qué se muestra                                                                     |
+| ------------- | ------------ | ---------------------------------------------------------------------------------- |
+| Por defecto   | —            | Encabezado, introducción, cada pregunta y la línea de soporte.                     |
+| Vacío         | `items={[]}` | Encabezado, introducción, "No questions here yet." y la línea de soporte.          |
+| Cargando      | `loading`    | Encabezado, introducción, cinco filas de marcador y la línea de soporte.           |
+| Error         | `error`      | Encabezado, introducción, un Alert de error con "Try again" y la línea de soporte. |
+| Deshabilitado | `disabled`   | Las mismas preguntas, que no se abren, y el botón de soporte deshabilitado.        |
+
+### Tamaño
+
+| Paso del contenedor      | Qué cambia                                         |
+| ------------------------ | -------------------------------------------------- |
+| bajo `@sm`               | La frase de soporte va sobre su botón.             |
+| `@sm` (`--container-sm`) | La frase de soporte y su botón comparten una fila. |
+| `@md` (`--container-md`) | El encabezado sube un tamaño.                      |
+| `@lg` (`--container-lg`) | Más espacio arriba y abajo de la sección.          |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+El mismo bloque a 18rem, 30rem, 40rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <FaqBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Vacío
+
+Pasa un array `items` vacío.
+
+<Preview examples={examples} layout="fill">
+  <FaqBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <FaqBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+Pulsa "Try again" para quitar el mensaje y recuperar las preguntas.
+
+<Preview examples={examples} layout="fill">
+  <FaqBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+<Preview examples={examples} layout="fill">
+  <FaqBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
+
+## Notas
+
+- Escribe cada pregunta como la haría un lector y respóndela en su primera frase.
+- Mantén la lista corta. Pon arriba las preguntas que más se hacen.

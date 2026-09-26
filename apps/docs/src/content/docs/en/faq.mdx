@@ -1,0 +1,195 @@
+---
+title: FAQ
+description: Frequently asked questions under a serif heading — each question opens onto its answer, with a line that points to support below.
+group: Blocks
+order: 119
+agent:
+  intent: A section of a marketing, pricing or help page that answers common questions — a serif heading, a sentence of introduction, one question per row that opens onto its answer, then a line that points to support.
+  whenToUse: "A page where readers arrive with the same few questions, like a pricing or help page, and each answer fits in a few sentences."
+  whenNotToUse:
+    - case: Groups of settings or long product specs inside an app
+      use: Accordion — the primitive, without the heading, the support line or the page states
+    - case: Long answers with several paragraphs and headings
+      use: Content — it reads as an article, not a list of questions
+    - case: What the product does, with an icon per point
+      use: FeatureGrid — it shows features at a glance
+  gotchas:
+    - "`items` is an array of `{ id, question, answer }`. Each question is an `h3` around the Accordion trigger, so the questions show in the page outline."
+    - "One answer is open at a time, and the open one closes when its question is pressed again. Every question starts closed."
+    - '`description` hides when you pass `""`, and so does the support line when `contactLabel` is `""`.'
+    - '`items={[]}` shows "No questions here yet." in place of the questions. The support line stays.'
+    - "`disabled` keeps every question and makes each one inert, and disables the support and retry buttons."
+    - 'Presentational: `onContact` reports that the support button was pressed and `onRetry` that "Try again" was pressed. What happens next stays yours.'
+    - "`loading` keeps the heading and the support line and replaces the questions with five skeleton rows in one busy `status` region."
+    - '`error` keeps the heading and the support line and puts an error Alert with your message and a "Try again" button where the questions were. An empty string counts as no error.'
+    - "The layout follows the block's own width, not the viewport: the support line stacks below `--container-sm` and sits on one row from there."
+  theming:
+    - "The block paints only the rules above and below the questions, the dashed empty box and the support line's frame (--border). The questions are Accordion's line variant, the error is Alert's error variant, the buttons are Button's outline variant and the loading rows are Skeleton."
+    - "The heading reads --font-serif and --foreground; the introduction, each answer and the support sentence read --muted-foreground; each question reads --foreground, its chevron --muted-foreground (--foreground on hover), and its focus ring --ring."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg. The heading is capped at --container-md and the questions at --container-lg."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import FaqBlockDemo from "../../../islands/FaqBlockDemo.svelte";
+import faqReact from "../../../../../../registry/blocks/faq/react/faq.tsx?raw";
+import faqVue from "../../../../../../registry/blocks/faq/vue/Faq.vue?raw";
+import faqSolid from "../../../../../../registry/blocks/faq/solid/faq.tsx?raw";
+import faqSvelte from "../../../../../../registry/blocks/faq/svelte/Faq.svelte?raw";
+
+export const examples = {
+  react: faqReact,
+  vue: faqVue,
+  solid: faqSolid,
+  svelte: faqSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <FaqBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="faq" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { Faq } from "@/components/blocks/faq";
+```
+
+```tsx
+<Faq heading="Questions and answers" items={items} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import Faq from "@/components/blocks/Faq.vue";
+</script>
+```
+
+```vue
+<Faq heading="Questions and answers" :items="items" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import Faq from "@/components/blocks/Faq.svelte";
+</script>
+```
+
+```svelte
+<Faq heading="Questions and answers" {items} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { Faq } from "@/components/blocks/faq";
+```
+
+```tsx
+<Faq heading="Questions and answers" items={items} />
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+| Prop           | Type         | Default                        | Description                                                                     |
+| -------------- | ------------ | ------------------------------ | ------------------------------------------------------------------------------- |
+| `heading`      | `string`     | `"Frequently asked questions"` | The section's heading. Set in the serif face.                                   |
+| `description`  | `string`     | a sentence                     | One sentence under the heading; `""` hides it.                                  |
+| `items`        | `FaqItem[]`  | five sample questions          | The questions, in order. `[]` shows the empty message.                          |
+| `contactText`  | `string`     | a sentence                     | The sentence on the support line.                                               |
+| `contactLabel` | `string`     | `"Contact support"`            | The support button's label; `""` hides the support line.                        |
+| `error`        | `string`     | —                              | Loading the questions failed; an error Alert with a retry replaces them.        |
+| `loading`      | `boolean`    | `false`                        | Skeleton rows in a busy region replace the questions.                           |
+| `disabled`     | `boolean`    | `false`                        | The questions stay but cannot open; the support and retry buttons are disabled. |
+| `onContact`    | `() => void` | —                              | The support button was pressed. Svelte: `oncontact`. Vue: `@contact`.           |
+| `onRetry`      | `() => void` | —                              | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.                    |
+
+### Item
+
+| Field      | Type     | Description                                              |
+| ---------- | -------- | -------------------------------------------------------- |
+| `id`       | `string` | A stable key for the question. Also its Accordion value. |
+| `question` | `string` | The question. Rendered as an `h3` around its trigger.    |
+| `answer`   | `string` | The answer, shown when the question opens.               |
+
+### States
+
+| State    | Prop         | What renders                                                                  |
+| -------- | ------------ | ----------------------------------------------------------------------------- |
+| Default  | —            | Heading, introduction, every question and the support line.                   |
+| Empty    | `items={[]}` | Heading, introduction, "No questions here yet." and the support line.         |
+| Loading  | `loading`    | Heading, introduction, five placeholder rows and the support line.            |
+| Error    | `error`      | Heading, introduction, an error Alert with "Try again", and the support line. |
+| Disabled | `disabled`   | The same questions, which cannot open, and a disabled support button.         |
+
+### Sizing
+
+| Container step           | What changes                                       |
+| ------------------------ | -------------------------------------------------- |
+| below `@sm`              | The support sentence sits above its button.        |
+| `@sm` (`--container-sm`) | The support sentence and its button share one row. |
+| `@md` (`--container-md`) | The heading steps up a size.                       |
+| `@lg` (`--container-lg`) | More room above and below the section.             |
+
+## Examples
+
+### Container widths
+
+The same block at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <FaqBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Empty
+
+Pass an empty `items` array.
+
+<Preview examples={examples} layout="fill">
+  <FaqBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <FaqBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+Press "Try again" to clear the message and bring the questions back.
+
+<Preview examples={examples} layout="fill">
+  <FaqBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <FaqBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Write each question the way a reader would ask it, and answer it in its first sentence.
+- Keep the list short. Put the questions people ask most at the top.

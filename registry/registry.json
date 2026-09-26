@@ -858,6 +858,78 @@
       ]
     },
     {
+      "name": "faq-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "FAQ (React)",
+      "description": "Frequently asked questions in an accordion, composing the @moderno-ui/react Accordion, Alert, Button and Skeleton primitives: a serif heading, a sentence of introduction, then one question per item that opens onto its answer, and a line that points to support, with its own loading, empty and error renders; responds to its container (@container) — the support line sits on one row at @sm, the heading steps up at @md and the section gets more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/faq/react/faq.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/faq.tsx"
+        }
+      ]
+    },
+    {
+      "name": "faq-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "FAQ (Vue)",
+      "description": "Frequently asked questions in an accordion, composing the @moderno-ui/vue Accordion, Alert, Button and Skeleton primitives: a serif heading, a sentence of introduction, then one question per item that opens onto its answer, and a line that points to support, with its own loading, empty and error renders; responds to its container (@container) — the support line sits on one row at @sm, the heading steps up at @md and the section gets more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/faq/vue/Faq.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/Faq.vue"
+        }
+      ]
+    },
+    {
+      "name": "faq-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "FAQ (Svelte)",
+      "description": "Frequently asked questions in an accordion, composing the @moderno-ui/svelte Accordion, Alert, Button and Skeleton primitives: a serif heading, a sentence of introduction, then one question per item that opens onto its answer, and a line that points to support, with its own loading, empty and error renders; responds to its container (@container) — the support line sits on one row at @sm, the heading steps up at @md and the section gets more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/faq/svelte/Faq.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/Faq.svelte"
+        }
+      ]
+    },
+    {
+      "name": "faq-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "FAQ (Solid)",
+      "description": "Frequently asked questions in an accordion, composing the @moderno-ui/solid Accordion, Alert, Button and Skeleton primitives: a serif heading, a sentence of introduction, then one question per item that opens onto its answer, and a line that points to support, with its own loading, empty and error renders; responds to its container (@container) — the support line sits on one row at @sm, the heading steps up at @md and the section gets more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/faq/solid/faq.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/faq.tsx"
+        }
+      ]
+    },
+    {
       "name": "feature-grid-react",
       "type": "registry:block",
       "version": "0.1.0",
