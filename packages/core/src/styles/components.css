@@ -1967,14 +1967,11 @@
       width var(--motion-normal) ease-out,
       height var(--motion-normal) ease-out;
   }
-  /* Indeterminate — no width from Ark: a short bar slides across the track
-     (the other way in a right-to-left page). */
+  /* Indeterminate — no width from Ark: a short bar slides across the track,
+     entering off the start edge and leaving off the end edge. */
   [data-scope="progress"][data-part="range"][data-state="indeterminate"] {
     width: 40%;
     animation: moderno-progress-slide calc(var(--motion-normal) * 5) ease-in-out infinite;
-  }
-  [data-scope="progress"][data-part="range"][data-orientation="horizontal"][data-state="indeterminate"][dir="rtl"] {
-    animation-direction: reverse;
   }
   @keyframes moderno-progress-slide {
     from {
@@ -1982,6 +1979,20 @@
     }
     to {
       translate: 250% 0;
+    }
+  }
+  /* Right-to-left — the bar sits at the track's right edge, so it needs the
+     mirrored motion; replaying the left-to-right one backwards would stop it
+     partway across. */
+  [data-scope="progress"][data-part="range"][data-orientation="horizontal"][data-state="indeterminate"][dir="rtl"] {
+    animation-name: moderno-progress-slide-rtl;
+  }
+  @keyframes moderno-progress-slide-rtl {
+    from {
+      translate: 100% 0;
+    }
+    to {
+      translate: -250% 0;
     }
   }
 
