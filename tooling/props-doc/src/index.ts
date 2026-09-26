@@ -21,7 +21,11 @@
 export interface PropDoc {
   /** Public prop name, in English (the real API). */
   name: string;
-  /** Resolved TypeScript type, formatted for display. */
+  /**
+   * Resolved TypeScript type, formatted for display. A union lists its members
+   * in a fixed order (see `union-order.ts`), so the text never depends on
+   * which other components were resolved alongside this one.
+   */
   type: string;
   /** False when the property is declared optional (`?`). */
   required: boolean;
@@ -57,6 +61,11 @@ export interface ComponentEntry {
   file: string;
   /** Exported interface/type name to resolve (e.g. `ButtonProps`). */
   type: string;
+  /**
+   * The component's recipe variant table, when it has one. A prop named after
+   * a variant prints its union members in the order the recipe declares them.
+   */
+  variants?: Record<string, readonly string[]>;
 }
 
 export interface ExtractOptions {
@@ -74,6 +83,7 @@ export interface ExtractOptions {
 
 import { dirname, resolve } from "node:path";
 import { Node, Project, SymbolFlags, type Symbol as TsSymbol } from "ts-morph";
+import { orderUnionMembers } from "./union-order.ts";
 
 /** Default origin filter: keep workspace `packages/` declarations, drop deps. */
 function defaultInclude(declFilePath: string): boolean {
@@ -145,8 +155,12 @@ export function extractProps(opts: ExtractOptions): ComponentDoc[] {
       }
 
       const required = (sym.getFlags() & SymbolFlags.Optional) === 0;
-      const type = formatType(sym.getTypeAtLocation(decl).getText(decl));
-      const prop: PropDoc = { name: sym.getName(), type, required };
+      const name = sym.getName();
+      const type = orderUnionMembers(
+        formatType(sym.getTypeAtLocation(decl).getText(decl)),
+        entry.variants?.[name],
+      );
+      const prop: PropDoc = { name, type, required };
       const description = jsDocSummary(sym);
       if (description) prop.description = description;
       props.push(prop);

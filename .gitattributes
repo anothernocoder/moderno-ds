@@ -12,3 +12,4 @@ packages/svelte/src/index.ts linguist-generated=true
 packages/vue/playground/app.ts linguist-generated=true
 packages/vue/src/index.ts linguist-generated=true
 registry/registry.json linguist-generated=true
+tooling/props-doc/src/components.generated.ts linguist-generated=true
