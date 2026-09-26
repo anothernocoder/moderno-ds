@@ -1,5 +1,11 @@
 # @moderno-ui/theme-compile
 
+## 0.0.2
+
+### Patch Changes
+
+- @moderno-ui/css@0.4.1
+
 ## 0.0.1
 
 ### Patch Changes

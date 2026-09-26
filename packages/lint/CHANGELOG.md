@@ -1,5 +1,12 @@
 # @moderno-ui/lint
 
+## 0.4.1
+
+### Patch Changes
+
+- Updated dependencies [c7d3d87]
+  - @moderno-ui/lint-core@0.4.1
+
 ## 0.4.0
 
 ### Minor Changes
