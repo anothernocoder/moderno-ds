@@ -76,7 +76,10 @@ function splitTop(src: string, isSeparator: (c: string) => boolean): string[] {
 /** `a, b` → the selectors of a selector list (also used for `:not()`/`:is()` args). */
 const splitList = (src: string): string[] => splitTop(src, (c) => c === ",");
 
-/** `a b` → the compounds of a complex selector. Descendant combinators only. */
+/**
+ * `a b > c` → the compounds of a complex selector, with each child combinator
+ * kept as its own `>` token. Descendant and child combinators only.
+ */
 const splitCompounds = (src: string): string[] => splitTop(src, (c) => /\s/.test(c));
 
 /** `[data-part="input"]:hover:not(:disabled)` → its simple selectors. */
@@ -168,25 +171,27 @@ function matchesCompound(compound: string, el: El): boolean {
 /**
  * Match a complex selector against a path (ancestors first, subject last),
  * right to left: the rightmost compound must match the subject, and each
- * compound to its left some strictly-earlier ancestor.
+ * compound to its left its parent (after `>`) or some strictly-earlier
+ * ancestor (after a space).
  */
 function matchesSelector(selector: string, path: El[]): boolean {
-  const compounds = splitCompounds(selector);
-  const subject = path.at(-1)!;
-  if (!matchesCompound(compounds.at(-1)!, subject)) return false;
-  let idx = path.length - 1;
-  for (let k = compounds.length - 2; k >= 0; k -= 1) {
-    let found = -1;
-    for (let e = idx - 1; e >= 0; e -= 1) {
-      if (matchesCompound(compounds[k]!, path[e]!)) {
-        found = e;
-        break;
-      }
-    }
-    if (found === -1) return false;
-    idx = found;
+  const tokens = splitCompounds(selector);
+  // Compound k is joined to compound k + 1 by a child (`>`) or descendant combinator.
+  const compounds: string[] = [];
+  const childOfLeft: boolean[] = [];
+  for (const token of tokens) {
+    if (token === ">") childOfLeft[compounds.length] = true;
+    else compounds.push(token);
   }
-  return true;
+  // Compound k matches path[e]; the compounds to its left must match above it.
+  const matchFrom = (k: number, e: number): boolean => {
+    if (!matchesCompound(compounds[k]!, path[e]!)) return false;
+    if (k === 0) return true;
+    if (childOfLeft[k]) return e > 0 && matchFrom(k - 1, e - 1);
+    for (let a = e - 1; a >= 0; a -= 1) if (matchFrom(k - 1, a)) return true;
+    return false;
+  };
+  return matchFrom(compounds.length - 1, path.length - 1);
 }
 
 /* ── Specificity ────────────────────────────────────────────────────────── */
@@ -199,6 +204,7 @@ const compareSpec = (a: Spec, b: Spec): number => a[0] - b[0] || a[1] - b[1] || 
 function specificityOf(selector: string): Spec {
   const total: Spec = [0, 0, 0];
   for (const compound of splitCompounds(selector)) {
+    if (compound === ">") continue;
     for (const s of parseCompound(compound)) {
       if (s.kind === "universal") continue;
       if (s.kind === "type") {
@@ -313,6 +319,52 @@ describe("components.css cascade — the resolver itself", () => {
     for (const part of PARTS) {
       expect(resolve("border-color", fieldControl(part))?.value).toBe("var(--input)");
     }
+  });
+
+  it("matches a child combinator on the direct parent only", () => {
+    const small = numberInputControl({ size: "sm" });
+    expect(resolve("height", small)?.value).toBe("var(--spacing-7)");
+    // The same control one wrapper further down is no longer the root's child.
+    const wrapper: El = { tag: "div", attrs: {}, pseudos: new Set() };
+    const nested = [small[0]!, wrapper, small[1]!];
+    expect(resolve("height", nested)?.value).toBe("var(--spacing-8)");
+  });
+});
+
+/** A NumberInput control (the bordered box) inside its root, in the state described. */
+function numberInputControl(
+  state: { size?: string; invalid?: boolean; pseudos?: string[] } = {},
+): El[] {
+  const rootAttrs: Record<string, string> = { "data-scope": "number-input", "data-part": "root" };
+  if (state.size) rootAttrs["data-size"] = state.size;
+  const attrs: Record<string, string> = { "data-scope": "number-input", "data-part": "control" };
+  if (state.invalid) attrs["data-invalid"] = "";
+  return [
+    { tag: "div", attrs: rootAttrs, pseudos: new Set() },
+    { tag: "div", attrs, pseudos: new Set(state.pseudos ?? []) },
+  ];
+}
+
+describe("components.css cascade — NumberInput's invalid box holds under the pointer", () => {
+  it("keeps --destructive on a hovered invalid control", () => {
+    const winner = resolve(
+      "border-color",
+      numberInputControl({ invalid: true, pseudos: ["hover"] }),
+    );
+    expect(winner?.value, `won by \`${winner?.selector}\``).toBe("var(--destructive)");
+  });
+
+  it("rings a focused invalid control in --destructive, a valid one in --ring", () => {
+    const focused = ["hover", "focus-within"];
+    expect(
+      resolve("outline-color", numberInputControl({ invalid: true, pseudos: focused }))?.value,
+    ).toBe("var(--destructive)");
+    expect(resolve("outline-color", numberInputControl({ pseudos: focused }))?.value).toBe(
+      "var(--ring)",
+    );
+    expect(resolve("border-color", numberInputControl({ pseudos: ["hover"] }))?.value).toBe(
+      "var(--ring)",
+    );
   });
 });
 

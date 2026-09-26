@@ -1,0 +1,183 @@
+---
+title: Chip
+description: A compact token for a filter, a tag or a recipient, with an optional remove button.
+group: Components
+order: 18
+component: Chip
+pkg: "@moderno-ui/react"
+agentPropsHash: "sha256:c2540037a4f6aa628878a4905a5406f374ee296d7889abfe72341a63565b27d5"
+agent:
+  intent: A compact token the user has picked and may remove.
+  whenToUse: "Selected filters, tags on an item, recipients in a field — anything shown as a small token the user can take away."
+  whenNotToUse:
+    - case: A read-only status label
+      use: Badge
+    - case: A control that toggles on and off
+      use: Toggle
+  gotchas:
+    - "removable only shows the × button; handle onRemove (Vue @remove) and drop the item from your own list."
+    - 'Name the remove button after the chip: removeLabel="Remove React". The default "Remove" is ambiguous in a list.'
+    - "The root is a <span>, not a button; the only interactive part is the remove trigger."
+  theming:
+    - "outline uses --border over --background, muted uses --muted, solid uses --primary. Never pass a colour."
+    - "The corner is --radius, so a chip follows the theme's shape."
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ChipDemo from "../../../examples/chip/chip.svelte";
+import baseReact from "../../../examples/chip/react.tsx?raw";
+import baseVue from "../../../examples/chip/vue.vue?raw";
+import baseSolid from "../../../examples/chip/solid.tsx?raw";
+import baseSvelte from "../../../examples/chip/chip.svelte?raw";
+import ChipVariantsDemo from "../../../examples/chip/variants/chip-variants.svelte";
+import variantsReact from "../../../examples/chip/variants/react.tsx?raw";
+import variantsVue from "../../../examples/chip/variants/vue.vue?raw";
+import variantsSolid from "../../../examples/chip/variants/solid.tsx?raw";
+import variantsSvelte from "../../../examples/chip/variants/chip-variants.svelte?raw";
+import ChipRemovableDemo from "../../../examples/chip/removable/chip-removable.svelte";
+import removableReact from "../../../examples/chip/removable/react.tsx?raw";
+import removableVue from "../../../examples/chip/removable/vue.vue?raw";
+import removableSolid from "../../../examples/chip/removable/solid.tsx?raw";
+import removableSvelte from "../../../examples/chip/removable/chip-removable.svelte?raw";
+import ChipSizesDemo from "../../../examples/chip/sizes/chip-sizes.svelte";
+import sizesReact from "../../../examples/chip/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/chip/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/chip/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/chip/sizes/chip-sizes.svelte?raw";
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
+  <ChipDemo client:visible />
+</Preview>
+
+## Installation
+
+<Install pkg="@moderno-ui/react" />
+
+## Usage
+
+Use a chip for a small token the user picked, such as a filter or a tag, and may want to remove.
+
+<ForFramework fw="react">
+
+```tsx
+import { Chip } from "@moderno-ui/react";
+```
+
+```tsx
+<Chip removable removeLabel="Remove React">
+  React
+</Chip>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Chip } from "@moderno-ui/vue";
+```
+
+```vue
+<Chip removable removeLabel="Remove React">React</Chip>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Chip } from "@moderno-ui/svelte";
+```
+
+```svelte
+<Chip removable removeLabel="Remove React">React</Chip>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Chip } from "@moderno-ui/solid";
+```
+
+```tsx
+<Chip removable removeLabel="Remove React">
+  React
+</Chip>
+```
+
+</ForFramework>
+
+## API Reference
+
+### Chip
+
+Renders a `<span>`; its children are the label. `variant` defaults to `outline` and `size` to `md`.
+
+<PropsTable component="Chip" />
+
+In Vue, listen with `@remove` instead of passing `onRemove`.
+
+### Parts
+
+| Part             | Element    | Description                                             |
+| ---------------- | ---------- | ------------------------------------------------------- |
+| `root`           | `<span>`   | The token. Carries `data-variant` and `data-size`.      |
+| `label`          | `<span>`   | The children. A long label is cut with an ellipsis.     |
+| `remove-trigger` | `<button>` | Rendered only with `removable`. Named by `removeLabel`. |
+
+## Examples
+
+### Variants
+
+<Preview
+  examples={{
+    react: variantsReact,
+    vue: variantsVue,
+    solid: variantsSolid,
+    svelte: variantsSvelte,
+  }}
+>
+  <ChipVariantsDemo client:visible />
+</Preview>
+
+### Removable
+
+The chip only reports the press. Your code removes the item from the list.
+
+<Preview
+  examples={{
+    react: removableReact,
+    vue: removableVue,
+    solid: removableSolid,
+    svelte: removableSvelte,
+  }}
+>
+  <ChipRemovableDemo client:visible />
+</Preview>
+
+### Sizes
+
+<Preview
+  examples={{
+    react: sizesReact,
+    vue: sizesVue,
+    solid: sizesSolid,
+    svelte: sizesSvelte,
+  }}
+>
+  <ChipSizesDemo client:visible />
+</Preview>
+
+## Notes
+
+- Chip is CSS-only: a `<span>` with `data-scope="chip"` and a native `<button>` to remove it.
+- Give every remove button its own name with `removeLabel`.
+- For a read-only label, use Badge.

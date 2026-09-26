@@ -1,0 +1,182 @@
+---
+title: Insignia
+description: Una etiqueta corta para un estado, una categoría o un número, con un punto opcional.
+group: Componentes
+order: 17
+component: Badge
+pkg: "@moderno-ui/react"
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import BadgeDemo from "../../../examples/badge/badge.svelte";
+import baseReact from "../../../examples/badge/react.tsx?raw";
+import baseVue from "../../../examples/badge/vue.vue?raw";
+import baseSolid from "../../../examples/badge/solid.tsx?raw";
+import baseSvelte from "../../../examples/badge/badge.svelte?raw";
+import BadgeVariantsDemo from "../../../examples/badge/variants/badge-variants.svelte";
+import variantsReact from "../../../examples/badge/variants/react.tsx?raw";
+import variantsVue from "../../../examples/badge/variants/vue.vue?raw";
+import variantsSolid from "../../../examples/badge/variants/solid.tsx?raw";
+import variantsSvelte from "../../../examples/badge/variants/badge-variants.svelte?raw";
+import BadgeStatusesDemo from "../../../examples/badge/statuses/badge-statuses.svelte";
+import statusesReact from "../../../examples/badge/statuses/react.tsx?raw";
+import statusesVue from "../../../examples/badge/statuses/vue.vue?raw";
+import statusesSolid from "../../../examples/badge/statuses/solid.tsx?raw";
+import statusesSvelte from "../../../examples/badge/statuses/badge-statuses.svelte?raw";
+import BadgeDotDemo from "../../../examples/badge/dot/badge-dot.svelte";
+import dotReact from "../../../examples/badge/dot/react.tsx?raw";
+import dotVue from "../../../examples/badge/dot/vue.vue?raw";
+import dotSolid from "../../../examples/badge/dot/solid.tsx?raw";
+import dotSvelte from "../../../examples/badge/dot/badge-dot.svelte?raw";
+import BadgeSizesDemo from "../../../examples/badge/sizes/badge-sizes.svelte";
+import sizesReact from "../../../examples/badge/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/badge/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/badge/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/badge/sizes/badge-sizes.svelte?raw";
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
+  <BadgeDemo client:visible />
+</Preview>
+
+## Instalación
+
+<Install pkg="@moderno-ui/react" />
+
+## Uso
+
+Usa una insignia para marcar el estado de algo que ya está en la página: una factura **Pagada**, una función en **Beta**, **3** mensajes nuevos.
+
+<ForFramework fw="react">
+
+```tsx
+import { Badge } from "@moderno-ui/react";
+```
+
+```tsx
+<Badge variant="success">Pagada</Badge>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Badge } from "@moderno-ui/vue";
+```
+
+```vue
+<Badge variant="success">Pagada</Badge>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Badge } from "@moderno-ui/svelte";
+```
+
+```svelte
+<Badge variant="success">Pagada</Badge>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Badge } from "@moderno-ui/solid";
+```
+
+```tsx
+<Badge variant="success">Pagada</Badge>
+```
+
+</ForFramework>
+
+## Referencia de API
+
+### Badge
+
+Renderiza un `<span>`; sus hijos son el texto. `variant` vale `neutral` por defecto y `size`, `md`.
+
+<PropsTable component="Badge" />
+
+### Partes
+
+| Parte  | Elemento | Descripción                                             |
+| ------ | -------- | ------------------------------------------------------- |
+| `root` | `<span>` | La etiqueta. Lleva `data-variant` y `data-size`.        |
+| `dot`  | `<span>` | Solo con `dot`. Toma el color del texto; `aria-hidden`. |
+
+## Ejemplos
+
+### Variantes
+
+`neutral` es la opción discreta por defecto, `solid` la más llamativa y `outline` no tiene relleno.
+
+<Preview
+  examples={{
+    react: variantsReact,
+    vue: variantsVue,
+    solid: variantsSolid,
+    svelte: variantsSvelte,
+  }}
+>
+  <BadgeVariantsDemo client:visible />
+</Preview>
+
+### Estados
+
+Cada estado toma el tono de su propio slot de color.
+
+<Preview
+  examples={{
+    react: statusesReact,
+    vue: statusesVue,
+    solid: statusesSolid,
+    svelte: statusesSvelte,
+  }}
+>
+  <BadgeStatusesDemo client:visible />
+</Preview>
+
+### Con punto
+
+<Preview
+  examples={{
+    react: dotReact,
+    vue: dotVue,
+    solid: dotSolid,
+    svelte: dotSvelte,
+  }}
+>
+  <BadgeDotDemo client:visible />
+</Preview>
+
+### Tamaños
+
+`sm` cabe en filas densas, como las celdas de una tabla.
+
+<Preview
+  examples={{
+    react: sizesReact,
+    vue: sizesVue,
+    solid: sizesSolid,
+    svelte: sizesSvelte,
+  }}
+>
+  <BadgeSizesDemo client:visible />
+</Preview>
+
+## Notas
+
+- Badge es solo CSS: un `<span>` con `data-scope="badge"`, sin máquina de Ark.
+- Una insignia no es interactiva. Para algo que el usuario puede quitar, usa Chip.
+- El punto es decorativo; el texto debe decir el estado.

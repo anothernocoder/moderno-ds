@@ -1,0 +1,311 @@
+---
+title: Slider
+description: Permite elegir un número, o un rango entre dos, arrastrando por una pista.
+group: Componentes
+order: 34
+component: Slider
+pkg: "@moderno-ui/react"
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import SliderDemo from "../../../examples/slider/slider.svelte";
+import baseReact from "../../../examples/slider/react.tsx?raw";
+import baseVue from "../../../examples/slider/vue.vue?raw";
+import baseSolid from "../../../examples/slider/solid.tsx?raw";
+import baseSvelte from "../../../examples/slider/slider.svelte?raw";
+import SliderRangeDemo from "../../../examples/slider/range/slider-range.svelte";
+import rangeReact from "../../../examples/slider/range/react.tsx?raw";
+import rangeVue from "../../../examples/slider/range/vue.vue?raw";
+import rangeSolid from "../../../examples/slider/range/solid.tsx?raw";
+import rangeSvelte from "../../../examples/slider/range/slider-range.svelte?raw";
+import SliderMarksDemo from "../../../examples/slider/marks/slider-marks.svelte";
+import marksReact from "../../../examples/slider/marks/react.tsx?raw";
+import marksVue from "../../../examples/slider/marks/vue.vue?raw";
+import marksSolid from "../../../examples/slider/marks/solid.tsx?raw";
+import marksSvelte from "../../../examples/slider/marks/slider-marks.svelte?raw";
+import SliderSizesDemo from "../../../examples/slider/sizes/slider-sizes.svelte";
+import sizesReact from "../../../examples/slider/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/slider/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/slider/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/slider/sizes/slider-sizes.svelte?raw";
+import SliderVerticalDemo from "../../../examples/slider/vertical/slider-vertical.svelte";
+import verticalReact from "../../../examples/slider/vertical/react.tsx?raw";
+import verticalVue from "../../../examples/slider/vertical/vue.vue?raw";
+import verticalSolid from "../../../examples/slider/vertical/solid.tsx?raw";
+import verticalSvelte from "../../../examples/slider/vertical/slider-vertical.svelte?raw";
+import SliderDraggingDemo from "../../../examples/slider/dragging/slider-dragging.svelte";
+import draggingReact from "../../../examples/slider/dragging/react.tsx?raw";
+import draggingVue from "../../../examples/slider/dragging/vue.vue?raw";
+import draggingSolid from "../../../examples/slider/dragging/solid.tsx?raw";
+import draggingSvelte from "../../../examples/slider/dragging/slider-dragging.svelte?raw";
+
+<FrameworkSelect locale="es" />
+
+<Preview
+  examples={{
+    react: baseReact,
+    vue: baseVue,
+    solid: baseSolid,
+    svelte: baseSvelte,
+  }}
+>
+  <SliderDemo client:visible />
+</Preview>
+
+## Instalación
+
+<Install pkg="@moderno-ui/react" />
+
+## Uso
+
+Slider permite elegir un número arrastrando un control por una pista. Úsalo cuando importa más la posición aproximada que la cifra exacta, como el volumen. Con dos controles se elige un rango.
+
+<ForFramework fw="react">
+
+```tsx
+import { Slider } from "@moderno-ui/react";
+```
+
+```tsx
+<Slider.Root value={volume} onValueChange={(details) => setVolume(details.value)}>
+  <Slider.Label>Volumen</Slider.Label>
+  <Slider.ValueText />
+  <Slider.Control>
+    <Slider.Track>
+      <Slider.Range />
+    </Slider.Track>
+    <Slider.Thumb index={0}>
+      <Slider.HiddenInput />
+    </Slider.Thumb>
+  </Slider.Control>
+</Slider.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Slider } from "@moderno-ui/vue";
+```
+
+```vue
+<Slider.Root v-model="volume">
+  <Slider.Label>Volumen</Slider.Label>
+  <Slider.ValueText />
+  <Slider.Control>
+    <Slider.Track>
+      <Slider.Range />
+    </Slider.Track>
+    <Slider.Thumb :index="0">
+      <Slider.HiddenInput />
+    </Slider.Thumb>
+  </Slider.Control>
+</Slider.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Slider } from "@moderno-ui/svelte";
+```
+
+```svelte
+<Slider.Root value={volume} onValueChange={(details) => (volume = details.value)}>
+  <Slider.Label>Volumen</Slider.Label>
+  <Slider.ValueText />
+  <Slider.Control>
+    <Slider.Track>
+      <Slider.Range />
+    </Slider.Track>
+    <Slider.Thumb index={0}>
+      <Slider.HiddenInput />
+    </Slider.Thumb>
+  </Slider.Control>
+</Slider.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Slider } from "@moderno-ui/solid";
+```
+
+```tsx
+<Slider.Root value={volume()} onValueChange={(details) => setVolume(details.value)}>
+  <Slider.Label>Volumen</Slider.Label>
+  <Slider.ValueText />
+  <Slider.Control>
+    <Slider.Track>
+      <Slider.Range />
+    </Slider.Track>
+    <Slider.Thumb index={0}>
+      <Slider.HiddenInput />
+    </Slider.Thumb>
+  </Slider.Control>
+</Slider.Root>
+```
+
+</ForFramework>
+
+El valor es un array con un número por control. Va de 0 a 100 por defecto.
+
+## Referencia de la API
+
+### Slider.Root
+
+`size` es el añadido de Moderno; todas las partes lo siguen. El resto de props vienen del Slider de Ark.
+
+<PropsTable component="Slider" />
+
+| Prop                    | Tipo                                                    | Por defecto    | Descripción                                                |
+| ----------------------- | ------------------------------------------------------- | -------------- | ---------------------------------------------------------- |
+| `value`                 | `number[]`                                              | —              | Valor controlado, un número por control.                   |
+| `defaultValue`          | `number[]`                                              | `[min]`        | Valor al principio, sin control.                           |
+| `onValueChange`         | `(details: { value: number[] }) => void`                | —              | Se llama mientras cambia el valor.                         |
+| `onValueChangeEnd`      | `(details: { value: number[] }) => void`                | —              | Se llama una vez, cuando el usuario suelta.                |
+| `min`                   | `number`                                                | `0`            | El valor más bajo.                                         |
+| `max`                   | `number`                                                | `100`          | El valor más alto.                                         |
+| `step`                  | `number`                                                | `1`            | Cuánto avanza un movimiento.                               |
+| `minStepsBetweenThumbs` | `number`                                                | `0`            | Cuántos pasos separan los controles de un rango.           |
+| `orientation`           | `"horizontal" \| "vertical"`                            | `"horizontal"` | Tiende la pista o la pone de pie.                          |
+| `origin`                | `"start" \| "center" \| "end"`                          | `"start"`      | Desde dónde se llena el rango de un solo control.          |
+| `disabled`              | `boolean`                                               | `false`        | Atenúa el slider e ignora la entrada.                      |
+| `readOnly`              | `boolean`                                               | `false`        | Muestra el valor pero ignora la entrada.                   |
+| `invalid`               | `boolean`                                               | `false`        | Marca el valor como erróneo.                               |
+| `name`                  | `string`                                                | —              | El nombre de campo de los inputs ocultos.                  |
+| `getAriaValueText`      | `(details: { value: number; index: number }) => string` | —              | Lo que dice un lector de pantalla del valor de un control. |
+
+En Vue, enlaza el valor con `:model-value` o `v-model`, y escucha con `@value-change`.
+
+### Slider.Thumb
+
+| Prop    | Tipo     | Por defecto | Descripción                                |
+| ------- | -------- | ----------- | ------------------------------------------ |
+| `index` | `number` | —           | Obligatorio. Qué valor mueve este control. |
+| `name`  | `string` | —           | El nombre de campo de su input oculto.     |
+
+### Slider.Marker
+
+| Prop    | Tipo     | Por defecto | Descripción                                  |
+| ------- | -------- | ----------- | -------------------------------------------- |
+| `value` | `number` | —           | Obligatorio. El valor en el que va la marca. |
+
+### Partes
+
+| Parte                      | Elemento  | Descripción                                                                   |
+| -------------------------- | --------- | ----------------------------------------------------------------------------- |
+| `Slider.Root`              | `<div>`   | Lleva `data-size`.                                                            |
+| `Slider.Label`             | `<label>` | Opcional. Nombra el valor. Al pulsarla, el foco va al control.                |
+| `Slider.ValueText`         | `<span>`  | Opcional. El valor, o los dos extremos de un rango.                           |
+| `Slider.Control`           | `<div>`   | La zona donde se pulsa o arrastra. Contiene la pista y los controles.         |
+| `Slider.Track`             | `<div>`   | La línea completa de valores posibles.                                        |
+| `Slider.Range`             | `<div>`   | La parte llena de la pista, hasta los controles o entre ellos.                |
+| `Slider.Thumb`             | `<div>`   | El control, con `role="slider"` y `aria-valuenow`.                            |
+| `Slider.HiddenInput`       | `<input>` | Dentro de un control. Lleva su valor a un formulario.                         |
+| `Slider.DraggingIndicator` | `<span>`  | Opcional, dentro de un control. El valor en una burbuja mientras se arrastra. |
+| `Slider.MarkerGroup`       | `<div>`   | Opcional. Contiene las marcas, bajo la pista.                                 |
+| `Slider.Marker`            | `<span>`  | Una marca en un valor, con tu propio texto.                                   |
+
+### Atributos data
+
+| Atributo           | Valores                                                                                   |
+| ------------------ | ----------------------------------------------------------------------------------------- |
+| `data-orientation` | `"horizontal"` o `"vertical"`, en todas las partes                                        |
+| `data-dragging`    | Mientras se arrastra un control, en la raíz, el control, la pista, el rango y ese control |
+| `data-focus`       | Mientras un control tiene el foco, en la raíz y sus partes                                |
+| `data-disabled`    | Con `disabled`, en todas las partes                                                       |
+| `data-invalid`     | Con `invalid`, en la raíz y sus partes                                                    |
+| `data-state`       | En cada marca: `"under-value"`, `"at-value"` o `"over-value"`                             |
+| `data-size`        | En la raíz: `"sm"`, `"md"` o `"lg"`                                                       |
+
+## Ejemplos
+
+### Rango
+
+Pasa dos valores y dibuja dos controles. El rango llena la pista entre ellos.
+
+<Preview
+  examples={{
+    react: rangeReact,
+    vue: rangeVue,
+    solid: rangeSolid,
+    svelte: rangeSvelte,
+  }}
+>
+  <SliderRangeDemo client:visible />
+</Preview>
+
+### Marcas
+
+Fija `step` para que el control salte de parada en parada, y rotula las paradas con `Slider.Marker`.
+
+<Preview
+  examples={{
+    react: marksReact,
+    vue: marksVue,
+    solid: marksSolid,
+    svelte: marksSvelte,
+  }}
+>
+  <SliderMarksDemo client:visible />
+</Preview>
+
+### Tamaños
+
+<Preview
+  examples={{
+    react: sizesReact,
+    vue: sizesVue,
+    solid: sizesSolid,
+    svelte: sizesSvelte,
+  }}
+>
+  <SliderSizesDemo client:visible />
+</Preview>
+
+### Vertical
+
+Con `orientation="vertical"`, la pista se pone de pie y se llena desde abajo.
+
+<Preview
+  examples={{
+    react: verticalReact,
+    vue: verticalVue,
+    solid: verticalSolid,
+    svelte: verticalSvelte,
+  }}
+>
+  <SliderVerticalDemo client:visible />
+</Preview>
+
+### Valor al arrastrar
+
+Pon `Slider.DraggingIndicator` en un control para mostrar su valor en una burbuja mientras el usuario lo arrastra.
+
+<Preview
+  examples={{
+    react: draggingReact,
+    vue: draggingVue,
+    solid: draggingSolid,
+    svelte: draggingSvelte,
+  }}
+>
+  <SliderDraggingDemo client:visible />
+</Preview>
+
+## Notas
+
+- `Slider.Root` está envuelto para añadir `size`; el resto de partes son las de Ark sin cambios.
+- Cada control se nombra con `Slider.Label`. Los dos controles de un rango la comparten; pasa `aria-label` como array para nombrar cada uno.
+- Ark oculta un control hasta que lo ha medido, para que quede dentro de la pista en los dos extremos.
+- En Solid, `Slider.ValueText` une los valores de un rango con una coma sin espacio (`20,80`); los demás frameworks añaden un espacio.
+- Para un número exacto que el usuario escribe, usa un Number Input.

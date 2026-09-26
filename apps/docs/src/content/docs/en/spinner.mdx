@@ -1,0 +1,159 @@
+---
+title: Spinner
+description: A spinning ring that shows something is loading, with a label for screen readers.
+group: Components
+order: 22
+component: Spinner
+pkg: "@moderno-ui/react"
+agentPropsHash: "sha256:f9ee43905618e68ac52b403009fc4886aaba5f5a9d9e323064245a8875ee7071"
+agent:
+  intent: A spinning ring that says work is in progress, with no progress value.
+  whenToUse: "A short wait with no known layout: submitting a form, refreshing a panel, loading more rows."
+  whenNotToUse:
+    - case: Content with a known layout is loading
+      use: Skeleton
+    - case: Progress toward a known end
+      use: Progress
+  gotchas:
+    - 'The root is role="status" with visually hidden text ("Loading"). Set label to say what is loading; do not add a second visible "Loading" next to it.'
+    - "The ring takes the text colour around it. To colour it, set color on a parent; there is no colour prop."
+    - "Under reduced motion the ring turns slower; it does not stop, because a still ring would not say that work is going on."
+  theming:
+    - "The ring is currentColor, with the track at 20% of it. Never pass a colour."
+    - "Sizes step on --spacing-4 / --spacing-6 / --spacing-8; the speed comes from --motion-normal."
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import SpinnerDemo from "../../../examples/spinner/spinner.svelte";
+import baseReact from "../../../examples/spinner/react.tsx?raw";
+import baseVue from "../../../examples/spinner/vue.vue?raw";
+import baseSolid from "../../../examples/spinner/solid.tsx?raw";
+import baseSvelte from "../../../examples/spinner/spinner.svelte?raw";
+import SpinnerSizesDemo from "../../../examples/spinner/sizes/spinner-sizes.svelte";
+import sizesReact from "../../../examples/spinner/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/spinner/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/spinner/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/spinner/sizes/spinner-sizes.svelte?raw";
+import SpinnerLabelDemo from "../../../examples/spinner/label/spinner-label.svelte";
+import labelReact from "../../../examples/spinner/label/react.tsx?raw";
+import labelVue from "../../../examples/spinner/label/vue.vue?raw";
+import labelSolid from "../../../examples/spinner/label/solid.tsx?raw";
+import labelSvelte from "../../../examples/spinner/label/spinner-label.svelte?raw";
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
+  <SpinnerDemo client:visible />
+</Preview>
+
+## Installation
+
+<Install pkg="@moderno-ui/react" />
+
+## Usage
+
+Use a spinner for a short wait when you cannot show the shape of what is coming: a form that is saving, a panel that is refreshing.
+
+<ForFramework fw="react">
+
+```tsx
+import { Spinner } from "@moderno-ui/react";
+```
+
+```tsx
+<Spinner />
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Spinner } from "@moderno-ui/vue";
+```
+
+```vue
+<Spinner />
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Spinner } from "@moderno-ui/svelte";
+```
+
+```svelte
+<Spinner />
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Spinner } from "@moderno-ui/solid";
+```
+
+```tsx
+<Spinner />
+```
+
+</ForFramework>
+
+## API Reference
+
+### Spinner
+
+Renders a `<span role="status">`. `size` defaults to `md` and `label` to `"Loading"`.
+
+<PropsTable component="Spinner" />
+
+### Parts
+
+| Part     | Element  | Description                                                   |
+| -------- | -------- | ------------------------------------------------------------- |
+| `root`   | `<span>` | `role="status"`. Carries `data-size`.                         |
+| `circle` | `<span>` | The spinning ring. Paints with `currentColor`; `aria-hidden`. |
+| `label`  | `<span>` | The `label` text, visually hidden.                            |
+
+## Examples
+
+### Sizes
+
+<Preview
+  examples={{
+    react: sizesReact,
+    vue: sizesVue,
+    solid: sizesSolid,
+    svelte: sizesSvelte,
+  }}
+>
+  <SpinnerSizesDemo client:visible />
+</Preview>
+
+### Label
+
+Say what is loading. Screen readers read the label; it is not shown.
+
+<Preview
+  examples={{
+    react: labelReact,
+    vue: labelVue,
+    solid: labelSolid,
+    svelte: labelSvelte,
+  }}
+>
+  <SpinnerLabelDemo client:visible />
+</Preview>
+
+## Notes
+
+- Spinner is CSS-only: a `<span>` with `data-scope="spinner"`, no Ark machine.
+- The ring takes the text colour around it, so it fits inside a button or on a muted line.
+- The ring turns slower for users who ask for reduced motion. It does not stop, because a still ring would not say that work is going on.

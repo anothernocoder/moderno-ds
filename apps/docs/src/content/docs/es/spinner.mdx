@@ -1,0 +1,143 @@
+---
+title: Spinner
+description: Un anillo que gira para mostrar que algo está cargando, con una etiqueta para lectores de pantalla.
+group: Componentes
+order: 22
+component: Spinner
+pkg: "@moderno-ui/react"
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import SpinnerDemo from "../../../examples/spinner/spinner.svelte";
+import baseReact from "../../../examples/spinner/react.tsx?raw";
+import baseVue from "../../../examples/spinner/vue.vue?raw";
+import baseSolid from "../../../examples/spinner/solid.tsx?raw";
+import baseSvelte from "../../../examples/spinner/spinner.svelte?raw";
+import SpinnerSizesDemo from "../../../examples/spinner/sizes/spinner-sizes.svelte";
+import sizesReact from "../../../examples/spinner/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/spinner/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/spinner/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/spinner/sizes/spinner-sizes.svelte?raw";
+import SpinnerLabelDemo from "../../../examples/spinner/label/spinner-label.svelte";
+import labelReact from "../../../examples/spinner/label/react.tsx?raw";
+import labelVue from "../../../examples/spinner/label/vue.vue?raw";
+import labelSolid from "../../../examples/spinner/label/solid.tsx?raw";
+import labelSvelte from "../../../examples/spinner/label/spinner-label.svelte?raw";
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
+  <SpinnerDemo client:visible />
+</Preview>
+
+## Instalación
+
+<Install pkg="@moderno-ui/react" />
+
+## Uso
+
+Usa un spinner para una espera corta cuando no puedes mostrar la forma de lo que viene: un formulario que se guarda, un panel que se actualiza.
+
+<ForFramework fw="react">
+
+```tsx
+import { Spinner } from "@moderno-ui/react";
+```
+
+```tsx
+<Spinner />
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Spinner } from "@moderno-ui/vue";
+```
+
+```vue
+<Spinner />
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Spinner } from "@moderno-ui/svelte";
+```
+
+```svelte
+<Spinner />
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Spinner } from "@moderno-ui/solid";
+```
+
+```tsx
+<Spinner />
+```
+
+</ForFramework>
+
+## Referencia de API
+
+### Spinner
+
+Renderiza un `<span role="status">`. `size` vale `md` por defecto y `label`, `"Loading"`.
+
+<PropsTable component="Spinner" />
+
+### Partes
+
+| Parte    | Elemento | Descripción                                                  |
+| -------- | -------- | ------------------------------------------------------------ |
+| `root`   | `<span>` | `role="status"`. Lleva `data-size`.                          |
+| `circle` | `<span>` | El anillo que gira. Pinta con `currentColor`; `aria-hidden`. |
+| `label`  | `<span>` | El texto de `label`, oculto a la vista.                      |
+
+## Ejemplos
+
+### Tamaños
+
+<Preview
+  examples={{
+    react: sizesReact,
+    vue: sizesVue,
+    solid: sizesSolid,
+    svelte: sizesSvelte,
+  }}
+>
+  <SpinnerSizesDemo client:visible />
+</Preview>
+
+### Etiqueta
+
+Di qué está cargando. Los lectores de pantalla leen la etiqueta; no se muestra. En una interfaz en español, pasa siempre un `label` en español: el valor por defecto está en inglés.
+
+<Preview
+  examples={{
+    react: labelReact,
+    vue: labelVue,
+    solid: labelSolid,
+    svelte: labelSvelte,
+  }}
+>
+  <SpinnerLabelDemo client:visible />
+</Preview>
+
+## Notas
+
+- Spinner es solo CSS: un `<span>` con `data-scope="spinner"`, sin máquina de Ark.
+- El anillo toma el color del texto que lo rodea, así encaja dentro de un botón o en una línea atenuada.
+- El anillo gira más despacio cuando el usuario pide menos movimiento. No se detiene, porque un anillo quieto ya no diría que algo está en curso.

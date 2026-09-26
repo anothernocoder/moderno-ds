@@ -54,6 +54,74 @@ shared stylesheet keys on.
 | no baked class/style             |  ✅   | ✅  |   ✅   |  ✅   |
 | native props forwarded           |  ✅   | ✅  |   ✅   |  ✅   |
 
+### Badge (`badgeRecipe`: `data-variant` × `data-size`; CSS-only, no Ark machine)
+
+| State / prop                | React | Vue | Svelte | Solid |
+| --------------------------- | :---: | :-: | :----: | :---: |
+| scope/part + defaults       |  ✅   | ✅  |   ✅   |  ✅   |
+| variant → `data-variant`    |  ✅   | ✅  |   ✅   |  ✅   |
+| size → `data-size`          |  ✅   | ✅  |   ✅   |  ✅   |
+| `dot` → `[data-part="dot"]` |  ✅   | ✅  |   ✅   |  ✅   |
+| dot part `aria-hidden`      |  ✅   | ✅  |   ✅   |  ✅   |
+| no baked class/style        |  ✅   | ✅  |   ✅   |  ✅   |
+| native props forwarded      |  ✅   | ✅  |   ✅   |  ✅   |
+| SSR string (playground)     |  ✅   | ✅  |   ✅   |  ✅   |
+
+### Chip (`chipRecipe`: `data-variant` × `data-size`; CSS-only, no Ark machine)
+
+| State / prop                              | React | Vue | Svelte | Solid |
+| ----------------------------------------- | :---: | :-: | :----: | :---: |
+| scope/part + defaults                     |  ✅   | ✅  |   ✅   |  ✅   |
+| variant → `data-variant`                  |  ✅   | ✅  |   ✅   |  ✅   |
+| size → `data-size`                        |  ✅   | ✅  |   ✅   |  ✅   |
+| children → `[data-part="label"]`          |  ✅   | ✅  |   ✅   |  ✅   |
+| no remove button unless `removable`       |  ✅   | ✅  |   ✅   |  ✅   |
+| `removable` → `remove-trigger` `<button>` |  ✅   | ✅  |   ✅   |  ✅   |
+| `removeLabel` names it (default "Remove") |  ✅   | ✅  |   ✅   |  ✅   |
+| press → `onRemove` (Vue: `remove` event)  |  ✅   | ✅  |   ✅   |  ✅   |
+| no baked class/style                      |  ✅   | ✅  |   ✅   |  ✅   |
+| native props forwarded                    |  ✅   | ✅  |   ✅   |  ✅   |
+| SSR string (playground)                   |  ✅   | ✅  |   ✅   |  ✅   |
+
+### Indicator (`indicatorAttrs`: `data-variant` × `data-size` + bare `data-pulse`; CSS-only)
+
+| State / prop                       | React | Vue | Svelte | Solid |
+| ---------------------------------- | :---: | :-: | :----: | :---: |
+| scope/part + defaults, no pulse    |  ✅   | ✅  |   ✅   |  ✅   |
+| variant → `data-variant`           |  ✅   | ✅  |   ✅   |  ✅   |
+| size → `data-size`                 |  ✅   | ✅  |   ✅   |  ✅   |
+| `pulse` → `data-pulse`             |  ✅   | ✅  |   ✅   |  ✅   |
+| dot always rendered, `aria-hidden` |  ✅   | ✅  |   ✅   |  ✅   |
+| children → `[data-part="label"]`   |  ✅   | ✅  |   ✅   |  ✅   |
+| no baked class/style               |  ✅   | ✅  |   ✅   |  ✅   |
+| native props forwarded             |  ✅   | ✅  |   ✅   |  ✅   |
+| SSR string (playground)            |  ✅   | ✅  |   ✅   |  ✅   |
+
+### Skeleton (`skeletonRecipe`: `data-shape`; CSS-only, no Ark machine)
+
+| State / prop                 | React | Vue | Svelte | Solid |
+| ---------------------------- | :---: | :-: | :----: | :---: |
+| scope/part + default shape   |  ✅   | ✅  |   ✅   |  ✅   |
+| shape → `data-shape`         |  ✅   | ✅  |   ✅   |  ✅   |
+| empty root, `aria-hidden`    |  ✅   | ✅  |   ✅   |  ✅   |
+| consumer `aria-hidden` wins  |  ✅   | ✅  |   ✅   |  ✅   |
+| no baked class/style         |  ✅   | ✅  |   ✅   |  ✅   |
+| native props (incl. `style`) |  ✅   | ✅  |   ✅   |  ✅   |
+| SSR string (playground)      |  ✅   | ✅  |   ✅   |  ✅   |
+
+### Spinner (`spinnerRecipe`: `data-size`; CSS-only, no Ark machine)
+
+| State / prop                               | React | Vue | Svelte | Solid |
+| ------------------------------------------ | :---: | :-: | :----: | :---: |
+| scope/part + default size                  |  ✅   | ✅  |   ✅   |  ✅   |
+| size → `data-size`                         |  ✅   | ✅  |   ✅   |  ✅   |
+| root `role="status"`, consumer role wins   |  ✅   | ✅  |   ✅   |  ✅   |
+| `circle` part `aria-hidden`                |  ✅   | ✅  |   ✅   |  ✅   |
+| `label` → `label` part (default "Loading") |  ✅   | ✅  |   ✅   |  ✅   |
+| no baked class/style                       |  ✅   | ✅  |   ✅   |  ✅   |
+| native props forwarded                     |  ✅   | ✅  |   ✅   |  ✅   |
+| SSR string (playground)                    |  ✅   | ✅  |   ✅   |  ✅   |
+
 ### Field (Ark `data-invalid` / `data-disabled`, no recipe)
 
 | State / prop                           | React | Vue | Svelte | Solid |
@@ -79,6 +147,20 @@ shared stylesheet keys on.
 | icon part `aria-hidden`        |  ✅   | ✅  |   ✅   |  ✅   |
 | no baked class/style           |  ✅   | ✅  |   ✅   |  ✅   |
 
+### Callout (`calloutRecipe`: `data-variant`; CSS-only, no Ark machine)
+
+| State / prop                          | React | Vue | Svelte | Solid |
+| ------------------------------------- | :---: | :-: | :----: | :---: |
+| scope/part + default variant, no size |  ✅   | ✅  |   ✅   |  ✅   |
+| variant → `data-variant`              |  ✅   | ✅  |   ✅   |  ✅   |
+| full anatomy renders                  |  ✅   | ✅  |   ✅   |  ✅   |
+| root `role="note"` for every variant  |  ✅   | ✅  |   ✅   |  ✅   |
+| consumer `role` overrides             |  ✅   | ✅  |   ✅   |  ✅   |
+| icon part `aria-hidden`               |  ✅   | ✅  |   ✅   |  ✅   |
+| no baked class/style                  |  ✅   | ✅  |   ✅   |  ✅   |
+| native props forwarded                |  ✅   | ✅  |   ✅   |  ✅   |
+| SSR string (playground)               |  ✅   | ✅  |   ✅   |  ✅   |
+
 ### Field (`fieldRecipe`: `data-size`; state is Ark's `data-invalid` / `data-disabled`)
 
 | State / prop                    | React | Vue | Svelte | Solid |
@@ -101,6 +183,165 @@ shared stylesheet keys on.
 | click toggles → `data-state`      |  ✅   | ✅  |   ✅   |  ✅   |
 | indeterminate → `data-state`      |  ✅   | ✅  |   ✅   |  ✅   |
 | disabled → `data-disabled`, inert |  ✅   | ✅  |   ✅   |  ✅   |
+
+### Switch (`switchRecipe`: `data-size`; Ark on/off machine)
+
+| State                                     | React | Vue | Svelte | Solid |
+| ----------------------------------------- | :---: | :-: | :----: | :---: |
+| size → root `data-size` (+ `md`)          |  ✅   | ✅  |   ✅   |  ✅   |
+| every Ark part exposed                    |  ✅   | ✅  |   ✅   |  ✅   |
+| label ↔ hidden input, `role="switch"`     |  ✅   | ✅  |   ✅   |  ✅   |
+| consumer `role` on the input wins         |  ✅   | ✅  |   ✅   |  ✅   |
+| click turns on → `data-state` on parts    |  ✅   | ✅  |   ✅   |  ✅   |
+| hidden input takes keyboard focus         |  ✅   | ✅  |   ✅   |  ✅   |
+| disabled → `data-disabled`, inert         |  ✅   | ✅  |   ✅   |  ✅   |
+| invalid → `data-invalid` + `aria-invalid` |  ✅   | ✅  |   ✅   |  ✅   |
+| native props forwarded, no baked style    |  ✅   | ✅  |   ✅   |  ✅   |
+
+### RadioGroup (`radioGroupRecipe`: `data-size`; Ark radio machine)
+
+| State                                         | React | Vue | Svelte | Solid |
+| --------------------------------------------- | :---: | :-: | :----: | :---: |
+| size → root `data-size` (+ `md`)              |  ✅   | ✅  |   ✅   |  ✅   |
+| every Ark part exposed + `ItemDescription`    |  ✅   | ✅  |   ✅   |  ✅   |
+| orientation → `data-orientation` (+ vertical) |  ✅   | ✅  |   ✅   |  ✅   |
+| group named by label, radio by text + desc.   |  ✅   | ✅  |   ✅   |  ✅   |
+| click picks → `data-state` + `onValueChange`  |  ✅   | ✅  |   ✅   |  ✅   |
+| checked radio takes keyboard focus            |  ✅   | ✅  |   ✅   |  ✅   |
+| arrow keys move the choice                    |  ✅   | ✅  |   ✅   |  ✅   |
+| disabled option → `data-disabled`, inert      |  ✅   | ✅  |   ✅   |  ✅   |
+| disabled group → every radio disabled         |  ✅   | ✅  |   ✅   |  ✅   |
+| invalid → `data-invalid` + `aria-invalid`     |  ✅   | ✅  |   ✅   |  ✅   |
+| native props forwarded to the root            |  ✅   | ✅  |   ✅   |  ✅   |
+
+### Toggle (`toggleRecipe`: `data-variant` × `data-size`; Ark toggle machine)
+
+| State                                            | React | Vue | Svelte | Solid |
+| ------------------------------------------------ | :---: | :-: | :----: | :---: |
+| variant × size → root `data-*` (+ `ghost`, `md`) |  ✅   | ✅  |   ✅   |  ✅   |
+| every Ark part exposed                           |  ✅   | ✅  |   ✅   |  ✅   |
+| native `<button>`, `aria-pressed` + `data-state` |  ✅   | ✅  |   ✅   |  ✅   |
+| click presses → `data-state="on"` + callback     |  ✅   | ✅  |   ✅   |  ✅   |
+| Indicator shows children on, `fallback` off      |  ✅   | ✅  |   ✅   |  ✅   |
+| Space / Enter toggle it                          |  ✅   | ✅  |   ✅   |  ✅   |
+| disabled → native `disabled` + `data-disabled`   |  ✅   | ✅  |   ✅   |  ✅   |
+| native props forwarded, no baked style           |  ✅   | ✅  |   ✅   |  ✅   |
+
+### ToggleGroup (`toggleGroupRecipe`: `data-variant` × `data-size`; Ark toggle-group machine)
+
+| State                                              | React | Vue | Svelte | Solid |
+| -------------------------------------------------- | :---: | :-: | :----: | :---: |
+| variant × size → root `data-*` (+ `ghost`, `md`)   |  ✅   | ✅  |   ✅   |  ✅   |
+| every Ark part exposed                             |  ✅   | ✅  |   ✅   |  ✅   |
+| orientation → `data-orientation` (+ horizontal)    |  ✅   | ✅  |   ✅   |  ✅   |
+| single: `radiogroup` of `radio` buttons            |  ✅   | ✅  |   ✅   |  ✅   |
+| click presses one → `data-state` + `onValueChange` |  ✅   | ✅  |   ✅   |  ✅   |
+| `multiple`: `group` of `aria-pressed` buttons      |  ✅   | ✅  |   ✅   |  ✅   |
+| arrow keys move focus between items                |  ✅   | ✅  |   ✅   |  ✅   |
+| disabled item → `data-disabled`, inert             |  ✅   | ✅  |   ✅   |  ✅   |
+| disabled group → every item disabled               |  ✅   | ✅  |   ✅   |  ✅   |
+| native props forwarded to the root                 |  ✅   | ✅  |   ✅   |  ✅   |
+
+### Tabs (`tabsRecipe`: `data-variant` × `data-size`; Ark tabs machine)
+
+| State                                                     | React | Vue | Svelte | Solid |
+| --------------------------------------------------------- | :---: | :-: | :----: | :---: |
+| variant × size → root `data-*` (+ `line`, `md`)           |  ✅   | ✅  |   ✅   |  ✅   |
+| every Ark part exposed                                    |  ✅   | ✅  |   ✅   |  ✅   |
+| orientation → `data-orientation` (+ horizontal)           |  ✅   | ✅  |   ✅   |  ✅   |
+| `tablist` of native `tab` buttons, panel labelled by tab  |  ✅   | ✅  |   ✅   |  ✅   |
+| click selects → `aria-selected` + panel + `onValueChange` |  ✅   | ✅  |   ✅   |  ✅   |
+| arrow keys / Home move focus, skipping a disabled tab     |  ✅   | ✅  |   ✅   |  ✅   |
+| vertical → up / down arrows                               |  ✅   | ✅  |   ✅   |  ✅   |
+| manual activation → Enter selects the focused tab         |  ✅   | ✅  |   ✅   |  ✅   |
+| disabled tab → native `disabled` + `data-disabled`, inert |  ✅   | ✅  |   ✅   |  ✅   |
+| native props forwarded to the root                        |  ✅   | ✅  |   ✅   |  ✅   |
+
+### Accordion (`accordionRecipe`: `data-variant` × `data-size`; Ark accordion machine)
+
+| State                                                        | React | Vue | Svelte | Solid |
+| ------------------------------------------------------------ | :---: | :-: | :----: | :---: |
+| variant × size → root `data-*` (+ `line`, `md`)              |  ✅   | ✅  |   ✅   |  ✅   |
+| every Ark part exposed                                       |  ✅   | ✅  |   ✅   |  ✅   |
+| native `button` trigger (`aria-expanded`) labels its region  |  ✅   | ✅  |   ✅   |  ✅   |
+| click opens one item → `data-state` + `onValueChange`        |  ✅   | ✅  |   ✅   |  ✅   |
+| `multiple` → several items open                              |  ✅   | ✅  |   ✅   |  ✅   |
+| `collapsible` → the open item closes                         |  ✅   | ✅  |   ✅   |  ✅   |
+| arrow keys / Home / End move focus, skipping a disabled item |  ✅   | ✅  |   ✅   |  ✅   |
+| disabled item → native `disabled` + `data-disabled`, inert   |  ✅   | ✅  |   ✅   |  ✅   |
+| native props forwarded to the root                           |  ✅   | ✅  |   ✅   |  ✅   |
+
+### Progress (`progressRecipe`: `data-size`; Ark progress machine)
+
+| State                                                               | React | Vue | Svelte | Solid |
+| ------------------------------------------------------------------- | :---: | :-: | :----: | :---: |
+| size → root `data-size` (+ `md`)                                    |  ✅   | ✅  |   ✅   |  ✅   |
+| every Ark part exposed                                              |  ✅   | ✅  |   ✅   |  ✅   |
+| linear: track is the `progressbar` (`aria-valuenow`/min/max)        |  ✅   | ✅  |   ✅   |  ✅   |
+| range width + value text follow the value, measured against min/max |  ✅   | ✅  |   ✅   |  ✅   |
+| controlled value → `data-state="complete"` at max, `View` shows     |  ✅   | ✅  |   ✅   |  ✅   |
+| `null` value → `data-state="indeterminate"`, no value, no width †   |  ✅   | ✅  |   ✅   |  ✅   |
+| circular: `<svg>` circle is the `progressbar`, track + range inside |  ✅   | ✅  |   ✅   |  ✅   |
+| native props forwarded to the root                                  |  ✅   | ✅  |   ✅   |  ✅   |
+
+† Zag's Solid binding reads a `null` value as "uncontrolled", so in Solid an
+indeterminate progress is `defaultValue={null}`; React, Vue and Svelte take
+`value={null}` too.
+
+### Slider (`sliderRecipe`: `data-size`; Ark slider machine)
+
+| State                                                                | React | Vue | Svelte | Solid |
+| -------------------------------------------------------------------- | :---: | :-: | :----: | :---: |
+| size → root `data-size` (+ `md`)                                     |  ✅   | ✅  |   ✅   |  ✅   |
+| every Ark part exposed                                               |  ✅   | ✅  |   ✅   |  ✅   |
+| thumb is the `slider` (`aria-valuenow`/min/max), labelled by Label   |  ✅   | ✅  |   ✅   |  ✅   |
+| range offsets inline on the root; hidden input carries the value     |  ✅   | ✅  |   ✅   |  ✅   |
+| range: two thumbs bound each other; value text lists both †          |  ✅   | ✅  |   ✅   |  ✅   |
+| markers → `data-state` under / at / over the value                   |  ✅   | ✅  |   ✅   |  ✅   |
+| arrow keys and End step the value; `onValueChange` reports it        |  ✅   | ✅  |   ✅   |  ✅   |
+| controlled value followed                                            |  ✅   | ✅  |   ✅   |  ✅   |
+| disabled → `data-disabled` on every part, thumb out of the tab order |  ✅   | ✅  |   ✅   |  ✅   |
+| native props forwarded to the root                                   |  ✅   | ✅  |   ✅   |  ✅   |
+
+† Ark's Solid `ValueText` joins a range's values with a bare comma (`20,80`);
+React, Vue and Svelte write `20, 80`.
+
+### NumberInput (`numberInputRecipe`: `data-size`; Ark number-input machine)
+
+| State                                                                  | React | Vue | Svelte | Solid |
+| ---------------------------------------------------------------------- | :---: | :-: | :----: | :---: |
+| size → root `data-size` (+ `md`)                                       |  ✅   | ✅  |   ✅   |  ✅   |
+| every Ark part exposed                                                 |  ✅   | ✅  |   ✅   |  ✅   |
+| input is the `spinbutton` (`aria-valuenow`/min/max), named by Label    |  ✅   | ✅  |   ✅   |  ✅   |
+| arrow keys and both steppers step the value; `onValueChange` reports   |  ✅   | ✅  |   ✅   |  ✅   |
+| at `max` the increment stepper is disabled                             |  ✅   | ✅  |   ✅   |  ✅   |
+| typed value out of range → `data-invalid`, clamped on blur             |  ✅   | ✅  |   ✅   |  ✅   |
+| `formatOptions` formats the value (`$1,234.50`)                        |  ✅   | ✅  |   ✅   |  ✅   |
+| controlled value followed                                              |  ✅   | ✅  |   ✅   |  ✅   |
+| `invalid` → `data-invalid` on the control, `aria-invalid` on the input |  ✅   | ✅  |   ✅   |  ✅   |
+| disabled → `data-disabled` on every part, input and steppers disabled  |  ✅   | ✅  |   ✅   |  ✅   |
+| native props forwarded to the root                                     |  ✅   | ✅  |   ✅   |  ✅   |
+
+### Pagination (`paginationRecipe`: `data-size`; Ark pagination machine)
+
+| State                                                                       | React | Vue | Svelte | Solid |
+| --------------------------------------------------------------------------- | :---: | :-: | :----: | :---: |
+| size → root `data-size` (+ `md`)                                            |  ✅   | ✅  |   ✅   |  ✅   |
+| every Ark part exposed                                                      |  ✅   | ✅  |   ✅   |  ✅   |
+| root is a `<nav>` landmark named "pagination"                               |  ✅   | ✅  |   ✅   |  ✅   |
+| `Context` pages → items + ellipses (`1 … 4 5 6 … 10`)                       |  ✅   | ✅  |   ✅   |  ✅   |
+| current item → `data-selected` + `aria-current="page"`; items named         |  ✅   | ✅  |   ✅   |  ✅   |
+| clicking an item goes there; `onPageChange` reports page + pageSize         |  ✅   | ✅  |   ✅   |  ✅   |
+| prev/next step, first/last jump                                             |  ✅   | ✅  |   ✅   |  ✅   |
+| prev/first disabled on page 1, next/last on the last (`disabled` + data-\*) |  ✅   | ✅  |   ✅   |  ✅   |
+| triggers named for screen readers                                           |  ✅   | ✅  |   ✅   |  ✅   |
+| `count` ÷ `pageSize` → pages; `siblingCount` widens the window              |  ✅   | ✅  |   ✅   |  ✅   |
+| controlled page followed                                                    |  ✅   | ✅  |   ✅   |  ✅   |
+| native props forwarded to the root                                          |  ✅   | ✅  |   ✅   |  ✅   |
+| `boundaryCount`                                                             |  ✅   | ❌† |   ✅   |  ✅   |
+
+† Ark's Vue Pagination does not declare `boundaryCount`; the attribute falls
+through to the `<nav>` and the machine keeps its default of 1.
 
 ### Dialog (Ark portal + focus trap + ids)
 
@@ -131,17 +372,38 @@ shared stylesheet keys on.
 | mask → `type="password"`               |  ✅   | ✅  |   ✅   |  ✅   |
 | invalid → `data-invalid` + aria        |  ✅   | ✅  |   ✅   |  ✅   |
 
+### Avatar (`avatarRecipe`: `data-size` × `data-shape`; Ark image-loading machine)
+
+| State                                      | React | Vue | Svelte | Solid |
+| ------------------------------------------ | :---: | :-: | :----: | :---: |
+| size/shape → root `data-*` (+ md, circle)  |  ✅   | ✅  |   ✅   |  ✅   |
+| every Ark part exposed                     |  ✅   | ✅  |   ✅   |  ✅   |
+| loading → fallback visible, image `hidden` |  ✅   | ✅  |   ✅   |  ✅   |
+| image loads → image visible, `loaded`      |  ✅   | ✅  |   ✅   |  ✅   |
+| image fails → fallback stays, `error`      |  ✅   | ✅  |   ✅   |  ✅   |
+| native props forwarded, no baked style     |  ✅   | ✅  |   ✅   |  ✅   |
+
 ## SSR (F3.3 / F3.5)
 
-| Guarantee                                   | React | Vue | Svelte | Solid |
-| ------------------------------------------- | :---: | :-: | :----: | :---: |
-| stable server HTML (scope/part + recipe)    |  ✅   | ✅  |   ✅   |  ✅   |
-| checkbox `data-state` survives SSR          |  ✅   | ✅  |   ✅   |  ✅   |
-| Field sizes + textarea survive SSR          |  ✅   | ✅  |   ✅   |  ✅   |
-| warning-free hydration (id path)            |  ✅   | ✅¹ |   —²   |  —²   |
-| static server-only island (zero `<script>`) |   —   |  —  |   ✅   |   —   |
-| `defaultOpen` survives SSR                  |  ✅   | ✅  |   ✅   |  ✅   |
-| PinInput `count` → correct server aria      |  ✅   | ✅  |   ✅   |  ✅   |
+| Guarantee                                    | React | Vue | Svelte | Solid |
+| -------------------------------------------- | :---: | :-: | :----: | :---: |
+| stable server HTML (scope/part + recipe)     |  ✅   | ✅  |   ✅   |  ✅   |
+| checkbox `data-state` survives SSR           |  ✅   | ✅  |   ✅   |  ✅   |
+| Field sizes + textarea survive SSR           |  ✅   | ✅  |   ✅   |  ✅   |
+| warning-free hydration (id path)             |  ✅   | ✅¹ |   —²   |  —²   |
+| static server-only island (zero `<script>`)  |   —   |  —  |   ✅   |   —   |
+| `defaultOpen` survives SSR                   |  ✅   | ✅  |   ✅   |  ✅   |
+| PinInput `count` → correct server aria       |  ✅   | ✅  |   ✅   |  ✅   |
+| Avatar fallback shown / image hidden on SSR  |  ✅   | ✅  |   ✅   |  ✅   |
+| Switch on/off state + switch role on SSR     |  ✅   | ✅  |   ✅   |  ✅   |
+| RadioGroup checked item + orientation on SSR |  ✅   | ✅  |   ✅   |  ✅   |
+| Toggle / ToggleGroup pressed state + roles   |  ✅   | ✅  |   ✅   |  ✅   |
+| Tabs selected tab, hidden panels + tab ids   |  ✅   | ✅  |   ✅   |  ✅   |
+| Accordion open items, hidden contents + ids  |  ✅   | ✅  |   ✅   |  ✅   |
+| Progress value, state + circle geometry      |  ✅   | ✅  |   ✅   |  ✅   |
+| Slider thumbs, bounds, range offsets + marks |  ✅   | ✅  |   ✅   |  ✅   |
+| NumberInput value, bounds, format + steppers |  ✅   | ✅  |   ✅   |  ✅   |
+| Pagination pages, ellipses, current + ends   |  ✅   | ✅  |   ✅   |  ✅   |
 
 ¹ Vue hydration is verified on the portal-free primitives (Button, Card, Field
 and Checkbox), the deterministic `useId` hazard; Ark's portaled popovers

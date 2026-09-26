@@ -1,0 +1,299 @@
+---
+title: Number Input
+description: A text box for a number, with buttons that step it up and down.
+group: Components
+order: 35
+component: NumberInput
+pkg: "@moderno-ui/react"
+agentPropsHash: "sha256:958fba9fc40c060babc290be1c39eeddd055f52b16d20fb2c4bc5ebb54fdc3e6"
+agent:
+  intent: Let the user type a number, or step it up and down with buttons or the arrow keys.
+  whenToUse: An exact number with limits — a quantity, a count of guests, an amount of money or a percent — where the user may type it or nudge it by a step.
+  whenNotToUse:
+    - case: A value where the rough position matters more than the exact digit, like volume
+      use: Slider
+    - case: Free text, or a number that is really a code, like a phone number or a zip code
+      use: Field
+    - case: A short one-time code, one digit per box
+      use: PinInput
+  gotchas:
+    - 'The value is a string, not a number: pass defaultValue="3", and read details.valueAsNumber in onValueChange when you need the number. An empty box is "".'
+    - "Put NumberInput.Input and both triggers inside NumberInput.Control. The control draws the border and the focus ring."
+    - "The triggers have no content of their own: pass a glyph or an icon, like − and +. Ark names them for screen readers."
+    - "A typed value outside min and max is marked invalid, then clamped when the input loses focus. Set clampValueOnBlur={false} to keep it."
+    - "In Vue, bind the value with v-model or :model-value; value is not a Vue prop."
+  theming:
+    - "The box is --background with an --input border and a --ring focus ring drawn inside it. Do not pass a hex."
+    - "The steppers are --muted-foreground and fill with --accent on hover. Invalid turns the border and the ring --destructive."
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import NumberInputDemo from "../../../examples/number-input/number-input.svelte";
+import baseReact from "../../../examples/number-input/react.tsx?raw";
+import baseVue from "../../../examples/number-input/vue.vue?raw";
+import baseSolid from "../../../examples/number-input/solid.tsx?raw";
+import baseSvelte from "../../../examples/number-input/number-input.svelte?raw";
+import NumberInputMinMaxDemo from "../../../examples/number-input/min-max/number-input-min-max.svelte";
+import minMaxReact from "../../../examples/number-input/min-max/react.tsx?raw";
+import minMaxVue from "../../../examples/number-input/min-max/vue.vue?raw";
+import minMaxSolid from "../../../examples/number-input/min-max/solid.tsx?raw";
+import minMaxSvelte from "../../../examples/number-input/min-max/number-input-min-max.svelte?raw";
+import NumberInputStepDemo from "../../../examples/number-input/step/number-input-step.svelte";
+import stepReact from "../../../examples/number-input/step/react.tsx?raw";
+import stepVue from "../../../examples/number-input/step/vue.vue?raw";
+import stepSolid from "../../../examples/number-input/step/solid.tsx?raw";
+import stepSvelte from "../../../examples/number-input/step/number-input-step.svelte?raw";
+import NumberInputFormattingDemo from "../../../examples/number-input/formatting/number-input-formatting.svelte";
+import formattingReact from "../../../examples/number-input/formatting/react.tsx?raw";
+import formattingVue from "../../../examples/number-input/formatting/vue.vue?raw";
+import formattingSolid from "../../../examples/number-input/formatting/solid.tsx?raw";
+import formattingSvelte from "../../../examples/number-input/formatting/number-input-formatting.svelte?raw";
+import NumberInputScrubberDemo from "../../../examples/number-input/scrubber/number-input-scrubber.svelte";
+import scrubberReact from "../../../examples/number-input/scrubber/react.tsx?raw";
+import scrubberVue from "../../../examples/number-input/scrubber/vue.vue?raw";
+import scrubberSolid from "../../../examples/number-input/scrubber/solid.tsx?raw";
+import scrubberSvelte from "../../../examples/number-input/scrubber/number-input-scrubber.svelte?raw";
+import NumberInputSizesDemo from "../../../examples/number-input/sizes/number-input-sizes.svelte";
+import sizesReact from "../../../examples/number-input/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/number-input/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/number-input/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/number-input/sizes/number-input-sizes.svelte?raw";
+
+<FrameworkSelect locale="en" />
+
+<Preview
+  examples={{
+    react: baseReact,
+    vue: baseVue,
+    solid: baseSolid,
+    svelte: baseSvelte,
+  }}
+>
+  <NumberInputDemo client:visible />
+</Preview>
+
+## Installation
+
+<Install pkg="@moderno-ui/react" />
+
+## Usage
+
+Number Input is a text box for a number, with buttons that step it up and down. Use it for an exact number with limits, like a quantity. The arrow keys step it too.
+
+<ForFramework fw="react">
+
+```tsx
+import { NumberInput } from "@moderno-ui/react";
+```
+
+```tsx
+<NumberInput.Root value={quantity} onValueChange={(details) => setQuantity(details.value)}>
+  <NumberInput.Label>Quantity</NumberInput.Label>
+  <NumberInput.Control>
+    <NumberInput.Input />
+    <NumberInput.DecrementTrigger>−</NumberInput.DecrementTrigger>
+    <NumberInput.IncrementTrigger>+</NumberInput.IncrementTrigger>
+  </NumberInput.Control>
+</NumberInput.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { NumberInput } from "@moderno-ui/vue";
+```
+
+```vue
+<NumberInput.Root v-model="quantity">
+  <NumberInput.Label>Quantity</NumberInput.Label>
+  <NumberInput.Control>
+    <NumberInput.Input />
+    <NumberInput.DecrementTrigger>−</NumberInput.DecrementTrigger>
+    <NumberInput.IncrementTrigger>+</NumberInput.IncrementTrigger>
+  </NumberInput.Control>
+</NumberInput.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { NumberInput } from "@moderno-ui/svelte";
+```
+
+```svelte
+<NumberInput.Root value={quantity} onValueChange={(details) => (quantity = details.value)}>
+  <NumberInput.Label>Quantity</NumberInput.Label>
+  <NumberInput.Control>
+    <NumberInput.Input />
+    <NumberInput.DecrementTrigger>−</NumberInput.DecrementTrigger>
+    <NumberInput.IncrementTrigger>+</NumberInput.IncrementTrigger>
+  </NumberInput.Control>
+</NumberInput.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { NumberInput } from "@moderno-ui/solid";
+```
+
+```tsx
+<NumberInput.Root value={quantity()} onValueChange={(details) => setQuantity(details.value)}>
+  <NumberInput.Label>Quantity</NumberInput.Label>
+  <NumberInput.Control>
+    <NumberInput.Input />
+    <NumberInput.DecrementTrigger>−</NumberInput.DecrementTrigger>
+    <NumberInput.IncrementTrigger>+</NumberInput.IncrementTrigger>
+  </NumberInput.Control>
+</NumberInput.Root>
+```
+
+</ForFramework>
+
+The value is a string, like `"3"`. `onValueChange` also gives `valueAsNumber`.
+
+## API Reference
+
+### NumberInput.Root
+
+`size` is the Moderno addition; every part follows it. The other props come from Ark's NumberInput.
+
+<PropsTable component="NumberInput" />
+
+| Prop               | Type                                                          | Default   | Description                                                  |
+| ------------------ | ------------------------------------------------------------- | --------- | ------------------------------------------------------------ |
+| `value`            | `string`                                                      | —         | Controlled value.                                            |
+| `defaultValue`     | `string`                                                      | —         | Value at first when uncontrolled.                            |
+| `onValueChange`    | `(details: { value: string; valueAsNumber: number }) => void` | —         | Called when the value changes.                               |
+| `onValueInvalid`   | `(details: { value: string; reason: string }) => void`        | —         | Called when the value goes under `min` or over `max`.        |
+| `min`              | `number`                                                      | —         | The lowest value.                                            |
+| `max`              | `number`                                                      | —         | The highest value.                                           |
+| `step`             | `number`                                                      | `1`       | How far one step goes.                                       |
+| `formatOptions`    | `Intl.NumberFormatOptions`                                    | —         | How to show the number: currency, percent, decimals.         |
+| `locale`           | `string`                                                      | `"en-US"` | The locale used to format and read the number.               |
+| `clampValueOnBlur` | `boolean`                                                     | `true`    | Snaps a typed value into `min`–`max` when the input blurs.   |
+| `allowOverflow`    | `boolean`                                                     | `false`   | Lets a step go past `min` and `max`.                         |
+| `allowMouseWheel`  | `boolean`                                                     | `false`   | Steps the value with the mouse wheel while focused.          |
+| `spinOnPress`      | `boolean`                                                     | `true`    | Keeps stepping while a stepper is held down.                 |
+| `disabled`         | `boolean`                                                     | `false`   | Dims the field and ignores input.                            |
+| `readOnly`         | `boolean`                                                     | `false`   | Shows the value but ignores input.                           |
+| `invalid`          | `boolean`                                                     | —         | Marks the value as wrong. Unset, it follows `min` and `max`. |
+| `required`         | `boolean`                                                     | `false`   | Marks the field as required in a form.                       |
+| `name`             | `string`                                                      | —         | The form field name of the input.                            |
+| `translations`     | `{ incrementLabel?: string; decrementLabel?: string }`        | —         | What a screen reader says for each stepper.                  |
+
+In Vue, bind the value with `:model-value` or `v-model`, and listen with `@value-change`.
+
+### Parts
+
+| Part                           | Element    | Description                                                   |
+| ------------------------------ | ---------- | ------------------------------------------------------------- |
+| `NumberInput.Root`             | `<div>`    | Carries `data-size`.                                          |
+| `NumberInput.Label`            | `<label>`  | Optional. Names the field. Clicking it focuses the input.     |
+| `NumberInput.Control`          | `<div>`    | The bordered box. Holds the input and the steppers.           |
+| `NumberInput.Input`            | `<input>`  | The text box, with `role="spinbutton"`.                       |
+| `NumberInput.DecrementTrigger` | `<button>` | Steps the value down. Off at `min`.                           |
+| `NumberInput.IncrementTrigger` | `<button>` | Steps the value up. Off at `max`.                             |
+| `NumberInput.Scrubber`         | `<div>`    | Optional. Drag it sideways to change the value.               |
+| `NumberInput.ValueText`        | `<span>`   | Optional. The formatted value, for a readout outside the box. |
+
+### Data attributes
+
+| Attribute        | Values                                                    |
+| ---------------- | --------------------------------------------------------- |
+| `data-focus`     | While the input has focus, on the root, label and control |
+| `data-invalid`   | When the value is invalid, on the root, control and input |
+| `data-disabled`  | When `disabled`, on every part; on a stepper at its bound |
+| `data-scrubbing` | While the scrubber is dragged, on the root and its parts  |
+| `data-size`      | On the root: `"sm"`, `"md"` or `"lg"`                     |
+
+## Examples
+
+### Min and max
+
+At a limit, its stepper turns off. A typed value outside the limits turns red, then snaps back when the input loses focus.
+
+<Preview
+  examples={{
+    react: minMaxReact,
+    vue: minMaxVue,
+    solid: minMaxSolid,
+    svelte: minMaxSvelte,
+  }}
+>
+  <NumberInputMinMaxDemo client:visible />
+</Preview>
+
+### Step
+
+`step` sets how far one press or arrow key goes.
+
+<Preview
+  examples={{
+    react: stepReact,
+    vue: stepVue,
+    solid: stepSolid,
+    svelte: stepSvelte,
+  }}
+>
+  <NumberInputStepDemo client:visible />
+</Preview>
+
+### Formatting
+
+`formatOptions` takes the options of `Intl.NumberFormat`. The user can still type a plain number.
+
+<Preview
+  examples={{
+    react: formattingReact,
+    vue: formattingVue,
+    solid: formattingSolid,
+    svelte: formattingSvelte,
+  }}
+>
+  <NumberInputFormattingDemo client:visible />
+</Preview>
+
+### Scrubber
+
+Put `NumberInput.Scrubber` in the control and drag it sideways to change the value.
+
+<Preview
+  examples={{
+    react: scrubberReact,
+    vue: scrubberVue,
+    solid: scrubberSolid,
+    svelte: scrubberSvelte,
+  }}
+>
+  <NumberInputScrubberDemo client:visible />
+</Preview>
+
+### Sizes
+
+<Preview
+  examples={{
+    react: sizesReact,
+    vue: sizesVue,
+    solid: sizesSolid,
+    svelte: sizesSvelte,
+  }}
+>
+  <NumberInputSizesDemo client:visible />
+</Preview>
+
+## Notes
+
+- `NumberInput.Root` is wrapped to add `size`; every other part is Ark's unchanged.
+- The steppers are out of the tab order. The arrow keys do the same job from the input; Shift takes ten steps at a time.
+- For a value the user picks by dragging along a track, use a Slider.

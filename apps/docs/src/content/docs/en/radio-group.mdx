@@ -1,0 +1,303 @@
+---
+title: Radio Group
+description: A set of options where the user picks exactly one, each with a label and an optional description.
+group: Components
+order: 27
+component: RadioGroup
+pkg: "@moderno-ui/react"
+agentPropsHash: "sha256:90889c24cb4d928c30a598d24f6746bcaaaafbce3a64442dfb78eab8d7a1e9f6"
+agent:
+  intent: Pick exactly one option from a short, visible list.
+  whenToUse: Two to five mutually exclusive options the user should compare at a glance — shipping speed, a plan, a payment method.
+  whenNotToUse:
+    - case: More than about five options, or options that do not need to be seen side by side
+      use: Select
+    - case: A single on/off setting that applies at once
+      use: Switch
+    - case: Several options that can be chosen together
+      use: Checkbox
+  gotchas:
+    - "Give every RadioGroup.Item its own value and render RadioGroup.ItemHiddenInput inside it — it is the real radio that carries focus, arrow keys and the form value."
+    - "Put RadioGroup.ItemDescription inside RadioGroup.ItemText, so screen readers read it with the option's label."
+    - "orientation is Ark's prop (vertical by default) and size is the only visual knob; checked, disabled, invalid and read-only are Ark's data-state and data-* attributes."
+  theming:
+    - "The radio circle is a --muted-foreground ring on --background; checked, it becomes a --primary ring around a --primary-foreground dot."
+    - "Invalid turns the circle's ring --destructive; the description text is --muted-foreground. Do not pass a hex."
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import RadioGroupDemo from "../../../examples/radio-group/radio-group.svelte";
+import baseReact from "../../../examples/radio-group/react.tsx?raw";
+import baseVue from "../../../examples/radio-group/vue.vue?raw";
+import baseSolid from "../../../examples/radio-group/solid.tsx?raw";
+import baseSvelte from "../../../examples/radio-group/radio-group.svelte?raw";
+import RadioGroupDescriptionsDemo from "../../../examples/radio-group/descriptions/radio-group-descriptions.svelte";
+import descriptionsReact from "../../../examples/radio-group/descriptions/react.tsx?raw";
+import descriptionsVue from "../../../examples/radio-group/descriptions/vue.vue?raw";
+import descriptionsSolid from "../../../examples/radio-group/descriptions/solid.tsx?raw";
+import descriptionsSvelte from "../../../examples/radio-group/descriptions/radio-group-descriptions.svelte?raw";
+import RadioGroupHorizontalDemo from "../../../examples/radio-group/horizontal/radio-group-horizontal.svelte";
+import horizontalReact from "../../../examples/radio-group/horizontal/react.tsx?raw";
+import horizontalVue from "../../../examples/radio-group/horizontal/vue.vue?raw";
+import horizontalSolid from "../../../examples/radio-group/horizontal/solid.tsx?raw";
+import horizontalSvelte from "../../../examples/radio-group/horizontal/radio-group-horizontal.svelte?raw";
+import RadioGroupSizesDemo from "../../../examples/radio-group/sizes/radio-group-sizes.svelte";
+import sizesReact from "../../../examples/radio-group/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/radio-group/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/radio-group/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/radio-group/sizes/radio-group-sizes.svelte?raw";
+import RadioGroupDisabledDemo from "../../../examples/radio-group/disabled/radio-group-disabled.svelte";
+import disabledReact from "../../../examples/radio-group/disabled/react.tsx?raw";
+import disabledVue from "../../../examples/radio-group/disabled/vue.vue?raw";
+import disabledSolid from "../../../examples/radio-group/disabled/solid.tsx?raw";
+import disabledSvelte from "../../../examples/radio-group/disabled/radio-group-disabled.svelte?raw";
+import RadioGroupInvalidDemo from "../../../examples/radio-group/invalid/radio-group-invalid.svelte";
+import invalidReact from "../../../examples/radio-group/invalid/react.tsx?raw";
+import invalidVue from "../../../examples/radio-group/invalid/vue.vue?raw";
+import invalidSolid from "../../../examples/radio-group/invalid/solid.tsx?raw";
+import invalidSvelte from "../../../examples/radio-group/invalid/radio-group-invalid.svelte?raw";
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
+  <RadioGroupDemo client:visible />
+</Preview>
+
+## Installation
+
+<Install pkg="@moderno-ui/react" />
+
+## Usage
+
+A radio group shows a short list of options, and the user picks exactly one. Use it when the options should be compared side by side; for a long list, use Select.
+
+<ForFramework fw="react">
+
+```tsx
+import { RadioGroup } from "@moderno-ui/react";
+```
+
+```tsx
+<RadioGroup.Root defaultValue="pro">
+  <RadioGroup.Label>Plan</RadioGroup.Label>
+  <RadioGroup.Item value="free">
+    <RadioGroup.ItemControl />
+    <RadioGroup.ItemText>Free</RadioGroup.ItemText>
+    <RadioGroup.ItemHiddenInput />
+  </RadioGroup.Item>
+  <RadioGroup.Item value="pro">
+    <RadioGroup.ItemControl />
+    <RadioGroup.ItemText>Pro</RadioGroup.ItemText>
+    <RadioGroup.ItemHiddenInput />
+  </RadioGroup.Item>
+</RadioGroup.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { RadioGroup } from "@moderno-ui/vue";
+```
+
+```vue
+<RadioGroup.Root default-value="pro">
+  <RadioGroup.Label>Plan</RadioGroup.Label>
+  <RadioGroup.Item value="free">
+    <RadioGroup.ItemControl />
+    <RadioGroup.ItemText>Free</RadioGroup.ItemText>
+    <RadioGroup.ItemHiddenInput />
+  </RadioGroup.Item>
+  <RadioGroup.Item value="pro">
+    <RadioGroup.ItemControl />
+    <RadioGroup.ItemText>Pro</RadioGroup.ItemText>
+    <RadioGroup.ItemHiddenInput />
+  </RadioGroup.Item>
+</RadioGroup.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { RadioGroup } from "@moderno-ui/svelte";
+```
+
+```svelte
+<RadioGroup.Root defaultValue="pro">
+  <RadioGroup.Label>Plan</RadioGroup.Label>
+  <RadioGroup.Item value="free">
+    <RadioGroup.ItemControl />
+    <RadioGroup.ItemText>Free</RadioGroup.ItemText>
+    <RadioGroup.ItemHiddenInput />
+  </RadioGroup.Item>
+  <RadioGroup.Item value="pro">
+    <RadioGroup.ItemControl />
+    <RadioGroup.ItemText>Pro</RadioGroup.ItemText>
+    <RadioGroup.ItemHiddenInput />
+  </RadioGroup.Item>
+</RadioGroup.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { RadioGroup } from "@moderno-ui/solid";
+```
+
+```tsx
+<RadioGroup.Root defaultValue="pro">
+  <RadioGroup.Label>Plan</RadioGroup.Label>
+  <RadioGroup.Item value="free">
+    <RadioGroup.ItemControl />
+    <RadioGroup.ItemText>Free</RadioGroup.ItemText>
+    <RadioGroup.ItemHiddenInput />
+  </RadioGroup.Item>
+  <RadioGroup.Item value="pro">
+    <RadioGroup.ItemControl />
+    <RadioGroup.ItemText>Pro</RadioGroup.ItemText>
+    <RadioGroup.ItemHiddenInput />
+  </RadioGroup.Item>
+</RadioGroup.Root>
+```
+
+</ForFramework>
+
+## API Reference
+
+### RadioGroup.Root
+
+`size` is the Moderno addition and defaults to `md`; the other props come from Ark's RadioGroup.
+
+<PropsTable component="RadioGroup" />
+
+| Prop            | Type                           | Default      | Description                                                    |
+| --------------- | ------------------------------ | ------------ | -------------------------------------------------------------- |
+| `value`         | `string \| null`               | —            | Controlled value. Pair with `onValueChange`.                   |
+| `defaultValue`  | `string \| null`               | —            | Initial value when uncontrolled.                               |
+| `onValueChange` | `(details: { value }) => void` | —            | Called when the user picks an option.                          |
+| `orientation`   | `"vertical" \| "horizontal"`   | `"vertical"` | Stacks the options in a column or lines them up in a row.      |
+| `disabled`      | `boolean`                      | `false`      | Disables every option and dims the group.                      |
+| `invalid`       | `boolean`                      | `false`      | Sets `aria-invalid` and rings every circle in `--destructive`. |
+| `readOnly`      | `boolean`                      | `false`      | Shows the choice but ignores clicks.                           |
+| `required`      | `boolean`                      | `false`      | Marks the radios as required.                                  |
+| `name`          | `string`                       | —            | Form field name shared by every radio.                         |
+
+### RadioGroup.Item
+
+| Prop       | Type      | Default | Description                                 |
+| ---------- | --------- | ------- | ------------------------------------------- |
+| `value`    | `string`  | —       | The value this option stands for. Required. |
+| `disabled` | `boolean` | `false` | Disables this option only.                  |
+| `invalid`  | `boolean` | `false` | Marks this option only as invalid.          |
+
+### Parts
+
+| Part                         | Element                | Description                                                                                       |
+| ---------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------- |
+| `RadioGroup.Root`            | `<div>`                | `role="radiogroup"`; carries `data-size` and `data-orientation`.                                  |
+| `RadioGroup.Label`           | `<span>`               | The group's label; it names the radiogroup.                                                       |
+| `RadioGroup.Item`            | `<label>`              | One option; clicking anywhere on it picks the option.                                             |
+| `RadioGroup.ItemControl`     | `<div>`                | The radio circle.                                                                                 |
+| `RadioGroup.ItemText`        | `<span>`               | The option's label; it names the radio.                                                           |
+| `RadioGroup.ItemDescription` | `<span>`               | Moderno's hint under the label. Put it inside `ItemText`.                                         |
+| `RadioGroup.ItemHiddenInput` | `<input type="radio">` | Visually hidden native radio; it carries focus, arrow keys, `name` and `value`. Always render it. |
+| `RadioGroup.Indicator`       | `<div>`                | Ark's sliding highlight behind the checked item. Unstyled by default; use it for a custom look.   |
+
+### Data attributes
+
+| Attribute            | Values                                                     |
+| -------------------- | ---------------------------------------------------------- |
+| `data-state`         | `"checked"` or `"unchecked"`, on every part of an item     |
+| `data-orientation`   | `"vertical"` or `"horizontal"`, on the root and every item |
+| `data-disabled`      | Present on a disabled group or option                      |
+| `data-invalid`       | Present while `invalid`                                    |
+| `data-readonly`      | Present on the items while `readOnly`                      |
+| `data-focus-visible` | On the item control whose radio has keyboard focus         |
+| `data-size`          | On the root: `"sm"`, `"md"` or `"lg"`                      |
+
+## Examples
+
+### Descriptions
+
+<Preview
+  examples={{
+    react: descriptionsReact,
+    vue: descriptionsVue,
+    solid: descriptionsSolid,
+    svelte: descriptionsSvelte,
+  }}
+>
+  <RadioGroupDescriptionsDemo client:visible />
+</Preview>
+
+### Horizontal
+
+<Preview
+  examples={{
+    react: horizontalReact,
+    vue: horizontalVue,
+    solid: horizontalSolid,
+    svelte: horizontalSvelte,
+  }}
+>
+  <RadioGroupHorizontalDemo client:visible />
+</Preview>
+
+### Sizes
+
+<Preview
+  examples={{
+    react: sizesReact,
+    vue: sizesVue,
+    solid: sizesSolid,
+    svelte: sizesSvelte,
+  }}
+>
+  <RadioGroupSizesDemo client:visible />
+</Preview>
+
+### Disabled option
+
+Pass `disabled` to one `RadioGroup.Item` to turn off that option only, or to `RadioGroup.Root` to turn off them all.
+
+<Preview
+  examples={{
+    react: disabledReact,
+    vue: disabledVue,
+    solid: disabledSolid,
+    svelte: disabledSvelte,
+  }}
+>
+  <RadioGroupDisabledDemo client:visible />
+</Preview>
+
+### Invalid
+
+RadioGroup has no error-text part, so put the message below it in your form.
+
+<Preview
+  examples={{
+    react: invalidReact,
+    vue: invalidVue,
+    solid: invalidSolid,
+    svelte: invalidSvelte,
+  }}
+>
+  <RadioGroupInvalidDemo client:visible />
+</Preview>
+
+## Notes
+
+- `RadioGroup.Root` is wrapped to add `size`, and `RadioGroup.ItemDescription` is Moderno's; every other part is Ark's unchanged.
+- Style state from `data-state` and the `data-*` flags; `size` is the only visual prop.
+- The arrow keys move the choice between options, as in a native radio group.
+- RadioGroup replaces the predecessor's Radio.

@@ -113,6 +113,264 @@
         "intent": "Enter a short code the user received out of band — an SMS OTP or an emailed verification code.",
         "whenToUse": "A fixed-length code where each character deserves its own cell."
       }
+    },
+    {
+      "name": "Avatar",
+      "scope": "avatar",
+      "import": "import { Avatar } from \"@moderno-ui/react\"",
+      "propsHash": "sha256:fixture-avatar",
+      "props": [
+        { "name": "shape", "type": "\"circle\" | \"square\"", "required": false },
+        { "name": "size", "type": "\"sm\" | \"md\" | \"lg\"", "required": false }
+      ],
+      "propsComplete": false,
+      "parts": [{ "name": "root" }, { "name": "image" }, { "name": "fallback" }],
+      "variants": { "size": ["sm", "md", "lg"], "shape": ["circle", "square"] },
+      "guidance": {
+        "intent": "Show who a person or a team is with a small picture, or their initials.",
+        "whenToUse": "Next to a name in a list, a comment, a header or a menu."
+      }
+    },
+    {
+      "name": "Switch",
+      "scope": "switch",
+      "import": "import { Switch } from \"@moderno-ui/react\"",
+      "propsHash": "sha256:fixture-switch",
+      "props": [{ "name": "size", "type": "\"sm\" | \"md\" | \"lg\"", "required": false }],
+      "propsComplete": false,
+      "parts": [
+        { "name": "root" },
+        { "name": "control" },
+        { "name": "thumb" },
+        { "name": "label" }
+      ],
+      "variants": { "size": ["sm", "md", "lg"] },
+      "guidance": {
+        "intent": "Turn one setting on or off, with the change applied at once.",
+        "whenToUse": "A preference in a settings list: notifications, dark mode, auto-save."
+      }
+    },
+    {
+      "name": "RadioGroup",
+      "scope": "radio-group",
+      "import": "import { RadioGroup } from \"@moderno-ui/react\"",
+      "propsHash": "sha256:fixture-radio-group",
+      "props": [{ "name": "size", "type": "\"sm\" | \"md\" | \"lg\"", "required": false }],
+      "propsComplete": false,
+      "parts": [
+        { "name": "root" },
+        { "name": "label" },
+        { "name": "item" },
+        { "name": "item-control" },
+        { "name": "item-text" },
+        { "name": "item-description" },
+        { "name": "indicator" }
+      ],
+      "variants": { "size": ["sm", "md", "lg"] },
+      "guidance": {
+        "intent": "Pick exactly one option from a short, visible list.",
+        "whenToUse": "Two to five mutually exclusive options the user should compare: shipping speed, plan, payment method."
+      }
+    },
+    {
+      "name": "Toggle",
+      "scope": "toggle",
+      "import": "import { Toggle } from \"@moderno-ui/react\"",
+      "propsHash": "sha256:fixture-toggle",
+      "props": [
+        { "name": "size", "type": "\"sm\" | \"md\" | \"lg\"", "required": false },
+        { "name": "variant", "type": "\"ghost\" | \"outline\"", "required": false }
+      ],
+      "propsComplete": false,
+      "parts": [{ "name": "root" }, { "name": "indicator" }],
+      "variants": { "variant": ["ghost", "outline"], "size": ["sm", "md", "lg"] },
+      "guidance": {
+        "intent": "A button that stays pressed until it is pressed again.",
+        "whenToUse": "One formatting or view option that is on or off: bold, mute, pin."
+      }
+    },
+    {
+      "name": "ToggleGroup",
+      "scope": "toggle-group",
+      "import": "import { ToggleGroup } from \"@moderno-ui/react\"",
+      "propsHash": "sha256:fixture-toggle-group",
+      "props": [
+        { "name": "size", "type": "\"sm\" | \"md\" | \"lg\"", "required": false },
+        { "name": "variant", "type": "\"ghost\" | \"outline\"", "required": false }
+      ],
+      "propsComplete": false,
+      "parts": [{ "name": "root" }, { "name": "item" }],
+      "variants": { "variant": ["ghost", "outline"], "size": ["sm", "md", "lg"] },
+      "guidance": {
+        "intent": "A row of toggle buttons where one, or several, stay pressed.",
+        "whenToUse": "A small set of related options shown as buttons: text alignment, text style, a view mode."
+      }
+    },
+    {
+      "name": "Tabs",
+      "scope": "tabs",
+      "import": "import { Tabs } from \"@moderno-ui/react\"",
+      "propsHash": "sha256:fixture-tabs",
+      "props": [
+        { "name": "size", "type": "\"sm\" | \"md\" | \"lg\"", "required": false },
+        { "name": "variant", "type": "\"line\" | \"enclosed\"", "required": false }
+      ],
+      "propsComplete": false,
+      "parts": [
+        { "name": "root" },
+        { "name": "list" },
+        { "name": "trigger" },
+        { "name": "indicator" },
+        { "name": "content" }
+      ],
+      "variants": { "variant": ["line", "enclosed"], "size": ["sm", "md", "lg"] },
+      "guidance": {
+        "intent": "Switch between related panels of content in the same place.",
+        "whenToUse": "Two to about seven sibling views of one subject: account settings, a product's details and reviews."
+      }
+    },
+    {
+      "name": "Accordion",
+      "scope": "accordion",
+      "import": "import { Accordion } from \"@moderno-ui/react\"",
+      "propsHash": "sha256:fixture-accordion",
+      "props": [
+        { "name": "size", "type": "\"sm\" | \"md\" | \"lg\"", "required": false },
+        { "name": "variant", "type": "\"line\" | \"enclosed\"", "required": false }
+      ],
+      "propsComplete": false,
+      "parts": [
+        { "name": "root" },
+        { "name": "item" },
+        { "name": "item-trigger" },
+        { "name": "item-indicator" },
+        { "name": "item-content" }
+      ],
+      "variants": { "variant": ["line", "enclosed"], "size": ["sm", "md", "lg"] },
+      "guidance": {
+        "intent": "Show a stack of sections the reader opens one header at a time.",
+        "whenToUse": "Long pages of optional detail: an FAQ, settings groups, product specs."
+      }
+    },
+    {
+      "name": "Progress",
+      "scope": "progress",
+      "import": "import { Progress } from \"@moderno-ui/react\"",
+      "propsHash": "sha256:fixture-progress",
+      "props": [{ "name": "size", "type": "\"sm\" | \"md\" | \"lg\"", "required": false }],
+      "propsComplete": false,
+      "parts": [
+        { "name": "root" },
+        { "name": "label" },
+        { "name": "value-text" },
+        { "name": "track" },
+        { "name": "range" },
+        { "name": "circle" },
+        { "name": "circle-track" },
+        { "name": "circle-range" },
+        { "name": "view" }
+      ],
+      "variants": { "size": ["sm", "md", "lg"] },
+      "guidance": {
+        "intent": "Show how far a task has come, as a bar or a ring.",
+        "whenToUse": "Uploads, installs, multi-step setup: work whose progress you can measure, or not yet."
+      }
+    },
+    {
+      "name": "Slider",
+      "scope": "slider",
+      "import": "import { Slider } from \"@moderno-ui/react\"",
+      "propsHash": "sha256:fixture-slider",
+      "props": [{ "name": "size", "type": "\"sm\" | \"md\" | \"lg\"", "required": false }],
+      "propsComplete": false,
+      "parts": [
+        { "name": "root" },
+        { "name": "label" },
+        { "name": "value-text" },
+        { "name": "control" },
+        { "name": "track" },
+        { "name": "range" },
+        { "name": "thumb" },
+        { "name": "dragging-indicator" },
+        { "name": "marker-group" },
+        { "name": "marker" }
+      ],
+      "variants": { "size": ["sm", "md", "lg"] },
+      "guidance": {
+        "intent": "Let the user pick a number, or a range between two, by dragging along a track.",
+        "whenToUse": "Volume, price ranges, filters: a value where the rough position matters more than the exact digit."
+      }
+    },
+    {
+      "name": "NumberInput",
+      "scope": "number-input",
+      "import": "import { NumberInput } from \"@moderno-ui/react\"",
+      "propsHash": "sha256:fixture-number-input",
+      "props": [{ "name": "size", "type": "\"sm\" | \"md\" | \"lg\"", "required": false }],
+      "propsComplete": false,
+      "parts": [
+        { "name": "root" },
+        { "name": "label" },
+        { "name": "control" },
+        { "name": "input" },
+        { "name": "decrement-trigger" },
+        { "name": "increment-trigger" },
+        { "name": "scrubber" },
+        { "name": "value-text" }
+      ],
+      "variants": { "size": ["sm", "md", "lg"] },
+      "guidance": {
+        "intent": "Let the user type a number, or step it up and down with buttons.",
+        "whenToUse": "Quantities, amounts, counts: an exact number with bounds, maybe formatted as money or a percent."
+      }
+    },
+    {
+      "name": "Pagination",
+      "scope": "pagination",
+      "import": "import { Pagination } from \"@moderno-ui/react\"",
+      "propsHash": "sha256:fixture-pagination",
+      "props": [{ "name": "size", "type": "\"sm\" | \"md\" | \"lg\"", "required": false }],
+      "propsComplete": false,
+      "parts": [
+        { "name": "root" },
+        { "name": "first-trigger" },
+        { "name": "prev-trigger" },
+        { "name": "item" },
+        { "name": "ellipsis" },
+        { "name": "next-trigger" },
+        { "name": "last-trigger" }
+      ],
+      "variants": { "size": ["sm", "md", "lg"] },
+      "guidance": {
+        "intent": "Let the user move between the pages of a long list.",
+        "whenToUse": "Tables, search results, feeds: many items shown a page at a time."
+      }
+    },
+    {
+      "name": "Callout",
+      "scope": "callout",
+      "import": "import { Callout } from \"@moderno-ui/react\"",
+      "propsHash": "sha256:fixture-callout",
+      "props": [
+        {
+          "name": "variant",
+          "type": "\"info\" | \"success\" | \"warning\" | \"error\"",
+          "required": false
+        }
+      ],
+      "propsComplete": true,
+      "parts": [
+        { "name": "root" },
+        { "name": "icon" },
+        { "name": "content" },
+        { "name": "title" },
+        { "name": "description" }
+      ],
+      "variants": { "variant": ["info", "success", "warning", "error"] },
+      "guidance": {
+        "intent": "A soft note inside the page's content: a tip, a caveat or a heads-up.",
+        "whenToUse": "Next to the content it is about, when the reader should not miss it."
+      }
     }
   ]
 }

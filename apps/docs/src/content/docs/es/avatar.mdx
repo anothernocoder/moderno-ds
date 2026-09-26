@@ -1,0 +1,186 @@
+---
+title: Avatar
+description: Una imagen pequeña de una persona o un equipo, con sus iniciales cuando no hay imagen.
+group: Componentes
+order: 23
+component: Avatar
+pkg: "@moderno-ui/react"
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import AvatarDemo from "../../../examples/avatar/avatar.svelte";
+import baseReact from "../../../examples/avatar/react.tsx?raw";
+import baseVue from "../../../examples/avatar/vue.vue?raw";
+import baseSolid from "../../../examples/avatar/solid.tsx?raw";
+import baseSvelte from "../../../examples/avatar/avatar.svelte?raw";
+import AvatarSizesDemo from "../../../examples/avatar/sizes/avatar-sizes.svelte";
+import sizesReact from "../../../examples/avatar/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/avatar/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/avatar/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/avatar/sizes/avatar-sizes.svelte?raw";
+import AvatarShapesDemo from "../../../examples/avatar/shapes/avatar-shapes.svelte";
+import shapesReact from "../../../examples/avatar/shapes/react.tsx?raw";
+import shapesVue from "../../../examples/avatar/shapes/vue.vue?raw";
+import shapesSolid from "../../../examples/avatar/shapes/solid.tsx?raw";
+import shapesSvelte from "../../../examples/avatar/shapes/avatar-shapes.svelte?raw";
+import AvatarFallbackDemo from "../../../examples/avatar/fallback/avatar-fallback.svelte";
+import fallbackReact from "../../../examples/avatar/fallback/react.tsx?raw";
+import fallbackVue from "../../../examples/avatar/fallback/vue.vue?raw";
+import fallbackSolid from "../../../examples/avatar/fallback/solid.tsx?raw";
+import fallbackSvelte from "../../../examples/avatar/fallback/avatar-fallback.svelte?raw";
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
+  <AvatarDemo client:visible />
+</Preview>
+
+## Instalación
+
+<Install pkg="@moderno-ui/react" />
+
+## Uso
+
+Usa un avatar para mostrar quién es alguien: junto a un nombre, en un comentario o en un menú. Pon las iniciales en `Avatar.Fallback`; se ven hasta que carga la imagen, y se quedan si falla.
+
+<ForFramework fw="react">
+
+```tsx
+import { Avatar } from "@moderno-ui/react";
+```
+
+```tsx
+<Avatar.Root>
+  <Avatar.Fallback>AL</Avatar.Fallback>
+  <Avatar.Image src="/ada.png" alt="Ada Lovelace" />
+</Avatar.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Avatar } from "@moderno-ui/vue";
+```
+
+```vue
+<Avatar.Root>
+  <Avatar.Fallback>AL</Avatar.Fallback>
+  <Avatar.Image src="/ada.png" alt="Ada Lovelace" />
+</Avatar.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Avatar } from "@moderno-ui/svelte";
+```
+
+```svelte
+<Avatar.Root>
+  <Avatar.Fallback>AL</Avatar.Fallback>
+  <Avatar.Image src="/ada.png" alt="Ada Lovelace" />
+</Avatar.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Avatar } from "@moderno-ui/solid";
+```
+
+```tsx
+<Avatar.Root>
+  <Avatar.Fallback>AL</Avatar.Fallback>
+  <Avatar.Image src="/ada.png" alt="Ada Lovelace" />
+</Avatar.Root>
+```
+
+</ForFramework>
+
+## Referencia de API
+
+### Avatar.Root
+
+<PropsTable component="Avatar" />
+
+Las props de comportamiento vienen de Ark. La que puedes necesitar:
+
+| Prop             | Tipo                                                 | Por defecto | Descripción                              |
+| ---------------- | ---------------------------------------------------- | ----------- | ---------------------------------------- |
+| `onStatusChange` | `(details: { status: "loaded" \| "error" }) => void` | —           | Se llama cuando la imagen carga o falla. |
+
+### Partes
+
+| Parte             | Elemento | Descripción                                                                  |
+| ----------------- | -------- | ---------------------------------------------------------------------------- |
+| `Avatar.Root`     | `<div>`  | La caja. Recibe `size`, `shape` y las props de comportamiento.               |
+| `Avatar.Image`    | `<img>`  | La imagen. Se ve cuando ha cargado. Necesita `src` y `alt`.                  |
+| `Avatar.Fallback` | `<span>` | Las iniciales. Se ven mientras carga la imagen, si falla o si no hay imagen. |
+
+### Atributos de datos
+
+| Atributo     | En              | Significado                                                   |
+| ------------ | --------------- | ------------------------------------------------------------- |
+| `data-size`  | Root            | `sm`, `md` (por defecto), `lg`                                |
+| `data-shape` | Root            | `circle` (por defecto), `square`                              |
+| `data-state` | Image, Fallback | `visible` o `hidden`. La parte oculta también lleva `hidden`. |
+
+## Ejemplos
+
+### Tamaños
+
+<Preview
+  examples={{
+    react: sizesReact,
+    vue: sizesVue,
+    solid: sizesSolid,
+    svelte: sizesSvelte,
+  }}
+>
+  <AvatarSizesDemo client:visible />
+</Preview>
+
+### Formas
+
+Usa `circle` para una persona y `square` para un equipo, un espacio de trabajo o un producto.
+
+<Preview
+  examples={{
+    react: shapesReact,
+    vue: shapesVue,
+    solid: shapesSolid,
+    svelte: shapesSvelte,
+  }}
+>
+  <AvatarShapesDemo client:visible />
+</Preview>
+
+### Iniciales
+
+Sin imagen, el avatar muestra su fallback. Usa una o dos letras.
+
+<Preview
+  examples={{
+    react: fallbackReact,
+    vue: fallbackVue,
+    solid: fallbackSolid,
+    svelte: fallbackSvelte,
+  }}
+>
+  <AvatarFallbackDemo client:visible />
+</Preview>
+
+## Notas
+
+- Solo `Avatar.Root` está envuelto, para añadir `size` y `shape`. Las demás partes son las de Ark.
+- La imagen y el fallback nunca se ven a la vez. Ark los cambia cuando la imagen carga.

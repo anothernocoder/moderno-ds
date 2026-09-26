@@ -154,3 +154,558 @@ describe("@moderno-ui/core components.css — Button overrides the native defaul
     expect(prop(decls, "pointer-events")).toBe("none");
   });
 });
+
+/*
+ * Toggle's root and ToggleGroup's items are native <button>s too, so the same
+ * two browser defaults leak through: the UA `buttonface` fill (a toggle at
+ * rest has no fill of its own) and a native `disabled` set without Ark — or
+ * before it hydrates — which carries no `data-disabled` for the base layer.
+ */
+describe("@moderno-ui/core components.css — Toggle and ToggleGroup buttons override the native defaults", () => {
+  const ruleDecls = (selector: string): Declaration[] => {
+    const found: Declaration[] = [];
+    root.walkRules((r: Rule) => {
+      if (!r.selectors.map((s) => s.trim()).includes(selector)) return;
+      r.walkDecls((d: Declaration) => {
+        found.push(d);
+      });
+    });
+    return found;
+  };
+  const prop = (decls: Declaration[], name: string) => decls.find((d) => d.prop === name)?.value;
+
+  for (const button of [
+    `[data-scope="toggle"][data-part="root"]`,
+    `[data-scope="toggle-group"][data-part="item"]`,
+  ]) {
+    it(`clears the UA button fill on ${button}`, () => {
+      expect(prop(ruleDecls(button), "background-color")).toBe("transparent");
+    });
+
+    it(`dims and disables a native :disabled ${button} like [data-disabled]`, () => {
+      const decls = ruleDecls(`${button}:disabled`);
+      expect(prop(decls, "opacity")).toBe("0.5");
+      expect(prop(decls, "pointer-events")).toBe("none");
+    });
+  }
+
+  const selectorsInOrder: string[] = [];
+  root.walkRules((r: Rule) => {
+    selectorsInOrder.push(...r.selectors.map((s) => s.trim()));
+  });
+
+  for (const { name, rootSelector, disabledSelector } of [
+    {
+      name: "Toggle",
+      rootSelector: `[data-scope="toggle"][data-part="root"]`,
+      disabledSelector: `[data-scope="toggle"][data-part="root"]:disabled`,
+    },
+    {
+      name: "ToggleGroup",
+      rootSelector: `[data-scope="toggle-group"][data-part="root"]`,
+      disabledSelector: `[data-scope="toggle-group"][data-part="item"]:disabled`,
+    },
+  ]) {
+    it(`dims a disabled ${name} once: its parts are reset after the :disabled rule`, () => {
+      const reset = `${rootSelector}[data-disabled] :where([data-part])`;
+      expect(prop(ruleDecls(reset), "opacity")).toBe("1");
+      expect(selectorsInOrder.indexOf(reset)).toBeGreaterThan(
+        selectorsInOrder.indexOf(disabledSelector),
+      );
+    });
+  }
+});
+
+/*
+ * A Tabs trigger is a native <button role="tab">, so the same two browser
+ * defaults leak through: the UA `buttonface` fill (a tab has no fill of its
+ * own — the enclosed pill is the indicator behind it) and a native `disabled`
+ * set without Ark, or before it hydrates, which carries no `data-disabled`.
+ */
+describe("@moderno-ui/core components.css — Tabs", () => {
+  const ruleDecls = (selector: string): Declaration[] => {
+    const found: Declaration[] = [];
+    root.walkRules((r: Rule) => {
+      if (!r.selectors.map((s) => s.trim().replace(/\s+/g, " ")).includes(selector)) return;
+      r.walkDecls((d: Declaration) => {
+        found.push(d);
+      });
+    });
+    return found;
+  };
+  const prop = (decls: Declaration[], name: string) => decls.find((d) => d.prop === name)?.value;
+  const TRIGGER = `[data-scope="tabs"][data-part="trigger"]`;
+
+  it("clears the UA button fill on the trigger", () => {
+    expect(prop(ruleDecls(TRIGGER), "background-color")).toBe("transparent");
+  });
+
+  it("dims and disables a native :disabled trigger like [data-disabled]", () => {
+    const decls = ruleDecls(`${TRIGGER}:disabled`);
+    expect(prop(decls, "opacity")).toBe("0.5");
+    expect(prop(decls, "pointer-events")).toBe("none");
+  });
+
+  it("sizes the indicator from the box Ark measures", () => {
+    const line = ruleDecls(
+      `[data-scope="tabs"][data-part="root"][data-variant="line"] > [data-part="list"] > [data-part="indicator"]`,
+    );
+    expect(prop(line, "width")).toBe("var(--width)");
+    const enclosed = ruleDecls(
+      `[data-scope="tabs"][data-part="root"][data-variant="enclosed"] > [data-part="list"] > [data-part="indicator"]`,
+    );
+    expect(prop(enclosed, "width")).toBe("var(--width)");
+    expect(prop(enclosed, "height")).toBe("var(--height)");
+  });
+
+  it("reaches the list and its parts through child combinators, so a nested Tabs keeps its own look", () => {
+    const variantRules: string[] = [];
+    root.walkRules((r: Rule) => {
+      for (const s of r.selectors) {
+        if (/\[data-scope="tabs"\]\[data-part="root"\]\[data-(variant|size)=/.test(s)) {
+          variantRules.push(s.replace(/\s+/g, " "));
+        }
+      }
+    });
+    expect(variantRules.length).toBeGreaterThan(0);
+    for (const s of variantRules) {
+      expect(s, s).not.toMatch(/\] \[data-part/);
+    }
+  });
+});
+
+/*
+ * An Accordion trigger is a native <button>, so the same two browser defaults
+ * leak through: the UA `buttonface` fill (a trigger has no fill of its own)
+ * and a native `disabled` set without Ark, or before it hydrates, which
+ * carries no `data-disabled`. Ark stamps `data-disabled` on the item and on
+ * its content and indicator too, so the item is dimmed once and its parts
+ * reset. The content's height animates from the height Ark measures.
+ */
+describe("@moderno-ui/core components.css — Accordion", () => {
+  const ruleDecls = (selector: string): Declaration[] => {
+    const found: Declaration[] = [];
+    root.walkRules((r: Rule) => {
+      if (!r.selectors.map((s) => s.trim().replace(/\s+/g, " ")).includes(selector)) return;
+      r.walkDecls((d: Declaration) => {
+        found.push(d);
+      });
+    });
+    return found;
+  };
+  const prop = (decls: Declaration[], name: string) => decls.find((d) => d.prop === name)?.value;
+  const TRIGGER = `[data-scope="accordion"][data-part="item-trigger"]`;
+  const CONTENT = `[data-scope="accordion"][data-part="item-content"]`;
+  const selectorsInOrder: string[] = [];
+  root.walkRules((r: Rule) => {
+    selectorsInOrder.push(...r.selectors.map((s) => s.trim().replace(/\s+/g, " ")));
+  });
+
+  it("clears the UA button fill on the trigger", () => {
+    expect(prop(ruleDecls(TRIGGER), "background-color")).toBe("transparent");
+  });
+
+  it("dims and disables a native :disabled trigger like [data-disabled]", () => {
+    const decls = ruleDecls(`${TRIGGER}:disabled`);
+    expect(prop(decls, "opacity")).toBe("0.5");
+    expect(prop(decls, "pointer-events")).toBe("none");
+  });
+
+  it("dims a disabled item once: its parts are reset after the :disabled rule", () => {
+    const reset = `[data-scope="accordion"][data-part="item"][data-disabled] :where([data-part])`;
+    expect(prop(ruleDecls(reset), "opacity")).toBe("1");
+    expect(selectorsInOrder.indexOf(reset)).toBeGreaterThan(
+      selectorsInOrder.indexOf(`${TRIGGER}:disabled`),
+    );
+  });
+
+  it("animates the content's height from the height Ark measures, both ways", () => {
+    expect(prop(ruleDecls(CONTENT), "overflow")).toBe("hidden");
+    expect(prop(ruleDecls(`${CONTENT}[data-state="open"]`), "animation")).toMatch(
+      /^moderno-accordion-expand var\(--motion-normal\)/,
+    );
+    expect(prop(ruleDecls(`${CONTENT}[data-state="closed"]`), "animation")).toMatch(
+      /^moderno-accordion-collapse var\(--motion-normal\)/,
+    );
+    const keyframes: Record<string, string[]> = {};
+    root.walkAtRules("keyframes", (at) => {
+      if (!at.params.startsWith("moderno-accordion-")) return;
+      keyframes[at.params] = [];
+      at.walkDecls("height", (d) => {
+        keyframes[at.params]!.push(d.value);
+      });
+    });
+    expect(keyframes).toEqual({
+      "moderno-accordion-expand": ["0", "var(--height)"],
+      "moderno-accordion-collapse": ["var(--height)", "0"],
+    });
+  });
+
+  it("drops the animation under reduced motion", () => {
+    let dropped = false;
+    root.walkAtRules("media", (at) => {
+      if (!at.params.includes("prefers-reduced-motion")) return;
+      at.walkRules((r) => {
+        if (r.selector === `${CONTENT}[data-state]`) {
+          r.walkDecls("animation", (d) => {
+            dropped = d.value === "none";
+          });
+        }
+      });
+    });
+    expect(dropped).toBe(true);
+  });
+
+  it("reaches the items and their parts through child combinators, so a nested Accordion keeps its own look", () => {
+    const variantRules = selectorsInOrder.filter((s) =>
+      /\[data-scope="accordion"\]\[data-part="root"\](\[data-(variant|size)=[^\]]+\])+ /.test(s),
+    );
+    expect(variantRules.length).toBeGreaterThan(0);
+    for (const s of variantRules) {
+      expect(s, s).not.toMatch(/\] \[data-part/);
+    }
+  });
+});
+
+/*
+ * Progress takes its percentage from Ark inline (the range's width, the
+ * circle-range's stroke offset) and its circle's geometry from --size and
+ * --thickness, which Ark reads and the stylesheet sets. A null value is
+ * indeterminate: Ark sets no width, so the stylesheet must animate one.
+ */
+describe("@moderno-ui/core components.css — Progress", () => {
+  const ruleDecls = (selector: string): Declaration[] => {
+    const found: Declaration[] = [];
+    root.walkRules((r: Rule) => {
+      if (!r.selectors.map((s) => s.trim().replace(/\s+/g, " ")).includes(selector)) return;
+      r.walkDecls((d: Declaration) => {
+        found.push(d);
+      });
+    });
+    return found;
+  };
+  const prop = (decls: Declaration[], name: string) => decls.find((d) => d.prop === name)?.value;
+  const ROOT = `[data-scope="progress"][data-part="root"]`;
+  const RANGE = `[data-scope="progress"][data-part="range"]`;
+  const CIRCLE_RANGE = `[data-scope="progress"][data-part="circle-range"]`;
+
+  it("sets the circle's --size and --thickness from spacing slots at every size", () => {
+    const circles = [
+      `[data-scope="progress"][data-part="circle"]`,
+      `${ROOT}[data-size="sm"] > [data-part="circle"]`,
+      `${ROOT}[data-size="lg"] > [data-part="circle"]`,
+    ];
+    for (const selector of circles) {
+      const decls = ruleDecls(selector);
+      expect(prop(decls, "--size"), selector).toMatch(/var\(--spacing-/);
+      expect(prop(decls, "--thickness"), selector).toMatch(/var\(--spacing-/);
+    }
+  });
+
+  it("gives an indeterminate range a width of its own and an endless animation", () => {
+    const linear = ruleDecls(`${RANGE}[data-state="indeterminate"]`);
+    expect(prop(linear, "width")).toBeDefined();
+    expect(prop(linear, "animation")).toMatch(/^moderno-progress-slide .* infinite$/);
+    const circular = ruleDecls(`${CIRCLE_RANGE}[data-state="indeterminate"]`);
+    expect(prop(circular, "stroke-dasharray")).toMatch(/var\(--circumference\)/);
+    expect(prop(circular, "animation")).toMatch(/^moderno-progress-spin .* infinite$/);
+  });
+
+  it("mirrors the indeterminate slide in right-to-left instead of replaying it backwards", () => {
+    const translateX = (name: string, step: "from" | "to") => {
+      let value: string | undefined;
+      root.walkAtRules("keyframes", (at) => {
+        if (at.params !== name) return;
+        at.walkRules((r) => {
+          if (r.selector === step) value = prop(r.nodes as Declaration[], "translate");
+        });
+      });
+      return value?.split(/\s+/)[0];
+    };
+    const mirrored = (x: string | undefined) => (x?.startsWith("-") ? x.slice(1) : `-${x}`);
+
+    const rtl = ruleDecls(
+      `${RANGE}[data-orientation="horizontal"][data-state="indeterminate"][dir="rtl"]`,
+    );
+    expect(prop(rtl, "animation-name")).toBe("moderno-progress-slide-rtl");
+    expect(prop(rtl, "animation-direction")).toBeUndefined();
+    for (const step of ["from", "to"] as const) {
+      const ltrX = translateX("moderno-progress-slide", step);
+      expect(ltrX, step).toBeDefined();
+      expect(translateX("moderno-progress-slide-rtl", step), step).toBe(mirrored(ltrX));
+    }
+  });
+
+  it("slows the indeterminate animations under reduced motion instead of stopping them", () => {
+    const slowed: string[] = [];
+    root.walkAtRules("media", (at) => {
+      if (!at.params.includes("prefers-reduced-motion")) return;
+      at.walkRules((r) => {
+        if (!r.selector.includes('[data-scope="progress"]')) return;
+        r.walkDecls((d) => {
+          if (d.prop === "animation" && d.value === "none") slowed.push(`stopped: ${r.selector}`);
+          if (d.prop === "animation-duration") slowed.push(r.selector);
+        });
+      });
+    });
+    expect(slowed).toEqual([
+      `${RANGE}[data-state="indeterminate"]`,
+      `${CIRCLE_RANGE}[data-state="indeterminate"]`,
+    ]);
+  });
+
+  it("reaches its parts through child combinators", () => {
+    const sizeRules: string[] = [];
+    root.walkRules((r: Rule) => {
+      for (const s of r.selectors) {
+        if (s.includes(`${ROOT}[data-size=`)) sizeRules.push(s.replace(/\s+/g, " "));
+      }
+    });
+    expect(sizeRules.length).toBeGreaterThan(0);
+    for (const s of sizeRules) {
+      expect(s, s).not.toMatch(/\] \[data-part/);
+    }
+  });
+});
+
+/*
+ * Slider takes every position from Ark inline: the range's inset, each
+ * thumb's and marker's offset along the track, and a centring `transform`.
+ * The stylesheet must centre the thumb across the track without touching
+ * that transform, and bring the dragging indicator back onto its own thumb.
+ */
+describe("@moderno-ui/core components.css — Slider", () => {
+  const ruleDecls = (selector: string): Declaration[] => {
+    const found: Declaration[] = [];
+    root.walkRules((r: Rule) => {
+      if (!r.selectors.map((s) => s.trim().replace(/\s+/g, " ")).includes(selector)) return;
+      r.walkDecls((d: Declaration) => {
+        found.push(d);
+      });
+    });
+    return found;
+  };
+  const prop = (decls: Declaration[], name: string) => decls.find((d) => d.prop === name)?.value;
+  const ROOT = `[data-scope="slider"][data-part="root"]`;
+  const THUMB = `[data-scope="slider"][data-part="thumb"]`;
+  const sliderRules = () => {
+    const rules: Rule[] = [];
+    root.walkRules((r: Rule) => {
+      if (r.selector.includes('[data-scope="slider"]')) rules.push(r);
+    });
+    return rules;
+  };
+
+  it("never sets transform, so Ark's inline centring along the track holds", () => {
+    for (const rule of sliderRules()) {
+      rule.walkDecls((d) => {
+        expect(d.prop, rule.selector).not.toBe("transform");
+      });
+    }
+  });
+
+  it("centres the thumb across the track with translate, in both orientations", () => {
+    expect(prop(ruleDecls(THUMB), "translate")).toBe("0 -50%");
+    expect(prop(ruleDecls(`${THUMB}[data-orientation="vertical"]`), "translate")).toBe("-50% 0");
+  });
+
+  it("puts the dragging indicator back on its own thumb, for both thumbs of a range", () => {
+    const decls = ruleDecls(`[data-scope="slider"][data-part="dragging-indicator"]`);
+    expect(prop(decls, "--slider-thumb-offset-0")).toBe("50%");
+    expect(prop(decls, "--slider-thumb-offset-1")).toBe("50%");
+  });
+
+  it("sizes the thumb from spacing slots at every size", () => {
+    const thumbs = [
+      THUMB,
+      `${ROOT}[data-size="sm"] > [data-part="control"] > [data-part="thumb"]`,
+      `${ROOT}[data-size="lg"] > [data-part="control"] > [data-part="thumb"]`,
+    ];
+    for (const selector of thumbs) {
+      const decls = ruleDecls(selector);
+      expect(prop(decls, "width"), selector).toMatch(/^var\(--spacing-\d\)$/);
+      expect(prop(decls, "height"), selector).toBe(prop(decls, "width"));
+    }
+  });
+
+  it("dims a disabled slider once: its parts are reset", () => {
+    expect(prop(ruleDecls(`${ROOT}[data-disabled] :where([data-part])`), "opacity")).toBe("1");
+  });
+
+  it("reaches its parts through child combinators", () => {
+    const sizeRules: string[] = [];
+    for (const r of sliderRules()) {
+      for (const s of r.selectors) {
+        if (s.includes(`${ROOT}[data-size=`)) sizeRules.push(s.replace(/\s+/g, " "));
+      }
+    }
+    expect(sizeRules.length).toBeGreaterThan(0);
+    for (const s of sizeRules) {
+      expect(s, s).not.toMatch(/\] \[data-part/);
+    }
+  });
+});
+
+/*
+ * A bordered control draws its focus ring INSIDE its box: a 2px ring offset
+ * by -2px covers the 1px resting border. An outset ring would leave that
+ * border visible inside it, a double border (7ea4320).
+ */
+describe("@moderno-ui/core components.css — bordered controls ring inset", () => {
+  const ruleDecls = (selector: string): Declaration[] => {
+    const found: Declaration[] = [];
+    root.walkRules((r: Rule) => {
+      if (!r.selectors.map((s) => s.trim().replace(/\s+/g, " ")).includes(selector)) return;
+      r.walkDecls((d: Declaration) => {
+        found.push(d);
+      });
+    });
+    return found;
+  };
+  const prop = (decls: Declaration[], name: string) => decls.find((d) => d.prop === name)?.value;
+
+  it.each([
+    `[data-scope="field"][data-part="input"]:focus-visible`,
+    `[data-scope="field"][data-part="textarea"]:focus-visible`,
+    `[data-scope="select"][data-part="trigger"]:focus-visible`,
+    `[data-scope="pin-input"][data-part="input"]:focus-visible`,
+    `[data-scope="number-input"][data-part="control"]:focus-within`,
+  ])("%s", (selector) => {
+    const decls = ruleDecls(selector);
+    expect(prop(decls, "outline")).toBe("2px solid var(--ring)");
+    expect(prop(decls, "outline-offset")).toBe("-2px");
+  });
+});
+
+/*
+ * NumberInput's control is the bordered box; the input inside it and the
+ * steppers draw no border or ring of their own, and a disabled number input
+ * is dimmed once.
+ */
+describe("@moderno-ui/core components.css — NumberInput", () => {
+  const ruleDecls = (selector: string): Declaration[] => {
+    const found: Declaration[] = [];
+    root.walkRules((r: Rule) => {
+      if (!r.selectors.map((s) => s.trim().replace(/\s+/g, " ")).includes(selector)) return;
+      r.walkDecls((d: Declaration) => {
+        found.push(d);
+      });
+    });
+    return found;
+  };
+  const prop = (decls: Declaration[], name: string) => decls.find((d) => d.prop === name)?.value;
+  const SCOPE = `[data-scope="number-input"]`;
+  const ROOT = `${SCOPE}[data-part="root"]`;
+
+  it("borders the control, not the input inside it", () => {
+    expect(prop(ruleDecls(`${SCOPE}[data-part="control"]`), "border")).toBe(
+      "1px solid var(--input)",
+    );
+    const input = ruleDecls(`${SCOPE}[data-part="input"]`);
+    expect(prop(input, "border")).toBe("0");
+    expect(prop(input, "outline")).toBe("none");
+  });
+
+  it("clears the native button fill on both steppers and dims them on :disabled too", () => {
+    for (const part of ["decrement-trigger", "increment-trigger"]) {
+      const selector = `${SCOPE}[data-part="${part}"]`;
+      expect(prop(ruleDecls(selector), "background-color"), part).toBe("transparent");
+      expect(prop(ruleDecls(`${selector}:disabled`), "opacity"), part).toBe("0.5");
+      expect(prop(ruleDecls(`${selector}[data-disabled]`), "opacity"), part).toBe("0.5");
+    }
+  });
+
+  it("dims a disabled number input once: its parts are reset", () => {
+    expect(prop(ruleDecls(`${ROOT}[data-disabled] :where([data-part])`), "opacity")).toBe("1");
+  });
+
+  it("sizes the box from spacing slots at every size", () => {
+    const controls = [
+      `${SCOPE}[data-part="control"]`,
+      `${ROOT}[data-size="sm"] > [data-part="control"]`,
+      `${ROOT}[data-size="lg"] > [data-part="control"]`,
+    ];
+    for (const selector of controls) {
+      expect(prop(ruleDecls(selector), "height"), selector).toMatch(/var\(--spacing-\d\)/);
+    }
+  });
+
+  it("reaches its parts through child combinators", () => {
+    const sizeRules: string[] = [];
+    root.walkRules((r: Rule) => {
+      for (const s of r.selectors) {
+        if (s.includes(`${ROOT}[data-size=`)) sizeRules.push(s.replace(/\s+/g, " "));
+      }
+    });
+    expect(sizeRules.length).toBeGreaterThan(0);
+    for (const s of sizeRules) {
+      expect(s, s).not.toMatch(/\] \[data-part/);
+    }
+  });
+});
+
+/*
+ * Pagination's page items and its four triggers are native <button>s, so the
+ * browser defaults leak through unless the sheet overrides them: the UA
+ * `buttonface` fill (a page button has no fill at rest), and a native
+ * `disabled` that Ark sets on a trigger with nowhere to go, which must look
+ * the same as `data-disabled` — also before Ark hydrates (3be5002).
+ */
+describe("@moderno-ui/core components.css — Pagination", () => {
+  const ruleDecls = (selector: string): Declaration[] => {
+    const found: Declaration[] = [];
+    root.walkRules((r: Rule) => {
+      if (!r.selectors.map((s) => s.trim().replace(/\s+/g, " ")).includes(selector)) return;
+      r.walkDecls((d: Declaration) => {
+        found.push(d);
+      });
+    });
+    return found;
+  };
+  const prop = (decls: Declaration[], name: string) => decls.find((d) => d.prop === name)?.value;
+  const SCOPE = `[data-scope="pagination"]`;
+  const BUTTONS = [
+    "item",
+    "first-trigger",
+    "prev-trigger",
+    "next-trigger",
+    "last-trigger",
+  ] as const;
+  const EVERY_BUTTON = `${SCOPE}:is( ${BUTTONS.map((p) => `[data-part="${p}"]`).join(", ")} )`;
+
+  it("clears the UA button fill on every button part", () => {
+    expect(prop(ruleDecls(EVERY_BUTTON), "background-color")).toBe("transparent");
+  });
+
+  it.each(BUTTONS)("dims %s on :disabled as well as [data-disabled]", (part) => {
+    for (const state of [":disabled", "[data-disabled]"]) {
+      const decls = ruleDecls(`${SCOPE}[data-part="${part}"]${state}`);
+      expect(prop(decls, "opacity"), state).toBe("0.5");
+      expect(prop(decls, "pointer-events"), state).toBe("none");
+    }
+  });
+
+  it("outlines the current page from contract slots", () => {
+    const current = ruleDecls(`${SCOPE}[data-part="item"][data-selected]`);
+    expect(prop(current, "border-color")).toBe("var(--border)");
+    expect(prop(current, "background-color")).toBe("var(--background)");
+  });
+
+  it("draws the focus ring inside every button", () => {
+    const decls = ruleDecls(`${EVERY_BUTTON}:focus-visible`);
+    expect(prop(decls, "outline")).toBe("2px solid var(--ring)");
+    expect(prop(decls, "outline-offset")).toBe("-2px");
+  });
+
+  it("sizes the buttons and the ellipsis from spacing slots at every size", () => {
+    const heights: string[] = [];
+    root.walkRules((r: Rule) => {
+      if (!r.selector.startsWith(SCOPE)) return;
+      r.walkDecls("height", (d) => {
+        heights.push(d.value);
+      });
+    });
+    expect(heights).toHaveLength(4);
+    for (const h of heights) expect(h).toMatch(/^(calc\()?var\(--spacing-\d\)/);
+  });
+});

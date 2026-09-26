@@ -16,11 +16,28 @@ describe("AGENT_COMPONENTS", () => {
       "Alert",
       "Card",
       "Divider",
+      "Badge",
+      "Chip",
+      "Indicator",
+      "Skeleton",
+      "Spinner",
+      "Callout",
       "Field",
       "Checkbox",
       "Dialog",
       "Select",
       "PinInput",
+      "Avatar",
+      "Switch",
+      "RadioGroup",
+      "Toggle",
+      "ToggleGroup",
+      "Tabs",
+      "Accordion",
+      "Progress",
+      "Slider",
+      "NumberInput",
+      "Pagination",
       "LineChart",
       "AreaChart",
       "BarChart",
@@ -114,6 +131,12 @@ describe("buildComponentsManifest", () => {
       "Alert",
       "Card",
       "Divider",
+      "Badge",
+      "Chip",
+      "Indicator",
+      "Skeleton",
+      "Spinner",
+      "Callout",
       "LineChart",
       "AreaChart",
       "BarChart",
@@ -135,6 +158,233 @@ describe("buildComponentsManifest", () => {
     const doc = manifest.components.find((c) => c.name === "Dialog")!;
     expect(doc.props).toEqual([]);
     expect(doc.variants).toBeUndefined();
+  });
+
+  it("carries Badge, Chip and Indicator props — what validate_usage checks against", () => {
+    const badge = manifest.components.find((c) => c.name === "Badge")!;
+    expect(badge.scope).toBe("badge");
+    expect(badge.props.map((p) => p.name).sort()).toEqual(["dot", "size", "variant"]);
+    expect(badge.variants?.variant).toContain("warning");
+    expect(badge.parts.map((p) => p.name)).toEqual(["root", "dot"]);
+
+    const chip = manifest.components.find((c) => c.name === "Chip")!;
+    expect(chip.scope).toBe("chip");
+    expect(chip.props.map((p) => p.name).sort()).toEqual([
+      "onRemove",
+      "removable",
+      "removeLabel",
+      "size",
+      "variant",
+    ]);
+    expect(chip.parts.map((p) => p.name)).toEqual(["root", "label", "remove-trigger"]);
+
+    // `pulse` is a real prop but not a recipe variant, so it is in `props` and
+    // absent from `variants`: the enum check has nothing to gate it against.
+    const indicator = manifest.components.find((c) => c.name === "Indicator")!;
+    expect(indicator.scope).toBe("indicator");
+    expect(indicator.props.map((p) => p.name).sort()).toEqual(["pulse", "size", "variant"]);
+    expect(indicator.variants).toEqual({
+      variant: ["neutral", "info", "success", "warning", "error"],
+      size: ["sm", "md"],
+    });
+    expect(indicator.parts.map((p) => p.name)).toEqual(["root", "dot", "label"]);
+  });
+
+  it("carries Skeleton and Spinner props — what validate_usage checks against", () => {
+    const skeleton = manifest.components.find((c) => c.name === "Skeleton")!;
+    expect(skeleton.scope).toBe("skeleton");
+    expect(skeleton.props.map((p) => p.name)).toEqual(["shape"]);
+    expect(skeleton.variants).toEqual({ shape: ["text", "rect", "circle"] });
+    expect(skeleton.parts.map((p) => p.name)).toEqual(["root"]);
+
+    const spinner = manifest.components.find((c) => c.name === "Spinner")!;
+    expect(spinner.scope).toBe("spinner");
+    expect(spinner.props.map((p) => p.name).sort()).toEqual(["label", "size"]);
+    expect(spinner.variants).toEqual({ size: ["sm", "md", "lg"] });
+    expect(spinner.parts.map((p) => p.name)).toEqual(["root", "circle", "label"]);
+  });
+
+  it("carries Callout's variant and anatomy — what validate_usage checks against", () => {
+    const callout = manifest.components.find((c) => c.name === "Callout")!;
+    expect(callout.scope).toBe("callout");
+    expect(callout.props.map((p) => p.name)).toEqual(["variant"]);
+    expect(callout.variants).toEqual({ variant: ["info", "success", "warning", "error"] });
+    expect(callout.parts.map((p) => p.name)).toEqual([
+      "root",
+      "icon",
+      "content",
+      "title",
+      "description",
+    ]);
+    expect(callout.propsComplete).toBe(true);
+  });
+
+  it("carries Avatar's recipe props, variants and Ark parts — what validate_usage checks against", () => {
+    const avatar = manifest.components.find((c) => c.name === "Avatar")!;
+    expect(avatar.scope).toBe("avatar");
+    expect(avatar.props.map((p) => p.name).sort()).toEqual(["shape", "size"]);
+    expect(avatar.variants).toEqual({ size: ["sm", "md", "lg"], shape: ["circle", "square"] });
+    expect(avatar.parts.map((p) => p.name)).toEqual(["root", "image", "fallback"]);
+    // Ark's own Root props (onStatusChange, ids) live under node_modules.
+    expect(avatar.propsComplete).toBe(false);
+  });
+
+  it("carries Switch's recipe prop, variants and Ark parts — what validate_usage checks against", () => {
+    const sw = manifest.components.find((c) => c.name === "Switch")!;
+    expect(sw.scope).toBe("switch");
+    expect(sw.props.map((p) => p.name)).toEqual(["size"]);
+    expect(sw.variants).toEqual({ size: ["sm", "md", "lg"] });
+    expect(sw.parts.map((p) => p.name)).toEqual(["root", "control", "thumb", "label"]);
+    // Ark's own Root props (checked, onCheckedChange, …) live under node_modules.
+    expect(sw.propsComplete).toBe(false);
+  });
+
+  it("carries RadioGroup's recipe prop, variants and parts — what validate_usage checks against", () => {
+    const rg = manifest.components.find((c) => c.name === "RadioGroup")!;
+    expect(rg.scope).toBe("radio-group");
+    expect(rg.props.map((p) => p.name)).toEqual(["size"]);
+    expect(rg.variants).toEqual({ size: ["sm", "md", "lg"] });
+    expect(rg.parts.map((p) => p.name)).toEqual([
+      "root",
+      "label",
+      "item",
+      "item-control",
+      "item-text",
+      "item-description",
+      "indicator",
+    ]);
+    // Ark's own Root props (value, orientation, onValueChange, …) live under node_modules.
+    expect(rg.propsComplete).toBe(false);
+  });
+
+  it("carries Toggle's and ToggleGroup's recipe props, variants and Ark parts", () => {
+    const toggle = manifest.components.find((c) => c.name === "Toggle")!;
+    expect(toggle.scope).toBe("toggle");
+    expect(toggle.props.map((p) => p.name)).toEqual(["size", "variant"]);
+    expect(toggle.variants).toEqual({ variant: ["ghost", "outline"], size: ["sm", "md", "lg"] });
+    expect(toggle.parts.map((p) => p.name)).toEqual(["root", "indicator"]);
+
+    const group = manifest.components.find((c) => c.name === "ToggleGroup")!;
+    expect(group.scope).toBe("toggle-group");
+    expect(group.props.map((p) => p.name)).toEqual(["size", "variant"]);
+    expect(group.variants).toEqual({ variant: ["ghost", "outline"], size: ["sm", "md", "lg"] });
+    expect(group.parts.map((p) => p.name)).toEqual(["root", "item"]);
+    // Ark's own Root props (pressed, value, multiple, …) live under node_modules.
+    expect(toggle.propsComplete).toBe(false);
+    expect(group.propsComplete).toBe(false);
+  });
+
+  it("carries Tabs' recipe props, variants and Ark parts", () => {
+    const tabs = manifest.components.find((c) => c.name === "Tabs")!;
+    expect(tabs.scope).toBe("tabs");
+    expect(tabs.props.map((p) => p.name)).toEqual(["size", "variant"]);
+    expect(tabs.variants).toEqual({ variant: ["line", "enclosed"], size: ["sm", "md", "lg"] });
+    expect(tabs.parts.map((p) => p.name)).toEqual([
+      "root",
+      "list",
+      "trigger",
+      "indicator",
+      "content",
+    ]);
+    // Ark's own Root props (value, orientation, activationMode, …) live under node_modules.
+    expect(tabs.propsComplete).toBe(false);
+  });
+
+  it("carries Accordion's recipe props, variants and Ark parts", () => {
+    const accordion = manifest.components.find((c) => c.name === "Accordion")!;
+    expect(accordion.scope).toBe("accordion");
+    expect(accordion.props.map((p) => p.name)).toEqual(["size", "variant"]);
+    expect(accordion.variants).toEqual({
+      variant: ["line", "enclosed"],
+      size: ["sm", "md", "lg"],
+    });
+    expect(accordion.parts.map((p) => p.name)).toEqual([
+      "root",
+      "item",
+      "item-trigger",
+      "item-indicator",
+      "item-content",
+    ]);
+    // Ark's own Root props (value, multiple, collapsible, …) live under node_modules.
+    expect(accordion.propsComplete).toBe(false);
+  });
+
+  it("carries Progress's recipe prop, size and Ark parts", () => {
+    const progress = manifest.components.find((c) => c.name === "Progress")!;
+    expect(progress.scope).toBe("progress");
+    expect(progress.props.map((p) => p.name)).toEqual(["size"]);
+    expect(progress.variants).toEqual({ size: ["sm", "md", "lg"] });
+    expect(progress.parts.map((p) => p.name)).toEqual([
+      "root",
+      "label",
+      "value-text",
+      "track",
+      "range",
+      "circle",
+      "circle-track",
+      "circle-range",
+      "view",
+    ]);
+    // Ark's own Root props (value, min, max, …) live under node_modules.
+    expect(progress.propsComplete).toBe(false);
+  });
+
+  it("carries Slider's recipe prop, size and Ark parts", () => {
+    const slider = manifest.components.find((c) => c.name === "Slider")!;
+    expect(slider.scope).toBe("slider");
+    expect(slider.props.map((p) => p.name)).toEqual(["size"]);
+    expect(slider.variants).toEqual({ size: ["sm", "md", "lg"] });
+    expect(slider.parts.map((p) => p.name)).toEqual([
+      "root",
+      "label",
+      "value-text",
+      "control",
+      "track",
+      "range",
+      "thumb",
+      "dragging-indicator",
+      "marker-group",
+      "marker",
+    ]);
+    // Ark's own Root props (value, min, max, step, …) live under node_modules.
+    expect(slider.propsComplete).toBe(false);
+  });
+
+  it("carries NumberInput's recipe prop, size and Ark parts", () => {
+    const numberInput = manifest.components.find((c) => c.name === "NumberInput")!;
+    expect(numberInput.scope).toBe("number-input");
+    expect(numberInput.props.map((p) => p.name)).toEqual(["size"]);
+    expect(numberInput.variants).toEqual({ size: ["sm", "md", "lg"] });
+    expect(numberInput.parts.map((p) => p.name)).toEqual([
+      "root",
+      "label",
+      "control",
+      "input",
+      "decrement-trigger",
+      "increment-trigger",
+      "scrubber",
+      "value-text",
+    ]);
+    // Ark's own Root props (value, min, max, step, …) live under node_modules.
+    expect(numberInput.propsComplete).toBe(false);
+  });
+
+  it("carries Pagination's recipe prop, size and Ark parts", () => {
+    const pagination = manifest.components.find((c) => c.name === "Pagination")!;
+    expect(pagination.scope).toBe("pagination");
+    expect(pagination.props.map((p) => p.name)).toEqual(["size"]);
+    expect(pagination.variants).toEqual({ size: ["sm", "md", "lg"] });
+    expect(pagination.parts.map((p) => p.name)).toEqual([
+      "root",
+      "first-trigger",
+      "prev-trigger",
+      "item",
+      "ellipsis",
+      "next-trigger",
+      "last-trigger",
+    ]);
+    // Ark's own Root props (count, page, pageSize, …) live under node_modules.
+    expect(pagination.propsComplete).toBe(false);
   });
 
   it("reads variants straight off the shared @moderno-ui/core recipes", () => {

@@ -1,0 +1,200 @@
+---
+title: Badge
+description: A short label for a status, a category or a count, with an optional dot.
+group: Components
+order: 17
+component: Badge
+pkg: "@moderno-ui/react"
+agentPropsHash: "sha256:8f2365c9ead5e3911e3667ae0736bba55fccff9a132ad4312b78cc89d1f8f6e2"
+agent:
+  intent: A short, static label for a status, a category or a count.
+  whenToUse: "Next to a title, in a table cell or on a card, to say what state something is in: Paid, Draft, Beta, 3 new."
+  whenNotToUse:
+    - case: A token the user can remove or pick
+      use: Chip
+    - case: A live status dot with no text
+      use: Indicator
+    - case: A message that explains something
+      use: Alert
+  gotchas:
+    - "Keep the text to one or two words; a badge never wraps."
+    - "The dot is decorative and hidden from assistive tech — the text must say the status."
+    - "error uses the --destructive slot; there is no danger variant."
+  theming:
+    - "Status badges tint from --info / --success / --warning / --destructive; solid uses --primary. Never pass a colour."
+    - "The pill shape is --radius-full, so it stays round even when a theme squares --radius."
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import BadgeDemo from "../../../examples/badge/badge.svelte";
+import baseReact from "../../../examples/badge/react.tsx?raw";
+import baseVue from "../../../examples/badge/vue.vue?raw";
+import baseSolid from "../../../examples/badge/solid.tsx?raw";
+import baseSvelte from "../../../examples/badge/badge.svelte?raw";
+import BadgeVariantsDemo from "../../../examples/badge/variants/badge-variants.svelte";
+import variantsReact from "../../../examples/badge/variants/react.tsx?raw";
+import variantsVue from "../../../examples/badge/variants/vue.vue?raw";
+import variantsSolid from "../../../examples/badge/variants/solid.tsx?raw";
+import variantsSvelte from "../../../examples/badge/variants/badge-variants.svelte?raw";
+import BadgeStatusesDemo from "../../../examples/badge/statuses/badge-statuses.svelte";
+import statusesReact from "../../../examples/badge/statuses/react.tsx?raw";
+import statusesVue from "../../../examples/badge/statuses/vue.vue?raw";
+import statusesSolid from "../../../examples/badge/statuses/solid.tsx?raw";
+import statusesSvelte from "../../../examples/badge/statuses/badge-statuses.svelte?raw";
+import BadgeDotDemo from "../../../examples/badge/dot/badge-dot.svelte";
+import dotReact from "../../../examples/badge/dot/react.tsx?raw";
+import dotVue from "../../../examples/badge/dot/vue.vue?raw";
+import dotSolid from "../../../examples/badge/dot/solid.tsx?raw";
+import dotSvelte from "../../../examples/badge/dot/badge-dot.svelte?raw";
+import BadgeSizesDemo from "../../../examples/badge/sizes/badge-sizes.svelte";
+import sizesReact from "../../../examples/badge/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/badge/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/badge/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/badge/sizes/badge-sizes.svelte?raw";
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
+  <BadgeDemo client:visible />
+</Preview>
+
+## Installation
+
+<Install pkg="@moderno-ui/react" />
+
+## Usage
+
+Use a badge to label the state of something already on the page: an invoice that is **Paid**, a feature in **Beta**, **3** new messages.
+
+<ForFramework fw="react">
+
+```tsx
+import { Badge } from "@moderno-ui/react";
+```
+
+```tsx
+<Badge variant="success">Paid</Badge>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Badge } from "@moderno-ui/vue";
+```
+
+```vue
+<Badge variant="success">Paid</Badge>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Badge } from "@moderno-ui/svelte";
+```
+
+```svelte
+<Badge variant="success">Paid</Badge>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Badge } from "@moderno-ui/solid";
+```
+
+```tsx
+<Badge variant="success">Paid</Badge>
+```
+
+</ForFramework>
+
+## API Reference
+
+### Badge
+
+Renders a `<span>`; its children are the text. `variant` defaults to `neutral` and `size` to `md`.
+
+<PropsTable component="Badge" />
+
+### Parts
+
+| Part   | Element  | Description                                                     |
+| ------ | -------- | --------------------------------------------------------------- |
+| `root` | `<span>` | The label. Carries `data-variant` and `data-size`.              |
+| `dot`  | `<span>` | Rendered only with `dot`. Takes the text colour; `aria-hidden`. |
+
+## Examples
+
+### Variants
+
+`neutral` is the quiet default, `solid` the loudest, `outline` has no fill.
+
+<Preview
+  examples={{
+    react: variantsReact,
+    vue: variantsVue,
+    solid: variantsSolid,
+    svelte: variantsSvelte,
+  }}
+>
+  <BadgeVariantsDemo client:visible />
+</Preview>
+
+### Statuses
+
+Each status tints from its own colour slot.
+
+<Preview
+  examples={{
+    react: statusesReact,
+    vue: statusesVue,
+    solid: statusesSolid,
+    svelte: statusesSvelte,
+  }}
+>
+  <BadgeStatusesDemo client:visible />
+</Preview>
+
+### With a dot
+
+<Preview
+  examples={{
+    react: dotReact,
+    vue: dotVue,
+    solid: dotSolid,
+    svelte: dotSvelte,
+  }}
+>
+  <BadgeDotDemo client:visible />
+</Preview>
+
+### Sizes
+
+`sm` fits dense rows such as table cells.
+
+<Preview
+  examples={{
+    react: sizesReact,
+    vue: sizesVue,
+    solid: sizesSolid,
+    svelte: sizesSvelte,
+  }}
+>
+  <BadgeSizesDemo client:visible />
+</Preview>
+
+## Notes
+
+- Badge is CSS-only: a `<span>` with `data-scope="badge"`, no Ark machine.
+- A badge is not interactive. For something the user can remove, use Chip.
+- The dot is decorative; the text must still say the status.

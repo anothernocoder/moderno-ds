@@ -1,0 +1,279 @@
+---
+title: Number Input
+description: Un campo de texto para un número, con botones que lo suben y lo bajan.
+group: Componentes
+order: 35
+component: NumberInput
+pkg: "@moderno-ui/react"
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import NumberInputDemo from "../../../examples/number-input/number-input.svelte";
+import baseReact from "../../../examples/number-input/react.tsx?raw";
+import baseVue from "../../../examples/number-input/vue.vue?raw";
+import baseSolid from "../../../examples/number-input/solid.tsx?raw";
+import baseSvelte from "../../../examples/number-input/number-input.svelte?raw";
+import NumberInputMinMaxDemo from "../../../examples/number-input/min-max/number-input-min-max.svelte";
+import minMaxReact from "../../../examples/number-input/min-max/react.tsx?raw";
+import minMaxVue from "../../../examples/number-input/min-max/vue.vue?raw";
+import minMaxSolid from "../../../examples/number-input/min-max/solid.tsx?raw";
+import minMaxSvelte from "../../../examples/number-input/min-max/number-input-min-max.svelte?raw";
+import NumberInputStepDemo from "../../../examples/number-input/step/number-input-step.svelte";
+import stepReact from "../../../examples/number-input/step/react.tsx?raw";
+import stepVue from "../../../examples/number-input/step/vue.vue?raw";
+import stepSolid from "../../../examples/number-input/step/solid.tsx?raw";
+import stepSvelte from "../../../examples/number-input/step/number-input-step.svelte?raw";
+import NumberInputFormattingDemo from "../../../examples/number-input/formatting/number-input-formatting.svelte";
+import formattingReact from "../../../examples/number-input/formatting/react.tsx?raw";
+import formattingVue from "../../../examples/number-input/formatting/vue.vue?raw";
+import formattingSolid from "../../../examples/number-input/formatting/solid.tsx?raw";
+import formattingSvelte from "../../../examples/number-input/formatting/number-input-formatting.svelte?raw";
+import NumberInputScrubberDemo from "../../../examples/number-input/scrubber/number-input-scrubber.svelte";
+import scrubberReact from "../../../examples/number-input/scrubber/react.tsx?raw";
+import scrubberVue from "../../../examples/number-input/scrubber/vue.vue?raw";
+import scrubberSolid from "../../../examples/number-input/scrubber/solid.tsx?raw";
+import scrubberSvelte from "../../../examples/number-input/scrubber/number-input-scrubber.svelte?raw";
+import NumberInputSizesDemo from "../../../examples/number-input/sizes/number-input-sizes.svelte";
+import sizesReact from "../../../examples/number-input/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/number-input/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/number-input/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/number-input/sizes/number-input-sizes.svelte?raw";
+
+<FrameworkSelect locale="es" />
+
+<Preview
+  examples={{
+    react: baseReact,
+    vue: baseVue,
+    solid: baseSolid,
+    svelte: baseSvelte,
+  }}
+>
+  <NumberInputDemo client:visible />
+</Preview>
+
+## Instalación
+
+<Install pkg="@moderno-ui/react" />
+
+## Uso
+
+Number Input es un campo de texto para un número, con botones que lo suben y lo bajan. Úsalo para un número exacto con límites, como una cantidad. Las flechas del teclado también lo cambian.
+
+<ForFramework fw="react">
+
+```tsx
+import { NumberInput } from "@moderno-ui/react";
+```
+
+```tsx
+<NumberInput.Root value={quantity} onValueChange={(details) => setQuantity(details.value)}>
+  <NumberInput.Label>Cantidad</NumberInput.Label>
+  <NumberInput.Control>
+    <NumberInput.Input />
+    <NumberInput.DecrementTrigger>−</NumberInput.DecrementTrigger>
+    <NumberInput.IncrementTrigger>+</NumberInput.IncrementTrigger>
+  </NumberInput.Control>
+</NumberInput.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { NumberInput } from "@moderno-ui/vue";
+```
+
+```vue
+<NumberInput.Root v-model="quantity">
+  <NumberInput.Label>Cantidad</NumberInput.Label>
+  <NumberInput.Control>
+    <NumberInput.Input />
+    <NumberInput.DecrementTrigger>−</NumberInput.DecrementTrigger>
+    <NumberInput.IncrementTrigger>+</NumberInput.IncrementTrigger>
+  </NumberInput.Control>
+</NumberInput.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { NumberInput } from "@moderno-ui/svelte";
+```
+
+```svelte
+<NumberInput.Root value={quantity} onValueChange={(details) => (quantity = details.value)}>
+  <NumberInput.Label>Cantidad</NumberInput.Label>
+  <NumberInput.Control>
+    <NumberInput.Input />
+    <NumberInput.DecrementTrigger>−</NumberInput.DecrementTrigger>
+    <NumberInput.IncrementTrigger>+</NumberInput.IncrementTrigger>
+  </NumberInput.Control>
+</NumberInput.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { NumberInput } from "@moderno-ui/solid";
+```
+
+```tsx
+<NumberInput.Root value={quantity()} onValueChange={(details) => setQuantity(details.value)}>
+  <NumberInput.Label>Cantidad</NumberInput.Label>
+  <NumberInput.Control>
+    <NumberInput.Input />
+    <NumberInput.DecrementTrigger>−</NumberInput.DecrementTrigger>
+    <NumberInput.IncrementTrigger>+</NumberInput.IncrementTrigger>
+  </NumberInput.Control>
+</NumberInput.Root>
+```
+
+</ForFramework>
+
+El valor es un texto, como `"3"`. `onValueChange` también da `valueAsNumber`.
+
+## Referencia de la API
+
+### NumberInput.Root
+
+`size` es el añadido de Moderno; todas las partes lo siguen. El resto de props vienen del NumberInput de Ark.
+
+<PropsTable component="NumberInput" />
+
+| Prop               | Tipo                                                          | Por defecto | Descripción                                                     |
+| ------------------ | ------------------------------------------------------------- | ----------- | --------------------------------------------------------------- |
+| `value`            | `string`                                                      | —           | Valor controlado.                                               |
+| `defaultValue`     | `string`                                                      | —           | Valor al principio, sin control.                                |
+| `onValueChange`    | `(details: { value: string; valueAsNumber: number }) => void` | —           | Se llama cuando cambia el valor.                                |
+| `onValueInvalid`   | `(details: { value: string; reason: string }) => void`        | —           | Se llama cuando el valor baja de `min` o pasa de `max`.         |
+| `min`              | `number`                                                      | —           | El valor más bajo.                                              |
+| `max`              | `number`                                                      | —           | El valor más alto.                                              |
+| `step`             | `number`                                                      | `1`         | Cuánto avanza un paso.                                          |
+| `formatOptions`    | `Intl.NumberFormatOptions`                                    | —           | Cómo mostrar el número: moneda, porcentaje, decimales.          |
+| `locale`           | `string`                                                      | `"en-US"`   | El idioma con el que se formatea y se lee el número.            |
+| `clampValueOnBlur` | `boolean`                                                     | `true`      | Ajusta un valor escrito a `min`–`max` al salir del campo.       |
+| `allowOverflow`    | `boolean`                                                     | `false`     | Deja que un paso pase de `min` y `max`.                         |
+| `allowMouseWheel`  | `boolean`                                                     | `false`     | Cambia el valor con la rueda del ratón mientras tiene el foco.  |
+| `spinOnPress`      | `boolean`                                                     | `true`      | Sigue cambiando el valor mientras se mantiene pulsado un botón. |
+| `disabled`         | `boolean`                                                     | `false`     | Atenúa el campo e ignora la entrada.                            |
+| `readOnly`         | `boolean`                                                     | `false`     | Muestra el valor pero ignora la entrada.                        |
+| `invalid`          | `boolean`                                                     | —           | Marca el valor como erróneo. Sin él, sigue a `min` y `max`.     |
+| `required`         | `boolean`                                                     | `false`     | Marca el campo como obligatorio en un formulario.               |
+| `name`             | `string`                                                      | —           | El nombre de campo del input.                                   |
+| `translations`     | `{ incrementLabel?: string; decrementLabel?: string }`        | —           | Lo que dice un lector de pantalla de cada botón.                |
+
+En Vue, enlaza el valor con `:model-value` o `v-model`, y escucha con `@value-change`.
+
+### Partes
+
+| Parte                          | Elemento   | Descripción                                                     |
+| ------------------------------ | ---------- | --------------------------------------------------------------- |
+| `NumberInput.Root`             | `<div>`    | Lleva `data-size`.                                              |
+| `NumberInput.Label`            | `<label>`  | Opcional. Nombra el campo. Al pulsarla, enfoca el input.        |
+| `NumberInput.Control`          | `<div>`    | La caja con borde. Contiene el input y los botones.             |
+| `NumberInput.Input`            | `<input>`  | El campo de texto, con `role="spinbutton"`.                     |
+| `NumberInput.DecrementTrigger` | `<button>` | Baja el valor un paso. Se apaga en `min`.                       |
+| `NumberInput.IncrementTrigger` | `<button>` | Sube el valor un paso. Se apaga en `max`.                       |
+| `NumberInput.Scrubber`         | `<div>`    | Opcional. Arrástralo de lado para cambiar el valor.             |
+| `NumberInput.ValueText`        | `<span>`   | Opcional. El valor formateado, para mostrarlo fuera de la caja. |
+
+### Atributos data
+
+| Atributo         | Valores                                                            |
+| ---------------- | ------------------------------------------------------------------ |
+| `data-focus`     | Mientras el input tiene el foco, en la raíz, la etiqueta y la caja |
+| `data-invalid`   | Cuando el valor es erróneo, en la raíz, la caja y el input         |
+| `data-disabled`  | Con `disabled`, en todas las partes; en un botón en su límite      |
+| `data-scrubbing` | Mientras se arrastra el scrubber, en la raíz y sus partes          |
+| `data-size`      | En la raíz: `"sm"`, `"md"` o `"lg"`                                |
+
+## Ejemplos
+
+### Mínimo y máximo
+
+En un límite, su botón se apaga. Un valor escrito fuera de los límites se pone en rojo y vuelve a su sitio al salir del campo.
+
+<Preview
+  examples={{
+    react: minMaxReact,
+    vue: minMaxVue,
+    solid: minMaxSolid,
+    svelte: minMaxSvelte,
+  }}
+>
+  <NumberInputMinMaxDemo client:visible />
+</Preview>
+
+### Paso
+
+`step` fija cuánto avanza cada pulsación o tecla de flecha.
+
+<Preview
+  examples={{
+    react: stepReact,
+    vue: stepVue,
+    solid: stepSolid,
+    svelte: stepSvelte,
+  }}
+>
+  <NumberInputStepDemo client:visible />
+</Preview>
+
+### Formato
+
+`formatOptions` acepta las opciones de `Intl.NumberFormat`. El usuario puede seguir escribiendo un número sin formato.
+
+<Preview
+  examples={{
+    react: formattingReact,
+    vue: formattingVue,
+    solid: formattingSolid,
+    svelte: formattingSvelte,
+  }}
+>
+  <NumberInputFormattingDemo client:visible />
+</Preview>
+
+### Scrubber
+
+Pon `NumberInput.Scrubber` dentro de la caja y arrástralo de lado para cambiar el valor.
+
+<Preview
+  examples={{
+    react: scrubberReact,
+    vue: scrubberVue,
+    solid: scrubberSolid,
+    svelte: scrubberSvelte,
+  }}
+>
+  <NumberInputScrubberDemo client:visible />
+</Preview>
+
+### Tamaños
+
+<Preview
+  examples={{
+    react: sizesReact,
+    vue: sizesVue,
+    solid: sizesSolid,
+    svelte: sizesSvelte,
+  }}
+>
+  <NumberInputSizesDemo client:visible />
+</Preview>
+
+## Notas
+
+- `NumberInput.Root` está envuelto para añadir `size`; el resto de partes son las de Ark sin cambios.
+- Los botones no entran en el orden de tabulación. Las flechas hacen lo mismo desde el input; con Mayús avanzan diez pasos de golpe.
+- Para un valor que se elige arrastrando por una pista, usa un Slider.

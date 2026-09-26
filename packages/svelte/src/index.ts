@@ -9,15 +9,39 @@
  */
 import type { Component } from "svelte";
 import {
+  Avatar as ArkAvatar,
   Checkbox as ArkCheckbox,
   Field as ArkField,
   PinInput as ArkPinInput,
+  RadioGroup as ArkRadioGroup,
   Select as ArkSelect,
+  Switch as ArkSwitch,
+  Tabs as ArkTabs,
+  Accordion as ArkAccordion,
+  Progress as ArkProgress,
+  Slider as ArkSlider,
+  NumberInput as ArkNumberInput,
+  Pagination as ArkPagination,
+  Toggle as ArkToggle,
+  ToggleGroup as ArkToggleGroup,
 } from "@ark-ui/svelte";
+import AvatarRoot from "./AvatarRoot.svelte";
 import CheckboxRoot from "./CheckboxRoot.svelte";
 import FieldRoot from "./FieldRoot.svelte";
 import PinInputRoot from "./PinInputRoot.svelte";
 import SelectRoot from "./SelectRoot.svelte";
+import SwitchRoot from "./SwitchRoot.svelte";
+import SwitchHiddenInput from "./SwitchHiddenInput.svelte";
+import RadioGroupRoot from "./RadioGroupRoot.svelte";
+import RadioGroupItemDescription from "./RadioGroupItemDescription.svelte";
+import ToggleRoot from "./ToggleRoot.svelte";
+import ToggleGroupRoot from "./ToggleGroupRoot.svelte";
+import TabsRoot from "./TabsRoot.svelte";
+import AccordionRoot from "./AccordionRoot.svelte";
+import ProgressRoot from "./ProgressRoot.svelte";
+import SliderRoot from "./SliderRoot.svelte";
+import NumberInputRoot from "./NumberInputRoot.svelte";
+import PaginationRoot from "./PaginationRoot.svelte";
 import type { AlertPartProps, AlertRootProps } from "./alert-props.js";
 import AlertRoot from "./AlertRoot.svelte";
 import AlertIcon from "./AlertIcon.svelte";
@@ -25,6 +49,12 @@ import AlertContent from "./AlertContent.svelte";
 import AlertTitle from "./AlertTitle.svelte";
 import AlertDescription from "./AlertDescription.svelte";
 import AlertAction from "./AlertAction.svelte";
+import type { CalloutPartProps, CalloutRootProps } from "./callout-props.js";
+import CalloutRoot from "./CalloutRoot.svelte";
+import CalloutIcon from "./CalloutIcon.svelte";
+import CalloutContent from "./CalloutContent.svelte";
+import CalloutTitle from "./CalloutTitle.svelte";
+import CalloutDescription from "./CalloutDescription.svelte";
 import CardRoot from "./CardRoot.svelte";
 import CardHeader from "./CardHeader.svelte";
 import CardTitle from "./CardTitle.svelte";
@@ -65,6 +95,28 @@ export type { AlertRootProps, AlertPartProps } from "./alert-props.js";
 export type { AlertVariant, AlertSize } from "@moderno-ui/core";
 
 /**
+ * Callout — a CSS-only soft note (no Ark machine), with the same
+ * `Root > Icon + Content(Title + Description)` anatomy in every framework.
+ * Annotated with the shared prop types from `callout-props.ts`, like `Alert`.
+ */
+export const Callout: {
+  Root: Component<CalloutRootProps>;
+  Icon: Component<CalloutPartProps>;
+  Content: Component<CalloutPartProps>;
+  Title: Component<CalloutPartProps>;
+  Description: Component<CalloutPartProps>;
+} = {
+  Root: CalloutRoot,
+  Icon: CalloutIcon,
+  Content: CalloutContent,
+  Title: CalloutTitle,
+  Description: CalloutDescription,
+};
+
+export type { CalloutRootProps, CalloutPartProps } from "./callout-props.js";
+export type { CalloutVariant } from "@moderno-ui/core";
+
+/**
  * Card — a CSS-only surface with an Ark-style anatomy. No Ark machine exists
  * for a card (nothing to track), so every part is authored here; each emits
  * `data-scope="card"` plus its own `data-part`, and the root carries
@@ -93,6 +145,32 @@ export type { CardVariant, CardSize } from "@moderno-ui/core";
  * `components.css` stroke as every other binding.
  */
 export { default as Divider } from "./Divider.svelte";
+
+/**
+ * Badge, Chip and Indicator — CSS-only (no Ark machine). Same recipes and
+ * `components.css` rules as every other binding: a status label, a removable
+ * token (it reports the press through `onRemove`) and a status dot.
+ */
+export { default as Badge } from "./Badge.svelte";
+export { default as Chip } from "./Chip.svelte";
+export { default as Indicator } from "./Indicator.svelte";
+export type {
+  BadgeVariant,
+  BadgeSize,
+  ChipVariant,
+  ChipSize,
+  IndicatorVariant,
+  IndicatorSize,
+} from "@moderno-ui/core";
+
+/**
+ * Skeleton and Spinner — CSS-only loading states (no Ark machine). Same
+ * recipes and `components.css` rules as every other binding: a muted
+ * placeholder in a content shape, and a ring with a screen-reader label.
+ */
+export { default as Skeleton } from "./Skeleton.svelte";
+export { default as Spinner } from "./Spinner.svelte";
+export type { SkeletonShape, SpinnerSize } from "@moderno-ui/core";
 
 /**
  * Charts (Phase 4) — pure SVG maps over `@moderno-ui/charts-core` models. Each
@@ -157,6 +235,188 @@ export const PinInput: Omit<typeof ArkPinInput, "Root"> & { Root: typeof PinInpu
   Root: PinInputRoot,
 };
 
+/**
+ * Avatar — a picture of a person or a team, with initials when there is none.
+ * Ark shows `Fallback` while the image loads or when it fails, `Image` once it
+ * has loaded; only `Root` is wrapped (to inject the `size` × `shape` recipe),
+ * every other part is Ark's verbatim. Annotated so the emitted `.d.ts` doesn't
+ * inline an un-nameable `@zag-js` type (TS2742).
+ */
+export const Avatar: Omit<typeof ArkAvatar, "Root"> & { Root: typeof AvatarRoot } = {
+  ...ArkAvatar,
+  Root: AvatarRoot,
+};
+export type { AvatarSize, AvatarShape } from "@moderno-ui/core";
+
+/**
+ * Switch — an on/off control with a label, for a setting that applies at once.
+ * Ark binds the root `<label>` to a visually hidden native input and stamps
+ * `data-state` / `data-disabled` / `data-invalid` on every part. `Root` is
+ * wrapped to inject the `size` recipe and `HiddenInput` to add its switch
+ * role; every other part is Ark's verbatim. Annotated so the emitted `.d.ts`
+ * doesn't inline an un-nameable `@zag-js` type (TS2742).
+ */
+export const Switch: Omit<typeof ArkSwitch, "Root" | "HiddenInput"> & {
+  Root: typeof SwitchRoot;
+  HiddenInput: typeof SwitchHiddenInput;
+} = {
+  ...ArkSwitch,
+  Root: SwitchRoot,
+  HiddenInput: SwitchHiddenInput,
+};
+export type { SwitchSize } from "@moderno-ui/core";
+
+/**
+ * RadioGroup — pick exactly one option from a short list. Ark binds the root
+ * `role="radiogroup"` to its `Label` and each `Item` `<label>` to a visually
+ * hidden native radio, and stamps `data-state` / `data-disabled` /
+ * `data-invalid` on every item part and `data-orientation` on the root.
+ * `Root` is wrapped to inject the `size` recipe and `ItemDescription` is
+ * Moderno's; every other part is Ark's verbatim. Annotated so the emitted
+ * `.d.ts` doesn't inline an un-nameable `@zag-js` type (TS2742).
+ */
+export const RadioGroup: Omit<typeof ArkRadioGroup, "Root"> & {
+  Root: typeof RadioGroupRoot;
+  ItemDescription: typeof RadioGroupItemDescription;
+} = {
+  ...ArkRadioGroup,
+  Root: RadioGroupRoot,
+  ItemDescription: RadioGroupItemDescription,
+};
+export type { RadioGroupSize } from "@moderno-ui/core";
+export type { RadioGroupItemDescriptionProps } from "./radio-group-props.js";
+
+/**
+ * Toggle — a button that stays pressed until it is pressed again. Ark renders
+ * a native `<button>` with `aria-pressed` and `data-state="on|off"`; the
+ * optional `Indicator` shows its children while on and its `fallback` snippet
+ * while off. `Root` is wrapped to inject the `variant` × `size` recipe; every
+ * other part is Ark's verbatim. Annotated so the emitted `.d.ts` doesn't
+ * inline an un-nameable `@zag-js` type (TS2742).
+ */
+export const Toggle: Omit<typeof ArkToggle, "Root"> & { Root: typeof ToggleRoot } = {
+  ...ArkToggle,
+  Root: ToggleRoot,
+};
+export type { ToggleVariant, ToggleSize } from "@moderno-ui/core";
+
+/**
+ * ToggleGroup — a row of toggle buttons; one or several stay pressed. Single
+ * selection makes the root a `role="radiogroup"` of `role="radio"` buttons,
+ * `multiple` a `role="group"` of `aria-pressed` buttons; items carry
+ * `data-state="on|off"`, `data-disabled` and `data-orientation`. `Root` is
+ * wrapped to inject the `variant` × `size` recipe; every other part is Ark's
+ * verbatim. Annotated so the emitted `.d.ts` doesn't inline an un-nameable
+ * `@zag-js` type (TS2742).
+ */
+export const ToggleGroup: Omit<typeof ArkToggleGroup, "Root"> & {
+  Root: typeof ToggleGroupRoot;
+} = {
+  ...ArkToggleGroup,
+  Root: ToggleGroupRoot,
+};
+export type { ToggleGroupVariant, ToggleGroupSize } from "@moderno-ui/core";
+
+/**
+ * Tabs — a list of tabs, each showing its own panel; one is selected at a
+ * time. Ark renders a `role="tablist"` list of native `<button role="tab">`
+ * triggers with `aria-selected` and `data-selected`, a `role="tabpanel"`
+ * content per tab that is `hidden` unless selected, and the optional
+ * `Indicator` it slides under the selected tab. `Root` is wrapped to inject
+ * the `variant` × `size` recipe; every other part is Ark's verbatim.
+ * Annotated so the emitted `.d.ts` doesn't inline an un-nameable `@zag-js`
+ * type (TS2742).
+ */
+export const Tabs: Omit<typeof ArkTabs, "Root"> & { Root: typeof TabsRoot } = {
+  ...ArkTabs,
+  Root: TabsRoot,
+};
+export type { TabsVariant, TabsSize } from "@moderno-ui/core";
+
+/**
+ * Accordion — a stack of sections, each opened and closed by its own header.
+ * Ark renders each `ItemTrigger` as a native `<button>` with `aria-expanded`
+ * and each `ItemContent` as a `role="region"` labelled by its trigger and
+ * `hidden` while closed; every part carries `data-state="open|closed"`. One
+ * item opens at a time unless `multiple`; `collapsible` lets the open one
+ * close. `Root` is wrapped to inject the `variant` × `size` recipe; every
+ * other part is Ark's verbatim. Annotated so the emitted `.d.ts` doesn't
+ * inline an un-nameable `@zag-js` type (TS2742).
+ */
+export const Accordion: Omit<typeof ArkAccordion, "Root"> & { Root: typeof AccordionRoot } = {
+  ...ArkAccordion,
+  Root: AccordionRoot,
+};
+export type { AccordionVariant, AccordionSize } from "@moderno-ui/core";
+
+/**
+ * Progress — how far a task has come, as a bar or a ring. Ark renders the
+ * `Track` (linear) or the `Circle` (circular) as the `role="progressbar"`
+ * with `aria-valuenow`, `aria-valuemin` and `aria-valuemax`; every part
+ * carries `data-state` (`loading`, `complete`, or `indeterminate` when
+ * `value` is `null`), the `Range` and `CircleRange` show the percentage and
+ * `ValueText` prints it. `Root` is wrapped to inject the `size` recipe; every
+ * other part is Ark's verbatim. Annotated so the emitted `.d.ts` doesn't
+ * inline an un-nameable `@zag-js` type (TS2742).
+ */
+export const Progress: Omit<typeof ArkProgress, "Root"> & { Root: typeof ProgressRoot } = {
+  ...ArkProgress,
+  Root: ProgressRoot,
+};
+export type { ProgressSize } from "@moderno-ui/core";
+
+/**
+ * Slider — pick a number, or a range between two, by dragging a thumb along
+ * a track. Ark renders each `Thumb` as a `role="slider"` with
+ * `aria-valuenow`, `aria-valuemin` and `aria-valuemax`, moved by pointer or
+ * keyboard; the `value` array holds one number per thumb, so two values make
+ * a range; Ark places the thumbs, the `Range` and each `Marker` inline.
+ * `Root` is wrapped to inject the `size` recipe; every other part is Ark's
+ * verbatim. Annotated so the emitted `.d.ts` doesn't inline an un-nameable
+ * `@zag-js` type (TS2742).
+ */
+export const Slider: Omit<typeof ArkSlider, "Root"> & { Root: typeof SliderRoot } = {
+  ...ArkSlider,
+  Root: SliderRoot,
+};
+export type { SliderSize } from "@moderno-ui/core";
+
+/**
+ * NumberInput — a text box for a number, with buttons that step it up and
+ * down. Ark renders the `Input` as a `role="spinbutton"` with
+ * `aria-valuenow`, `aria-valuemin` and `aria-valuemax`; the arrow keys, the
+ * steppers and an optional `Scrubber` change the value by `step`; Ark formats
+ * it with `formatOptions` and clamps it to `min`/`max` on blur. `Root` is
+ * wrapped to inject the `size` recipe; every other part is Ark's verbatim.
+ * Annotated so the emitted `.d.ts` doesn't inline an un-nameable `@zag-js`
+ * type (TS2742).
+ */
+export const NumberInput: Omit<typeof ArkNumberInput, "Root"> & {
+  Root: typeof NumberInputRoot;
+} = {
+  ...ArkNumberInput,
+  Root: NumberInputRoot,
+};
+export type { NumberInputSize } from "@moderno-ui/core";
+
+/**
+ * Pagination — a row of page buttons with prev/next, that skips the pages
+ * far from the current one behind an ellipsis. Ark drives all of it: `count`
+ * items split into pages of `pageSize`; the `Context` snippet hands back the
+ * page list (`pages`, each a page or an ellipsis) to render as `Item`s and
+ * `Ellipsis`es; the current item carries `aria-current="page"`; the triggers
+ * are disabled at either end. `Root` is wrapped to inject the `size` recipe;
+ * every other part is Ark's verbatim. Annotated so the emitted `.d.ts`
+ * doesn't inline an un-nameable `@zag-js` type (TS2742).
+ */
+export const Pagination: Omit<typeof ArkPagination, "Root"> & {
+  Root: typeof PaginationRoot;
+} = {
+  ...ArkPagination,
+  Root: PaginationRoot,
+};
+export type { PaginationSize } from "@moderno-ui/core";
+
 export { createListCollection } from "@ark-ui/svelte";
 
 export type {
@@ -165,4 +425,19 @@ export type {
   SelectValueChangeDetails,
   PinInputValueChangeDetails,
   PinInputValueInvalidDetails,
+  AvatarStatusChangeDetails,
+  SwitchCheckedChangeDetails,
+  RadioGroupValueChangeDetails,
+  ToggleGroupValueChangeDetails,
+  TabsValueChangeDetails,
+  AccordionValueChangeDetails,
+  ProgressValueChangeDetails,
+  SliderValueChangeDetails,
+  SliderFocusChangeDetails,
+  NumberInputValueChangeDetails,
+  NumberInputFocusChangeDetails,
+  NumberInputValueInvalidDetails,
+  PaginationPageChangeDetails,
+  PaginationPageSizeChangeDetails,
+  PaginationPageUrlDetails,
 } from "@ark-ui/svelte";

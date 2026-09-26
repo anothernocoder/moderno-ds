@@ -8,11 +8,28 @@
  */
 import { For } from "solid-js";
 import { Alert } from "../src/alert.jsx";
+import { Callout } from "../src/callout.jsx";
 import { Button } from "../src/button.jsx";
 import { Divider } from "../src/divider.jsx";
+import { Badge } from "../src/badge.jsx";
+import { Chip } from "../src/chip.jsx";
+import { Indicator } from "../src/indicator.jsx";
+import { Skeleton } from "../src/skeleton.jsx";
+import { Spinner } from "../src/spinner.jsx";
 import { Field } from "../src/field.jsx";
 import { Card } from "../src/card.jsx";
+import { Avatar } from "../src/avatar.jsx";
 import { Checkbox } from "../src/checkbox.jsx";
+import { Switch } from "../src/switch.jsx";
+import { RadioGroup } from "../src/radio-group.jsx";
+import { Toggle } from "../src/toggle.jsx";
+import { ToggleGroup } from "../src/toggle-group.jsx";
+import { Tabs } from "../src/tabs.jsx";
+import { Accordion } from "../src/accordion.jsx";
+import { Progress } from "../src/progress.jsx";
+import { Slider } from "../src/slider.jsx";
+import { NumberInput } from "../src/number-input.jsx";
+import { Pagination } from "../src/pagination.jsx";
 import { Dialog, Portal } from "../src/dialog.js";
 import { Select, createListCollection } from "../src/select.jsx";
 import { PinInput } from "../src/pin-input.jsx";
@@ -79,6 +96,48 @@ export function App(props: { open?: boolean }) {
         <Divider orientation="vertical">Or</Divider>
       </section>
 
+      <section aria-label="badges">
+        <Badge>Draft</Badge>
+        <Badge variant="success" dot>
+          Paid
+        </Badge>
+        <Badge variant="error" size="sm">
+          Overdue
+        </Badge>
+      </section>
+
+      <section aria-label="chips">
+        <Chip>Design</Chip>
+        <Chip variant="muted" size="sm" removable removeLabel="Remove React">
+          React
+        </Chip>
+      </section>
+
+      <section aria-label="indicators">
+        <Indicator variant="success" pulse>
+          Online
+        </Indicator>
+        <Indicator variant="error" size="sm" aria-label="Offline" />
+      </section>
+
+      <section aria-label="loading">
+        <Skeleton />
+        <Skeleton shape="rect" />
+        <Skeleton shape="circle" />
+        <Spinner />
+        <Spinner size="lg" label="Saving changes" />
+      </section>
+
+      <section aria-label="avatars">
+        <Avatar.Root>
+          <Avatar.Fallback>AL</Avatar.Fallback>
+          <Avatar.Image src="/ada.png" alt="Ada Lovelace" />
+        </Avatar.Root>
+        <Avatar.Root size="sm" shape="square">
+          <Avatar.Fallback>MD</Avatar.Fallback>
+        </Avatar.Root>
+      </section>
+
       <section aria-label="alerts">
         <Alert.Root variant="info">
           <Alert.Icon>i</Alert.Icon>
@@ -99,6 +158,21 @@ export function App(props: { open?: boolean }) {
             <Alert.Description>We could not charge your card.</Alert.Description>
           </Alert.Content>
         </Alert.Root>
+      </section>
+
+      <section aria-label="callouts">
+        <Callout.Root>
+          <Callout.Icon>i</Callout.Icon>
+          <Callout.Content>
+            <Callout.Title>Good to know</Callout.Title>
+            <Callout.Description>Exports run overnight.</Callout.Description>
+          </Callout.Content>
+        </Callout.Root>
+        <Callout.Root variant="warning">
+          <Callout.Content>
+            <Callout.Description>Renaming a workspace breaks old links.</Callout.Description>
+          </Callout.Content>
+        </Callout.Root>
       </section>
 
       <section aria-label="fields">
@@ -153,6 +227,258 @@ export function App(props: { open?: boolean }) {
           <Checkbox.Label>Unavailable</Checkbox.Label>
           <Checkbox.HiddenInput />
         </Checkbox.Root>
+      </section>
+
+      <section aria-label="switches">
+        <Switch.Root defaultChecked>
+          <Switch.Control>
+            <Switch.Thumb />
+          </Switch.Control>
+          <Switch.Label>Airplane mode</Switch.Label>
+          <Switch.HiddenInput />
+        </Switch.Root>
+        <Switch.Root size="sm" disabled>
+          <Switch.Control>
+            <Switch.Thumb />
+          </Switch.Control>
+          <Switch.Label>Bluetooth</Switch.Label>
+          <Switch.HiddenInput />
+        </Switch.Root>
+      </section>
+
+      <section aria-label="radio groups">
+        <RadioGroup.Root defaultValue="standard">
+          <RadioGroup.Label>Shipping</RadioGroup.Label>
+          <RadioGroup.Item value="standard">
+            <RadioGroup.ItemControl />
+            <RadioGroup.ItemText>
+              Standard
+              <RadioGroup.ItemDescription>3–5 business days</RadioGroup.ItemDescription>
+            </RadioGroup.ItemText>
+            <RadioGroup.ItemHiddenInput />
+          </RadioGroup.Item>
+          <RadioGroup.Item value="express">
+            <RadioGroup.ItemControl />
+            <RadioGroup.ItemText>
+              Express
+              <RadioGroup.ItemDescription>1–2 business days</RadioGroup.ItemDescription>
+            </RadioGroup.ItemText>
+            <RadioGroup.ItemHiddenInput />
+          </RadioGroup.Item>
+        </RadioGroup.Root>
+        <RadioGroup.Root size="sm" orientation="horizontal" disabled>
+          <RadioGroup.Label>Billing</RadioGroup.Label>
+          <RadioGroup.Item value="monthly">
+            <RadioGroup.ItemControl />
+            <RadioGroup.ItemText>Monthly</RadioGroup.ItemText>
+            <RadioGroup.ItemHiddenInput />
+          </RadioGroup.Item>
+          <RadioGroup.Item value="yearly">
+            <RadioGroup.ItemControl />
+            <RadioGroup.ItemText>Yearly</RadioGroup.ItemText>
+            <RadioGroup.ItemHiddenInput />
+          </RadioGroup.Item>
+        </RadioGroup.Root>
+      </section>
+
+      <section aria-label="toggles">
+        <Toggle.Root defaultPressed>
+          <Toggle.Indicator fallback="☆">★</Toggle.Indicator>
+          Favorite
+        </Toggle.Root>
+        <Toggle.Root variant="outline" size="sm" disabled>
+          <Toggle.Indicator fallback="☆">★</Toggle.Indicator>
+          Pin
+        </Toggle.Root>
+        <ToggleGroup.Root defaultValue={["center"]} aria-label="Text alignment">
+          <ToggleGroup.Item value="left">Left</ToggleGroup.Item>
+          <ToggleGroup.Item value="center">Center</ToggleGroup.Item>
+        </ToggleGroup.Root>
+        <ToggleGroup.Root
+          variant="outline"
+          size="lg"
+          orientation="vertical"
+          multiple
+          disabled
+          aria-label="Text style"
+        >
+          <ToggleGroup.Item value="bold">Bold</ToggleGroup.Item>
+          <ToggleGroup.Item value="italic">Italic</ToggleGroup.Item>
+        </ToggleGroup.Root>
+      </section>
+
+      <section aria-label="tabs">
+        <Tabs.Root defaultValue="account">
+          <Tabs.List aria-label="Settings">
+            <Tabs.Trigger value="account">Account</Tabs.Trigger>
+            <Tabs.Trigger value="password">Password</Tabs.Trigger>
+            <Tabs.Indicator />
+          </Tabs.List>
+          <Tabs.Content value="account">Account panel</Tabs.Content>
+          <Tabs.Content value="password">Password panel</Tabs.Content>
+        </Tabs.Root>
+        <Tabs.Root variant="enclosed" size="sm" orientation="vertical" defaultValue="team">
+          <Tabs.List aria-label="Workspace">
+            <Tabs.Trigger value="billing" disabled>
+              Billing
+            </Tabs.Trigger>
+            <Tabs.Trigger value="team">Team</Tabs.Trigger>
+            <Tabs.Indicator />
+          </Tabs.List>
+          <Tabs.Content value="billing">Billing panel</Tabs.Content>
+          <Tabs.Content value="team">Team panel</Tabs.Content>
+        </Tabs.Root>
+      </section>
+
+      <section aria-label="accordion">
+        <Accordion.Root defaultValue={["shipping"]}>
+          <Accordion.Item value="shipping">
+            <Accordion.ItemTrigger>
+              Shipping
+              <Accordion.ItemIndicator>⌄</Accordion.ItemIndicator>
+            </Accordion.ItemTrigger>
+            <Accordion.ItemContent>Shipping answer</Accordion.ItemContent>
+          </Accordion.Item>
+          <Accordion.Item value="returns">
+            <Accordion.ItemTrigger>
+              Returns
+              <Accordion.ItemIndicator>⌄</Accordion.ItemIndicator>
+            </Accordion.ItemTrigger>
+            <Accordion.ItemContent>Returns answer</Accordion.ItemContent>
+          </Accordion.Item>
+        </Accordion.Root>
+        <Accordion.Root variant="enclosed" size="sm" multiple defaultValue={["support"]}>
+          <Accordion.Item value="warranty" disabled>
+            <Accordion.ItemTrigger>
+              Warranty
+              <Accordion.ItemIndicator>⌄</Accordion.ItemIndicator>
+            </Accordion.ItemTrigger>
+            <Accordion.ItemContent>Warranty answer</Accordion.ItemContent>
+          </Accordion.Item>
+          <Accordion.Item value="support">
+            <Accordion.ItemTrigger>
+              Support
+              <Accordion.ItemIndicator>⌄</Accordion.ItemIndicator>
+            </Accordion.ItemTrigger>
+            <Accordion.ItemContent>Support answer</Accordion.ItemContent>
+          </Accordion.Item>
+        </Accordion.Root>
+      </section>
+
+      <section aria-label="progress">
+        <Progress.Root value={40}>
+          <Progress.Label>Uploading</Progress.Label>
+          <Progress.ValueText />
+          <Progress.Track>
+            <Progress.Range />
+          </Progress.Track>
+        </Progress.Root>
+        <Progress.Root size="sm" value={75}>
+          <Progress.Circle>
+            <Progress.CircleTrack />
+            <Progress.CircleRange />
+          </Progress.Circle>
+          <Progress.ValueText />
+        </Progress.Root>
+        <Progress.Root size="lg" defaultValue={null}>
+          <Progress.Track>
+            <Progress.Range />
+          </Progress.Track>
+        </Progress.Root>
+      </section>
+
+      <section aria-label="slider">
+        <Slider.Root defaultValue={[40]}>
+          <Slider.Label>Volume</Slider.Label>
+          <Slider.ValueText />
+          <Slider.Control>
+            <Slider.Track>
+              <Slider.Range />
+            </Slider.Track>
+            <Slider.Thumb index={0}>
+              <Slider.HiddenInput />
+            </Slider.Thumb>
+          </Slider.Control>
+          <Slider.MarkerGroup>
+            <Slider.Marker value={0}>0</Slider.Marker>
+            <Slider.Marker value={50}>50</Slider.Marker>
+            <Slider.Marker value={100}>100</Slider.Marker>
+          </Slider.MarkerGroup>
+        </Slider.Root>
+        <Slider.Root size="sm" defaultValue={[20, 80]}>
+          <Slider.Label>Price</Slider.Label>
+          <Slider.Control>
+            <Slider.Track>
+              <Slider.Range />
+            </Slider.Track>
+            <Slider.Thumb index={0}>
+              <Slider.HiddenInput />
+            </Slider.Thumb>
+            <Slider.Thumb index={1}>
+              <Slider.HiddenInput />
+            </Slider.Thumb>
+          </Slider.Control>
+        </Slider.Root>
+      </section>
+
+      <section aria-label="number-input">
+        <NumberInput.Root defaultValue="10" min={0} max={10}>
+          <NumberInput.Label>Quantity</NumberInput.Label>
+          <NumberInput.Control>
+            <NumberInput.Input />
+            <NumberInput.DecrementTrigger>−</NumberInput.DecrementTrigger>
+            <NumberInput.IncrementTrigger>+</NumberInput.IncrementTrigger>
+          </NumberInput.Control>
+        </NumberInput.Root>
+        <NumberInput.Root
+          size="sm"
+          defaultValue="1234.5"
+          formatOptions={{ style: "currency", currency: "USD" }}
+        >
+          <NumberInput.Label>Price</NumberInput.Label>
+          <NumberInput.Control>
+            <NumberInput.Input />
+            <NumberInput.DecrementTrigger>−</NumberInput.DecrementTrigger>
+            <NumberInput.IncrementTrigger>+</NumberInput.IncrementTrigger>
+          </NumberInput.Control>
+        </NumberInput.Root>
+      </section>
+
+      <section aria-label="pagination">
+        <Pagination.Root count={100} pageSize={10} defaultPage={5}>
+          <Pagination.PrevTrigger>‹</Pagination.PrevTrigger>
+          <Pagination.Context>
+            {(pagination) => (
+              <For each={pagination().pages}>
+                {(page, index) =>
+                  page.type === "page" ? (
+                    <Pagination.Item {...page}>{page.value}</Pagination.Item>
+                  ) : (
+                    <Pagination.Ellipsis index={index()}>…</Pagination.Ellipsis>
+                  )
+                }
+              </For>
+            )}
+          </Pagination.Context>
+          <Pagination.NextTrigger>›</Pagination.NextTrigger>
+        </Pagination.Root>
+        <Pagination.Root size="sm" count={30} pageSize={10}>
+          <Pagination.PrevTrigger>‹</Pagination.PrevTrigger>
+          <Pagination.Context>
+            {(pagination) => (
+              <For each={pagination().pages}>
+                {(page, index) =>
+                  page.type === "page" ? (
+                    <Pagination.Item {...page}>{page.value}</Pagination.Item>
+                  ) : (
+                    <Pagination.Ellipsis index={index()}>…</Pagination.Ellipsis>
+                  )
+                }
+              </For>
+            )}
+          </Pagination.Context>
+          <Pagination.NextTrigger>›</Pagination.NextTrigger>
+        </Pagination.Root>
       </section>
 
       <Dialog.Root defaultOpen={props.open}>

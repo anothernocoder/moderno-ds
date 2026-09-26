@@ -1,0 +1,268 @@
+---
+title: Tabs
+description: A row of tabs that switch between panels of content in the same place.
+group: Components
+order: 31
+component: Tabs
+pkg: "@moderno-ui/react"
+agentPropsHash: "sha256:53d4b31a611e19160a136f8fc2c5fd4ebd324336da9b9a19e094540493237e18"
+agent:
+  intent: Switch between related panels of content in the same place.
+  whenToUse: Two to about seven sibling views of one subject — account settings, a product's details and reviews, code in several languages.
+  whenNotToUse:
+    - case: Moving between pages or routes of an app
+      use: Links in a navigation bar
+    - case: Choosing a value that a form submits, or a view mode like list or grid
+      use: Toggle Group
+    - case: Steps the user must take in order
+      use: A flow of screens
+    - case: Sections the user may want to open at the same time
+      use: Accordion
+  gotchas:
+    - "Every Tabs.Trigger needs a Tabs.Content with the same value; the value is a string."
+    - "Put Tabs.Indicator inside Tabs.List, after the triggers: it is the bar (line) or the pill (enclosed) that marks the selected tab."
+    - "Give Tabs.List an aria-label: it is the tablist and needs a name."
+    - "Tabs.List goes directly inside Tabs.Root, and the triggers and indicator directly inside the list; variant and size reach them through the root."
+    - 'The arrow keys select the next tab at once; pass activationMode="manual" to move focus only and select with Enter or Space.'
+  theming:
+    - "Triggers are --muted-foreground; the selected or hovered trigger is --foreground."
+    - "The line indicator is a --primary bar on a --border rule; the enclosed indicator is a --background pill with --shadow-sm in a --muted bar. Do not pass a hex."
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import TabsDemo from "../../../examples/tabs/tabs.svelte";
+import baseReact from "../../../examples/tabs/react.tsx?raw";
+import baseVue from "../../../examples/tabs/vue.vue?raw";
+import baseSolid from "../../../examples/tabs/solid.tsx?raw";
+import baseSvelte from "../../../examples/tabs/tabs.svelte?raw";
+import TabsEnclosedDemo from "../../../examples/tabs/enclosed/tabs-enclosed.svelte";
+import enclosedReact from "../../../examples/tabs/enclosed/react.tsx?raw";
+import enclosedVue from "../../../examples/tabs/enclosed/vue.vue?raw";
+import enclosedSolid from "../../../examples/tabs/enclosed/solid.tsx?raw";
+import enclosedSvelte from "../../../examples/tabs/enclosed/tabs-enclosed.svelte?raw";
+import TabsVerticalDemo from "../../../examples/tabs/vertical/tabs-vertical.svelte";
+import verticalReact from "../../../examples/tabs/vertical/react.tsx?raw";
+import verticalVue from "../../../examples/tabs/vertical/vue.vue?raw";
+import verticalSolid from "../../../examples/tabs/vertical/solid.tsx?raw";
+import verticalSvelte from "../../../examples/tabs/vertical/tabs-vertical.svelte?raw";
+import TabsSizesDemo from "../../../examples/tabs/sizes/tabs-sizes.svelte";
+import sizesReact from "../../../examples/tabs/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/tabs/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/tabs/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/tabs/sizes/tabs-sizes.svelte?raw";
+import TabsDisabledDemo from "../../../examples/tabs/disabled/tabs-disabled.svelte";
+import disabledReact from "../../../examples/tabs/disabled/react.tsx?raw";
+import disabledVue from "../../../examples/tabs/disabled/vue.vue?raw";
+import disabledSolid from "../../../examples/tabs/disabled/solid.tsx?raw";
+import disabledSvelte from "../../../examples/tabs/disabled/tabs-disabled.svelte?raw";
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
+  <TabsDemo client:visible />
+</Preview>
+
+## Installation
+
+<Install pkg="@moderno-ui/react" />
+
+## Usage
+
+Tabs show one panel at a time. Use them for sibling views of one subject, like the sections of a settings page. Each trigger selects the panel with the same `value`.
+
+<ForFramework fw="react">
+
+```tsx
+import { Tabs } from "@moderno-ui/react";
+```
+
+```tsx
+<Tabs.Root defaultValue="account">
+  <Tabs.List aria-label="Settings">
+    <Tabs.Trigger value="account">Account</Tabs.Trigger>
+    <Tabs.Trigger value="password">Password</Tabs.Trigger>
+    <Tabs.Indicator />
+  </Tabs.List>
+  <Tabs.Content value="account">Change your name and email.</Tabs.Content>
+  <Tabs.Content value="password">Change your password.</Tabs.Content>
+</Tabs.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Tabs } from "@moderno-ui/vue";
+```
+
+```vue
+<Tabs.Root default-value="account">
+  <Tabs.List aria-label="Settings">
+    <Tabs.Trigger value="account">Account</Tabs.Trigger>
+    <Tabs.Trigger value="password">Password</Tabs.Trigger>
+    <Tabs.Indicator />
+  </Tabs.List>
+  <Tabs.Content value="account">Change your name and email.</Tabs.Content>
+  <Tabs.Content value="password">Change your password.</Tabs.Content>
+</Tabs.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Tabs } from "@moderno-ui/svelte";
+```
+
+```svelte
+<Tabs.Root defaultValue="account">
+  <Tabs.List aria-label="Settings">
+    <Tabs.Trigger value="account">Account</Tabs.Trigger>
+    <Tabs.Trigger value="password">Password</Tabs.Trigger>
+    <Tabs.Indicator />
+  </Tabs.List>
+  <Tabs.Content value="account">Change your name and email.</Tabs.Content>
+  <Tabs.Content value="password">Change your password.</Tabs.Content>
+</Tabs.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Tabs } from "@moderno-ui/solid";
+```
+
+```tsx
+<Tabs.Root defaultValue="account">
+  <Tabs.List aria-label="Settings">
+    <Tabs.Trigger value="account">Account</Tabs.Trigger>
+    <Tabs.Trigger value="password">Password</Tabs.Trigger>
+    <Tabs.Indicator />
+  </Tabs.List>
+  <Tabs.Content value="account">Change your name and email.</Tabs.Content>
+  <Tabs.Content value="password">Change your password.</Tabs.Content>
+</Tabs.Root>
+```
+
+</ForFramework>
+
+## API Reference
+
+### Tabs.Root
+
+`variant` and `size` are the Moderno additions; the list, its triggers and the indicator follow them. The other props come from Ark's Tabs.
+
+<PropsTable component="Tabs" />
+
+| Prop             | Type                                   | Default        | Description                                                                      |
+| ---------------- | -------------------------------------- | -------------- | -------------------------------------------------------------------------------- |
+| `value`          | `string`                               | —              | Controlled selected tab. Pair with `onValueChange`.                              |
+| `defaultValue`   | `string`                               | —              | Initial selected tab when uncontrolled.                                          |
+| `onValueChange`  | `(details: { value: string }) => void` | —              | Called when a tab is selected.                                                   |
+| `orientation`    | `"horizontal" \| "vertical"`           | `"horizontal"` | Lays the tabs out in a row or a column; sets the arrow keys.                     |
+| `activationMode` | `"automatic" \| "manual"`              | `"automatic"`  | `automatic` selects a tab when it gets focus; `manual` waits for Enter or Space. |
+| `loopFocus`      | `boolean`                              | `true`         | The arrow keys wrap from the last tab to the first.                              |
+| `lazyMount`      | `boolean`                              | `false`        | Renders a panel only the first time its tab is selected.                         |
+| `unmountOnExit`  | `boolean`                              | `false`        | Removes a panel when its tab is no longer selected.                              |
+
+In Vue, listen with `@value-change` or bind the value with `v-model`.
+
+### Tabs.Trigger
+
+| Prop       | Type      | Default | Description                                          |
+| ---------- | --------- | ------- | ---------------------------------------------------- |
+| `value`    | `string`  | —       | Required. The tab's value; matches a `Tabs.Content`. |
+| `disabled` | `boolean` | `false` | Disables this tab only.                              |
+
+### Tabs.Content
+
+| Prop    | Type     | Default | Description                                           |
+| ------- | -------- | ------- | ----------------------------------------------------- |
+| `value` | `string` | —       | Required. The value of the tab that shows this panel. |
+
+### Parts
+
+| Part             | Element    | Description                                                 |
+| ---------------- | ---------- | ----------------------------------------------------------- |
+| `Tabs.Root`      | `<div>`    | Carries `data-variant`, `data-size` and `data-orientation`. |
+| `Tabs.List`      | `<div>`    | `role="tablist"`. Holds the triggers and the indicator.     |
+| `Tabs.Trigger`   | `<button>` | `role="tab"` with `aria-selected`. Selects its panel.       |
+| `Tabs.Indicator` | `<div>`    | Optional. The bar or pill that marks the selected tab.      |
+| `Tabs.Content`   | `<div>`    | `role="tabpanel"`. Hidden unless its tab is selected.       |
+
+### Data attributes
+
+| Attribute          | Values                                        |
+| ------------------ | --------------------------------------------- |
+| `data-selected`    | Present on the selected trigger and its panel |
+| `data-disabled`    | Present on a disabled trigger                 |
+| `data-orientation` | `"horizontal"` or `"vertical"`, on every part |
+| `data-variant`     | On the root: `"line"` or `"enclosed"`         |
+| `data-size`        | On the root: `"sm"`, `"md"` or `"lg"`         |
+
+## Examples
+
+### Enclosed
+
+The tabs sit in one muted bar; the selected tab is a pill.
+
+<Preview
+  examples={{
+    react: enclosedReact,
+    vue: enclosedVue,
+    solid: enclosedSolid,
+    svelte: enclosedSvelte,
+  }}
+>
+  <TabsEnclosedDemo client:visible />
+</Preview>
+
+### Vertical
+
+The tabs sit in a column beside the panel. The up and down arrow keys move between them.
+
+<Preview
+  examples={{
+    react: verticalReact,
+    vue: verticalVue,
+    solid: verticalSolid,
+    svelte: verticalSvelte,
+  }}
+>
+  <TabsVerticalDemo client:visible />
+</Preview>
+
+### Sizes
+
+<Preview examples={{ react: sizesReact, vue: sizesVue, solid: sizesSolid, svelte: sizesSvelte }}>
+  <TabsSizesDemo client:visible />
+</Preview>
+
+### Disabled tab
+
+A disabled tab can't be selected, and the arrow keys skip it.
+
+<Preview
+  examples={{
+    react: disabledReact,
+    vue: disabledVue,
+    solid: disabledSolid,
+    svelte: disabledSvelte,
+  }}
+>
+  <TabsDisabledDemo client:visible />
+</Preview>
+
+## Notes
+
+- `Tabs.Root` is wrapped to add `variant` and `size`; every other part is Ark's unchanged.
+- Style state from `data-selected` and the `data-*` flags on each part; `variant` and `size` are the only visual props.
+- For a choice the user submits, or a view mode like list or grid, use Toggle Group.

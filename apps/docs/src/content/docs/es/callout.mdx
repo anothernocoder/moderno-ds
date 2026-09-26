@@ -1,0 +1,189 @@
+---
+title: Callout
+description: Una nota suave dentro de tu contenido, para un consejo, una advertencia o un aviso, en cuatro variantes.
+group: Componentes
+order: 24
+component: Callout
+pkg: "@moderno-ui/react"
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import CalloutDemo from "../../../examples/callout/callout.svelte";
+import baseReact from "../../../examples/callout/react.tsx?raw";
+import baseVue from "../../../examples/callout/vue.vue?raw";
+import baseSolid from "../../../examples/callout/solid.tsx?raw";
+import baseSvelte from "../../../examples/callout/callout.svelte?raw";
+import CalloutVariantsDemo from "../../../examples/callout/variants/callout-variants.svelte";
+import variantsReact from "../../../examples/callout/variants/react.tsx?raw";
+import variantsVue from "../../../examples/callout/variants/vue.vue?raw";
+import variantsSolid from "../../../examples/callout/variants/solid.tsx?raw";
+import variantsSvelte from "../../../examples/callout/variants/callout-variants.svelte?raw";
+import CalloutTextOnlyDemo from "../../../examples/callout/text-only/callout-text-only.svelte";
+import textOnlyReact from "../../../examples/callout/text-only/react.tsx?raw";
+import textOnlyVue from "../../../examples/callout/text-only/vue.vue?raw";
+import textOnlySolid from "../../../examples/callout/text-only/solid.tsx?raw";
+import textOnlySvelte from "../../../examples/callout/text-only/callout-text-only.svelte?raw";
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
+  <CalloutDemo client:visible />
+</Preview>
+
+## Instalación
+
+<Install pkg="@moderno-ui/react" />
+
+## Uso
+
+Usa un callout para una nota que forma parte del contenido: un consejo, una advertencia o un aviso. Es más discreto que un [Alert](/es/alert/), que informa de algo que acaba de pasar.
+
+<ForFramework fw="react">
+
+```tsx
+import { Callout } from "@moderno-ui/react";
+```
+
+```tsx
+<Callout.Root variant="warning">
+  <Callout.Content>
+    <Callout.Title>Renombrar rompe los enlaces antiguos</Callout.Title>
+    <Callout.Description>Comparte la nueva dirección con tu equipo.</Callout.Description>
+  </Callout.Content>
+</Callout.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Callout } from "@moderno-ui/vue";
+```
+
+```vue
+<Callout.Root variant="warning">
+  <Callout.Content>
+    <Callout.Title>Renombrar rompe los enlaces antiguos</Callout.Title>
+    <Callout.Description>Comparte la nueva dirección con tu equipo.</Callout.Description>
+  </Callout.Content>
+</Callout.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Callout } from "@moderno-ui/svelte";
+```
+
+```svelte
+<Callout.Root variant="warning">
+  <Callout.Content>
+    <Callout.Title>Renombrar rompe los enlaces antiguos</Callout.Title>
+    <Callout.Description>Comparte la nueva dirección con tu equipo.</Callout.Description>
+  </Callout.Content>
+</Callout.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Callout } from "@moderno-ui/solid";
+```
+
+```tsx
+<Callout.Root variant="warning">
+  <Callout.Content>
+    <Callout.Title>Renombrar rompe los enlaces antiguos</Callout.Title>
+    <Callout.Description>Comparte la nueva dirección con tu equipo.</Callout.Description>
+  </Callout.Content>
+</Callout.Root>
+```
+
+</ForFramework>
+
+## Referencia de API
+
+### Callout.Root
+
+`variant` vale `info` por defecto.
+
+<PropsTable component="Callout" />
+
+| Prop   | Tipo     | Por defecto | Descripción                                           |
+| ------ | -------- | ----------- | ----------------------------------------------------- |
+| `role` | `string` | `note`      | Sobrescribe el rol de nota, por ejemplo con `region`. |
+
+### Callout.Icon
+
+Un slot para tu propio glifo; la parte lo colorea con el tono de la variante vía `currentColor`.
+
+| Prop          | Tipo      | Por defecto | Descripción                                                 |
+| ------------- | --------- | ----------- | ----------------------------------------------------------- |
+| `aria-hidden` | `boolean` | `true`      | Oculta el glifo decorativo a las tecnologías de asistencia. |
+
+### Partes
+
+Cada parte renderiza un `<div>` y acepta cualquier atributo de div.
+
+| Parte                 | `data-part`   | Descripción                             |
+| --------------------- | ------------- | --------------------------------------- |
+| `Callout.Root`        | `root`        | La nota. Lleva `data-variant`.          |
+| `Callout.Icon`        | `icon`        | Glifo opcional antes del contenido.     |
+| `Callout.Content`     | `content`     | Columna con el título y la descripción. |
+| `Callout.Title`       | `title`       | Titular opcional.                       |
+| `Callout.Description` | `description` | El texto de la nota.                    |
+
+### Variantes
+
+| `variant` | Slot de color   |
+| --------- | --------------- |
+| `info`    | `--info`        |
+| `success` | `--success`     |
+| `warning` | `--warning`     |
+| `error`   | `--destructive` |
+
+## Ejemplos
+
+### Variantes
+
+La variante solo colorea la franja y el icono. La superficie se mantiene tranquila.
+
+<Preview
+  examples={{
+    react: variantsReact,
+    vue: variantsVue,
+    solid: variantsSolid,
+    svelte: variantsSvelte,
+  }}
+>
+  <CalloutVariantsDemo client:visible />
+</Preview>
+
+### Solo texto
+
+Una nota corta no necesita título ni icono.
+
+<Preview
+  examples={{
+    react: textOnlyReact,
+    vue: textOnlyVue,
+    solid: textOnlySolid,
+    svelte: textOnlySvelte,
+  }}
+>
+  <CalloutTextOnlyDemo client:visible />
+</Preview>
+
+## Notas
+
+- Callout es solo CSS: sin máquina de Ark, solo partes con `data-scope="callout"` y su `data-part`.
+- Un callout no se anuncia al aparecer. Si el mensaje informa de un evento, usa un Alert.
