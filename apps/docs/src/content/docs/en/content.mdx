@@ -1,0 +1,201 @@
+---
+title: Content
+description: A long-form prose section — a serif heading, a lead, titled sections of paragraphs and a pulled quote, in one reading column.
+group: Blocks
+order: 119
+agent:
+  intent: A section of a landing, guide or article page that is read, not scanned — a kicker, a serif heading, a lead, then titled sections of paragraphs, a pulled quote and one call to action, in one reading column.
+  whenToUse: "A page that explains something in a few paragraphs: a guide, a story, a product's approach, a policy summary."
+  whenNotToUse:
+    - case: The first section of a landing page, with the main call to action
+      use: Hero — it says what the product is in one line; the content section comes after it
+    - case: Several short points that each fit in one sentence
+      use: FeatureGrid — an icon, a title and a sentence per point
+    - case: A title with actions above a page or a list
+      use: SectionHeader — it carries breadcrumbs, a status and actions
+  gotchas:
+    - "`sections` is an array of `{ id, heading, paragraphs }`. Each section renders an `h3` and one `p` per string in `paragraphs`."
+    - '`kicker`, `lead` and `action` hide when you pass `""`; `quote` hides when you pass `null`.'
+    - '`sections={[]}` shows "Nothing to read here yet." in place of the article, and hides the quote and the action.'
+    - "Presentational: `onAction` and `onRetry` report which button was pressed. Opening a page and retrying stay yours."
+    - "`loading` keeps the kicker, heading and lead, and replaces the sections with skeleton lines in one busy `status` region."
+    - '`error` keeps the kicker, heading and lead, and puts an error Alert with your message and a "Try again" button where the sections were. An empty string counts as no error.'
+    - "The text column is capped at `--container-md`, and the sizes follow the block's own width, not the viewport."
+  theming:
+    - "The only paint of its own is the quote's left rule (--border) and the dashed empty box (--border). The action is Button's outline variant, the error is Alert's error variant and the loading placeholders are Skeleton."
+    - "The heading and the quote read --font-serif and --foreground; the kicker, the lead, each paragraph and the quote's author read --muted-foreground."
+    - "Type sizes come from the contract scale: text-heading-sm and text-heading for the heading, text-body and text-body-lg for the prose, text-ui-sm and text-ui-md for the kicker and the author. The three steps are --container-sm, --container-md and --container-lg."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ContentBlockDemo from "../../../islands/ContentBlockDemo.svelte";
+import contentReact from "../../../../../../registry/blocks/content/react/content.tsx?raw";
+import contentVue from "../../../../../../registry/blocks/content/vue/Content.vue?raw";
+import contentSolid from "../../../../../../registry/blocks/content/solid/content.tsx?raw";
+import contentSvelte from "../../../../../../registry/blocks/content/svelte/Content.svelte?raw";
+
+export const examples = {
+  react: contentReact,
+  vue: contentVue,
+  solid: contentSolid,
+  svelte: contentSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <ContentBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="content" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { Content } from "@/components/blocks/content";
+```
+
+```tsx
+<Content heading="How we close the month" sections={sections} onAction={openGuide} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import Content from "@/components/blocks/Content.vue";
+</script>
+```
+
+```vue
+<Content heading="How we close the month" :sections="sections" @action="openGuide" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import Content from "@/components/blocks/Content.svelte";
+</script>
+```
+
+```svelte
+<Content heading="How we close the month" {sections} onaction={openGuide} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { Content } from "@/components/blocks/content";
+```
+
+```tsx
+<Content heading="How we close the month" sections={sections} onAction={openGuide} />
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+| Prop       | Type                   | Default                                     | Description                                                                   |
+| ---------- | ---------------------- | ------------------------------------------- | ----------------------------------------------------------------------------- |
+| `kicker`   | `string`               | `"Field notes"`                             | A few words above the heading; `""` hides it.                                 |
+| `heading`  | `string`               | `"Close the month without the spreadsheet"` | The section's heading. Set in the serif face.                                 |
+| `lead`     | `string`               | a sentence                                  | The introduction under the heading; `""` hides it.                            |
+| `sections` | `ContentSection[]`     | two sample sections                         | The article, in order. `[]` shows the empty message.                          |
+| `quote`    | `ContentQuote \| null` | a sample quote                              | A pulled quote after the sections; `null` hides it.                           |
+| `action`   | `string`               | `"Read the full guide"`                     | The outline button's label under the article; `""` hides it.                  |
+| `error`    | `string`               | —                                           | Loading the article failed; an error Alert with a retry replaces it.          |
+| `loading`  | `boolean`              | `false`                                     | Skeleton lines in a busy region replace the article.                          |
+| `disabled` | `boolean`              | `false`                                     | The content stays and every button is disabled.                               |
+| `onAction` | `() => void`           | —                                           | The button under the article was pressed. Svelte: `onaction`. Vue: `@action`. |
+| `onRetry`  | `() => void`           | —                                           | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.                  |
+
+### Section
+
+| Field        | Type       | Description                           |
+| ------------ | ---------- | ------------------------------------- |
+| `id`         | `string`   | A stable key for the section.         |
+| `heading`    | `string`   | A few words. Rendered as an `h3`.     |
+| `paragraphs` | `string[]` | The section's text, one `p` per item. |
+
+### Quote
+
+| Field    | Type     | Description                          |
+| -------- | -------- | ------------------------------------ |
+| `text`   | `string` | The quoted words, in the serif face. |
+| `author` | `string` | Who said it, under the quote.        |
+
+### States
+
+| State    | Prop            | What renders                                                    |
+| -------- | --------------- | --------------------------------------------------------------- |
+| Default  | —               | Kicker, heading, lead, every section, the quote and the action. |
+| Empty    | `sections={[]}` | Kicker, heading, lead and "Nothing to read here yet."           |
+| Loading  | `loading`       | Kicker, heading, lead and two placeholder sections.             |
+| Error    | `error`         | Kicker, heading, lead, then an error Alert with "Try again".    |
+| Disabled | `disabled`      | The same content with the action disabled.                      |
+
+### Sizing
+
+| Container step           | What changes                                      |
+| ------------------------ | ------------------------------------------------- |
+| below `@sm`              | The lead at body size.                            |
+| `@sm` (`--container-sm`) | The lead steps up a size; the quote moves inward. |
+| `@md` (`--container-md`) | The heading steps up a size.                      |
+| `@lg` (`--container-lg`) | More room above and below the section.            |
+
+## Examples
+
+### Container widths
+
+The same block at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <ContentBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Empty
+
+Pass an empty `sections` array.
+
+<Preview examples={examples} layout="fill">
+  <ContentBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <ContentBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+Press "Try again" to clear the message and bring the article back.
+
+<Preview examples={examples} layout="fill">
+  <ContentBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <ContentBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Two to four sections read best. Put a longer article on its own page.
+- Keep paragraphs short: three or four sentences each.

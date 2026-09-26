@@ -498,6 +498,78 @@
       ]
     },
     {
+      "name": "content-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Content (React)",
+      "description": "A long-form prose section for a landing, guide or article page, composing the @moderno-ui/react Alert, Button and Skeleton primitives: a kicker, a serif heading and a lead, then titled sections of paragraphs on the contract type scale, a pulled quote and one call to action, in one reading column capped at --container-md, with its own loading, empty and error renders; responds to its container (@container) — the lead steps up at @sm, the heading steps up at @md and the section gets more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/content/react/content.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/content.tsx"
+        }
+      ]
+    },
+    {
+      "name": "content-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Content (Vue)",
+      "description": "A long-form prose section for a landing, guide or article page, composing the @moderno-ui/vue Alert, Button and Skeleton primitives: a kicker, a serif heading and a lead, then titled sections of paragraphs on the contract type scale, a pulled quote and one call to action, in one reading column capped at --container-md, with its own loading, empty and error renders; responds to its container (@container) — the lead steps up at @sm, the heading steps up at @md and the section gets more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/content/vue/Content.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/Content.vue"
+        }
+      ]
+    },
+    {
+      "name": "content-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Content (Svelte)",
+      "description": "A long-form prose section for a landing, guide or article page, composing the @moderno-ui/svelte Alert, Button and Skeleton primitives: a kicker, a serif heading and a lead, then titled sections of paragraphs on the contract type scale, a pulled quote and one call to action, in one reading column capped at --container-md, with its own loading, empty and error renders; responds to its container (@container) — the lead steps up at @sm, the heading steps up at @md and the section gets more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/content/svelte/Content.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/Content.svelte"
+        }
+      ]
+    },
+    {
+      "name": "content-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Content (Solid)",
+      "description": "A long-form prose section for a landing, guide or article page, composing the @moderno-ui/solid Alert, Button and Skeleton primitives: a kicker, a serif heading and a lead, then titled sections of paragraphs on the contract type scale, a pulled quote and one call to action, in one reading column capped at --container-md, with its own loading, empty and error renders; responds to its container (@container) — the lead steps up at @sm, the heading steps up at @md and the section gets more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/content/solid/content.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/content.tsx"
+        }
+      ]
+    },
+    {
       "name": "description-list-react",
       "type": "registry:block",
       "version": "0.1.0",
