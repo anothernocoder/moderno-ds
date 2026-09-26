@@ -30,6 +30,11 @@
  *   - RadioGroup — one native radio per item, each bound to its label and
  *                text by ids from `useId`; the checked item, the orientation
  *                and the disabled group must match both ways.
+ *   - Toggle / ToggleGroup — Ark's toggle machines on native buttons; the
+ *                pressed state (aria-pressed, aria-checked, data-state), the
+ *                Indicator's on/off content, the group's role and orientation,
+ *                and the disabled buttons must match both ways; item ids come
+ *                from `useId`.
  *   - Dialog   — a Portal + focus-trap machine that must emit a stable,
  *                hydration-safe trigger while its content stays unmounted-visible.
  *   - Select   — a collection + popover whose hidden native <select> and ids
@@ -58,6 +63,8 @@ import { Avatar } from "../src/avatar.js";
 import { Checkbox } from "../src/checkbox.js";
 import { Switch } from "../src/switch.js";
 import { RadioGroup } from "../src/radio-group.js";
+import { Toggle } from "../src/toggle.js";
+import { ToggleGroup } from "../src/toggle-group.js";
 import { Dialog, Portal } from "../src/dialog.js";
 import { Select, createListCollection } from "../src/select.js";
 import { PinInput } from "../src/pin-input.js";
@@ -312,6 +319,32 @@ export function App({ open = false }: AppProps) {
             <RadioGroup.ItemHiddenInput />
           </RadioGroup.Item>
         </RadioGroup.Root>
+      </section>
+
+      <section aria-label="toggles">
+        <Toggle.Root defaultPressed>
+          <Toggle.Indicator fallback="☆">★</Toggle.Indicator>
+          Favorite
+        </Toggle.Root>
+        <Toggle.Root variant="outline" size="sm" disabled>
+          <Toggle.Indicator fallback="☆">★</Toggle.Indicator>
+          Pin
+        </Toggle.Root>
+        <ToggleGroup.Root defaultValue={["center"]} aria-label="Text alignment">
+          <ToggleGroup.Item value="left">Left</ToggleGroup.Item>
+          <ToggleGroup.Item value="center">Center</ToggleGroup.Item>
+        </ToggleGroup.Root>
+        <ToggleGroup.Root
+          variant="outline"
+          size="lg"
+          orientation="vertical"
+          multiple
+          disabled
+          aria-label="Text style"
+        >
+          <ToggleGroup.Item value="bold">Bold</ToggleGroup.Item>
+          <ToggleGroup.Item value="italic">Italic</ToggleGroup.Item>
+        </ToggleGroup.Root>
       </section>
 
       <Dialog.Root defaultOpen={open}>

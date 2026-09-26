@@ -22,6 +22,8 @@ import { Avatar } from "../src/avatar.jsx";
 import { Checkbox } from "../src/checkbox.jsx";
 import { Switch } from "../src/switch.jsx";
 import { RadioGroup } from "../src/radio-group.jsx";
+import { Toggle } from "../src/toggle.jsx";
+import { ToggleGroup } from "../src/toggle-group.jsx";
 import { Dialog, Portal } from "../src/dialog.js";
 import { Select, createListCollection } from "../src/select.jsx";
 import { PinInput } from "../src/pin-input.jsx";
@@ -271,6 +273,32 @@ export function App(props: { open?: boolean }) {
             <RadioGroup.ItemHiddenInput />
           </RadioGroup.Item>
         </RadioGroup.Root>
+      </section>
+
+      <section aria-label="toggles">
+        <Toggle.Root defaultPressed>
+          <Toggle.Indicator fallback="☆">★</Toggle.Indicator>
+          Favorite
+        </Toggle.Root>
+        <Toggle.Root variant="outline" size="sm" disabled>
+          <Toggle.Indicator fallback="☆">★</Toggle.Indicator>
+          Pin
+        </Toggle.Root>
+        <ToggleGroup.Root defaultValue={["center"]} aria-label="Text alignment">
+          <ToggleGroup.Item value="left">Left</ToggleGroup.Item>
+          <ToggleGroup.Item value="center">Center</ToggleGroup.Item>
+        </ToggleGroup.Root>
+        <ToggleGroup.Root
+          variant="outline"
+          size="lg"
+          orientation="vertical"
+          multiple
+          disabled
+          aria-label="Text style"
+        >
+          <ToggleGroup.Item value="bold">Bold</ToggleGroup.Item>
+          <ToggleGroup.Item value="italic">Italic</ToggleGroup.Item>
+        </ToggleGroup.Root>
       </section>
 
       <Dialog.Root defaultOpen={props.open}>

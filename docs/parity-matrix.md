@@ -214,6 +214,34 @@ shared stylesheet keys on.
 | invalid → `data-invalid` + `aria-invalid`     |  ✅   | ✅  |   ✅   |  ✅   |
 | native props forwarded to the root            |  ✅   | ✅  |   ✅   |  ✅   |
 
+### Toggle (`toggleRecipe`: `data-variant` × `data-size`; Ark toggle machine)
+
+| State                                            | React | Vue | Svelte | Solid |
+| ------------------------------------------------ | :---: | :-: | :----: | :---: |
+| variant × size → root `data-*` (+ `ghost`, `md`) |  ✅   | ✅  |   ✅   |  ✅   |
+| every Ark part exposed                           |  ✅   | ✅  |   ✅   |  ✅   |
+| native `<button>`, `aria-pressed` + `data-state` |  ✅   | ✅  |   ✅   |  ✅   |
+| click presses → `data-state="on"` + callback     |  ✅   | ✅  |   ✅   |  ✅   |
+| Indicator shows children on, `fallback` off      |  ✅   | ✅  |   ✅   |  ✅   |
+| Space / Enter toggle it                          |  ✅   | ✅  |   ✅   |  ✅   |
+| disabled → native `disabled` + `data-disabled`   |  ✅   | ✅  |   ✅   |  ✅   |
+| native props forwarded, no baked style           |  ✅   | ✅  |   ✅   |  ✅   |
+
+### ToggleGroup (`toggleGroupRecipe`: `data-variant` × `data-size`; Ark toggle-group machine)
+
+| State                                              | React | Vue | Svelte | Solid |
+| -------------------------------------------------- | :---: | :-: | :----: | :---: |
+| variant × size → root `data-*` (+ `ghost`, `md`)   |  ✅   | ✅  |   ✅   |  ✅   |
+| every Ark part exposed                             |  ✅   | ✅  |   ✅   |  ✅   |
+| orientation → `data-orientation` (+ horizontal)    |  ✅   | ✅  |   ✅   |  ✅   |
+| single: `radiogroup` of `radio` buttons            |  ✅   | ✅  |   ✅   |  ✅   |
+| click presses one → `data-state` + `onValueChange` |  ✅   | ✅  |   ✅   |  ✅   |
+| `multiple`: `group` of `aria-pressed` buttons      |  ✅   | ✅  |   ✅   |  ✅   |
+| arrow keys move focus between items                |  ✅   | ✅  |   ✅   |  ✅   |
+| disabled item → `data-disabled`, inert             |  ✅   | ✅  |   ✅   |  ✅   |
+| disabled group → every item disabled               |  ✅   | ✅  |   ✅   |  ✅   |
+| native props forwarded to the root                 |  ✅   | ✅  |   ✅   |  ✅   |
+
 ### Dialog (Ark portal + focus trap + ids)
 
 | State                    | React | Vue | Svelte | Solid |
@@ -268,6 +296,7 @@ shared stylesheet keys on.
 | Avatar fallback shown / image hidden on SSR  |  ✅   | ✅  |   ✅   |  ✅   |
 | Switch on/off state + switch role on SSR     |  ✅   | ✅  |   ✅   |  ✅   |
 | RadioGroup checked item + orientation on SSR |  ✅   | ✅  |   ✅   |  ✅   |
+| Toggle / ToggleGroup pressed state + roles   |  ✅   | ✅  |   ✅   |  ✅   |
 
 ¹ Vue hydration is verified on the portal-free primitives (Button, Card, Field
 and Checkbox), the deterministic `useId` hazard; Ark's portaled popovers

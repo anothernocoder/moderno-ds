@@ -17,6 +17,7 @@
   import { Checkbox } from "../src/index.js";
   import { Switch } from "../src/index.js";
   import { RadioGroup } from "../src/index.js";
+  import { Toggle, ToggleGroup } from "../src/index.js";
   import { Dialog, Portal } from "../src/index.js";
   import { Select, createListCollection } from "../src/index.js";
   import { PinInput } from "../src/index.js";
@@ -238,6 +239,38 @@
         <RadioGroup.ItemHiddenInput />
       </RadioGroup.Item>
     </RadioGroup.Root>
+  </section>
+
+  <section aria-label="toggles">
+    <Toggle.Root defaultPressed>
+      <Toggle.Indicator>
+        {#snippet fallback()}☆{/snippet}
+        ★
+      </Toggle.Indicator>
+      Favorite
+    </Toggle.Root>
+    <Toggle.Root variant="outline" size="sm" disabled>
+      <Toggle.Indicator>
+        {#snippet fallback()}☆{/snippet}
+        ★
+      </Toggle.Indicator>
+      Pin
+    </Toggle.Root>
+    <ToggleGroup.Root defaultValue={["center"]} aria-label="Text alignment">
+      <ToggleGroup.Item value="left">Left</ToggleGroup.Item>
+      <ToggleGroup.Item value="center">Center</ToggleGroup.Item>
+    </ToggleGroup.Root>
+    <ToggleGroup.Root
+      variant="outline"
+      size="lg"
+      orientation="vertical"
+      multiple
+      disabled
+      aria-label="Text style"
+    >
+      <ToggleGroup.Item value="bold">Bold</ToggleGroup.Item>
+      <ToggleGroup.Item value="italic">Italic</ToggleGroup.Item>
+    </ToggleGroup.Root>
   </section>
 
   <Dialog.Root defaultOpen={open}>

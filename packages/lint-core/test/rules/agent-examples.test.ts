@@ -190,3 +190,31 @@ describe("moderno/valid-props over the real RadioGroup manifest", () => {
     ]);
   });
 });
+
+describe("moderno/valid-props over the real Toggle and ToggleGroup manifests", () => {
+  const manifests = manifestsFor("react");
+  const check = (code: string) =>
+    validProps.check({ code, framework: "react", manifests }).map((f) => f.message);
+
+  it("accepts the recipe props and Ark's own props on each root", { timeout: 30_000 }, () => {
+    expect(
+      check(
+        '<Toggle.Root variant="outline" size="sm" pressed={bold} onPressedChange={setBold} aria-label="Bold" />',
+      ),
+    ).toEqual([]);
+    expect(
+      check(
+        '<ToggleGroup.Root variant="outline" size="lg" multiple orientation="vertical" value={styles} onValueChange={save} />',
+      ),
+    ).toEqual([]);
+  });
+
+  it("rejects a variant or size outside the recipe", () => {
+    expect(check('<Toggle.Root variant="solid" />')).toEqual([
+      expect.stringContaining('Invalid value "solid"'),
+    ]);
+    expect(check('<ToggleGroup.Root size="xl" />')).toEqual([
+      expect.stringContaining('Invalid value "xl"'),
+    ]);
+  });
+});

@@ -154,3 +154,50 @@ describe("@moderno-ui/core components.css — Button overrides the native defaul
     expect(prop(decls, "pointer-events")).toBe("none");
   });
 });
+
+/*
+ * Toggle's root and ToggleGroup's items are native <button>s too, so the same
+ * two browser defaults leak through: the UA `buttonface` fill (a toggle at
+ * rest has no fill of its own) and a native `disabled` set without Ark — or
+ * before it hydrates — which carries no `data-disabled` for the base layer.
+ */
+describe("@moderno-ui/core components.css — Toggle and ToggleGroup buttons override the native defaults", () => {
+  const ruleDecls = (selector: string): Declaration[] => {
+    const found: Declaration[] = [];
+    root.walkRules((r: Rule) => {
+      if (!r.selectors.map((s) => s.trim()).includes(selector)) return;
+      r.walkDecls((d: Declaration) => {
+        found.push(d);
+      });
+    });
+    return found;
+  };
+  const prop = (decls: Declaration[], name: string) => decls.find((d) => d.prop === name)?.value;
+
+  for (const button of [
+    `[data-scope="toggle"][data-part="root"]`,
+    `[data-scope="toggle-group"][data-part="item"]`,
+  ]) {
+    it(`clears the UA button fill on ${button}`, () => {
+      expect(prop(ruleDecls(button), "background-color")).toBe("transparent");
+    });
+
+    it(`dims and disables a native :disabled ${button} like [data-disabled]`, () => {
+      const decls = ruleDecls(`${button}:disabled`);
+      expect(prop(decls, "opacity")).toBe("0.5");
+      expect(prop(decls, "pointer-events")).toBe("none");
+    });
+  }
+
+  it("dims a disabled group once: its items are reset after the :disabled rule", () => {
+    const selectorsInOrder: string[] = [];
+    root.walkRules((r: Rule) => {
+      selectorsInOrder.push(...r.selectors.map((s) => s.trim()));
+    });
+    const reset = `[data-scope="toggle-group"][data-part="root"][data-disabled] :where([data-part])`;
+    expect(prop(ruleDecls(reset), "opacity")).toBe("1");
+    expect(selectorsInOrder.indexOf(reset)).toBeGreaterThan(
+      selectorsInOrder.indexOf(`[data-scope="toggle-group"][data-part="item"]:disabled`),
+    );
+  });
+});

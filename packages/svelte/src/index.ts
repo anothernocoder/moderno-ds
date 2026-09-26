@@ -16,6 +16,8 @@ import {
   RadioGroup as ArkRadioGroup,
   Select as ArkSelect,
   Switch as ArkSwitch,
+  Toggle as ArkToggle,
+  ToggleGroup as ArkToggleGroup,
 } from "@ark-ui/svelte";
 import AvatarRoot from "./AvatarRoot.svelte";
 import CheckboxRoot from "./CheckboxRoot.svelte";
@@ -26,6 +28,8 @@ import SwitchRoot from "./SwitchRoot.svelte";
 import SwitchHiddenInput from "./SwitchHiddenInput.svelte";
 import RadioGroupRoot from "./RadioGroupRoot.svelte";
 import RadioGroupItemDescription from "./RadioGroupItemDescription.svelte";
+import ToggleRoot from "./ToggleRoot.svelte";
+import ToggleGroupRoot from "./ToggleGroupRoot.svelte";
 import type { AlertPartProps, AlertRootProps } from "./alert-props.js";
 import AlertRoot from "./AlertRoot.svelte";
 import AlertIcon from "./AlertIcon.svelte";
@@ -270,6 +274,37 @@ export const RadioGroup: Omit<typeof ArkRadioGroup, "Root"> & {
 export type { RadioGroupSize } from "@moderno-ui/core";
 export type { RadioGroupItemDescriptionProps } from "./radio-group-props.js";
 
+/**
+ * Toggle — a button that stays pressed until it is pressed again. Ark renders
+ * a native `<button>` with `aria-pressed` and `data-state="on|off"`; the
+ * optional `Indicator` shows its children while on and its `fallback` snippet
+ * while off. `Root` is wrapped to inject the `variant` × `size` recipe; every
+ * other part is Ark's verbatim. Annotated so the emitted `.d.ts` doesn't
+ * inline an un-nameable `@zag-js` type (TS2742).
+ */
+export const Toggle: Omit<typeof ArkToggle, "Root"> & { Root: typeof ToggleRoot } = {
+  ...ArkToggle,
+  Root: ToggleRoot,
+};
+export type { ToggleVariant, ToggleSize } from "@moderno-ui/core";
+
+/**
+ * ToggleGroup — a row of toggle buttons; one or several stay pressed. Single
+ * selection makes the root a `role="radiogroup"` of `role="radio"` buttons,
+ * `multiple` a `role="group"` of `aria-pressed` buttons; items carry
+ * `data-state="on|off"`, `data-disabled` and `data-orientation`. `Root` is
+ * wrapped to inject the `variant` × `size` recipe; every other part is Ark's
+ * verbatim. Annotated so the emitted `.d.ts` doesn't inline an un-nameable
+ * `@zag-js` type (TS2742).
+ */
+export const ToggleGroup: Omit<typeof ArkToggleGroup, "Root"> & {
+  Root: typeof ToggleGroupRoot;
+} = {
+  ...ArkToggleGroup,
+  Root: ToggleGroupRoot,
+};
+export type { ToggleGroupVariant, ToggleGroupSize } from "@moderno-ui/core";
+
 export { createListCollection } from "@ark-ui/svelte";
 
 export type {
@@ -281,4 +316,5 @@ export type {
   AvatarStatusChangeDetails,
   SwitchCheckedChangeDetails,
   RadioGroupValueChangeDetails,
+  ToggleGroupValueChangeDetails,
 } from "@ark-ui/svelte";

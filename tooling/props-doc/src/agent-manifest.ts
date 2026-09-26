@@ -44,6 +44,8 @@ import {
   spinnerRecipe,
   switchRecipe,
   radioGroupRecipe,
+  toggleRecipe,
+  toggleGroupRecipe,
 } from "@moderno-ui/core";
 import { extractProps, type ComponentDoc, type ComponentEntry, type PropDoc } from "./index.ts";
 import { ENTRIES } from "./manifest.ts";
@@ -322,6 +324,31 @@ export const AGENT_COMPONENTS: AgentComponentSpec[] = [
       { name: "indicator", description: "Ark's sliding highlight; unstyled by default." },
     ],
     variants: radioGroupRecipe.variants,
+  },
+  {
+    name: "Toggle",
+    slug: "toggle",
+    scope: "toggle",
+    propsEntry: findEntry("Toggle"),
+    parts: [
+      { name: "root", description: "A native <button> that stays pressed; aria-pressed." },
+      {
+        name: "indicator",
+        description: "Optional; shows its children while on and its fallback while off.",
+      },
+    ],
+    variants: toggleRecipe.variants,
+  },
+  {
+    name: "ToggleGroup",
+    slug: "toggle-group",
+    scope: "toggle-group",
+    propsEntry: findEntry("ToggleGroup"),
+    parts: [
+      { name: "root", description: "Carries variant and size for every item." },
+      { name: "item", description: "One native <button>; on or off." },
+    ],
+    variants: toggleGroupRecipe.variants,
   },
   {
     name: "LineChart",

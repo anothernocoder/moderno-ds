@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { renderToString } from "solid-js/web";
 import { App } from "../playground/app.jsx";
-import { partAttrs, partTags } from "../../core/test/ssr-parts.ts";
+import { attrOf, partAttrs, partTags } from "../../core/test/ssr-parts.ts";
 
 /**
  * SSR smoke — Solid compiles this file in server mode (see vitest.ssr.config.ts)
@@ -124,6 +124,49 @@ describe("SSR (Solid)", () => {
     expect(radios[0]).toMatch(/\schecked(?:=""|[\s>/])/);
     expect(radios[1]).not.toMatch(/\schecked(?:=""|[\s>/])/);
     expect(radios[3]).toMatch(/\sdisabled(?:=""|[\s>/])/);
+    // Toggle and ToggleGroup: Ark's toggle machines on native buttons. The
+    // recipes land on each root, the pressed state reaches the server string
+    // (aria-pressed / aria-checked / data-state), the Indicator renders its
+    // on or off content (past any framework hydration comments), and each group carries its role and orientation.
+    expect(partAttrs(html, "toggle", "root", "data-variant")).toEqual(["ghost", "outline"]);
+    expect(partAttrs(html, "toggle", "root", "data-size")).toEqual(["md", "sm"]);
+    expect(partAttrs(html, "toggle", "root", "aria-pressed")).toEqual(["true", "false"]);
+    expect(partAttrs(html, "toggle", "root", "data-state")).toEqual(["on", "off"]);
+    expect(partAttrs(html, "toggle", "indicator", "data-state")).toEqual(["on", "off"]);
+    expect(html).toMatch(/data-part="indicator"[^>]*>(?:\s|<!--[^>]*-->)*★/);
+    expect(html).toMatch(/data-part="indicator"[^>]*>(?:\s|<!--[^>]*-->)*☆/);
+    const disabledToggles = partTags(html, "toggle", "root").map((tag) =>
+      /\sdisabled(?:=""|[\s>])/.test(tag),
+    );
+    expect(disabledToggles).toEqual([false, true]);
+    expect(partAttrs(html, "toggle-group", "root", "data-variant")).toEqual(["ghost", "outline"]);
+    expect(partAttrs(html, "toggle-group", "root", "data-size")).toEqual(["md", "lg"]);
+    expect(partAttrs(html, "toggle-group", "root", "data-orientation")).toEqual([
+      "horizontal",
+      "vertical",
+    ]);
+    expect(partAttrs(html, "toggle-group", "root", "role")).toEqual(["radiogroup", "group"]);
+    expect(partAttrs(html, "toggle-group", "item", "data-state")).toEqual([
+      "off",
+      "on",
+      "off",
+      "off",
+    ]);
+    const groupItems = partTags(html, "toggle-group", "item");
+    expect(groupItems.slice(0, 2).map((tag) => attrOf(tag, "aria-checked"))).toEqual([
+      "false",
+      "true",
+    ]);
+    expect(groupItems.slice(2).map((tag) => attrOf(tag, "aria-pressed"))).toEqual([
+      "false",
+      "false",
+    ]);
+    expect(groupItems.map((tag) => /\sdisabled(?:=""|[\s>])/.test(tag))).toEqual([
+      false,
+      false,
+      true,
+      true,
+    ]);
     expect(html).toContain('data-scope="pin-input"');
     // Every code cell is on the server, and `count` makes the server's aria
     // labels agree with the client's — the PinInput-specific SSR hazard.

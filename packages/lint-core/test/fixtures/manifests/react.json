@@ -173,6 +173,40 @@
       }
     },
     {
+      "name": "Toggle",
+      "scope": "toggle",
+      "import": "import { Toggle } from \"@moderno-ui/react\"",
+      "propsHash": "sha256:fixture-toggle",
+      "props": [
+        { "name": "size", "type": "\"sm\" | \"md\" | \"lg\"", "required": false },
+        { "name": "variant", "type": "\"ghost\" | \"outline\"", "required": false }
+      ],
+      "propsComplete": false,
+      "parts": [{ "name": "root" }, { "name": "indicator" }],
+      "variants": { "variant": ["ghost", "outline"], "size": ["sm", "md", "lg"] },
+      "guidance": {
+        "intent": "A button that stays pressed until it is pressed again.",
+        "whenToUse": "One formatting or view option that is on or off: bold, mute, pin."
+      }
+    },
+    {
+      "name": "ToggleGroup",
+      "scope": "toggle-group",
+      "import": "import { ToggleGroup } from \"@moderno-ui/react\"",
+      "propsHash": "sha256:fixture-toggle-group",
+      "props": [
+        { "name": "size", "type": "\"sm\" | \"md\" | \"lg\"", "required": false },
+        { "name": "variant", "type": "\"ghost\" | \"outline\"", "required": false }
+      ],
+      "propsComplete": false,
+      "parts": [{ "name": "root" }, { "name": "item" }],
+      "variants": { "variant": ["ghost", "outline"], "size": ["sm", "md", "lg"] },
+      "guidance": {
+        "intent": "A row of toggle buttons where one, or several, stay pressed.",
+        "whenToUse": "A small set of related options shown as buttons: text alignment, text style, a view mode."
+      }
+    },
+    {
       "name": "Callout",
       "scope": "callout",
       "import": "import { Callout } from \"@moderno-ui/react\"",

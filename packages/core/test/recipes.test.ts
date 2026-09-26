@@ -4,6 +4,8 @@ import {
   avatarRecipe,
   switchRecipe,
   radioGroupRecipe,
+  toggleRecipe,
+  toggleGroupRecipe,
   alertRole,
   badgeRecipe,
   buttonRecipe,
@@ -371,5 +373,53 @@ describe("radioGroupRecipe", () => {
   it("rejects values outside the schema", () => {
     // @ts-expect-error — "xl" is not a radio group size
     expect(() => radioGroupRecipe({ size: "xl" })).toThrow(/invalid value/);
+  });
+});
+
+describe("toggleRecipe", () => {
+  it("defaults to the ghost variant at size md", () => {
+    expect(toggleRecipe()).toEqual({ "data-variant": "ghost", "data-size": "md" });
+  });
+
+  it("maps variant and size to data-attributes", () => {
+    expect(toggleRecipe({ variant: "outline", size: "sm" })).toEqual({
+      "data-variant": "outline",
+      "data-size": "sm",
+    });
+  });
+
+  it("carries no variant for what Ark already tracks", () => {
+    // Pressed, disabled surface as Ark's own props and
+    // data-attributes, so they must never become recipe variants.
+    expect(Object.keys(toggleRecipe.variants)).toEqual(["variant", "size"]);
+  });
+
+  it("rejects values outside the schema", () => {
+    // @ts-expect-error — "solid" is not a toggle variant
+    expect(() => toggleRecipe({ variant: "solid" })).toThrow(/invalid value/);
+  });
+});
+
+describe("toggleGroupRecipe", () => {
+  it("defaults to the ghost variant at size md", () => {
+    expect(toggleGroupRecipe()).toEqual({ "data-variant": "ghost", "data-size": "md" });
+  });
+
+  it("maps variant and size to data-attributes", () => {
+    expect(toggleGroupRecipe({ variant: "outline", size: "sm" })).toEqual({
+      "data-variant": "outline",
+      "data-size": "sm",
+    });
+  });
+
+  it("carries no variant for what Ark already tracks", () => {
+    // Pressed, disabled, orientation and multiple surface as Ark's own props and
+    // data-attributes, so they must never become recipe variants.
+    expect(Object.keys(toggleGroupRecipe.variants)).toEqual(["variant", "size"]);
+  });
+
+  it("rejects values outside the schema", () => {
+    // @ts-expect-error — "solid" is not a toggle group variant
+    expect(() => toggleGroupRecipe({ variant: "solid" })).toThrow(/invalid value/);
   });
 });

@@ -24,6 +24,8 @@ import { Avatar } from "../src/avatar.js";
 import { Checkbox } from "../src/checkbox.js";
 import { Switch } from "../src/switch.js";
 import { RadioGroup } from "../src/radio-group.js";
+import { Toggle } from "../src/toggle.js";
+import { ToggleGroup } from "../src/toggle-group.js";
 import { Dialog, Portal } from "../src/dialog.js";
 import { Select, createListCollection } from "../src/select.js";
 import { PinInput } from "../src/pin-input.js";
@@ -262,6 +264,36 @@ export const App = defineComponent({
               h(RadioGroup.ItemHiddenInput),
             ]),
           ]),
+        ]),
+
+        h("section", { "aria-label": "toggles" }, [
+          h(Toggle.Root, { defaultPressed: true }, () => [
+            h(Toggle.Indicator, null, { default: () => "★", fallback: () => "☆" }),
+            "Favorite",
+          ]),
+          h(Toggle.Root, { variant: "outline", size: "sm", disabled: true }, () => [
+            h(Toggle.Indicator, null, { default: () => "★", fallback: () => "☆" }),
+            "Pin",
+          ]),
+          h(ToggleGroup.Root, { defaultValue: ["center"], "aria-label": "Text alignment" }, () => [
+            h(ToggleGroup.Item, { value: "left" }, () => "Left"),
+            h(ToggleGroup.Item, { value: "center" }, () => "Center"),
+          ]),
+          h(
+            ToggleGroup.Root,
+            {
+              variant: "outline",
+              size: "lg",
+              orientation: "vertical",
+              multiple: true,
+              disabled: true,
+              "aria-label": "Text style",
+            },
+            () => [
+              h(ToggleGroup.Item, { value: "bold" }, () => "Bold"),
+              h(ToggleGroup.Item, { value: "italic" }, () => "Italic"),
+            ],
+          ),
         ]),
 
         h(Dialog.Root, { defaultOpen: props.open }, () => [

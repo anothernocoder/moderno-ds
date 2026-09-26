@@ -225,6 +225,33 @@ export const radioGroupRecipe = cva({
   defaultVariants: { size: "md" },
 });
 
+/**
+ * Toggle: visual `variant` × `size` for a button that stays pressed. `ghost`
+ * has no fill at rest; `outline` draws a border. Pressed and disabled are
+ * Ark's own `data-state="on|off"` / `data-disabled`, not variants.
+ */
+export const toggleRecipe = cva({
+  variants: {
+    variant: ["ghost", "outline"],
+    size: ["sm", "md", "lg"],
+  },
+  defaultVariants: { variant: "ghost", size: "md" },
+});
+
+/**
+ * ToggleGroup: `variant` × `size` on the root, which every item follows.
+ * `ghost` sets the items apart; `outline` holds them in one bordered bar.
+ * Orientation and single/multiple selection are Ark's own `orientation` and
+ * `multiple` props; pressed and disabled are Ark's `data-state`/`data-*`.
+ */
+export const toggleGroupRecipe = cva({
+  variants: {
+    variant: ["ghost", "outline"],
+    size: ["sm", "md", "lg"],
+  },
+  defaultVariants: { variant: "ghost", size: "md" },
+});
+
 /*
  * The variant unions, derived once beside the recipes. Bindings import these
  * names instead of re-deriving them from the recipe tables — a recipe change
@@ -370,3 +397,17 @@ export type SwitchSize = NonNullable<VariantProps<typeof switchRecipe.variants>[
 
 /** RadioGroup's density (radio circle and item text). */
 export type RadioGroupSize = NonNullable<VariantProps<typeof radioGroupRecipe.variants>["size"]>;
+
+/** Toggle's visual style (`ghost`, `outline`). */
+export type ToggleVariant = NonNullable<VariantProps<typeof toggleRecipe.variants>["variant"]>;
+
+/** Toggle's control density. */
+export type ToggleSize = NonNullable<VariantProps<typeof toggleRecipe.variants>["size"]>;
+
+/** ToggleGroup's visual style (`ghost`, `outline`), shared by its items. */
+export type ToggleGroupVariant = NonNullable<
+  VariantProps<typeof toggleGroupRecipe.variants>["variant"]
+>;
+
+/** ToggleGroup's density, shared by its items. */
+export type ToggleGroupSize = NonNullable<VariantProps<typeof toggleGroupRecipe.variants>["size"]>;

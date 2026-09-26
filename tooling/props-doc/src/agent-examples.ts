@@ -1515,6 +1515,158 @@ export const AGENT_EXAMPLES: Record<string, Partial<Record<Framework, AgentExamp
     ],
   },
 
+  Toggle: {
+    react: [
+      {
+        title: "A button that stays pressed, with an on/off indicator",
+        code: [
+          'import { Toggle } from "@moderno-ui/react";',
+          "",
+          "<Toggle.Root defaultPressed onPressedChange={save}>",
+          '  <Toggle.Indicator fallback="☆">★</Toggle.Indicator>',
+          "  Favorite",
+          "</Toggle.Root>",
+        ].join("\n"),
+      },
+    ],
+    vue: [
+      {
+        title: "A button that stays pressed, with an on/off indicator",
+        code: [
+          '<script setup lang="ts">',
+          'import { Toggle } from "@moderno-ui/vue";',
+          "</script>",
+          "",
+          "<template>",
+          '  <Toggle.Root default-pressed @pressed-change="save">',
+          "    <Toggle.Indicator>",
+          "      ★",
+          "      <template #fallback>☆</template>",
+          "    </Toggle.Indicator>",
+          "    Favorite",
+          "  </Toggle.Root>",
+          "</template>",
+        ].join("\n"),
+      },
+    ],
+    svelte: [
+      {
+        title: "A button that stays pressed, with an on/off indicator",
+        code: [
+          '<script lang="ts">',
+          '  import { Toggle } from "@moderno-ui/svelte";',
+          "</script>",
+          "",
+          "<Toggle.Root defaultPressed onPressedChange={save}>",
+          "  <Toggle.Indicator>",
+          "    {#snippet fallback()}☆{/snippet}",
+          "    ★",
+          "  </Toggle.Indicator>",
+          "  Favorite",
+          "</Toggle.Root>",
+        ].join("\n"),
+      },
+    ],
+    solid: [
+      {
+        title: "A button that stays pressed, with an on/off indicator",
+        code: [
+          'import { Toggle } from "@moderno-ui/solid";',
+          "",
+          "<Toggle.Root defaultPressed onPressedChange={save}>",
+          '  <Toggle.Indicator fallback="☆">★</Toggle.Indicator>',
+          "  Favorite",
+          "</Toggle.Root>",
+        ].join("\n"),
+      },
+    ],
+  },
+
+  ToggleGroup: {
+    react: [
+      {
+        title: "One pressed item, or several with multiple",
+        code: [
+          'import { ToggleGroup } from "@moderno-ui/react";',
+          "",
+          '<ToggleGroup.Root defaultValue={["left"]} onValueChange={save} aria-label="Text alignment">',
+          '  <ToggleGroup.Item value="left">Left</ToggleGroup.Item>',
+          '  <ToggleGroup.Item value="center">Center</ToggleGroup.Item>',
+          '  <ToggleGroup.Item value="right">Right</ToggleGroup.Item>',
+          "</ToggleGroup.Root>",
+          "",
+          '<ToggleGroup.Root multiple variant="outline" aria-label="Text style">',
+          '  <ToggleGroup.Item value="bold">Bold</ToggleGroup.Item>',
+          '  <ToggleGroup.Item value="italic">Italic</ToggleGroup.Item>',
+          "</ToggleGroup.Root>",
+        ].join("\n"),
+      },
+    ],
+    vue: [
+      {
+        title: "One pressed item, or several with multiple",
+        code: [
+          '<script setup lang="ts">',
+          'import { ToggleGroup } from "@moderno-ui/vue";',
+          "</script>",
+          "",
+          "<template>",
+          '  <ToggleGroup.Root :default-value="[\'left\']" @value-change="save" aria-label="Text alignment">',
+          '    <ToggleGroup.Item value="left">Left</ToggleGroup.Item>',
+          '    <ToggleGroup.Item value="center">Center</ToggleGroup.Item>',
+          '    <ToggleGroup.Item value="right">Right</ToggleGroup.Item>',
+          "  </ToggleGroup.Root>",
+          "",
+          '  <ToggleGroup.Root multiple variant="outline" aria-label="Text style">',
+          '    <ToggleGroup.Item value="bold">Bold</ToggleGroup.Item>',
+          '    <ToggleGroup.Item value="italic">Italic</ToggleGroup.Item>',
+          "  </ToggleGroup.Root>",
+          "</template>",
+        ].join("\n"),
+      },
+    ],
+    svelte: [
+      {
+        title: "One pressed item, or several with multiple",
+        code: [
+          '<script lang="ts">',
+          '  import { ToggleGroup } from "@moderno-ui/svelte";',
+          "</script>",
+          "",
+          '<ToggleGroup.Root defaultValue={["left"]} onValueChange={save} aria-label="Text alignment">',
+          '  <ToggleGroup.Item value="left">Left</ToggleGroup.Item>',
+          '  <ToggleGroup.Item value="center">Center</ToggleGroup.Item>',
+          '  <ToggleGroup.Item value="right">Right</ToggleGroup.Item>',
+          "</ToggleGroup.Root>",
+          "",
+          '<ToggleGroup.Root multiple variant="outline" aria-label="Text style">',
+          '  <ToggleGroup.Item value="bold">Bold</ToggleGroup.Item>',
+          '  <ToggleGroup.Item value="italic">Italic</ToggleGroup.Item>',
+          "</ToggleGroup.Root>",
+        ].join("\n"),
+      },
+    ],
+    solid: [
+      {
+        title: "One pressed item, or several with multiple",
+        code: [
+          'import { ToggleGroup } from "@moderno-ui/solid";',
+          "",
+          '<ToggleGroup.Root defaultValue={["left"]} onValueChange={save} aria-label="Text alignment">',
+          '  <ToggleGroup.Item value="left">Left</ToggleGroup.Item>',
+          '  <ToggleGroup.Item value="center">Center</ToggleGroup.Item>',
+          '  <ToggleGroup.Item value="right">Right</ToggleGroup.Item>',
+          "</ToggleGroup.Root>",
+          "",
+          '<ToggleGroup.Root multiple variant="outline" aria-label="Text style">',
+          '  <ToggleGroup.Item value="bold">Bold</ToggleGroup.Item>',
+          '  <ToggleGroup.Item value="italic">Italic</ToggleGroup.Item>',
+          "</ToggleGroup.Root>",
+        ].join("\n"),
+      },
+    ],
+  },
+
   LineChart: {
     react: [
       {

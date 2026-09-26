@@ -1,0 +1,231 @@
+---
+title: Toggle Group
+description: Una fila de botones toggle donde uno, o varios, se quedan pulsados.
+group: Componentes
+order: 29
+component: ToggleGroup
+pkg: "@moderno-ui/react"
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ToggleGroupDemo from "../../../examples/toggle-group/toggle-group.svelte";
+import baseReact from "../../../examples/toggle-group/react.tsx?raw";
+import baseVue from "../../../examples/toggle-group/vue.vue?raw";
+import baseSolid from "../../../examples/toggle-group/solid.tsx?raw";
+import baseSvelte from "../../../examples/toggle-group/toggle-group.svelte?raw";
+import ToggleGroupMultipleDemo from "../../../examples/toggle-group/multiple/toggle-group-multiple.svelte";
+import multipleReact from "../../../examples/toggle-group/multiple/react.tsx?raw";
+import multipleVue from "../../../examples/toggle-group/multiple/vue.vue?raw";
+import multipleSolid from "../../../examples/toggle-group/multiple/solid.tsx?raw";
+import multipleSvelte from "../../../examples/toggle-group/multiple/toggle-group-multiple.svelte?raw";
+import ToggleGroupOutlineDemo from "../../../examples/toggle-group/outline/toggle-group-outline.svelte";
+import outlineReact from "../../../examples/toggle-group/outline/react.tsx?raw";
+import outlineVue from "../../../examples/toggle-group/outline/vue.vue?raw";
+import outlineSolid from "../../../examples/toggle-group/outline/solid.tsx?raw";
+import outlineSvelte from "../../../examples/toggle-group/outline/toggle-group-outline.svelte?raw";
+import ToggleGroupVerticalDemo from "../../../examples/toggle-group/vertical/toggle-group-vertical.svelte";
+import verticalReact from "../../../examples/toggle-group/vertical/react.tsx?raw";
+import verticalVue from "../../../examples/toggle-group/vertical/vue.vue?raw";
+import verticalSolid from "../../../examples/toggle-group/vertical/solid.tsx?raw";
+import verticalSvelte from "../../../examples/toggle-group/vertical/toggle-group-vertical.svelte?raw";
+import ToggleGroupSizesDemo from "../../../examples/toggle-group/sizes/toggle-group-sizes.svelte";
+import sizesReact from "../../../examples/toggle-group/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/toggle-group/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/toggle-group/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/toggle-group/sizes/toggle-group-sizes.svelte?raw";
+import ToggleGroupDisabledDemo from "../../../examples/toggle-group/disabled/toggle-group-disabled.svelte";
+import disabledReact from "../../../examples/toggle-group/disabled/react.tsx?raw";
+import disabledVue from "../../../examples/toggle-group/disabled/vue.vue?raw";
+import disabledSolid from "../../../examples/toggle-group/disabled/solid.tsx?raw";
+import disabledSvelte from "../../../examples/toggle-group/disabled/toggle-group-disabled.svelte?raw";
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
+  <ToggleGroupDemo client:visible />
+</Preview>
+
+## Instalación
+
+<Install pkg="@moderno-ui/react" />
+
+## Uso
+
+Un toggle group es una fila de botones para opciones relacionadas. Por defecto se queda pulsado un botón a la vez, como en la alineación del texto; con `multiple` pueden quedarse varios, como negrita y cursiva.
+
+<ForFramework fw="react">
+
+```tsx
+import { ToggleGroup } from "@moderno-ui/react";
+```
+
+```tsx
+<ToggleGroup.Root defaultValue={["left"]} aria-label="Text alignment">
+  <ToggleGroup.Item value="left">Left</ToggleGroup.Item>
+  <ToggleGroup.Item value="center">Center</ToggleGroup.Item>
+  <ToggleGroup.Item value="right">Right</ToggleGroup.Item>
+</ToggleGroup.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { ToggleGroup } from "@moderno-ui/vue";
+```
+
+```vue
+<ToggleGroup.Root :default-value="['left']" aria-label="Text alignment">
+  <ToggleGroup.Item value="left">Left</ToggleGroup.Item>
+  <ToggleGroup.Item value="center">Center</ToggleGroup.Item>
+  <ToggleGroup.Item value="right">Right</ToggleGroup.Item>
+</ToggleGroup.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { ToggleGroup } from "@moderno-ui/svelte";
+```
+
+```svelte
+<ToggleGroup.Root defaultValue={["left"]} aria-label="Text alignment">
+  <ToggleGroup.Item value="left">Left</ToggleGroup.Item>
+  <ToggleGroup.Item value="center">Center</ToggleGroup.Item>
+  <ToggleGroup.Item value="right">Right</ToggleGroup.Item>
+</ToggleGroup.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { ToggleGroup } from "@moderno-ui/solid";
+```
+
+```tsx
+<ToggleGroup.Root defaultValue={["left"]} aria-label="Text alignment">
+  <ToggleGroup.Item value="left">Left</ToggleGroup.Item>
+  <ToggleGroup.Item value="center">Center</ToggleGroup.Item>
+  <ToggleGroup.Item value="right">Right</ToggleGroup.Item>
+</ToggleGroup.Root>
+```
+
+</ForFramework>
+
+## Referencia de la API
+
+### ToggleGroup.Root
+
+`variant` y `size` son los añadidos de Moderno, y todos los elementos los siguen. El resto de props vienen del ToggleGroup de Ark.
+
+<PropsTable component="ToggleGroup" />
+
+| Prop            | Tipo                                     | Por defecto    | Descripción                                                                |
+| --------------- | ---------------------------------------- | -------------- | -------------------------------------------------------------------------- |
+| `value`         | `string[]`                               | —              | Elementos pulsados, controlado. Úsalo con `onValueChange`.                 |
+| `defaultValue`  | `string[]`                               | `[]`           | Elementos pulsados al inicio cuando no está controlado.                    |
+| `onValueChange` | `(details: { value: string[] }) => void` | —              | Se llama cuando un elemento se pulsa o se suelta.                          |
+| `multiple`      | `boolean`                                | `false`        | Permite que varios elementos se queden pulsados.                           |
+| `deselectable`  | `boolean`                                | `true`         | En modo simple, deja soltar el elemento pulsado.                           |
+| `orientation`   | `"horizontal" \| "vertical"`             | `"horizontal"` | Coloca los elementos en fila o en columna; define las flechas del teclado. |
+| `disabled`      | `boolean`                                | `false`        | Deshabilita todos los elementos.                                           |
+| `loopFocus`     | `boolean`                                | `true`         | Las flechas pasan del último elemento al primero.                          |
+| `rovingFocus`   | `boolean`                                | `true`         | Tab se detiene una vez en el grupo; las flechas se mueven entre elementos. |
+
+En Vue, escucha con `@value-change` o enlaza el valor con `v-model`.
+
+### ToggleGroup.Item
+
+| Prop       | Tipo      | Por defecto | Descripción                         |
+| ---------- | --------- | ----------- | ----------------------------------- |
+| `value`    | `string`  | —           | Obligatorio. El valor del elemento. |
+| `disabled` | `boolean` | `false`     | Deshabilita solo este elemento.     |
+
+### Partes
+
+| Parte              | Elemento   | Descripción                                                                                                   |
+| ------------------ | ---------- | ------------------------------------------------------------------------------------------------------------- |
+| `ToggleGroup.Root` | `<div>`    | `role="radiogroup"`, o `role="group"` con `multiple`. Lleva `data-variant`, `data-size` y `data-orientation`. |
+| `ToggleGroup.Item` | `<button>` | Una opción. `role="radio"` con `aria-checked`, o `aria-pressed` con `multiple`.                               |
+
+### Atributos data
+
+| Atributo           | Valores                                                                                |
+| ------------------ | -------------------------------------------------------------------------------------- |
+| `data-state`       | En cada elemento: `"on"` u `"off"`                                                     |
+| `data-disabled`    | Presente en un elemento deshabilitado, y en la raíz cuando el grupo está deshabilitado |
+| `data-orientation` | `"horizontal"` o `"vertical"`, en la raíz y los elementos                              |
+| `data-variant`     | En la raíz: `"ghost"` u `"outline"`                                                    |
+| `data-size`        | En la raíz: `"sm"`, `"md"` o `"lg"`                                                    |
+
+## Ejemplos
+
+### Múltiple
+
+<Preview
+  examples={{
+    react: multipleReact,
+    vue: multipleVue,
+    solid: multipleSolid,
+    svelte: multipleSvelte,
+  }}
+>
+  <ToggleGroupMultipleDemo client:visible />
+</Preview>
+
+### Outline
+
+<Preview
+  examples={{ react: outlineReact, vue: outlineVue, solid: outlineSolid, svelte: outlineSvelte }}
+>
+  <ToggleGroupOutlineDemo client:visible />
+</Preview>
+
+### Vertical
+
+Las flechas arriba y abajo se mueven entre los elementos.
+
+<Preview
+  examples={{
+    react: verticalReact,
+    vue: verticalVue,
+    solid: verticalSolid,
+    svelte: verticalSvelte,
+  }}
+>
+  <ToggleGroupVerticalDemo client:visible />
+</Preview>
+
+### Tamaños
+
+<Preview examples={{ react: sizesReact, vue: sizesVue, solid: sizesSolid, svelte: sizesSvelte }}>
+  <ToggleGroupSizesDemo client:visible />
+</Preview>
+
+### Elemento deshabilitado
+
+<Preview
+  examples={{
+    react: disabledReact,
+    vue: disabledVue,
+    solid: disabledSolid,
+    svelte: disabledSvelte,
+  }}
+>
+  <ToggleGroupDisabledDemo client:visible />
+</Preview>
+
+## Notas
+
+- `ToggleGroup.Root` está envuelto para añadir `variant` y `size`; el resto de partes son las de Ark sin cambios.
+- Estiliza el estado desde `data-state` y los atributos `data-*` de cada elemento; `variant` y `size` son las únicas props visuales.
+- Para una elección en un formulario, donde cada opción necesita su propia etiqueta, usa Radio Group.

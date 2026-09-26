@@ -1,0 +1,210 @@
+---
+title: Toggle
+description: A button that stays pressed until it is pressed again, for one option that is on or off.
+group: Components
+order: 28
+component: Toggle
+pkg: "@moderno-ui/react"
+agentPropsHash: "sha256:6627386dcf20b3ffd702ebb67b156b563ed19f2c0a2e0bb48da6f1365f851595"
+agent:
+  intent: A button that stays pressed until it is pressed again.
+  whenToUse: One option that is on or off and looks like a button — bold text, mute, pin, a filter in a toolbar.
+  whenNotToUse:
+    - case: A setting in a settings list that takes effect at once
+      use: Switch
+    - case: A choice inside a form that the user submits later
+      use: Checkbox
+    - case: Several related options shown together, like text alignment
+      use: Toggle Group
+    - case: An action that runs once, like Save
+      use: Button
+  gotchas:
+    - "Toggle.Root is the button itself. Give it a visible label or an aria-label, and keep the label the same when it is pressed — aria-pressed already tells screen readers."
+    - "Toggle.Indicator swaps its content: its children show while on and its fallback while off. The fallback is a prop in React and Solid, a named slot in Vue and a snippet in Svelte."
+    - "variant and size are the only visual knobs; pressed and disabled are Ark's data-state and data-disabled attributes, not props to style around."
+  theming:
+    - "At rest a ghost toggle has no fill and an outline toggle is a --border outline on --background. Hover is --muted with --muted-foreground; pressed is --accent with --accent-foreground."
+    - "Disabled dims the button to half opacity. Do not pass a hex."
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ToggleDemo from "../../../examples/toggle/toggle.svelte";
+import baseReact from "../../../examples/toggle/react.tsx?raw";
+import baseVue from "../../../examples/toggle/vue.vue?raw";
+import baseSolid from "../../../examples/toggle/solid.tsx?raw";
+import baseSvelte from "../../../examples/toggle/toggle.svelte?raw";
+import ToggleIndicatorDemo from "../../../examples/toggle/indicator/toggle-indicator.svelte";
+import indicatorReact from "../../../examples/toggle/indicator/react.tsx?raw";
+import indicatorVue from "../../../examples/toggle/indicator/vue.vue?raw";
+import indicatorSolid from "../../../examples/toggle/indicator/solid.tsx?raw";
+import indicatorSvelte from "../../../examples/toggle/indicator/toggle-indicator.svelte?raw";
+import ToggleVariantsDemo from "../../../examples/toggle/variants/toggle-variants.svelte";
+import variantsReact from "../../../examples/toggle/variants/react.tsx?raw";
+import variantsVue from "../../../examples/toggle/variants/vue.vue?raw";
+import variantsSolid from "../../../examples/toggle/variants/solid.tsx?raw";
+import variantsSvelte from "../../../examples/toggle/variants/toggle-variants.svelte?raw";
+import ToggleSizesDemo from "../../../examples/toggle/sizes/toggle-sizes.svelte";
+import sizesReact from "../../../examples/toggle/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/toggle/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/toggle/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/toggle/sizes/toggle-sizes.svelte?raw";
+import ToggleDisabledDemo from "../../../examples/toggle/disabled/toggle-disabled.svelte";
+import disabledReact from "../../../examples/toggle/disabled/react.tsx?raw";
+import disabledVue from "../../../examples/toggle/disabled/vue.vue?raw";
+import disabledSolid from "../../../examples/toggle/disabled/solid.tsx?raw";
+import disabledSvelte from "../../../examples/toggle/disabled/toggle-disabled.svelte?raw";
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
+  <ToggleDemo client:visible />
+</Preview>
+
+## Installation
+
+<Install pkg="@moderno-ui/react" />
+
+## Usage
+
+A toggle is a button that stays pressed. Press it once to turn an option on, and again to turn it off. Use it for one option in a toolbar; for several related options, use Toggle Group.
+
+<ForFramework fw="react">
+
+```tsx
+import { Toggle } from "@moderno-ui/react";
+```
+
+```tsx
+<Toggle.Root>Bold</Toggle.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Toggle } from "@moderno-ui/vue";
+```
+
+```vue
+<Toggle.Root>Bold</Toggle.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Toggle } from "@moderno-ui/svelte";
+```
+
+```svelte
+<Toggle.Root>Bold</Toggle.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Toggle } from "@moderno-ui/solid";
+```
+
+```tsx
+<Toggle.Root>Bold</Toggle.Root>
+```
+
+</ForFramework>
+
+## API Reference
+
+### Toggle.Root
+
+`variant` and `size` are the Moderno additions; the other props come from Ark's Toggle.
+
+<PropsTable component="Toggle" />
+
+| Prop              | Type                         | Default | Description                                    |
+| ----------------- | ---------------------------- | ------- | ---------------------------------------------- |
+| `pressed`         | `boolean`                    | —       | Controlled state. Pair with `onPressedChange`. |
+| `defaultPressed`  | `boolean`                    | `false` | Initial state when uncontrolled.               |
+| `onPressedChange` | `(pressed: boolean) => void` | —       | Called when the toggle is pressed or released. |
+| `disabled`        | `boolean`                    | `false` | Disables the button and dims it.               |
+
+In Vue, listen with `@pressed-change` or bind the state with `v-model:pressed`.
+
+### Parts
+
+| Part               | Element    | Description                                                                                                     |
+| ------------------ | ---------- | --------------------------------------------------------------------------------------------------------------- |
+| `Toggle.Root`      | `<button>` | The button. Carries `aria-pressed`, `data-variant` and `data-size`.                                             |
+| `Toggle.Indicator` | `<div>`    | Optional. Shows its children while on and its `fallback` while off (a `<span>` with a `#fallback` slot in Vue). |
+
+### Data attributes
+
+| Attribute       | Values                                       |
+| --------------- | -------------------------------------------- |
+| `data-state`    | `"on"` or `"off"`, on the root and indicator |
+| `data-pressed`  | Present while pressed                        |
+| `data-disabled` | Present while `disabled`                     |
+| `data-variant`  | On the root: `"ghost"` or `"outline"`        |
+| `data-size`     | On the root: `"sm"`, `"md"` or `"lg"`        |
+
+## Examples
+
+### Indicator
+
+Show one icon while the toggle is on and another while it is off.
+
+<Preview
+  examples={{
+    react: indicatorReact,
+    vue: indicatorVue,
+    solid: indicatorSolid,
+    svelte: indicatorSvelte,
+  }}
+>
+  <ToggleIndicatorDemo client:visible />
+</Preview>
+
+### Variants
+
+<Preview
+  examples={{
+    react: variantsReact,
+    vue: variantsVue,
+    solid: variantsSolid,
+    svelte: variantsSvelte,
+  }}
+>
+  <ToggleVariantsDemo client:visible />
+</Preview>
+
+### Sizes
+
+<Preview examples={{ react: sizesReact, vue: sizesVue, solid: sizesSolid, svelte: sizesSvelte }}>
+  <ToggleSizesDemo client:visible />
+</Preview>
+
+### Disabled
+
+<Preview
+  examples={{
+    react: disabledReact,
+    vue: disabledVue,
+    solid: disabledSolid,
+    svelte: disabledSvelte,
+  }}
+>
+  <ToggleDisabledDemo client:visible />
+</Preview>
+
+## Notes
+
+- `Toggle.Root` is wrapped to add `variant` and `size`; every other part is Ark's unchanged.
+- Style state from `data-state` and the `data-*` flags; `variant` and `size` are the only visual props.
+- Toggle is a pressable button. For an on/off setting with a track and a thumb, use Switch.

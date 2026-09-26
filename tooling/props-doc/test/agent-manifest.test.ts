@@ -30,6 +30,8 @@ describe("AGENT_COMPONENTS", () => {
       "Avatar",
       "Switch",
       "RadioGroup",
+      "Toggle",
+      "ToggleGroup",
       "LineChart",
       "AreaChart",
       "BarChart",
@@ -247,6 +249,23 @@ describe("buildComponentsManifest", () => {
     ]);
     // Ark's own Root props (value, orientation, onValueChange, …) live under node_modules.
     expect(rg.propsComplete).toBe(false);
+  });
+
+  it("carries Toggle's and ToggleGroup's recipe props, variants and Ark parts", () => {
+    const toggle = manifest.components.find((c) => c.name === "Toggle")!;
+    expect(toggle.scope).toBe("toggle");
+    expect(toggle.props.map((p) => p.name)).toEqual(["size", "variant"]);
+    expect(toggle.variants).toEqual({ variant: ["ghost", "outline"], size: ["sm", "md", "lg"] });
+    expect(toggle.parts.map((p) => p.name)).toEqual(["root", "indicator"]);
+
+    const group = manifest.components.find((c) => c.name === "ToggleGroup")!;
+    expect(group.scope).toBe("toggle-group");
+    expect(group.props.map((p) => p.name)).toEqual(["size", "variant"]);
+    expect(group.variants).toEqual({ variant: ["ghost", "outline"], size: ["sm", "md", "lg"] });
+    expect(group.parts.map((p) => p.name)).toEqual(["root", "item"]);
+    // Ark's own Root props (pressed, value, multiple, …) live under node_modules.
+    expect(toggle.propsComplete).toBe(false);
+    expect(group.propsComplete).toBe(false);
   });
 
   it("reads variants straight off the shared @moderno-ui/core recipes", () => {

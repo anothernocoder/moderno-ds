@@ -32,6 +32,8 @@ export {
   avatarRecipe,
   switchRecipe,
   radioGroupRecipe,
+  toggleRecipe,
+  toggleGroupRecipe,
 } from "./recipes.js";
 export type {
   ButtonVariant,
@@ -61,4 +63,8 @@ export type {
   AvatarShape,
   SwitchSize,
   RadioGroupSize,
+  ToggleVariant,
+  ToggleSize,
+  ToggleGroupVariant,
+  ToggleGroupSize,
 } from "./recipes.js";

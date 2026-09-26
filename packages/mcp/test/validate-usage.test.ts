@@ -262,6 +262,47 @@ describe("validateUsage", () => {
     expect(rawArk[0]!.suggestion).toContain('import { RadioGroup } from "@moderno-ui/react"');
   });
 
+  it("accepts real Toggle and ToggleGroup usage and knows their Ark anatomy", () => {
+    const code = [
+      'import { Toggle, ToggleGroup } from "@moderno-ui/react";',
+      "",
+      '<Toggle.Root variant="outline" size="sm" defaultPressed onPressedChange={save}>',
+      '  <Toggle.Indicator fallback="☆">★</Toggle.Indicator>',
+      "  Favorite",
+      "</Toggle.Root>",
+      "",
+      '<ToggleGroup.Root variant="outline" multiple defaultValue={["bold"]} aria-label="Text style">',
+      '  <ToggleGroup.Item value="bold">Bold</ToggleGroup.Item>',
+      '  <ToggleGroup.Item value="italic">Italic</ToggleGroup.Item>',
+      "</ToggleGroup.Root>",
+      "",
+      '[data-scope="toggle-group"][data-part="item"][data-state="on"] { color: var(--foreground); }',
+    ].join("\n");
+    expect(validateUsage(manifests, { code, framework: "react" }).findings).toHaveLength(0);
+
+    const badVariant = validateUsage(manifests, {
+      framework: "react",
+      code: '<Toggle.Root variant="solid" />',
+    }).findings;
+    expect(badVariant).toHaveLength(1);
+    expect(badVariant[0]).toMatchObject({ ruleId: "moderno/valid-props" });
+    expect(badVariant[0]!.message).toContain("ghost, outline");
+
+    const badPart = validateUsage(manifests, {
+      framework: "react",
+      code: '[data-scope="toggle-group"][data-part="button"] { color: var(--primary); }',
+    }).findings;
+    expect(badPart).toHaveLength(1);
+    expect(badPart[0]!.message).toContain('"button" is not a real part of ToggleGroup');
+
+    const rawArk = validateUsage(manifests, {
+      framework: "react",
+      code: 'import { ToggleGroup } from "@ark-ui/react";',
+    }).findings;
+    expect(rawArk).toHaveLength(1);
+    expect(rawArk[0]!.suggestion).toContain('import { ToggleGroup } from "@moderno-ui/react"');
+  });
+
   it("returns no findings for clean, valid usage", () => {
     const { findings } = validateUsage(manifests, {
       framework: "react",
