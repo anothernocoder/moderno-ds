@@ -1,0 +1,5 @@
+value NumberInput
+type NumberInputFocusChangeDetails
+type NumberInputSize
+type NumberInputValueChangeDetails
+type NumberInputValueInvalidDetails

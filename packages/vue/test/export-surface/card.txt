@@ -1,0 +1,3 @@
+value Card
+type CardSize
+type CardVariant

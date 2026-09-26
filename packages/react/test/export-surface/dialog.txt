@@ -1,0 +1,9 @@
+value Dialog
+type DialogBackdropProps
+type DialogCloseTriggerProps
+type DialogContentProps
+type DialogDescriptionProps
+type DialogPositionerProps
+type DialogRootProps
+type DialogTitleProps
+type DialogTriggerProps

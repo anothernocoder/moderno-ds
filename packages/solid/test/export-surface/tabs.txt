@@ -1,0 +1,10 @@
+value Tabs
+type ModernoTabsRootProps
+type TabContentProps
+type TabIndicatorProps
+type TabListProps
+type TabTriggerProps
+type TabsRootProps
+type TabsSize
+type TabsValueChangeDetails
+type TabsVariant

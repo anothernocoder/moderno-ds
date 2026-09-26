@@ -1,0 +1,14 @@
+value NumberInput
+type ModernoNumberInputRootProps
+type NumberInputControlProps
+type NumberInputDecrementTriggerProps
+type NumberInputFocusChangeDetails
+type NumberInputIncrementTriggerProps
+type NumberInputInputProps
+type NumberInputLabelProps
+type NumberInputRootProps
+type NumberInputScrubberProps
+type NumberInputSize
+type NumberInputValueChangeDetails
+type NumberInputValueInvalidDetails
+type NumberInputValueTextProps

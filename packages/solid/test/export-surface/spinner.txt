@@ -1,0 +1,3 @@
+value Spinner
+type SpinnerProps
+type SpinnerSize

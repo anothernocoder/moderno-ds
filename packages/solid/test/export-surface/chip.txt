@@ -1,0 +1,4 @@
+value Chip
+type ChipProps
+type ChipSize
+type ChipVariant

@@ -1,0 +1,4 @@
+value Slider
+type SliderFocusChangeDetails
+type SliderSize
+type SliderValueChangeDetails
