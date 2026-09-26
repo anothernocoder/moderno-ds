@@ -642,6 +642,78 @@
       ]
     },
     {
+      "name": "list-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "List (React)",
+      "description": "Record rows with actions composing the @moderno-ui/react Card, Avatar, Badge, Button, Skeleton and Alert primitives: one row per record with an avatar, a name and a second line, a status badge, a short fact and Edit and Remove buttons, with its own empty, loading and error renders; responds to its container (@container) — the header lines up and the buttons move to the row's end at @sm, the status moves into its own column and the heading grows at @md, and the facts line up in one column at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/list/react/list.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/list.tsx"
+        }
+      ]
+    },
+    {
+      "name": "list-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "List (Vue)",
+      "description": "Record rows with actions composing the @moderno-ui/vue Card, Avatar, Badge, Button, Skeleton and Alert primitives: one row per record with an avatar, a name and a second line, a status badge, a short fact and Edit and Remove buttons, with its own empty, loading and error renders; responds to its container (@container) — the header lines up and the buttons move to the row's end at @sm, the status moves into its own column and the heading grows at @md, and the facts line up in one column at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/list/vue/List.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/List.vue"
+        }
+      ]
+    },
+    {
+      "name": "list-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "List (Svelte)",
+      "description": "Record rows with actions composing the @moderno-ui/svelte Card, Avatar, Badge, Button, Skeleton and Alert primitives: one row per record with an avatar, a name and a second line, a status badge, a short fact and Edit and Remove buttons, with its own empty, loading and error renders; responds to its container (@container) — the header lines up and the buttons move to the row's end at @sm, the status moves into its own column and the heading grows at @md, and the facts line up in one column at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/list/svelte/List.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/List.svelte"
+        }
+      ]
+    },
+    {
+      "name": "list-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "List (Solid)",
+      "description": "Record rows with actions composing the @moderno-ui/solid Card, Avatar, Badge, Button, Skeleton and Alert primitives: one row per record with an avatar, a name and a second line, a status badge, a short fact and Edit and Remove buttons, with its own empty, loading and error renders; responds to its container (@container) — the header lines up and the buttons move to the row's end at @sm, the status moves into its own column and the heading grows at @md, and the facts line up in one column at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/list/solid/list.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/list.tsx"
+        }
+      ]
+    },
+    {
       "name": "list-container-react",
       "type": "registry:block",
       "version": "0.1.0",
