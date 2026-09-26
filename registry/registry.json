@@ -428,9 +428,9 @@
     {
       "name": "empty-state-react",
       "type": "registry:block",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "Empty State (React)",
-      "description": "Centered no-data placeholder with a primary action, composing the @moderno-ui/react Button primitive.",
+      "description": "What a list, table or page shows when it has nothing in it yet, composing the @moderno-ui/react Button and Skeleton primitives: an icon, a title, one line of description and up to two actions (primary and secondary), with its own loading and error renders; responds to its container (@container) — the actions move side by side at @sm, the icon and title step up at @md and the block takes more room above and below at @lg.",
       "dependencies": [
         "@moderno-ui/react"
       ],
@@ -446,9 +446,9 @@
     {
       "name": "empty-state-vue",
       "type": "registry:block",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "Empty State (Vue)",
-      "description": "Centered no-data placeholder with a primary action, composing the @moderno-ui/vue Button primitive.",
+      "description": "What a list, table or page shows when it has nothing in it yet, composing the @moderno-ui/vue Button and Skeleton primitives: an icon, a title, one line of description and up to two actions (primary and secondary), with its own loading and error renders; responds to its container (@container) — the actions move side by side at @sm, the icon and title step up at @md and the block takes more room above and below at @lg.",
       "dependencies": [
         "@moderno-ui/vue"
       ],
@@ -464,9 +464,9 @@
     {
       "name": "empty-state-svelte",
       "type": "registry:block",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "Empty State (Svelte)",
-      "description": "Centered no-data placeholder with a primary action, composing the @moderno-ui/svelte Button primitive.",
+      "description": "What a list, table or page shows when it has nothing in it yet, composing the @moderno-ui/svelte Button and Skeleton primitives: an icon, a title, one line of description and up to two actions (primary and secondary), with its own loading and error renders; responds to its container (@container) — the actions move side by side at @sm, the icon and title step up at @md and the block takes more room above and below at @lg.",
       "dependencies": [
         "@moderno-ui/svelte"
       ],
@@ -482,9 +482,9 @@
     {
       "name": "empty-state-solid",
       "type": "registry:block",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "Empty State (Solid)",
-      "description": "Centered no-data placeholder with a primary action, composing the @moderno-ui/solid Button primitive.",
+      "description": "What a list, table or page shows when it has nothing in it yet, composing the @moderno-ui/solid Button and Skeleton primitives: an icon, a title, one line of description and up to two actions (primary and secondary), with its own loading and error renders; responds to its container (@container) — the actions move side by side at @sm, the icon and title step up at @md and the block takes more room above and below at @lg.",
       "dependencies": [
         "@moderno-ui/solid"
       ],

@@ -1,0 +1,169 @@
+---
+title: Estado vacío
+description: Lo que muestra una lista, una tabla o una página cuando aún no tiene nada — un icono, un título, una línea de descripción y hasta dos acciones.
+group: Bloques
+order: 116
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import EmptyStateBlockDemo from "../../../islands/EmptyStateBlockDemo.svelte";
+import emptyStateReact from "../../../../../../registry/blocks/empty-state/react/empty-state.tsx?raw";
+import emptyStateVue from "../../../../../../registry/blocks/empty-state/vue/EmptyState.vue?raw";
+import emptyStateSolid from "../../../../../../registry/blocks/empty-state/solid/empty-state.tsx?raw";
+import emptyStateSvelte from "../../../../../../registry/blocks/empty-state/svelte/EmptyState.svelte?raw";
+
+export const examples = {
+  react: emptyStateReact,
+  vue: emptyStateVue,
+  solid: emptyStateSolid,
+  svelte: emptyStateSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <EmptyStateBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="empty-state" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { EmptyState } from "@/components/blocks/empty-state";
+```
+
+```tsx
+<EmptyState title="Aún no hay facturas" primaryAction="Nueva factura" onPrimaryAction={create} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import EmptyState from "@/components/blocks/EmptyState.vue";
+</script>
+```
+
+```vue
+<EmptyState title="Aún no hay facturas" primary-action="Nueva factura" @primary-action="create" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import EmptyState from "@/components/blocks/EmptyState.svelte";
+</script>
+```
+
+```svelte
+<EmptyState title="Aún no hay facturas" primaryAction="Nueva factura" onprimaryaction={create} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { EmptyState } from "@/components/blocks/empty-state";
+```
+
+```tsx
+<EmptyState title="Aún no hay facturas" primaryAction="Nueva factura" onPrimaryAction={create} />
+```
+
+</ForFramework>
+
+## Referencia de API
+
+### Props
+
+| Prop                | Tipo                              | Por defecto         | Descripción                                                                            |
+| ------------------- | --------------------------------- | ------------------- | -------------------------------------------------------------------------------------- |
+| `icon`              | `"folder" \| "search" \| "inbox"` | `"folder"`          | El glifo del recuadro sobre el título.                                                 |
+| `title`             | `string`                          | `"No projects yet"` | Lo que falta, en pocas palabras.                                                       |
+| `description`       | `string`                          | una frase           | Una línea sobre por qué importa o qué hacer; `""` la oculta.                           |
+| `primaryAction`     | `string`                          | `"New project"`     | El texto del botón principal; `""` lo oculta.                                          |
+| `secondaryAction`   | `string`                          | `"Import"`          | El texto del botón con contorno; `""` lo oculta.                                       |
+| `error`             | `string`                          | —                   | El contenido no cargó; tu mensaje sustituye el título y un reintento las acciones.     |
+| `loading`           | `boolean`                         | `false`             | Marcadores esqueleto en una región ocupada sustituyen el mensaje.                      |
+| `disabled`          | `boolean`                         | `false`             | El mensaje se queda y todos los botones quedan deshabilitados.                         |
+| `onPrimaryAction`   | `() => void`                      | —                   | Se pulsó el botón principal. Svelte: `onprimaryaction`. Vue: `@primary-action`.        |
+| `onSecondaryAction` | `() => void`                      | —                   | Se pulsó el botón con contorno. Svelte: `onsecondaryaction`. Vue: `@secondary-action`. |
+| `onRetry`           | `() => void`                      | —                   | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.                            |
+
+### Estados
+
+| Estado        | Prop       | Qué se muestra                                                                                         |
+| ------------- | ---------- | ------------------------------------------------------------------------------------------------------ |
+| Vacío         | —          | El de por defecto: icono, título, descripción y las dos acciones. Muéstralo donde irían los elementos. |
+| Cargando      | `loading`  | Marcadores para el icono, el texto y un botón, en una región `status` ocupada.                         |
+| Error         | `error`    | Un glifo de alerta, tu mensaje, una pista fija y un botón "Try again", como `alert`.                   |
+| Deshabilitado | `disabled` | El mismo mensaje con los dos botones deshabilitados.                                                   |
+
+### Tamaño
+
+| Paso del contenedor      | Qué cambia                                                                      |
+| ------------------------ | ------------------------------------------------------------------------------- |
+| bajo `@sm`               | Las acciones se apilan, cada una tan ancha como el bloque, la principal arriba. |
+| `@sm` (`--container-sm`) | Las acciones van una junto a otra, centradas, con su propio ancho.              |
+| `@md` (`--container-md`) | El recuadro del icono y el título suben un tamaño.                              |
+| `@lg` (`--container-lg`) | El bloque toma el doble de espacio arriba y abajo.                              |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+El mismo bloque a 18rem, 30rem, 40rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <EmptyStateBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Sin resultados
+
+Una búsqueda o un filtro sin coincidencias: el glifo `search` y una sola acción.
+
+<Preview examples={examples} layout="fill">
+  <EmptyStateBlockDemo client:visible locale="es" state="no-results" />
+</Preview>
+
+### Solo mensaje
+
+Aún no hay nada que hacer: oculta las dos acciones.
+
+<Preview examples={examples} layout="fill">
+  <EmptyStateBlockDemo client:visible locale="es" state="message-only" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <EmptyStateBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+<Preview examples={examples} layout="fill">
+  <EmptyStateBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+<Preview examples={examples} layout="fill">
+  <EmptyStateBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
+
+## Notas
+
+- Muestra el estado vacío en lugar de la lista, no encima de ella.
+- Di qué falta y qué hacer después. A menudo basta con una acción.
