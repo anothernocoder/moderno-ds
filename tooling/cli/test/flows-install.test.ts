@@ -35,7 +35,7 @@ interface Variant {
   screenTargets: string[];
   /** The specifiers the assembly imports its screens through. */
   imports: string[];
-  /** The two blocks every auth screen shares, and where they land. */
+  /** The block every auth screen shares, and where it lands. */
   blocks: Array<{ item: string; target: string }>;
 }
 
@@ -58,10 +58,7 @@ const variants: Variant[] = [
       "@/components/screens/reset-password",
       "@/components/screens/verify",
     ],
-    blocks: [
-      { item: "login-form-react", target: "src/components/blocks/login-form.tsx" },
-      { item: "alert-list-react", target: "src/components/blocks/alert-list.tsx" },
-    ],
+    blocks: [{ item: "login-form-react", target: "src/components/blocks/login-form.tsx" }],
   },
   {
     framework: "vue",
@@ -102,10 +99,7 @@ const variants: Variant[] = [
       "@/components/screens/ResetPassword.svelte",
       "@/components/screens/Verify.svelte",
     ],
-    blocks: [
-      { item: "login-form-svelte", target: "src/components/blocks/LoginForm.svelte" },
-      { item: "alert-list-svelte", target: "src/components/blocks/AlertList.svelte" },
-    ],
+    blocks: [{ item: "login-form-svelte", target: "src/components/blocks/LoginForm.svelte" }],
   },
   {
     framework: "solid",
@@ -149,12 +143,11 @@ describe("moderno add auth-<framework>", () => {
       const result = await addItem({ registry, projectDir: project, name: flow, manifest });
 
       // Deepest first, and each item exactly once however many screens want it:
-      // the two shared blocks are written before the first screen that imports
-      // them and are not written again for the four screens after it.
+      // the shared block is written before the first screen that imports it and
+      // is not written again for the four screens after it.
       expect(result.installed.filter((name) => name === variant.blocks[0]!.item)).toHaveLength(1);
       expect(result.installed).toEqual([
         variant.blocks[0]!.item,
-        variant.blocks[1]!.item,
         ...SCREENS.map((screen) => `${screen}-${variant.framework}`),
         flow,
       ]);

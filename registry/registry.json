@@ -386,9 +386,9 @@
       "type": "registry:screen",
       "version": "0.1.1",
       "title": "Sign in (React)",
-      "description": "Full-viewport sign-in screen composing the login-form and alert-list blocks: the credential form with its error, loading and disabled states, and the service notices a person needs before signing in. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the notices move beside the card at @lg.",
+      "description": "Full-viewport sign-in screen composing the login-form block: the credential form with its error, loading and disabled states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm and the footer at @md.",
       "dependencies": ["@moderno-ui/react"],
-      "registryDependencies": ["login-form-react", "alert-list-react"],
+      "registryDependencies": ["login-form-react"],
       "files": [
         {
           "path": "screens/sign-in/react/sign-in.tsx",
@@ -402,9 +402,9 @@
       "type": "registry:screen",
       "version": "0.1.2",
       "title": "Sign in (Vue)",
-      "description": "Full-viewport sign-in screen composing the login-form and alert-list blocks: the credential form with its error, loading and disabled states, and the service notices a person needs before signing in. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the notices move beside the card at @lg.",
+      "description": "Full-viewport sign-in screen composing the login-form block: the credential form with its error, loading and disabled states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm and the footer at @md.",
       "dependencies": ["@moderno-ui/vue"],
-      "registryDependencies": ["login-form-vue", "alert-list-vue"],
+      "registryDependencies": ["login-form-vue"],
       "files": [
         {
           "path": "screens/sign-in/vue/SignIn.vue",
@@ -418,9 +418,9 @@
       "type": "registry:screen",
       "version": "0.1.1",
       "title": "Sign in (Svelte)",
-      "description": "Full-viewport sign-in screen composing the login-form and alert-list blocks: the credential form with its error, loading and disabled states, and the service notices a person needs before signing in. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the notices move beside the card at @lg.",
+      "description": "Full-viewport sign-in screen composing the login-form block: the credential form with its error, loading and disabled states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm and the footer at @md.",
       "dependencies": ["@moderno-ui/svelte"],
-      "registryDependencies": ["login-form-svelte", "alert-list-svelte"],
+      "registryDependencies": ["login-form-svelte"],
       "files": [
         {
           "path": "screens/sign-in/svelte/SignIn.svelte",
@@ -434,9 +434,9 @@
       "type": "registry:screen",
       "version": "0.1.1",
       "title": "Sign in (Solid)",
-      "description": "Full-viewport sign-in screen composing the login-form and alert-list blocks: the credential form with its error, loading and disabled states, and the service notices a person needs before signing in. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the notices move beside the card at @lg.",
+      "description": "Full-viewport sign-in screen composing the login-form block: the credential form with its error, loading and disabled states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm and the footer at @md.",
       "dependencies": ["@moderno-ui/solid"],
-      "registryDependencies": ["login-form-solid", "alert-list-solid"],
+      "registryDependencies": ["login-form-solid"],
       "files": [
         {
           "path": "screens/sign-in/solid/sign-in.tsx",
@@ -514,9 +514,9 @@
       "type": "registry:screen",
       "version": "0.1.1",
       "title": "Forgot password (React)",
-      "description": "Full-viewport password-recovery screen composing the login-form block in its forgot-password mode and the alert-list block: the address field and — once sent — the same card confirming the link is on its way, with the notes that answer \"it has not arrived\" beside it. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the notes move beside the card at @lg.",
+      "description": "Full-viewport password-recovery screen composing the login-form block in its forgot-password mode: the address field and — once sent — the same card confirming the link is on its way. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm and the footer at @md.",
       "dependencies": ["@moderno-ui/react"],
-      "registryDependencies": ["login-form-react", "alert-list-react"],
+      "registryDependencies": ["login-form-react"],
       "files": [
         {
           "path": "screens/forgot-password/react/forgot-password.tsx",
@@ -530,9 +530,9 @@
       "type": "registry:screen",
       "version": "0.1.2",
       "title": "Forgot password (Vue)",
-      "description": "Full-viewport password-recovery screen composing the login-form block in its forgot-password mode and the alert-list block: the address field and — once sent — the same card confirming the link is on its way, with the notes that answer \"it has not arrived\" beside it. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the notes move beside the card at @lg.",
+      "description": "Full-viewport password-recovery screen composing the login-form block in its forgot-password mode: the address field and — once sent — the same card confirming the link is on its way. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm and the footer at @md.",
       "dependencies": ["@moderno-ui/vue"],
-      "registryDependencies": ["login-form-vue", "alert-list-vue"],
+      "registryDependencies": ["login-form-vue"],
       "files": [
         {
           "path": "screens/forgot-password/vue/ForgotPassword.vue",
@@ -546,9 +546,9 @@
       "type": "registry:screen",
       "version": "0.1.1",
       "title": "Forgot password (Svelte)",
-      "description": "Full-viewport password-recovery screen composing the login-form block in its forgot-password mode and the alert-list block: the address field and — once sent — the same card confirming the link is on its way, with the notes that answer \"it has not arrived\" beside it. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the notes move beside the card at @lg.",
+      "description": "Full-viewport password-recovery screen composing the login-form block in its forgot-password mode: the address field and — once sent — the same card confirming the link is on its way. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm and the footer at @md.",
       "dependencies": ["@moderno-ui/svelte"],
-      "registryDependencies": ["login-form-svelte", "alert-list-svelte"],
+      "registryDependencies": ["login-form-svelte"],
       "files": [
         {
           "path": "screens/forgot-password/svelte/ForgotPassword.svelte",
@@ -562,9 +562,9 @@
       "type": "registry:screen",
       "version": "0.1.1",
       "title": "Forgot password (Solid)",
-      "description": "Full-viewport password-recovery screen composing the login-form block in its forgot-password mode and the alert-list block: the address field and — once sent — the same card confirming the link is on its way, with the notes that answer \"it has not arrived\" beside it. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the notes move beside the card at @lg.",
+      "description": "Full-viewport password-recovery screen composing the login-form block in its forgot-password mode: the address field and — once sent — the same card confirming the link is on its way. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm and the footer at @md.",
       "dependencies": ["@moderno-ui/solid"],
-      "registryDependencies": ["login-form-solid", "alert-list-solid"],
+      "registryDependencies": ["login-form-solid"],
       "files": [
         {
           "path": "screens/forgot-password/solid/forgot-password.tsx",
@@ -578,9 +578,9 @@
       "type": "registry:screen",
       "version": "0.1.0",
       "title": "Reset password (React)",
-      "description": "Full-viewport screen at the end of a password-reset link, composing the login-form block in its reset-password mode and the alert-list block: the new password and its confirmation, the rules said out loud as they are met, the emailed token carried in a hidden input, and the notes saying what using this link does beside them. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the notes move beside the card at @lg.",
+      "description": "Full-viewport screen at the end of a password-reset link, composing the login-form block in its reset-password mode: the new password and its confirmation, the rules said out loud as they are met, and the emailed token carried in a hidden input. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm and the footer at @md.",
       "dependencies": ["@moderno-ui/react"],
-      "registryDependencies": ["login-form-react", "alert-list-react"],
+      "registryDependencies": ["login-form-react"],
       "files": [
         {
           "path": "screens/reset-password/react/reset-password.tsx",
@@ -594,9 +594,9 @@
       "type": "registry:screen",
       "version": "0.1.0",
       "title": "Reset password (Vue)",
-      "description": "Full-viewport screen at the end of a password-reset link, composing the login-form block in its reset-password mode and the alert-list block: the new password and its confirmation, the rules said out loud as they are met, the emailed token carried in a hidden input, and the notes saying what using this link does beside them. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the notes move beside the card at @lg.",
+      "description": "Full-viewport screen at the end of a password-reset link, composing the login-form block in its reset-password mode: the new password and its confirmation, the rules said out loud as they are met, and the emailed token carried in a hidden input. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm and the footer at @md.",
       "dependencies": ["@moderno-ui/vue"],
-      "registryDependencies": ["login-form-vue", "alert-list-vue"],
+      "registryDependencies": ["login-form-vue"],
       "files": [
         {
           "path": "screens/reset-password/vue/ResetPassword.vue",
@@ -610,9 +610,9 @@
       "type": "registry:screen",
       "version": "0.1.0",
       "title": "Reset password (Svelte)",
-      "description": "Full-viewport screen at the end of a password-reset link, composing the login-form block in its reset-password mode and the alert-list block: the new password and its confirmation, the rules said out loud as they are met, the emailed token carried in a hidden input, and the notes saying what using this link does beside them. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the notes move beside the card at @lg.",
+      "description": "Full-viewport screen at the end of a password-reset link, composing the login-form block in its reset-password mode: the new password and its confirmation, the rules said out loud as they are met, and the emailed token carried in a hidden input. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm and the footer at @md.",
       "dependencies": ["@moderno-ui/svelte"],
-      "registryDependencies": ["login-form-svelte", "alert-list-svelte"],
+      "registryDependencies": ["login-form-svelte"],
       "files": [
         {
           "path": "screens/reset-password/svelte/ResetPassword.svelte",
@@ -626,9 +626,9 @@
       "type": "registry:screen",
       "version": "0.1.0",
       "title": "Reset password (Solid)",
-      "description": "Full-viewport screen at the end of a password-reset link, composing the login-form block in its reset-password mode and the alert-list block: the new password and its confirmation, the rules said out loud as they are met, the emailed token carried in a hidden input, and the notes saying what using this link does beside them. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the notes move beside the card at @lg.",
+      "description": "Full-viewport screen at the end of a password-reset link, composing the login-form block in its reset-password mode: the new password and its confirmation, the rules said out loud as they are met, and the emailed token carried in a hidden input. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm and the footer at @md.",
       "dependencies": ["@moderno-ui/solid"],
-      "registryDependencies": ["login-form-solid", "alert-list-solid"],
+      "registryDependencies": ["login-form-solid"],
       "files": [
         {
           "path": "screens/reset-password/solid/reset-password.tsx",
@@ -642,9 +642,9 @@
       "type": "registry:screen",
       "version": "0.1.0",
       "title": "Verify (React)",
-      "description": "Full-viewport screen that takes the one-time code emailed after sign-up, composing the login-form block in its verify mode and the alert-list block: one cell per digit with autocomplete=\"one-time-code\", the address carried in a hidden input so a resend still posts without JavaScript, a second submit that asks for a new code once the countdown is up, and the notes that answer \"it has not arrived\" beside them. Presentational — data and callbacks in, no navigation state and no timer of its own — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the notes move beside the card at @lg.",
+      "description": "Full-viewport screen that takes the one-time code emailed after sign-up, composing the login-form block in its verify mode: one cell per digit with autocomplete=\"one-time-code\", the address carried in a hidden input so a resend still posts without JavaScript, and a second submit that asks for a new code once the countdown is up. Presentational — data and callbacks in, no navigation state and no timer of its own — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm and the footer at @md.",
       "dependencies": ["@moderno-ui/react"],
-      "registryDependencies": ["login-form-react", "alert-list-react"],
+      "registryDependencies": ["login-form-react"],
       "files": [
         {
           "path": "screens/verify/react/verify.tsx",
@@ -658,9 +658,9 @@
       "type": "registry:screen",
       "version": "0.1.0",
       "title": "Verify (Vue)",
-      "description": "Full-viewport screen that takes the one-time code emailed after sign-up, composing the login-form block in its verify mode and the alert-list block: one cell per digit with autocomplete=\"one-time-code\", the address carried in a hidden input so a resend still posts without JavaScript, a second submit that asks for a new code once the countdown is up, and the notes that answer \"it has not arrived\" beside them. Presentational — data and callbacks in, no navigation state and no timer of its own — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the notes move beside the card at @lg.",
+      "description": "Full-viewport screen that takes the one-time code emailed after sign-up, composing the login-form block in its verify mode: one cell per digit with autocomplete=\"one-time-code\", the address carried in a hidden input so a resend still posts without JavaScript, and a second submit that asks for a new code once the countdown is up. Presentational — data and callbacks in, no navigation state and no timer of its own — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm and the footer at @md.",
       "dependencies": ["@moderno-ui/vue"],
-      "registryDependencies": ["login-form-vue", "alert-list-vue"],
+      "registryDependencies": ["login-form-vue"],
       "files": [
         {
           "path": "screens/verify/vue/Verify.vue",
@@ -674,9 +674,9 @@
       "type": "registry:screen",
       "version": "0.1.0",
       "title": "Verify (Svelte)",
-      "description": "Full-viewport screen that takes the one-time code emailed after sign-up, composing the login-form block in its verify mode and the alert-list block: one cell per digit with autocomplete=\"one-time-code\", the address carried in a hidden input so a resend still posts without JavaScript, a second submit that asks for a new code once the countdown is up, and the notes that answer \"it has not arrived\" beside them. Presentational — data and callbacks in, no navigation state and no timer of its own — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the notes move beside the card at @lg.",
+      "description": "Full-viewport screen that takes the one-time code emailed after sign-up, composing the login-form block in its verify mode: one cell per digit with autocomplete=\"one-time-code\", the address carried in a hidden input so a resend still posts without JavaScript, and a second submit that asks for a new code once the countdown is up. Presentational — data and callbacks in, no navigation state and no timer of its own — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm and the footer at @md.",
       "dependencies": ["@moderno-ui/svelte"],
-      "registryDependencies": ["login-form-svelte", "alert-list-svelte"],
+      "registryDependencies": ["login-form-svelte"],
       "files": [
         {
           "path": "screens/verify/svelte/Verify.svelte",
@@ -690,9 +690,9 @@
       "type": "registry:screen",
       "version": "0.1.0",
       "title": "Verify (Solid)",
-      "description": "Full-viewport screen that takes the one-time code emailed after sign-up, composing the login-form block in its verify mode and the alert-list block: one cell per digit with autocomplete=\"one-time-code\", the address carried in a hidden input so a resend still posts without JavaScript, a second submit that asks for a new code once the countdown is up, and the notes that answer \"it has not arrived\" beside them. Presentational — data and callbacks in, no navigation state and no timer of its own — and responsive to its container (@container) across all three contract steps: the masthead lines up at @sm, the footer at @md, and the notes move beside the card at @lg.",
+      "description": "Full-viewport screen that takes the one-time code emailed after sign-up, composing the login-form block in its verify mode: one cell per digit with autocomplete=\"one-time-code\", the address carried in a hidden input so a resend still posts without JavaScript, and a second submit that asks for a new code once the countdown is up. Presentational — data and callbacks in, no navigation state and no timer of its own — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm and the footer at @md.",
       "dependencies": ["@moderno-ui/solid"],
-      "registryDependencies": ["login-form-solid", "alert-list-solid"],
+      "registryDependencies": ["login-form-solid"],
       "files": [
         {
           "path": "screens/verify/solid/verify.tsx",

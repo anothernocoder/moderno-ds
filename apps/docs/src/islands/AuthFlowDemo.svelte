@@ -29,14 +29,15 @@
   the assembly *owns* is visible rather than merely described. A real app puts
   the first into its router and the second into its session.
 
-  A screen owns the viewport, so its root is `min-h-dvh`: each frame caps its
-  height and scrolls, the way a phone or a laptop crops a page. Every width
+  A screen owns the viewport, so its root is `min-h-dvh`: each device
+  (DeviceFrame) makes its own screen the viewport. Every width
   decision is read off the screen's own container (ADR-0005), which is why the
-  two tabs disagree with each other on one screen.
+  three tabs disagree with each other on one screen.
 -->
 <script lang="ts">
   import AuthFlow from "../../../../registry/flows/auth/svelte/AuthFlow.svelte";
   import DemoTabs from "./DemoTabs.svelte";
+  import DeviceFrame from "./DeviceFrame.svelte";
 
   type AuthStep = "sign-in" | "sign-up" | "forgot-password" | "reset-password" | "verify";
 
@@ -51,17 +52,15 @@
     "verify",
   ];
 
-  /** One frame below the screens' first step, one past their last. */
-  const widths = { desktop: "62rem", phone: "22rem" } as const;
-  type Frame = keyof typeof widths;
+  type Frame = "phone" | "tablet" | "desktop";
 
   const copy = {
     en: {
       label: "Auth flow frames",
-      frames: { desktop: "desktop", phone: "phone" },
       tabs: [
-        { id: "desktop", icon: "desktop", label: "Desktop", caption: "Past --container-lg every screen stands its notes beside its card — walk it: the links move the flow, the submits advance it, and any six digits pass the code check, because there is no server behind an example." },
-        { id: "phone", icon: "phone", label: "Phone", caption: "Under --container-sm the same flow, walkable on its own, with every screen stacked; neither frame reads the window." },
+        { id: "phone", icon: "phone", label: "Phone" },
+        { id: "tablet", icon: "tablet", label: "Tablet" },
+        { id: "desktop", icon: "desktop", label: "Desktop" },
       ],
       readout: "What the assembly reported",
       empty: "Nothing yet — move the flow above.",
@@ -69,10 +68,10 @@
     },
     es: {
       label: "Marcos del flujo de acceso",
-      frames: { desktop: "escritorio", phone: "teléfono" },
       tabs: [
-        { id: "desktop", icon: "desktop", label: "Escritorio", caption: "Por encima de --container-lg cada pantalla pone sus notas junto a la tarjeta — recórrelo: los enlaces mueven el flujo, los envíos lo hacen avanzar y seis dígitos cualesquiera pasan la comprobación del código, porque detrás de un ejemplo no hay servidor." },
-        { id: "phone", icon: "phone", label: "Teléfono", caption: "Por debajo de --container-sm el mismo flujo, recorrible por sí solo, con cada pantalla apilada; ningún marco lee la ventana." },
+        { id: "phone", icon: "phone", label: "Teléfono" },
+        { id: "tablet", icon: "tablet", label: "Tableta" },
+        { id: "desktop", icon: "desktop", label: "Escritorio" },
       ],
       readout: "Lo que informó el ensamblaje",
       empty: "Nada todavía — mueve el flujo de arriba.",
@@ -97,7 +96,7 @@
   }
 
   function frameOf(id: string): Frame {
-    return id === "phone" ? "phone" : "desktop";
+    return id === "phone" || id === "tablet" ? id : "desktop";
   }
 
   /** A tab mounts a fresh flow at its first step, so the readout starts over too. */
@@ -111,17 +110,9 @@
   {#snippet stage(id)}
     {@const frame = frameOf(id)}
     <div class="auth-stage" {@attach fresh}>
-      <div class="screen-scroll">
-        <div
-          class="demo-viewport screen-frame"
-          style="--viewport-width: {widths[frame]}"
-          data-label="{widths[frame]} · {copy.frames[frame]}"
-        >
-          <div class="screen-window">
-            <AuthFlow {onstepchange} {onauthenticated} />
-          </div>
-        </div>
-      </div>
+      <DeviceFrame device={frame}>
+        <AuthFlow {onstepchange} {onauthenticated} />
+      </DeviceFrame>
 
       <div class="demo-readout" role="group" aria-label={copy.readout}>
         <ol class="demo-steps">
@@ -151,30 +142,6 @@
     display: grid;
     gap: var(--spacing-6);
   }
-  /* Each frame keeps the width its label names at every viewport — that is the
-     whole claim of ADR-0005 — so a frame wider than the docs column scrolls
-     inside the stage rather than being squeezed or pushing the page sideways.
-     The block padding leaves room for the label straddling the frame's top
-     edge, which the scroll box would otherwise clip. */
-  .screen-scroll {
-    overflow-x: auto;
-    padding-block: 0.75rem 0.25rem;
-  }
-  /* The global dashed viewport, at exactly its content width: no inner padding
-     and no `min(100%, …)` cap, because the screens read their container and a
-     capped frame would quietly move them into another band. */
-  .screen-frame {
-    width: calc(var(--viewport-width) + 2px);
-    padding: 0;
-  }
-  /* The window the flow owns. The height is the demo's, not the design
-     system's — the screens themselves size only from contract slots and their
-     own container. */
-  .screen-window {
-    block-size: 38rem;
-    overflow: auto;
-    border-radius: inherit;
-  }
   /* The one thing the docs override on the shipped files, and only here: a
      screen's root is `min-h-dvh`, because a screen is as tall as the window it
      owns. A browser window's worth of flow inside a docs page would bury the
@@ -182,11 +149,11 @@
      `registry/` changes — this rule is the frame telling the screen how big the
      window is, which is what a real viewport does. The flow's own wrapper is in
      the chain, so it has to carry the height through. */
-  .screen-window :global(.moderno-flow-auth) {
+  :global(.screen-window .moderno-flow-auth) {
     block-size: 100%;
   }
-  .screen-window :global(.moderno-flow-auth > div),
-  .screen-window :global(.moderno-flow-auth > div > div) {
+  :global(.screen-window .moderno-flow-auth > div),
+  :global(.screen-window .moderno-flow-auth > div > div) {
     min-block-size: 100%;
   }
   .demo-readout {

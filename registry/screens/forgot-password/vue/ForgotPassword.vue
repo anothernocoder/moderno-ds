@@ -1,16 +1,15 @@
 <script setup lang="ts">
 /**
  * ForgotPassword — the full-viewport recovery screen: the card that asks for an
- * address and then confirms the link is on its way, and beside it the notes that
- * answer the question the reader is about to ask ("it has not arrived"). Copy it
- * into your project with `moderno add forgot-password-vue`; the blocks it
- * composes arrive with it, and every file is yours from that moment.
+ * address and then confirms the link is on its way. Copy it into your project
+ * with `moderno add forgot-password-vue`; the block it composes arrives with it,
+ * and every file is yours from that moment.
  *
  * Two states, one screen. `sent` is the whole of it: unsent, the card asks for
- * the address; sent, the same card confirms. Nothing moves — the masthead, the
- * notes and the footer stay where they were and only the card's contents change,
- * because a page that re-lays itself out at the moment of confirmation makes the
- * reader find it again just when they were told to look somewhere else.
+ * the address; sent, the same card confirms. Nothing moves — the masthead and
+ * the footer stay where they were and only the card's contents change, because
+ * a page that re-lays itself out at the moment of confirmation makes the reader
+ * find it again just when they were told to look somewhere else.
  *
  * It never says whether the address has an account: the confirmation reads "if
  * that address has an account" and the same card renders either way. A recovery
@@ -29,73 +28,27 @@
  * already locked out, and a way back that only works once the JavaScript has
  * loaded is no way back at all.
  *
- * The notes sit in an `<aside>`, deliberately unlabelled: the block's own
- * `heading` is the `<h2>` inside it, and an `aria-label` repeating that string
- * would make a screen reader announce the same sentence twice. The root is a
- * `<div>`, not a `<main>`: most app shells already provide that landmark and two
- * visible ones in a document is invalid.
+ * The root is a `<div>`, not a `<main>`: most app shells already provide that
+ * landmark and two visible ones in a document is invalid.
  *
  * Responsive to its container, not the viewport (ADR-0005). Full-viewport is a
  * *height* — `min-h-dvh` — and every width is read off the screen's own
  * `@container`: at `@sm` (--container-sm) the masthead stops stacking, at `@md`
- * (--container-md) the footer does, and at `@lg` (--container-lg) the notes leave
- * their place under the card and stand beside it.
+ * (--container-md) the footer does.
  *
  * States: `loading` and `disabled` make the card inert; `error` raises the
  * form-level alert and `errors.email` marks a malformed address, which leaks
- * nothing. The notes carry `noticesLoading` and `noticesError`; the empty case is
- * the screen's own — with `:notices="[]"` the aside is not rendered at all.
+ * nothing.
  *
  * Class strings are written out in full rather than shared through a variable:
  * the docs compile the previews' Tailwind from `class` attributes, so a class
  * assembled in JS would render here and vanish in the preview.
  */
-import { computed } from "vue";
-import AlertList from "@/components/blocks/AlertList.vue";
 import LoginForm from "@/components/blocks/LoginForm.vue";
 
 type ForgotPasswordDestination = "home" | "support" | "privacy" | "terms";
 
-/** One note, as the alert-list block renders it. */
-interface Notice {
-  id: string;
-  variant: "info" | "success" | "warning" | "error";
-  title: string;
-  description?: string;
-  meta?: string;
-  actionLabel?: string;
-}
-
-/**
- * What this screen answers before it is asked: the three things a person wonders
- * between pressing "Send reset link" and giving up. Delete it and pass your own
- * `notices` — or rewrite it in place, the file is yours.
- */
-const recoveryNotices: Notice[] = [
-  {
-    id: "expiry",
-    variant: "info",
-    title: "The link is good for 30 minutes",
-    description: "Ask for another whenever you like; sending a new one retires the old.",
-    meta: "One use each",
-  },
-  {
-    id: "delivery",
-    variant: "info",
-    title: "It can land in spam",
-    description: "Look under promotions and updates too — the mail comes from a no-reply address.",
-    meta: "Usually within a minute",
-  },
-  {
-    id: "sso",
-    variant: "warning",
-    title: "Signed in with Google or a work account?",
-    description: "There is no password to reset. Go back and use the provider you signed up with.",
-    meta: "Single sign-on",
-  },
-];
-
-const props = withDefaults(
+withDefaults(
   defineProps<{
     /** The link has gone out: the card confirms instead of asking. */
     sent?: boolean;
@@ -109,12 +62,6 @@ const props = withDefaults(
     loading?: boolean;
     /** Recovery is unavailable here (an SSO-only workspace, a locked account). */
     disabled?: boolean;
-    /** Notes to show beside the card. `[]` renders the card alone. */
-    notices?: Notice[];
-    /** The notes could not be loaded; that message replaces the list. */
-    noticesError?: string;
-    /** The notes are still loading: a busy region stands in for the list. */
-    noticesLoading?: boolean;
     /** Where "Sign in" points, in the card's footer. */
     signInHref?: string;
     /** Where the wordmark points. */
@@ -133,9 +80,6 @@ const props = withDefaults(
     errors: undefined,
     loading: false,
     disabled: false,
-    notices: undefined,
-    noticesError: undefined,
-    noticesLoading: false,
     signInHref: "#",
     homeHref: "#",
     supportHref: "#",
@@ -152,26 +96,7 @@ const props = withDefaults(
 const emit = defineEmits<{
   submit: [event: Event];
   navigate: [destination: ForgotPasswordDestination, event: MouseEvent];
-  noticeAction: [id: string];
-  dismissNotice: [id: string];
-  dismissNotices: [];
-  retryNotices: [];
 }>();
-
-/**
- * Resolved beside the props rather than as a `withDefaults` factory: a default
- * that reads a `const` from this same `<script setup>` is hoisted out of
- * `setup()` and `@vue/compiler-sfc` refuses to compile the file.
- *
- * Named apart from the prop on purpose. A setup binding outranks a prop of the
- * same name in the template, so a shadowing `notices` would silently be this
- * one — correct here, and a trap for the next person to read it.
- */
-const resolvedNotices = computed(() => props.notices ?? recoveryNotices);
-
-const showNotices = computed(
-  () => Boolean(props.noticesError) || props.noticesLoading || resolvedNotices.value.length > 0,
-);
 </script>
 
 <template>
@@ -197,35 +122,19 @@ const showNotices = computed(
         </p>
       </header>
 
-      <div class="grid content-center gap-8 @lg:grid-cols-2 @lg:items-start @lg:gap-10">
-        <div class="mx-auto w-full max-w-sm">
-          <LoginForm
-            mode="forgot-password"
-            :title-level="1"
-            :sent="sent"
-            :sent-to="sentTo"
-            :error="error"
-            :errors="errors"
-            :loading="loading"
-            :disabled="disabled"
-            :sign-in-href="signInHref"
-            @submit="emit('submit', $event)"
-          />
-        </div>
-
-        <aside v-if="showNotices" class="mx-auto w-full max-w-md">
-          <AlertList
-            heading="About the reset link"
-            description="What to expect, and what to do if it does not arrive."
-            :alerts="resolvedNotices"
-            :error="noticesError"
-            :loading="noticesLoading"
-            @action="emit('noticeAction', $event)"
-            @dismiss="emit('dismissNotice', $event)"
-            @dismiss-all="emit('dismissNotices')"
-            @retry="emit('retryNotices')"
-          />
-        </aside>
+      <div class="mx-auto grid w-full max-w-sm content-center">
+        <LoginForm
+          mode="forgot-password"
+          :title-level="1"
+          :sent="sent"
+          :sent-to="sentTo"
+          :error="error"
+          :errors="errors"
+          :loading="loading"
+          :disabled="disabled"
+          :sign-in-href="signInHref"
+          @submit="emit('submit', $event)"
+        />
       </div>
 
       <footer

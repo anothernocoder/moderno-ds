@@ -1,13 +1,12 @@
 import type { FormEvent, MouseEvent } from "react";
-import { AlertList, type AlertListItem } from "@/components/blocks/alert-list";
 import { LoginForm } from "@/components/blocks/login-form";
 
 /**
  * Verify — the full-viewport screen between "we sent you a code" and an account
  * that is actually usable: the card that takes the code a cell at a time and
- * can ask for a new one, and beside it the notes that answer "it has not
- * arrived". Copy it into your project with `moderno add verify-react`; the
- * blocks it composes arrive with it, and every file is yours from that moment.
+ * can ask for a new one. Copy it into your project with
+ * `moderno add verify-react`; the blocks it composes arrive with it, and every
+ * file is yours from that moment.
  *
  * **The code, not the password.** Whoever is here has already given their
  * address and is holding — or hunting for — six digits. So the screen asks for
@@ -48,10 +47,6 @@ import { LoginForm } from "@/components/blocks/login-form";
  * JavaScript. The card's "Sign in" link is an `href` only, forwarded as
  * `signInHref`.
  *
- * The notes sit in an `<aside>`, deliberately unlabelled: the block's own
- * `heading` is the `h2` inside it, and an `aria-label` repeating that string
- * would make a screen reader announce the same sentence twice.
- *
  * The root is a `<div>`, not a `<main>`: the screen is the page's content, but
  * whether it *is* the `main` landmark depends on the route that mounts it —
  * most app shells already provide one, and two visible `<main>` elements in a
@@ -65,9 +60,6 @@ import { LoginForm } from "@/components/blocks/login-form";
  *   and the support link share a row.
  * - `@md` (`--container-md`, 36rem) — the footer stops stacking: the copyright
  *   and the legal links share a row.
- * - `@lg` (`--container-lg`, 48rem) — the notes leave their place under the card
- *   and stand beside it, so "look in spam" is read while the inbox is still
- *   open rather than after the third failed attempt.
  *
  * **States.** `loading` and `disabled` make the card inert; `errors.code` marks
  * a code that was wrong or has expired and prints the reason under the cells;
@@ -75,48 +67,13 @@ import { LoginForm } from "@/components/blocks/login-form";
  * "this address is already verified" belong — with `disabled` beside it, so a
  * screen that cannot accept a code does not pretend to take one. `resendIn`
  * locks the resend and says for how long; `resent` rewrites the card's header
- * to confirm that a new code went out. The notes carry their own
- * `noticesLoading` and `noticesError`, and the *empty* case is the screen's
- * own: with `notices={[]}` the aside is not rendered at all and the card sits
- * centred and alone.
+ * to confirm that a new code went out.
  *
  * Class strings are written out in full rather than shared through a constant:
  * the docs compile the previews' Tailwind from `class` attributes, so a class
  * assembled in JS would render here and vanish in the preview.
  */
 export type VerifyDestination = "home" | "support" | "privacy" | "terms";
-
-/**
- * What this screen answers before it is asked — all three are versions of "it
- * has not arrived", which is the only question this page ever gets. Delete it
- * and pass your own `notices`, or rewrite it in place: the file is yours.
- */
-const verifyNotices: AlertListItem[] = [
-  {
-    id: "expiry",
-    variant: "info",
-    title: "The code lasts 10 minutes",
-    description:
-      "After that it stops working and you can ask for a new one from the button under the code.",
-    meta: "10 minutes",
-  },
-  {
-    id: "spam",
-    variant: "warning",
-    title: "Nothing in your inbox?",
-    description:
-      "Look in spam and in any filtered or promotions tab. A code that landed there still works.",
-    meta: "Check spam",
-  },
-  {
-    id: "latest",
-    variant: "info",
-    title: "Only the newest code works",
-    description:
-      "Asking for a new one retires the one before it, so use the most recent mail rather than the first.",
-    meta: "One at a time",
-  },
-];
 
 export interface VerifyProps {
   /** The address the code went to: named in the card and submitted from a hidden input, so a resend knows where to send. */
@@ -135,12 +92,6 @@ export interface VerifyProps {
   loading?: boolean;
   /** No code can be checked here — pair it with `error` when the attempts are spent. */
   disabled?: boolean;
-  /** Notes to show beside the card. `[]` renders the card alone. */
-  notices?: AlertListItem[];
-  /** The notes could not be loaded; that message replaces the list. */
-  noticesError?: string;
-  /** The notes are still loading: a busy region stands in for the list. */
-  noticesLoading?: boolean;
   /**
    * Native submit, from either button. Call `event.preventDefault()` and read
    * the form with the submitter — `new FormData(form, event.nativeEvent.submitter)` —
@@ -153,14 +104,6 @@ export interface VerifyProps {
    * and read `metaKey` / `ctrlKey` first to leave a new-tab click alone.
    */
   onNavigate?: (destination: VerifyDestination, event: MouseEvent<HTMLAnchorElement>) => void;
-  /** A note's own action (`actionLabel`), reported with that note's id. */
-  onNoticeAction?: (id: string) => void;
-  /** A note was dismissed; you drop it from your own state. */
-  onDismissNotice?: (id: string) => void;
-  /** Every note was dismissed at once. */
-  onDismissNotices?: () => void;
-  /** Retry after `noticesError`. */
-  onRetryNotices?: () => void;
   /** Where "Sign in" points, in the card's footer. */
   signInHref?: string;
   /** Where the wordmark points. */
@@ -182,23 +125,14 @@ export function Verify({
   errors,
   loading = false,
   disabled = false,
-  notices = verifyNotices,
-  noticesError,
-  noticesLoading = false,
   onSubmit,
   onNavigate,
-  onNoticeAction,
-  onDismissNotice,
-  onDismissNotices,
-  onRetryNotices,
   signInHref = "#",
   homeHref = "#",
   supportHref = "#",
   privacyHref = "#",
   termsHref = "#",
 }: VerifyProps) {
-  const showNotices = Boolean(noticesError) || noticesLoading || notices.length > 0;
-
   return (
     <div className="@container moderno-screen-verify min-h-dvh bg-background text-foreground">
       <div className="grid min-h-dvh grid-rows-[auto_1fr_auto] gap-8 p-6">
@@ -222,39 +156,21 @@ export function Verify({
           </p>
         </header>
 
-        <div className="grid content-center gap-8 @lg:grid-cols-2 @lg:items-start @lg:gap-10">
-          <div className="mx-auto w-full max-w-sm">
-            <LoginForm
-              mode="verify"
-              titleLevel={1}
-              sentTo={sentTo}
-              codeLength={codeLength}
-              resendIn={resendIn}
-              resent={resent}
-              error={error}
-              errors={errors}
-              loading={loading}
-              disabled={disabled}
-              onSubmit={onSubmit}
-              signInHref={signInHref}
-            />
-          </div>
-
-          {showNotices ? (
-            <aside className="mx-auto w-full max-w-md">
-              <AlertList
-                heading="If the code has not arrived"
-                description="Three things worth trying before asking for another one."
-                alerts={notices}
-                error={noticesError}
-                loading={noticesLoading}
-                onAction={onNoticeAction}
-                onDismiss={onDismissNotice}
-                onDismissAll={onDismissNotices}
-                onRetry={onRetryNotices}
-              />
-            </aside>
-          ) : null}
+        <div className="mx-auto grid w-full max-w-sm content-center">
+          <LoginForm
+            mode="verify"
+            titleLevel={1}
+            sentTo={sentTo}
+            codeLength={codeLength}
+            resendIn={resendIn}
+            resent={resent}
+            error={error}
+            errors={errors}
+            loading={loading}
+            disabled={disabled}
+            onSubmit={onSubmit}
+            signInHref={signInHref}
+          />
         </div>
 
         <footer className="grid gap-2 text-ui-md text-muted-foreground @md:flex @md:items-center @md:justify-between">

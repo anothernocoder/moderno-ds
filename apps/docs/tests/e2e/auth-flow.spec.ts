@@ -25,21 +25,19 @@
  *    JavaScript, and clicking one changes the screen without changing the
  *    document's URL, which is what makes the assembly a router rather than a
  *    set of anchors.
- * 3. **Container, not viewport.** The demo's Desktop and Phone tabs mount the
- *    flow in a desktop-width and a phone-width frame — one copy per tab, each
- *    reached by selecting it — so at every viewport the two disagree: the masthead
- *    lines up at `--container-sm`, the footer at `--container-md`, and the notes
- *    move beside the card at `--container-lg` — all read off the frame, never
- *    the window (ADR-0005).
+ * 3. **Container, not viewport.** The demo's Phone, Tablet and Desktop tabs
+ *    mount the flow in a phone-, a tablet- and a desktop-width frame — one copy
+ *    per tab, each reached by selecting it — so at every viewport they disagree: the masthead
+ *    lines up at `--container-sm` and the footer at `--container-md` — both read
+ *    off the frame, never the window (ADR-0005).
  * 4. **AA contrast** on the text the screen under the flow paints, in light and
  *    in dark.
  */
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
-/** The contract's three container steps, in px at the default root size. */
+/** The two container steps the screens read, in px at the default root size. */
 const CONTAINER_SM = 384;
 const CONTAINER_MD = 576;
-const CONTAINER_LG = 768;
 
 /** The responsive policy's three widths (ADR-0005). */
 const WIDTHS = [375, 768, 1280];
@@ -47,11 +45,11 @@ const WIDTHS = [375, 768, 1280];
 const PAGE = "/en/auth/";
 
 /**
- * The demo's tabs (islands/AuthFlowDemo.svelte), in order: a desktop-width
- * frame, then a phone-width one. Only the active tab's copy of the flow is
- * mounted, and the desktop one is what the page opens on.
+ * The demo's tabs (islands/AuthFlowDemo.svelte), in order: a phone-width,
+ * a tablet-width and a desktop-width frame. Only the active tab's copy of the
+ * flow is mounted, and the phone one is what the page opens on.
  */
-const TABS = ["desktop", "phone"] as const;
+const TABS = ["phone", "tablet", "desktop"] as const;
 type Tab = (typeof TABS)[number];
 
 /**
@@ -63,7 +61,7 @@ function cardTitle(page: Page): Locator {
   return flow(page).locator('[data-scope="card"][data-part="title"]');
 }
 
-/** The walkable copy — the Desktop tab's, which the page opens on. */
+/** The walkable copy — the Desktop tab's, which the walks select first. */
 function flow(page: Page): Locator {
   return page.locator('.preview-panel--demo [data-demo-state="desktop"] .moderno-flow-auth');
 }
@@ -119,8 +117,6 @@ interface FlowMetrics {
   mastheadDisplay: string;
   /** `display` of the footer: stacked below `@md`, one row at or above it. */
   footerDisplay: string;
-  /** Grid tracks in the content region: one column, or two at `@lg`. */
-  contentColumns: string;
   /** Every heading's *effective* rank, in document order (`aria-level` wins). */
   headingLevels: number[];
 }
@@ -135,15 +131,15 @@ async function flowMetrics(page: Page): Promise<FlowMetrics[]> {
       if (!root) throw new Error("the flow rendered no screen");
       const masthead = root.querySelector("header");
       const footer = root.querySelector("footer");
-      const content = root.querySelector("header + div");
-      if (!masthead || !footer || !content) throw new Error("the screen lost its own markup");
+      if (!masthead || !footer) throw new Error("the screen lost its own markup");
       return {
-        containerWidth: root.getBoundingClientRect().width,
-        rootHeight: root.getBoundingClientRect().height,
+        // Layout size, not the painted box: the docs scale the device to fit the
+        // column, and that transform never changes what the container reads.
+        containerWidth: (root as HTMLElement).offsetWidth,
+        rootHeight: (root as HTMLElement).offsetHeight,
         frameHeight: (wrapper.parentElement as HTMLElement).clientHeight,
         mastheadDisplay: getComputedStyle(masthead).display,
         footerDisplay: getComputedStyle(footer).display,
-        contentColumns: getComputedStyle(content).gridTemplateColumns,
         headingLevels: [...root.querySelectorAll("h1, h2, h3, h4, h5, h6")].map((heading) =>
           Number(heading.getAttribute("aria-level") ?? heading.tagName.slice(1)),
         ),
@@ -218,7 +214,6 @@ async function contrastRatios(page: Page): Promise<Record<string, number>> {
       wordmark: against(pick("header a")),
       supportLine: against(pick("header p")),
       supportLink: against(pick("header p a")),
-      noticesHeading: against(pick("aside h2")),
       copyright: against(pick("footer p")),
       legalLink: against(pick("footer nav a")),
     };
@@ -232,6 +227,7 @@ test.describe("auth flow", () => {
     await page.setViewportSize({ width: 1280, height: 1200 });
     await page.goto(PAGE, { waitUntil: "networkidle" });
     await hydrated(page);
+    await showTab(page, "desktop");
 
     const walked = flow(page);
     await expect(cardTitle(page)).toHaveText("Sign in");
@@ -283,6 +279,7 @@ test.describe("auth flow", () => {
     await page.setViewportSize({ width: 1280, height: 1200 });
     await page.goto(PAGE, { waitUntil: "networkidle" });
     await hydrated(page);
+    await showTab(page, "desktop");
 
     const walked = flow(page);
     const forgot = walked.getByRole("link", { name: "Forgot your password?" });
@@ -293,8 +290,8 @@ test.describe("auth flow", () => {
     await walked.locator('input[name="email"]').fill("ada@example.com");
     await walked.getByRole("button", { name: "Send reset link" }).click();
 
-    // The card confirms in place; the flow stays on the same screen and swaps
-    // the notes for the one that stands in for the email.
+    // The card confirms in place; the flow stays on the same screen and shows
+    // the banner that stands in for the email.
     expect(await currentScreen(page)).toBe("forgot-password");
     await expect(cardTitle(page)).toHaveText("Check your inbox");
 
@@ -355,7 +352,7 @@ test.describe("auth flow", () => {
             mounted.push(copies[0]!);
           }
 
-          // The two frame widths are fixed by the demo, so at every viewport its
+          // The three frame widths are fixed by the demo, so at every viewport its
           // tabs hold one copy below the first step and one above the last.
           const widths = mounted.map((m) => m.containerWidth);
           expect(
@@ -363,8 +360,8 @@ test.describe("auth flow", () => {
             `${scheme} ${width}px: a copy below @sm`,
           ).toBe(true);
           expect(
-            widths.some((w) => w >= CONTAINER_LG),
-            `${scheme} ${width}px: a copy at or above @lg`,
+            widths.some((w) => w >= CONTAINER_MD),
+            `${scheme} ${width}px: a copy at or above @md`,
           ).toBe(true);
 
           for (const [index, metrics] of mounted.entries()) {
@@ -374,9 +371,6 @@ test.describe("auth flow", () => {
             );
             expect(metrics.footerDisplay, `${where}: footer`).toBe(
               metrics.containerWidth >= CONTAINER_MD ? "flex" : "grid",
-            );
-            expect(metrics.contentColumns.split(/\s+/).length, `${where}: content columns`).toBe(
-              metrics.containerWidth >= CONTAINER_LG ? 2 : 1,
             );
             // Full-viewport is a height, and the flow's wrapper passes it
             // through: on this page each frame stands in for the window.
