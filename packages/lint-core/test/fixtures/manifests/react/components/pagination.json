@@ -1,0 +1,22 @@
+{
+  "name": "Pagination",
+  "scope": "pagination",
+  "import": "import { Pagination } from \"@moderno-ui/react\"",
+  "propsHash": "sha256:fixture-pagination",
+  "props": [{ "name": "size", "type": "\"sm\" | \"md\" | \"lg\"", "required": false }],
+  "propsComplete": false,
+  "parts": [
+    { "name": "root" },
+    { "name": "first-trigger" },
+    { "name": "prev-trigger" },
+    { "name": "item" },
+    { "name": "ellipsis" },
+    { "name": "next-trigger" },
+    { "name": "last-trigger" }
+  ],
+  "variants": { "size": ["sm", "md", "lg"] },
+  "guidance": {
+    "intent": "Let the user move between the pages of a long list.",
+    "whenToUse": "Tables, search results, feeds: many items shown a page at a time."
+  }
+}

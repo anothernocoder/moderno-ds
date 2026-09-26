@@ -1,11 +1,10 @@
-import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
-import { tmpdir } from "node:os";
+import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import { fileURLToPath } from "node:url";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { readManifest } from "../src/manifest.ts";
-import { addItem, updateItem } from "../src/operations.ts";
-import { createRegistry } from "../src/registry.ts";
+import { describe, expect, it } from "vitest";
+import { readManifest } from "../../src/manifest.ts";
+import { addItem, updateItem } from "../../src/operations.ts";
+import { createRegistry } from "../../src/registry.ts";
+import { registryDir, useFreshProject } from "./fresh-project.ts";
 
 /**
  * `moderno add <flow>` against the **real** catalog, into a temp project.
@@ -13,8 +12,8 @@ import { createRegistry } from "../src/registry.ts";
  * This is the top of the tier ladder and the one command that has to resolve
  * two levels of composition at once: a `registry:flow` whose
  * `registryDependencies` are its screens, each of whose `registryDependencies`
- * are the blocks it composes. `screens-install.test.ts` holds the level below;
- * what is held here is the promise the flows page makes — one command puts the
+ * are the blocks it composes. Each screen's own file beside this one holds the
+ * level below; what is held here is the promise the flows page makes — one command puts the
  * assembly, its five screens and the blocks they share on disk, each recorded
  * under its own version, with **one** copy of a block five screens all import.
  *
@@ -22,7 +21,6 @@ import { createRegistry } from "../src/registry.ts";
  * consumer edits the assembly (which the flow exists to be edited), `update` on
  * a screen still moves that screen and leaves the edited file alone.
  */
-const registryDir = fileURLToPath(new URL("../../../registry", import.meta.url));
 
 /** The auth flow's screens, in the order the catalog declares them. */
 const SCREENS = ["sign-in", "sign-up", "forgot-password", "reset-password", "verify"] as const;
@@ -119,13 +117,7 @@ const variants: Variant[] = [
   },
 ];
 
-let project: string;
-beforeEach(async () => {
-  project = await mkdtemp(join(tmpdir(), "moderno-proj-"));
-});
-afterEach(async () => {
-  await rm(project, { recursive: true, force: true });
-});
+const project = useFreshProject();
 
 describe("moderno add auth-<framework>", () => {
   for (const variant of variants) {
@@ -133,8 +125,8 @@ describe("moderno add auth-<framework>", () => {
 
     it(`installs ${flow}, its five screens and the blocks they share`, async () => {
       const registry = await createRegistry(registryDir).load();
-      const manifest = await readManifest(project);
-      const result = await addItem({ registry, projectDir: project, name: flow, manifest });
+      const manifest = await readManifest(project());
+      const result = await addItem({ registry, projectDir: project(), name: flow, manifest });
 
       // Deepest first, and each item exactly once however many screens want it:
       // the shared block is written before the first screen that imports it and
@@ -147,17 +139,17 @@ describe("moderno add auth-<framework>", () => {
       ]);
 
       // The assembly composes the five screens from where `add` just put them.
-      const assembly = await readFile(join(project, variant.target), "utf8");
+      const assembly = await readFile(join(project(), variant.target), "utf8");
       for (const specifier of variant.imports) expect(assembly).toContain(specifier);
 
       // Every screen and every block is on disk as its own file, not inlined.
       for (const target of [...variant.screenTargets, ...variant.blocks.map((b) => b.target)]) {
-        expect((await readFile(join(project, target), "utf8")).length).toBeGreaterThan(0);
+        expect((await readFile(join(project(), target), "utf8")).length).toBeGreaterThan(0);
       }
 
       // Per item, not per flow: `moderno update verify-react` stays possible,
       // and the five screens share the one installed copy of the card.
-      const recorded = await readManifest(project);
+      const recorded = await readManifest(project());
       expect(recorded.items[flow]!.type).toBe("registry:flow");
       expect(recorded.items[flow]!.version).toBe(registry.getItem(flow)!.version);
       expect(recorded.items[flow]!.files[0]!.target).toBe(variant.target);
@@ -176,20 +168,20 @@ describe("moderno add auth-<framework>", () => {
 
     it(`leaves an edited ${flow} alone while updating the screen beside it`, async () => {
       const registry = await createRegistry(registryDir).load();
-      const manifest = await readManifest(project);
-      await addItem({ registry, projectDir: project, name: flow, manifest });
+      const manifest = await readManifest(project());
+      await addItem({ registry, projectDir: project(), name: flow, manifest });
 
       // The assembly is the file the flow exists to have rewritten.
-      const assemblyFile = join(project, variant.target);
+      const assemblyFile = join(project(), variant.target);
       const edited = `${await readFile(assemblyFile, "utf8")}\n// wired to our own router\n`;
       await writeFile(assemblyFile, edited);
 
-      const installed = await readManifest(project);
+      const installed = await readManifest(project());
       const screen = `${SCREENS[4]}-${variant.framework}`;
 
       const flowUpdate = await updateItem({
         registry,
-        projectDir: project,
+        projectDir: project(),
         name: flow,
         manifest: installed,
       });
@@ -199,7 +191,7 @@ describe("moderno add auth-<framework>", () => {
       // …and the untouched items in the same tree still move on their own.
       const screenUpdate = await updateItem({
         registry,
-        projectDir: project,
+        projectDir: project(),
         name: screen,
         manifest: installed,
       });
@@ -228,14 +220,14 @@ describe("moderno add auth-<framework>", () => {
 
   it("installs a screen without the flow it belongs to", async () => {
     const registry = await createRegistry(registryDir).load();
-    const manifest = await readManifest(project);
+    const manifest = await readManifest(project());
     const result = await addItem({
       registry,
-      projectDir: project,
+      projectDir: project(),
       name: "verify-react",
       manifest,
     });
     expect(result.installed).not.toContain("auth-react");
-    expect((await readManifest(project)).items["auth-react"]).toBeUndefined();
+    expect((await readManifest(project())).items["auth-react"]).toBeUndefined();
   });
 });

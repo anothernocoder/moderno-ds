@@ -25,8 +25,8 @@
  *    overrides `min-h-dvh` to the frame's height so a browser window's worth of
  *    screen does not bury the page — so what is asserted here is that the
  *    screen fills whatever it was told the window is. That the shipped file says
- *    `min-h-dvh` is held by `tooling/cli/test/screens-install.test.ts`, against
- *    the bytes the CLI writes.
+ *    `min-h-dvh` is held by `tooling/cli/test/install/sign-up.test.ts`, against the
+ *    bytes the CLI writes.
  * 3. **The card is the sign-up card.** Whatever the width, the block inside is
  *    mounted in its account-creation mode: the name field and the required
  *    consent box are there, and the remember-me of the sign-in mode is not.

@@ -1,0 +1,23 @@
+{
+  "name": "Tabs",
+  "scope": "tabs",
+  "import": "import { Tabs } from \"@moderno-ui/react\"",
+  "propsHash": "sha256:fixture-tabs",
+  "props": [
+    { "name": "size", "type": "\"sm\" | \"md\" | \"lg\"", "required": false },
+    { "name": "variant", "type": "\"line\" | \"enclosed\"", "required": false }
+  ],
+  "propsComplete": false,
+  "parts": [
+    { "name": "root" },
+    { "name": "list" },
+    { "name": "trigger" },
+    { "name": "indicator" },
+    { "name": "content" }
+  ],
+  "variants": { "variant": ["line", "enclosed"], "size": ["sm", "md", "lg"] },
+  "guidance": {
+    "intent": "Switch between related panels of content in the same place.",
+    "whenToUse": "Two to about seven sibling views of one subject: account settings, a product's details and reviews."
+  }
+}

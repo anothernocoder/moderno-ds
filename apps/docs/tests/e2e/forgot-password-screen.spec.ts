@@ -23,8 +23,8 @@
  *    overrides `min-h-dvh` to the frame's height so a browser window's worth of
  *    screen does not bury the page — so what is asserted here is that the
  *    screen fills whatever it was told the window is. That the shipped file says
- *    `min-h-dvh` is held by `tooling/cli/test/screens-install.test.ts`, against
- *    the bytes the CLI writes.
+ *    `min-h-dvh` is held by `tooling/cli/test/install/forgot-password.test.ts`,
+ *    against the bytes the CLI writes.
  * 3. **The card asks for an address and nothing else.** Whatever the width, the
  *    only named control the form submits is `email` — no password, no
  *    remember-me, no consent box, in either of the screen's two states.
