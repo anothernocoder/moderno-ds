@@ -1,0 +1,4 @@
+/* A lone card gets its natural reading width, not the whole stage. */
+.preview-panel--demo > astro-island > [data-scope="card"][data-part="root"] {
+  width: min(100%, 24rem);
+}

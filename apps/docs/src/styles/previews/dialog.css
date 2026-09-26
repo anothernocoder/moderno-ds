@@ -1,0 +1,4 @@
+/* A row of actions inside a dialog is its footer: it sits at the end. */
+[data-scope="dialog"] .demo-row {
+  justify-content: flex-end;
+}

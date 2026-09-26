@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { llmsIndex, pageMarkdown } from "./markdown.ts";
+import { llmsIndex, pageMarkdown, tierIndexMarkdown } from "./markdown.ts";
 
 describe("pageMarkdown — page → plain Markdown", () => {
   const body = [
@@ -135,6 +135,29 @@ describe("pageMarkdown — ContractTable", () => {
       "| table color |",
     );
     expect(pageMarkdown({ title: "T", description: "D", body })).not.toContain("ContractTable");
+  });
+});
+
+describe("pageMarkdown — TierIndex", () => {
+  const pages = [
+    { slug: "login-form", title: "Login form", description: "The credential card." },
+    { slug: "alert-list", title: "Alert list", description: "A notification centre." },
+  ];
+
+  it("lists a tier's pages as locale-prefixed links with their descriptions", () => {
+    expect(tierIndexMarkdown("es", pages)).toBe(
+      "- [Login form](/es/login-form/) — The credential card.\n" +
+        "- [Alert list](/es/alert-list/) — A notification centre.",
+    );
+  });
+
+  it("renders a TierIndex through its resolver, and drops it without one", () => {
+    const body = "## Available blocks\n\n<TierIndex />\n";
+    const resolve = { tierIndex: () => tierIndexMarkdown("en", pages) };
+    expect(pageMarkdown({ title: "T", description: "D", body, resolve })).toContain(
+      "- [Login form](/en/login-form/) — The credential card.",
+    );
+    expect(pageMarkdown({ title: "T", description: "D", body })).not.toContain("TierIndex");
   });
 });
 

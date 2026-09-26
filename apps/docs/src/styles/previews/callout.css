@@ -1,0 +1,8 @@
+/* A lone callout gets its natural reading width, not the whole stage; several
+   compared one under another need a wider column than a form does. */
+.preview-panel--demo > astro-island > [data-scope="callout"][data-part="root"] {
+  width: min(100%, 32rem);
+}
+.demo-stack:has(> [data-scope="callout"]) {
+  max-width: 32rem;
+}

@@ -1,0 +1,4 @@
+/* A row of spinners has no shared text baseline, so it centres instead. */
+.demo-row:has(> [data-scope="spinner"]) {
+  align-items: center;
+}
