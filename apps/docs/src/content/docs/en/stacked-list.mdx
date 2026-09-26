@@ -1,0 +1,191 @@
+---
+title: Stacked list
+description: Records stacked in one card, each with an avatar, a status badge and a meta line, with empty, loading and error states.
+group: Blocks
+order: 109
+agent:
+  intent: A vertical list of records in one card — people, accounts, customers or devices — each row with an avatar, a name, a secondary line, a status badge, a meta line and a View action.
+  whenToUse: "A list the reader scans row by row and opens one record from: a team's members, a workspace's customers, the accounts on a billing page, the devices signed in to an account."
+  whenNotToUse:
+    - case: Records the reader compares across many columns or sorts
+      use: a table — a stacked list shows a few fields per row, not a grid of them
+    - case: A handful of items the reader picks by picture or title
+      use: GridList — tiles read faster than rows when there are few of them
+    - case: Events in time order
+      use: ActivityFeed — its rows are what happened, not who or what exists
+  gotchas:
+    - "Presentational: `onView` reports which row the reader picked and `onInvite` the header button; routing and data stay yours."
+    - "`items` defaults to a sample team so the block renders standalone. Pass your own array — or edit the constant, the file is yours after `moderno add`."
+    - "`items={[]}` is the empty state, not a bug: the list loaded and there is nothing in it."
+    - "`loading` replaces the rows with skeleton rows inside a busy `status` region; `error` replaces the card with one alert and a retry, because an empty list and a list that failed to load are different facts."
+    - "Every View button's accessible name carries the row's title, so screen readers and voice control hear which record it opens."
+    - "Rows follow the block's own width, not the viewport: the View button sits under its record below `--container-sm`, the badge and meta take a trailing column from `--container-md`, and share one line from `--container-lg`."
+  theming:
+    - "Nothing is painted here. The list is one Card, the pictures are Avatar, the status is a Badge, the controls are Button, the loading rows are Skeleton and the failed load is an error Alert."
+    - "Rows are split by the --border hairline; the heading and its sentence are props, defaulting to a team: the same list shows customers, accounts or devices."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import StackedListBlockDemo from "../../../islands/StackedListBlockDemo.svelte";
+import stackedListReact from "../../../../../../registry/blocks/stacked-list/react/stacked-list.tsx?raw";
+import stackedListVue from "../../../../../../registry/blocks/stacked-list/vue/StackedList.vue?raw";
+import stackedListSolid from "../../../../../../registry/blocks/stacked-list/solid/stacked-list.tsx?raw";
+import stackedListSvelte from "../../../../../../registry/blocks/stacked-list/svelte/StackedList.svelte?raw";
+
+export const examples = {
+  react: stackedListReact,
+  vue: stackedListVue,
+  solid: stackedListSolid,
+  svelte: stackedListSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <StackedListBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="stacked-list" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { StackedList } from "@/components/blocks/stacked-list";
+```
+
+```tsx
+<StackedList items={members} onView={(id) => navigate(`/team/${id}`)} onInvite={openInvite} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import StackedList from "@/components/blocks/StackedList.vue";
+</script>
+```
+
+```vue
+<StackedList :items="members" @view="goTo" @invite="openInvite" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import StackedList from "@/components/blocks/StackedList.svelte";
+</script>
+```
+
+```svelte
+<StackedList items={members} onview={goTo} oninvite={openInvite} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { StackedList } from "@/components/blocks/stacked-list";
+```
+
+```tsx
+<StackedList items={members()} onView={(id) => navigate(`/team/${id}`)} onInvite={openInvite} />
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+| Prop          | Type                   | Default          | Description                                                  |
+| ------------- | ---------------------- | ---------------- | ------------------------------------------------------------ |
+| `items`       | `StackedListItem[]`    | a sample team    | The rows, in the order shown. `[]` renders the empty state.  |
+| `heading`     | `string`               | `"Team members"` | The heading over the list.                                   |
+| `description` | `string`               | a sentence       | The line under the heading; `""` hides it.                   |
+| `error`       | `string`               | —                | The list failed to load; an alert with a retry replaces it.  |
+| `loading`     | `boolean`              | `false`          | Skeleton rows in a busy region replace the rows.             |
+| `disabled`    | `boolean`              | `false`          | The rows stay readable and every button is disabled.         |
+| `onView`      | `(id: string) => void` | —                | A row's View button. Svelte: `onview`. Vue: `@view`.         |
+| `onInvite`    | `() => void`           | —                | "Invite member". Svelte: `oninvite`. Vue: `@invite`.         |
+| `onRetry`     | `() => void`           | —                | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`. |
+
+### StackedListItem
+
+| Field           | Type                                                       | Description                                      |
+| --------------- | ---------------------------------------------------------- | ------------------------------------------------ |
+| `id`            | `string`                                                   | Stable identity, reported by `onView`.           |
+| `title`         | `string`                                                   | The row's name.                                  |
+| `subtitle`      | `string`                                                   | Optional line under the name, like an email.     |
+| `initials`      | `string`                                                   | The avatar's fallback when there is no image.    |
+| `image`         | `string`                                                   | Optional picture URL for the avatar.             |
+| `status`        | `string`                                                   | Optional badge text.                             |
+| `statusVariant` | `"neutral" \| "info" \| "success" \| "warning" \| "error"` | The badge colour. Default `"neutral"`.           |
+| `meta`          | `string`                                                   | Optional muted line, like "Last seen 3 hrs ago". |
+
+### States
+
+| State    | Prop         | What renders                                                    |
+| -------- | ------------ | --------------------------------------------------------------- |
+| Default  | —            | One row per item, split by hairlines.                           |
+| Empty    | `items={[]}` | "No members yet" inside the card.                               |
+| Loading  | `loading`    | Three skeleton rows in a busy `status` region.                  |
+| Error    | `error`      | One error alert with a "Try again" button in place of the card. |
+| Disabled | `disabled`   | The rows with every button disabled.                            |
+
+### Sizing
+
+| Container step           | What changes                                                                           |
+| ------------------------ | -------------------------------------------------------------------------------------- |
+| `@sm` (`--container-sm`) | The heading and "Invite member" share a row; each View button moves beside its record. |
+| `@md` (`--container-md`) | Badge and meta move to a trailing column; the heading steps up a size.                 |
+| `@lg` (`--container-lg`) | Badge and meta share one line.                                                         |
+
+## Examples
+
+### Container widths
+
+The same list at 18rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <StackedListBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Empty
+
+<Preview examples={examples} layout="fill">
+  <StackedListBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <StackedListBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+<Preview examples={examples} layout="fill">
+  <StackedListBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <StackedListBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Presentational: it navigates nowhere. The callbacks report what the reader asked for.
+- Every View button's accessible name includes the row's title.

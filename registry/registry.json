@@ -1002,6 +1002,78 @@
       ]
     },
     {
+      "name": "stacked-list-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Stacked List (React)",
+      "description": "Stacked records in one card composing the @moderno-ui/react Card, Avatar, Badge, Button, Skeleton and Alert primitives: one row per item with an avatar, a name and a secondary line, a status badge, a muted meta line and a View action, with its own empty, loading and error renders; responds to its container (@container) — the header lines up and each View button moves beside its record at @sm, the badge and meta move to a trailing column at @md and share one line at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/stacked-list/react/stacked-list.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/stacked-list.tsx"
+        }
+      ]
+    },
+    {
+      "name": "stacked-list-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Stacked List (Vue)",
+      "description": "Stacked records in one card composing the @moderno-ui/vue Card, Avatar, Badge, Button, Skeleton and Alert primitives: one row per item with an avatar, a name and a secondary line, a status badge, a muted meta line and a View action, with its own empty, loading and error renders; responds to its container (@container) — the header lines up and each View button moves beside its record at @sm, the badge and meta move to a trailing column at @md and share one line at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/stacked-list/vue/StackedList.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/StackedList.vue"
+        }
+      ]
+    },
+    {
+      "name": "stacked-list-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Stacked List (Svelte)",
+      "description": "Stacked records in one card composing the @moderno-ui/svelte Card, Avatar, Badge, Button, Skeleton and Alert primitives: one row per item with an avatar, a name and a secondary line, a status badge, a muted meta line and a View action, with its own empty, loading and error renders; responds to its container (@container) — the header lines up and each View button moves beside its record at @sm, the badge and meta move to a trailing column at @md and share one line at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/stacked-list/svelte/StackedList.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/StackedList.svelte"
+        }
+      ]
+    },
+    {
+      "name": "stacked-list-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Stacked List (Solid)",
+      "description": "Stacked records in one card composing the @moderno-ui/solid Card, Avatar, Badge, Button, Skeleton and Alert primitives: one row per item with an avatar, a name and a secondary line, a status badge, a muted meta line and a View action, with its own empty, loading and error renders; responds to its container (@container) — the header lines up and each View button moves beside its record at @sm, the badge and meta move to a trailing column at @md and share one line at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/stacked-list/solid/stacked-list.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/stacked-list.tsx"
+        }
+      ]
+    },
+    {
       "name": "stat-row-react",
       "type": "registry:block",
       "version": "0.1.0",
