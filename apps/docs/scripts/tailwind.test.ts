@@ -158,11 +158,13 @@ describe("the docs Tailwind build compiles what blocks are written with", () => 
     const prose = docsCss.slice(docsCss.indexOf("@layer docs.prose"));
     expect(prose, "docs.css must declare @layer docs.prose").not.toBe(docsCss);
     const body = prose.slice(0, prose.indexOf("\n}\n") + 3);
-    for (const rule of ["main h1", "main h2", "main h3", "main p"]) {
+    for (const rule of ["a", "main h1", "main h2", "main h3", "main p"]) {
       expect(body, `${rule} must sit inside @layer docs.prose`).toContain(`${rule} {`);
     }
-    // Nothing outside the layer may select a bare heading or paragraph again.
+    // Nothing outside the layer may select a bare heading, paragraph or link
+    // again: a bare `a { color: inherit }` beats a block's `hover:text-*`.
     const outside = docsCss.replace(body, "");
     expect(outside).not.toMatch(/^\s*main (?:h[1-6]|p)[\s,{]/m);
+    expect(outside).not.toMatch(/^a(?::hover)? \{/m);
   });
 });

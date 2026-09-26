@@ -1,0 +1,213 @@
+---
+title: Section header
+description: The header bar of a page, a section or a card, with its heading, its context and its actions.
+group: Blocks
+order: 112
+agent:
+  intent: The header bar at the top of a page, a section or a card — its heading, a line of context and the one or two actions that belong to it.
+  whenToUse: "At the top of anything that has a name and something to do: a record's page (a project, an invoice, a customer), a section of a settings or dashboard page, a card or panel in a grid."
+  whenNotToUse:
+    - case: The site's own navigation, logo and account menu
+      use: an app shell or a site header — this block heads one page or region, it does not navigate the app
+    - case: A marketing page's opening statement with an image
+      use: a hero block — this header is for working views, not for selling
+    - case: A heading with nothing else around it
+      use: a plain h1, h2 or h3 — the block earns its place with context and actions
+  gotchas:
+    - "Presentational: it fetches nothing. `onPrimaryAction`, `onSecondaryAction` and `onRetry` report what the reader asked for."
+    - "`variant` sets the rank as well as the look: `page` is an h1, `section` an h2 and `card` an h3. Use one `page` header per page."
+    - "The breadcrumb trail, the status badge and the meta line are page-only. Pass `breadcrumbs={[]}`, `status={null}` or `meta={[]}` to drop one."
+    - 'The last crumb is the current page: it renders as text with `aria-current="page"`, never as a link. Below --container-sm only the parent crumb shows, as a way back.'
+    - "`count` is how many items the header heads. `count={0}` is the empty state: the secondary action works on items, so it is disabled, and the primary action stays enabled — it is the way to add the first one."
+    - "`loading` swaps the heading and its context for placeholders in a busy region; `error` keeps the heading and puts an alert with a retry under it. Both disable the actions."
+    - "The sample content renders when you pass nothing. Pass your own — or edit the constants, the file is yours after `moderno add`."
+  theming:
+    - "Nothing is painted here. The actions are Button's outline and primary variants, the count and the status are Badge, the card variant is Card, the placeholders are Skeleton and the failed load is Alert's error variant."
+    - "The page heading is set in --font-serif, the brand's display face. The section header's rule uses --border; the trail, the description and the meta line use --muted-foreground."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import SectionHeaderBlockDemo from "../../../islands/SectionHeaderBlockDemo.svelte";
+import sectionHeaderReact from "../../../../../../registry/blocks/section-header/react/section-header.tsx?raw";
+import sectionHeaderVue from "../../../../../../registry/blocks/section-header/vue/SectionHeader.vue?raw";
+import sectionHeaderSolid from "../../../../../../registry/blocks/section-header/solid/section-header.tsx?raw";
+import sectionHeaderSvelte from "../../../../../../registry/blocks/section-header/svelte/SectionHeader.svelte?raw";
+
+export const examples = {
+  react: sectionHeaderReact,
+  vue: sectionHeaderVue,
+  solid: sectionHeaderSolid,
+  svelte: sectionHeaderSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <SectionHeaderBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="section-header" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { SectionHeader } from "@/components/blocks/section-header";
+```
+
+```tsx
+<SectionHeader variant="section" heading="Open tasks" count={12} onPrimaryAction={addTask} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import SectionHeader from "@/components/blocks/SectionHeader.vue";
+</script>
+```
+
+```vue
+<SectionHeader variant="section" heading="Open tasks" :count="12" @primary-action="addTask" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import SectionHeader from "@/components/blocks/SectionHeader.svelte";
+</script>
+```
+
+```svelte
+<SectionHeader variant="section" heading="Open tasks" count={12} onprimaryaction={addTask} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { SectionHeader } from "@/components/blocks/section-header";
+```
+
+```tsx
+<SectionHeader variant="section" heading="Open tasks" count={12} onPrimaryAction={addTask} />
+```
+
+</ForFramework>
+
+Pick the `variant` by what the header heads: the whole page, one section of it, or a card.
+
+## API Reference
+
+### Props
+
+| Prop                | Type                            | Default         | Description                                                                   |
+| ------------------- | ------------------------------- | --------------- | ----------------------------------------------------------------------------- |
+| `variant`           | `"page" \| "section" \| "card"` | `"page"`        | What the header heads. Sets the heading's rank (h1, h2, h3) and its size.     |
+| `heading`           | `string`                        | `"Q3 redesign"` | The heading.                                                                  |
+| `description`       | `string`                        | a sentence      | The line under the heading; `""` hides it.                                    |
+| `breadcrumbs`       | `SectionHeaderCrumb[]`          | a sample trail  | Page only. The trail above the heading, ending with the current page.         |
+| `status`            | `SectionHeaderStatus \| null`   | `Active`        | Page only. A badge with a dot at the start of the meta line; `null` hides it. |
+| `meta`              | `string[]`                      | two facts       | Page only. Short facts after the status, like a due date or an owner.         |
+| `count`             | `number`                        | —               | How many items the header heads, shown as a badge after the heading.          |
+| `primaryLabel`      | `string`                        | `"New task"`    | The primary button's label; `""` hides it.                                    |
+| `secondaryLabel`    | `string`                        | `"Share"`       | The outline button's label; `""` hides it.                                    |
+| `error`             | `string`                        | —               | The details failed to load; an alert with a retry goes under the heading.     |
+| `loading`           | `boolean`                       | `false`         | Placeholders in a busy region replace the heading and its context.            |
+| `disabled`          | `boolean`                       | `false`         | Every button is disabled.                                                     |
+| `onPrimaryAction`   | `() => void`                    | —               | The primary button. Svelte: `onprimaryaction`. Vue: `@primary-action`.        |
+| `onSecondaryAction` | `() => void`                    | —               | The outline button. Svelte: `onsecondaryaction`. Vue: `@secondary-action`.    |
+| `onRetry`           | `() => void`                    | —               | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.                  |
+
+### SectionHeaderCrumb
+
+| Field   | Type     | Description                                                         |
+| ------- | -------- | ------------------------------------------------------------------- |
+| `label` | `string` | The crumb's text.                                                   |
+| `href`  | `string` | Where it links. The last crumb never links: it is the current page. |
+
+### SectionHeaderStatus
+
+| Field   | Type                                                       | Description                            |
+| ------- | ---------------------------------------------------------- | -------------------------------------- |
+| `label` | `string`                                                   | The status, in words.                  |
+| `tone`  | `"neutral" \| "info" \| "success" \| "warning" \| "error"` | The badge's tint. Default `"neutral"`. |
+
+### States
+
+| State    | Prop        | What renders                                                                        |
+| -------- | ----------- | ----------------------------------------------------------------------------------- |
+| Default  | —           | The heading, its context and both actions.                                          |
+| Empty    | `count={0}` | The count reads 0; the outline action is disabled and the primary one stays usable. |
+| Loading  | `loading`   | Placeholders in a busy `status` region; both actions disabled.                      |
+| Error    | `error`     | The heading, then an error alert with a "Try again" button; both actions disabled.  |
+| Disabled | `disabled`  | Everything readable, every button disabled. The trail's links still work.           |
+
+### Sizing
+
+| Container step           | What changes                                                                            |
+| ------------------------ | --------------------------------------------------------------------------------------- |
+| below `@sm`              | The actions sit under the heading and share its width; the trail shows only a way back. |
+| `@sm` (`--container-sm`) | The actions move beside the heading; the full trail shows.                              |
+| `@md` (`--container-md`) | The page and section headings step up one size.                                         |
+| `@lg` (`--container-lg`) | The page heading takes the largest size and the description steps up to body text.      |
+
+## Examples
+
+### Container widths
+
+The same page header at 18rem, 30rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <SectionHeaderBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Section
+
+A section header sits on a rule, with an h2.
+
+<Preview examples={examples} layout="fill">
+  <SectionHeaderBlockDemo client:visible locale="en" state="section" />
+</Preview>
+
+### Card
+
+A card header sits in a card, with an h3. Add your card's content under it.
+
+<Preview examples={examples} layout="fill">
+  <SectionHeaderBlockDemo client:visible locale="en" state="card" />
+</Preview>
+
+### Empty
+
+<Preview examples={examples} layout="fill">
+  <SectionHeaderBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <SectionHeaderBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+<Preview examples={examples} layout="fill">
+  <SectionHeaderBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <SectionHeaderBlockDemo client:visible locale="en" state="disabled" />
+</Preview>

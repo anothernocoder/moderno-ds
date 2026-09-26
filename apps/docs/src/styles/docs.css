@@ -69,14 +69,6 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
-a:hover {
-  text-decoration: underline;
-}
-
 code,
 pre,
 kbd {
@@ -605,8 +597,18 @@ main.main--wide {
 
   The hierarchy: headings in --foreground, running text a step back
   (--docs-fg-body), generous space above each h2 so sections read as sections.
+
+  The bare link reset lives here too: unlayered, its `color: inherit` beat a
+  previewed block's own `hover:text-foreground` on every link it draws.
 */
 @layer docs.prose {
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
   main h1 {
     font-size: var(--text-heading-lg);
     line-height: var(--leading-heading-lg);

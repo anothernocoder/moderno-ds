@@ -642,6 +642,78 @@
       ]
     },
     {
+      "name": "section-header-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Section Header (React)",
+      "description": "A header bar with actions for a page, a section or a card, composing the @moderno-ui/react Alert, Badge, Button, Card and Skeleton primitives: a page header carries a breadcrumb trail, a display heading and a status line, a section header sits on a rule and a card header sits in a card, each with a secondary and a primary action and its own empty, loading and error renders; responds to its container (@container) across all three contract steps — the full trail and the actions beside the heading at @sm, a larger heading at @md, the largest heading and a larger description at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/section-header/react/section-header.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/section-header.tsx"
+        }
+      ]
+    },
+    {
+      "name": "section-header-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Section Header (Vue)",
+      "description": "A header bar with actions for a page, a section or a card, composing the @moderno-ui/vue Alert, Badge, Button, Card and Skeleton primitives: a page header carries a breadcrumb trail, a display heading and a status line, a section header sits on a rule and a card header sits in a card, each with a secondary and a primary action and its own empty, loading and error renders; responds to its container (@container) across all three contract steps — the full trail and the actions beside the heading at @sm, a larger heading at @md, the largest heading and a larger description at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/section-header/vue/SectionHeader.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/SectionHeader.vue"
+        }
+      ]
+    },
+    {
+      "name": "section-header-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Section Header (Svelte)",
+      "description": "A header bar with actions for a page, a section or a card, composing the @moderno-ui/svelte Alert, Badge, Button, Card and Skeleton primitives: a page header carries a breadcrumb trail, a display heading and a status line, a section header sits on a rule and a card header sits in a card, each with a secondary and a primary action and its own empty, loading and error renders; responds to its container (@container) across all three contract steps — the full trail and the actions beside the heading at @sm, a larger heading at @md, the largest heading and a larger description at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/section-header/svelte/SectionHeader.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/SectionHeader.svelte"
+        }
+      ]
+    },
+    {
+      "name": "section-header-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Section Header (Solid)",
+      "description": "A header bar with actions for a page, a section or a card, composing the @moderno-ui/solid Alert, Badge, Button, Card and Skeleton primitives: a page header carries a breadcrumb trail, a display heading and a status line, a section header sits on a rule and a card header sits in a card, each with a secondary and a primary action and its own empty, loading and error renders; responds to its container (@container) across all three contract steps — the full trail and the actions beside the heading at @sm, a larger heading at @md, the largest heading and a larger description at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/section-header/solid/section-header.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/section-header.tsx"
+        }
+      ]
+    },
+    {
       "name": "stat-row-react",
       "type": "registry:block",
       "version": "0.1.0",
