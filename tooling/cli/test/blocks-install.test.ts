@@ -28,10 +28,12 @@ afterEach(async () => {
 });
 
 describe("moderno add login-form-<framework>", () => {
-  /** React and Svelte are the two frameworks blocks are authored in (spec #69). */
+  /** Blocks are authored in all four frameworks, one registry item each. */
   const variants = [
     { item: "login-form-react", target: "src/components/blocks/login-form.tsx" },
+    { item: "login-form-vue", target: "src/components/blocks/LoginForm.vue" },
     { item: "login-form-svelte", target: "src/components/blocks/LoginForm.svelte" },
+    { item: "login-form-solid", target: "src/components/blocks/login-form.tsx" },
   ];
 
   for (const { item, target } of variants) {
@@ -77,10 +79,12 @@ describe("moderno add login-form-<framework>", () => {
 });
 
 describe("moderno add form-layout-<framework>", () => {
-  /** React and Svelte are the two frameworks blocks are authored in (spec #69). */
+  /** Blocks are authored in all four frameworks, one registry item each. */
   const variants = [
     { item: "form-layout-react", target: "src/components/blocks/form-layout.tsx" },
+    { item: "form-layout-vue", target: "src/components/blocks/FormLayout.vue" },
     { item: "form-layout-svelte", target: "src/components/blocks/FormLayout.svelte" },
+    { item: "form-layout-solid", target: "src/components/blocks/form-layout.tsx" },
   ];
 
   for (const { item, target } of variants) {
@@ -131,10 +135,12 @@ describe("moderno add form-layout-<framework>", () => {
 });
 
 describe("moderno add alert-list-<framework>", () => {
-  /** React and Svelte are the two frameworks blocks are authored in (spec #69). */
+  /** Blocks are authored in all four frameworks, one registry item each. */
   const variants = [
     { item: "alert-list-react", target: "src/components/blocks/alert-list.tsx" },
+    { item: "alert-list-vue", target: "src/components/blocks/AlertList.vue" },
     { item: "alert-list-svelte", target: "src/components/blocks/AlertList.svelte" },
+    { item: "alert-list-solid", target: "src/components/blocks/alert-list.tsx" },
   ];
 
   for (const { item, target } of variants) {

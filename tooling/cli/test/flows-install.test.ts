@@ -39,7 +39,7 @@ interface Variant {
   blocks: Array<{ item: string; target: string }>;
 }
 
-/** React and Svelte are the two frameworks flows are authored in (spec #69). */
+/** Flows are authored in all four frameworks, one registry item each. */
 const variants: Variant[] = [
   {
     framework: "react",
@@ -61,6 +61,25 @@ const variants: Variant[] = [
     blocks: [{ item: "login-form-react", target: "src/components/blocks/login-form.tsx" }],
   },
   {
+    framework: "vue",
+    target: "src/components/flows/AuthFlow.vue",
+    screenTargets: [
+      "src/components/screens/SignIn.vue",
+      "src/components/screens/SignUp.vue",
+      "src/components/screens/ForgotPassword.vue",
+      "src/components/screens/ResetPassword.vue",
+      "src/components/screens/Verify.vue",
+    ],
+    imports: [
+      "@/components/screens/SignIn.vue",
+      "@/components/screens/SignUp.vue",
+      "@/components/screens/ForgotPassword.vue",
+      "@/components/screens/ResetPassword.vue",
+      "@/components/screens/Verify.vue",
+    ],
+    blocks: [{ item: "login-form-vue", target: "src/components/blocks/LoginForm.vue" }],
+  },
+  {
     framework: "svelte",
     target: "src/components/flows/AuthFlow.svelte",
     screenTargets: [
@@ -78,6 +97,25 @@ const variants: Variant[] = [
       "@/components/screens/Verify.svelte",
     ],
     blocks: [{ item: "login-form-svelte", target: "src/components/blocks/LoginForm.svelte" }],
+  },
+  {
+    framework: "solid",
+    target: "src/components/flows/auth-flow.tsx",
+    screenTargets: [
+      "src/components/screens/sign-in.tsx",
+      "src/components/screens/sign-up.tsx",
+      "src/components/screens/forgot-password.tsx",
+      "src/components/screens/reset-password.tsx",
+      "src/components/screens/verify.tsx",
+    ],
+    imports: [
+      "@/components/screens/sign-in",
+      "@/components/screens/sign-up",
+      "@/components/screens/forgot-password",
+      "@/components/screens/reset-password",
+      "@/components/screens/verify",
+    ],
+    blocks: [{ item: "login-form-solid", target: "src/components/blocks/login-form.tsx" }],
   },
 ];
 
