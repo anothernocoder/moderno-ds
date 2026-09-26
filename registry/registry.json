@@ -426,6 +426,78 @@
       ]
     },
     {
+      "name": "stat-row-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Stat Row (React)",
+      "description": "A row of KPI stats with deltas, composing the @moderno-ui/react Alert, Badge, Button, Card and Skeleton primitives: each stat is a card with its label, its value in the display face and its change tinted by whether that change is good news, with its own empty, loading and error renders; responds to its container (@container) across all three contract steps — two stats a row and the header lined up at @sm, larger values at @md, four stats a row at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/stat-row/react/stat-row.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/stat-row.tsx"
+        }
+      ]
+    },
+    {
+      "name": "stat-row-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Stat Row (Vue)",
+      "description": "A row of KPI stats with deltas, composing the @moderno-ui/vue Alert, Badge, Button, Card and Skeleton primitives: each stat is a card with its label, its value in the display face and its change tinted by whether that change is good news, with its own empty, loading and error renders; responds to its container (@container) across all three contract steps — two stats a row and the header lined up at @sm, larger values at @md, four stats a row at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/stat-row/vue/StatRow.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/StatRow.vue"
+        }
+      ]
+    },
+    {
+      "name": "stat-row-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Stat Row (Svelte)",
+      "description": "A row of KPI stats with deltas, composing the @moderno-ui/svelte Alert, Badge, Button, Card and Skeleton primitives: each stat is a card with its label, its value in the display face and its change tinted by whether that change is good news, with its own empty, loading and error renders; responds to its container (@container) across all three contract steps — two stats a row and the header lined up at @sm, larger values at @md, four stats a row at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/stat-row/svelte/StatRow.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/StatRow.svelte"
+        }
+      ]
+    },
+    {
+      "name": "stat-row-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Stat Row (Solid)",
+      "description": "A row of KPI stats with deltas, composing the @moderno-ui/solid Alert, Badge, Button, Card and Skeleton primitives: each stat is a card with its label, its value in the display face and its change tinted by whether that change is good news, with its own empty, loading and error renders; responds to its container (@container) across all three contract steps — two stats a row and the header lined up at @sm, larger values at @md, four stats a row at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/stat-row/solid/stat-row.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/stat-row.tsx"
+        }
+      ]
+    },
+    {
       "name": "forgot-password-react",
       "type": "registry:screen",
       "version": "0.1.1",

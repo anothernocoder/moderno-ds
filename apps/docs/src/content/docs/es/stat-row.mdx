@@ -1,0 +1,166 @@
+---
+title: Fila de métricas
+description: Una fila de métricas clave con su variación que se reparte según el ancho de su contenedor.
+group: Bloques
+order: 104
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import StatRowBlockDemo from "../../../islands/StatRowBlockDemo.svelte";
+import statRowReact from "../../../../../../registry/blocks/stat-row/react/stat-row.tsx?raw";
+import statRowVue from "../../../../../../registry/blocks/stat-row/vue/StatRow.vue?raw";
+import statRowSolid from "../../../../../../registry/blocks/stat-row/solid/stat-row.tsx?raw";
+import statRowSvelte from "../../../../../../registry/blocks/stat-row/svelte/StatRow.svelte?raw";
+
+export const examples = {
+  react: statRowReact,
+  vue: statRowVue,
+  solid: statRowSolid,
+  svelte: statRowSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <StatRowBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="stat-row" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { StatRow } from "@/components/blocks/stat-row";
+```
+
+```tsx
+<StatRow stats={stats} onAction={openReport} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import StatRow from "@/components/blocks/StatRow.vue";
+</script>
+```
+
+```vue
+<StatRow :stats="stats" @action="openReport" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import StatRow from "@/components/blocks/StatRow.svelte";
+</script>
+```
+
+```svelte
+<StatRow {stats} onaction={openReport} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { StatRow } from "@/components/blocks/stat-row";
+```
+
+```tsx
+<StatRow stats={stats()} onAction={openReport} />
+```
+
+</ForFramework>
+
+Cada métrica es `{ id, label, value, delta, tone, caption }`. Pon en `tone` lo que significa el cambio: una baja en la tasa de abandono es `positive`.
+
+## Referencia de API
+
+### Propiedades
+
+| Propiedad     | Tipo            | Por defecto     | Descripción                                                           |
+| ------------- | --------------- | --------------- | --------------------------------------------------------------------- |
+| `stats`       | `StatRowItem[]` | un ejemplo      | Las métricas, en orden de lectura. `[]` muestra el estado vacío.      |
+| `heading`     | `string`        | `"Overview"`    | El título sobre la fila.                                              |
+| `description` | `string`        | una frase       | La línea bajo el título; `""` la oculta.                              |
+| `actionLabel` | `string`        | `"View report"` | El texto del botón de la cabecera; `""` oculta el botón.              |
+| `error`       | `string`        | —               | Las métricas no cargaron; una alerta con reintento las reemplaza.     |
+| `loading`     | `boolean`       | `false`         | Tarjetas de marcador en una región ocupada reemplazan las métricas.   |
+| `disabled`    | `boolean`       | `false`         | Las métricas siguen legibles y todos los botones quedan desactivados. |
+| `onAction`    | `() => void`    | —               | El botón de la cabecera. Svelte: `onaction`. Vue: `@action`.          |
+| `onRetry`     | `() => void`    | —               | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.           |
+
+### StatRowItem
+
+| Campo     | Tipo                                    | Descripción                                          |
+| --------- | --------------------------------------- | ---------------------------------------------------- |
+| `id`      | `string`                                | Identidad estable.                                   |
+| `label`   | `string`                                | Lo que se mide.                                      |
+| `value`   | `string`                                | El número, ya formateado.                            |
+| `delta`   | `string`                                | Cambio opcional, con su signo: `+12.5%`, `−0.4 pts`. |
+| `tone`    | `"positive" \| "negative" \| "neutral"` | Lo que significa el cambio. Por defecto `"neutral"`. |
+| `caption` | `string`                                | Contexto opcional tras el cambio: `vs last month`.   |
+
+### Estados
+
+| Estado        | Propiedad    | Qué se muestra                                                    |
+| ------------- | ------------ | ----------------------------------------------------------------- |
+| Por defecto   | —            | Una tarjeta por métrica.                                          |
+| Vacío         | `stats={[]}` | Una tarjeta "No numbers yet".                                     |
+| Cargando      | `loading`    | Cuatro tarjetas de marcador en una región `status` ocupada.       |
+| Error         | `error`      | Una alerta de error con el botón "Try again" en lugar de la fila. |
+| Deshabilitado | `disabled`   | Las métricas con todos los botones desactivados.                  |
+
+### Dimensionado
+
+| Paso del contenedor      | Qué cambia                                                  |
+| ------------------------ | ----------------------------------------------------------- |
+| bajo `@sm`               | Una métrica por fila; el botón queda bajo el título.        |
+| `@sm` (`--container-sm`) | Dos métricas por fila; el título y el botón comparten fila. |
+| `@md` (`--container-md`) | Valores y título más grandes.                               |
+| `@lg` (`--container-lg`) | Cuatro métricas por fila.                                   |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+La misma fila a 18rem, 30rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <StatRowBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Vacío
+
+<Preview examples={examples} layout="fill">
+  <StatRowBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <StatRowBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+<Preview examples={examples} layout="fill">
+  <StatRowBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+<Preview examples={examples} layout="fill">
+  <StatRowBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
