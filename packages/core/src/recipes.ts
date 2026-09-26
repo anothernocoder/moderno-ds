@@ -212,6 +212,19 @@ export const switchRecipe = cva({
   defaultVariants: { size: "md" },
 });
 
+/**
+ * RadioGroup: `size` (the radio circle and the item text density).
+ * Orientation is Ark's own `orientation` prop, stamped as `data-orientation`;
+ * checked, disabled, invalid and read-only are Ark's `data-state`/`data-*`.
+ * None of them is a variant.
+ */
+export const radioGroupRecipe = cva({
+  variants: {
+    size: ["sm", "md", "lg"],
+  },
+  defaultVariants: { size: "md" },
+});
+
 /*
  * The variant unions, derived once beside the recipes. Bindings import these
  * names instead of re-deriving them from the recipe tables — a recipe change
@@ -354,3 +367,6 @@ export type AvatarShape = NonNullable<VariantProps<typeof avatarRecipe.variants>
 
 /** Switch's density (track, thumb and label). */
 export type SwitchSize = NonNullable<VariantProps<typeof switchRecipe.variants>["size"]>;
+
+/** RadioGroup's density (radio circle and item text). */
+export type RadioGroupSize = NonNullable<VariantProps<typeof radioGroupRecipe.variants>["size"]>;

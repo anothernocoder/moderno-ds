@@ -27,6 +27,9 @@
  *                plus indicators the machine hides via the `hidden` attribute.
  *   - Switch   — the same label ↔ hidden-input pairing by `useId`, with the
  *                on/off state and the switch role on the server string.
+ *   - RadioGroup — one native radio per item, each bound to its label and
+ *                text by ids from `useId`; the checked item, the orientation
+ *                and the disabled group must match both ways.
  *   - Dialog   — a Portal + focus-trap machine that must emit a stable,
  *                hydration-safe trigger while its content stays unmounted-visible.
  *   - Select   — a collection + popover whose hidden native <select> and ids
@@ -54,6 +57,7 @@ import { Field } from "../src/field.js";
 import { Avatar } from "../src/avatar.js";
 import { Checkbox } from "../src/checkbox.js";
 import { Switch } from "../src/switch.js";
+import { RadioGroup } from "../src/radio-group.js";
 import { Dialog, Portal } from "../src/dialog.js";
 import { Select, createListCollection } from "../src/select.js";
 import { PinInput } from "../src/pin-input.js";
@@ -273,6 +277,41 @@ export function App({ open = false }: AppProps) {
           <Switch.Label>Bluetooth</Switch.Label>
           <Switch.HiddenInput />
         </Switch.Root>
+      </section>
+
+      <section aria-label="radio groups">
+        <RadioGroup.Root defaultValue="standard">
+          <RadioGroup.Label>Shipping</RadioGroup.Label>
+          <RadioGroup.Item value="standard">
+            <RadioGroup.ItemControl />
+            <RadioGroup.ItemText>
+              Standard
+              <RadioGroup.ItemDescription>3–5 business days</RadioGroup.ItemDescription>
+            </RadioGroup.ItemText>
+            <RadioGroup.ItemHiddenInput />
+          </RadioGroup.Item>
+          <RadioGroup.Item value="express">
+            <RadioGroup.ItemControl />
+            <RadioGroup.ItemText>
+              Express
+              <RadioGroup.ItemDescription>1–2 business days</RadioGroup.ItemDescription>
+            </RadioGroup.ItemText>
+            <RadioGroup.ItemHiddenInput />
+          </RadioGroup.Item>
+        </RadioGroup.Root>
+        <RadioGroup.Root size="sm" orientation="horizontal" disabled>
+          <RadioGroup.Label>Billing</RadioGroup.Label>
+          <RadioGroup.Item value="monthly">
+            <RadioGroup.ItemControl />
+            <RadioGroup.ItemText>Monthly</RadioGroup.ItemText>
+            <RadioGroup.ItemHiddenInput />
+          </RadioGroup.Item>
+          <RadioGroup.Item value="yearly">
+            <RadioGroup.ItemControl />
+            <RadioGroup.ItemText>Yearly</RadioGroup.ItemText>
+            <RadioGroup.ItemHiddenInput />
+          </RadioGroup.Item>
+        </RadioGroup.Root>
       </section>
 
       <Dialog.Root defaultOpen={open}>

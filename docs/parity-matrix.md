@@ -198,6 +198,22 @@ shared stylesheet keys on.
 | invalid → `data-invalid` + `aria-invalid` |  ✅   | ✅  |   ✅   |  ✅   |
 | native props forwarded, no baked style    |  ✅   | ✅  |   ✅   |  ✅   |
 
+### RadioGroup (`radioGroupRecipe`: `data-size`; Ark radio machine)
+
+| State                                         | React | Vue | Svelte | Solid |
+| --------------------------------------------- | :---: | :-: | :----: | :---: |
+| size → root `data-size` (+ `md`)              |  ✅   | ✅  |   ✅   |  ✅   |
+| every Ark part exposed + `ItemDescription`    |  ✅   | ✅  |   ✅   |  ✅   |
+| orientation → `data-orientation` (+ vertical) |  ✅   | ✅  |   ✅   |  ✅   |
+| group named by label, radio by text + desc.   |  ✅   | ✅  |   ✅   |  ✅   |
+| click picks → `data-state` + `onValueChange`  |  ✅   | ✅  |   ✅   |  ✅   |
+| checked radio takes keyboard focus            |  ✅   | ✅  |   ✅   |  ✅   |
+| arrow keys move the choice                    |  ✅   | ✅  |   ✅   |  ✅   |
+| disabled option → `data-disabled`, inert      |  ✅   | ✅  |   ✅   |  ✅   |
+| disabled group → every radio disabled         |  ✅   | ✅  |   ✅   |  ✅   |
+| invalid → `data-invalid` + `aria-invalid`     |  ✅   | ✅  |   ✅   |  ✅   |
+| native props forwarded to the root            |  ✅   | ✅  |   ✅   |  ✅   |
+
 ### Dialog (Ark portal + focus trap + ids)
 
 | State                    | React | Vue | Svelte | Solid |
@@ -240,17 +256,18 @@ shared stylesheet keys on.
 
 ## SSR (F3.3 / F3.5)
 
-| Guarantee                                   | React | Vue | Svelte | Solid |
-| ------------------------------------------- | :---: | :-: | :----: | :---: |
-| stable server HTML (scope/part + recipe)    |  ✅   | ✅  |   ✅   |  ✅   |
-| checkbox `data-state` survives SSR          |  ✅   | ✅  |   ✅   |  ✅   |
-| Field sizes + textarea survive SSR          |  ✅   | ✅  |   ✅   |  ✅   |
-| warning-free hydration (id path)            |  ✅   | ✅¹ |   —²   |  —²   |
-| static server-only island (zero `<script>`) |   —   |  —  |   ✅   |   —   |
-| `defaultOpen` survives SSR                  |  ✅   | ✅  |   ✅   |  ✅   |
-| PinInput `count` → correct server aria      |  ✅   | ✅  |   ✅   |  ✅   |
-| Avatar fallback shown / image hidden on SSR |  ✅   | ✅  |   ✅   |  ✅   |
-| Switch on/off state + switch role on SSR    |  ✅   | ✅  |   ✅   |  ✅   |
+| Guarantee                                    | React | Vue | Svelte | Solid |
+| -------------------------------------------- | :---: | :-: | :----: | :---: |
+| stable server HTML (scope/part + recipe)     |  ✅   | ✅  |   ✅   |  ✅   |
+| checkbox `data-state` survives SSR           |  ✅   | ✅  |   ✅   |  ✅   |
+| Field sizes + textarea survive SSR           |  ✅   | ✅  |   ✅   |  ✅   |
+| warning-free hydration (id path)             |  ✅   | ✅¹ |   —²   |  —²   |
+| static server-only island (zero `<script>`)  |   —   |  —  |   ✅   |   —   |
+| `defaultOpen` survives SSR                   |  ✅   | ✅  |   ✅   |  ✅   |
+| PinInput `count` → correct server aria       |  ✅   | ✅  |   ✅   |  ✅   |
+| Avatar fallback shown / image hidden on SSR  |  ✅   | ✅  |   ✅   |  ✅   |
+| Switch on/off state + switch role on SSR     |  ✅   | ✅  |   ✅   |  ✅   |
+| RadioGroup checked item + orientation on SSR |  ✅   | ✅  |   ✅   |  ✅   |
 
 ¹ Vue hydration is verified on the portal-free primitives (Button, Card, Field
 and Checkbox), the deterministic `useId` hazard; Ark's portaled popovers

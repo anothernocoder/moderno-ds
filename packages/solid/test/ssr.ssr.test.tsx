@@ -92,6 +92,38 @@ describe("SSR (Solid)", () => {
     expect(switchInputs).toHaveLength(2);
     expect(switchInputs[0]).toMatch(/\schecked(?:=""|[\s>/])/);
     expect(switchInputs[1]).toMatch(/\sdisabled(?:=""|[\s>/])/);
+    // RadioGroup: Ark's radio machine. The recipe and Ark's orientation land
+    // on each root, the checked item reaches its parts on the server, the
+    // disabled group is marked, and every native radio is already there with
+    // its checked / disabled state before hydration.
+    expect(partAttrs(html, "radio-group", "root", "data-size")).toEqual(["md", "sm"]);
+    expect(partAttrs(html, "radio-group", "root", "data-orientation")).toEqual([
+      "vertical",
+      "horizontal",
+    ]);
+    expect(partAttrs(html, "radio-group", "root", "role")).toEqual(["radiogroup", "radiogroup"]);
+    expect(partAttrs(html, "radio-group", "item", "data-state")).toEqual([
+      "checked",
+      "unchecked",
+      "unchecked",
+      "unchecked",
+    ]);
+    expect(partAttrs(html, "radio-group", "item-control", "data-state")).toEqual([
+      "checked",
+      "unchecked",
+      "unchecked",
+      "unchecked",
+    ]);
+    expect(partTags(html, "radio-group", "item-description")).toHaveLength(2);
+    const disabledGroups = partTags(html, "radio-group", "root").map((tag) =>
+      /\sdata-disabled(?:=""|[\s>])/.test(tag),
+    );
+    expect(disabledGroups).toEqual([false, true]);
+    const radios = html.match(/<input[^>]*type="radio"[^>]*>/g) ?? [];
+    expect(radios).toHaveLength(4);
+    expect(radios[0]).toMatch(/\schecked(?:=""|[\s>/])/);
+    expect(radios[1]).not.toMatch(/\schecked(?:=""|[\s>/])/);
+    expect(radios[3]).toMatch(/\sdisabled(?:=""|[\s>/])/);
     expect(html).toContain('data-scope="pin-input"');
     // Every code cell is on the server, and `count` makes the server's aria
     // labels agree with the client's — the PinInput-specific SSR hazard.

@@ -43,6 +43,7 @@ import {
   skeletonRecipe,
   spinnerRecipe,
   switchRecipe,
+  radioGroupRecipe,
 } from "@moderno-ui/core";
 import { extractProps, type ComponentDoc, type ComponentEntry, type PropDoc } from "./index.ts";
 import { ENTRIES } from "./manifest.ts";
@@ -302,6 +303,25 @@ export const AGENT_COMPONENTS: AgentComponentSpec[] = [
       { name: "label" },
     ],
     variants: switchRecipe.variants,
+  },
+  {
+    name: "RadioGroup",
+    slug: "radio-group",
+    scope: "radio-group",
+    propsEntry: findEntry("RadioGroup"),
+    parts: [
+      { name: "root" },
+      { name: "label", description: "The group's label; it names the radiogroup." },
+      { name: "item", description: "One option: a <label> around its radio." },
+      { name: "item-control", description: "The radio circle." },
+      { name: "item-text", description: "The option's label; names its radio." },
+      {
+        name: "item-description",
+        description: "Moderno's hint under an option's label; goes inside item-text.",
+      },
+      { name: "indicator", description: "Ark's sliding highlight; unstyled by default." },
+    ],
+    variants: radioGroupRecipe.variants,
   },
   {
     name: "LineChart",

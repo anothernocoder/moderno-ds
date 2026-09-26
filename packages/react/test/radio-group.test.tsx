@@ -1,0 +1,180 @@
+// @vitest-environment jsdom
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { cleanup, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import {
+  RadioGroup,
+  type RadioGroupSize,
+  type RadioGroupValueChangeDetails,
+} from "../src/index.js";
+
+afterEach(cleanup);
+
+describe("RadioGroup surface (React)", () => {
+  it("exposes every Ark part, not a hand-maintained subset", async () => {
+    const { RadioGroup: ArkRadioGroup } = await import("@ark-ui/react");
+    for (const part of Object.keys(ArkRadioGroup)) {
+      if (part === "Root") continue; // wrapped below
+      expect(
+        RadioGroup[part as keyof typeof RadioGroup],
+        `RadioGroup.${part} missing`,
+      ).toBeDefined();
+    }
+    expect(RadioGroup.ItemDescription).toBeDefined();
+  });
+});
+
+const OPTIONS = [
+  { value: "standard", label: "Standard", description: "3–5 business days" },
+  { value: "express", label: "Express", description: "1–2 business days" },
+  { value: "pickup", label: "Pickup", description: "Closed this week", disabled: true },
+];
+
+function Demo(props: {
+  size?: RadioGroupSize;
+  orientation?: "horizontal" | "vertical";
+  disabled?: boolean;
+  invalid?: boolean;
+  defaultValue?: string;
+  onValueChange?: (details: RadioGroupValueChangeDetails) => void;
+}) {
+  return (
+    <RadioGroup.Root
+      size={props.size}
+      orientation={props.orientation}
+      disabled={props.disabled}
+      invalid={props.invalid}
+      defaultValue={props.defaultValue}
+      onValueChange={props.onValueChange}
+      name="shipping"
+      className="shipping"
+    >
+      <RadioGroup.Label>Shipping</RadioGroup.Label>
+      {OPTIONS.map((option) => (
+        <RadioGroup.Item key={option.value} value={option.value} disabled={option.disabled}>
+          <RadioGroup.ItemControl />
+          <RadioGroup.ItemText>
+            {option.label}
+            <RadioGroup.ItemDescription>{option.description}</RadioGroup.ItemDescription>
+          </RadioGroup.ItemText>
+          <RadioGroup.ItemHiddenInput />
+        </RadioGroup.Item>
+      ))}
+    </RadioGroup.Root>
+  );
+}
+
+const part = (name: string) =>
+  document.querySelector<HTMLElement>(`[data-scope="radio-group"][data-part="${name}"]`)!;
+const parts = (name: string) =>
+  Array.from(
+    document.querySelectorAll<HTMLElement>(`[data-scope="radio-group"][data-part="${name}"]`),
+  );
+const radio = (name: RegExp) => screen.getByRole("radio", { name }) as HTMLInputElement;
+
+describe("RadioGroup", () => {
+  it("applies the size recipe to the root part, defaulting to md", () => {
+    render(<Demo size="lg" />);
+    expect(part("root").getAttribute("data-size")).toBe("lg");
+    // Ark's own anatomy is intact around the recipe attribute.
+    expect(part("label")).toBeTruthy();
+    expect(parts("item")).toHaveLength(3);
+    expect(parts("item-control")).toHaveLength(3);
+    expect(parts("item-text")).toHaveLength(3);
+    expect(parts("item-description")).toHaveLength(3);
+
+    cleanup();
+    render(<Demo />);
+    expect(part("root").getAttribute("data-size")).toBe("md");
+  });
+
+  it("forwards native props to Ark's root", () => {
+    render(<Demo />);
+    expect(part("root").className).toBe("shipping");
+  });
+
+  it("lays out vertically by default and horizontally on request", () => {
+    render(<Demo />);
+    expect(part("root").getAttribute("data-orientation")).toBe("vertical");
+
+    cleanup();
+    render(<Demo orientation="horizontal" />);
+    expect(part("root").getAttribute("data-orientation")).toBe("horizontal");
+    expect(part("item").getAttribute("data-orientation")).toBe("horizontal");
+  });
+
+  it("names the group by its label and each radio by its text and description", () => {
+    render(<Demo />);
+    expect(screen.getByRole("radiogroup", { name: "Shipping" })).toBe(part("root"));
+    const standard = radio(/^Standard/);
+    expect(standard.type).toBe("radio");
+    expect(standard.name).toBe("shipping");
+    expect(standard.value).toBe("standard");
+    // The description sits inside ItemText, so it is read with the label.
+    expect(radio(/Express\s*1–2 business days/)).toBeTruthy();
+    expect(part("item-description").tagName).toBe("SPAN");
+  });
+
+  it("selects an option when clicked and reports the new value", async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    render(<Demo defaultValue="standard" onValueChange={onValueChange} />);
+    expect(parts("item")[0]!.getAttribute("data-state")).toBe("checked");
+
+    await user.click(screen.getByText("Express"));
+
+    expect(onValueChange).toHaveBeenCalledWith(expect.objectContaining({ value: "express" }));
+    expect(parts("item")[0]!.getAttribute("data-state")).toBe("unchecked");
+    expect(parts("item")[1]!.getAttribute("data-state")).toBe("checked");
+    expect(parts("item-control")[1]!.getAttribute("data-state")).toBe("checked");
+    expect(radio(/^Express/).checked).toBe(true);
+  });
+
+  it("puts keyboard focus on the checked radio", async () => {
+    const user = userEvent.setup();
+    render(<Demo defaultValue="express" />);
+    await user.tab();
+    expect(document.activeElement).toBe(radio(/^Express/));
+  });
+
+  it("moves the selection with the arrow keys", async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    render(<Demo defaultValue="standard" onValueChange={onValueChange} />);
+    await user.tab();
+    await user.keyboard("{ArrowDown}");
+    expect(onValueChange).toHaveBeenCalledWith(expect.objectContaining({ value: "express" }));
+    expect(parts("item")[1]!.getAttribute("data-state")).toBe("checked");
+  });
+
+  it("marks a disabled option with data-disabled and refuses to select it", async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    render(<Demo onValueChange={onValueChange} />);
+
+    expect(parts("item")[2]!.hasAttribute("data-disabled")).toBe(true);
+    expect(radio(/^Pickup/).disabled).toBe(true);
+    expect(part("root").hasAttribute("data-disabled")).toBe(false);
+
+    await user.click(screen.getByText("Pickup"));
+    expect(onValueChange).not.toHaveBeenCalled();
+    expect(parts("item")[2]!.getAttribute("data-state")).toBe("unchecked");
+  });
+
+  it("disables every option when the group is disabled", () => {
+    render(<Demo disabled />);
+    expect(part("root").hasAttribute("data-disabled")).toBe(true);
+    for (const input of screen.getAllByRole("radio") as HTMLInputElement[]) {
+      expect(input.disabled).toBe(true);
+    }
+  });
+
+  it("marks invalid on every radio circle and input", () => {
+    render(<Demo invalid />);
+    expect(part("root").hasAttribute("data-invalid")).toBe(true);
+    for (const control of parts("item-control")) {
+      expect(control.hasAttribute("data-invalid")).toBe(true);
+    }
+    expect(radio(/^Standard/).getAttribute("aria-invalid")).toBe("true");
+  });
+});

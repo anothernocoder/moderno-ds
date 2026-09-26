@@ -91,6 +91,21 @@ export type {
   SwitchCheckedChangeDetails,
 } from "./switch.jsx";
 
+export { RadioGroup } from "./radio-group.jsx";
+export type {
+  RadioGroupSize,
+  ModernoRadioGroupRootProps,
+  RadioGroupRootProps,
+  RadioGroupLabelProps,
+  RadioGroupItemProps,
+  RadioGroupItemControlProps,
+  RadioGroupItemTextProps,
+  RadioGroupItemDescriptionProps,
+  RadioGroupItemHiddenInputProps,
+  RadioGroupIndicatorProps,
+  RadioGroupValueChangeDetails,
+} from "./radio-group.jsx";
+
 export { Avatar } from "./avatar.jsx";
 export type {
   AvatarSize,

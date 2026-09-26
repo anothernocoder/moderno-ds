@@ -170,3 +170,23 @@ describe("moderno/valid-props over the real Switch manifest", () => {
     ]);
   });
 });
+
+describe("moderno/valid-props over the real RadioGroup manifest", () => {
+  const manifests = manifestsFor("react");
+  const check = (code: string) =>
+    validProps.check({ code, framework: "react", manifests }).map((f) => f.message);
+
+  it("accepts the recipe prop and Ark's own props on the root", { timeout: 30_000 }, () => {
+    expect(
+      check(
+        '<RadioGroup.Root size="lg" orientation="horizontal" value={plan} onValueChange={save} name="plan" />',
+      ),
+    ).toEqual([]);
+  });
+
+  it("rejects a size outside the recipe", () => {
+    expect(check('<RadioGroup.Root size="xl" />')).toEqual([
+      expect.stringContaining('Invalid value "xl"'),
+    ]);
+  });
+});

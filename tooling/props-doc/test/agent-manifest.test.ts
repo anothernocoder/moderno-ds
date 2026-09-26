@@ -29,6 +29,7 @@ describe("AGENT_COMPONENTS", () => {
       "PinInput",
       "Avatar",
       "Switch",
+      "RadioGroup",
       "LineChart",
       "AreaChart",
       "BarChart",
@@ -228,6 +229,24 @@ describe("buildComponentsManifest", () => {
     expect(sw.parts.map((p) => p.name)).toEqual(["root", "control", "thumb", "label"]);
     // Ark's own Root props (checked, onCheckedChange, …) live under node_modules.
     expect(sw.propsComplete).toBe(false);
+  });
+
+  it("carries RadioGroup's recipe prop, variants and parts — what validate_usage checks against", () => {
+    const rg = manifest.components.find((c) => c.name === "RadioGroup")!;
+    expect(rg.scope).toBe("radio-group");
+    expect(rg.props.map((p) => p.name)).toEqual(["size"]);
+    expect(rg.variants).toEqual({ size: ["sm", "md", "lg"] });
+    expect(rg.parts.map((p) => p.name)).toEqual([
+      "root",
+      "label",
+      "item",
+      "item-control",
+      "item-text",
+      "item-description",
+      "indicator",
+    ]);
+    // Ark's own Root props (value, orientation, onValueChange, …) live under node_modules.
+    expect(rg.propsComplete).toBe(false);
   });
 
   it("reads variants straight off the shared @moderno-ui/core recipes", () => {

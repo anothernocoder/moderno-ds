@@ -23,6 +23,7 @@ import { Field } from "../src/field.js";
 import { Avatar } from "../src/avatar.js";
 import { Checkbox } from "../src/checkbox.js";
 import { Switch } from "../src/switch.js";
+import { RadioGroup } from "../src/radio-group.js";
 import { Dialog, Portal } from "../src/dialog.js";
 import { Select, createListCollection } from "../src/select.js";
 import { PinInput } from "../src/pin-input.js";
@@ -225,6 +226,41 @@ export const App = defineComponent({
             h(Switch.Control, {}, () => h(Switch.Thumb)),
             h(Switch.Label, {}, () => "Bluetooth"),
             h(Switch.HiddenInput),
+          ]),
+        ]),
+
+        h("section", { "aria-label": "radio groups" }, [
+          h(RadioGroup.Root, { defaultValue: "standard" }, () => [
+            h(RadioGroup.Label, {}, () => "Shipping"),
+            h(RadioGroup.Item, { value: "standard" }, () => [
+              h(RadioGroup.ItemControl),
+              h(RadioGroup.ItemText, {}, () => [
+                "Standard",
+                h(RadioGroup.ItemDescription, {}, () => "3–5 business days"),
+              ]),
+              h(RadioGroup.ItemHiddenInput),
+            ]),
+            h(RadioGroup.Item, { value: "express" }, () => [
+              h(RadioGroup.ItemControl),
+              h(RadioGroup.ItemText, {}, () => [
+                "Express",
+                h(RadioGroup.ItemDescription, {}, () => "1–2 business days"),
+              ]),
+              h(RadioGroup.ItemHiddenInput),
+            ]),
+          ]),
+          h(RadioGroup.Root, { size: "sm", orientation: "horizontal", disabled: true }, () => [
+            h(RadioGroup.Label, {}, () => "Billing"),
+            h(RadioGroup.Item, { value: "monthly" }, () => [
+              h(RadioGroup.ItemControl),
+              h(RadioGroup.ItemText, {}, () => "Monthly"),
+              h(RadioGroup.ItemHiddenInput),
+            ]),
+            h(RadioGroup.Item, { value: "yearly" }, () => [
+              h(RadioGroup.ItemControl),
+              h(RadioGroup.ItemText, {}, () => "Yearly"),
+              h(RadioGroup.ItemHiddenInput),
+            ]),
           ]),
         ]),
 
