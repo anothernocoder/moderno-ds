@@ -18,6 +18,7 @@
   import { Switch } from "../src/index.js";
   import { RadioGroup } from "../src/index.js";
   import { Toggle, ToggleGroup } from "../src/index.js";
+  import { Tabs } from "../src/index.js";
   import { Dialog, Portal } from "../src/index.js";
   import { Select, createListCollection } from "../src/index.js";
   import { PinInput } from "../src/index.js";
@@ -271,6 +272,27 @@
       <ToggleGroup.Item value="bold">Bold</ToggleGroup.Item>
       <ToggleGroup.Item value="italic">Italic</ToggleGroup.Item>
     </ToggleGroup.Root>
+  </section>
+
+  <section aria-label="tabs">
+    <Tabs.Root defaultValue="account">
+      <Tabs.List aria-label="Settings">
+        <Tabs.Trigger value="account">Account</Tabs.Trigger>
+        <Tabs.Trigger value="password">Password</Tabs.Trigger>
+        <Tabs.Indicator />
+      </Tabs.List>
+      <Tabs.Content value="account">Account panel</Tabs.Content>
+      <Tabs.Content value="password">Password panel</Tabs.Content>
+    </Tabs.Root>
+    <Tabs.Root variant="enclosed" size="sm" orientation="vertical" defaultValue="team">
+      <Tabs.List aria-label="Workspace">
+        <Tabs.Trigger value="billing" disabled>Billing</Tabs.Trigger>
+        <Tabs.Trigger value="team">Team</Tabs.Trigger>
+        <Tabs.Indicator />
+      </Tabs.List>
+      <Tabs.Content value="billing">Billing panel</Tabs.Content>
+      <Tabs.Content value="team">Team panel</Tabs.Content>
+    </Tabs.Root>
   </section>
 
   <Dialog.Root defaultOpen={open}>

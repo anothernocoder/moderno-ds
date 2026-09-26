@@ -125,6 +125,19 @@ export type {
   ToggleGroupValueChangeDetails,
 } from "./toggle-group.jsx";
 
+export { Tabs } from "./tabs.jsx";
+export type {
+  TabsVariant,
+  TabsSize,
+  ModernoTabsRootProps,
+  TabsRootProps,
+  TabListProps,
+  TabTriggerProps,
+  TabContentProps,
+  TabIndicatorProps,
+  TabsValueChangeDetails,
+} from "./tabs.jsx";
+
 export { Avatar } from "./avatar.jsx";
 export type {
   AvatarSize,

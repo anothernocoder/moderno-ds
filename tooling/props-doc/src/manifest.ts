@@ -31,6 +31,7 @@ export const ENTRIES: ComponentEntry[] = [
   { name: "RadioGroup", file: "src/radio-group.tsx", type: "ModernoRadioGroupRootProps" },
   { name: "Toggle", file: "src/toggle.tsx", type: "ModernoToggleRootProps" },
   { name: "ToggleGroup", file: "src/toggle-group.tsx", type: "ModernoToggleGroupRootProps" },
+  { name: "Tabs", file: "src/tabs.tsx", type: "ModernoTabsRootProps" },
   { name: "LineChart", file: "src/charts.tsx", type: "LineChartProps" },
   { name: "AreaChart", file: "src/charts.tsx", type: "AreaChartProps" },
   { name: "BarChart", file: "src/charts.tsx", type: "BarChartProps" },

@@ -46,6 +46,7 @@ import {
   radioGroupRecipe,
   toggleRecipe,
   toggleGroupRecipe,
+  tabsRecipe,
 } from "@moderno-ui/core";
 import { extractProps, type ComponentDoc, type ComponentEntry, type PropDoc } from "./index.ts";
 import { ENTRIES } from "./manifest.ts";
@@ -349,6 +350,20 @@ export const AGENT_COMPONENTS: AgentComponentSpec[] = [
       { name: "item", description: "One native <button>; on or off." },
     ],
     variants: toggleGroupRecipe.variants,
+  },
+  {
+    name: "Tabs",
+    slug: "tabs",
+    scope: "tabs",
+    propsEntry: findEntry("Tabs"),
+    parts: [
+      { name: "root", description: "Carries variant and size for the list and its triggers." },
+      { name: "list", description: "The tablist that holds the triggers and the indicator." },
+      { name: "trigger", description: 'One native <button role="tab">; selects its panel.' },
+      { name: "indicator", description: "Optional; the mark Ark slides to the selected tab." },
+      { name: "content", description: "One tabpanel; hidden unless its tab is selected." },
+    ],
+    variants: tabsRecipe.variants,
   },
   {
     name: "LineChart",

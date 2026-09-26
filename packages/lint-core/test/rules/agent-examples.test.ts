@@ -218,3 +218,26 @@ describe("moderno/valid-props over the real Toggle and ToggleGroup manifests", (
     ]);
   });
 });
+
+describe("moderno/valid-props over the real Tabs manifest", () => {
+  const manifests = manifestsFor("react");
+  const check = (code: string) =>
+    validProps.check({ code, framework: "react", manifests }).map((f) => f.message);
+
+  it("accepts the recipe props and Ark's own props on the root", { timeout: 30_000 }, () => {
+    expect(
+      check(
+        '<Tabs.Root variant="enclosed" size="sm" orientation="vertical" activationMode="manual" value={tab} onValueChange={setTab} />',
+      ),
+    ).toEqual([]);
+  });
+
+  it("rejects a variant or size outside the recipe", () => {
+    expect(check('<Tabs.Root variant="pill" />')).toEqual([
+      expect.stringContaining('Invalid value "pill"'),
+    ]);
+    expect(check('<Tabs.Root size="xl" />')).toEqual([
+      expect.stringContaining('Invalid value "xl"'),
+    ]);
+  });
+});

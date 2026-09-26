@@ -32,6 +32,7 @@ describe("AGENT_COMPONENTS", () => {
       "RadioGroup",
       "Toggle",
       "ToggleGroup",
+      "Tabs",
       "LineChart",
       "AreaChart",
       "BarChart",
@@ -266,6 +267,22 @@ describe("buildComponentsManifest", () => {
     // Ark's own Root props (pressed, value, multiple, …) live under node_modules.
     expect(toggle.propsComplete).toBe(false);
     expect(group.propsComplete).toBe(false);
+  });
+
+  it("carries Tabs' recipe props, variants and Ark parts", () => {
+    const tabs = manifest.components.find((c) => c.name === "Tabs")!;
+    expect(tabs.scope).toBe("tabs");
+    expect(tabs.props.map((p) => p.name)).toEqual(["size", "variant"]);
+    expect(tabs.variants).toEqual({ variant: ["line", "enclosed"], size: ["sm", "md", "lg"] });
+    expect(tabs.parts.map((p) => p.name)).toEqual([
+      "root",
+      "list",
+      "trigger",
+      "indicator",
+      "content",
+    ]);
+    // Ark's own Root props (value, orientation, activationMode, …) live under node_modules.
+    expect(tabs.propsComplete).toBe(false);
   });
 
   it("reads variants straight off the shared @moderno-ui/core recipes", () => {

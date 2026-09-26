@@ -16,6 +16,7 @@ import {
   RadioGroup as ArkRadioGroup,
   Select as ArkSelect,
   Switch as ArkSwitch,
+  Tabs as ArkTabs,
   Toggle as ArkToggle,
   ToggleGroup as ArkToggleGroup,
 } from "@ark-ui/svelte";
@@ -30,6 +31,7 @@ import RadioGroupRoot from "./RadioGroupRoot.svelte";
 import RadioGroupItemDescription from "./RadioGroupItemDescription.svelte";
 import ToggleRoot from "./ToggleRoot.svelte";
 import ToggleGroupRoot from "./ToggleGroupRoot.svelte";
+import TabsRoot from "./TabsRoot.svelte";
 import type { AlertPartProps, AlertRootProps } from "./alert-props.js";
 import AlertRoot from "./AlertRoot.svelte";
 import AlertIcon from "./AlertIcon.svelte";
@@ -305,6 +307,22 @@ export const ToggleGroup: Omit<typeof ArkToggleGroup, "Root"> & {
 };
 export type { ToggleGroupVariant, ToggleGroupSize } from "@moderno-ui/core";
 
+/**
+ * Tabs — a list of tabs, each showing its own panel; one is selected at a
+ * time. Ark renders a `role="tablist"` list of native `<button role="tab">`
+ * triggers with `aria-selected` and `data-selected`, a `role="tabpanel"`
+ * content per tab that is `hidden` unless selected, and the optional
+ * `Indicator` it slides under the selected tab. `Root` is wrapped to inject
+ * the `variant` × `size` recipe; every other part is Ark's verbatim.
+ * Annotated so the emitted `.d.ts` doesn't inline an un-nameable `@zag-js`
+ * type (TS2742).
+ */
+export const Tabs: Omit<typeof ArkTabs, "Root"> & { Root: typeof TabsRoot } = {
+  ...ArkTabs,
+  Root: TabsRoot,
+};
+export type { TabsVariant, TabsSize } from "@moderno-ui/core";
+
 export { createListCollection } from "@ark-ui/svelte";
 
 export type {
@@ -317,4 +335,5 @@ export type {
   SwitchCheckedChangeDetails,
   RadioGroupValueChangeDetails,
   ToggleGroupValueChangeDetails,
+  TabsValueChangeDetails,
 } from "@ark-ui/svelte";

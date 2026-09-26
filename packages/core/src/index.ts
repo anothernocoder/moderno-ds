@@ -34,6 +34,7 @@ export {
   radioGroupRecipe,
   toggleRecipe,
   toggleGroupRecipe,
+  tabsRecipe,
 } from "./recipes.js";
 export type {
   ButtonVariant,
@@ -67,4 +68,6 @@ export type {
   ToggleSize,
   ToggleGroupVariant,
   ToggleGroupSize,
+  TabsVariant,
+  TabsSize,
 } from "./recipes.js";

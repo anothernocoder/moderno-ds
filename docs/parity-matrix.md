@@ -242,6 +242,21 @@ shared stylesheet keys on.
 | disabled group → every item disabled               |  ✅   | ✅  |   ✅   |  ✅   |
 | native props forwarded to the root                 |  ✅   | ✅  |   ✅   |  ✅   |
 
+### Tabs (`tabsRecipe`: `data-variant` × `data-size`; Ark tabs machine)
+
+| State                                                     | React | Vue | Svelte | Solid |
+| --------------------------------------------------------- | :---: | :-: | :----: | :---: |
+| variant × size → root `data-*` (+ `line`, `md`)           |  ✅   | ✅  |   ✅   |  ✅   |
+| every Ark part exposed                                    |  ✅   | ✅  |   ✅   |  ✅   |
+| orientation → `data-orientation` (+ horizontal)           |  ✅   | ✅  |   ✅   |  ✅   |
+| `tablist` of native `tab` buttons, panel labelled by tab  |  ✅   | ✅  |   ✅   |  ✅   |
+| click selects → `aria-selected` + panel + `onValueChange` |  ✅   | ✅  |   ✅   |  ✅   |
+| arrow keys / Home move focus, skipping a disabled tab     |  ✅   | ✅  |   ✅   |  ✅   |
+| vertical → up / down arrows                               |  ✅   | ✅  |   ✅   |  ✅   |
+| manual activation → Enter selects the focused tab         |  ✅   | ✅  |   ✅   |  ✅   |
+| disabled tab → native `disabled` + `data-disabled`, inert |  ✅   | ✅  |   ✅   |  ✅   |
+| native props forwarded to the root                        |  ✅   | ✅  |   ✅   |  ✅   |
+
 ### Dialog (Ark portal + focus trap + ids)
 
 | State                    | React | Vue | Svelte | Solid |
@@ -297,6 +312,7 @@ shared stylesheet keys on.
 | Switch on/off state + switch role on SSR     |  ✅   | ✅  |   ✅   |  ✅   |
 | RadioGroup checked item + orientation on SSR |  ✅   | ✅  |   ✅   |  ✅   |
 | Toggle / ToggleGroup pressed state + roles   |  ✅   | ✅  |   ✅   |  ✅   |
+| Tabs selected tab, hidden panels + tab ids   |  ✅   | ✅  |   ✅   |  ✅   |
 
 ¹ Vue hydration is verified on the portal-free primitives (Button, Card, Field
 and Checkbox), the deterministic `useId` hazard; Ark's portaled popovers

@@ -951,6 +951,183 @@
     }
   }
 
+  /* ──────────────────────────── Tabs ──────────────────────────── *
+   * Ark's tabs machine: root > list (role="tablist") > trigger (a native
+   * <button role="tab">) + indicator, then one content (role="tabpanel") per
+   * trigger. Ark stamps data-orientation on every part, data-selected on the
+   * selected trigger and its content, data-disabled on a disabled trigger,
+   * and hides every other content with `hidden`. The indicator is Ark's
+   * absolutely positioned mark: Ark measures the selected trigger and hands
+   * its box over as --left/--top/--width/--height (and hides the indicator
+   * until it has one). `tabsRecipe` puts variant × size on the root; the
+   * list, triggers and indicator follow it through child combinators
+   * (root > list > trigger | indicator), so a Tabs nested in a panel keeps
+   * its own variant and size.                                             */
+  [data-scope="tabs"][data-part="root"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+  }
+  [data-scope="tabs"][data-part="root"][data-orientation="vertical"] {
+    flex-direction: row;
+  }
+  /* The list is the indicator's offset parent (Ark measures triggers from
+     it) and its own stacking context, so the indicator can sit behind the
+     triggers without escaping below the page. */
+  [data-scope="tabs"][data-part="list"] {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: var(--spacing-1);
+  }
+  [data-scope="tabs"][data-part="list"][data-orientation="vertical"] {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  [data-scope="tabs"][data-part="trigger"] {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-2);
+    height: var(--spacing-8);
+    padding-inline: var(--spacing-3);
+    border: 0;
+    border-radius: var(--radius);
+    /* Clears the UA `buttonface` grey: a tab has no fill of its own. */
+    background-color: transparent;
+    color: var(--muted-foreground);
+    font-family: var(--font-sans);
+    font-size: var(--text-ui-md);
+    font-weight: var(--font-weight-medium);
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    transition: color var(--motion-fast);
+  }
+  [data-scope="tabs"][data-part="trigger"][data-orientation="vertical"] {
+    justify-content: flex-start;
+  }
+  [data-scope="tabs"][data-part="trigger"]:hover,
+  [data-scope="tabs"][data-part="trigger"][data-selected] {
+    color: var(--foreground);
+  }
+  /* The ring is drawn inside the tab, where a neighbour cannot cover it. */
+  [data-scope="tabs"][data-part="trigger"]:focus-visible {
+    outline-color: var(--ring);
+    outline-style: solid;
+    outline-width: 2px;
+    outline-offset: -2px;
+  }
+  /* Disabled — the base layer dims `[data-disabled]`, which Ark stamps; a
+     native `disabled` set without Ark (or before it hydrates) gets the same
+     dimmed, inert look here, like Button. */
+  [data-scope="tabs"][data-part="trigger"]:disabled {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+  /* Ark sets the indicator's position, offset and transition property
+     inline; the stylesheet gives it a shape per variant and the timing. */
+  [data-scope="tabs"][data-part="indicator"] {
+    z-index: 0;
+    --transition-duration: var(--motion-fast);
+    --transition-timing-function: ease-out;
+  }
+  /* The panel Ark makes focusable, so a keyboard user can reach it. */
+  [data-scope="tabs"][data-part="content"] {
+    min-width: 0;
+    color: var(--foreground);
+  }
+  [data-scope="tabs"][data-part="content"]:focus-visible {
+    outline-color: var(--ring);
+    outline-style: solid;
+    outline-width: 2px;
+    outline-offset: 2px;
+  }
+
+  /* Line — the list sits on a --border rule and the indicator is a --primary
+     bar over it, under the selected tab (beside it when vertical). */
+  [data-scope="tabs"][data-part="root"][data-variant="line"] > [data-part="list"] {
+    border-bottom: 1px solid var(--border);
+  }
+  [data-scope="tabs"][data-part="root"][data-variant="line"]
+    > [data-part="list"]
+    > [data-part="indicator"] {
+    bottom: -1px;
+    width: var(--width);
+    height: 2px;
+    background-color: var(--primary);
+  }
+  [data-scope="tabs"][data-part="root"][data-variant="line"]
+    > [data-part="list"][data-orientation="vertical"] {
+    border-bottom: 0;
+    border-inline-end: 1px solid var(--border);
+  }
+  [data-scope="tabs"][data-part="root"][data-variant="line"]
+    > [data-part="list"]
+    > [data-part="indicator"][data-orientation="vertical"] {
+    bottom: auto;
+    inset-inline-end: -1px;
+    width: 2px;
+    height: var(--height);
+  }
+
+  /* Enclosed — the tabs sit in one --muted bar, half a spacing step from its
+     edge, and the indicator is a --background pill behind the selected tab;
+     corners follow the bar's. */
+  [data-scope="tabs"][data-part="root"][data-variant="enclosed"] > [data-part="list"] {
+    width: fit-content;
+    padding: calc(var(--spacing-1) / 2);
+    border-radius: var(--radius);
+    background-color: var(--muted);
+  }
+  [data-scope="tabs"][data-part="root"][data-variant="enclosed"]
+    > [data-part="list"]
+    > [data-part="trigger"] {
+    border-radius: calc(var(--radius) - var(--spacing-1) / 2);
+  }
+  [data-scope="tabs"][data-part="root"][data-variant="enclosed"]
+    > [data-part="list"]
+    > [data-part="indicator"] {
+    top: var(--top);
+    left: var(--left);
+    width: var(--width);
+    height: var(--height);
+    border-radius: calc(var(--radius) - var(--spacing-1) / 2);
+    background-color: var(--background);
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* Density driven by the recipe's data-size on the root — heights match
+     Button's, from the spacing slots; `lg` sums two. */
+  [data-scope="tabs"][data-part="root"][data-size="sm"]
+    > [data-part="list"]
+    > [data-part="trigger"] {
+    height: var(--spacing-7);
+    padding-inline: var(--spacing-2);
+    font-size: var(--text-ui-sm);
+  }
+  [data-scope="tabs"][data-part="root"][data-size="lg"]
+    > [data-part="list"]
+    > [data-part="trigger"] {
+    height: calc(var(--spacing-8) + var(--spacing-2));
+    padding-inline: var(--spacing-4);
+    font-size: var(--text-ui-lg);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-scope="tabs"][data-part="trigger"] {
+      transition: none;
+    }
+    [data-scope="tabs"][data-part="indicator"] {
+      --transition-duration: 0ms;
+    }
+  }
+
   /* ─────────────────────────── Dialog ─────────────────────────── *
    * Ark owns portal + focus trap + ids. Scope "dialog".               */
   /* The scrim is its own slot, not a mix of --foreground: that slot is

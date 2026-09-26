@@ -1,0 +1,246 @@
+---
+title: Tabs
+description: Una fila de pestañas que cambian entre paneles de contenido en el mismo sitio.
+group: Componentes
+order: 31
+component: Tabs
+pkg: "@moderno-ui/react"
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import TabsDemo from "../../../examples/tabs/tabs.svelte";
+import baseReact from "../../../examples/tabs/react.tsx?raw";
+import baseVue from "../../../examples/tabs/vue.vue?raw";
+import baseSolid from "../../../examples/tabs/solid.tsx?raw";
+import baseSvelte from "../../../examples/tabs/tabs.svelte?raw";
+import TabsEnclosedDemo from "../../../examples/tabs/enclosed/tabs-enclosed.svelte";
+import enclosedReact from "../../../examples/tabs/enclosed/react.tsx?raw";
+import enclosedVue from "../../../examples/tabs/enclosed/vue.vue?raw";
+import enclosedSolid from "../../../examples/tabs/enclosed/solid.tsx?raw";
+import enclosedSvelte from "../../../examples/tabs/enclosed/tabs-enclosed.svelte?raw";
+import TabsVerticalDemo from "../../../examples/tabs/vertical/tabs-vertical.svelte";
+import verticalReact from "../../../examples/tabs/vertical/react.tsx?raw";
+import verticalVue from "../../../examples/tabs/vertical/vue.vue?raw";
+import verticalSolid from "../../../examples/tabs/vertical/solid.tsx?raw";
+import verticalSvelte from "../../../examples/tabs/vertical/tabs-vertical.svelte?raw";
+import TabsSizesDemo from "../../../examples/tabs/sizes/tabs-sizes.svelte";
+import sizesReact from "../../../examples/tabs/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/tabs/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/tabs/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/tabs/sizes/tabs-sizes.svelte?raw";
+import TabsDisabledDemo from "../../../examples/tabs/disabled/tabs-disabled.svelte";
+import disabledReact from "../../../examples/tabs/disabled/react.tsx?raw";
+import disabledVue from "../../../examples/tabs/disabled/vue.vue?raw";
+import disabledSolid from "../../../examples/tabs/disabled/solid.tsx?raw";
+import disabledSvelte from "../../../examples/tabs/disabled/tabs-disabled.svelte?raw";
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
+  <TabsDemo client:visible />
+</Preview>
+
+## Instalación
+
+<Install pkg="@moderno-ui/react" />
+
+## Uso
+
+Las pestañas muestran un panel a la vez. Úsalas para vistas hermanas de un mismo tema, como las secciones de una página de ajustes. Cada trigger selecciona el panel con el mismo `value`.
+
+<ForFramework fw="react">
+
+```tsx
+import { Tabs } from "@moderno-ui/react";
+```
+
+```tsx
+<Tabs.Root defaultValue="account">
+  <Tabs.List aria-label="Settings">
+    <Tabs.Trigger value="account">Account</Tabs.Trigger>
+    <Tabs.Trigger value="password">Password</Tabs.Trigger>
+    <Tabs.Indicator />
+  </Tabs.List>
+  <Tabs.Content value="account">Change your name and email.</Tabs.Content>
+  <Tabs.Content value="password">Change your password.</Tabs.Content>
+</Tabs.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Tabs } from "@moderno-ui/vue";
+```
+
+```vue
+<Tabs.Root default-value="account">
+  <Tabs.List aria-label="Settings">
+    <Tabs.Trigger value="account">Account</Tabs.Trigger>
+    <Tabs.Trigger value="password">Password</Tabs.Trigger>
+    <Tabs.Indicator />
+  </Tabs.List>
+  <Tabs.Content value="account">Change your name and email.</Tabs.Content>
+  <Tabs.Content value="password">Change your password.</Tabs.Content>
+</Tabs.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Tabs } from "@moderno-ui/svelte";
+```
+
+```svelte
+<Tabs.Root defaultValue="account">
+  <Tabs.List aria-label="Settings">
+    <Tabs.Trigger value="account">Account</Tabs.Trigger>
+    <Tabs.Trigger value="password">Password</Tabs.Trigger>
+    <Tabs.Indicator />
+  </Tabs.List>
+  <Tabs.Content value="account">Change your name and email.</Tabs.Content>
+  <Tabs.Content value="password">Change your password.</Tabs.Content>
+</Tabs.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Tabs } from "@moderno-ui/solid";
+```
+
+```tsx
+<Tabs.Root defaultValue="account">
+  <Tabs.List aria-label="Settings">
+    <Tabs.Trigger value="account">Account</Tabs.Trigger>
+    <Tabs.Trigger value="password">Password</Tabs.Trigger>
+    <Tabs.Indicator />
+  </Tabs.List>
+  <Tabs.Content value="account">Change your name and email.</Tabs.Content>
+  <Tabs.Content value="password">Change your password.</Tabs.Content>
+</Tabs.Root>
+```
+
+</ForFramework>
+
+## Referencia de la API
+
+### Tabs.Root
+
+`variant` y `size` son los añadidos de Moderno; la lista, sus triggers y el indicador los siguen. El resto de props vienen del Tabs de Ark.
+
+<PropsTable component="Tabs" />
+
+| Prop             | Tipo                                   | Por defecto    | Descripción                                                                               |
+| ---------------- | -------------------------------------- | -------------- | ----------------------------------------------------------------------------------------- |
+| `value`          | `string`                               | —              | Pestaña seleccionada, controlado. Úsalo con `onValueChange`.                              |
+| `defaultValue`   | `string`                               | —              | Pestaña seleccionada al inicio cuando no está controlado.                                 |
+| `onValueChange`  | `(details: { value: string }) => void` | —              | Se llama cuando se selecciona una pestaña.                                                |
+| `orientation`    | `"horizontal" \| "vertical"`           | `"horizontal"` | Coloca las pestañas en fila o en columna; define las flechas del teclado.                 |
+| `activationMode` | `"automatic" \| "manual"`              | `"automatic"`  | `automatic` selecciona una pestaña al recibir el foco; `manual` espera a Enter o Espacio. |
+| `loopFocus`      | `boolean`                              | `true`         | Las flechas pasan de la última pestaña a la primera.                                      |
+| `lazyMount`      | `boolean`                              | `false`        | Renderiza un panel solo la primera vez que se selecciona su pestaña.                      |
+| `unmountOnExit`  | `boolean`                              | `false`        | Quita un panel cuando su pestaña deja de estar seleccionada.                              |
+
+En Vue, escucha con `@value-change` o enlaza el valor con `v-model`.
+
+### Tabs.Trigger
+
+| Prop       | Tipo      | Por defecto | Descripción                                                          |
+| ---------- | --------- | ----------- | -------------------------------------------------------------------- |
+| `value`    | `string`  | —           | Obligatorio. El valor de la pestaña; coincide con un `Tabs.Content`. |
+| `disabled` | `boolean` | `false`     | Deshabilita solo esta pestaña.                                       |
+
+### Tabs.Content
+
+| Prop    | Tipo     | Por defecto | Descripción                                                 |
+| ------- | -------- | ----------- | ----------------------------------------------------------- |
+| `value` | `string` | —           | Obligatorio. El valor de la pestaña que muestra este panel. |
+
+### Partes
+
+| Parte            | Elemento   | Descripción                                                        |
+| ---------------- | ---------- | ------------------------------------------------------------------ |
+| `Tabs.Root`      | `<div>`    | Lleva `data-variant`, `data-size` y `data-orientation`.            |
+| `Tabs.List`      | `<div>`    | `role="tablist"`. Contiene los triggers y el indicador.            |
+| `Tabs.Trigger`   | `<button>` | `role="tab"` con `aria-selected`. Selecciona su panel.             |
+| `Tabs.Indicator` | `<div>`    | Opcional. La barra o la píldora que marca la pestaña seleccionada. |
+| `Tabs.Content`   | `<div>`    | `role="tabpanel"`. Oculto salvo que su pestaña esté seleccionada.  |
+
+### Atributos data
+
+| Atributo           | Valores                                            |
+| ------------------ | -------------------------------------------------- |
+| `data-selected`    | Presente en el trigger seleccionado y en su panel  |
+| `data-disabled`    | Presente en un trigger deshabilitado               |
+| `data-orientation` | `"horizontal"` o `"vertical"`, en todas las partes |
+| `data-variant`     | En la raíz: `"line"` o `"enclosed"`                |
+| `data-size`        | En la raíz: `"sm"`, `"md"` o `"lg"`                |
+
+## Ejemplos
+
+### Enclosed
+
+Las pestañas van en una barra atenuada; la seleccionada es una píldora.
+
+<Preview
+  examples={{
+    react: enclosedReact,
+    vue: enclosedVue,
+    solid: enclosedSolid,
+    svelte: enclosedSvelte,
+  }}
+>
+  <TabsEnclosedDemo client:visible />
+</Preview>
+
+### Vertical
+
+Las pestañas van en una columna junto al panel. Las flechas arriba y abajo se mueven entre ellas.
+
+<Preview
+  examples={{
+    react: verticalReact,
+    vue: verticalVue,
+    solid: verticalSolid,
+    svelte: verticalSvelte,
+  }}
+>
+  <TabsVerticalDemo client:visible />
+</Preview>
+
+### Tamaños
+
+<Preview examples={{ react: sizesReact, vue: sizesVue, solid: sizesSolid, svelte: sizesSvelte }}>
+  <TabsSizesDemo client:visible />
+</Preview>
+
+### Pestaña deshabilitada
+
+Una pestaña deshabilitada no se puede seleccionar, y las flechas la saltan.
+
+<Preview
+  examples={{
+    react: disabledReact,
+    vue: disabledVue,
+    solid: disabledSolid,
+    svelte: disabledSvelte,
+  }}
+>
+  <TabsDisabledDemo client:visible />
+</Preview>
+
+## Notas
+
+- `Tabs.Root` está envuelto para añadir `variant` y `size`; el resto de partes son las de Ark sin cambios.
+- Estiliza el estado desde `data-selected` y los atributos `data-*` de cada parte; `variant` y `size` son las únicas props visuales.
+- Para una elección que el usuario envía, o un modo de vista como lista o cuadrícula, usa Toggle Group.

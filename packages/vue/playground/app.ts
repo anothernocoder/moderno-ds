@@ -26,6 +26,7 @@ import { Switch } from "../src/switch.js";
 import { RadioGroup } from "../src/radio-group.js";
 import { Toggle } from "../src/toggle.js";
 import { ToggleGroup } from "../src/toggle-group.js";
+import { Tabs } from "../src/tabs.js";
 import { Dialog, Portal } from "../src/dialog.js";
 import { Select, createListCollection } from "../src/select.js";
 import { PinInput } from "../src/pin-input.js";
@@ -292,6 +293,31 @@ export const App = defineComponent({
             () => [
               h(ToggleGroup.Item, { value: "bold" }, () => "Bold"),
               h(ToggleGroup.Item, { value: "italic" }, () => "Italic"),
+            ],
+          ),
+        ]),
+
+        h("section", { "aria-label": "tabs" }, [
+          h(Tabs.Root, { defaultValue: "account" }, () => [
+            h(Tabs.List, { "aria-label": "Settings" }, () => [
+              h(Tabs.Trigger, { value: "account" }, () => "Account"),
+              h(Tabs.Trigger, { value: "password" }, () => "Password"),
+              h(Tabs.Indicator),
+            ]),
+            h(Tabs.Content, { value: "account" }, () => "Account panel"),
+            h(Tabs.Content, { value: "password" }, () => "Password panel"),
+          ]),
+          h(
+            Tabs.Root,
+            { variant: "enclosed", size: "sm", orientation: "vertical", defaultValue: "team" },
+            () => [
+              h(Tabs.List, { "aria-label": "Workspace" }, () => [
+                h(Tabs.Trigger, { value: "billing", disabled: true }, () => "Billing"),
+                h(Tabs.Trigger, { value: "team" }, () => "Team"),
+                h(Tabs.Indicator),
+              ]),
+              h(Tabs.Content, { value: "billing" }, () => "Billing panel"),
+              h(Tabs.Content, { value: "team" }, () => "Team panel"),
             ],
           ),
         ]),

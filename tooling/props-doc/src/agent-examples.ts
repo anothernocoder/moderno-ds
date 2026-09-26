@@ -1667,6 +1667,87 @@ export const AGENT_EXAMPLES: Record<string, Partial<Record<Framework, AgentExamp
     ],
   },
 
+  Tabs: {
+    react: [
+      {
+        title: "Tabs with an indicator, one panel per tab",
+        code: [
+          'import { Tabs } from "@moderno-ui/react";',
+          "",
+          '<Tabs.Root defaultValue="account" onValueChange={save}>',
+          '  <Tabs.List aria-label="Settings">',
+          '    <Tabs.Trigger value="account">Account</Tabs.Trigger>',
+          '    <Tabs.Trigger value="password">Password</Tabs.Trigger>',
+          "    <Tabs.Indicator />",
+          "  </Tabs.List>",
+          '  <Tabs.Content value="account">Account settings</Tabs.Content>',
+          '  <Tabs.Content value="password">Password settings</Tabs.Content>',
+          "</Tabs.Root>",
+        ].join("\n"),
+      },
+    ],
+    vue: [
+      {
+        title: "Tabs with an indicator, one panel per tab",
+        code: [
+          '<script setup lang="ts">',
+          'import { Tabs } from "@moderno-ui/vue";',
+          "</script>",
+          "",
+          "<template>",
+          '  <Tabs.Root default-value="account" @value-change="save">',
+          '    <Tabs.List aria-label="Settings">',
+          '      <Tabs.Trigger value="account">Account</Tabs.Trigger>',
+          '      <Tabs.Trigger value="password">Password</Tabs.Trigger>',
+          "      <Tabs.Indicator />",
+          "    </Tabs.List>",
+          '    <Tabs.Content value="account">Account settings</Tabs.Content>',
+          '    <Tabs.Content value="password">Password settings</Tabs.Content>',
+          "  </Tabs.Root>",
+          "</template>",
+        ].join("\n"),
+      },
+    ],
+    svelte: [
+      {
+        title: "Tabs with an indicator, one panel per tab",
+        code: [
+          '<script lang="ts">',
+          '  import { Tabs } from "@moderno-ui/svelte";',
+          "</script>",
+          "",
+          '<Tabs.Root defaultValue="account" onValueChange={save}>',
+          '  <Tabs.List aria-label="Settings">',
+          '    <Tabs.Trigger value="account">Account</Tabs.Trigger>',
+          '    <Tabs.Trigger value="password">Password</Tabs.Trigger>',
+          "    <Tabs.Indicator />",
+          "  </Tabs.List>",
+          '  <Tabs.Content value="account">Account settings</Tabs.Content>',
+          '  <Tabs.Content value="password">Password settings</Tabs.Content>',
+          "</Tabs.Root>",
+        ].join("\n"),
+      },
+    ],
+    solid: [
+      {
+        title: "Tabs with an indicator, one panel per tab",
+        code: [
+          'import { Tabs } from "@moderno-ui/solid";',
+          "",
+          '<Tabs.Root defaultValue="account" onValueChange={save}>',
+          '  <Tabs.List aria-label="Settings">',
+          '    <Tabs.Trigger value="account">Account</Tabs.Trigger>',
+          '    <Tabs.Trigger value="password">Password</Tabs.Trigger>',
+          "    <Tabs.Indicator />",
+          "  </Tabs.List>",
+          '  <Tabs.Content value="account">Account settings</Tabs.Content>',
+          '  <Tabs.Content value="password">Password settings</Tabs.Content>',
+          "</Tabs.Root>",
+        ].join("\n"),
+      },
+    ],
+  },
+
   LineChart: {
     react: [
       {

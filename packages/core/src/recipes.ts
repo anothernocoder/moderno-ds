@@ -252,6 +252,21 @@ export const toggleGroupRecipe = cva({
   defaultVariants: { variant: "ghost", size: "md" },
 });
 
+/**
+ * Tabs: `variant` × `size` on the root, which the list, its triggers and the
+ * indicator follow. `line` underlines the selected tab on a bordered list;
+ * `enclosed` lifts it as a pill out of a muted bar. Orientation, activation
+ * and the selected value are Ark's own props; selected and disabled surface
+ * as Ark's `data-selected` / `data-disabled`, not variants.
+ */
+export const tabsRecipe = cva({
+  variants: {
+    variant: ["line", "enclosed"],
+    size: ["sm", "md", "lg"],
+  },
+  defaultVariants: { variant: "line", size: "md" },
+});
+
 /*
  * The variant unions, derived once beside the recipes. Bindings import these
  * names instead of re-deriving them from the recipe tables — a recipe change
@@ -411,3 +426,9 @@ export type ToggleGroupVariant = NonNullable<
 
 /** ToggleGroup's density, shared by its items. */
 export type ToggleGroupSize = NonNullable<VariantProps<typeof toggleGroupRecipe.variants>["size"]>;
+
+/** Tabs' visual style (`line`, `enclosed`), shared by the list and its triggers. */
+export type TabsVariant = NonNullable<VariantProps<typeof tabsRecipe.variants>["variant"]>;
+
+/** Tabs' density (trigger height and type), shared by every trigger. */
+export type TabsSize = NonNullable<VariantProps<typeof tabsRecipe.variants>["size"]>;
