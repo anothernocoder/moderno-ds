@@ -426,6 +426,78 @@
       ]
     },
     {
+      "name": "blog-header-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Blog Header (React)",
+      "description": "The top of a blog index, composing the @moderno-ui/react Alert, Button, Chip and Skeleton primitives: a kicker, a serif title and a sentence of introduction over a row of category chips, each a link to its category with the current one filled, with its own loading, empty and error renders for the categories; responds to its container (@container) — a larger description at @sm, a larger title and more room between the chips at @md, and more room around the header at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/blog-header/react/blog-header.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/blog-header.tsx"
+        }
+      ]
+    },
+    {
+      "name": "blog-header-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Blog Header (Vue)",
+      "description": "The top of a blog index, composing the @moderno-ui/vue Alert, Button, Chip and Skeleton primitives: a kicker, a serif title and a sentence of introduction over a row of category chips, each a link to its category with the current one filled, with its own loading, empty and error renders for the categories; responds to its container (@container) — a larger description at @sm, a larger title and more room between the chips at @md, and more room around the header at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/blog-header/vue/BlogHeader.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/BlogHeader.vue"
+        }
+      ]
+    },
+    {
+      "name": "blog-header-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Blog Header (Svelte)",
+      "description": "The top of a blog index, composing the @moderno-ui/svelte Alert, Button, Chip and Skeleton primitives: a kicker, a serif title and a sentence of introduction over a row of category chips, each a link to its category with the current one filled, with its own loading, empty and error renders for the categories; responds to its container (@container) — a larger description at @sm, a larger title and more room between the chips at @md, and more room around the header at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/blog-header/svelte/BlogHeader.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/BlogHeader.svelte"
+        }
+      ]
+    },
+    {
+      "name": "blog-header-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Blog Header (Solid)",
+      "description": "The top of a blog index, composing the @moderno-ui/solid Alert, Button, Chip and Skeleton primitives: a kicker, a serif title and a sentence of introduction over a row of category chips, each a link to its category with the current one filled, with its own loading, empty and error renders for the categories; responds to its container (@container) — a larger description at @sm, a larger title and more room between the chips at @md, and more room around the header at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/blog-header/solid/blog-header.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/blog-header.tsx"
+        }
+      ]
+    },
+    {
       "name": "careers-react",
       "type": "registry:block",
       "version": "0.1.0",
