@@ -1,0 +1,195 @@
+---
+title: Careers
+description: A list of open roles for a careers page — a title, a department, a place and an apply link for each one, under a serif heading.
+group: Blocks
+order: 119
+agent:
+  intent: A section of a careers or about page that lists the open roles — a serif heading, a sentence of introduction, then each role's title, department badge, location and type, with an apply link.
+  whenToUse: "A company page that lists open jobs, each one sent to its own application page."
+  whenNotToUse:
+    - case: Items the user opens, edits or tracks, like tasks or files
+      use: StackedList — its rows carry a status and an action each
+    - case: What the product does, with an icon per point
+      use: FeatureGrid — it shows features at a glance
+    - case: One call to action for the whole page
+      use: Hero — the careers list comes after it
+  gotchas:
+    - "`roles` is an array of `{ id, title, department, location, type, href }`. Each role's apply link goes to its `href`."
+    - 'Each apply link reads "Apply" and is named "Apply for <title>" for screen readers, so every link in the list says where it goes.'
+    - '`description` hides when you pass `""`.'
+    - '`roles={[]}` shows "No open roles right now. Check back soon." in place of the list.'
+    - "`disabled` keeps every role and makes each apply link inert: it drops its `href` and carries `aria-disabled`. The retry button is disabled too."
+    - 'Presentational: `onRetry` reports that "Try again" was pressed. Loading the roles again stays yours.'
+    - "`loading` keeps the heading and replaces the list with three skeleton rows in one busy `status` region."
+    - '`error` keeps the heading and puts an error Alert with your message and a "Try again" button where the list was. An empty string counts as no error.'
+    - "The layout follows the block's own width, not the viewport: each apply link sits under its role below `--container-sm` and beside it from there."
+  theming:
+    - "The block paints only its dividers and the dashed empty box (--border). The department is Badge's outline variant, the error is Alert's error variant, the retry is Button's outline variant and the loading rows are Skeleton."
+    - "The heading reads --font-serif and --foreground; the introduction and each role's location and type read --muted-foreground; the apply link reads --foreground, and its focus ring --ring."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg. The heading is capped at --container-md and the list at --container-lg."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import CareersBlockDemo from "../../../islands/CareersBlockDemo.svelte";
+import careersReact from "../../../../../../registry/blocks/careers/react/careers.tsx?raw";
+import careersVue from "../../../../../../registry/blocks/careers/vue/Careers.vue?raw";
+import careersSolid from "../../../../../../registry/blocks/careers/solid/careers.tsx?raw";
+import careersSvelte from "../../../../../../registry/blocks/careers/svelte/Careers.svelte?raw";
+
+export const examples = {
+  react: careersReact,
+  vue: careersVue,
+  solid: careersSolid,
+  svelte: careersSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <CareersBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="careers" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { Careers } from "@/components/blocks/careers";
+```
+
+```tsx
+<Careers heading="Open roles" roles={roles} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import Careers from "@/components/blocks/Careers.vue";
+</script>
+```
+
+```vue
+<Careers heading="Open roles" :roles="roles" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import Careers from "@/components/blocks/Careers.svelte";
+</script>
+```
+
+```svelte
+<Careers heading="Open roles" {roles} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { Careers } from "@/components/blocks/careers";
+```
+
+```tsx
+<Careers heading="Open roles" roles={roles} />
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+| Prop          | Type            | Default                | Description                                                              |
+| ------------- | --------------- | ---------------------- | ------------------------------------------------------------------------ |
+| `heading`     | `string`        | `"Come build with us"` | The section's heading. Set in the serif face.                            |
+| `description` | `string`        | a sentence             | One sentence under the heading; `""` hides it.                           |
+| `roles`       | `CareersRole[]` | five sample roles      | The open roles, in order. `[]` shows the empty message.                  |
+| `error`       | `string`        | —                      | Loading the roles failed; an error Alert with a retry replaces the list. |
+| `loading`     | `boolean`       | `false`                | Skeleton rows in a busy region replace the list.                         |
+| `disabled`    | `boolean`       | `false`                | The roles stay; every apply link is inert and the retry button disabled. |
+| `onRetry`     | `() => void`    | —                      | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.             |
+
+### Role
+
+| Field        | Type     | Description                                            |
+| ------------ | -------- | ------------------------------------------------------ |
+| `id`         | `string` | A stable key for the role.                             |
+| `title`      | `string` | The job title. Rendered as an `h3`.                    |
+| `department` | `string` | The team. Shown in an outline Badge.                   |
+| `location`   | `string` | Where the role is based, like `"Remote"`.              |
+| `type`       | `string` | How the role is held, like `"Full-time"`.              |
+| `href`       | `string` | The role's application page. The apply link goes here. |
+
+### States
+
+| State    | Prop         | What renders                                                 |
+| -------- | ------------ | ------------------------------------------------------------ |
+| Default  | —            | Heading, introduction and every role with its apply link.    |
+| Empty    | `roles={[]}` | Heading, introduction and "No open roles right now."         |
+| Loading  | `loading`    | Heading, introduction and three placeholder rows.            |
+| Error    | `error`      | Heading, introduction, then an error Alert with "Try again". |
+| Disabled | `disabled`   | The same roles with every apply link inert.                  |
+
+### Sizing
+
+| Container step           | What changes                           |
+| ------------------------ | -------------------------------------- |
+| below `@sm`              | Each apply link sits under its role.   |
+| `@sm` (`--container-sm`) | Each apply link sits beside its role.  |
+| `@md` (`--container-md`) | The heading steps up a size.           |
+| `@lg` (`--container-lg`) | More room above and below the section. |
+
+## Examples
+
+### Container widths
+
+The same block at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <CareersBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Empty
+
+Pass an empty `roles` array.
+
+<Preview examples={examples} layout="fill">
+  <CareersBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <CareersBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+Press "Try again" to clear the message and bring the roles back.
+
+<Preview examples={examples} layout="fill">
+  <CareersBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <CareersBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Keep each title to the job's name. Put the details on the page the apply link opens.
+- Order the roles the way candidates look for them, like by team.

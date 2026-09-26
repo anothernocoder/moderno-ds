@@ -426,6 +426,78 @@
       ]
     },
     {
+      "name": "careers-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Careers (React)",
+      "description": "A list of open roles with an apply link each, composing the @moderno-ui/react Alert, Badge, Button and Skeleton primitives: a serif heading, a sentence of introduction, then a title, a department badge, a location and a type per role, with its own loading, empty and error renders; responds to its container (@container) — each role puts its apply link beside it at @sm, the heading steps up at @md and the section gets more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/careers/react/careers.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/careers.tsx"
+        }
+      ]
+    },
+    {
+      "name": "careers-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Careers (Vue)",
+      "description": "A list of open roles with an apply link each, composing the @moderno-ui/vue Alert, Badge, Button and Skeleton primitives: a serif heading, a sentence of introduction, then a title, a department badge, a location and a type per role, with its own loading, empty and error renders; responds to its container (@container) — each role puts its apply link beside it at @sm, the heading steps up at @md and the section gets more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/careers/vue/Careers.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/Careers.vue"
+        }
+      ]
+    },
+    {
+      "name": "careers-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Careers (Svelte)",
+      "description": "A list of open roles with an apply link each, composing the @moderno-ui/svelte Alert, Badge, Button and Skeleton primitives: a serif heading, a sentence of introduction, then a title, a department badge, a location and a type per role, with its own loading, empty and error renders; responds to its container (@container) — each role puts its apply link beside it at @sm, the heading steps up at @md and the section gets more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/careers/svelte/Careers.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/Careers.svelte"
+        }
+      ]
+    },
+    {
+      "name": "careers-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Careers (Solid)",
+      "description": "A list of open roles with an apply link each, composing the @moderno-ui/solid Alert, Badge, Button and Skeleton primitives: a serif heading, a sentence of introduction, then a title, a department badge, a location and a type per role, with its own loading, empty and error renders; responds to its container (@container) — each role puts its apply link beside it at @sm, the heading steps up at @md and the section gets more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/careers/solid/careers.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/careers.tsx"
+        }
+      ]
+    },
+    {
       "name": "container-react",
       "type": "registry:block",
       "version": "0.1.0",
