@@ -2082,6 +2082,78 @@
       ]
     },
     {
+      "name": "testimonials-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Testimonials (React)",
+      "description": "A wall of customer quotes, composing the @moderno-ui/react Alert, Avatar, Button, Card and Skeleton primitives: a serif heading, a sentence of introduction, then one Card per quote with the author's Avatar, name and role, with its own loading, empty and error renders; responds to its container (@container) — the quotes read a size larger at @sm, the cards sit in two columns and the heading steps up at @md, and three columns with more room at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/testimonials/react/testimonials.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/testimonials.tsx"
+        }
+      ]
+    },
+    {
+      "name": "testimonials-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Testimonials (Vue)",
+      "description": "A wall of customer quotes, composing the @moderno-ui/vue Alert, Avatar, Button, Card and Skeleton primitives: a serif heading, a sentence of introduction, then one Card per quote with the author's Avatar, name and role, with its own loading, empty and error renders; responds to its container (@container) — the quotes read a size larger at @sm, the cards sit in two columns and the heading steps up at @md, and three columns with more room at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/testimonials/vue/Testimonials.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/Testimonials.vue"
+        }
+      ]
+    },
+    {
+      "name": "testimonials-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Testimonials (Svelte)",
+      "description": "A wall of customer quotes, composing the @moderno-ui/svelte Alert, Avatar, Button, Card and Skeleton primitives: a serif heading, a sentence of introduction, then one Card per quote with the author's Avatar, name and role, with its own loading, empty and error renders; responds to its container (@container) — the quotes read a size larger at @sm, the cards sit in two columns and the heading steps up at @md, and three columns with more room at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/testimonials/svelte/Testimonials.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/Testimonials.svelte"
+        }
+      ]
+    },
+    {
+      "name": "testimonials-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Testimonials (Solid)",
+      "description": "A wall of customer quotes, composing the @moderno-ui/solid Alert, Avatar, Button, Card and Skeleton primitives: a serif heading, a sentence of introduction, then one Card per quote with the author's Avatar, name and role, with its own loading, empty and error renders; responds to its container (@container) — the quotes read a size larger at @sm, the cards sit in two columns and the heading steps up at @md, and three columns with more room at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/testimonials/solid/testimonials.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/testimonials.tsx"
+        }
+      ]
+    },
+    {
       "name": "forgot-password-react",
       "type": "registry:screen",
       "version": "0.1.1",

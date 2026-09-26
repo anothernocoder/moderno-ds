@@ -1,0 +1,37 @@
+{
+  "title": "Testimonials",
+  "description": "A wall of customer quotes, composing the @moderno-ui/{framework} Alert, Avatar, Button, Card and Skeleton primitives: a serif heading, a sentence of introduction, then one Card per quote with the author's Avatar, name and role, with its own loading, empty and error renders; responds to its container (@container) — the quotes read a size larger at @sm, the cards sit in two columns and the heading steps up at @md, and three columns with more room at @lg.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": [],
+  "files": {
+    "react": [
+      {
+        "path": "blocks/testimonials/react/testimonials.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/testimonials.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "blocks/testimonials/vue/Testimonials.vue",
+        "type": "registry:block",
+        "target": "src/components/blocks/Testimonials.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "blocks/testimonials/svelte/Testimonials.svelte",
+        "type": "registry:block",
+        "target": "src/components/blocks/Testimonials.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "blocks/testimonials/solid/testimonials.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/testimonials.tsx"
+      }
+    ]
+  }
+}
