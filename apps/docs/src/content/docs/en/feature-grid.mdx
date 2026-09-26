@@ -1,0 +1,193 @@
+---
+title: Feature Grid
+description: A grid of features for a landing page — an icon, a title and a description for each one, under a serif heading.
+group: Blocks
+order: 118
+agent:
+  intent: A section of a landing or product page that lists what the product does — a serif heading, a sentence of introduction, then an icon, a short title and one sentence per feature, and one call to action.
+  whenToUse: "A marketing or product page that needs to show three to nine features at a glance, each one small enough for an icon, a title and a sentence."
+  whenNotToUse:
+    - case: The first section of a landing page, with the main call to action
+      use: Hero — it says what the product is; the feature grid comes after it
+    - case: Items the user opens, edits or tracks, like projects or files
+      use: GridList — its cards carry a status and an action each
+    - case: Numbers that change, like revenue or sign-ups
+      use: StatRow — it shows figures with their trend
+  gotchas:
+    - "`features` is an array of `{ id, icon, title, description }`. `icon` is one of `zap`, `clock`, `receipt`, `chart`, `shield` or `users`; add your own path to `iconPaths` in the copied file for more."
+    - '`description` and `action` hide when you pass `""`.'
+    - '`features={[]}` shows "No features to show yet." in place of the grid, and hides the action.'
+    - "Presentational: `onAction` and `onRetry` report which button was pressed. Opening a page and retrying stay yours."
+    - "`loading` keeps the heading and replaces the grid with three skeleton features in one busy `status` region."
+    - '`error` keeps the heading and puts an error Alert with your message and a "Try again" button where the grid was. An empty string counts as no error.'
+    - "The layout follows the block's own width, not the viewport: one column below `--container-sm`, two from there, three from `--container-lg`."
+  theming:
+    - "The only paint of its own is the icon tile (--muted, --border, rounded-lg) and the dashed empty box (--border). The action is Button's outline variant, the error is Alert's error variant and the loading placeholders are Skeleton."
+    - "The heading reads --font-serif and --foreground; the introduction and each feature's description read --muted-foreground."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg, and the heading and introduction are capped at --container-md."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import FeatureGridBlockDemo from "../../../islands/FeatureGridBlockDemo.svelte";
+import featureGridReact from "../../../../../../registry/blocks/feature-grid/react/feature-grid.tsx?raw";
+import featureGridVue from "../../../../../../registry/blocks/feature-grid/vue/FeatureGrid.vue?raw";
+import featureGridSolid from "../../../../../../registry/blocks/feature-grid/solid/feature-grid.tsx?raw";
+import featureGridSvelte from "../../../../../../registry/blocks/feature-grid/svelte/FeatureGrid.svelte?raw";
+
+export const examples = {
+  react: featureGridReact,
+  vue: featureGridVue,
+  solid: featureGridSolid,
+  svelte: featureGridSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <FeatureGridBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="feature-grid" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { FeatureGrid } from "@/components/blocks/feature-grid";
+```
+
+```tsx
+<FeatureGrid heading="Why teams switch" features={features} onAction={openTour} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import FeatureGrid from "@/components/blocks/FeatureGrid.vue";
+</script>
+```
+
+```vue
+<FeatureGrid heading="Why teams switch" :features="features" @action="openTour" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import FeatureGrid from "@/components/blocks/FeatureGrid.svelte";
+</script>
+```
+
+```svelte
+<FeatureGrid heading="Why teams switch" {features} onaction={openTour} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { FeatureGrid } from "@/components/blocks/feature-grid";
+```
+
+```tsx
+<FeatureGrid heading="Why teams switch" features={features} onAction={openTour} />
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+| Prop          | Type                | Default                             | Description                                                                 |
+| ------------- | ------------------- | ----------------------------------- | --------------------------------------------------------------------------- |
+| `heading`     | `string`            | `"Everything you need to get paid"` | The section's heading. Set in the serif face.                               |
+| `description` | `string`            | a sentence                          | One sentence under the heading; `""` hides it.                              |
+| `features`    | `FeatureGridItem[]` | six sample features                 | The features, in order. `[]` shows the empty message.                       |
+| `action`      | `string`            | `"See all features"`                | The outline button's label under the grid; `""` hides it.                   |
+| `error`       | `string`            | —                                   | Loading the features failed; an error Alert with a retry replaces the grid. |
+| `loading`     | `boolean`           | `false`                             | Skeleton features in a busy region replace the grid.                        |
+| `disabled`    | `boolean`           | `false`                             | The content stays and every button is disabled.                             |
+| `onAction`    | `() => void`        | —                                   | The button under the grid was pressed. Svelte: `onaction`. Vue: `@action`.  |
+| `onRetry`     | `() => void`        | —                                   | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.                |
+
+### Feature
+
+| Field         | Type                                                              | Description                       |
+| ------------- | ----------------------------------------------------------------- | --------------------------------- |
+| `id`          | `string`                                                          | A stable key for the feature.     |
+| `icon`        | `"zap" \| "clock" \| "receipt" \| "chart" \| "shield" \| "users"` | The glyph in the tile.            |
+| `title`       | `string`                                                          | A few words. Rendered as an `h3`. |
+| `description` | `string`                                                          | One sentence about what it does.  |
+
+### States
+
+| State    | Prop            | What renders                                                 |
+| -------- | --------------- | ------------------------------------------------------------ |
+| Default  | —               | Heading, introduction, every feature and the action.         |
+| Empty    | `features={[]}` | Heading, introduction and "No features to show yet."         |
+| Loading  | `loading`       | Heading, introduction and three placeholder features.        |
+| Error    | `error`         | Heading, introduction, then an error Alert with "Try again". |
+| Disabled | `disabled`      | The same content with the action disabled.                   |
+
+### Sizing
+
+| Container step           | What changes                                              |
+| ------------------------ | --------------------------------------------------------- |
+| below `@sm`              | One feature per row.                                      |
+| `@sm` (`--container-sm`) | Two columns.                                              |
+| `@md` (`--container-md`) | The heading steps up a size.                              |
+| `@lg` (`--container-lg`) | Three columns, and more room above and below the section. |
+
+## Examples
+
+### Container widths
+
+The same block at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <FeatureGridBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Empty
+
+Pass an empty `features` array.
+
+<Preview examples={examples} layout="fill">
+  <FeatureGridBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <FeatureGridBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+Press "Try again" to clear the message and bring the features back.
+
+<Preview examples={examples} layout="fill">
+  <FeatureGridBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <FeatureGridBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Three or six features read best: they fill every row at two and three columns.
+- Keep each description to one sentence. Put the details on the page the action opens.
