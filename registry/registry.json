@@ -714,6 +714,78 @@
       ]
     },
     {
+      "name": "contact-modal-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Contact Modal (React)",
+      "description": "A lead-capture form in a Dialog, composing the @moderno-ui/react Dialog, Button, Field and Alert primitives: a heading, a line of description and a Button that opens a Dialog holding name, work email, company and message fields; the form refuses an empty name or email, marks those fields invalid and focuses the first, and has its own loading, error and sent renders; responds to its container (@container) — the trigger stops filling its row at @sm, the heading steps up at @md and the text sits beside the trigger at @lg, and the dialog sets name and email side by side and its buttons in a row once its own width allows.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/contact-modal/react/contact-modal.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/contact-modal.tsx"
+        }
+      ]
+    },
+    {
+      "name": "contact-modal-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Contact Modal (Vue)",
+      "description": "A lead-capture form in a Dialog, composing the @moderno-ui/vue Dialog, Button, Field and Alert primitives: a heading, a line of description and a Button that opens a Dialog holding name, work email, company and message fields; the form refuses an empty name or email, marks those fields invalid and focuses the first, and has its own loading, error and sent renders; responds to its container (@container) — the trigger stops filling its row at @sm, the heading steps up at @md and the text sits beside the trigger at @lg, and the dialog sets name and email side by side and its buttons in a row once its own width allows.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/contact-modal/vue/ContactModal.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/ContactModal.vue"
+        }
+      ]
+    },
+    {
+      "name": "contact-modal-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Contact Modal (Svelte)",
+      "description": "A lead-capture form in a Dialog, composing the @moderno-ui/svelte Dialog, Button, Field and Alert primitives: a heading, a line of description and a Button that opens a Dialog holding name, work email, company and message fields; the form refuses an empty name or email, marks those fields invalid and focuses the first, and has its own loading, error and sent renders; responds to its container (@container) — the trigger stops filling its row at @sm, the heading steps up at @md and the text sits beside the trigger at @lg, and the dialog sets name and email side by side and its buttons in a row once its own width allows.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/contact-modal/svelte/ContactModal.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/ContactModal.svelte"
+        }
+      ]
+    },
+    {
+      "name": "contact-modal-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Contact Modal (Solid)",
+      "description": "A lead-capture form in a Dialog, composing the @moderno-ui/solid Dialog, Button, Field and Alert primitives: a heading, a line of description and a Button that opens a Dialog holding name, work email, company and message fields; the form refuses an empty name or email, marks those fields invalid and focuses the first, and has its own loading, error and sent renders; responds to its container (@container) — the trigger stops filling its row at @sm, the heading steps up at @md and the text sits beside the trigger at @lg, and the dialog sets name and email side by side and its buttons in a row once its own width allows.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/contact-modal/solid/contact-modal.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/contact-modal.tsx"
+        }
+      ]
+    },
+    {
       "name": "container-react",
       "type": "registry:block",
       "version": "0.1.0",

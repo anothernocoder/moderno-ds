@@ -1,0 +1,202 @@
+---
+title: Contact modal
+description: A call to talk to sales — a serif heading, one sentence and a button that opens a lead form in a dialog.
+group: Blocks
+order: 120
+agent:
+  intent: A lead-capture call to action — a serif heading, a sentence and a Button that opens a Dialog with a name, work email, company and message form.
+  whenToUse: "A pricing, product or landing page where visitors ask to talk to sales without leaving the page."
+  whenNotToUse:
+    - case: A contact page where the form is always on show, next to the team's email and phone
+      use: Contact — it lays the form out in the page
+    - case: A dialog that confirms an action or asks for one value
+      use: ModalActions — one dialog per row of actions
+    - case: A call to action that links to another page
+      use: CTA — its buttons are links, not a form
+  gotchas:
+    - "Presentational: `onSubmit` receives `{ name, email, company, message }`, each trimmed. Sending the lead, and setting `loading`, `error` or `sent` from the result, stays yours."
+    - "Name and work email are required. Sent empty, the form does not call `onSubmit`: those fields turn invalid, show their error and the first takes focus. Company and message are optional."
+    - 'Most states live in the dialog: `loading` disables the fields and turns the button into a busy "Sending"; `error` puts an error Alert at the top of the form and keeps what was typed; `sent` swaps the form for a success Alert and a Close button.'
+    - '`disabled` disables the trigger, so the dialog cannot open. An empty `error` string counts as no error, and `description` hides when you pass `""`.'
+    - "The dialog is named by its title and described by its description; Cancel, Close and Escape close it, and focus returns to the trigger."
+    - "The layout follows the block's own width, not the viewport: the trigger fills its row below `--container-sm`, and the text moves beside it from `--container-lg`. The dialog is a container too: name and email sit side by side and its buttons sit in a row from `--container-sm`."
+  theming:
+    - "The block paints only the panel's border (--border). The trigger and form buttons are Button, the inputs are Field, the overlay is Dialog and the messages are Alert's error and success variants."
+    - "The heading reads --font-serif and --foreground; the description reads --muted-foreground."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg, and the panel is capped at --container-lg."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ContactModalBlockDemo from "../../../islands/ContactModalBlockDemo.svelte";
+import contactModalReact from "../../../../../../registry/blocks/contact-modal/react/contact-modal.tsx?raw";
+import contactModalVue from "../../../../../../registry/blocks/contact-modal/vue/ContactModal.vue?raw";
+import contactModalSolid from "../../../../../../registry/blocks/contact-modal/solid/contact-modal.tsx?raw";
+import contactModalSvelte from "../../../../../../registry/blocks/contact-modal/svelte/ContactModal.svelte?raw";
+
+export const examples = {
+  react: contactModalReact,
+  vue: contactModalVue,
+  solid: contactModalSolid,
+  svelte: contactModalSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <ContactModalBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="contact-modal" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { ContactModal } from "@/components/blocks/contact-modal";
+```
+
+```tsx
+<ContactModal heading="Talk to sales" onSubmit={(lead) => send(lead)} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import ContactModal from "@/components/blocks/ContactModal.vue";
+</script>
+```
+
+```vue
+<ContactModal heading="Talk to sales" @submit="send" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import ContactModal from "@/components/blocks/ContactModal.svelte";
+</script>
+```
+
+```svelte
+<ContactModal heading="Talk to sales" onsubmit={send} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { ContactModal } from "@/components/blocks/contact-modal";
+```
+
+```tsx
+<ContactModal heading="Talk to sales" onSubmit={(lead) => send(lead)} />
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+| Prop          | Type                          | Default              | Description                                                      |
+| ------------- | ----------------------------- | -------------------- | ---------------------------------------------------------------- |
+| `heading`     | `string`                      | `"Talk to our team"` | The serif heading in the panel.                                  |
+| `description` | `string`                      | a sentence           | The line under the heading; `""` hides it.                       |
+| `trigger`     | `string`                      | `"Contact sales"`    | The label of the button that opens the dialog.                   |
+| `error`       | `string`                      | —                    | Sending failed; an error Alert sits at the top of the form.      |
+| `loading`     | `boolean`                     | `false`              | The fields are disabled and the send button is a busy "Sending". |
+| `disabled`    | `boolean`                     | `false`              | The trigger is disabled, so the dialog cannot open.              |
+| `sent`        | `boolean`                     | `false`              | A success Alert and a Close button replace the form.             |
+| `onSubmit`    | `(lead: ContactLead) => void` | —                    | A filled form was sent. Svelte: `onsubmit`. Vue: `@submit`.      |
+
+### ContactLead
+
+| Field     | Type     | Description                                    |
+| --------- | -------- | ---------------------------------------------- |
+| `name`    | `string` | Required. The visitor's name.                  |
+| `email`   | `string` | Required. The visitor's work email.            |
+| `company` | `string` | Optional. `""` when the visitor left it empty. |
+| `message` | `string` | Optional. `""` when the visitor left it empty. |
+
+### States
+
+| State    | Prop          | What renders                                                                      |
+| -------- | ------------- | --------------------------------------------------------------------------------- |
+| Default  | —             | The panel and its trigger; the dialog holds the empty form.                       |
+| Empty    | an empty form | Sent empty, name and email turn invalid, show an error and the first takes focus. |
+| Loading  | `loading`     | The form with its fields disabled and a busy "Sending" button.                    |
+| Error    | `error`       | An error Alert at the top of the form; what was typed stays.                      |
+| Disabled | `disabled`    | The panel with its trigger disabled.                                              |
+| Sent     | `sent`        | "Message sent" and a Close button in place of the form.                           |
+
+### Sizing
+
+| Container step           | What changes                                                          |
+| ------------------------ | --------------------------------------------------------------------- |
+| below `@sm`              | Everything is centred and the trigger fills its row.                  |
+| `@sm` (`--container-sm`) | The trigger takes its own width, and the panel's padding grows.       |
+| `@md` (`--container-md`) | The heading steps up a size.                                          |
+| `@lg` (`--container-lg`) | The text sits beside the trigger, with more room above and below.     |
+| dialog below `@sm`       | The fields stack; the buttons stack full width, send on top.          |
+| dialog from `@sm`        | Name and email sit side by side; the buttons sit in a row at its end. |
+
+## Examples
+
+Most states live in the dialog. Press the button in each example to see it.
+
+### Container widths
+
+The same block at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <ContactModalBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Empty
+
+Press "Send message" without typing anything.
+
+<Preview examples={examples} layout="fill">
+  <ContactModalBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <ContactModalBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+Fill in name and email, then press "Send message" to clear the error.
+
+<Preview examples={examples} layout="fill">
+  <ContactModalBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <ContactModalBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+### Sent
+
+<Preview examples={examples} layout="fill">
+  <ContactModalBlockDemo client:visible locale="en" state="sent" />
+</Preview>
+
+## Notes
+
+- Keep `error` short and say what failed. The form keeps what the visitor typed, so they can send it again.
+- Ask only for what sales needs to reply. Every extra field loses some visitors.
