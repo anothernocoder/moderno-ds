@@ -1,5 +1,146 @@
 # @moderno-ui/core
 
+## 0.5.0
+
+### Minor Changes
+
+- 88a5167: Add **Accordion** in all four framework packages, over Ark's Accordion
+  (`Root > Item > ItemTrigger (> ItemIndicator) + ItemContent`). An accordion is
+  a stack of sections that open and close under their own headers; one item is
+  open at a time unless `multiple`, and `collapsible` lets the open one close.
+  The content's height animates open and closed. The root takes `variant`
+  (`line`, `enclosed`) and `size` (`sm`, `md`, `lg`); every item follows it.
+  Every other part and prop is Ark's.
+
+  `@moderno-ui/core` gains `accordionRecipe`.
+
+- 9193504: Add **Avatar** in all four framework packages, over Ark's Avatar: `Root > Image +
+Fallback`. The fallback (the initials) shows while the image loads and when it
+  fails; the image shows once it has loaded. `Avatar.Root` takes `size` (`sm`,
+  `md`, `lg`) and `shape` (`circle` for a person, `square` for a team or a
+  product); every other part is Ark's.
+
+  `@moderno-ui/core` gains `avatarRecipe`.
+
+- c7d3d87: Add three CSS-only primitives in all four framework packages:
+
+  - **Badge** — a short status label (`neutral`, `solid`, `outline`, and the
+    `info`/`success`/`warning`/`error` statuses) at two sizes, with an optional
+    leading `dot`.
+  - **Chip** — a compact token (`outline`, `muted`, `solid`) whose `removable`
+    flag adds a named remove button reporting through `onRemove` (Vue: `@remove`).
+  - **Indicator** — a status dot with an optional label and a `pulse` ring that
+    stops under `prefers-reduced-motion`. A bare dot named by `aria-label` gets
+    `role="img"`, so screen readers read its status.
+
+  `@moderno-ui/core` gains `badgeRecipe`, `chipRecipe`, `indicatorRecipe`,
+  `indicatorAttrs` and `indicatorRole`. `moderno/valid-props` no longer folds a Vue `aria-*`/`data-*`
+  attribute to camelCase and reports it as an unknown prop.
+
+- 71dd05a: Add **Callout**, a CSS-only soft note in all four framework packages: a tip, a
+  caveat or a heads-up inside the page's content. The anatomy is `Callout.Root >
+Callout.Icon + Callout.Content(Callout.Title + Callout.Description)`, in four
+  variants (`info`, `success`, `warning`, `error`). Softer than Alert: the surface
+  stays `--muted` and only a stripe on the inline-start edge and the icon take the
+  status colour, and the root is `role="note"` instead of a live region.
+
+  `@moderno-ui/core` gains `calloutRecipe` and the `CalloutVariant` type.
+
+- e601e4e: Add **NumberInput** in all four framework packages, over Ark's NumberInput. A
+  text box for a number with buttons that step it up and down
+  (`Root > Label + Control > Input + DecrementTrigger + IncrementTrigger`, with an
+  optional `Scrubber` and `ValueText`). The root takes `size` (`sm`, `md`, `lg`);
+  every other part and prop is Ark's, including `min`, `max`, `step` and
+  `formatOptions`. The control draws its focus ring inside its border, like Field,
+  Select and Pin Input.
+
+  `@moderno-ui/core` gains `numberInputRecipe`.
+
+- 9fef080: Add **Pagination** in all four framework packages, over Ark's Pagination. A row
+  of page buttons with previous and next that skips far pages behind an ellipsis
+  (`Root > FirstTrigger? + PrevTrigger + Item… / Ellipsis… + NextTrigger +
+LastTrigger?`, with the page list from `Context`). The root takes `size` (`sm`,
+  `md`, `lg`); every other part and prop is Ark's, including `count`, `pageSize`,
+  `page` and `siblingCount`. The current page is outlined, and every button draws
+  its focus ring inside its edge.
+
+  `@moderno-ui/core` gains `paginationRecipe`.
+
+- d947a35: Add **Progress** in all four framework packages, over Ark's Progress. A bar
+  (`Root > Label + ValueText + Track > Range`) or a ring
+  (`Root > Circle > CircleTrack + CircleRange`, with `ValueText` in its middle)
+  shows how far a task has come; a `null` value makes it indeterminate, and the
+  bar slides or the ring turns. The root takes `size` (`sm`, `md`, `lg`); every
+  other part and prop is Ark's, including `min`, `max` and `orientation`.
+
+  `@moderno-ui/core` gains `progressRecipe`.
+
+- 49cf29c: Add **RadioGroup** in all four framework packages, over Ark's RadioGroup:
+  `Root > Label + Item (> ItemControl + ItemText + ItemHiddenInput)` plus Ark's
+  `Indicator`. The user picks exactly one option from a short list, laid out in a
+  column or a row (Ark's `orientation`). `RadioGroup.Root` takes `size` (`sm`,
+  `md`, `lg`), and Moderno adds `RadioGroup.ItemDescription`, a hint that goes
+  inside `ItemText` so screen readers read it with the label. Every other part is
+  Ark's. It replaces the predecessor's Radio.
+
+  `@moderno-ui/core` gains `radioGroupRecipe`.
+
+- cbab2a4: Add two CSS-only loading primitives in all four framework packages:
+
+  - **Skeleton** — a muted placeholder in a `text`, `rect` or `circle` shape. It
+    is `aria-hidden`, sized by the consumer like the content it replaces, and its
+    pulse stops under `prefers-reduced-motion`.
+  - **Spinner** — an indeterminate ring at three sizes (`sm`, `md`, `lg`). The
+    root is `role="status"` with a visually hidden `label` (default "Loading").
+    The ring paints with the surrounding text colour and turns slower under
+    `prefers-reduced-motion`.
+
+  `@moderno-ui/core` gains `skeletonRecipe` and `spinnerRecipe`.
+
+- 94c8e8c: Add **Slider** in all four framework packages, over Ark's Slider. One thumb
+  picks a number; two pick a range
+  (`Root > Label + ValueText + Control > (Track > Range) + Thumb`, with marks in
+  `MarkerGroup > Marker` and an optional `DraggingIndicator` bubble in a thumb).
+  The root takes `size` (`sm`, `md`, `lg`); every other part and prop is Ark's,
+  including `min`, `max`, `step` and `orientation`.
+
+  `@moderno-ui/core` gains `sliderRecipe`.
+
+- 8cb82f1: Add **Switch** in all four framework packages, over Ark's Switch: `Root > Control
+(> Thumb) + Label + HiddenInput`. It turns one setting on or off, and the change
+  applies at once. `Switch.Root` takes `size` (`sm`, `md`, `lg`);
+  `Switch.HiddenInput` gets `role="switch"` so screen readers announce a switch,
+  not a checkbox. Every other part is Ark's. It replaces the predecessor's Toggle.
+
+  `@moderno-ui/core` gains `switchRecipe`.
+
+- 95d7aff: Add **Tabs** in all four framework packages, over Ark's Tabs
+  (`Root > List > Trigger + Indicator`, then one `Content` per tab). Tabs switch
+  between panels of content in the same place; they lay out in a row or, with
+  `orientation="vertical"`, a column. The root takes `variant` (`line`,
+  `enclosed`) and `size` (`sm`, `md`, `lg`); the list, triggers and indicator
+  follow it. Every other part and prop is Ark's.
+
+  `@moderno-ui/core` gains `tabsRecipe`.
+
+- 15e6251: Add **Toggle** and **ToggleGroup** in all four framework packages, over Ark's
+  Toggle (`Root > Indicator`) and ToggleGroup (`Root > Item`). A Toggle is a
+  button that stays pressed until it is pressed again; a ToggleGroup is a row of
+  them where one item (or, with `multiple`, several) stays pressed. Both roots
+  take `variant` (`ghost`, `outline`) and `size` (`sm`, `md`, `lg`); a group's
+  items follow its root. Every other part and prop is Ark's.
+
+  `@moderno-ui/core` gains `toggleRecipe` and `toggleGroupRecipe`.
+
+### Patch Changes
+
+- 7ea4320: Draw the focus ring of Field inputs, Select triggers and Pin Input cells inset
+  (`outline-offset: -2px`), so it covers the 1px border instead of floating
+  outside it and showing a double border on focus.
+- 7329652: Make the Select trigger fill its root, like the Field input does, instead of
+  shrinking to its content. A Select given a width now shows a trigger of that
+  width, and it lines up with Field in a form.
+
 ## 0.4.0
 
 ### Minor Changes
