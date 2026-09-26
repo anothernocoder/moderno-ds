@@ -1,0 +1,207 @@
+---
+title: Product Card
+description: One product as a card — its image, name, price and a badge like "Sale", with an Add to cart button.
+group: Blocks
+order: 119
+agent:
+  intent: One product in a shop as a card — its image with an optional badge, its name as a link, a short description, the price (with the old price struck through on a sale) and an Add to cart button.
+  whenToUse: "A shop's product grid, a featured product on a landing page, or a product suggested in a sidebar."
+  whenNotToUse:
+    - case: Articles or blog posts
+      use: PostGrid — its cards carry a date, an excerpt and an author
+    - case: Projects or records in an app, each with a status and an Open action
+      use: GridList — its cards carry a status and an action each
+    - case: A plan with a monthly price and a list of features
+      use: Pricing — it compares plans side by side
+  gotchas:
+    - "`product` is `{ name, price, compareAtPrice?, description?, badge?, href?, image?: { src, alt } }`."
+    - "`price` and `compareAtPrice` are strings. Format them in the reader's currency and language before you pass them, like `€28`."
+    - '`compareAtPrice` is the old price. It shows struck through after `price`, and screen readers hear "Was" before it.'
+    - "With `href`, the product's name is a link to it. Without it, the name is plain text."
+    - "Give `image.alt` a short description of the photo. Without `image`, the image area is an empty muted box."
+    - "`badge` sits on the image's top corner, as Badge's solid variant. Keep it to one word, like `New` or `Sale`."
+    - "The name is an `h3`, so a grid of cards under your own `h2` reads well in the page outline."
+    - '`product={null}` shows "This product is no longer available." in place of the card.'
+    - "`disabled` keeps the product, makes the name link inert (no `href`, `aria-disabled`) and disables Add to cart and the retry button."
+    - "Presentational: `onAddToCart` reports that Add to cart was pressed, and `onRetry` that Try again was. The cart and loading stay yours."
+    - "`loading` shows one placeholder card in a busy `status` region."
+    - '`error` shows an error Alert with your message and a "Try again" button in place of the card. An empty string counts as no error.'
+    - "The layout follows the block's own width, not the viewport: the image sits above the text below `--container-sm` and beside it from there; the name steps up from `--container-md`; from `--container-lg` the image and the text share the width evenly and the image is square."
+  theming:
+    - "The block paints only the muted box behind the image (--muted) and its dashed empty box (--border). The card is Card's outline variant, the badge is Badge's solid variant, Add to cart is Button's primary variant, the error is Alert's error variant, the retry is Button's outline variant and the loading card is Skeleton."
+    - "The name link reads --foreground and its focus ring --ring; the description and the old price read --muted-foreground."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg. The card is capped at --container-lg."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ProductCardBlockDemo from "../../../islands/ProductCardBlockDemo.svelte";
+import productCardReact from "../../../../../../registry/blocks/product-card/react/product-card.tsx?raw";
+import productCardVue from "../../../../../../registry/blocks/product-card/vue/ProductCard.vue?raw";
+import productCardSolid from "../../../../../../registry/blocks/product-card/solid/product-card.tsx?raw";
+import productCardSvelte from "../../../../../../registry/blocks/product-card/svelte/ProductCard.svelte?raw";
+
+export const examples = {
+  react: productCardReact,
+  vue: productCardVue,
+  solid: productCardSolid,
+  svelte: productCardSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <ProductCardBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="product-card" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { ProductCard } from "@/components/blocks/product-card";
+```
+
+```tsx
+<ProductCard product={product} onAddToCart={() => addToCart(product)} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import ProductCard from "@/components/blocks/ProductCard.vue";
+</script>
+```
+
+```vue
+<ProductCard :product="product" @add-to-cart="addToCart(product)" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import ProductCard from "@/components/blocks/ProductCard.svelte";
+</script>
+```
+
+```svelte
+<ProductCard {product} onaddtocart={() => addToCart(product)} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { ProductCard } from "@/components/blocks/product-card";
+```
+
+```tsx
+<ProductCard product={product} onAddToCart={() => addToCart(product)} />
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+| Prop          | Type              | Default          | Description                                                                |
+| ------------- | ----------------- | ---------------- | -------------------------------------------------------------------------- |
+| `product`     | `Product \| null` | a sample product | The product to show. `null` shows the empty message.                       |
+| `error`       | `string`          | —                | Loading the product failed; an error Alert with a retry replaces the card. |
+| `loading`     | `boolean`         | `false`          | A placeholder card in a busy region replaces the card.                     |
+| `disabled`    | `boolean`         | `false`          | The product stays; its link is inert and every button disabled.            |
+| `onAddToCart` | `() => void`      | —                | "Add to cart" was pressed. Svelte: `onaddtocart`. Vue: `@add-to-cart`.     |
+| `onRetry`     | `() => void`      | —                | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.               |
+
+### Product
+
+| Field            | Type           | Description                                                   |
+| ---------------- | -------------- | ------------------------------------------------------------- |
+| `name`           | `string`       | The product's name.                                           |
+| `price`          | `string`       | The price as people read it, like `"€28"`.                    |
+| `compareAtPrice` | `string`       | Optional. The old price, struck through after `price`.        |
+| `description`    | `string`       | Optional. One or two short sentences under the name.          |
+| `badge`          | `string`       | Optional. One word on the image, like `"New"` or `"Sale"`.    |
+| `href`           | `string`       | Optional. Turns the name into a link to the product's page.   |
+| `image`          | `ProductImage` | Optional. The photo: `{ src, alt }`. Without it, a muted box. |
+
+### States
+
+| State    | Prop             | What renders                                            |
+| -------- | ---------------- | ------------------------------------------------------- |
+| Default  | —                | The image, name, description, price and "Add to cart".  |
+| Empty    | `product={null}` | "This product is no longer available." in a dashed box. |
+| Loading  | `loading`        | One placeholder card.                                   |
+| Error    | `error`          | An error Alert with "Try again" in place of the card.   |
+| Disabled | `disabled`       | The same product with its link inert and buttons off.   |
+
+### Sizing
+
+| Container step           | What changes                                                        |
+| ------------------------ | ------------------------------------------------------------------- |
+| below `@sm`              | The image on top, the text under it, a full-width button.           |
+| `@sm` (`--container-sm`) | The image moves beside the text; the button fits its label.         |
+| `@md` (`--container-md`) | The name steps up a size.                                           |
+| `@lg` (`--container-lg`) | The image and the text share the width evenly; the image is square. |
+
+## Examples
+
+### Container widths
+
+The same block at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <ProductCardBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Without an image
+
+Leave out `image`, and the image area is a muted box.
+
+<Preview examples={examples} layout="fill">
+  <ProductCardBlockDemo client:visible locale="en" state="no-image" />
+</Preview>
+
+### Empty
+
+Pass `product={null}`.
+
+<Preview examples={examples} layout="fill">
+  <ProductCardBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <ProductCardBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+Press "Try again" to clear the message and bring the product back.
+
+<Preview examples={examples} layout="fill">
+  <ProductCardBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <ProductCardBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Use a photo that still reads when it is cropped to a square: the product in the middle, with room around it.
+- In a grid of cards, give every card the same kind of photo, so the row looks even.

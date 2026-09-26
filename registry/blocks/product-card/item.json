@@ -1,0 +1,37 @@
+{
+  "title": "Product Card",
+  "description": "One product as a card, composing the @moderno-ui/{framework} Alert, Badge, Button, Card and Skeleton primitives: the product's image with an optional Badge on it, its linked name, a short description, the price (with the old price struck through on a sale) and an Add to cart button, with its own loading, empty and error renders; responds to its container (@container) — the image moves beside the text at @sm, the name steps up at @md, and the image and the text share the width evenly, the image square, at @lg.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": [],
+  "files": {
+    "react": [
+      {
+        "path": "blocks/product-card/react/product-card.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/product-card.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "blocks/product-card/vue/ProductCard.vue",
+        "type": "registry:block",
+        "target": "src/components/blocks/ProductCard.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "blocks/product-card/svelte/ProductCard.svelte",
+        "type": "registry:block",
+        "target": "src/components/blocks/ProductCard.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "blocks/product-card/solid/product-card.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/product-card.tsx"
+      }
+    ]
+  }
+}

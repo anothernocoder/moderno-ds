@@ -2370,6 +2370,78 @@
       ]
     },
     {
+      "name": "product-card-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Product Card (React)",
+      "description": "One product as a card, composing the @moderno-ui/react Alert, Badge, Button, Card and Skeleton primitives: the product's image with an optional Badge on it, its linked name, a short description, the price (with the old price struck through on a sale) and an Add to cart button, with its own loading, empty and error renders; responds to its container (@container) — the image moves beside the text at @sm, the name steps up at @md, and the image and the text share the width evenly, the image square, at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/product-card/react/product-card.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/product-card.tsx"
+        }
+      ]
+    },
+    {
+      "name": "product-card-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Product Card (Vue)",
+      "description": "One product as a card, composing the @moderno-ui/vue Alert, Badge, Button, Card and Skeleton primitives: the product's image with an optional Badge on it, its linked name, a short description, the price (with the old price struck through on a sale) and an Add to cart button, with its own loading, empty and error renders; responds to its container (@container) — the image moves beside the text at @sm, the name steps up at @md, and the image and the text share the width evenly, the image square, at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/product-card/vue/ProductCard.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/ProductCard.vue"
+        }
+      ]
+    },
+    {
+      "name": "product-card-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Product Card (Svelte)",
+      "description": "One product as a card, composing the @moderno-ui/svelte Alert, Badge, Button, Card and Skeleton primitives: the product's image with an optional Badge on it, its linked name, a short description, the price (with the old price struck through on a sale) and an Add to cart button, with its own loading, empty and error renders; responds to its container (@container) — the image moves beside the text at @sm, the name steps up at @md, and the image and the text share the width evenly, the image square, at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/product-card/svelte/ProductCard.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/ProductCard.svelte"
+        }
+      ]
+    },
+    {
+      "name": "product-card-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Product Card (Solid)",
+      "description": "One product as a card, composing the @moderno-ui/solid Alert, Badge, Button, Card and Skeleton primitives: the product's image with an optional Badge on it, its linked name, a short description, the price (with the old price struck through on a sale) and an Add to cart button, with its own loading, empty and error renders; responds to its container (@container) — the image moves beside the text at @sm, the name steps up at @md, and the image and the text share the width evenly, the image square, at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/product-card/solid/product-card.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/product-card.tsx"
+        }
+      ]
+    },
+    {
       "name": "section-header-react",
       "type": "registry:block",
       "version": "0.1.0",
