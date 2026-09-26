@@ -17,4 +17,5 @@ export default function expectCard(card: AgentComponent): void {
     "content",
     "footer",
   ]);
+  expect(card.propsComplete).toBe(true);
 }

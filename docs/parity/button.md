@@ -2,7 +2,7 @@
 ssr: Button scope/part + recipe `data-*`
 ---
 
-### Button (`buttonRecipe`: `data-variant` × `data-size`)
+### Button (`buttonRecipe`: `data-variant` × `data-size`; no Ark machine)
 
 | State / prop             | React | Vue | Svelte | Solid |
 | ------------------------ | :---: | :-: | :----: | :---: |

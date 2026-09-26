@@ -7,4 +7,5 @@ export default function expectSkeleton(skeleton: AgentComponent): void {
   expect(skeleton.props.map((p) => p.name)).toEqual(["shape"]);
   expect(skeleton.variants).toEqual({ shape: ["text", "rect", "circle"] });
   expect(skeleton.parts.map((p) => p.name)).toEqual(["root"]);
+  expect(skeleton.propsComplete).toBe(true);
 }

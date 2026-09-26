@@ -16,12 +16,10 @@
 | Tokens / brand   | `@moderno-ui/css` → contract slots             | one theme re-themes 5 |
 
 Each binding's only job is to spread `data-scope`/`data-part` + the recipe's
-`data-*` onto markup. Alert, Badge, Button, Callout, Card, Chip, Divider,
-Indicator, Skeleton and Spinner are authored elements: none has a headless
-machine behind it, so all of their parts are ours. Dialog is a verbatim Ark
-re-export. Every other component wraps only Ark's `Root` to inject its recipe;
-Switch also wraps `HiddenInput` for its `switch` role, and RadioGroup adds its
-own `ItemDescription`.
+`data-*` onto markup. A component whose heading below says "no Ark machine" or
+"CSS-only" is an authored element: no headless machine is behind it, so all of
+its parts are ours. Every other component wraps only Ark's `Root` to inject its
+recipe, plus any part its own heading or rows name.
 
 ## Component × framework × state
 
@@ -78,7 +76,7 @@ Legend: ✅ verified by an automated test · ❌ not supported (see its footnote
 | no baked class/style        |  ✅   | ✅  |   ✅   |  ✅   |
 | native props forwarded      |  ✅   | ✅  |   ✅   |  ✅   |
 
-### Button (`buttonRecipe`: `data-variant` × `data-size`)
+### Button (`buttonRecipe`: `data-variant` × `data-size`; no Ark machine)
 
 | State / prop             | React | Vue | Svelte | Solid |
 | ------------------------ | :---: | :-: | :----: | :---: |
@@ -139,7 +137,7 @@ Legend: ✅ verified by an automated test · ❌ not supported (see its footnote
 | no baked class/style                      |  ✅   | ✅  |   ✅   |  ✅   |
 | native props forwarded                    |  ✅   | ✅  |   ✅   |  ✅   |
 
-### Dialog (Ark portal + focus trap + ids)
+### Dialog (a verbatim Ark re-export: portal + focus trap + ids)
 
 | State                    | React | Vue | Svelte | Solid |
 | ------------------------ | :---: | :-: | :----: | :---: |
@@ -148,7 +146,7 @@ Legend: ✅ verified by an automated test · ❌ not supported (see its footnote
 | focus trapped when open  |  ✅   | ✅  |   ✅   |  ✅   |
 | closes via close trigger |  ✅   | ✅  |   ✅   |  ✅   |
 
-### Divider (`dividerRecipe`: `data-orientation` × `data-align`)
+### Divider (`dividerRecipe`: `data-orientation` × `data-align`; no Ark machine)
 
 | State / prop                     | React | Vue | Svelte | Solid |
 | -------------------------------- | :---: | :-: | :----: | :---: |
@@ -321,7 +319,7 @@ React, Vue and Svelte write `20, 80`.
 | no baked class/style                       |  ✅   | ✅  |   ✅   |  ✅   |
 | native props forwarded                     |  ✅   | ✅  |   ✅   |  ✅   |
 
-### Switch (`switchRecipe`: `data-size`; Ark on/off machine)
+### Switch (`switchRecipe`: `data-size`; Ark on/off machine, `HiddenInput` wrapped for its `switch` role)
 
 | State                                     | React | Vue | Svelte | Solid |
 | ----------------------------------------- | :---: | :-: | :----: | :---: |

@@ -7,4 +7,5 @@ export default function expectSpinner(spinner: AgentComponent): void {
   expect(spinner.props.map((p) => p.name).sort()).toEqual(["label", "size"]);
   expect(spinner.variants).toEqual({ size: ["sm", "md", "lg"] });
   expect(spinner.parts.map((p) => p.name)).toEqual(["root", "circle", "label"]);
+  expect(spinner.propsComplete).toBe(true);
 }

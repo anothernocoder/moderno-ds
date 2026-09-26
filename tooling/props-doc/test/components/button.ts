@@ -8,4 +8,5 @@ export default function expectButton(button: AgentComponent): void {
     variant: ["primary", "secondary", "outline", "ghost", "destructive"],
     size: ["sm", "md", "lg"],
   });
+  expect(button.propsComplete).toBe(true);
 }

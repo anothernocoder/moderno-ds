@@ -1,3 +1,4 @@
+import { readFileSync, readdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { CONTRACT } from "@moderno-ui/css/contract";
@@ -50,44 +51,26 @@ const expectations = Object.fromEntries(
   ).map(([path, module]) => [path.replace(/^\.\/components\/(.*)\.ts$/, "$1"), module.default]),
 );
 
+/** The slugs of the `.ts` files in `dir` (relative to this test), sorted. */
+function slugsIn(dir: string): string[] {
+  return readdirSync(new URL(dir, import.meta.url))
+    .filter((file) => file.endsWith(".ts"))
+    .map((file) => file.slice(0, -".ts".length))
+    .sort();
+}
+
+/** `toggle-group` → `ToggleGroup`: a component is named after its slug. */
+function pascalCase(slug: string): string {
+  return slug.replace(/(^|-)([a-z])/g, (_, _dash: string, letter: string) => letter.toUpperCase());
+}
+
 describe("AGENT_COMPONENTS", () => {
-  it("covers every shipped primitive once each, sorted by slug", () => {
-    const names = AGENT_COMPONENTS.map((c) => c.name);
-    expect(names).toEqual([
-      "Accordion",
-      "Alert",
-      "AreaChart",
-      "Avatar",
-      "Badge",
-      "BarChart",
-      "Button",
-      "Callout",
-      "Card",
-      "Checkbox",
-      "Chip",
-      "Dialog",
-      "Divider",
-      "Field",
-      "Indicator",
-      "LineChart",
-      "NumberInput",
-      "Pagination",
-      "PinInput",
-      "Progress",
-      "RadioGroup",
-      "ScatterChart",
-      "Select",
-      "Skeleton",
-      "Slider",
-      "Spinner",
-      "Switch",
-      "Tabs",
-      "Toggle",
-      "ToggleGroup",
-    ]);
-    expect(new Set(names).size).toBe(names.length);
+  it("covers every file in src/components/ once each, sorted by slug and named after it", () => {
     const slugs = AGENT_COMPONENTS.map((c) => c.slug);
-    expect(slugs).toEqual([...slugs].sort());
+    expect(slugs).toEqual(slugsIn("../src/components/"));
+    const names = AGENT_COMPONENTS.map((c) => c.name);
+    expect(names).toEqual(slugs.map(pascalCase));
+    expect(new Set(names).size).toBe(names.length);
   });
 
   it("has an expectation file for every component, and none for a component it lacks", () => {
@@ -119,28 +102,16 @@ describe("buildComponentsManifest", () => {
     }
   });
 
-  it("marks the prop list complete only where the workspace declares every prop", () => {
+  it("pins in every expectation file whether the prop list is complete", () => {
     // The authored primitives own their whole API. The Ark-backed roots do
     // not: `Select.Root`'s `collection`, `Field.Root`'s `invalid` and
     // `Dialog.Root`'s `open` are declared under node_modules and dropped, so
-    // `validate_usage` must not read their prop lists as exhaustive.
-    const complete = manifest.components.filter((c) => c.propsComplete).map((c) => c.name);
-    expect(complete).toEqual([
-      "Alert",
-      "AreaChart",
-      "Badge",
-      "BarChart",
-      "Button",
-      "Callout",
-      "Card",
-      "Chip",
-      "Divider",
-      "Indicator",
-      "LineChart",
-      "ScatterChart",
-      "Skeleton",
-      "Spinner",
-    ]);
+    // `validate_usage` must not read their prop lists as exhaustive. Each
+    // component states which it is in its own file, so none is left unchecked.
+    for (const slug of slugsIn("./components/")) {
+      const source = readFileSync(new URL(`./components/${slug}.ts`, import.meta.url), "utf8");
+      expect(source, slug).toMatch(/\.propsComplete\)\.toBe\((true|false)\)/);
+    }
   });
 
   it("attaches framework-specific examples, not the react snippet reused verbatim", () => {

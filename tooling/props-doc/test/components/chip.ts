@@ -12,4 +12,5 @@ export default function expectChip(chip: AgentComponent): void {
     "variant",
   ]);
   expect(chip.parts.map((p) => p.name)).toEqual(["root", "label", "remove-trigger"]);
+  expect(chip.propsComplete).toBe(true);
 }

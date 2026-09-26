@@ -12,4 +12,5 @@ export default function expectIndicator(indicator: AgentComponent): void {
     size: ["sm", "md"],
   });
   expect(indicator.parts.map((p) => p.name)).toEqual(["root", "dot", "label"]);
+  expect(indicator.propsComplete).toBe(true);
 }

@@ -5,4 +5,5 @@ import type { AgentComponent } from "../../src/agent-manifest.ts";
 export default function expectField(field: AgentComponent): void {
   expect(field.props.map((p) => p.name)).toEqual(["size"]);
   expect(field.variants).toEqual({ size: ["sm", "md", "lg"] });
+  expect(field.propsComplete).toBe(false);
 }

@@ -2,7 +2,7 @@
 ssr: Dialog trigger; `defaultOpen` survives
 ---
 
-### Dialog (Ark portal + focus trap + ids)
+### Dialog (a verbatim Ark re-export: portal + focus trap + ids)
 
 | State                    | React | Vue | Svelte | Solid |
 | ------------------------ | :---: | :-: | :----: | :---: |

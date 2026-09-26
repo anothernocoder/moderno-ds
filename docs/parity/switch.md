@@ -2,7 +2,7 @@
 ssr: Switch on/off state + switch role
 ---
 
-### Switch (`switchRecipe`: `data-size`; Ark on/off machine)
+### Switch (`switchRecipe`: `data-size`; Ark on/off machine, `HiddenInput` wrapped for its `switch` role)
 
 | State                                     | React | Vue | Svelte | Solid |
 | ----------------------------------------- | :---: | :-: | :----: | :---: |

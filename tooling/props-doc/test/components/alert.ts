@@ -17,4 +17,5 @@ export default function expectAlert(alert: AgentComponent): void {
     "description",
     "action",
   ]);
+  expect(alert.propsComplete).toBe(true);
 }

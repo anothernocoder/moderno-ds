@@ -7,4 +7,5 @@ export default function expectBadge(badge: AgentComponent): void {
   expect(badge.props.map((p) => p.name).sort()).toEqual(["dot", "size", "variant"]);
   expect(badge.variants?.variant).toContain("warning");
   expect(badge.parts.map((p) => p.name)).toEqual(["root", "dot"]);
+  expect(badge.propsComplete).toBe(true);
 }

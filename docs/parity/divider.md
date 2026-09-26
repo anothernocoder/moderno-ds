@@ -2,7 +2,7 @@
 ssr: Divider separator role, label + vertical label
 ---
 
-### Divider (`dividerRecipe`: `data-orientation` × `data-align`)
+### Divider (`dividerRecipe`: `data-orientation` × `data-align`; no Ark machine)
 
 | State / prop                     | React | Vue | Svelte | Solid |
 | -------------------------------- | :---: | :-: | :----: | :---: |

@@ -9,4 +9,5 @@ export default function expectDivider(divider: AgentComponent): void {
     align: ["start", "center", "end"],
   });
   expect(divider.parts.map((p) => p.name)).toEqual(["root", "label"]);
+  expect(divider.propsComplete).toBe(true);
 }

@@ -7,4 +7,5 @@ export default function expectPinInput(pinInput: AgentComponent): void {
   // node_modules and stay out of the table; only what Moderno declares.
   expect(pinInput.props.map((p) => p.name)).toEqual(["size"]);
   expect(pinInput.variants).toEqual({ size: ["sm", "md", "lg"] });
+  expect(pinInput.propsComplete).toBe(false);
 }

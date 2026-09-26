@@ -5,4 +5,5 @@ import type { AgentComponent } from "../../src/agent-manifest.ts";
 export default function expectCheckbox(checkbox: AgentComponent): void {
   expect(checkbox.props.map((p) => p.name)).toEqual(["size"]);
   expect(checkbox.variants).toEqual({ size: ["sm", "md", "lg"] });
+  expect(checkbox.propsComplete).toBe(false);
 }
