@@ -1506,6 +1506,78 @@
       ]
     },
     {
+      "name": "status-monitoring-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Status Monitoring (React)",
+      "description": "Service status with uptime bars, composing the @moderno-ui/react Alert, Badge, Button, Card, Indicator and Skeleton primitives: an overall status badge, then one card per service with its live status, a bar per day tinted by how that day went, and its uptime, with its own empty, loading and error renders; responds to its container (@container) across all three contract steps — the header and each service's name and status line up at @sm, taller bars and a larger heading at @md, two services a row at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/status-monitoring/react/status-monitoring.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/status-monitoring.tsx"
+        }
+      ]
+    },
+    {
+      "name": "status-monitoring-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Status Monitoring (Vue)",
+      "description": "Service status with uptime bars, composing the @moderno-ui/vue Alert, Badge, Button, Card, Indicator and Skeleton primitives: an overall status badge, then one card per service with its live status, a bar per day tinted by how that day went, and its uptime, with its own empty, loading and error renders; responds to its container (@container) across all three contract steps — the header and each service's name and status line up at @sm, taller bars and a larger heading at @md, two services a row at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/status-monitoring/vue/StatusMonitoring.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/StatusMonitoring.vue"
+        }
+      ]
+    },
+    {
+      "name": "status-monitoring-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Status Monitoring (Svelte)",
+      "description": "Service status with uptime bars, composing the @moderno-ui/svelte Alert, Badge, Button, Card, Indicator and Skeleton primitives: an overall status badge, then one card per service with its live status, a bar per day tinted by how that day went, and its uptime, with its own empty, loading and error renders; responds to its container (@container) across all three contract steps — the header and each service's name and status line up at @sm, taller bars and a larger heading at @md, two services a row at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/status-monitoring/svelte/StatusMonitoring.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/StatusMonitoring.svelte"
+        }
+      ]
+    },
+    {
+      "name": "status-monitoring-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Status Monitoring (Solid)",
+      "description": "Service status with uptime bars, composing the @moderno-ui/solid Alert, Badge, Button, Card, Indicator and Skeleton primitives: an overall status badge, then one card per service with its live status, a bar per day tinted by how that day went, and its uptime, with its own empty, loading and error renders; responds to its container (@container) across all three contract steps — the header and each service's name and status line up at @sm, taller bars and a larger heading at @md, two services a row at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/status-monitoring/solid/status-monitoring.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/status-monitoring.tsx"
+        }
+      ]
+    },
+    {
       "name": "forgot-password-react",
       "type": "registry:screen",
       "version": "0.1.1",
