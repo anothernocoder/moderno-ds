@@ -1,0 +1,4 @@
+value Avatar
+type AvatarShape
+type AvatarSize
+type AvatarStatusChangeDetails

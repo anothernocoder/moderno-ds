@@ -1,0 +1,4 @@
+/* A row of avatars has no shared text baseline, so it centres instead. */
+.demo-row:has(> [data-scope="avatar"]) {
+  align-items: center;
+}

@@ -1,0 +1,19 @@
+{
+  "title": "Theme Moderno",
+  "description": "The default Moderno brand: near-black monochrome workspace with sharp corners. Defines the contract slots in :root (light) and .dark (dark).",
+  "version": "0.3.0",
+  "dependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "themes/theme-moderno/theme.css",
+      "type": "registry:theme",
+      "target": "src/styles/theme-moderno.css"
+    },
+    {
+      "path": "themes/theme-moderno/DESIGN.md",
+      "type": "registry:file",
+      "target": "DESIGN.md"
+    }
+  ]
+}

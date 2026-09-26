@@ -1,0 +1,4 @@
+value Badge
+type BadgeProps
+type BadgeSize
+type BadgeVariant

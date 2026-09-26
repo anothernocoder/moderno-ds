@@ -1,0 +1,42 @@
+{
+  "title": "Alert List",
+  "description": "Notification centre composing the @moderno-ui/{framework} Alert, Button and Card primitives: a stack of dismissible status alerts in all four variants, with its own empty, loading and error renders and a heading it takes as a prop; responds to its container (@container) across all three contract steps — the header lines up at @sm, each dismiss control grows its label at @md, each timestamp moves to the trailing edge at @lg.",
+  "version": {
+    "react": "0.2.0",
+    "vue": "0.2.2",
+    "svelte": "0.2.0",
+    "solid": "0.2.0"
+  },
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": [],
+  "files": {
+    "react": [
+      {
+        "path": "blocks/alert-list/react/alert-list.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/alert-list.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "blocks/alert-list/vue/AlertList.vue",
+        "type": "registry:block",
+        "target": "src/components/blocks/AlertList.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "blocks/alert-list/svelte/AlertList.svelte",
+        "type": "registry:block",
+        "target": "src/components/blocks/AlertList.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "blocks/alert-list/solid/alert-list.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/alert-list.tsx"
+      }
+    ]
+  }
+}

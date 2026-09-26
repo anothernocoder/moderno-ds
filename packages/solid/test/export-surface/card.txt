@@ -1,0 +1,9 @@
+value Card
+type CardContentProps
+type CardDescriptionProps
+type CardFooterProps
+type CardHeaderProps
+type CardRootProps
+type CardSize
+type CardTitleProps
+type CardVariant

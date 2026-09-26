@@ -23,8 +23,8 @@
  *    overrides `min-h-dvh` to the frame's height so a browser window's worth of
  *    screen does not bury the page — so what is asserted here is that the
  *    screen fills whatever it was told the window is. That the shipped file says
- *    `min-h-dvh` is held by `tooling/cli/test/screens-install.test.ts`, against
- *    the bytes the CLI writes.
+ *    `min-h-dvh` is held by `tooling/cli/test/install/sign-in.test.ts`, against the
+ *    bytes the CLI writes.
  * 3. **AA contrast** on every text the screen paints itself — the wordmark, the
  *    support line and its link, the copyright, the legal links — in light and
  *    in dark.

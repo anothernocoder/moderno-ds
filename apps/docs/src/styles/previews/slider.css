@@ -1,0 +1,6 @@
+/* A lone slider gets a card's width; a standing one keeps its own. */
+.preview-panel--demo
+  > astro-island
+  > [data-scope="slider"][data-part="root"][data-orientation="horizontal"] {
+  width: min(100%, 24rem);
+}

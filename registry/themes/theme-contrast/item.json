@@ -1,0 +1,19 @@
+{
+  "title": "Theme Contrast",
+  "description": "Synthetic maximum-contrast brand scoped under [data-brand=\"contrast\"], composed with .dark. Demonstrates the multi-brand switch.",
+  "version": "0.3.0",
+  "dependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "themes/theme-contrast/theme.css",
+      "type": "registry:theme",
+      "target": "src/styles/theme-contrast.css"
+    },
+    {
+      "path": "themes/theme-contrast/DESIGN.md",
+      "type": "registry:file",
+      "target": "design/theme-contrast/DESIGN.md"
+    }
+  ]
+}

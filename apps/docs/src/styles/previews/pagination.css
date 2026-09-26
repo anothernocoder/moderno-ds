@@ -1,0 +1,5 @@
+/* Pagination rows of different widths, one under another: each is centred on
+   the stage, like a lone one. */
+.demo-stack:has(> [data-scope="pagination"]) {
+  justify-items: center;
+}

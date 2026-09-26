@@ -1,0 +1,37 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`@moderno-ui/core exports > exports exactly the pinned names 1`] = `
+[
+  "accordionRecipe",
+  "alertRecipe",
+  "alertRole",
+  "avatarRecipe",
+  "badgeRecipe",
+  "buttonRecipe",
+  "calloutRecipe",
+  "cardRecipe",
+  "checkboxRecipe",
+  "chipRecipe",
+  "cva",
+  "cx",
+  "dividerRecipe",
+  "fieldRecipe",
+  "indicatorAttrs",
+  "indicatorRecipe",
+  "indicatorRole",
+  "numberInputRecipe",
+  "paginationRecipe",
+  "partAttrs",
+  "pinInputRecipe",
+  "progressRecipe",
+  "radioGroupRecipe",
+  "selectRecipe",
+  "skeletonRecipe",
+  "sliderRecipe",
+  "spinnerRecipe",
+  "switchRecipe",
+  "tabsRecipe",
+  "toggleGroupRecipe",
+  "toggleRecipe",
+]
+`;

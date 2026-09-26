@@ -1,0 +1,37 @@
+{
+  "title": "Verify",
+  "description": "Full-viewport screen that takes the one-time code emailed after sign-up, composing the login-form block in its verify mode: one cell per digit with autocomplete=\"one-time-code\", the address carried in a hidden input so a resend still posts without JavaScript, and a second submit that asks for a new code once the countdown is up. Presentational — data and callbacks in, no navigation state and no timer of its own — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm and the footer at @md.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": ["login-form-{framework}"],
+  "files": {
+    "react": [
+      {
+        "path": "screens/verify/react/verify.tsx",
+        "type": "registry:screen",
+        "target": "src/components/screens/verify.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "screens/verify/vue/Verify.vue",
+        "type": "registry:screen",
+        "target": "src/components/screens/Verify.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "screens/verify/svelte/Verify.svelte",
+        "type": "registry:screen",
+        "target": "src/components/screens/Verify.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "screens/verify/solid/verify.tsx",
+        "type": "registry:screen",
+        "target": "src/components/screens/verify.tsx"
+      }
+    ]
+  }
+}

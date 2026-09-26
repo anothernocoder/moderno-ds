@@ -1,0 +1,17 @@
+{
+  "name": "Avatar",
+  "scope": "avatar",
+  "import": "import { Avatar } from \"@moderno-ui/react\"",
+  "propsHash": "sha256:fixture-avatar",
+  "props": [
+    { "name": "shape", "type": "\"circle\" | \"square\"", "required": false },
+    { "name": "size", "type": "\"sm\" | \"md\" | \"lg\"", "required": false }
+  ],
+  "propsComplete": false,
+  "parts": [{ "name": "root" }, { "name": "image" }, { "name": "fallback" }],
+  "variants": { "size": ["sm", "md", "lg"], "shape": ["circle", "square"] },
+  "guidance": {
+    "intent": "Show who a person or a team is with a small picture, or their initials.",
+    "whenToUse": "Next to a name in a list, a comment, a header or a menu."
+  }
+}

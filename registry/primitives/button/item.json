@@ -1,0 +1,14 @@
+{
+  "title": "Button (eject)",
+  "description": "Ejected copy of the @moderno-ui/react Button primitive. Use only when you must own the markup; styling still comes from @moderno-ui/css.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/core", "@moderno-ui/css"],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "primitives/react/button.tsx",
+      "type": "registry:component",
+      "target": "src/components/ui/button.tsx"
+    }
+  ]
+}

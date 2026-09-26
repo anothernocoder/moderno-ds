@@ -1,7 +1,6 @@
-import { readFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import postcss, { type Declaration, type Rule } from "postcss";
+import type { Declaration, Rule } from "postcss";
+import { parsePartial } from "./stylesheet.ts";
 
 /**
  * Card's own contract, on top of the stylesheet-wide guards in
@@ -14,11 +13,7 @@ import postcss, { type Declaration, type Rule } from "postcss";
  * to hold here is that the rules never bake a radius or reach for a shadow to
  * fake depth, and that every padding step comes off the spacing scale.
  */
-const css = readFileSync(
-  fileURLToPath(new URL("../src/styles/components.css", import.meta.url)),
-  "utf8",
-);
-const root = postcss.parse(css);
+const root = parsePartial("card");
 
 /** Every declaration inside a rule whose selector targets `[data-scope="card"]`. */
 const cardDecls: Declaration[] = [];

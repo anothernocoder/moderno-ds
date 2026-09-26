@@ -1,0 +1,4 @@
+/* Skeleton lines stand in for lines of text, so they sit as close as text does. */
+.demo-stack:has(> [data-scope="skeleton"]) {
+  gap: 0.75rem;
+}

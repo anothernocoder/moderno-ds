@@ -20,11 +20,14 @@ export interface NavSection {
 
 /**
  * The reading order of docs pages, shared by every surface that lists them —
- * the sidebar, the index card grid, `llms.txt`. `order` decides it; the slug is
- * the tie-break, so two pages that share an `order` can never fall back to
- * whatever sequence the content loader happened to yield. `order` values are
- * unique per locale (a test holds that), so the tie-break should stay unused —
- * it is here so a future duplicate is merely redundant, not silently unstable.
+ * the sidebar, the index card grid, a tier's index page, `llms.txt`. `order`
+ * decides it; the slug breaks a tie, so two pages that share an `order` can
+ * never fall back to whatever sequence the content loader happened to yield.
+ *
+ * Ties are allowed: two sibling tickets that pick the same `order` in one group
+ * land side by side, sorted by slug. The slug and not the title, because the
+ * slug is the same in every locale — both sidebars list tied pages in the same
+ * sequence, and so do the two `llms.txt` files.
  */
 export function byReadingOrder(
   a: { slug: string; order: number },
@@ -48,6 +51,17 @@ export function sidebarSections(pages: readonly NavPage[]): NavSection[] {
     else sections.set(page.group, [page]);
   }
   return [...sections].map(([group, groupPages]) => ({ group, pages: groupPages }));
+}
+
+/**
+ * The other pages filed under `slug`'s own sidebar group, in reading order —
+ * what a tier's index page (Blocks, Screens, Flows) lists. The page itself is
+ * left out; a slug that is not among `pages` has no siblings.
+ */
+export function groupSiblings<P extends NavPage>(pages: readonly P[], slug: string): P[] {
+  const group = pages.find((p) => p.slug === slug)?.group;
+  if (group === undefined) return [];
+  return pages.filter((p) => p.group === group && p.slug !== slug).sort(byReadingOrder);
 }
 
 export interface PagerLinks {

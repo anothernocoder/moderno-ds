@@ -1,0 +1,5 @@
+/* A lone number input centred on the stage gets a reading width instead of its
+   intrinsic ~20ch, without the example having to carry a docs-only class. */
+.preview-panel--demo > astro-island > [data-scope="number-input"][data-part="root"] {
+  width: min(100%, 20rem);
+}

@@ -16,7 +16,15 @@
  * their own, since all three exercise the same `discoverManifests` this
  * package owns.
  */
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -33,6 +41,30 @@ export interface ConsumerFixture {
   /** The consumer project root — pass this as `discoverManifests`' `cwd`. */
   dir: string;
   cleanup: () => void;
+}
+
+function readJson(file: string): unknown {
+  return JSON.parse(readFileSync(file, "utf8"));
+}
+
+/**
+ * The fixture manifest for one package, as the text its `moderno.agent.json`
+ * would hold. A package with many components keeps them one file each — a
+ * folder with `_package.json` (every field but `components`) and
+ * `components/<slug>.json` — so adding a component to the fixture is adding a
+ * file; the rest are a single `<name>.json`.
+ */
+function readManifestFixture(fixture: string): string {
+  const folder = join(manifestFixturesDir, fixture);
+  if (!existsSync(folder)) return readFileSync(`${folder}.json`, "utf8");
+
+  const componentsDir = join(folder, "components");
+  const components = readdirSync(componentsDir)
+    .filter((file) => file.endsWith(".json"))
+    .sort()
+    .map((file) => readJson(join(componentsDir, file)));
+  const pkg = readJson(join(folder, "_package.json")) as object;
+  return JSON.stringify({ ...pkg, components }, null, 2);
 }
 
 function installPackage(nodeModulesDir: string, name: string, version: string): string {
@@ -53,7 +85,7 @@ export function createConsumerFixture(): ConsumerFixture {
   const nodeModulesDir = join(dir, "node_modules");
 
   for (const fixture of INSTALLED_WITH_MANIFEST) {
-    const json = readFileSync(join(manifestFixturesDir, `${fixture}.json`), "utf8");
+    const json = readManifestFixture(fixture);
     const { package: name, version } = JSON.parse(json) as { package: string; version: string };
     const distDir = join(installPackage(nodeModulesDir, name, version), "dist");
     mkdirSync(distDir);

@@ -1,0 +1,8 @@
+value Avatar
+type AvatarFallbackProps
+type AvatarImageProps
+type AvatarRootProps
+type AvatarShape
+type AvatarSize
+type AvatarStatusChangeDetails
+type ModernoAvatarRootProps

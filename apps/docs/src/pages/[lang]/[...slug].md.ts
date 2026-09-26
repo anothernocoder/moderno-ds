@@ -1,19 +1,44 @@
 import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import type { APIRoute } from "astro";
-import { getCollection } from "astro:content";
+import { getCollection, type CollectionEntry } from "astro:content";
 import { contractTableMarkdown, isContractTableName } from "../../lib/contractTable.ts";
-import { pageMarkdown, type PropRow } from "../../lib/markdown.ts";
+import { pageMarkdown, tierIndexMarkdown, type PropRow } from "../../lib/markdown.ts";
+import { groupSiblings } from "../../i18n/nav.ts";
 import { splitId, useTranslations } from "../../i18n/ui.ts";
 
 // One `.md` twin per docs page per locale — the copy-as-markdown source and the
 // per-component `.md` the registry/LLMs consume. Built statically alongside HTML.
 export async function getStaticPaths() {
-  const docs = await getCollection("docs");
+  const docs = (await getCollection("docs")).map((entry) => ({ entry, ...splitId(entry.id) }));
   return docs
-    .map((entry) => ({ entry, ...splitId(entry.id) }))
     .filter((p) => p.slug !== "index")
-    .map((p) => ({ params: { lang: p.locale, slug: p.slug }, props: { entry: p.entry } }));
+    .map((p) => ({
+      params: { lang: p.locale, slug: p.slug },
+      props: { entry: p.entry, tier: tierPages(docs, p.locale, p.slug) },
+    }));
+}
+
+interface TierPage {
+  slug: string;
+  title: string;
+  description: string;
+}
+
+/** What a `<TierIndex />` on this page lists: the other pages of its sidebar group. */
+function tierPages(
+  docs: readonly { entry: CollectionEntry<"docs">; locale: string; slug: string }[],
+  locale: string,
+  slug: string,
+): TierPage[] {
+  const pages = docs
+    .filter((p) => p.locale === locale)
+    .map((p) => ({ ...p.entry.data, slug: p.slug }));
+  return groupSiblings(pages, slug).map(({ slug, title, description }) => ({
+    slug,
+    title,
+    description,
+  }));
 }
 
 // The same generated JSON <PropsTable> renders, so the `.md` table can't drift
@@ -35,9 +60,10 @@ interface Entry {
 }
 
 export const GET: APIRoute = ({ props }) => {
-  const entry = (props as { entry: Entry }).entry;
+  const { entry, tier } = props as { entry: Entry; tier: TierPage[] };
+  const locale = splitId(entry.id).locale;
   const dir = entry.filePath ? dirname(resolve(process.cwd(), entry.filePath)) : undefined;
-  const t = useTranslations(splitId(entry.id).locale);
+  const t = useTranslations(locale);
   const body = pageMarkdown({
     title: entry.data.title,
     description: entry.data.description,
@@ -58,6 +84,7 @@ export const GET: APIRoute = ({ props }) => {
       // neutral defaults.
       contractTable: (table) =>
         isContractTableName(table) ? contractTableMarkdown(table, t) : undefined,
+      tierIndex: () => tierIndexMarkdown(locale, tier),
     },
   });
   return new Response(body, { headers: { "content-type": "text/markdown; charset=utf-8" } });

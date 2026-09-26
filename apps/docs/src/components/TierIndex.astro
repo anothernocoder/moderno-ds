@@ -1,0 +1,39 @@
+---
+/**
+ * The list on a tier's index page (Blocks, Screens, Flows): every other page
+ * filed under this page's own sidebar group, with its description, in reading
+ * order. Built from frontmatter, so a new block, screen or flow page joins its
+ * tier's list the moment it exists — no shared list to append to.
+ */
+import { getCollection } from "astro:content";
+import { groupSiblings } from "../i18n/nav.ts";
+import { currentLocale, splitId } from "../i18n/ui.ts";
+
+const locale = currentLocale(Astro.currentLocale);
+const slug = Astro.params.slug ?? "";
+const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
+
+const pages = groupSiblings(
+  (await getCollection("docs"))
+    .map((entry) => ({ entry, ...splitId(entry.id) }))
+    .filter((p) => p.locale === locale)
+    .map((p) => ({
+      slug: p.slug,
+      title: p.entry.data.title,
+      group: p.entry.data.group,
+      order: p.entry.data.order,
+      description: p.entry.data.description,
+    })),
+  slug,
+);
+---
+
+<ul class="tier-index">
+  {
+    pages.map((p) => (
+      <li>
+        <a href={`${base}${locale}/${p.slug}/`}>{p.title}</a> — {p.description}
+      </li>
+    ))
+  }
+</ul>

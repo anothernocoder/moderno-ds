@@ -1,0 +1,5 @@
+value Pagination
+type PaginationPageChangeDetails
+type PaginationPageSizeChangeDetails
+type PaginationPageUrlDetails
+type PaginationSize

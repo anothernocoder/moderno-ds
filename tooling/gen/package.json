@@ -1,0 +1,8 @@
+{
+  "name": "@moderno-ui/gen",
+  "version": "0.0.1",
+  "description": "`pnpm gen`: writes every committed file that aggregates one-file-per-component sources (ADR-0009). Each aggregator in src/aggregators/ owns one generated file; `--check` fails when a committed one is stale.",
+  "license": "MIT",
+  "type": "module",
+  "private": true
+}

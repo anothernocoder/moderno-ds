@@ -1,0 +1,37 @@
+{
+  "title": "Empty State",
+  "description": "Centered no-data placeholder with a primary action, composing the @moderno-ui/{framework} Button primitive.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": [],
+  "files": {
+    "react": [
+      {
+        "path": "blocks/empty-state/react/empty-state.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/empty-state.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "blocks/empty-state/vue/EmptyState.vue",
+        "type": "registry:block",
+        "target": "src/components/blocks/EmptyState.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "blocks/empty-state/svelte/EmptyState.svelte",
+        "type": "registry:block",
+        "target": "src/components/blocks/EmptyState.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "blocks/empty-state/solid/empty-state.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/empty-state.tsx"
+      }
+    ]
+  }
+}

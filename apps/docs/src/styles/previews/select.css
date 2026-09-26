@@ -1,0 +1,11 @@
+/* A lone select centred on the stage gets a reading width instead of its
+   intrinsic ~20ch, without the example having to carry a docs-only class. In a
+   row of variants it shares the line with its siblings. */
+.preview-panel--demo > astro-island > [data-scope="select"][data-part="root"],
+.demo-row > [data-scope="select"][data-part="root"] {
+  width: min(100%, 20rem);
+}
+.demo-row > [data-scope="select"][data-part="root"] {
+  flex: 1 1 10rem;
+  max-width: 13rem;
+}

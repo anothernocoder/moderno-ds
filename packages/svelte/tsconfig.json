@@ -10,6 +10,8 @@
     "src/**/*.ts",
     "src/**/*.svelte",
     "test/**/*.ts",
+    "playground/**/*.ts",
+    "playground/**/*.svelte",
     "../../apps/docs/src/examples/**/*.svelte"
   ]
 }

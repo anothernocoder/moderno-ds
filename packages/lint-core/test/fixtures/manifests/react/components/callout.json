@@ -1,0 +1,26 @@
+{
+  "name": "Callout",
+  "scope": "callout",
+  "import": "import { Callout } from \"@moderno-ui/react\"",
+  "propsHash": "sha256:fixture-callout",
+  "props": [
+    {
+      "name": "variant",
+      "type": "\"info\" | \"success\" | \"warning\" | \"error\"",
+      "required": false
+    }
+  ],
+  "propsComplete": true,
+  "parts": [
+    { "name": "root" },
+    { "name": "icon" },
+    { "name": "content" },
+    { "name": "title" },
+    { "name": "description" }
+  ],
+  "variants": { "variant": ["info", "success", "warning", "error"] },
+  "guidance": {
+    "intent": "A soft note inside the page's content: a tip, a caveat or a heads-up.",
+    "whenToUse": "Next to the content it is about, when the reader should not miss it."
+  }
+}

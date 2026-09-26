@@ -1138,47 +1138,6 @@ main.main--wide {
      at. */
   background: var(--background);
 }
-/* A lone form control centred on the stage gets a reading width instead of its
-   intrinsic ~20ch, without the example having to carry a docs-only class. */
-.preview-panel--demo
-  > astro-island
-  > :is([data-scope="field"], [data-scope="select"], [data-scope="number-input"])[data-part="root"],
-.demo-row > :is([data-scope="field"], [data-scope="select"])[data-part="root"] {
-  width: min(100%, 20rem);
-}
-.demo-row > :is([data-scope="field"], [data-scope="select"])[data-part="root"] {
-  flex: 1 1 10rem;
-  max-width: 13rem;
-}
-/* A lone card, message or accordion gets its natural reading width, not the
-   whole stage. */
-.preview-panel--demo > astro-island > [data-scope="card"][data-part="root"] {
-  width: min(100%, 24rem);
-}
-.preview-panel--demo
-  > astro-island
-  > :is(
-    [data-scope="alert"],
-    [data-scope="callout"],
-    [data-scope="divider"],
-    [data-scope="accordion"]
-  )[data-part="root"] {
-  width: min(100%, 32rem);
-}
-/* A lone bar gets a card's width; a ring or a standing bar keeps its own. */
-.preview-panel--demo
-  > astro-island
-  > [data-scope="progress"][data-part="root"][data-orientation="horizontal"]:not(
-    :has(> [data-part="circle"])
-  ) {
-  width: min(100%, 24rem);
-}
-/* A lone slider gets a card's width too; a standing one keeps its own. */
-.preview-panel--demo
-  > astro-island
-  > [data-scope="slider"][data-part="root"][data-orientation="horizontal"] {
-  width: min(100%, 24rem);
-}
 /* Rows and grids take the stage's width, so their items can sit side by side
    instead of shrink-wrapping to one column; the row still centres them. */
 .preview-panel--demo > astro-island > :is(.demo-row, .demo-grid) {
@@ -1336,32 +1295,6 @@ main.main--wide {
   width: 100%;
   max-width: 22rem;
 }
-/* Full-width items (alerts, callouts, dividers, accordions) compared one
-   under another need a wider column than a form does. */
-.demo-stack:has(
-  > :is(
-    [data-scope="alert"],
-    [data-scope="callout"],
-    [data-scope="divider"],
-    [data-scope="accordion"]
-  )
-) {
-  max-width: 32rem;
-}
-/* Skeleton lines stand in for lines of text, so they sit as close as text
-   does; a row of spinners or avatars has no shared text baseline, so it
-   centres instead. */
-/* Pagination rows of different widths, one under another: each is centred on
-   the stage, like a lone one. */
-.demo-stack:has(> [data-scope="pagination"]) {
-  justify-items: center;
-}
-.demo-stack:has(> [data-scope="skeleton"]) {
-  gap: 0.75rem;
-}
-.demo-row:has(> :is([data-scope="spinner"], [data-scope="avatar"])) {
-  align-items: center;
-}
 /* A media object: a fixed item (an avatar) beside text that takes the rest of
    the width. */
 .demo-media {
@@ -1370,10 +1303,6 @@ main.main--wide {
   gap: 1rem;
   width: 100%;
   max-width: 22rem;
-}
-/* A row of actions inside a dialog is its footer: it sits at the end. */
-[data-scope="dialog"] .demo-row {
-  justify-content: flex-end;
 }
 
 /*
