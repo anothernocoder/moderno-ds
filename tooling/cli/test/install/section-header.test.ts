@@ -45,10 +45,14 @@ describe("moderno add section-header-<framework>", () => {
       // …a breadcrumb trail that names the current page…
       expect(written).toContain('aria-label="Breadcrumb"');
       expect(written).toContain('"page"');
-      // …and the states it advertises: a busy region while loading, and a
-      // retry when the details failed.
+      // …the states it advertises: a busy region while loading, and a retry
+      // when the details failed…
       expect(written).toContain("aria-busy");
       expect(written).toContain("Try again");
+      // The card variant holds the card's body under its header…
+      expect(written).toContain("<Card.Content");
+      // …and crumbs and meta are keyed by position: their text can repeat.
+      expect(written).not.toMatch(/key="?\{?(crumb\.label|item)\b|\((crumb\.label|item)\)\}/);
 
       const recorded = await readManifest(project());
       expect(recorded.items[item]!.version).toBe(registry.getItem(item)!.version);

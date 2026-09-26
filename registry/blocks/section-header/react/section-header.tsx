@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Alert, Badge, Button, Card, Skeleton } from "@moderno-ui/react";
 
 export type SectionHeaderVariant = "page" | "section" | "card";
@@ -42,6 +43,7 @@ export interface SectionHeaderProps {
   onPrimaryAction?: () => void;
   onSecondaryAction?: () => void;
   onRetry?: () => void;
+  children?: ReactNode;
 }
 
 export function SectionHeader({
@@ -60,6 +62,7 @@ export function SectionHeader({
   onPrimaryAction,
   onSecondaryAction,
   onRetry,
+  children,
 }: SectionHeaderProps) {
   const Heading = headingTags[variant];
   const isPage = variant === "page";
@@ -78,7 +81,7 @@ export function SectionHeader({
               const parent = index === breadcrumbs.length - 2;
               return (
                 <li
-                  key={crumb.label}
+                  key={index}
                   className={
                     parent ? "flex items-center gap-2" : "hidden items-center gap-2 @sm:flex"
                   }
@@ -153,8 +156,8 @@ export function SectionHeader({
                     </Badge>
                   </li>
                 ) : null}
-                {meta.map((item) => (
-                  <li key={item}>{item}</li>
+                {meta.map((item, index) => (
+                  <li key={index}>{item}</li>
                 ))}
               </ul>
             ) : null}
@@ -215,20 +218,26 @@ export function SectionHeader({
     </div>
   );
 
+  if (variant === "card") {
+    return (
+      <div
+        className="@container moderno-block-section-header text-foreground"
+        data-variant={variant}
+      >
+        <Card.Root>
+          <Card.Header>{bar}</Card.Header>
+          {children ? <Card.Content>{children}</Card.Content> : null}
+        </Card.Root>
+      </div>
+    );
+  }
+
   return (
     <header
       className="@container moderno-block-section-header text-foreground"
       data-variant={variant}
     >
-      {variant === "card" ? (
-        <Card.Root>
-          <Card.Header>{bar}</Card.Header>
-        </Card.Root>
-      ) : (
-        <div className={variant === "section" ? "border-b border-border pb-4" : undefined}>
-          {bar}
-        </div>
-      )}
+      <div className={variant === "section" ? "border-b border-border pb-4" : undefined}>{bar}</div>
     </header>
   );
 }

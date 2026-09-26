@@ -24,6 +24,11 @@
       membersDescription: "People who can see and edit this project.",
       invite: "Invite",
       manage: "Manage",
+      people: [
+        { name: "Ada Lovelace", role: "Owner" },
+        { name: "Grace Hopper", role: "Editor" },
+        { name: "Alan Turing", role: "Viewer" },
+      ],
     },
     es: {
       error: "No pudimos cargar los detalles de este proyecto.",
@@ -35,6 +40,11 @@
       membersDescription: "Personas que pueden ver y editar este proyecto.",
       invite: "Invitar",
       manage: "Gestionar",
+      people: [
+        { name: "Ada Lovelace", role: "Propietaria" },
+        { name: "Grace Hopper", role: "Editora" },
+        { name: "Alan Turing", role: "Lector" },
+      ],
     },
   }[locale];
 </script>
@@ -71,7 +81,16 @@
       count={8}
       primaryLabel={copy.invite}
       secondaryLabel={copy.manage}
-    />
+    >
+      <ul class="grid gap-2 text-ui-md">
+        {#each copy.people as person (person.name)}
+          <li class="flex justify-between gap-4">
+            <span>{person.name}</span>
+            <span class="text-muted-foreground">{person.role}</span>
+          </li>
+        {/each}
+      </ul>
+    </SectionHeader>
   {:else if state === "loading"}
     <SectionHeader loading />
   {:else if state === "error"}

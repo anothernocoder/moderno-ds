@@ -16,6 +16,7 @@ agent:
   gotchas:
     - "Presentational: it fetches nothing. `onPrimaryAction`, `onSecondaryAction` and `onRetry` report what the reader asked for."
     - "`variant` sets the rank as well as the look: `page` is an h1, `section` an h2 and `card` an h3. Use one `page` header per page."
+    - '`variant="card"` renders the whole card. Pass the card''s body as children (Vue: the default slot); it goes under the header, inside the card. Do not wrap the block in another Card.'
     - "The breadcrumb trail, the status badge and the meta line are page-only. Pass `breadcrumbs={[]}`, `status={null}` or `meta={[]}` to drop one."
     - 'The last crumb is the current page: it renders as text with `aria-current="page"`, never as a link. Below --container-sm only the parent crumb shows, as a way back.'
     - "`count` is how many items the header heads. `count={0}` is the empty state: the secondary action works on items, so it is disabled, and the primary action stays enabled — it is the way to add the first one."
@@ -128,6 +129,7 @@ Pick the `variant` by what the header heads: the whole page, one section of it, 
 | `onPrimaryAction`   | `() => void`                    | —               | The primary button. Svelte: `onprimaryaction`. Vue: `@primary-action`.        |
 | `onSecondaryAction` | `() => void`                    | —               | The outline button. Svelte: `onsecondaryaction`. Vue: `@secondary-action`.    |
 | `onRetry`           | `() => void`                    | —               | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.                  |
+| `children`          | content                         | —               | Card only. The card's body, under the header inside the card. Vue: the slot.  |
 
 ### SectionHeaderCrumb
 
@@ -182,11 +184,48 @@ A section header sits on a rule, with an h2.
 
 ### Card
 
-A card header sits in a card, with an h3. Add your card's content under it.
+A card header sits at the top of a card, with an h3. Put the card's body between the tags: it renders under the header, inside the same card.
 
 <Preview examples={examples} layout="fill">
   <SectionHeaderBlockDemo client:visible locale="en" state="card" />
 </Preview>
+
+<ForFramework fw="react">
+
+```tsx
+<SectionHeader variant="card" heading="Team members" count={8}>
+  <MemberList />
+</SectionHeader>
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<SectionHeader variant="card" heading="Team members" :count="8">
+  <MemberList />
+</SectionHeader>
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<SectionHeader variant="card" heading="Team members" count={8}>
+  <MemberList />
+</SectionHeader>
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+<SectionHeader variant="card" heading="Team members" count={8}>
+  <MemberList />
+</SectionHeader>
+```
+
+</ForFramework>
 
 ### Empty
 

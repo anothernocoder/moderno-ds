@@ -14,7 +14,8 @@
  *    all three steps.
  * 2. **Every variant and state renders what it claims**: a page header (h1,
  *    trail, status line), a section header on a rule (h2), a card header in a
- *    card (h3); a count of 0 that disables only the outline action; placeholders
+ *    card (h3) with the card's body under it, inside the same card; a count of
+ *    0 that disables only the outline action; placeholders
  *    in a busy region while loading; an alert with a retry when the details
  *    failed; and every button inert when disabled.
  * 3. **AA contrast** on every text it paints, per scheme.
@@ -31,7 +32,7 @@ const CONTAINER_LG = 768;
 const WIDTHS = [375, 768, 1280];
 
 const PAGE = "/en/section-header/";
-const BLOCK = "header.moderno-block-section-header";
+const BLOCK = ".moderno-block-section-header";
 
 /**
  * The page's previews (islands/SectionHeaderBlockDemo.svelte): the main
@@ -84,6 +85,10 @@ interface BlockMetrics {
   /** Whether the copy sits on a bottom rule, or inside a Card. */
   rule: boolean;
   inCard: boolean;
+  /** The block root's tag: a `header` bar, or a `div` holding a whole card. */
+  rootTag: string;
+  /** The rows of the card's body, rendered in Card.Content after the header. */
+  cardBody: string[];
   /** The actions, in order, with whether each is disabled. */
   actions: { label: string; disabled: boolean }[];
   /** Placeholders inside a busy `status` region. */
@@ -166,6 +171,14 @@ async function blockMetrics(page: Page, state: State): Promise<BlockMetrics[]> {
           count: heading?.querySelector('[data-scope="badge"]')?.textContent?.trim() ?? null,
           rule: !card && parseFloat(getComputedStyle(shell).borderBottomWidth) > 0,
           inCard: card !== null,
+          rootTag: header.tagName.toLowerCase(),
+          cardBody: card
+            ? [
+                ...card.querySelectorAll(
+                  ':scope > [data-part="header"] + [data-scope="card"][data-part="content"] li',
+                ),
+              ].map((li) => li.textContent?.replace(/\s+/g, " ").trim() ?? "")
+            : [],
           actions: actions.map((button) => ({
             label: button.textContent?.trim() ?? "",
             disabled: button.disabled,
@@ -268,9 +281,14 @@ async function textRatios(
       for (const crumb of block.querySelectorAll("nav li > a, nav li > [aria-current]")) {
         ratios[`crumb ${crumb.textContent?.trim()}`] = against(crumb);
       }
+      const body = block.querySelector('[data-scope="card"][data-part="content"]');
       for (const item of block.querySelectorAll("ul > li")) {
+        if (body?.contains(item)) continue;
         const badge = item.querySelector('[data-scope="badge"]');
         ratios[`meta ${item.textContent?.trim()}`] = against(badge ?? item);
+      }
+      for (const text of body?.querySelectorAll("li > span") ?? []) {
+        ratios[`card body ${text.textContent?.trim()}`] = against(text);
       }
       return ratios;
     },
@@ -341,6 +359,7 @@ for (const scheme of ["light", "dark"] as const) {
           expect(block.status, `${state}: status`).toBe("success");
           expect(block.meta, `${state}: meta`).toEqual(["Due Oct 14", "Owned by Ada Lovelace"]);
           expect(block.rule || block.inCard, `${state}: no frame of its own`).toBe(false);
+          expect(block.rootTag, `${state}: root`).toBe("header");
         }
         expect(copies.default!.actions).toEqual([
           { label: "Share", disabled: false },
@@ -366,6 +385,15 @@ for (const scheme of ["light", "dark"] as const) {
           true,
         ]);
         expect(card.count).toBe("8");
+        // The card's body sits in the same card, under its header; the root is
+        // no <header>, since it holds more than the header.
+        expect(section.rootTag).toBe("header");
+        expect(card.rootTag).toBe("div");
+        expect(card.cardBody).toEqual([
+          "Ada Lovelace Owner",
+          "Grace Hopper Editor",
+          "Alan Turing Viewer",
+        ]);
 
         // Empty: the count reads 0, the outline action (it works on items) is
         // disabled, and the primary one stays usable — it adds the first item.
@@ -430,6 +458,7 @@ for (const scheme of ["light", "dark"] as const) {
         "default New task",
         "section count",
         "card heading",
+        "card body Owner",
         "failed retry",
       ]) {
         expect(ratios[measured], `${scheme}: ${measured} measured`).toBeDefined();

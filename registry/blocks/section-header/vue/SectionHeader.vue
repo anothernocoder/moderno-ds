@@ -83,7 +83,11 @@ const showStatusLine = computed(
 </script>
 
 <template>
-  <header class="@container moderno-block-section-header text-foreground" :data-variant="variant">
+  <component
+    :is="variant === 'card' ? 'div' : 'header'"
+    class="@container moderno-block-section-header text-foreground"
+    :data-variant="variant"
+  >
     <component
       :is="variant === 'card' ? Card.Root : 'div'"
       :class="variant === 'section' ? 'border-b border-border pb-4' : undefined"
@@ -94,7 +98,7 @@ const showStatusLine = computed(
             <ol class="flex flex-wrap items-center gap-2 text-ui-sm text-muted-foreground">
               <li
                 v-for="(crumb, index) in resolvedCrumbs"
-                :key="crumb.label"
+                :key="index"
                 :class="
                   index === resolvedCrumbs.length - 2
                     ? 'flex items-center gap-2'
@@ -157,7 +161,7 @@ const showStatusLine = computed(
                     resolvedStatus.label
                   }}</Badge>
                 </li>
-                <li v-for="item in resolvedMeta" :key="item">{{ item }}</li>
+                <li v-for="(item, index) in resolvedMeta" :key="index">{{ item }}</li>
               </ul>
             </div>
 
@@ -208,6 +212,9 @@ const showStatusLine = computed(
           </Alert.Root>
         </div>
       </component>
+      <Card.Content v-if="variant === 'card' && $slots.default">
+        <slot />
+      </Card.Content>
     </component>
-  </header>
+  </component>
 </template>

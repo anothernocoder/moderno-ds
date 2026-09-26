@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { Snippet } from "svelte";
   import { Alert, Badge, Button, Card, Skeleton } from "@moderno-ui/svelte";
 
   type SectionHeaderVariant = "page" | "section" | "card";
@@ -31,6 +32,7 @@
     onprimaryaction?: () => void;
     onsecondaryaction?: () => void;
     onretry?: () => void;
+    children?: Snippet;
   }
 
   const sampleCrumbs: SectionHeaderCrumb[] = [
@@ -61,6 +63,7 @@
     onprimaryaction,
     onsecondaryaction,
     onretry,
+    children,
   }: Props = $props();
 
   const isPage = $derived(variant === "page");
@@ -75,7 +78,7 @@
     {#if isPage && breadcrumbs.length > 0}
       <nav aria-label="Breadcrumb">
         <ol class="flex flex-wrap items-center gap-2 text-ui-sm text-muted-foreground">
-          {#each breadcrumbs as crumb, index (crumb.label)}
+          {#each breadcrumbs as crumb, index (index)}
             {@const current = index === breadcrumbs.length - 1}
             {@const parent = index === breadcrumbs.length - 2}
             <li class={parent ? "flex items-center gap-2" : "hidden items-center gap-2 @sm:flex"}>
@@ -140,7 +143,7 @@
                   <Badge variant={status.tone ?? "neutral"} size="sm" dot>{status.label}</Badge>
                 </li>
               {/if}
-              {#each meta as item (item)}
+              {#each meta as item, index (index)}
                 <li>{item}</li>
               {/each}
             </ul>
@@ -194,14 +197,19 @@
   </div>
 {/snippet}
 
-<header class="@container moderno-block-section-header text-foreground" data-variant={variant}>
-  {#if variant === "card"}
+{#if variant === "card"}
+  <div class="@container moderno-block-section-header text-foreground" data-variant={variant}>
     <Card.Root>
       <Card.Header>{@render bar()}</Card.Header>
+      {#if children}
+        <Card.Content>{@render children()}</Card.Content>
+      {/if}
     </Card.Root>
-  {:else}
+  </div>
+{:else}
+  <header class="@container moderno-block-section-header text-foreground" data-variant={variant}>
     <div class={variant === "section" ? "border-b border-border pb-4" : undefined}>
       {@render bar()}
     </div>
-  {/if}
-</header>
+  </header>
+{/if}

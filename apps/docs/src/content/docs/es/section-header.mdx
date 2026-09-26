@@ -106,6 +106,7 @@ Elige la `variant` según lo que encabeza: la página entera, una sección de el
 | `onPrimaryAction`   | `() => void`                    | —               | El botón principal. Svelte: `onprimaryaction`. Vue: `@primary-action`.                |
 | `onSecondaryAction` | `() => void`                    | —               | El botón con borde. Svelte: `onsecondaryaction`. Vue: `@secondary-action`.            |
 | `onRetry`           | `() => void`                    | —               | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.                           |
+| `children`          | contenido                       | —               | Solo tarjeta. El cuerpo de la tarjeta, bajo la cabecera y dentro. Vue: el slot.       |
 
 ### SectionHeaderCrumb
 
@@ -160,11 +161,48 @@ Una cabecera de sección se apoya en una línea, con un h2.
 
 ### Tarjeta
 
-Una cabecera de tarjeta va dentro de una tarjeta, con un h3. Añade el contenido de la tarjeta debajo.
+Una cabecera de tarjeta va arriba de una tarjeta, con un h3. Pon el cuerpo de la tarjeta entre las etiquetas: se muestra bajo la cabecera, dentro de la misma tarjeta.
 
 <Preview examples={examples} layout="fill">
   <SectionHeaderBlockDemo client:visible locale="es" state="card" />
 </Preview>
+
+<ForFramework fw="react">
+
+```tsx
+<SectionHeader variant="card" heading="Miembros del equipo" count={8}>
+  <MemberList />
+</SectionHeader>
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<SectionHeader variant="card" heading="Miembros del equipo" :count="8">
+  <MemberList />
+</SectionHeader>
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<SectionHeader variant="card" heading="Miembros del equipo" count={8}>
+  <MemberList />
+</SectionHeader>
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+<SectionHeader variant="card" heading="Miembros del equipo" count={8}>
+  <MemberList />
+</SectionHeader>
+```
+
+</ForFramework>
 
 ### Vacío
 

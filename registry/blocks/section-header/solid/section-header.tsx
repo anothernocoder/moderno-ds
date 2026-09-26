@@ -1,4 +1,4 @@
-import { For, Show } from "solid-js";
+import { children, For, Show, type JSX } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import { Alert, Badge, Button, Card, Skeleton } from "@moderno-ui/solid";
 
@@ -44,6 +44,7 @@ export interface SectionHeaderProps {
   onPrimaryAction?: () => void;
   onSecondaryAction?: () => void;
   onRetry?: () => void;
+  children?: JSX.Element;
 }
 
 export function SectionHeader(props: SectionHeaderProps) {
@@ -64,6 +65,7 @@ export function SectionHeader(props: SectionHeaderProps) {
   const showCount = () => showDetails() && props.count !== undefined;
   const showStatusLine = () =>
     isPage() && showDetails() && (status() !== null || meta().length > 0);
+  const body = children(() => props.children);
 
   const bar = () => (
     <div class="grid gap-3">
@@ -223,22 +225,27 @@ export function SectionHeader(props: SectionHeaderProps) {
   );
 
   return (
-    <header
-      class="@container moderno-block-section-header text-foreground"
-      data-variant={variant()}
-    >
-      <Show
-        when={variant() === "card"}
-        fallback={
+    <Show
+      when={variant() === "card"}
+      fallback={
+        <header
+          class="@container moderno-block-section-header text-foreground"
+          data-variant={variant()}
+        >
           <div class={variant() === "section" ? "border-b border-border pb-4" : undefined}>
             {bar()}
           </div>
-        }
-      >
+        </header>
+      }
+    >
+      <div class="@container moderno-block-section-header text-foreground" data-variant="card">
         <Card.Root>
           <Card.Header>{bar()}</Card.Header>
+          <Show when={body()}>
+            <Card.Content>{body()}</Card.Content>
+          </Show>
         </Card.Root>
-      </Show>
-    </header>
+      </div>
+    </Show>
   );
 }
