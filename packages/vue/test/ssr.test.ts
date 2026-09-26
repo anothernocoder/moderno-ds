@@ -24,6 +24,7 @@ import { Accordion } from "../src/accordion.js";
 import { Progress } from "../src/progress.js";
 import { Slider } from "../src/slider.js";
 import { NumberInput } from "../src/number-input.js";
+import { Pagination } from "../src/pagination.js";
 import { attrOf, partAttrs, partTags } from "../../core/test/ssr-parts.ts";
 import { PinInput } from "../src/pin-input.js";
 
@@ -345,6 +346,33 @@ describe("SSR (Vue)", () => {
       partTags(html, "number-input", part).map((tag) => /\sdisabled(?:=""|[\s>])/.test(tag));
     expect(steppersDisabled("increment-trigger")).toEqual([true, false]);
     expect(steppersDisabled("decrement-trigger")).toEqual([false, false]);
+    // Pagination: Ark's pagination machine. The recipe lands on each root; each
+    // root reaches the server as a named <nav> with its page list (an ellipsis
+    // on both sides of page 5), the current page marked, and prev already
+    // disabled on the first page.
+    expect(partAttrs(html, "pagination", "root", "data-size")).toEqual(["md", "sm"]);
+    expect(partTags(html, "pagination", "root").map((tag) => tag.slice(0, 4))).toEqual([
+      "<nav",
+      "<nav",
+    ]);
+    expect(partAttrs(html, "pagination", "root", "aria-label")).toEqual([
+      "pagination",
+      "pagination",
+    ]);
+    expect(partAttrs(html, "pagination", "item", "data-index")).toEqual([
+      ...["1", "4", "5", "6", "10"],
+      ...["1", "2", "3"],
+    ]);
+    expect(partTags(html, "pagination", "ellipsis")).toHaveLength(2);
+    expect(
+      partTags(html, "pagination", "item")
+        .filter((tag) => attrOf(tag, "aria-current") === "page")
+        .map((tag) => attrOf(tag, "data-index")),
+    ).toEqual(["5", "1"]);
+    const triggersDisabled = (part: string) =>
+      partTags(html, "pagination", part).map((tag) => /\sdisabled(?:=""|[\s>])/.test(tag));
+    expect(triggersDisabled("prev-trigger")).toEqual([false, true]);
+    expect(triggersDisabled("next-trigger")).toEqual([false, false]);
     expect(html).toContain('data-scope="pin-input"');
     // Every code cell is on the server, and `count` makes the server's aria
     // labels agree with the client's — the PinInput-specific SSR hazard.
@@ -406,6 +434,8 @@ describe("SSR (Vue)", () => {
  * not provide, so their hydration is covered by the string + interaction suites
  * instead.
  */
+type HydrationPage = { type: "page"; value: number } | { type: "ellipsis" };
+
 const HydrationApp = defineComponent({
   name: "VueHydrationApp",
   setup() {
@@ -541,6 +571,18 @@ const HydrationApp = defineComponent({
             ]),
           ],
         ),
+        h(Pagination.Root, { page: 5, count: 100, pageSize: 10, size: "sm" }, () => [
+          h(Pagination.PrevTrigger, {}, () => "‹"),
+          h(Pagination.Context, null, {
+            default: ({ pages }: { pages: HydrationPage[] }) =>
+              pages.map((page, index) =>
+                page.type === "page"
+                  ? h(Pagination.Item, { key: index, ...page }, () => String(page.value))
+                  : h(Pagination.Ellipsis, { key: index, index }, () => "…"),
+              ),
+          }),
+          h(Pagination.NextTrigger, {}, () => "›"),
+        ]),
         h(Alert.Root, { variant: "error" }, () => [
           h(Alert.Icon, {}, () => "!"),
           h(Alert.Content, {}, () => [

@@ -324,6 +324,20 @@ export const numberInputRecipe = cva({
   defaultVariants: { size: "md" },
 });
 
+/**
+ * Pagination: `size` on the root — the height and type of the page buttons,
+ * the prev/next/first/last triggers and the ellipsis. The page count, current
+ * page, page size, sibling and boundary counts are Ark's own props; the
+ * current page surfaces as Ark's `data-selected` and `aria-current`, and a
+ * trigger with nowhere to go is disabled by Ark.
+ */
+export const paginationRecipe = cva({
+  variants: {
+    size: ["sm", "md", "lg"],
+  },
+  defaultVariants: { size: "md" },
+});
+
 /*
  * The variant unions, derived once beside the recipes. Bindings import these
  * names instead of re-deriving them from the recipe tables — a recipe change
@@ -506,3 +520,6 @@ export type SliderSize = NonNullable<VariantProps<typeof sliderRecipe.variants>[
 
 /** NumberInput's density (box height, stepper width, type), shared by every part. */
 export type NumberInputSize = NonNullable<VariantProps<typeof numberInputRecipe.variants>["size"]>;
+
+/** Pagination's density (button height, type), shared by every part. */
+export type PaginationSize = NonNullable<VariantProps<typeof paginationRecipe.variants>["size"]>;

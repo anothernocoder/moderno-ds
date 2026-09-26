@@ -322,3 +322,23 @@ describe("moderno/valid-props over the real NumberInput manifest", () => {
     ]);
   });
 });
+
+describe("moderno/valid-props over the real Pagination manifest", () => {
+  const manifests = manifestsFor("react");
+  const check = (code: string) =>
+    validProps.check({ code, framework: "react", manifests }).map((f) => f.message);
+
+  it("accepts the recipe prop and Ark's own props on the root", { timeout: 30_000 }, () => {
+    expect(
+      check(
+        '<Pagination.Root size="sm" count={200} pageSize={20} defaultPage={3} siblingCount={2} />',
+      ),
+    ).toEqual([]);
+  });
+
+  it("rejects a size outside the recipe", () => {
+    expect(check('<Pagination.Root size="xl" />')).toEqual([
+      expect.stringContaining('Invalid value "xl"'),
+    ]);
+  });
+});

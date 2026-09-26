@@ -29,6 +29,7 @@ import { Accordion } from "../src/accordion.jsx";
 import { Progress } from "../src/progress.jsx";
 import { Slider } from "../src/slider.jsx";
 import { NumberInput } from "../src/number-input.jsx";
+import { Pagination } from "../src/pagination.jsx";
 import { Dialog, Portal } from "../src/dialog.js";
 import { Select, createListCollection } from "../src/select.jsx";
 import { PinInput } from "../src/pin-input.jsx";
@@ -441,6 +442,43 @@ export function App(props: { open?: boolean }) {
             <NumberInput.IncrementTrigger>+</NumberInput.IncrementTrigger>
           </NumberInput.Control>
         </NumberInput.Root>
+      </section>
+
+      <section aria-label="pagination">
+        <Pagination.Root count={100} pageSize={10} defaultPage={5}>
+          <Pagination.PrevTrigger>‹</Pagination.PrevTrigger>
+          <Pagination.Context>
+            {(pagination) => (
+              <For each={pagination().pages}>
+                {(page, index) =>
+                  page.type === "page" ? (
+                    <Pagination.Item {...page}>{page.value}</Pagination.Item>
+                  ) : (
+                    <Pagination.Ellipsis index={index()}>…</Pagination.Ellipsis>
+                  )
+                }
+              </For>
+            )}
+          </Pagination.Context>
+          <Pagination.NextTrigger>›</Pagination.NextTrigger>
+        </Pagination.Root>
+        <Pagination.Root size="sm" count={30} pageSize={10}>
+          <Pagination.PrevTrigger>‹</Pagination.PrevTrigger>
+          <Pagination.Context>
+            {(pagination) => (
+              <For each={pagination().pages}>
+                {(page, index) =>
+                  page.type === "page" ? (
+                    <Pagination.Item {...page}>{page.value}</Pagination.Item>
+                  ) : (
+                    <Pagination.Ellipsis index={index()}>…</Pagination.Ellipsis>
+                  )
+                }
+              </For>
+            )}
+          </Pagination.Context>
+          <Pagination.NextTrigger>›</Pagination.NextTrigger>
+        </Pagination.Root>
       </section>
 
       <Dialog.Root defaultOpen={props.open}>

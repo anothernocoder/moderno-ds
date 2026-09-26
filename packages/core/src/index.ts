@@ -39,6 +39,7 @@ export {
   progressRecipe,
   sliderRecipe,
   numberInputRecipe,
+  paginationRecipe,
 } from "./recipes.js";
 export type {
   ButtonVariant,
@@ -79,4 +80,5 @@ export type {
   ProgressSize,
   SliderSize,
   NumberInputSize,
+  PaginationSize,
 } from "./recipes.js";

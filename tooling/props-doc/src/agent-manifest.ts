@@ -51,6 +51,7 @@ import {
   progressRecipe,
   sliderRecipe,
   numberInputRecipe,
+  paginationRecipe,
 } from "@moderno-ui/core";
 import { extractProps, type ComponentDoc, type ComponentEntry, type PropDoc } from "./index.ts";
 import { ENTRIES } from "./manifest.ts";
@@ -451,6 +452,25 @@ export const AGENT_COMPONENTS: AgentComponentSpec[] = [
       { name: "value-text", description: "Optional; the formatted value, outside the box." },
     ],
     variants: numberInputRecipe.variants,
+  },
+  {
+    name: "Pagination",
+    slug: "pagination",
+    scope: "pagination",
+    propsEntry: findEntry("Pagination"),
+    parts: [
+      { name: "root", description: "The <nav> landmark; carries size and holds the row." },
+      { name: "first-trigger", description: "Optional; a button that goes to the first page." },
+      { name: "prev-trigger", description: "A button that goes one page back. Off on page 1." },
+      {
+        name: "item",
+        description: "One page button, from the Context's pages; the current one is marked.",
+      },
+      { name: "ellipsis", description: "Stands for the pages skipped between two items." },
+      { name: "next-trigger", description: "A button that goes one page on. Off on the last." },
+      { name: "last-trigger", description: "Optional; a button that goes to the last page." },
+    ],
+    variants: paginationRecipe.variants,
   },
   {
     name: "LineChart",

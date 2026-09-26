@@ -23,6 +23,7 @@
   import { Progress } from "../src/index.js";
   import { Slider } from "../src/index.js";
   import { NumberInput } from "../src/index.js";
+  import { Pagination } from "../src/index.js";
   import { Dialog, Portal } from "../src/index.js";
   import { Select, createListCollection } from "../src/index.js";
   import { PinInput } from "../src/index.js";
@@ -411,6 +412,39 @@
         <NumberInput.IncrementTrigger>+</NumberInput.IncrementTrigger>
       </NumberInput.Control>
     </NumberInput.Root>
+  </section>
+
+  <section aria-label="pagination">
+    <Pagination.Root count={100} pageSize={10} defaultPage={5}>
+      <Pagination.PrevTrigger>‹</Pagination.PrevTrigger>
+      <Pagination.Context>
+        {#snippet render(pagination)}
+          {#each pagination().pages as page, index (index)}
+            {#if page.type === "page"}
+              <Pagination.Item {...page}>{page.value}</Pagination.Item>
+            {:else}
+              <Pagination.Ellipsis {index}>…</Pagination.Ellipsis>
+            {/if}
+          {/each}
+        {/snippet}
+      </Pagination.Context>
+      <Pagination.NextTrigger>›</Pagination.NextTrigger>
+    </Pagination.Root>
+    <Pagination.Root size="sm" count={30} pageSize={10}>
+      <Pagination.PrevTrigger>‹</Pagination.PrevTrigger>
+      <Pagination.Context>
+        {#snippet render(pagination)}
+          {#each pagination().pages as page, index (index)}
+            {#if page.type === "page"}
+              <Pagination.Item {...page}>{page.value}</Pagination.Item>
+            {:else}
+              <Pagination.Ellipsis {index}>…</Pagination.Ellipsis>
+            {/if}
+          {/each}
+        {/snippet}
+      </Pagination.Context>
+      <Pagination.NextTrigger>›</Pagination.NextTrigger>
+    </Pagination.Root>
   </section>
 
   <Dialog.Root defaultOpen={open}>

@@ -203,6 +203,22 @@ export type {
   NumberInputValueInvalidDetails,
 } from "./number-input.jsx";
 
+export { Pagination } from "./pagination.jsx";
+export type {
+  PaginationSize,
+  ModernoPaginationRootProps,
+  PaginationRootProps,
+  PaginationItemProps,
+  PaginationEllipsisProps,
+  PaginationFirstTriggerProps,
+  PaginationPrevTriggerProps,
+  PaginationNextTriggerProps,
+  PaginationLastTriggerProps,
+  PaginationPageChangeDetails,
+  PaginationPageSizeChangeDetails,
+  PaginationPageUrlDetails,
+} from "./pagination.jsx";
+
 export { Avatar } from "./avatar.jsx";
 export type {
   AvatarSize,

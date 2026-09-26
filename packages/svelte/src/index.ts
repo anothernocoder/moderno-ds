@@ -21,6 +21,7 @@ import {
   Progress as ArkProgress,
   Slider as ArkSlider,
   NumberInput as ArkNumberInput,
+  Pagination as ArkPagination,
   Toggle as ArkToggle,
   ToggleGroup as ArkToggleGroup,
 } from "@ark-ui/svelte";
@@ -40,6 +41,7 @@ import AccordionRoot from "./AccordionRoot.svelte";
 import ProgressRoot from "./ProgressRoot.svelte";
 import SliderRoot from "./SliderRoot.svelte";
 import NumberInputRoot from "./NumberInputRoot.svelte";
+import PaginationRoot from "./PaginationRoot.svelte";
 import type { AlertPartProps, AlertRootProps } from "./alert-props.js";
 import AlertRoot from "./AlertRoot.svelte";
 import AlertIcon from "./AlertIcon.svelte";
@@ -397,6 +399,24 @@ export const NumberInput: Omit<typeof ArkNumberInput, "Root"> & {
 };
 export type { NumberInputSize } from "@moderno-ui/core";
 
+/**
+ * Pagination — a row of page buttons with prev/next, that skips the pages
+ * far from the current one behind an ellipsis. Ark drives all of it: `count`
+ * items split into pages of `pageSize`; the `Context` snippet hands back the
+ * page list (`pages`, each a page or an ellipsis) to render as `Item`s and
+ * `Ellipsis`es; the current item carries `aria-current="page"`; the triggers
+ * are disabled at either end. `Root` is wrapped to inject the `size` recipe;
+ * every other part is Ark's verbatim. Annotated so the emitted `.d.ts`
+ * doesn't inline an un-nameable `@zag-js` type (TS2742).
+ */
+export const Pagination: Omit<typeof ArkPagination, "Root"> & {
+  Root: typeof PaginationRoot;
+} = {
+  ...ArkPagination,
+  Root: PaginationRoot,
+};
+export type { PaginationSize } from "@moderno-ui/core";
+
 export { createListCollection } from "@ark-ui/svelte";
 
 export type {
@@ -417,4 +437,7 @@ export type {
   NumberInputValueChangeDetails,
   NumberInputFocusChangeDetails,
   NumberInputValueInvalidDetails,
+  PaginationPageChangeDetails,
+  PaginationPageSizeChangeDetails,
+  PaginationPageUrlDetails,
 } from "@ark-ui/svelte";

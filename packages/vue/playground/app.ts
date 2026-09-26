@@ -31,6 +31,7 @@ import { Accordion } from "../src/accordion.js";
 import { Progress } from "../src/progress.js";
 import { Slider } from "../src/slider.js";
 import { NumberInput } from "../src/number-input.js";
+import { Pagination } from "../src/pagination.js";
 import { Dialog, Portal } from "../src/dialog.js";
 import { Select, createListCollection } from "../src/select.js";
 import { PinInput } from "../src/pin-input.js";
@@ -74,6 +75,23 @@ const frameworks = createListCollection({
     { label: "Solid", value: "solid" },
   ],
 });
+
+type Page = { type: "page"; value: number } | { type: "ellipsis" };
+
+// A Pagination row: prev, the page list Ark's Context hands back (pages and
+// ellipses), next.
+const pageRow = () => [
+  h(Pagination.PrevTrigger, {}, () => "‹"),
+  h(Pagination.Context, null, {
+    default: ({ pages }: { pages: Page[] }) =>
+      pages.map((page, index) =>
+        page.type === "page"
+          ? h(Pagination.Item, { key: index, ...page }, () => String(page.value))
+          : h(Pagination.Ellipsis, { key: index, index }, () => "…"),
+      ),
+  }),
+  h(Pagination.NextTrigger, {}, () => "›"),
+];
 
 export const App = defineComponent({
   name: "VueSsrApp",
@@ -429,6 +447,11 @@ export const App = defineComponent({
               ]),
             ],
           ),
+        ]),
+
+        h("section", { "aria-label": "pagination" }, [
+          h(Pagination.Root, { count: 100, pageSize: 10, defaultPage: 5 }, () => pageRow()),
+          h(Pagination.Root, { size: "sm", count: 30, pageSize: 10 }, () => pageRow()),
         ]),
 
         h(Dialog.Root, { defaultOpen: props.open }, () => [

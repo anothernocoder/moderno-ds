@@ -37,6 +37,7 @@ describe("AGENT_COMPONENTS", () => {
       "Progress",
       "Slider",
       "NumberInput",
+      "Pagination",
       "LineChart",
       "AreaChart",
       "BarChart",
@@ -366,6 +367,24 @@ describe("buildComponentsManifest", () => {
     ]);
     // Ark's own Root props (value, min, max, step, …) live under node_modules.
     expect(numberInput.propsComplete).toBe(false);
+  });
+
+  it("carries Pagination's recipe prop, size and Ark parts", () => {
+    const pagination = manifest.components.find((c) => c.name === "Pagination")!;
+    expect(pagination.scope).toBe("pagination");
+    expect(pagination.props.map((p) => p.name)).toEqual(["size"]);
+    expect(pagination.variants).toEqual({ size: ["sm", "md", "lg"] });
+    expect(pagination.parts.map((p) => p.name)).toEqual([
+      "root",
+      "first-trigger",
+      "prev-trigger",
+      "item",
+      "ellipsis",
+      "next-trigger",
+      "last-trigger",
+    ]);
+    // Ark's own Root props (count, page, pageSize, …) live under node_modules.
+    expect(pagination.propsComplete).toBe(false);
   });
 
   it("reads variants straight off the shared @moderno-ui/core recipes", () => {

@@ -1351,6 +1351,11 @@ main.main--wide {
 /* Skeleton lines stand in for lines of text, so they sit as close as text
    does; a row of spinners or avatars has no shared text baseline, so it
    centres instead. */
+/* Pagination rows of different widths, one under another: each is centred on
+   the stage, like a lone one. */
+.demo-stack:has(> [data-scope="pagination"]) {
+  justify-items: center;
+}
 .demo-stack:has(> [data-scope="skeleton"]) {
   gap: 0.75rem;
 }

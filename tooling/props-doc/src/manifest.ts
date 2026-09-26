@@ -36,6 +36,7 @@ export const ENTRIES: ComponentEntry[] = [
   { name: "Progress", file: "src/progress.tsx", type: "ModernoProgressRootProps" },
   { name: "Slider", file: "src/slider.tsx", type: "ModernoSliderRootProps" },
   { name: "NumberInput", file: "src/number-input.tsx", type: "ModernoNumberInputRootProps" },
+  { name: "Pagination", file: "src/pagination.tsx", type: "ModernoPaginationRootProps" },
   { name: "LineChart", file: "src/charts.tsx", type: "LineChartProps" },
   { name: "AreaChart", file: "src/charts.tsx", type: "AreaChartProps" },
   { name: "BarChart", file: "src/charts.tsx", type: "BarChartProps" },

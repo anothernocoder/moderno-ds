@@ -1,0 +1,272 @@
+---
+title: Pagination
+description: Una fila de botones de página con anterior y siguiente, que oculta las páginas lejanas tras unos puntos suspensivos.
+group: Componentes
+order: 36
+component: Pagination
+pkg: "@moderno-ui/react"
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import PaginationDemo from "../../../examples/pagination/pagination.svelte";
+import baseReact from "../../../examples/pagination/react.tsx?raw";
+import baseVue from "../../../examples/pagination/vue.vue?raw";
+import baseSolid from "../../../examples/pagination/solid.tsx?raw";
+import baseSvelte from "../../../examples/pagination/pagination.svelte?raw";
+import PaginationFirstLastDemo from "../../../examples/pagination/first-last/pagination-first-last.svelte";
+import firstLastReact from "../../../examples/pagination/first-last/react.tsx?raw";
+import firstLastVue from "../../../examples/pagination/first-last/vue.vue?raw";
+import firstLastSolid from "../../../examples/pagination/first-last/solid.tsx?raw";
+import firstLastSvelte from "../../../examples/pagination/first-last/pagination-first-last.svelte?raw";
+import PaginationSiblingsDemo from "../../../examples/pagination/siblings/pagination-siblings.svelte";
+import siblingsReact from "../../../examples/pagination/siblings/react.tsx?raw";
+import siblingsVue from "../../../examples/pagination/siblings/vue.vue?raw";
+import siblingsSolid from "../../../examples/pagination/siblings/solid.tsx?raw";
+import siblingsSvelte from "../../../examples/pagination/siblings/pagination-siblings.svelte?raw";
+import PaginationSizesDemo from "../../../examples/pagination/sizes/pagination-sizes.svelte";
+import sizesReact from "../../../examples/pagination/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/pagination/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/pagination/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/pagination/sizes/pagination-sizes.svelte?raw";
+
+<FrameworkSelect locale="es" />
+
+<Preview
+  examples={{
+    react: baseReact,
+    vue: baseVue,
+    solid: baseSolid,
+    svelte: baseSvelte,
+  }}
+>
+  <PaginationDemo client:visible />
+</Preview>
+
+## Instalación
+
+<Install pkg="@moderno-ui/react" />
+
+## Uso
+
+Pagination es una fila de botones de página con anterior y siguiente. Úsalo cuando una lista no cabe en una pantalla y la muestras página a página. Las páginas lejanas se ocultan tras unos puntos suspensivos, así la fila sigue corta.
+
+<ForFramework fw="react">
+
+```tsx
+import { Pagination } from "@moderno-ui/react";
+```
+
+```tsx
+<Pagination.Root
+  count={120}
+  pageSize={10}
+  page={page}
+  onPageChange={(details) => setPage(details.page)}
+>
+  <Pagination.PrevTrigger>‹</Pagination.PrevTrigger>
+  <Pagination.Context>
+    {(pagination) =>
+      pagination.pages.map((page, index) =>
+        page.type === "page" ? (
+          <Pagination.Item key={index} {...page}>
+            {page.value}
+          </Pagination.Item>
+        ) : (
+          <Pagination.Ellipsis key={index} index={index}>
+            …
+          </Pagination.Ellipsis>
+        ),
+      )
+    }
+  </Pagination.Context>
+  <Pagination.NextTrigger>›</Pagination.NextTrigger>
+</Pagination.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Pagination } from "@moderno-ui/vue";
+```
+
+```vue
+<Pagination.Root v-model:page="page" :count="120" :page-size="10">
+  <Pagination.PrevTrigger>‹</Pagination.PrevTrigger>
+  <Pagination.Context v-slot="{ pages }">
+    <template v-for="(page, index) in pages" :key="index">
+      <Pagination.Item v-if="page.type === 'page'" v-bind="page">{{ page.value }}</Pagination.Item>
+      <Pagination.Ellipsis v-else :index="index">…</Pagination.Ellipsis>
+    </template>
+  </Pagination.Context>
+  <Pagination.NextTrigger>›</Pagination.NextTrigger>
+</Pagination.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Pagination } from "@moderno-ui/svelte";
+```
+
+```svelte
+<Pagination.Root count={120} pageSize={10} {page} onPageChange={(details) => (page = details.page)}>
+  <Pagination.PrevTrigger>‹</Pagination.PrevTrigger>
+  <Pagination.Context>
+    {#snippet render(pagination)}
+      {#each pagination().pages as page, index (index)}
+        {#if page.type === "page"}
+          <Pagination.Item {...page}>{page.value}</Pagination.Item>
+        {:else}
+          <Pagination.Ellipsis {index}>…</Pagination.Ellipsis>
+        {/if}
+      {/each}
+    {/snippet}
+  </Pagination.Context>
+  <Pagination.NextTrigger>›</Pagination.NextTrigger>
+</Pagination.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { For } from "solid-js";
+import { Pagination } from "@moderno-ui/solid";
+```
+
+```tsx
+<Pagination.Root
+  count={120}
+  pageSize={10}
+  page={page()}
+  onPageChange={(details) => setPage(details.page)}
+>
+  <Pagination.PrevTrigger>‹</Pagination.PrevTrigger>
+  <Pagination.Context>
+    {(pagination) => (
+      <For each={pagination().pages}>
+        {(page, index) =>
+          page.type === "page" ? (
+            <Pagination.Item {...page}>{page.value}</Pagination.Item>
+          ) : (
+            <Pagination.Ellipsis index={index()}>…</Pagination.Ellipsis>
+          )
+        }
+      </For>
+    )}
+  </Pagination.Context>
+  <Pagination.NextTrigger>›</Pagination.NextTrigger>
+</Pagination.Root>
+```
+
+</ForFramework>
+
+`count` es el número de elementos, no de páginas. Con 120 elementos y 10 por página, hay 12 páginas. Las páginas empiezan en 1.
+
+## Referencia de la API
+
+### Pagination.Root
+
+`size` es el añadido de Moderno; todos los botones lo siguen. El resto de props vienen del Pagination de Ark.
+
+<PropsTable component="Pagination" />
+
+| Prop               | Tipo                                                      | Por defecto | Descripción                                                        |
+| ------------------ | --------------------------------------------------------- | ----------- | ------------------------------------------------------------------ |
+| `count`            | `number`                                                  | `1`         | Cuántos elementos hay en total.                                    |
+| `pageSize`         | `number`                                                  | —           | Número controlado de elementos por página.                         |
+| `defaultPageSize`  | `number`                                                  | `10`        | Elementos por página al principio, sin control.                    |
+| `page`             | `number`                                                  | —           | Página actual controlada, desde 1.                                 |
+| `defaultPage`      | `number`                                                  | `1`         | Página al principio, sin control.                                  |
+| `onPageChange`     | `(details: { page: number; pageSize: number }) => void`   | —           | Se llama cuando cambia la página.                                  |
+| `onPageSizeChange` | `(details: { pageSize: number }) => void`                 | —           | Se llama cuando cambia el tamaño de página.                        |
+| `siblingCount`     | `number`                                                  | `1`         | Cuántas páginas mostrar a cada lado de la actual.                  |
+| `boundaryCount`    | `number`                                                  | `1`         | Cuántas páginas mostrar en cada extremo. No en Vue.                |
+| `type`             | `"button" \| "link"`                                      | `"button"`  | `"link"` da a cada botón un `href` de `getPageUrl`.                |
+| `getPageUrl`       | `(details: { page: number; pageSize: number }) => string` | —           | Construye el `href` de una página, cuando `type` es `"link"`.      |
+| `translations`     | `IntlTranslations`                                        | —           | Lo que dice un lector de pantalla de la fila, cada página y botón. |
+
+En Vue, enlaza la página con `v-model:page`, y escucha con `@page-change`.
+
+### Partes
+
+| Parte                     | Elemento   | Descripción                                                    |
+| ------------------------- | ---------- | -------------------------------------------------------------- |
+| `Pagination.Root`         | `<nav>`    | El landmark. Lleva `data-size`.                                |
+| `Pagination.Context`      | —          | Te da `pages`, la lista que pintar, y la `page` actual.        |
+| `Pagination.Item`         | `<button>` | Una página. Recibe `type="page"` y `value`; expande la página. |
+| `Pagination.Ellipsis`     | `<div>`    | Representa las páginas ocultas. Recibe su `index` en `pages`.  |
+| `Pagination.PrevTrigger`  | `<button>` | Va una página atrás. Se apaga en la primera.                   |
+| `Pagination.NextTrigger`  | `<button>` | Va una página adelante. Se apaga en la última.                 |
+| `Pagination.FirstTrigger` | `<button>` | Opcional. Va a la primera página.                              |
+| `Pagination.LastTrigger`  | `<button>` | Opcional. Va a la última página.                               |
+
+### Atributos data
+
+| Atributo        | Valores                                                   |
+| --------------- | --------------------------------------------------------- |
+| `data-selected` | En el item de la página actual, con `aria-current="page"` |
+| `data-index`    | En cada item: su número de página                         |
+| `data-disabled` | En un botón que no tiene adónde ir                        |
+| `data-size`     | En la raíz: `"sm"`, `"md"` o `"lg"`                       |
+
+## Ejemplos
+
+### Primera y última
+
+Añade `Pagination.FirstTrigger` y `Pagination.LastTrigger` para saltar a cada extremo.
+
+<Preview
+  examples={{
+    react: firstLastReact,
+    vue: firstLastVue,
+    solid: firstLastSolid,
+    svelte: firstLastSvelte,
+  }}
+>
+  <PaginationFirstLastDemo client:visible />
+</Preview>
+
+### Más páginas junto a la actual
+
+`siblingCount` fija cuántas páginas se ven a cada lado de la página actual.
+
+<Preview
+  examples={{
+    react: siblingsReact,
+    vue: siblingsVue,
+    solid: siblingsSolid,
+    svelte: siblingsSvelte,
+  }}
+>
+  <PaginationSiblingsDemo client:visible />
+</Preview>
+
+### Tamaños
+
+<Preview
+  examples={{
+    react: sizesReact,
+    vue: sizesVue,
+    solid: sizesSolid,
+    svelte: sizesSvelte,
+  }}
+>
+  <PaginationSizesDemo client:visible />
+</Preview>
+
+## Notas
+
+- `Pagination.Root` está envuelto para añadir `size`; el resto de partes son las de Ark sin cambios.
+- La fila mantiene su largo al cambiar de página: cerca de un extremo, Ark pone más páginas en lugar de puntos suspensivos.
+- En una página de derecha a izquierda, la fila empieza por la derecha. Pasa los signos al revés: `›` para anterior y `‹` para siguiente.
+- Para elegir un número exacto, usa un NumberInput.

@@ -52,6 +52,9 @@
  *   - NumberInput — Ark's number-input machine: the spinbutton's value,
  *                bounds, formatted text and ids, and a stepper disabled at
  *                its bound must match both ways.
+ *   - Pagination — Ark's pagination machine: the page list with its
+ *                ellipses, the current page and the triggers disabled at
+ *                either end must match both ways.
  *   - Dialog   — a Portal + focus-trap machine that must emit a stable,
  *                hydration-safe trigger while its content stays unmounted-visible.
  *   - Select   — a collection + popover whose hidden native <select> and ids
@@ -87,6 +90,7 @@ import { Accordion } from "../src/accordion.js";
 import { Progress } from "../src/progress.js";
 import { Slider } from "../src/slider.js";
 import { NumberInput } from "../src/number-input.js";
+import { Pagination } from "../src/pagination.js";
 import { Dialog, Portal } from "../src/dialog.js";
 import { Select, createListCollection } from "../src/select.js";
 import { PinInput } from "../src/pin-input.js";
@@ -504,6 +508,47 @@ export function App({ open = false }: AppProps) {
             <NumberInput.IncrementTrigger>+</NumberInput.IncrementTrigger>
           </NumberInput.Control>
         </NumberInput.Root>
+      </section>
+
+      <section aria-label="pagination">
+        <Pagination.Root count={100} pageSize={10} defaultPage={5}>
+          <Pagination.PrevTrigger>‹</Pagination.PrevTrigger>
+          <Pagination.Context>
+            {(pagination) =>
+              pagination.pages.map((page, index) =>
+                page.type === "page" ? (
+                  <Pagination.Item key={index} {...page}>
+                    {page.value}
+                  </Pagination.Item>
+                ) : (
+                  <Pagination.Ellipsis key={index} index={index}>
+                    …
+                  </Pagination.Ellipsis>
+                ),
+              )
+            }
+          </Pagination.Context>
+          <Pagination.NextTrigger>›</Pagination.NextTrigger>
+        </Pagination.Root>
+        <Pagination.Root size="sm" count={30} pageSize={10}>
+          <Pagination.PrevTrigger>‹</Pagination.PrevTrigger>
+          <Pagination.Context>
+            {(pagination) =>
+              pagination.pages.map((page, index) =>
+                page.type === "page" ? (
+                  <Pagination.Item key={index} {...page}>
+                    {page.value}
+                  </Pagination.Item>
+                ) : (
+                  <Pagination.Ellipsis key={index} index={index}>
+                    …
+                  </Pagination.Ellipsis>
+                ),
+              )
+            }
+          </Pagination.Context>
+          <Pagination.NextTrigger>›</Pagination.NextTrigger>
+        </Pagination.Root>
       </section>
 
       <Dialog.Root defaultOpen={open}>

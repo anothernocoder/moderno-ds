@@ -322,6 +322,27 @@ React, Vue and Svelte write `20, 80`.
 | disabled → `data-disabled` on every part, input and steppers disabled  |  ✅   | ✅  |   ✅   |  ✅   |
 | native props forwarded to the root                                     |  ✅   | ✅  |   ✅   |  ✅   |
 
+### Pagination (`paginationRecipe`: `data-size`; Ark pagination machine)
+
+| State                                                                       | React | Vue | Svelte | Solid |
+| --------------------------------------------------------------------------- | :---: | :-: | :----: | :---: |
+| size → root `data-size` (+ `md`)                                            |  ✅   | ✅  |   ✅   |  ✅   |
+| every Ark part exposed                                                      |  ✅   | ✅  |   ✅   |  ✅   |
+| root is a `<nav>` landmark named "pagination"                               |  ✅   | ✅  |   ✅   |  ✅   |
+| `Context` pages → items + ellipses (`1 … 4 5 6 … 10`)                       |  ✅   | ✅  |   ✅   |  ✅   |
+| current item → `data-selected` + `aria-current="page"`; items named         |  ✅   | ✅  |   ✅   |  ✅   |
+| clicking an item goes there; `onPageChange` reports page + pageSize         |  ✅   | ✅  |   ✅   |  ✅   |
+| prev/next step, first/last jump                                             |  ✅   | ✅  |   ✅   |  ✅   |
+| prev/first disabled on page 1, next/last on the last (`disabled` + data-\*) |  ✅   | ✅  |   ✅   |  ✅   |
+| triggers named for screen readers                                           |  ✅   | ✅  |   ✅   |  ✅   |
+| `count` ÷ `pageSize` → pages; `siblingCount` widens the window              |  ✅   | ✅  |   ✅   |  ✅   |
+| controlled page followed                                                    |  ✅   | ✅  |   ✅   |  ✅   |
+| native props forwarded to the root                                          |  ✅   | ✅  |   ✅   |  ✅   |
+| `boundaryCount`                                                             |  ✅   | ❌† |   ✅   |  ✅   |
+
+† Ark's Vue Pagination does not declare `boundaryCount`; the attribute falls
+through to the `<nav>` and the machine keeps its default of 1.
+
 ### Dialog (Ark portal + focus trap + ids)
 
 | State                    | React | Vue | Svelte | Solid |
@@ -382,6 +403,7 @@ React, Vue and Svelte write `20, 80`.
 | Progress value, state + circle geometry      |  ✅   | ✅  |   ✅   |  ✅   |
 | Slider thumbs, bounds, range offsets + marks |  ✅   | ✅  |   ✅   |  ✅   |
 | NumberInput value, bounds, format + steppers |  ✅   | ✅  |   ✅   |  ✅   |
+| Pagination pages, ellipses, current + ends   |  ✅   | ✅  |   ✅   |  ✅   |
 
 ¹ Vue hydration is verified on the portal-free primitives (Button, Card, Field
 and Checkbox), the deterministic `useId` hazard; Ark's portaled popovers
