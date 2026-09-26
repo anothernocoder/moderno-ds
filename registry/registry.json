@@ -2154,6 +2154,78 @@
       ]
     },
     {
+      "name": "team-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Team (React)",
+      "description": "A grid of the people behind the product, composing the @moderno-ui/react Alert, Avatar, Button and Skeleton primitives: a serif heading, a sentence of introduction, then each member's Avatar, name, role and a short bio, with its own loading, empty and error renders; responds to its container (@container) — the avatar moves beside the name at @sm, the members sit in two columns and the heading steps up at @md, and three columns with more room at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/team/react/team.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/team.tsx"
+        }
+      ]
+    },
+    {
+      "name": "team-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Team (Vue)",
+      "description": "A grid of the people behind the product, composing the @moderno-ui/vue Alert, Avatar, Button and Skeleton primitives: a serif heading, a sentence of introduction, then each member's Avatar, name, role and a short bio, with its own loading, empty and error renders; responds to its container (@container) — the avatar moves beside the name at @sm, the members sit in two columns and the heading steps up at @md, and three columns with more room at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/team/vue/Team.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/Team.vue"
+        }
+      ]
+    },
+    {
+      "name": "team-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Team (Svelte)",
+      "description": "A grid of the people behind the product, composing the @moderno-ui/svelte Alert, Avatar, Button and Skeleton primitives: a serif heading, a sentence of introduction, then each member's Avatar, name, role and a short bio, with its own loading, empty and error renders; responds to its container (@container) — the avatar moves beside the name at @sm, the members sit in two columns and the heading steps up at @md, and three columns with more room at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/team/svelte/Team.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/Team.svelte"
+        }
+      ]
+    },
+    {
+      "name": "team-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Team (Solid)",
+      "description": "A grid of the people behind the product, composing the @moderno-ui/solid Alert, Avatar, Button and Skeleton primitives: a serif heading, a sentence of introduction, then each member's Avatar, name, role and a short bio, with its own loading, empty and error renders; responds to its container (@container) — the avatar moves beside the name at @sm, the members sit in two columns and the heading steps up at @md, and three columns with more room at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/team/solid/team.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/team.tsx"
+        }
+      ]
+    },
+    {
       "name": "testimonials-react",
       "type": "registry:block",
       "version": "0.1.0",
