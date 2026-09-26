@@ -143,11 +143,8 @@ describe("moderno add sign-in-<framework>", () => {
     {
       item: "sign-in-vue",
       target: "src/components/screens/SignIn.vue",
-      blocks: [
-        { item: "login-form-vue", target: "src/components/blocks/LoginForm.vue" },
-        { item: "alert-list-vue", target: "src/components/blocks/AlertList.vue" },
-      ],
-      imports: ["@/components/blocks/LoginForm.vue", "@/components/blocks/AlertList.vue"],
+      blocks: [{ item: "login-form-vue", target: "src/components/blocks/LoginForm.vue" }],
+      imports: ["@/components/blocks/LoginForm.vue"],
     },
     {
       item: "sign-in-svelte",
@@ -158,11 +155,8 @@ describe("moderno add sign-in-<framework>", () => {
     {
       item: "sign-in-solid",
       target: "src/components/screens/sign-in.tsx",
-      blocks: [
-        { item: "login-form-solid", target: "src/components/blocks/login-form.tsx" },
-        { item: "alert-list-solid", target: "src/components/blocks/alert-list.tsx" },
-      ],
-      imports: ["@/components/blocks/login-form", "@/components/blocks/alert-list"],
+      blocks: [{ item: "login-form-solid", target: "src/components/blocks/login-form.tsx" }],
+      imports: ["@/components/blocks/login-form"],
     },
   ];
 
@@ -238,11 +232,8 @@ describe("moderno add forgot-password-<framework>", () => {
     {
       item: "forgot-password-vue",
       target: "src/components/screens/ForgotPassword.vue",
-      blocks: [
-        { item: "login-form-vue", target: "src/components/blocks/LoginForm.vue" },
-        { item: "alert-list-vue", target: "src/components/blocks/AlertList.vue" },
-      ],
-      imports: ["@/components/blocks/LoginForm.vue", "@/components/blocks/AlertList.vue"],
+      blocks: [{ item: "login-form-vue", target: "src/components/blocks/LoginForm.vue" }],
+      imports: ["@/components/blocks/LoginForm.vue"],
       card: "src/components/blocks/LoginForm.vue",
     },
     {
@@ -255,11 +246,8 @@ describe("moderno add forgot-password-<framework>", () => {
     {
       item: "forgot-password-solid",
       target: "src/components/screens/forgot-password.tsx",
-      blocks: [
-        { item: "login-form-solid", target: "src/components/blocks/login-form.tsx" },
-        { item: "alert-list-solid", target: "src/components/blocks/alert-list.tsx" },
-      ],
-      imports: ["@/components/blocks/login-form", "@/components/blocks/alert-list"],
+      blocks: [{ item: "login-form-solid", target: "src/components/blocks/login-form.tsx" }],
+      imports: ["@/components/blocks/login-form"],
       card: "src/components/blocks/login-form.tsx",
     },
   ];
@@ -356,11 +344,8 @@ describe("moderno add reset-password-<framework>", () => {
     {
       item: "reset-password-vue",
       target: "src/components/screens/ResetPassword.vue",
-      blocks: [
-        { item: "login-form-vue", target: "src/components/blocks/LoginForm.vue" },
-        { item: "alert-list-vue", target: "src/components/blocks/AlertList.vue" },
-      ],
-      imports: ["@/components/blocks/LoginForm.vue", "@/components/blocks/AlertList.vue"],
+      blocks: [{ item: "login-form-vue", target: "src/components/blocks/LoginForm.vue" }],
+      imports: ["@/components/blocks/LoginForm.vue"],
       card: "src/components/blocks/LoginForm.vue",
     },
     {
@@ -373,11 +358,8 @@ describe("moderno add reset-password-<framework>", () => {
     {
       item: "reset-password-solid",
       target: "src/components/screens/reset-password.tsx",
-      blocks: [
-        { item: "login-form-solid", target: "src/components/blocks/login-form.tsx" },
-        { item: "alert-list-solid", target: "src/components/blocks/alert-list.tsx" },
-      ],
-      imports: ["@/components/blocks/login-form", "@/components/blocks/alert-list"],
+      blocks: [{ item: "login-form-solid", target: "src/components/blocks/login-form.tsx" }],
+      imports: ["@/components/blocks/login-form"],
       card: "src/components/blocks/login-form.tsx",
     },
   ];
@@ -477,11 +459,8 @@ describe("moderno add verify-<framework>", () => {
     {
       item: "verify-vue",
       target: "src/components/screens/Verify.vue",
-      blocks: [
-        { item: "login-form-vue", target: "src/components/blocks/LoginForm.vue" },
-        { item: "alert-list-vue", target: "src/components/blocks/AlertList.vue" },
-      ],
-      imports: ["@/components/blocks/LoginForm.vue", "@/components/blocks/AlertList.vue"],
+      blocks: [{ item: "login-form-vue", target: "src/components/blocks/LoginForm.vue" }],
+      imports: ["@/components/blocks/LoginForm.vue"],
       card: "src/components/blocks/LoginForm.vue",
     },
     {
@@ -494,11 +473,8 @@ describe("moderno add verify-<framework>", () => {
     {
       item: "verify-solid",
       target: "src/components/screens/verify.tsx",
-      blocks: [
-        { item: "login-form-solid", target: "src/components/blocks/login-form.tsx" },
-        { item: "alert-list-solid", target: "src/components/blocks/alert-list.tsx" },
-      ],
-      imports: ["@/components/blocks/login-form", "@/components/blocks/alert-list"],
+      blocks: [{ item: "login-form-solid", target: "src/components/blocks/login-form.tsx" }],
+      imports: ["@/components/blocks/login-form"],
       card: "src/components/blocks/login-form.tsx",
     },
   ];

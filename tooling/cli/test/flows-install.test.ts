@@ -77,10 +77,7 @@ const variants: Variant[] = [
       "@/components/screens/ResetPassword.vue",
       "@/components/screens/Verify.vue",
     ],
-    blocks: [
-      { item: "login-form-vue", target: "src/components/blocks/LoginForm.vue" },
-      { item: "alert-list-vue", target: "src/components/blocks/AlertList.vue" },
-    ],
+    blocks: [{ item: "login-form-vue", target: "src/components/blocks/LoginForm.vue" }],
   },
   {
     framework: "svelte",
@@ -118,10 +115,7 @@ const variants: Variant[] = [
       "@/components/screens/reset-password",
       "@/components/screens/verify",
     ],
-    blocks: [
-      { item: "login-form-solid", target: "src/components/blocks/login-form.tsx" },
-      { item: "alert-list-solid", target: "src/components/blocks/alert-list.tsx" },
-    ],
+    blocks: [{ item: "login-form-solid", target: "src/components/blocks/login-form.tsx" }],
   },
 ];
 
