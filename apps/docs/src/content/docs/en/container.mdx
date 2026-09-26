@@ -1,0 +1,169 @@
+---
+title: Container
+description: A max-width page wrapper that centres its content with a gutter on both sides.
+group: Blocks
+order: 111
+agent:
+  intent: Centre a page's content at a readable width, with the same gutter on both sides, wherever the page is mounted.
+  whenToUse: "Around the content of a page or a page region: a settings page, an article, a form, a dashboard body. Pick the width by how dense the content is."
+  whenNotToUse:
+    - case: Grouping related content inside a page
+      use: Panel or Card — a container sets the width, it draws no surface
+    - case: A list with a header and footer that stay put while the rows scroll
+      use: ListContainer
+    - case: The app's frame (navigation, sidebar, top bar)
+      use: an app shell — a container sits inside it, around one page's content
+  gotchas:
+    - "`size` picks the widest the content gets: `sm`, `md` and `lg` are the contract's --container-sm, --container-md and --container-lg; `full` has no cap."
+    - "With no children it renders a sample card, so the block shows something on its own. Pass your own content."
+    - "It has no states of its own: loading, empty and error belong to what you put inside."
+    - "The gutter responds to the container's own width, never the viewport: wider at --container-sm, wider again at --container-md, with more room above and below at --container-lg."
+  theming:
+    - "Nothing is painted here. The widths are the contract's --container-* slots and the gutter is the spacing scale, so a theme that re-maps them re-sizes the block."
+    - "The sample content is Card's outline surface."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ContainerBlockDemo from "../../../islands/ContainerBlockDemo.svelte";
+import containerReact from "../../../../../../registry/blocks/container/react/container.tsx?raw";
+import containerVue from "../../../../../../registry/blocks/container/vue/Container.vue?raw";
+import containerSolid from "../../../../../../registry/blocks/container/solid/container.tsx?raw";
+import containerSvelte from "../../../../../../registry/blocks/container/svelte/Container.svelte?raw";
+
+export const examples = {
+  react: containerReact,
+  vue: containerVue,
+  solid: containerSolid,
+  svelte: containerSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <ContainerBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="container" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { Container } from "@/components/blocks/container";
+```
+
+```tsx
+<Container size="md">
+  <SettingsForm />
+</Container>
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import Container from "@/components/blocks/Container.vue";
+</script>
+```
+
+```vue
+<Container size="md">
+  <SettingsForm />
+</Container>
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import Container from "@/components/blocks/Container.svelte";
+</script>
+```
+
+```svelte
+<Container size="md">
+  <SettingsForm />
+</Container>
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { Container } from "@/components/blocks/container";
+```
+
+```tsx
+<Container size="md">
+  <SettingsForm />
+</Container>
+```
+
+</ForFramework>
+
+Use `sm` for reading and short forms, `md` for most pages and `lg` for dense views.
+
+## API Reference
+
+### Props
+
+| Prop       | Type                               | Default       | Description                                                  |
+| ---------- | ---------------------------------- | ------------- | ------------------------------------------------------------ |
+| `size`     | `"sm" \| "md" \| "lg" \| "full"`   | `"lg"`        | The widest the content gets; `full` has no cap.              |
+| `children` | content (Vue and Svelte: the slot) | a sample card | What the container centres. Without it, a sample card shows. |
+
+### Sizes
+
+| Size   | Maximum width                |
+| ------ | ---------------------------- |
+| `sm`   | `--container-sm` (24rem)     |
+| `md`   | `--container-md` (36rem)     |
+| `lg`   | `--container-lg` (48rem)     |
+| `full` | none: the width of its space |
+
+### States
+
+The container has no states of its own. Loading, empty and error belong to its content.
+
+### Sizing
+
+| Container step           | What changes                           |
+| ------------------------ | -------------------------------------- |
+| below `@sm`              | A narrow gutter on each side.          |
+| `@sm` (`--container-sm`) | A wider gutter.                        |
+| `@md` (`--container-md`) | A wider gutter again.                  |
+| `@lg` (`--container-lg`) | More room above and below the content. |
+
+## Examples
+
+### Each size
+
+The same content at each `size`. A size wider than its space simply fills it.
+
+<Preview examples={examples} layout="fill">
+  <ContainerBlockDemo client:visible locale="en" state="sizes" />
+</Preview>
+
+### Container widths
+
+The same container at 18rem, 30rem and 50rem. The gutter grows with the room. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <ContainerBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Your own content
+
+Anything you pass in replaces the sample card.
+
+<Preview examples={examples} layout="fill">
+  <ContainerBlockDemo client:visible locale="en" state="content" />
+</Preview>

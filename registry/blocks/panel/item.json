@@ -1,0 +1,37 @@
+{
+  "title": "Panel",
+  "description": "Grouping surfaces, composing the @moderno-ui/{framework} Alert, Button, Card and Skeleton primitives: a heading over bordered panels, each with a title, a sentence and its own action, with empty, loading and error renders of its own; responds to its container (@container) across all three contract steps — actions shrink to their label at @sm, two panels a row and a larger heading at @md, wider gaps at @lg.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": [],
+  "files": {
+    "react": [
+      {
+        "path": "blocks/panel/react/panel.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/panel.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "blocks/panel/vue/Panel.vue",
+        "type": "registry:block",
+        "target": "src/components/blocks/Panel.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "blocks/panel/svelte/Panel.svelte",
+        "type": "registry:block",
+        "target": "src/components/blocks/Panel.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "blocks/panel/solid/panel.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/panel.tsx"
+      }
+    ]
+  }
+}

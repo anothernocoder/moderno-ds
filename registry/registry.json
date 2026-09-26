@@ -210,6 +210,78 @@
       ]
     },
     {
+      "name": "container-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Container (React)",
+      "description": "A max-width page wrapper, composing the @moderno-ui/react Card primitive for its sample content: it centres whatever it holds at one of the contract's widths (sm, md, lg or full) with a gutter on both sides; responds to its container (@container) across all three contract steps — a wider gutter at @sm and again at @md, more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/container/react/container.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/container.tsx"
+        }
+      ]
+    },
+    {
+      "name": "container-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Container (Vue)",
+      "description": "A max-width page wrapper, composing the @moderno-ui/vue Card primitive for its sample content: it centres whatever it holds at one of the contract's widths (sm, md, lg or full) with a gutter on both sides; responds to its container (@container) across all three contract steps — a wider gutter at @sm and again at @md, more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/container/vue/Container.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/Container.vue"
+        }
+      ]
+    },
+    {
+      "name": "container-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Container (Svelte)",
+      "description": "A max-width page wrapper, composing the @moderno-ui/svelte Card primitive for its sample content: it centres whatever it holds at one of the contract's widths (sm, md, lg or full) with a gutter on both sides; responds to its container (@container) across all three contract steps — a wider gutter at @sm and again at @md, more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/container/svelte/Container.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/Container.svelte"
+        }
+      ]
+    },
+    {
+      "name": "container-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Container (Solid)",
+      "description": "A max-width page wrapper, composing the @moderno-ui/solid Card primitive for its sample content: it centres whatever it holds at one of the contract's widths (sm, md, lg or full) with a gutter on both sides; responds to its container (@container) across all three contract steps — a wider gutter at @sm and again at @md, more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/container/solid/container.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/container.tsx"
+        }
+      ]
+    },
+    {
       "name": "description-list-react",
       "type": "registry:block",
       "version": "0.1.0",
@@ -498,6 +570,78 @@
       ]
     },
     {
+      "name": "list-container-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "List Container (React)",
+      "description": "A header, a scrolling body and a footer around a list, composing the @moderno-ui/react Alert, Avatar, Badge, Button, Card and Skeleton primitives: the header and footer stay put while the rows scroll, with empty, loading and error renders of its own; responds to its container (@container) across all three contract steps — status and time move to a trailing column at @sm, sit side by side and the heading grows at @md, and the times line up in one column at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/list-container/react/list-container.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/list-container.tsx"
+        }
+      ]
+    },
+    {
+      "name": "list-container-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "List Container (Vue)",
+      "description": "A header, a scrolling body and a footer around a list, composing the @moderno-ui/vue Alert, Avatar, Badge, Button, Card and Skeleton primitives: the header and footer stay put while the rows scroll, with empty, loading and error renders of its own; responds to its container (@container) across all three contract steps — status and time move to a trailing column at @sm, sit side by side and the heading grows at @md, and the times line up in one column at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/list-container/vue/ListContainer.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/ListContainer.vue"
+        }
+      ]
+    },
+    {
+      "name": "list-container-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "List Container (Svelte)",
+      "description": "A header, a scrolling body and a footer around a list, composing the @moderno-ui/svelte Alert, Avatar, Badge, Button, Card and Skeleton primitives: the header and footer stay put while the rows scroll, with empty, loading and error renders of its own; responds to its container (@container) across all three contract steps — status and time move to a trailing column at @sm, sit side by side and the heading grows at @md, and the times line up in one column at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/list-container/svelte/ListContainer.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/ListContainer.svelte"
+        }
+      ]
+    },
+    {
+      "name": "list-container-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "List Container (Solid)",
+      "description": "A header, a scrolling body and a footer around a list, composing the @moderno-ui/solid Alert, Avatar, Badge, Button, Card and Skeleton primitives: the header and footer stay put while the rows scroll, with empty, loading and error renders of its own; responds to its container (@container) across all three contract steps — status and time move to a trailing column at @sm, sit side by side and the heading grows at @md, and the times line up in one column at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/list-container/solid/list-container.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/list-container.tsx"
+        }
+      ]
+    },
+    {
       "name": "login-form-react",
       "type": "registry:block",
       "version": "0.7.0",
@@ -566,6 +710,78 @@
           "path": "blocks/login-form/solid/login-form.tsx",
           "type": "registry:block",
           "target": "src/components/blocks/login-form.tsx"
+        }
+      ]
+    },
+    {
+      "name": "panel-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Panel (React)",
+      "description": "Grouping surfaces, composing the @moderno-ui/react Alert, Button, Card and Skeleton primitives: a heading over bordered panels, each with a title, a sentence and its own action, with empty, loading and error renders of its own; responds to its container (@container) across all three contract steps — actions shrink to their label at @sm, two panels a row and a larger heading at @md, wider gaps at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/panel/react/panel.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/panel.tsx"
+        }
+      ]
+    },
+    {
+      "name": "panel-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Panel (Vue)",
+      "description": "Grouping surfaces, composing the @moderno-ui/vue Alert, Button, Card and Skeleton primitives: a heading over bordered panels, each with a title, a sentence and its own action, with empty, loading and error renders of its own; responds to its container (@container) across all three contract steps — actions shrink to their label at @sm, two panels a row and a larger heading at @md, wider gaps at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/panel/vue/Panel.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/Panel.vue"
+        }
+      ]
+    },
+    {
+      "name": "panel-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Panel (Svelte)",
+      "description": "Grouping surfaces, composing the @moderno-ui/svelte Alert, Button, Card and Skeleton primitives: a heading over bordered panels, each with a title, a sentence and its own action, with empty, loading and error renders of its own; responds to its container (@container) across all three contract steps — actions shrink to their label at @sm, two panels a row and a larger heading at @md, wider gaps at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/panel/svelte/Panel.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/Panel.svelte"
+        }
+      ]
+    },
+    {
+      "name": "panel-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Panel (Solid)",
+      "description": "Grouping surfaces, composing the @moderno-ui/solid Alert, Button, Card and Skeleton primitives: a heading over bordered panels, each with a title, a sentence and its own action, with empty, loading and error renders of its own; responds to its container (@container) across all three contract steps — actions shrink to their label at @sm, two panels a row and a larger heading at @md, wider gaps at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/panel/solid/panel.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/panel.tsx"
         }
       ]
     },
