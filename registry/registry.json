@@ -714,6 +714,78 @@
       ]
     },
     {
+      "name": "checkout-form-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Checkout Form (React)",
+      "description": "The address and payment steps of a checkout, composing the @moderno-ui/react Field, RadioGroup, Switch, Divider, Button and Alert primitives: a serif heading over a bordered form whose `step` picks what it asks for — shipping (an email for the receipt, the shipping address and a delivery method picked from bordered options with their price) or payment (the name on the card, its number, expiry and CVC, and a switch to save the card) — with back and continue buttons and its own disabled, loading and error renders; responds to its container (@container) — the fields pair off and the buttons share a row at @sm, the heading steps up and the delivery options sit side by side at @md, and each group's title moves beside its fields with more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/checkout-form/react/checkout-form.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/checkout-form.tsx"
+        }
+      ]
+    },
+    {
+      "name": "checkout-form-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Checkout Form (Vue)",
+      "description": "The address and payment steps of a checkout, composing the @moderno-ui/vue Field, RadioGroup, Switch, Divider, Button and Alert primitives: a serif heading over a bordered form whose `step` picks what it asks for — shipping (an email for the receipt, the shipping address and a delivery method picked from bordered options with their price) or payment (the name on the card, its number, expiry and CVC, and a switch to save the card) — with back and continue buttons and its own disabled, loading and error renders; responds to its container (@container) — the fields pair off and the buttons share a row at @sm, the heading steps up and the delivery options sit side by side at @md, and each group's title moves beside its fields with more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/checkout-form/vue/CheckoutForm.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/CheckoutForm.vue"
+        }
+      ]
+    },
+    {
+      "name": "checkout-form-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Checkout Form (Svelte)",
+      "description": "The address and payment steps of a checkout, composing the @moderno-ui/svelte Field, RadioGroup, Switch, Divider, Button and Alert primitives: a serif heading over a bordered form whose `step` picks what it asks for — shipping (an email for the receipt, the shipping address and a delivery method picked from bordered options with their price) or payment (the name on the card, its number, expiry and CVC, and a switch to save the card) — with back and continue buttons and its own disabled, loading and error renders; responds to its container (@container) — the fields pair off and the buttons share a row at @sm, the heading steps up and the delivery options sit side by side at @md, and each group's title moves beside its fields with more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/checkout-form/svelte/CheckoutForm.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/CheckoutForm.svelte"
+        }
+      ]
+    },
+    {
+      "name": "checkout-form-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Checkout Form (Solid)",
+      "description": "The address and payment steps of a checkout, composing the @moderno-ui/solid Field, RadioGroup, Switch, Divider, Button and Alert primitives: a serif heading over a bordered form whose `step` picks what it asks for — shipping (an email for the receipt, the shipping address and a delivery method picked from bordered options with their price) or payment (the name on the card, its number, expiry and CVC, and a switch to save the card) — with back and continue buttons and its own disabled, loading and error renders; responds to its container (@container) — the fields pair off and the buttons share a row at @sm, the heading steps up and the delivery options sit side by side at @md, and each group's title moves beside its fields with more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/checkout-form/solid/checkout-form.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/checkout-form.tsx"
+        }
+      ]
+    },
+    {
       "name": "contact-react",
       "type": "registry:block",
       "version": "0.1.0",

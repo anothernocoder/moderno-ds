@@ -1,0 +1,37 @@
+{
+  "title": "Checkout Form",
+  "description": "The address and payment steps of a checkout, composing the @moderno-ui/{framework} Field, RadioGroup, Switch, Divider, Button and Alert primitives: a serif heading over a bordered form whose `step` picks what it asks for — shipping (an email for the receipt, the shipping address and a delivery method picked from bordered options with their price) or payment (the name on the card, its number, expiry and CVC, and a switch to save the card) — with back and continue buttons and its own disabled, loading and error renders; responds to its container (@container) — the fields pair off and the buttons share a row at @sm, the heading steps up and the delivery options sit side by side at @md, and each group's title moves beside its fields with more room above and below at @lg.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": [],
+  "files": {
+    "react": [
+      {
+        "path": "blocks/checkout-form/react/checkout-form.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/checkout-form.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "blocks/checkout-form/vue/CheckoutForm.vue",
+        "type": "registry:block",
+        "target": "src/components/blocks/CheckoutForm.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "blocks/checkout-form/svelte/CheckoutForm.svelte",
+        "type": "registry:block",
+        "target": "src/components/blocks/CheckoutForm.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "blocks/checkout-form/solid/checkout-form.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/checkout-form.tsx"
+      }
+    ]
+  }
+}
