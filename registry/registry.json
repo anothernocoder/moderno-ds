@@ -2514,6 +2514,78 @@
       ]
     },
     {
+      "name": "promo-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Promo (React)",
+      "description": "A sitewide promo bar composing the @moderno-ui/react Button, Alert and Skeleton primitives: a bold offer with a short detail, a promo code that copies itself on press, one action and a dismiss that hides the bar, with its own empty, loading and error renders; responds to its container (@container) — the detail joins the offer's line at @sm, the code and action move beside the text at @md (the detail back under the offer) and everything shares one centred line at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/promo/react/promo.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/promo.tsx"
+        }
+      ]
+    },
+    {
+      "name": "promo-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Promo (Vue)",
+      "description": "A sitewide promo bar composing the @moderno-ui/vue Button, Alert and Skeleton primitives: a bold offer with a short detail, a promo code that copies itself on press, one action and a dismiss that hides the bar, with its own empty, loading and error renders; responds to its container (@container) — the detail joins the offer's line at @sm, the code and action move beside the text at @md (the detail back under the offer) and everything shares one centred line at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/promo/vue/Promo.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/Promo.vue"
+        }
+      ]
+    },
+    {
+      "name": "promo-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Promo (Svelte)",
+      "description": "A sitewide promo bar composing the @moderno-ui/svelte Button, Alert and Skeleton primitives: a bold offer with a short detail, a promo code that copies itself on press, one action and a dismiss that hides the bar, with its own empty, loading and error renders; responds to its container (@container) — the detail joins the offer's line at @sm, the code and action move beside the text at @md (the detail back under the offer) and everything shares one centred line at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/promo/svelte/Promo.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/Promo.svelte"
+        }
+      ]
+    },
+    {
+      "name": "promo-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Promo (Solid)",
+      "description": "A sitewide promo bar composing the @moderno-ui/solid Button, Alert and Skeleton primitives: a bold offer with a short detail, a promo code that copies itself on press, one action and a dismiss that hides the bar, with its own empty, loading and error renders; responds to its container (@container) — the detail joins the offer's line at @sm, the code and action move beside the text at @md (the detail back under the offer) and everything shares one centred line at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/promo/solid/promo.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/promo.tsx"
+        }
+      ]
+    },
+    {
       "name": "section-header-react",
       "type": "registry:block",
       "version": "0.1.0",

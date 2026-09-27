@@ -1,0 +1,184 @@
+---
+title: Promo
+description: Una barra de promoción para todo el sitio — una oferta, un código que se copia al pulsarlo, una acción y un botón para descartarla.
+group: Bloques
+order: 119
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import PromoBlockDemo from "../../../islands/PromoBlockDemo.svelte";
+import promoReact from "../../../../../../registry/blocks/promo/react/promo.tsx?raw";
+import promoVue from "../../../../../../registry/blocks/promo/vue/Promo.vue?raw";
+import promoSolid from "../../../../../../registry/blocks/promo/solid/promo.tsx?raw";
+import promoSvelte from "../../../../../../registry/blocks/promo/svelte/Promo.svelte?raw";
+
+export const examples = {
+  react: promoReact,
+  vue: promoVue,
+  solid: promoSolid,
+  svelte: promoSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <PromoBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="promo" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { Promo } from "@/components/blocks/promo";
+```
+
+```tsx
+<Promo
+  offer="Envío gratis este fin de semana"
+  detail="Pedidos de más de 50 €"
+  code="ENVIOGRATIS"
+  onAction={() => open("/tienda")}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import Promo from "@/components/blocks/Promo.vue";
+</script>
+```
+
+```vue
+<Promo
+  offer="Envío gratis este fin de semana"
+  detail="Pedidos de más de 50 €"
+  code="ENVIOGRATIS"
+  @action="open('/tienda')"
+/>
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import Promo from "@/components/blocks/Promo.svelte";
+</script>
+```
+
+```svelte
+<Promo
+  offer="Envío gratis este fin de semana"
+  detail="Pedidos de más de 50 €"
+  code="ENVIOGRATIS"
+  onaction={() => open("/tienda")}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { Promo } from "@/components/blocks/promo";
+```
+
+```tsx
+<Promo
+  offer="Envío gratis este fin de semana"
+  detail="Pedidos de más de 50 €"
+  code="ENVIOGRATIS"
+  onAction={() => open("/tienda")}
+/>
+```
+
+</ForFramework>
+
+## Referencia de API
+
+### Props
+
+| Prop          | Tipo                     | Por defecto      | Descripción                                                        |
+| ------------- | ------------------------ | ---------------- | ------------------------------------------------------------------ |
+| `offer`       | `string`                 | texto de muestra | La oferta, en negrita.                                             |
+| `detail`      | `string`                 | `"Ends Sunday"`  | Una línea corta tras la oferta, como la fecha de fin.              |
+| `code`        | `string`                 | `"MONTHEND20"`   | El código de promoción. Al pulsarlo se copia. `""` quita el botón. |
+| `actionLabel` | `string`                 | `"Claim offer"`  | El texto del botón de acción. `""` quita el botón.                 |
+| `dismissible` | `boolean`                | `true`           | Muestra el botón para descartar.                                   |
+| `error`       | `string`                 | —                | La oferta no cargó; una alerta con reintento la sustituye.         |
+| `loading`     | `boolean`                | `false`          | Una barra esqueleto en una región ocupada la sustituye.            |
+| `disabled`    | `boolean`                | `false`          | La barra sigue legible y todos sus botones quedan deshabilitados.  |
+| `onAction`    | `() => void`             | —                | Se pulsó la acción. Svelte: `onaction`. Vue: `@action`.            |
+| `onCopy`      | `(code: string) => void` | —                | Se copió el código. Svelte: `oncopy`. Vue: `@copy`.                |
+| `onDismiss`   | `() => void`             | —                | Se descartó la barra. Svelte: `ondismiss`. Vue: `@dismiss`.        |
+| `onRetry`     | `() => void`             | —                | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.        |
+
+### Estados
+
+| Estado        | Prop                   | Qué se muestra                                                     |
+| ------------- | ---------------------- | ------------------------------------------------------------------ |
+| Por defecto   | —                      | La barra con su oferta, detalle, código, acción y descarte.        |
+| Copiado       | pulsar el código       | Una marca en lugar del icono de copiar, y se lee "Code copied".    |
+| Descartado    | pulsar descartar       | Nada: la barra se oculta y llama a `onDismiss`.                    |
+| Vacío         | `offer=""` `detail=""` | Nada: el bloque no ocupa espacio.                                  |
+| Cargando      | `loading`              | Una barra esqueleto en una región `status` ocupada.                |
+| Error         | `error`                | Una alerta de error con el botón "Try again" en lugar de la barra. |
+| Deshabilitado | `disabled`             | La barra con todos sus botones deshabilitados.                     |
+
+### Tamaño
+
+| Paso del contenedor      | Qué cambia                                                                    |
+| ------------------------ | ----------------------------------------------------------------------------- |
+| bajo `@sm`               | La oferta y el detalle se apilan; los botones debajo.                         |
+| `@sm` (`--container-sm`) | El detalle pasa a la línea de la oferta.                                      |
+| `@md` (`--container-md`) | El código y la acción pasan junto al texto; el detalle vuelve bajo la oferta. |
+| `@lg` (`--container-lg`) | Todo comparte una línea, centrado en la barra.                                |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+La misma barra a 18rem, 30rem, 40rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <PromoBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Vacío
+
+<Preview examples={examples} layout="fill">
+  <PromoBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <PromoBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+<Preview examples={examples} layout="fill">
+  <PromoBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+<Preview examples={examples} layout="fill">
+  <PromoBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
+
+## Notas
+
+- Ponla una sola vez, sobre la cabecera de la página, para que ocupe todo el ancho.
+- Mantén la oferta corta: en una página ancha comparte línea con el detalle, el código y la acción.
+- Para que siga descartada en la próxima visita, guárdalo en `onDismiss` y deja de mostrar el bloque.
