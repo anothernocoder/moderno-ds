@@ -2,8 +2,19 @@
 .preview-panel--demo > astro-island > [data-scope="carousel"][data-part="root"] {
   width: min(100%, 24rem);
 }
-/* The demo slides stand in for pictures: a tinted panel, its label centred. */
-.preview-panel--demo [data-scope="carousel"][data-part="item"] {
+/* The demo slides stand in for pictures: a tinted panel, its label centred.
+   Only the Carousel page's own demos (a carousel on the stage, or in a stack
+   on it): a block that composes a Carousel brings real slides and sizes them
+   itself. */
+.preview-panel--demo
+  > astro-island
+  > [data-scope="carousel"]
+  [data-scope="carousel"][data-part="item"],
+.preview-panel--demo
+  > astro-island
+  > .demo-stack
+  > [data-scope="carousel"]
+  [data-scope="carousel"][data-part="item"] {
   display: grid;
   place-items: center;
   height: 10rem;
@@ -13,6 +24,10 @@
   font-size: var(--text-heading);
   font-weight: var(--font-weight-semibold);
 }
-.demo-stack [data-scope="carousel"][data-part="item"] {
+.preview-panel--demo
+  > astro-island
+  > .demo-stack
+  > [data-scope="carousel"]
+  [data-scope="carousel"][data-part="item"] {
   height: 6rem;
 }

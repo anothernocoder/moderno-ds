@@ -1,0 +1,245 @@
+---
+title: Product Details
+description: One product in full — a gallery of its photos, its name and price, a choice for each option such as colour or size, a quantity box and an Add to cart button, then tabs for details, care and shipping.
+group: Blocks
+order: 163
+agent:
+  intent: A shop's product page section — a Carousel gallery of the product's photos, a serif name, the price, a short description, one RadioGroup per option (colour, size…), a NumberInput for the quantity and an Add to cart button, then Tabs for details, care and shipping.
+  whenToUse: "The top of a product page, where a shopper looks at one product, picks its options and adds it to the cart."
+  whenNotToUse:
+    - case: One product as a small card in a list or a promo
+      use: ProductCard — it shows one photo, the name, the price and Add to cart
+    - case: A grid of products to browse, with pagination
+      use: ProductList — it shows a page of products to pick from
+    - case: The items already in the cart, with their quantities
+      use: ShoppingCart — it lists each line with a quantity and Remove
+  gotchas:
+    - "`product` is `{ name, price, compareAtPrice?, description?, images?, options?, sections?, maxQuantity? }`. `images` is `{ src, alt }[]`, `options` is `{ name, values: { value, label, soldOut? }[] }[]` and `sections` is `{ title, body }[]`."
+    - "`price` and `compareAtPrice` are strings as people read them, like `€28`. Format them in the reader's currency and language before you pass them. With `compareAtPrice`, the old price is struck through beside the price."
+    - "The gallery is a Carousel with one slide per image. With two images or more it shows previous and next buttons and one dot per photo. Without images it shows one empty muted square."
+    - 'Each option is a RadioGroup named by the option''s `name`. It starts on the first value that is not sold out. A value with `soldOut` is shown, marked "Sold out" and cannot be picked.'
+    - 'If every value of an option is sold out, the button reads "Sold out" and it and the quantity box are off.'
+    - "The quantity is a NumberInput for whole numbers from 1 to `maxQuantity` (99 by default). It starts at 1."
+    - '`onAddToCart(selection)` (Svelte `onaddtocart`, Vue `@add-to-cart`) reports `{ options, quantity }`: `options` maps each option''s `name` to the chosen `value`, like `{ Colour: "sage", Size: "350" }`. Adding it to the cart stays yours.'
+    - 'Pass `adding` while your request runs: the button shows a spinner, reads "Adding", is marked busy and cannot be pressed again.'
+    - "The block keeps the chosen options and quantity itself. To start over for another product, give the block a new `key`."
+    - "The name is the block's `h2`. `sections` become Tabs under the button, the first one open; with no `sections`, there are no tabs."
+    - '`product={null}` shows "This product is no longer available." in a dashed box.'
+    - "`loading` shows placeholders for the gallery and the details in one busy `status` region."
+    - '`error` shows an error Alert with your message and a "Try again" button in place of the product. An empty string counts as no error.'
+    - "`disabled` keeps the product readable — the gallery and the tabs still work — and turns off every option, the quantity box, Add to cart and the retry button."
+    - "The layout follows the block's own width, not the viewport: everything in one column, the quantity above the button, at first; the quantity beside the button from `--container-sm`; a larger name from `--container-md`; the gallery beside the details from `--container-lg`."
+  theming:
+    - "The block paints only the muted square behind each photo (--muted) and its dashed empty box (--border). The gallery is Carousel, each option is RadioGroup, the quantity is NumberInput, Add to cart is Button's primary variant with a Spinner while adding, the details are Tabs, the error is Alert's error variant, the retry is Button's outline variant and the loading placeholders are Skeleton."
+    - "The name reads --font-serif and --foreground; the description, the old price and the tab text read --muted-foreground."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ProductDetailsBlockDemo from "../../../islands/ProductDetailsBlockDemo.svelte";
+import productDetailsReact from "../../../../../../registry/blocks/product-details/react/product-details.tsx?raw";
+import productDetailsVue from "../../../../../../registry/blocks/product-details/vue/ProductDetails.vue?raw";
+import productDetailsSolid from "../../../../../../registry/blocks/product-details/solid/product-details.tsx?raw";
+import productDetailsSvelte from "../../../../../../registry/blocks/product-details/svelte/ProductDetails.svelte?raw";
+
+export const examples = {
+  react: productDetailsReact,
+  vue: productDetailsVue,
+  solid: productDetailsSolid,
+  svelte: productDetailsSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <ProductDetailsBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="product-details" />
+
+## Usage
+
+Use Product Details at the top of a product page. Shoppers look through the photos, pick a colour or a size, choose how many and add the product to their cart.
+
+<ForFramework fw="react">
+
+```tsx
+import { ProductDetails } from "@/components/blocks/product-details";
+```
+
+```tsx
+<ProductDetails product={product} adding={adding} onAddToCart={addToCart} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import ProductDetails from "@/components/blocks/ProductDetails.vue";
+</script>
+```
+
+```vue
+<ProductDetails :product="product" :adding="adding" @add-to-cart="addToCart" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import ProductDetails from "@/components/blocks/ProductDetails.svelte";
+</script>
+```
+
+```svelte
+<ProductDetails {product} {adding} onaddtocart={addToCart} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { ProductDetails } from "@/components/blocks/product-details";
+```
+
+```tsx
+<ProductDetails product={product()} adding={adding()} onAddToCart={addToCart} />
+```
+
+</ForFramework>
+
+`addToCart` receives the chosen options and the quantity, like `{ options: { Colour: "sage", Size: "350" }, quantity: 2 }`. Set `adding` while you save it.
+
+## API Reference
+
+### Props
+
+| Prop          | Type                                    | Default          | Description                                                                                                  |
+| ------------- | --------------------------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------ |
+| `product`     | `Product \| null`                       | a sample product | The product to show. `null` shows the empty message.                                                         |
+| `error`       | `string`                                | —                | Loading the product failed; an error Alert with a retry replaces it.                                         |
+| `loading`     | `boolean`                               | `false`          | Placeholders in a busy region replace the product.                                                           |
+| `disabled`    | `boolean`                               | `false`          | The product stays readable; every option, the quantity box and every button are off.                         |
+| `adding`      | `boolean`                               | `false`          | The button shows a spinner, reads "Adding" and cannot be pressed.                                            |
+| `onAddToCart` | `(selection: ProductSelection) => void` | —                | "Add to cart" was pressed, with the chosen options and quantity. Svelte: `onaddtocart`. Vue: `@add-to-cart`. |
+| `onRetry`     | `() => void`                            | —                | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.                                                 |
+
+### Product
+
+| Field            | Type               | Description                                                           |
+| ---------------- | ------------------ | --------------------------------------------------------------------- |
+| `name`           | `string`           | The product's name, the block's heading.                              |
+| `price`          | `string`           | The price as people read it, like `"€28"`.                            |
+| `compareAtPrice` | `string`           | Optional. The old price, struck through beside the price.             |
+| `description`    | `string`           | Optional. A short paragraph under the price.                          |
+| `images`         | `ProductImage[]`   | Optional. The photos, `{ src, alt }`. Without them, one muted square. |
+| `options`        | `ProductOption[]`  | Optional. `{ name, values }`, one RadioGroup each.                    |
+| `sections`       | `ProductSection[]` | Optional. `{ title, body }`, one tab each.                            |
+| `maxQuantity`    | `number`           | Optional. The most a shopper can pick; `99` when left out.            |
+
+### ProductOptionValue
+
+| Field     | Type      | Description                                             |
+| --------- | --------- | ------------------------------------------------------- |
+| `value`   | `string`  | What `onAddToCart` reports for this choice.             |
+| `label`   | `string`  | What the shopper reads, like `"Sage"`.                  |
+| `soldOut` | `boolean` | Optional. Marks the choice "Sold out" and turns it off. |
+
+### ProductSelection
+
+| Field      | Type                     | Description                                        |
+| ---------- | ------------------------ | -------------------------------------------------- |
+| `options`  | `Record<string, string>` | Each option's `name` mapped to the chosen `value`. |
+| `quantity` | `number`                 | How many, a whole number from 1 to `maxQuantity`.  |
+
+### States
+
+| State    | Prop                  | What renders                                                              |
+| -------- | --------------------- | ------------------------------------------------------------------------- |
+| Default  | —                     | The gallery, the name, the price, the options, the quantity and the tabs. |
+| Adding   | `adding`              | The same, with a spinner and "Adding" on the button.                      |
+| Sold out | every value `soldOut` | The same, with "Sold out" on the button and the quantity box off.         |
+| Empty    | `product={null}`      | "This product is no longer available." in a dashed box.                   |
+| Loading  | `loading`             | Placeholders for the gallery and the details.                             |
+| Error    | `error`               | An error Alert with "Try again".                                          |
+| Disabled | `disabled`            | The same product with every option, the quantity box and the button off.  |
+
+### Sizing
+
+| Container step           | What changes                                    |
+| ------------------------ | ----------------------------------------------- |
+| below `@sm`              | One column. The quantity sits above the button. |
+| `@sm` (`--container-sm`) | The quantity and the button share a row.        |
+| `@md` (`--container-md`) | The name steps up.                              |
+| `@lg` (`--container-lg`) | The gallery moves beside the details.           |
+
+## Examples
+
+### Container widths
+
+The same block at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <ProductDetailsBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Without photos
+
+Leave out `images`, and the gallery is one muted square.
+
+<Preview examples={examples} layout="fill">
+  <ProductDetailsBlockDemo client:visible locale="en" state="no-photos" />
+</Preview>
+
+### Sold out
+
+Mark every value of an option `soldOut`, and the button reads "Sold out".
+
+<Preview examples={examples} layout="fill">
+  <ProductDetailsBlockDemo client:visible locale="en" state="sold-out" />
+</Preview>
+
+### Adding
+
+Pass `adding` while your request runs.
+
+<Preview examples={examples} layout="fill">
+  <ProductDetailsBlockDemo client:visible locale="en" state="adding" />
+</Preview>
+
+### Empty
+
+Pass `product={null}` when the product is gone.
+
+<Preview examples={examples} layout="fill">
+  <ProductDetailsBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <ProductDetailsBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+Press "Try again" to clear the message and bring the product back.
+
+<Preview examples={examples} layout="fill">
+  <ProductDetailsBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+Use it while the page saves something else, so the shopper cannot change the choice.
+
+<Preview examples={examples} layout="fill">
+  <ProductDetailsBlockDemo client:visible locale="en" state="disabled" />
+</Preview>

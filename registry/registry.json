@@ -3234,6 +3234,78 @@
       ]
     },
     {
+      "name": "product-details-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Product Details (React)",
+      "description": "One product's page section, composing the @moderno-ui/react Alert, Button, Carousel, NumberInput, RadioGroup, Skeleton, Spinner and Tabs primitives: a Carousel gallery of the product's photos, its serif name and price, a short description, one RadioGroup per option (colour, size…) with sold-out values off, a NumberInput for the quantity and an Add to cart button that reports the selection, then Tabs for details, care and shipping, with its own adding, sold-out, loading, empty and error renders; responds to its container (@container) — the quantity and the button share a row at @sm, the name steps up at @md, and the gallery moves beside the details at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/product-details/react/product-details.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/product-details.tsx"
+        }
+      ]
+    },
+    {
+      "name": "product-details-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Product Details (Vue)",
+      "description": "One product's page section, composing the @moderno-ui/vue Alert, Button, Carousel, NumberInput, RadioGroup, Skeleton, Spinner and Tabs primitives: a Carousel gallery of the product's photos, its serif name and price, a short description, one RadioGroup per option (colour, size…) with sold-out values off, a NumberInput for the quantity and an Add to cart button that reports the selection, then Tabs for details, care and shipping, with its own adding, sold-out, loading, empty and error renders; responds to its container (@container) — the quantity and the button share a row at @sm, the name steps up at @md, and the gallery moves beside the details at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/product-details/vue/ProductDetails.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/ProductDetails.vue"
+        }
+      ]
+    },
+    {
+      "name": "product-details-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Product Details (Svelte)",
+      "description": "One product's page section, composing the @moderno-ui/svelte Alert, Button, Carousel, NumberInput, RadioGroup, Skeleton, Spinner and Tabs primitives: a Carousel gallery of the product's photos, its serif name and price, a short description, one RadioGroup per option (colour, size…) with sold-out values off, a NumberInput for the quantity and an Add to cart button that reports the selection, then Tabs for details, care and shipping, with its own adding, sold-out, loading, empty and error renders; responds to its container (@container) — the quantity and the button share a row at @sm, the name steps up at @md, and the gallery moves beside the details at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/product-details/svelte/ProductDetails.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/ProductDetails.svelte"
+        }
+      ]
+    },
+    {
+      "name": "product-details-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Product Details (Solid)",
+      "description": "One product's page section, composing the @moderno-ui/solid Alert, Button, Carousel, NumberInput, RadioGroup, Skeleton, Spinner and Tabs primitives: a Carousel gallery of the product's photos, its serif name and price, a short description, one RadioGroup per option (colour, size…) with sold-out values off, a NumberInput for the quantity and an Add to cart button that reports the selection, then Tabs for details, care and shipping, with its own adding, sold-out, loading, empty and error renders; responds to its container (@container) — the quantity and the button share a row at @sm, the name steps up at @md, and the gallery moves beside the details at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/product-details/solid/product-details.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/product-details.tsx"
+        }
+      ]
+    },
+    {
       "name": "product-feature-list-react",
       "type": "registry:block",
       "version": "0.1.0",
