@@ -1,0 +1,12 @@
+/* The context menu demo's trigger is an area to right-click in: a dashed
+   panel with its hint centred, so the example carries no docs-only class. */
+.preview-panel--demo [data-scope="menu"][data-part="context-trigger"] {
+  display: grid;
+  place-items: center;
+  width: min(100%, 18rem);
+  height: 8rem;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  color: var(--muted-foreground);
+  font-size: var(--text-ui-md);
+}

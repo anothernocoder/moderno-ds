@@ -133,8 +133,9 @@ modal or a full page — so it reads the width of its container instead:
   that genuinely changes _shape_ on a small screen — a `Dialog` presented as a
   bottom `Drawer`, a `Menu` as a bottom sheet — and there is no separate
   "mobile" component family. `components.css` carries an allow-list of the
-  `data-scope`s entitled to one; it starts **empty**, and a primitive is added to
-  it in the same change that adds its rule. Queries about the _user_
+  `data-scope`s entitled to one (in its test, `components-css.media.test.ts`); a
+  primitive is added to it in the same change that adds its rule, and the test
+  fails on an entry no rule uses. `menu` is on it. Queries about the _user_
   (`prefers-reduced-motion`, `prefers-color-scheme`) are not viewport queries and
   are always allowed.
 - **Intrinsic layout is not a breakpoint.** `auto-fit` grids are welcome and

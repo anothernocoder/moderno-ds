@@ -29,6 +29,7 @@ export * from "./exports/field.js";
 export * from "./exports/indicator.js";
 export * from "./exports/line-chart.js";
 export * from "./exports/list-collection.js";
+export * from "./exports/menu.js";
 export * from "./exports/number-input.js";
 export * from "./exports/pagination.js";
 export * from "./exports/pin-input.js";

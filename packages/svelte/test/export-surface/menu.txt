@@ -1,0 +1,5 @@
+value Menu
+type MenuHighlightChangeDetails
+type MenuOpenChangeDetails
+type MenuSelectionDetails
+type MenuSize

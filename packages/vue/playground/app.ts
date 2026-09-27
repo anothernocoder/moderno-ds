@@ -27,6 +27,7 @@ import DividerSection from "./sections/divider.js";
 import DonutChartSection from "./sections/donut-chart.js";
 import FieldSection from "./sections/field.js";
 import IndicatorSection from "./sections/indicator.js";
+import MenuSection from "./sections/menu.js";
 import NumberInputSection from "./sections/number-input.js";
 import PaginationSection from "./sections/pagination.js";
 import PinInputSection from "./sections/pin-input.js";
@@ -72,6 +73,7 @@ export const App = defineComponent({
         h(DonutChartSection, { open: props.open }),
         h(FieldSection, { open: props.open }),
         h(IndicatorSection, { open: props.open }),
+        h(MenuSection, { open: props.open }),
         h(NumberInputSection, { open: props.open }),
         h(PaginationSection, { open: props.open }),
         h(PinInputSection, { open: props.open }),

@@ -28,6 +28,7 @@ import donutChartComponent from "./components/donut-chart.ts";
 import fieldComponent from "./components/field.ts";
 import indicatorComponent from "./components/indicator.ts";
 import lineChartComponent from "./components/line-chart.ts";
+import menuComponent from "./components/menu.ts";
 import numberInputComponent from "./components/number-input.ts";
 import paginationComponent from "./components/pagination.ts";
 import pinInputComponent from "./components/pin-input.ts";
@@ -68,6 +69,7 @@ export const { ENTRIES, AGENT_COMPONENTS, AGENT_EXAMPLES } = assembleComponents(
   fieldComponent,
   indicatorComponent,
   lineChartComponent,
+  menuComponent,
   numberInputComponent,
   paginationComponent,
   pinInputComponent,

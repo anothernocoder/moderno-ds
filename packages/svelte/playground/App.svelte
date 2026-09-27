@@ -27,6 +27,7 @@
   import DonutChart from "./sections/DonutChart.svelte";
   import Field from "./sections/Field.svelte";
   import Indicator from "./sections/Indicator.svelte";
+  import Menu from "./sections/Menu.svelte";
   import NumberInput from "./sections/NumberInput.svelte";
   import Pagination from "./sections/Pagination.svelte";
   import PinInput from "./sections/PinInput.svelte";
@@ -67,6 +68,7 @@
   <DonutChart {open} />
   <Field {open} />
   <Indicator {open} />
+  <Menu {open} />
   <NumberInput {open} />
   <Pagination {open} />
   <PinInput {open} />

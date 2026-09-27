@@ -22,6 +22,7 @@ exports[`@moderno-ui/core exports > exports exactly the pinned names 1`] = `
   "indicatorAttrs",
   "indicatorRecipe",
   "indicatorRole",
+  "menuRecipe",
   "numberInputRecipe",
   "paginationRecipe",
   "partAttrs",

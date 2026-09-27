@@ -32,6 +32,7 @@ export * from "./recipes/chip.js";
 export * from "./recipes/divider.js";
 export * from "./recipes/field.js";
 export * from "./recipes/indicator.js";
+export * from "./recipes/menu.js";
 export * from "./recipes/number-input.js";
 export * from "./recipes/pagination.js";
 export * from "./recipes/pin-input.js";

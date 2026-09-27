@@ -1,0 +1,283 @@
+---
+title: Menu
+description: A list of actions that opens from a button, with groups, separators, checkable items and submenus.
+group: Components
+order: 41
+component: Menu
+pkg: "@moderno-ui/react"
+agentPropsHash: "sha256:0855f74fd852b8517f95cdf0719085833aa5e26c1258a22159008ef22d2f8a8d"
+agent:
+  intent: Offer a short list of actions behind one button.
+  whenToUse: Row actions, a toolbar's overflow, an account menu — actions that do not need to stay on screen.
+  whenNotToUse:
+    - case: Picking a value for a form field
+      use: Select
+    - case: Two to five actions that all fit on screen
+      use: Button
+    - case: Rich content, like a form or a card, next to a button
+      use: Popover
+  gotchas:
+    - "size goes on Menu.Root, not on Menu.Content: the root has no element, and passes the size to the trigger and the content."
+    - "Every Menu.Item needs a unique value. onSelect on Menu.Root reports it."
+    - "A submenu is a nested Menu.Root inside Menu.Content, opened by a Menu.TriggerItem, with its own Positioner and Content."
+    - "Menu.CheckboxItem takes checked and onCheckedChange; a Menu.RadioItemGroup takes value and onValueChange."
+    - "Under a 40rem viewport the open menu is a bottom sheet over a scrim. Do not add a media query of your own."
+  theming:
+    - "The surface paints --popover and --popover-foreground, with a --border edge and --shadow-md."
+    - "A highlighted item fills with --accent. The bottom sheet's scrim is --overlay."
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import MenuDemo from "../../../examples/menu/menu.svelte";
+import baseReact from "../../../examples/menu/react.tsx?raw";
+import baseVue from "../../../examples/menu/vue.vue?raw";
+import baseSolid from "../../../examples/menu/solid.tsx?raw";
+import baseSvelte from "../../../examples/menu/menu.svelte?raw";
+import MenuGroupsDemo from "../../../examples/menu/groups/menu-groups.svelte";
+import groupsReact from "../../../examples/menu/groups/react.tsx?raw";
+import groupsVue from "../../../examples/menu/groups/vue.vue?raw";
+import groupsSolid from "../../../examples/menu/groups/solid.tsx?raw";
+import groupsSvelte from "../../../examples/menu/groups/menu-groups.svelte?raw";
+import MenuOptionsDemo from "../../../examples/menu/options/menu-options.svelte";
+import optionsReact from "../../../examples/menu/options/react.tsx?raw";
+import optionsVue from "../../../examples/menu/options/vue.vue?raw";
+import optionsSolid from "../../../examples/menu/options/solid.tsx?raw";
+import optionsSvelte from "../../../examples/menu/options/menu-options.svelte?raw";
+import MenuSubmenuDemo from "../../../examples/menu/submenu/menu-submenu.svelte";
+import submenuReact from "../../../examples/menu/submenu/react.tsx?raw";
+import submenuVue from "../../../examples/menu/submenu/vue.vue?raw";
+import submenuSolid from "../../../examples/menu/submenu/solid.tsx?raw";
+import submenuSvelte from "../../../examples/menu/submenu/menu-submenu.svelte?raw";
+import MenuContextMenuDemo from "../../../examples/menu/context-menu/menu-context-menu.svelte";
+import contextMenuReact from "../../../examples/menu/context-menu/react.tsx?raw";
+import contextMenuVue from "../../../examples/menu/context-menu/vue.vue?raw";
+import contextMenuSolid from "../../../examples/menu/context-menu/solid.tsx?raw";
+import contextMenuSvelte from "../../../examples/menu/context-menu/menu-context-menu.svelte?raw";
+import MenuSizesDemo from "../../../examples/menu/sizes/menu-sizes.svelte";
+import sizesReact from "../../../examples/menu/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/menu/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/menu/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/menu/sizes/menu-sizes.svelte?raw";
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
+  <MenuDemo client:visible />
+</Preview>
+
+## Installation
+
+<Install pkg="@moderno-ui/react" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { Menu, Portal } from "@moderno-ui/react";
+```
+
+```tsx
+<Menu.Root onSelect={(details) => console.log(details.value)}>
+  <Menu.Trigger>Actions</Menu.Trigger>
+  <Portal>
+    <Menu.Positioner>
+      <Menu.Content>
+        <Menu.Item value="edit">Edit</Menu.Item>
+        <Menu.Item value="delete">Delete</Menu.Item>
+      </Menu.Content>
+    </Menu.Positioner>
+  </Portal>
+</Menu.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import { Menu, Portal } from "@moderno-ui/vue";
+</script>
+```
+
+```vue
+<template>
+  <Menu.Root @select="(details) => console.log(details.value)">
+    <Menu.Trigger>Actions</Menu.Trigger>
+    <Portal>
+      <Menu.Positioner>
+        <Menu.Content>
+          <Menu.Item value="edit">Edit</Menu.Item>
+          <Menu.Item value="delete">Delete</Menu.Item>
+        </Menu.Content>
+      </Menu.Positioner>
+    </Portal>
+  </Menu.Root>
+</template>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import { Menu, Portal } from "@moderno-ui/svelte";
+</script>
+```
+
+```svelte
+<Menu.Root onSelect={(details) => console.log(details.value)}>
+  <Menu.Trigger>Actions</Menu.Trigger>
+  <Portal>
+    <Menu.Positioner>
+      <Menu.Content>
+        <Menu.Item value="edit">Edit</Menu.Item>
+        <Menu.Item value="delete">Delete</Menu.Item>
+      </Menu.Content>
+    </Menu.Positioner>
+  </Portal>
+</Menu.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Menu, Portal } from "@moderno-ui/solid";
+```
+
+```tsx
+<Menu.Root onSelect={(details) => console.log(details.value)}>
+  <Menu.Trigger>Actions</Menu.Trigger>
+  <Portal>
+    <Menu.Positioner>
+      <Menu.Content>
+        <Menu.Item value="edit">Edit</Menu.Item>
+        <Menu.Item value="delete">Delete</Menu.Item>
+      </Menu.Content>
+    </Menu.Positioner>
+  </Portal>
+</Menu.Root>
+```
+
+</ForFramework>
+
+## API Reference
+
+### Menu.Root
+
+<PropsTable component="Menu" />
+
+The other props come from Ark. The ones you will use most:
+
+| Prop            | Type                                   | Default | Description                                                 |
+| --------------- | -------------------------------------- | ------- | ----------------------------------------------------------- |
+| `onSelect`      | `(details: { value: string }) => void` | —       | Called when the user chooses an item, with its `value`.     |
+| `open`          | `boolean`                              | —       | Controlled open state. Update it from `onOpenChange`.       |
+| `defaultOpen`   | `boolean`                              | `false` | Open at first, when uncontrolled.                           |
+| `onOpenChange`  | `(details: { open: boolean }) => void` | —       | Called when the menu opens or closes.                       |
+| `closeOnSelect` | `boolean`                              | `true`  | Close the menu after the user chooses an item.              |
+| `positioning`   | `PositioningOptions`                   | —       | Where the menu opens, like `{ placement: "bottom-start" }`. |
+
+In Vue, listen with `@select` and `@open-change`, and bind with `v-model:open`.
+
+### Parts
+
+| Part                  | Element    | Description                                                         |
+| --------------------- | ---------- | ------------------------------------------------------------------- |
+| `Menu.Root`           | —          | Holds the state. Takes `size` and Ark's props. Renders no element.  |
+| `Menu.Trigger`        | `<button>` | Opens and closes the menu. Carries `data-size`.                     |
+| `Menu.Indicator`      | `<div>`    | Optional. An arrow in the trigger that turns while open.            |
+| `Menu.ContextTrigger` | `<button>` | Optional. An area that opens the menu on right-click or long-press. |
+| `Menu.Positioner`     | `<div>`    | Places the menu. Wrap it in `Portal`.                               |
+| `Menu.Content`        | `<div>`    | The menu surface. Carries `data-size`.                              |
+| `Menu.Item`           | `<div>`    | One action. Takes a unique `value`, and `disabled`.                 |
+| `Menu.ItemGroup`      | `<div>`    | Groups items under a label.                                         |
+| `Menu.ItemGroupLabel` | `<div>`    | The group's name.                                                   |
+| `Menu.Separator`      | `<hr>`     | A line between groups.                                              |
+| `Menu.CheckboxItem`   | `<div>`    | An item that turns on and off. Takes `checked`.                     |
+| `Menu.RadioItemGroup` | `<div>`    | Groups radio items. Takes `value`.                                  |
+| `Menu.RadioItem`      | `<div>`    | One choice in a radio group.                                        |
+| `Menu.ItemText`       | `<div>`    | The label of a checkbox or radio item.                              |
+| `Menu.ItemIndicator`  | `<div>`    | Shown while a checkbox or radio item is checked.                    |
+| `Menu.TriggerItem`    | `<div>`    | An item that opens a submenu.                                       |
+| `Menu.Arrow`          | `<div>`    | Optional. Points at the trigger. Holds `Menu.ArrowTip`.             |
+
+### Data attributes
+
+| Attribute          | On                   | Values                                       |
+| ------------------ | -------------------- | -------------------------------------------- |
+| `data-size`        | Trigger, Content     | `sm`, `md` (default), `lg`                   |
+| `data-state`       | Trigger, Content     | `open`, `closed`                             |
+| `data-state`       | Checkbox, radio item | `checked`, `unchecked`                       |
+| `data-highlighted` | Item                 | Present on the keyboard or pointer highlight |
+| `data-disabled`    | Item                 | Present when the item is `disabled`          |
+
+## Examples
+
+### Groups and separators
+
+`Menu.ItemGroup` names a set of items. `Menu.Separator` draws a line between sets. A `disabled` item stays visible but can't be chosen.
+
+<Preview
+  examples={{ react: groupsReact, vue: groupsVue, solid: groupsSolid, svelte: groupsSvelte }}
+>
+  <MenuGroupsDemo client:visible />
+</Preview>
+
+### Checkbox and radio items
+
+`closeOnSelect={false}` keeps the menu open while the user changes settings.
+
+<Preview
+  examples={{ react: optionsReact, vue: optionsVue, solid: optionsSolid, svelte: optionsSvelte }}
+>
+  <MenuOptionsDemo client:visible />
+</Preview>
+
+### Submenu
+
+Put a second `Menu.Root` inside `Menu.Content`. Its `Menu.TriggerItem` opens it.
+
+<Preview
+  examples={{ react: submenuReact, vue: submenuVue, solid: submenuSolid, svelte: submenuSvelte }}
+>
+  <MenuSubmenuDemo client:visible />
+</Preview>
+
+### Context menu
+
+`Menu.ContextTrigger` opens the menu where the user right-clicks, or long-presses on a touch screen.
+
+<Preview
+  examples={{
+    react: contextMenuReact,
+    vue: contextMenuVue,
+    solid: contextMenuSolid,
+    svelte: contextMenuSvelte,
+  }}
+>
+  <MenuContextMenuDemo client:visible />
+</Preview>
+
+### Sizes
+
+`size` on `Menu.Root` sets the trigger's height and the items' density.
+
+<Preview examples={{ react: sizesReact, vue: sizesVue, solid: sizesSolid, svelte: sizesSvelte }}>
+  <MenuSizesDemo client:visible />
+</Preview>
+
+## Notes
+
+- On a screen narrower than 40rem, the open menu is a bottom sheet: it slides to the foot of the screen over a dimmed page. A tap on the dimmed page closes it.
+- `Menu.Root`, `Menu.Trigger` and `Menu.Content` are wrapped to add `size`. Every other part is Ark's.
+- A submenu takes the size of its parent menu, unless you give it its own.
+- Arrow keys move the highlight, typing jumps to an item, and Escape closes the menu.

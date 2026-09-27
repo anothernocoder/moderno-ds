@@ -1679,6 +1679,249 @@
     }
   }
 
+  /* ─────────────────────────── Menu ─────────────────────────── *
+   * `menuRecipe` size on the trigger and the content: Ark's Menu.Root
+   * renders no element. Ark drives open state, focus, typeahead and
+   * submenus. Under 40rem the menu is a bottom sheet (ADR-0005).       */
+
+  /* The trigger is a native <button> and paints its own fill over the UA
+     `buttonface` grey: an outline control, like Button's outline variant. */
+  [data-scope="menu"][data-part="trigger"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-2);
+    height: var(--spacing-8);
+    padding-inline: var(--spacing-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: var(--text-ui-md);
+    font-weight: var(--font-weight-medium);
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    transition:
+      background-color var(--motion-fast),
+      color var(--motion-fast);
+  }
+  [data-scope="menu"][data-part="trigger"]:hover,
+  [data-scope="menu"][data-part="trigger"][data-state="open"] {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+  [data-scope="menu"][data-part="trigger"][data-size="sm"] {
+    height: var(--spacing-7);
+    padding-inline: var(--spacing-2);
+    font-size: var(--text-ui-sm);
+  }
+  [data-scope="menu"][data-part="trigger"][data-size="lg"] {
+    height: calc(var(--spacing-8) + var(--spacing-2));
+    padding-inline: var(--spacing-4);
+    font-size: var(--text-ui-lg);
+  }
+
+  /* The context trigger is a native <button> too, wrapped around whatever
+     area opens the menu on right-click or long-press: it clears every UA
+     button default and takes the look of what it wraps. */
+  [data-scope="menu"][data-part="context-trigger"] {
+    padding: 0;
+    border: 0;
+    background-color: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: inherit;
+  }
+
+  /* Both buttons ring inside their box: the trigger's resting border would
+     show inside an outset ring, a double border (7ea4320). */
+  [data-scope="menu"]:is([data-part="trigger"], [data-part="context-trigger"]):focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+  }
+
+  /* A native `disabled` looks the same as Ark's data-disabled (3be5002). */
+  [data-scope="menu"]:is([data-part="trigger"], [data-part="context-trigger"]):disabled,
+  [data-scope="menu"]:is([data-part="trigger"], [data-part="context-trigger"])[data-disabled] {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+
+  /* The open/close affordance inside the trigger turns over while open. */
+  [data-scope="menu"][data-part="indicator"] {
+    display: inline-flex;
+    transition: transform var(--motion-fast);
+  }
+  [data-scope="menu"][data-part="indicator"][data-state="open"] {
+    transform: rotate(180deg);
+  }
+
+  /* The surface. Ark copies the content's z-index onto the positioner, so a
+     menu opens above an app's sticky chrome (the usual z-50 layer), like
+     Dialog. The content holds focus while the highlight moves through the
+     items (aria-activedescendant), so the highlighted item shows focus, not
+     the surface. */
+  [data-scope="menu"][data-part="content"] {
+    position: relative;
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    min-width: calc(var(--spacing-8) * 5);
+    padding: var(--spacing-1);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--popover);
+    color: var(--popover-foreground);
+    font-family: var(--font-sans);
+    box-shadow: var(--shadow-md);
+  }
+  [data-scope="menu"][data-part="content"]:focus-visible {
+    outline: none;
+  }
+
+  /* Arrow: Ark sizes and fills it from these two variables. */
+  [data-scope="menu"][data-part="arrow"] {
+    --arrow-size: var(--spacing-3);
+    --arrow-background: var(--popover);
+  }
+  [data-scope="menu"][data-part="arrow-tip"] {
+    border-top: 1px solid var(--border);
+    border-left: 1px solid var(--border);
+  }
+
+  /* Items. A trigger item opens a submenu; checkbox and radio items are items
+     with a data-type. */
+  [data-scope="menu"]:is([data-part="item"], [data-part="trigger-item"]) {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    min-height: var(--spacing-8);
+    padding-inline: var(--spacing-2);
+    border-radius: calc(var(--radius) - var(--spacing-1));
+    font-size: var(--text-ui-md);
+    line-height: var(--leading-ui-md);
+    cursor: pointer;
+    user-select: none;
+    outline: none;
+  }
+  [data-scope="menu"]:is([data-part="item"], [data-part="trigger-item"])[data-highlighted],
+  [data-scope="menu"][data-part="trigger-item"][data-state="open"] {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+  /* The text takes the free space, so an indicator or a shortcut sits at the
+     end of the row. */
+  [data-scope="menu"][data-part="item-text"] {
+    flex: 1;
+  }
+  [data-scope="menu"][data-part="item-indicator"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--spacing-4);
+  }
+
+  [data-scope="menu"][data-part="item-group"] {
+    display: flex;
+    flex-direction: column;
+  }
+  [data-scope="menu"][data-part="item-group-label"] {
+    padding: var(--spacing-1) var(--spacing-2);
+    color: var(--muted-foreground);
+    font-size: var(--text-ui-xs);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--leading-ui-xs);
+  }
+
+  /* The separator is an <hr> (a <div> in Svelte): the UA margins and inset
+     border are replaced by one hairline that runs to the surface's edges. */
+  [data-scope="menu"][data-part="separator"] {
+    height: 0;
+    margin: var(--spacing-1) calc(var(--spacing-1) * -1);
+    border: 0;
+    border-top: 1px solid var(--border);
+  }
+
+  /* Density driven by the recipe's data-size on the content. Descendant
+     combinators, so a consumer may wrap the items; the :where(:not(…)) guard
+     (no specificity) stops at a submenu rendered inside this content without
+     a Portal, which follows its own data-size. `lg` exceeds the top spacing
+     slot, so it sums two slots rather than inventing a token. */
+  [data-scope="menu"][data-part="content"][data-size="sm"]
+    [data-scope="menu"]:is([data-part="item"], [data-part="trigger-item"]):where(
+      :not(
+        [data-scope="menu"][data-part="content"][data-size="sm"]
+          [data-scope="menu"][data-part="content"]:not([data-size="sm"])
+          *
+      )
+    ) {
+    min-height: var(--spacing-7);
+    font-size: var(--text-ui-sm);
+    line-height: var(--leading-ui-sm);
+  }
+  [data-scope="menu"][data-part="content"][data-size="lg"]
+    [data-scope="menu"]:is([data-part="item"], [data-part="trigger-item"]):where(
+      :not(
+        [data-scope="menu"][data-part="content"][data-size="lg"]
+          [data-scope="menu"][data-part="content"]:not([data-size="lg"])
+          *
+      )
+    ) {
+    min-height: calc(var(--spacing-8) + var(--spacing-2));
+    padding-inline: var(--spacing-3);
+    font-size: var(--text-ui-lg);
+    line-height: var(--leading-ui-lg);
+  }
+
+  /* Bottom sheet. Under 40rem an open menu leaves its trigger: the positioner
+     covers the viewport and paints the scrim, the same --overlay slot Dialog's
+     backdrop uses, and the content sits at its foot, full width. A tap on the
+     scrim is outside the content, so it closes the menu. Ark's positioner
+     writes its place as inline styles (position, top, left, min-width,
+     transform), and !important is the only way a stylesheet overrides an
+     inline style. 40rem is literal because a media query cannot read a
+     custom property. */
+  @media (width < 40rem) {
+    [data-scope="menu"][data-part="positioner"]:has(> [data-part="content"][data-state="open"]) {
+      position: fixed !important;
+      inset: 0 !important;
+      min-width: 0 !important;
+      transform: none !important;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding-top: var(--spacing-8);
+      background-color: var(--overlay);
+    }
+    [data-scope="menu"][data-part="content"] {
+      width: 100%;
+      max-height: 100%;
+      overflow-y: auto;
+      padding: var(--spacing-2) var(--spacing-2) calc(var(--spacing-2) + env(safe-area-inset-bottom));
+      border-width: 1px 0 0;
+      border-radius: calc(var(--radius) * 2) calc(var(--radius) * 2) 0 0;
+      box-shadow: var(--shadow-lg);
+    }
+    /* A finger needs a taller row than a pointer, whatever the size. */
+    [data-scope="menu"][data-part="content"][data-size]
+      [data-scope="menu"]:is([data-part="item"], [data-part="trigger-item"]) {
+      min-height: calc(var(--spacing-8) + var(--spacing-3));
+    }
+    [data-scope="menu"][data-part="arrow"] {
+      display: none;
+    }
+  }
+
+  /* Less motion: the trigger and its indicator change at once. */
+  @media (prefers-reduced-motion: reduce) {
+    [data-scope="menu"]:is([data-part="trigger"], [data-part="indicator"]) {
+      transition: none;
+    }
+  }
+
   /* ───────────────────────── Number Input ───────────────────────── *
    * Ark's number-input machine: root > label + control > input + the two
    * steppers (decrement-trigger, increment-trigger, native <button>s), with

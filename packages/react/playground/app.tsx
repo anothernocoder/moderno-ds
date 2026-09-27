@@ -31,6 +31,7 @@ import DividerSection from "./sections/divider.js";
 import DonutChartSection from "./sections/donut-chart.js";
 import FieldSection from "./sections/field.js";
 import IndicatorSection from "./sections/indicator.js";
+import MenuSection from "./sections/menu.js";
 import NumberInputSection from "./sections/number-input.js";
 import PaginationSection from "./sections/pagination.js";
 import PinInputSection from "./sections/pin-input.js";
@@ -75,6 +76,7 @@ export function App({ open = false }: AppProps) {
       <DonutChartSection open={open} />
       <FieldSection open={open} />
       <IndicatorSection open={open} />
+      <MenuSection open={open} />
       <NumberInputSection open={open} />
       <PaginationSection open={open} />
       <PinInputSection open={open} />
