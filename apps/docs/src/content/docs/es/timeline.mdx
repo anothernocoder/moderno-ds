@@ -1,6 +1,6 @@
 ---
 title: Timeline
-description: Una línea de tiempo de animación para un editor — reproducir, pausar y repetir, una regla de tiempo con un cabezal que se arrastra, y una fila de fotogramas clave por propiedad animada.
+description: Una línea de tiempo de animación para un editor — reproducir, pausar y repetir, una regla de tiempo con un cabezal que se arrastra y se amplía, y una fila de fotogramas clave por propiedad animada que se añaden, mueven y borran.
 group: Bloques
 order: 299
 ---
@@ -28,7 +28,7 @@ export const examples = {
   <TimelineBlockDemo client:visible locale="es" />
 </Preview>
 
-Úsala en un editor que anima propiedades en el tiempo: pulsa reproducir, arrastra el cabezal para recorrer la animación y selecciona o mueve un fotograma clave. El bloque muestra el tiempo; tu app lo controla.
+Úsala en un editor que anima propiedades en el tiempo: pulsa reproducir, arrastra el cabezal para recorrer la animación, añade, mueve y borra fotogramas clave, y amplía para colocarlos en su fotograma. El bloque muestra el tiempo; tu app lo controla.
 
 ## Instalación
 
@@ -51,6 +51,8 @@ import { Timeline } from "@/components/blocks/timeline";
   onTimeChange={setTime}
   onPlayingChange={setPlaying}
   onKeyframeChange={moveKeyframe}
+  onKeyframeAdd={addKeyframe}
+  onKeyframeDelete={deleteKeyframe}
 />
 ```
 
@@ -72,6 +74,8 @@ import Timeline from "@/components/blocks/Timeline.vue";
   @time-change="time = $event"
   @playing-change="playing = $event"
   @keyframe-change="moveKeyframe"
+  @keyframe-add="addKeyframe"
+  @keyframe-delete="deleteKeyframe"
 />
 ```
 
@@ -93,6 +97,8 @@ import Timeline from "@/components/blocks/Timeline.vue";
   ontimechange={(next) => (time = next)}
   onplayingchange={(next) => (playing = next)}
   onkeyframechange={moveKeyframe}
+  onkeyframeadd={addKeyframe}
+  onkeyframedelete={deleteKeyframe}
 />
 ```
 
@@ -112,12 +118,14 @@ import { Timeline } from "@/components/blocks/timeline";
   onTimeChange={setTime}
   onPlayingChange={setPlaying}
   onKeyframeChange={moveKeyframe}
+  onKeyframeAdd={addKeyframe}
+  onKeyframeDelete={deleteKeyframe}
 />
 ```
 
 </ForFramework>
 
-El bloque no tiene reloj. Mientras `playing` es true, tu app avanza `time` (por ejemplo con `requestAnimationFrame`) y se detiene o vuelve a empezar en `duration`. `moveKeyframe` escribe el nuevo `time` en ese fotograma clave de `tracks`.
+El bloque no tiene reloj. Mientras `playing` es true, tu app avanza `time` (por ejemplo con `requestAnimationFrame`) y se detiene o vuelve a empezar en `duration`. `moveKeyframe`, `addKeyframe` y `deleteKeyframe` escriben el cambio en `tracks`; `addKeyframe` da al nuevo fotograma clave el `id` que elijas.
 
 ## Referencia de la API
 
@@ -132,11 +140,15 @@ El bloque no tiene reloj. Mientras `playing` es true, tu app avanza `time` (por 
 | `playing`          | `boolean`                                        | `false`                | El botón de reproducir está pulsado.                                                                           |
 | `loop`             | `boolean`                                        | `false`                | El botón de repetir está pulsado.                                                                              |
 | `selectedKeyframe` | `KeyframeSelection \| null`                      | `null`                 | El fotograma clave que se dibuja como seleccionado.                                                            |
+| `zoom`             | `number`                                         | `1`                    | Cuánto se amplía el eje de tiempo. `1` muestra toda la `duration` en el ancho visible.                         |
 | `onTimeChange`     | `(time: number) => void`                         | —                      | El cabezal se arrastró, se pulsó o se movió con el teclado. Svelte: `ontimechange`. Vue: `@time-change`.       |
 | `onPlayingChange`  | `(playing: boolean) => void`                     | —                      | Se pulsó reproducir o pausar, o Espacio. Svelte: `onplayingchange`. Vue: `@playing-change`.                    |
 | `onLoopChange`     | `(loop: boolean) => void`                        | —                      | Se pulsó repetir. Svelte: `onloopchange`. Vue: `@loop-change`.                                                 |
 | `onKeyframeSelect` | `(selection: KeyframeSelection \| null) => void` | —                      | Se pulsó o enfocó un fotograma clave. Svelte: `onkeyframeselect`. Vue: `@keyframe-select`.                     |
 | `onKeyframeChange` | `(change: KeyframeChange) => void`               | —                      | Un fotograma clave se arrastró o se movió con el teclado. Svelte: `onkeyframechange`. Vue: `@keyframe-change`. |
+| `onKeyframeAdd`    | `(keyframe: KeyframeAdd) => void`                | —                      | Se pulsó añadir fotograma clave. Svelte: `onkeyframeadd`. Vue: `@keyframe-add`.                                |
+| `onKeyframeDelete` | `(keyframe: KeyframeSelection) => void`          | —                      | Se pulsó borrar fotograma clave o la tecla Supr. Svelte: `onkeyframedelete`. Vue: `@keyframe-delete`.          |
+| `onZoomChange`     | `(zoom: number) => void`                         | —                      | Se pulsó alejar, acercar o ajustar. Svelte: `onzoomchange`. Vue: `@zoom-change`.                               |
 
 ### TimelineTrack
 
@@ -146,37 +158,41 @@ El bloque no tiene reloj. Mientras `playing` es true, tu app avanza `time` (por 
 | `label`     | `string`                         | La etiqueta de la fila, y parte del nombre de cada fotograma clave.            |
 | `keyframes` | `{ id: string; time: number }[]` | Un tirador por fotograma, en `time` segundos. El bloque los ordena por tiempo. |
 
-### KeyframeSelection y KeyframeChange
+### KeyframeSelection, KeyframeChange y KeyframeAdd
 
-| Campo        | Tipo     | Descripción                                                                 |
-| ------------ | -------- | --------------------------------------------------------------------------- |
-| `trackId`    | `string` | El `id` de la pista.                                                        |
-| `keyframeId` | `string` | El `id` del fotograma clave.                                                |
-| `time`       | `number` | Solo `KeyframeChange`: el nuevo tiempo, en segundos, ajustado al fotograma. |
+| Campo        | Tipo     | Descripción                                                                                    |
+| ------------ | -------- | ---------------------------------------------------------------------------------------------- |
+| `trackId`    | `string` | El `id` de la pista.                                                                           |
+| `keyframeId` | `string` | El `id` del fotograma clave. No está en `KeyframeAdd`: tu app nombra el nuevo fotograma clave. |
+| `time`       | `number` | Solo `KeyframeChange` y `KeyframeAdd`: el tiempo, en segundos, ajustado al fotograma.          |
 
 ### Partes
 
-| Parte             | Qué es                                                                                                                                       |
-| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| Controles         | Toggles de reproducir/pausar y repetir con Tooltips, y el marcador `actual / duración` en `m:ss:ff`.                                         |
-| Regla             | Un Slider de un solo tirador: el tirador es el cabezal ("Playhead", anunciado como "1.20 seconds"); las marcas de tiempo son sus marcadores. |
-| Pistas            | Una fila por pista: su etiqueta y un Slider con un tirador por fotograma clave y sin rango.                                                  |
-| Línea del cabezal | Una línea en el tiempo del cabezal que cruza todas las pistas.                                                                               |
+| Parte             | Qué es                                                                                                                                                                                                                                                                  |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Controles         | Toggles de reproducir/pausar y repetir, Buttons de añadir y borrar fotograma clave ("Add keyframe", "Delete keyframe"), el marcador `actual / duración` en `m:ss:ff`, y Buttons de alejar, acercar y ajustar ("Zoom out", "Zoom in", "Fit"). Cada uno tiene un Tooltip. |
+| Regla             | Un Slider de un solo tirador: el tirador es el cabezal ("Playhead", anunciado como "1.20 seconds"); las marcas de tiempo son sus marcadores.                                                                                                                            |
+| Pistas            | Una fila por pista: su etiqueta, un Toggle que selecciona la pista, y un Slider con un tirador por fotograma clave y sin rango.                                                                                                                                         |
+| Línea del cabezal | Una línea en el tiempo del cabezal que cruza todas las pistas.                                                                                                                                                                                                          |
 
 ### Estados
 
-| Estado        | Prop               | Qué se muestra                                                                                 |
-| ------------- | ------------------ | ---------------------------------------------------------------------------------------------- |
-| En pausa      | —                  | El botón de reproducir muestra el icono de reproducir y no está pulsado.                       |
-| Reproduciendo | `playing`          | El botón de reproducir está pulsado y muestra el icono de pausa.                               |
-| Repitiendo    | `loop`             | El botón de repetir está pulsado.                                                              |
-| Seleccionado  | `selectedKeyframe` | Ese fotograma clave es un rombo mayor y relleno con contorno; su nombre termina en "selected". |
+| Estado             | Prop                                      | Qué se muestra                                                                                                                                                                           |
+| ------------------ | ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| En pausa           | —                                         | El botón de reproducir muestra el icono de reproducir y no está pulsado.                                                                                                                 |
+| Reproduciendo      | `playing`                                 | El botón de reproducir está pulsado y muestra el icono de pausa.                                                                                                                         |
+| Repitiendo         | `loop`                                    | El botón de repetir está pulsado.                                                                                                                                                        |
+| Seleccionado       | `selectedKeyframe`                        | Ese fotograma clave es un rombo mayor y relleno con contorno; su nombre termina en "selected".                                                                                           |
+| Pista seleccionada | `selectedKeyframe`, o pulsar una etiqueta | La etiqueta de esa pista está pulsada; añadir fotograma clave añade en ella.                                                                                                             |
+| Ampliado           | `zoom` mayor que `1`                      | El área de tiempo es `zoom` veces más ancha y se desplaza en horizontal; las marcas de la regla se hacen más densas.                                                                     |
+| Desactivado        | —                                         | Añadir, sin pista seleccionada o con un fotograma clave en el fotograma del cabezal; borrar, sin fotograma clave seleccionado; alejar y ajustar en `1`; acercar en la ampliación máxima. |
 
 ### Teclado
 
 | Tecla                    | Dónde                           | Hace                                                                          |
 | ------------------------ | ------------------------------- | ----------------------------------------------------------------------------- |
 | Espacio                  | La línea de tiempo, el cabezal  | Reproduce o pausa.                                                            |
+| Supr                     | La línea de tiempo              | Borra el fotograma clave seleccionado. Retroceso también.                     |
 | Flecha izquierda/derecha | El cabezal o un fotograma clave | Lo mueve un fotograma.                                                        |
 | Re Pág / Av Pág          | El cabezal o un fotograma clave | Lo mueve un segundo.                                                          |
 | Inicio / Fin             | El cabezal o un fotograma clave | Lo lleva al principio o al final (un fotograma clave se para en sus vecinos). |
@@ -213,4 +229,20 @@ Una animación de 90 segundos a 24 fotogramas por segundo. La regla marca cada 1
 
 <Preview examples={examples} layout="fill">
   <TimelineBlockDemo client:visible locale="es" example="frames" />
+</Preview>
+
+### Añadir y borrar fotogramas clave
+
+Pulsa la etiqueta de una pista, mueve el cabezal y pulsa añadir fotograma clave. Para borrar, selecciona un fotograma clave y pulsa borrar fotograma clave o la tecla Supr.
+
+<Preview examples={examples} layout="fill">
+  <TimelineBlockDemo client:visible locale="es" example="editing" />
+</Preview>
+
+### Ampliar
+
+Ampliada al 400%: la regla marca cada cinco fotogramas y el área de tiempo se desplaza en horizontal. Ajustar vuelve a mostrar toda la animación.
+
+<Preview examples={examples} layout="fill">
+  <TimelineBlockDemo client:visible locale="es" example="zoom" />
 </Preview>

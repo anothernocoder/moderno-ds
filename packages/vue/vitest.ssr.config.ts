@@ -15,6 +15,8 @@ const manifest = fileURLToPath(new URL("../../registry/registry.json", import.me
 // imports from this package), but a jsdom-mode test compiles the SFC for the
 // client and Vite resolves from the importer, so point the name at the source.
 const primitives = fileURLToPath(new URL("./src/index.ts", import.meta.url));
+// Same reason for core: a block that announces a change imports `announce()` by name.
+const core = fileURLToPath(new URL("../core/src/index.ts", import.meta.url));
 
 export default defineConfig({
   plugins: [vue()],
@@ -22,6 +24,7 @@ export default defineConfig({
     alias: [
       ...registryAliases(manifest, "vue"),
       { find: /^@moderno-ui\/vue$/, replacement: primitives },
+      { find: /^@moderno-ui\/core$/, replacement: core },
     ],
   },
   test: {

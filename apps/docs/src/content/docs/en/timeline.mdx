@@ -1,11 +1,11 @@
 ---
 title: Timeline
-description: An animation timeline for an editor — play, pause and loop, a time ruler with a playhead you drag, and one row of keyframes per animated property.
+description: An animation timeline for an editor — play, pause and loop, a time ruler with a playhead you drag and zoom, and one row of keyframes per animated property that you add, move and delete.
 group: Blocks
 order: 299
 agent:
-  intent: An editor panel section for animation — play/pause and loop Toggles with a "current / duration" readout, a time ruler that is a single-thumb Slider (the playhead) with its time marks, and one row per animated property whose keyframes are the thumbs of a Slider.
-  whenToUse: "An editor or creative tool that animates properties over time and needs a playhead to scrub and keyframes to select and move."
+  intent: An editor panel section for animation — play/pause and loop Toggles with a "current / duration" readout, Add keyframe, Delete keyframe and zoom Buttons, a time ruler that is a single-thumb Slider (the playhead) with its time marks, and one row per animated property whose keyframes are the thumbs of a Slider.
+  whenToUse: "An editor or creative tool that animates properties over time and needs a playhead to scrub, keyframes to add, select, move and delete, and a zoom to place them on the frame."
   whenNotToUse:
     - case: One number picked from a range
       use: Slider — a single thumb on a track
@@ -14,17 +14,22 @@ agent:
     - case: A list of past events in order
       use: ActivityFeed — a dated list of what happened
   gotchas:
-    - "Controlled only. The block renders `tracks`, `time`, `playing`, `loop` and `selectedKeyframe` exactly as given and reports changes through callbacks. Write each change back, or nothing moves."
+    - "Controlled only. The block renders `tracks`, `time`, `playing`, `loop`, `selectedKeyframe` and `zoom` exactly as given and reports changes through callbacks. Write each change back, or nothing moves."
+    - "Add keyframe reports `onKeyframeAdd({ trackId, time })` for the selected track at the playhead, snapped to the frame; your app creates the keyframe (and its `id`) in `tracks`. It is disabled with no track selected or when a keyframe already sits on that frame."
+    - "The selected track is the selected keyframe's track, or else the one whose label was pressed last. Pressing a label selects its track and clears the keyframe selection."
+    - "Delete keyframe and the Delete key report `onKeyframeDelete({ trackId, keyframeId })` for the selected keyframe; your app removes it from `tracks`. The selection and the focus move to the nearest keyframe on that track, or to its label."
+    - '`zoom` is a factor: `1` fits the whole `duration` in the visible width. Zoom out, Zoom in and Fit report `onZoomChange` (half, double, or `1`); the deepest zoom shows about ten frames. Above `1` the time area scrolls sideways, and each change is announced ("Zoom 200%").'
     - "The block has no clock. Play only reports `onPlayingChange(true)`; your app advances `time` (for example with requestAnimationFrame) and stops or loops at the end."
     - "Time is in seconds. `fps` (default `30`) sets the frame: every time the block reports is snapped to `1 / fps`, and arrow keys move one frame."
     - "`tracks` is `{ id, label, keyframes: { id, time }[] }[]`. Keyframes cannot pass each other or share a frame, so their order never changes."
-    - "Svelte takes lowercase callbacks (`ontimechange`, `onplayingchange`, `onloopchange`, `onkeyframeselect`, `onkeyframechange`); Vue emits `@time-change`, `@playing-change`, `@loop-change`, `@keyframe-select` and `@keyframe-change`."
-    - "Space plays and pauses while the focus is on the timeline, but not on a keyframe or a button. Page Up/Down move the playhead or a keyframe one second; Home/End go to the start or end."
+    - "Svelte takes lowercase callbacks (`ontimechange`, `onplayingchange`, `onloopchange`, `onkeyframeselect`, `onkeyframechange`, `onkeyframeadd`, `onkeyframedelete`, `onzoomchange`); Vue emits `@time-change`, `@playing-change`, `@loop-change`, `@keyframe-select`, `@keyframe-change`, `@keyframe-add`, `@keyframe-delete` and `@zoom-change`."
+    - "Space plays and pauses while the focus is on the timeline, but not on a keyframe or a button. Page Up/Down move the playhead or a keyframe one second; Home/End go to the start or end. Delete (or Backspace) deletes the selected keyframe."
     - "Clicking or focusing a keyframe reports `onKeyframeSelect`. A press on an empty stretch of a track does nothing: only keyframes move."
-    - "The track list scrolls under the ruler once it is taller than 16rem; the label column keeps its width and only the time area stretches."
+    - "The track list scrolls under the ruler once it is taller than 16rem; the label column keeps its width and only the time area stretches. Zoomed in, the ruler and every track scroll sideways together under the label column, and the playhead is kept in view."
+    - "Ruler marks follow the zoom: whole seconds while three or more fill the view, then frames (`15f`), never more than about ten in the view."
     - "The layout follows the block's own width, not the viewport: the label column widens from `--container-sm`, and every ruler mark shows from `--container-md` (every other one below)."
   theming:
-    - "The block paints only its borders (--border), its --background (so the sticky ruler covers the tracks it scrolls over), the playhead line and the keyframe diamonds (--primary). The play and loop buttons are Toggle, their labels Tooltip, the ruler and tracks Slider."
+    - "The block paints only its borders (--border), its --background (so the sticky ruler and label column cover the tracks they scroll over), the playhead line and the keyframe diamonds (--primary). The play and loop buttons and the track labels are Toggle, the add, delete and zoom buttons ghost Button, their labels Tooltip, the ruler and tracks Slider."
     - "The selected keyframe is a larger, filled diamond with a --foreground outline; the others are small hollow diamonds."
     - "Layout comes from the Tailwind preset's contract-backed utilities; the two steps are --container-sm and --container-md."
 ---
@@ -52,7 +57,7 @@ export const examples = {
   <TimelineBlockDemo client:visible locale="en" />
 </Preview>
 
-Use it in an editor that animates properties over time: press play, drag the playhead to scrub, and select or move a keyframe. The block shows the time; your app owns it.
+Use it in an editor that animates properties over time: press play, drag the playhead to scrub, add, move and delete keyframes, and zoom in to place them on the frame. The block shows the time; your app owns it.
 
 ## Installation
 
@@ -75,6 +80,8 @@ import { Timeline } from "@/components/blocks/timeline";
   onTimeChange={setTime}
   onPlayingChange={setPlaying}
   onKeyframeChange={moveKeyframe}
+  onKeyframeAdd={addKeyframe}
+  onKeyframeDelete={deleteKeyframe}
 />
 ```
 
@@ -96,6 +103,8 @@ import Timeline from "@/components/blocks/Timeline.vue";
   @time-change="time = $event"
   @playing-change="playing = $event"
   @keyframe-change="moveKeyframe"
+  @keyframe-add="addKeyframe"
+  @keyframe-delete="deleteKeyframe"
 />
 ```
 
@@ -117,6 +126,8 @@ import Timeline from "@/components/blocks/Timeline.vue";
   ontimechange={(next) => (time = next)}
   onplayingchange={(next) => (playing = next)}
   onkeyframechange={moveKeyframe}
+  onkeyframeadd={addKeyframe}
+  onkeyframedelete={deleteKeyframe}
 />
 ```
 
@@ -136,31 +147,37 @@ import { Timeline } from "@/components/blocks/timeline";
   onTimeChange={setTime}
   onPlayingChange={setPlaying}
   onKeyframeChange={moveKeyframe}
+  onKeyframeAdd={addKeyframe}
+  onKeyframeDelete={deleteKeyframe}
 />
 ```
 
 </ForFramework>
 
-The block has no clock. While `playing` is true, your app advances `time` (for example with `requestAnimationFrame`) and stops or loops at `duration`. `moveKeyframe` writes the new `time` into that keyframe of `tracks`.
+The block has no clock. While `playing` is true, your app advances `time` (for example with `requestAnimationFrame`) and stops or loops at `duration`. `moveKeyframe`, `addKeyframe` and `deleteKeyframe` write the change into `tracks`; `addKeyframe` gives the new keyframe an `id` of your choice.
 
 ## API Reference
 
 ### Props
 
-| Prop               | Type                                             | Default             | Description                                                                                     |
-| ------------------ | ------------------------------------------------ | ------------------- | ----------------------------------------------------------------------------------------------- |
-| `tracks`           | `TimelineTrack[]`                                | three sample tracks | One row each, with its label and its keyframes.                                                 |
-| `duration`         | `number`                                         | `5`                 | The length of the animation, in seconds.                                                        |
-| `time`             | `number`                                         | `0`                 | Where the playhead is, in seconds.                                                              |
-| `fps`              | `number`                                         | `30`                | Frames per second. Reported times snap to `1 / fps`; an arrow key moves one frame.              |
-| `playing`          | `boolean`                                        | `false`             | The play button is pressed.                                                                     |
-| `loop`             | `boolean`                                        | `false`             | The loop button is pressed.                                                                     |
-| `selectedKeyframe` | `KeyframeSelection \| null`                      | `null`              | The keyframe drawn as selected.                                                                 |
-| `onTimeChange`     | `(time: number) => void`                         | —                   | The playhead was dragged, clicked or moved by key. Svelte: `ontimechange`. Vue: `@time-change`. |
-| `onPlayingChange`  | `(playing: boolean) => void`                     | —                   | Play or pause was pressed, or Space. Svelte: `onplayingchange`. Vue: `@playing-change`.         |
-| `onLoopChange`     | `(loop: boolean) => void`                        | —                   | Loop was pressed. Svelte: `onloopchange`. Vue: `@loop-change`.                                  |
-| `onKeyframeSelect` | `(selection: KeyframeSelection \| null) => void` | —                   | A keyframe was clicked or focused. Svelte: `onkeyframeselect`. Vue: `@keyframe-select`.         |
-| `onKeyframeChange` | `(change: KeyframeChange) => void`               | —                   | A keyframe was dragged or moved by key. Svelte: `onkeyframechange`. Vue: `@keyframe-change`.    |
+| Prop               | Type                                             | Default             | Description                                                                                         |
+| ------------------ | ------------------------------------------------ | ------------------- | --------------------------------------------------------------------------------------------------- |
+| `tracks`           | `TimelineTrack[]`                                | three sample tracks | One row each, with its label and its keyframes.                                                     |
+| `duration`         | `number`                                         | `5`                 | The length of the animation, in seconds.                                                            |
+| `time`             | `number`                                         | `0`                 | Where the playhead is, in seconds.                                                                  |
+| `fps`              | `number`                                         | `30`                | Frames per second. Reported times snap to `1 / fps`; an arrow key moves one frame.                  |
+| `playing`          | `boolean`                                        | `false`             | The play button is pressed.                                                                         |
+| `loop`             | `boolean`                                        | `false`             | The loop button is pressed.                                                                         |
+| `selectedKeyframe` | `KeyframeSelection \| null`                      | `null`              | The keyframe drawn as selected.                                                                     |
+| `zoom`             | `number`                                         | `1`                 | How far the time axis is zoomed. `1` fits the whole `duration` in the visible width.                |
+| `onTimeChange`     | `(time: number) => void`                         | —                   | The playhead was dragged, clicked or moved by key. Svelte: `ontimechange`. Vue: `@time-change`.     |
+| `onPlayingChange`  | `(playing: boolean) => void`                     | —                   | Play or pause was pressed, or Space. Svelte: `onplayingchange`. Vue: `@playing-change`.             |
+| `onLoopChange`     | `(loop: boolean) => void`                        | —                   | Loop was pressed. Svelte: `onloopchange`. Vue: `@loop-change`.                                      |
+| `onKeyframeSelect` | `(selection: KeyframeSelection \| null) => void` | —                   | A keyframe was clicked or focused. Svelte: `onkeyframeselect`. Vue: `@keyframe-select`.             |
+| `onKeyframeChange` | `(change: KeyframeChange) => void`               | —                   | A keyframe was dragged or moved by key. Svelte: `onkeyframechange`. Vue: `@keyframe-change`.        |
+| `onKeyframeAdd`    | `(keyframe: KeyframeAdd) => void`                | —                   | Add keyframe was pressed. Svelte: `onkeyframeadd`. Vue: `@keyframe-add`.                            |
+| `onKeyframeDelete` | `(keyframe: KeyframeSelection) => void`          | —                   | Delete keyframe or the Delete key was pressed. Svelte: `onkeyframedelete`. Vue: `@keyframe-delete`. |
+| `onZoomChange`     | `(zoom: number) => void`                         | —                   | Zoom out, Zoom in or Fit was pressed. Svelte: `onzoomchange`. Vue: `@zoom-change`.                  |
 
 ### TimelineTrack
 
@@ -170,37 +187,41 @@ The block has no clock. While `playing` is true, your app advances `time` (for e
 | `label`     | `string`                         | The row's label, and part of each keyframe's name.               |
 | `keyframes` | `{ id: string; time: number }[]` | One thumb each, at `time` seconds. The block sorts them by time. |
 
-### KeyframeSelection and KeyframeChange
+### KeyframeSelection, KeyframeChange and KeyframeAdd
 
-| Field        | Type     | Description                                                            |
-| ------------ | -------- | ---------------------------------------------------------------------- |
-| `trackId`    | `string` | The track's `id`.                                                      |
-| `keyframeId` | `string` | The keyframe's `id`.                                                   |
-| `time`       | `number` | `KeyframeChange` only: the new time, in seconds, snapped to the frame. |
+| Field        | Type     | Description                                                                          |
+| ------------ | -------- | ------------------------------------------------------------------------------------ |
+| `trackId`    | `string` | The track's `id`.                                                                    |
+| `keyframeId` | `string` | The keyframe's `id`. Not in `KeyframeAdd`: your app names the new keyframe.          |
+| `time`       | `number` | `KeyframeChange` and `KeyframeAdd` only: the time, in seconds, snapped to the frame. |
 
 ### Parts
 
-| Part          | What it is                                                                                                                  |
-| ------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| Controls      | Play/pause and loop Toggles with Tooltips, and the readout `current / duration` in `m:ss:ff`.                               |
-| Ruler         | A single-thumb Slider: the thumb is the playhead ("Playhead", announced as "1.20 seconds"); the time marks are its markers. |
-| Tracks        | One row per track: its label, then a Slider with one thumb per keyframe and no range.                                       |
-| Playhead line | A line at the playhead's time that crosses every track.                                                                     |
+| Part          | What it is                                                                                                                                                                       |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Controls      | Play/pause and loop Toggles, Add keyframe and Delete keyframe Buttons, the readout `current / duration` in `m:ss:ff`, and Zoom out, Zoom in and Fit Buttons. Each has a Tooltip. |
+| Ruler         | A single-thumb Slider: the thumb is the playhead ("Playhead", announced as "1.20 seconds"); the time marks are its markers.                                                      |
+| Tracks        | One row per track: its label, a Toggle that selects the track, then a Slider with one thumb per keyframe and no range.                                                           |
+| Playhead line | A line at the playhead's time that crosses every track.                                                                                                                          |
 
 ### States
 
-| State    | Prop               | What renders                                                                            |
-| -------- | ------------------ | --------------------------------------------------------------------------------------- |
-| Paused   | —                  | The play button shows a play icon and is not pressed.                                   |
-| Playing  | `playing`          | The play button is pressed and shows a pause icon.                                      |
-| Looping  | `loop`             | The loop button is pressed.                                                             |
-| Selected | `selectedKeyframe` | That keyframe is a larger, filled diamond with an outline; its name ends in "selected". |
+| State          | Prop                                 | What renders                                                                                                                                                              |
+| -------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Paused         | —                                    | The play button shows a play icon and is not pressed.                                                                                                                     |
+| Playing        | `playing`                            | The play button is pressed and shows a pause icon.                                                                                                                        |
+| Looping        | `loop`                               | The loop button is pressed.                                                                                                                                               |
+| Selected       | `selectedKeyframe`                   | That keyframe is a larger, filled diamond with an outline; its name ends in "selected".                                                                                   |
+| Track selected | `selectedKeyframe`, or a label press | That track's label is pressed; Add keyframe adds to it.                                                                                                                   |
+| Zoomed         | `zoom` above `1`                     | The time area is `zoom` times wider and scrolls sideways; the ruler marks get denser.                                                                                     |
+| Disabled       | —                                    | Add keyframe with no track selected or with a keyframe on the playhead's frame; Delete keyframe with none selected; Zoom out and Fit at `1`; Zoom in at the deepest zoom. |
 
 ### Keyboard
 
 | Key                 | Where                      | Does                                                                   |
 | ------------------- | -------------------------- | ---------------------------------------------------------------------- |
 | Space               | The timeline, the playhead | Plays or pauses.                                                       |
+| Delete              | The timeline               | Deletes the selected keyframe. Backspace does too.                     |
 | Left / Right arrow  | The playhead or a keyframe | Moves it one frame.                                                    |
 | Page Up / Page Down | The playhead or a keyframe | Moves it one second.                                                   |
 | Home / End          | The playhead or a keyframe | Moves it to the start or the end (a keyframe stops at its neighbours). |
@@ -237,4 +258,20 @@ A 90-second animation at 24 frames per second. The ruler marks every 10 seconds,
 
 <Preview examples={examples} layout="fill">
   <TimelineBlockDemo client:visible locale="en" example="frames" />
+</Preview>
+
+### Add and delete keyframes
+
+Press a track's label, move the playhead, then press Add keyframe. To delete, select a keyframe and press Delete keyframe or the Delete key.
+
+<Preview examples={examples} layout="fill">
+  <TimelineBlockDemo client:visible locale="en" example="editing" />
+</Preview>
+
+### Zoom
+
+Zoomed to 400%: the ruler marks every five frames, and the time area scrolls sideways. Fit shows the whole animation again.
+
+<Preview examples={examples} layout="fill">
+  <TimelineBlockDemo client:visible locale="en" example="zoom" />
 </Preview>

@@ -26,7 +26,16 @@
  *    a press on an empty stretch of a track moves nothing.
  * 6. **Long lists scroll under a sticky ruler.**
  * 7. **Looks right** in theme-moderno and theme-contrast, light and dark: AA
- *    text and 3:1 for the diamonds and the playhead line.
+ *    text and 3:1 for the diamonds, the playhead line and the icons.
+ * 8. **Keyframes are added and deleted by the app**: Add keyframe adds at the
+ *    playhead to the selected track and is disabled on a frame that already
+ *    has one; Delete keyframe and the Delete key remove the selected one. The
+ *    focus goes to the new keyframe, or to the nearest one left (or the
+ *    track's label).
+ * 9. **Zoom widens the time area**: Zoom in, Zoom out and Fit change it and
+ *    announce it; the ruler and every track scroll sideways together under
+ *    the label column; the playhead stays in view; the marks get denser
+ *    (seconds, then frames) and their labels never overlap.
  */
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
@@ -34,9 +43,9 @@ import { expect, test, type Locator, type Page } from "@playwright/test";
 const CONTAINER_SM = 384;
 const CONTAINER_MD = 576;
 
-/** The label column, `w-20` below `@sm` and `w-32` from it, in px. */
-const LABEL_NARROW = 80;
-const LABEL_WIDE = 128;
+/** The label column, `w-22` below `@sm` and `w-34` from it, in px. */
+const LABEL_NARROW = 88;
+const LABEL_WIDE = 136;
 
 /** The responsive policy's three widths (ADR-0005). */
 const WIDTHS = [375, 768, 1280];
@@ -45,8 +54,9 @@ const PAGE = "/en/timeline/";
 const BLOCK = "section.moderno-block-timeline";
 const FPS = 30;
 
-const STATES = ["default", "narrow", "compact", "panel", "tracks", "frames"] as const;
-type State = (typeof STATES)[number];
+/** The copies at zoom 1; `zoom` scrolls sideways on purpose and is measured on its own. */
+const STATES = ["default", "narrow", "compact", "panel", "tracks", "frames", "editing"] as const;
+type State = (typeof STATES)[number] | "zoom";
 
 function block(page: Page, state: State): Locator {
   return page.locator(`[data-demo-state="${state}"] ${BLOCK}`);
@@ -74,6 +84,8 @@ const readout = (copy: Locator) => copy.locator("p").first();
 const playhead = (copy: Locator) => copy.getByRole("slider", { name: "Playhead" });
 const keyframe = (copy: Locator, name: string) =>
   copy.getByRole("slider", { name: new RegExp(`^${name}`) });
+const button = (copy: Locator, name: string) => copy.getByRole("button", { name, exact: true });
+const announcer = (page: Page) => page.locator("[data-live-announcer]");
 
 /** "0:01:12 / 0:05:00" → seconds of the current time at `fps`. */
 function secondsOf(text: string, fps = FPS): number {
@@ -102,7 +114,7 @@ async function layout(copy: Locator): Promise<Layout> {
   return copy.evaluate((section) => {
     const box = (el: Element) => el.getBoundingClientRect();
     const text = (el: Element) => el.textContent?.replace(/\s+/g, " ").trim() ?? "";
-    const scroller = section.querySelector<HTMLElement>(".overflow-y-auto")!;
+    const scroller = section.querySelector<HTMLElement>(".overflow-auto")!;
     const rows = [...section.querySelectorAll("li")];
     const labelCells = rows.map((row) => row.firstElementChild!);
     const sliders = [...section.querySelectorAll('[data-scope="slider"][data-part="root"]')];
@@ -153,11 +165,7 @@ test.describe("timeline — what it renders", () => {
     const metrics = await layout(copy);
     expect(metrics.marks).toEqual(["0s", "1s", "2s", "3s", "4s", "5s"]);
 
-    await expect(copy.locator("li > span:first-child")).toHaveText([
-      "Opacity",
-      "Position",
-      "Scale",
-    ]);
+    await expect(copy.locator("[data-track-label]")).toHaveText(["Opacity", "Position", "Scale"]);
     const names = await copy
       .locator("[data-track-id] [role=slider]")
       .evaluateAll((thumbs) => thumbs.map((t) => t.getAttribute("aria-label")));
@@ -444,13 +452,231 @@ test.describe("timeline — keyframes", () => {
   });
 });
 
+test.describe("timeline — adding and deleting keyframes", () => {
+  test("Add keyframe adds at the playhead to the selected track, then focuses it", async ({
+    page,
+  }) => {
+    await openPage(page);
+    const copy = await show(page, "editing");
+    const add = button(copy, "Add keyframe");
+    await expect(add, "no track selected").toHaveAttribute("aria-disabled", "true");
+
+    const position = button(copy, "Position");
+    await position.click();
+    await expect(position).toHaveAttribute("aria-pressed", "true");
+    await expect(add).not.toHaveAttribute("aria-disabled");
+    await add.hover();
+    await expect(page.getByRole("tooltip")).toHaveText("Add keyframe");
+
+    await add.click();
+    await expect(keyframe(copy, "Position keyframe at 2.00 s, selected")).toBeFocused();
+    await expect(copy.locator('[data-track-id="position"] [role=slider]')).toHaveCount(3);
+    await expect(add, "a keyframe sits on this frame now").toHaveAttribute("aria-disabled", "true");
+
+    // With a keyframe selected, its track is the one Add keyframe adds to.
+    await keyframe(copy, "Scale keyframe at 1.50").click();
+    await expect(button(copy, "Scale")).toHaveAttribute("aria-pressed", "true");
+    await expect(position).toHaveAttribute("aria-pressed", "false");
+    await playhead(copy).focus();
+    await page.keyboard.press("ArrowRight");
+    await expect(readout(copy)).toHaveText(/^0:02:01/);
+    await add.click();
+    await expect(keyframe(copy, "Scale keyframe at 2.03 s, selected")).toBeFocused();
+    const value = Number(
+      await keyframe(copy, "Scale keyframe at 2.03").getAttribute("aria-valuenow"),
+    );
+    expect(Math.abs(value * FPS - Math.round(value * FPS)), "on a frame").toBeLessThan(1e-6);
+  });
+
+  test("Delete keyframe and the Delete key remove the selected one and focus the nearest", async ({
+    page,
+  }) => {
+    await openPage(page);
+    const copy = await show(page, "editing");
+    const remove = button(copy, "Delete keyframe");
+    await expect(remove, "no keyframe selected").toHaveAttribute("aria-disabled", "true");
+
+    await keyframe(copy, "Opacity keyframe at 1.00").click();
+    await page.keyboard.press("Delete");
+    // 0 s is one second away, 4 s three.
+    await expect(keyframe(copy, "Opacity keyframe at 0.00 s, selected")).toBeFocused();
+    await expect(copy.locator('[data-track-id="opacity"] [role=slider]')).toHaveCount(2);
+
+    await remove.hover();
+    await expect(page.getByRole("tooltip")).toHaveText("Delete keyframe (Delete)");
+    await remove.click();
+    await expect(keyframe(copy, "Opacity keyframe at 4.00 s, selected")).toBeFocused();
+
+    // The last one: the focus goes to the track's label, which stays pressed.
+    await remove.click();
+    const opacity = button(copy, "Opacity");
+    await expect(opacity).toBeFocused();
+    await expect(opacity).toHaveAttribute("aria-pressed", "true");
+    await expect(copy.locator('[data-track-id="opacity"] [role=slider]')).toHaveCount(0);
+    await expect(remove).toHaveAttribute("aria-disabled", "true");
+    await expect(
+      button(copy, "Add keyframe"),
+      "the empty track takes a new one",
+    ).not.toHaveAttribute("aria-disabled");
+  });
+});
+
+/** Where the playhead line sits against the visible time area, and how the time area scrolls. */
+async function timeArea(copy: Locator) {
+  return copy.evaluate((section) => {
+    const box = (el: Element) => el.getBoundingClientRect();
+    const scroller = section.querySelector<HTMLElement>(".overflow-auto")!;
+    const corner = section.querySelector(".sticky > .sticky")!;
+    const line = section.querySelector('[aria-hidden="true"] .w-px')!;
+    const controls = [...section.querySelectorAll('[data-scope="slider"] [data-part="control"]')];
+    const labels = [...section.querySelectorAll("li > :first-child")];
+    const markers = [...section.querySelectorAll<HTMLElement>('[data-part="marker"]')]
+      .filter((mark) => getComputedStyle(mark).display !== "none")
+      .map((mark) => ({
+        text: mark.textContent?.trim() ?? "",
+        left: box(mark).left,
+        right: box(mark).right,
+      }));
+    return {
+      start: box(corner).right,
+      end: box(scroller).left + scroller.clientWidth,
+      lineX: box(line).left,
+      overflow: scroller.scrollWidth - scroller.clientWidth,
+      scrollLeft: scroller.scrollLeft,
+      widths: controls.map((control) => box(control).width),
+      lefts: controls.map((control) => box(control).left),
+      labelLefts: labels.map((label) => box(label).left),
+      markers,
+    };
+  });
+}
+
+async function scrollTimeArea(copy: Locator, left: number): Promise<void> {
+  await copy.evaluate(async (section, to) => {
+    section.querySelector<HTMLElement>(".overflow-auto")!.scrollLeft = to;
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+  }, left);
+}
+
+test.describe("timeline — zoom", () => {
+  test("Zoom in, Zoom out and Fit widen the time area, scroll it as one and announce it", async ({
+    page,
+  }) => {
+    await openPage(page);
+    const copy = await show(page, "default");
+    const zoomIn = button(copy, "Zoom in");
+    const zoomOut = button(copy, "Zoom out");
+    const fit = button(copy, "Fit");
+    await expect(zoomOut).toHaveAttribute("aria-disabled", "true");
+    await expect(fit).toHaveAttribute("aria-disabled", "true");
+    const fitted = await timeArea(copy);
+    expect(fitted.overflow).toBeLessThanOrEqual(0);
+
+    await zoomIn.hover();
+    await expect(page.getByRole("tooltip")).toHaveText("Zoom in");
+    await zoomIn.click();
+    await expect(announcer(page)).toHaveText("Zoom 200%");
+    const zoomed = await timeArea(copy);
+    expect(zoomed.widths[0], "twice as wide").toBeCloseTo(fitted.widths[0]! * 2, 0);
+    expect(zoomed.overflow, "scrolls sideways").toBeGreaterThan(0);
+
+    // The ruler and every track scroll together; the label column stays put.
+    await scrollTimeArea(copy, 0);
+    const before = await timeArea(copy);
+    await scrollTimeArea(copy, 120);
+    const after = await timeArea(copy);
+    expect(after.scrollLeft).toBeCloseTo(120, 0);
+    for (const [i, left] of after.lefts.entries()) {
+      expect(before.widths[i], `time area ${i} width`).toBeCloseTo(before.widths[0]!, 0);
+      expect(left, `time area ${i} left`).toBeCloseTo(before.lefts[i]! - 120, 0);
+    }
+    expect(after.labelLefts).toEqual(before.labelLefts);
+
+    await zoomOut.hover();
+    await expect(page.getByRole("tooltip")).toHaveText("Zoom out");
+    await zoomIn.click();
+    await expect(announcer(page)).toHaveText("Zoom 400%");
+    await zoomIn.click();
+    await expect(announcer(page)).toHaveText("Zoom 800%");
+    // About ten frames fill the view: no deeper.
+    await expect(zoomIn).toHaveAttribute("aria-disabled", "true");
+    await expect(zoomIn, "a button that disables itself keeps the focus").toBeFocused();
+    await zoomOut.click();
+    await expect(announcer(page)).toHaveText("Zoom 400%");
+    await fit.hover();
+    await expect(page.getByRole("tooltip")).toHaveText("Fit");
+    await fit.click();
+    await expect(announcer(page)).toHaveText("Zoom 100%");
+    await expect(fit).toHaveAttribute("aria-disabled", "true");
+    expect((await timeArea(copy)).overflow).toBeLessThanOrEqual(0);
+  });
+
+  for (const width of WIDTHS) {
+    test(`keeps the playhead in view and the marks apart at ${width}px`, async ({ page }) => {
+      await openPage(page, width);
+      const copy = await show(page, "zoom");
+      const inView = async (where: string) => {
+        const area = await timeArea(copy);
+        expect(area.lineX, `${where}: playhead right of the labels`).toBeGreaterThanOrEqual(
+          area.start,
+        );
+        expect(area.lineX, `${where}: playhead left of the edge`).toBeLessThanOrEqual(area.end);
+        return area;
+      };
+      const apart = (area: Awaited<ReturnType<typeof timeArea>>, where: string) => {
+        const sorted = [...area.markers].sort((a, b) => a.left - b.left);
+        for (const [i, mark] of sorted.slice(1).entries()) {
+          expect(
+            mark.left,
+            `${where}: "${sorted[i]!.text}" and "${mark.text}"`,
+          ).toBeGreaterThanOrEqual(sorted[i]!.right);
+        }
+      };
+
+      // It starts at 400% with the playhead at 4 s, far right: scrolled into view.
+      let area = await inView("400%");
+      apart(area, "400%");
+      expect(
+        area.markers.some((mark) => mark.text.endsWith("f")),
+        "frame marks",
+      ).toBe(true);
+
+      const texts: Record<string, string[]> = {};
+      for (const [step, label] of [
+        ["Zoom in", "800%"],
+        ["Fit", "100%"],
+        ["Zoom in", "200%"],
+      ] as const) {
+        await button(copy, step).click();
+        await expect(announcer(page)).toHaveText(`Zoom ${label}`);
+        area = await inView(label);
+        apart(area, label);
+        texts[label] = area.markers.map((mark) => mark.text);
+      }
+      // Seconds, then frames: denser as the zoom deepens.
+      expect(texts["100%"]!.every((text) => text.endsWith("s"))).toBe(true);
+      expect(texts["200%"]).toContain("1s");
+      expect(texts["800%"]!.some((text) => text.endsWith("f"))).toBe(true);
+
+      // The playhead follows the keyboard, too.
+      await playhead(copy).focus();
+      await page.keyboard.press("Home");
+      await expect(readout(copy)).toHaveText(/^0:00:00/);
+      await inView("Home");
+      await page.keyboard.press("End");
+      await expect(readout(copy)).toHaveText(/^0:05:00/);
+      await inView("End");
+    });
+  }
+});
+
 test.describe("timeline — long track lists", () => {
   test("scroll under a ruler that stays on top", async ({ page }) => {
     await openPage(page);
     const copy = await show(page, "tracks");
     await expect(copy.locator("li")).toHaveCount(8);
     const scrolled = await copy.evaluate(async (section) => {
-      const scroller = section.querySelector<HTMLElement>(".overflow-y-auto")!;
+      const scroller = section.querySelector<HTMLElement>(".overflow-auto")!;
       const ruler = scroller.querySelector<HTMLElement>(".sticky")!;
       const overflows = scroller.scrollHeight > scroller.clientHeight;
       scroller.scrollTop = scroller.scrollHeight;
@@ -503,8 +729,11 @@ async function ratios(copy: Locator): Promise<Record<string, number>> {
     const color = (el: Element) => getComputedStyle(el).color;
     result.readout = ratio(color(section.querySelector("p")!), surface);
     result.time = ratio(color(section.querySelector("p > span")!), surface);
-    section.querySelectorAll("li > span:first-child").forEach((label) => {
-      result[`label ${label.textContent}`] = ratio(color(label), surface);
+    // A pressed label sits on its own --accent fill.
+    section.querySelectorAll("[data-track-label]").forEach((label) => {
+      const fill = getComputedStyle(label).backgroundColor;
+      const behind = rgba(fill)[3] === 0 ? surface : fill;
+      result[`label ${label.textContent}`] = ratio(color(label), behind);
     });
     section.querySelectorAll('[data-part="marker"]').forEach((mark) => {
       result[`mark ${mark.textContent?.trim()}`] = ratio(color(mark), surface);
@@ -513,7 +742,10 @@ async function ratios(copy: Locator): Promise<Record<string, number>> {
     result.diamond = ratio(getComputedStyle(diamond).borderTopColor, surface);
     const line = section.querySelector('[aria-hidden="true"] .w-px')!;
     result.line = ratio(getComputedStyle(line).backgroundColor, surface);
-    result.icon = ratio(color(section.querySelector("button")!), surface);
+    // Every icon button that can be pressed; a disabled one is exempt (WCAG 1.4.11).
+    section.querySelectorAll("button[aria-label]:not([aria-disabled])").forEach((icon) => {
+      result[`icon ${icon.getAttribute("aria-label")}`] = ratio(color(icon), surface);
+    });
     return result;
   });
 }
@@ -528,9 +760,12 @@ for (const theme of ["moderno", "contrast"] as const) {
         await openPage(page);
         expect(await page.evaluate(() => document.documentElement.dataset.brand)).toBe(theme);
         const copy = await show(page, "default");
+        // A selected keyframe presses its track's label and enables Delete keyframe.
+        await keyframe(copy, "Position keyframe at 0.50").click();
         const found = await ratios(copy);
+        expect(Object.keys(found)).toContain("icon Delete keyframe");
         for (const [name, value] of Object.entries(found)) {
-          const floor = ["diamond", "line", "icon"].includes(name) ? 3 : 4.5;
+          const floor = ["diamond", "line"].includes(name) || name.startsWith("icon ") ? 3 : 4.5;
           expect(value, `${theme} ${scheme}: ${name}`).toBeGreaterThanOrEqual(floor);
         }
       });

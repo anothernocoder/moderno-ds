@@ -1,9 +1,10 @@
 <!--
   The app around one timeline block, as a consumer would write it: the block
   is controlled and holds no clock, so this keeps the time, the playing and
-  loop flags, the tracks and the selection, and writes back every change the
-  block reports. While playing, a requestAnimationFrame clock advances the
-  time; at the end it stops, or wraps round to the start when looping.
+  loop flags, the tracks, the selection and the zoom, and writes back every
+  change the block reports: a moved, added or deleted keyframe lands in
+  `tracks`. While playing, a requestAnimationFrame clock advances the time; at
+  the end it stops, or wraps round to the start when looping.
 -->
 <script lang="ts">
   import Timeline from "../../../../registry/blocks/timeline/svelte/Timeline.svelte";
@@ -19,7 +20,8 @@
     duration,
     fps = 30,
     time: startTime = 0,
-  }: { tracks: Track[]; duration: number; fps?: number; time?: number } = $props();
+    zoom: startZoom = 1,
+  }: { tracks: Track[]; duration: number; fps?: number; time?: number; zoom?: number } = $props();
 
   // Seeded once from the props: from here on the demo owns them, like an app would.
   // svelte-ignore state_referenced_locally
@@ -29,6 +31,10 @@
   let playing = $state(false);
   let loop = $state(false);
   let selectedKeyframe = $state<{ trackId: string; keyframeId: string } | null>(null);
+  // svelte-ignore state_referenced_locally
+  let zoom = $state(startZoom);
+  // New keyframes need ids of their own; the block leaves naming them to the app.
+  let added = 0;
 
   $effect(() => {
     if (!playing) return;
@@ -68,6 +74,26 @@
           },
     );
   }
+
+  function addKeyframe(keyframe: { trackId: string; time: number }) {
+    added += 1;
+    tracks = tracks.map((track) =>
+      track.id !== keyframe.trackId
+        ? track
+        : {
+            ...track,
+            keyframes: [...track.keyframes, { id: `${track.id}-added-${added}`, time: keyframe.time }],
+          },
+    );
+  }
+
+  function deleteKeyframe(keyframe: { trackId: string; keyframeId: string }) {
+    tracks = tracks.map((track) =>
+      track.id !== keyframe.trackId
+        ? track
+        : { ...track, keyframes: track.keyframes.filter(({ id }) => id !== keyframe.keyframeId) },
+    );
+  }
 </script>
 
 <Timeline
@@ -78,9 +104,13 @@
   {playing}
   {loop}
   {selectedKeyframe}
+  {zoom}
   ontimechange={(next) => (time = next)}
   onplayingchange={play}
   onloopchange={(next) => (loop = next)}
   onkeyframeselect={(selection) => (selectedKeyframe = selection)}
   onkeyframechange={moveKeyframe}
+  onkeyframeadd={addKeyframe}
+  onkeyframedelete={deleteKeyframe}
+  onzoomchange={(next) => (zoom = next)}
 />

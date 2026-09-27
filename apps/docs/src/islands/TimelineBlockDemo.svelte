@@ -15,13 +15,17 @@
   (the label column widens) and 40rem crosses `--container-md` (every ruler
   mark shows).
 
+  `editing` starts with the playhead between keyframes, ready to add one, and
+  `zoom` starts at 400%, with the frame marks showing and the playhead late in
+  the animation, scrolled into view.
+
   `data-demo-state` names each copy on its wrapper, so the e2e spec can find
   each copy by what it is meant to show.
 -->
 <script lang="ts">
   import TimelineStage from "./TimelineStage.svelte";
 
-  type Example = "default" | "widths" | "tracks" | "frames";
+  type Example = "default" | "widths" | "tracks" | "frames" | "editing" | "zoom";
 
   let { locale = "en", example = "default" }: { locale?: "en" | "es"; example?: Example } =
     $props();
@@ -96,6 +100,10 @@
     <TimelineStage tracks={manyTracks} duration={5} />
   {:else if example === "frames"}
     <TimelineStage tracks={longTracks} duration={90} fps={24} />
+  {:else if example === "editing"}
+    <TimelineStage tracks={threeTracks} duration={5} time={2} />
+  {:else if example === "zoom"}
+    <TimelineStage tracks={threeTracks} duration={5} time={4} zoom={4} />
   {:else}
     <TimelineStage tracks={threeTracks} duration={5} time={1.4} />
   {/if}

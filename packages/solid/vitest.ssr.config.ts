@@ -11,9 +11,19 @@ import { registryAliases } from "../lint/src/registry.ts";
 // project resolves those aliases.
 const manifest = fileURLToPath(new URL("../../registry/registry.json", import.meta.url));
 
+// A block that announces a change imports `announce()` from core by name, and
+// `registry/` has no `node_modules` to find it in: point the name at core's
+// source, whose own imports then resolve from core.
+const core = fileURLToPath(new URL("../core/src/index.ts", import.meta.url));
+
 export default defineConfig({
   plugins: [solid({ ssr: true })],
-  resolve: { alias: registryAliases(manifest, "solid") },
+  resolve: {
+    alias: [
+      ...registryAliases(manifest, "solid"),
+      { find: /^@moderno-ui\/core$/, replacement: core },
+    ],
+  },
   test: {
     name: "solid-ssr",
     environment: "node",

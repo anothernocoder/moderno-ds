@@ -4678,9 +4678,10 @@
       "type": "registry:block",
       "version": "0.1.0",
       "title": "Timeline (React)",
-      "description": "An animation timeline for an editor panel, composing the @moderno-ui/react Toggle, Tooltip and Slider primitives: play/pause and loop toggles with a \"current / duration\" readout in m:ss:ff, a time ruler that is a single-thumb Slider (the playhead, with its time marks as markers), and one row per animated property whose keyframes are the thumbs of a Slider with no range; a playhead line crosses every track. Controlled only: it renders tracks, time, playing, loop and the selected keyframe as given and reports every change (times snapped to 1 / fps); it holds no clock. Space plays and pauses, Page Up/Down move a thumb one second; the track list scrolls under a sticky ruler; responds to its container (@container) — the label column widens at @sm and every ruler mark shows at @md.",
+      "description": "An animation timeline for an editor panel, composing the @moderno-ui/react Toggle, Tooltip, Button and Slider primitives: play/pause and loop toggles with a \"current / duration\" readout in m:ss:ff, Add keyframe and Delete keyframe buttons, zoom out / zoom in / Fit buttons, a time ruler that is a single-thumb Slider (the playhead, with its time marks as markers, seconds then frames as you zoom in), and one row per animated property — a label that selects the track, then a Slider whose thumbs are its keyframes; a playhead line crosses every track. Controlled only: it renders tracks, time, playing, loop, the selected keyframe and zoom as given and reports every change (times snapped to 1 / fps), announcing the zoom level through announce() from @moderno-ui/core; it holds no clock. Space plays and pauses, Delete removes the selected keyframe, Page Up/Down move a thumb one second; zoom widens the time area, which scrolls sideways with the ruler and every track under a sticky label column and a sticky ruler; responds to its container (@container) — the label column widens at @sm and every ruler mark shows at @md.",
       "dependencies": [
-        "@moderno-ui/react"
+        "@moderno-ui/react",
+        "@moderno-ui/core"
       ],
       "registryDependencies": [],
       "files": [
@@ -4696,9 +4697,10 @@
       "type": "registry:block",
       "version": "0.1.0",
       "title": "Timeline (Vue)",
-      "description": "An animation timeline for an editor panel, composing the @moderno-ui/vue Toggle, Tooltip and Slider primitives: play/pause and loop toggles with a \"current / duration\" readout in m:ss:ff, a time ruler that is a single-thumb Slider (the playhead, with its time marks as markers), and one row per animated property whose keyframes are the thumbs of a Slider with no range; a playhead line crosses every track. Controlled only: it renders tracks, time, playing, loop and the selected keyframe as given and reports every change (times snapped to 1 / fps); it holds no clock. Space plays and pauses, Page Up/Down move a thumb one second; the track list scrolls under a sticky ruler; responds to its container (@container) — the label column widens at @sm and every ruler mark shows at @md.",
+      "description": "An animation timeline for an editor panel, composing the @moderno-ui/vue Toggle, Tooltip, Button and Slider primitives: play/pause and loop toggles with a \"current / duration\" readout in m:ss:ff, Add keyframe and Delete keyframe buttons, zoom out / zoom in / Fit buttons, a time ruler that is a single-thumb Slider (the playhead, with its time marks as markers, seconds then frames as you zoom in), and one row per animated property — a label that selects the track, then a Slider whose thumbs are its keyframes; a playhead line crosses every track. Controlled only: it renders tracks, time, playing, loop, the selected keyframe and zoom as given and reports every change (times snapped to 1 / fps), announcing the zoom level through announce() from @moderno-ui/core; it holds no clock. Space plays and pauses, Delete removes the selected keyframe, Page Up/Down move a thumb one second; zoom widens the time area, which scrolls sideways with the ruler and every track under a sticky label column and a sticky ruler; responds to its container (@container) — the label column widens at @sm and every ruler mark shows at @md.",
       "dependencies": [
-        "@moderno-ui/vue"
+        "@moderno-ui/vue",
+        "@moderno-ui/core"
       ],
       "registryDependencies": [],
       "files": [
@@ -4714,9 +4716,10 @@
       "type": "registry:block",
       "version": "0.1.0",
       "title": "Timeline (Svelte)",
-      "description": "An animation timeline for an editor panel, composing the @moderno-ui/svelte Toggle, Tooltip and Slider primitives: play/pause and loop toggles with a \"current / duration\" readout in m:ss:ff, a time ruler that is a single-thumb Slider (the playhead, with its time marks as markers), and one row per animated property whose keyframes are the thumbs of a Slider with no range; a playhead line crosses every track. Controlled only: it renders tracks, time, playing, loop and the selected keyframe as given and reports every change (times snapped to 1 / fps); it holds no clock. Space plays and pauses, Page Up/Down move a thumb one second; the track list scrolls under a sticky ruler; responds to its container (@container) — the label column widens at @sm and every ruler mark shows at @md.",
+      "description": "An animation timeline for an editor panel, composing the @moderno-ui/svelte Toggle, Tooltip, Button and Slider primitives: play/pause and loop toggles with a \"current / duration\" readout in m:ss:ff, Add keyframe and Delete keyframe buttons, zoom out / zoom in / Fit buttons, a time ruler that is a single-thumb Slider (the playhead, with its time marks as markers, seconds then frames as you zoom in), and one row per animated property — a label that selects the track, then a Slider whose thumbs are its keyframes; a playhead line crosses every track. Controlled only: it renders tracks, time, playing, loop, the selected keyframe and zoom as given and reports every change (times snapped to 1 / fps), announcing the zoom level through announce() from @moderno-ui/core; it holds no clock. Space plays and pauses, Delete removes the selected keyframe, Page Up/Down move a thumb one second; zoom widens the time area, which scrolls sideways with the ruler and every track under a sticky label column and a sticky ruler; responds to its container (@container) — the label column widens at @sm and every ruler mark shows at @md.",
       "dependencies": [
-        "@moderno-ui/svelte"
+        "@moderno-ui/svelte",
+        "@moderno-ui/core"
       ],
       "registryDependencies": [],
       "files": [
@@ -4732,9 +4735,10 @@
       "type": "registry:block",
       "version": "0.1.0",
       "title": "Timeline (Solid)",
-      "description": "An animation timeline for an editor panel, composing the @moderno-ui/solid Toggle, Tooltip and Slider primitives: play/pause and loop toggles with a \"current / duration\" readout in m:ss:ff, a time ruler that is a single-thumb Slider (the playhead, with its time marks as markers), and one row per animated property whose keyframes are the thumbs of a Slider with no range; a playhead line crosses every track. Controlled only: it renders tracks, time, playing, loop and the selected keyframe as given and reports every change (times snapped to 1 / fps); it holds no clock. Space plays and pauses, Page Up/Down move a thumb one second; the track list scrolls under a sticky ruler; responds to its container (@container) — the label column widens at @sm and every ruler mark shows at @md.",
+      "description": "An animation timeline for an editor panel, composing the @moderno-ui/solid Toggle, Tooltip, Button and Slider primitives: play/pause and loop toggles with a \"current / duration\" readout in m:ss:ff, Add keyframe and Delete keyframe buttons, zoom out / zoom in / Fit buttons, a time ruler that is a single-thumb Slider (the playhead, with its time marks as markers, seconds then frames as you zoom in), and one row per animated property — a label that selects the track, then a Slider whose thumbs are its keyframes; a playhead line crosses every track. Controlled only: it renders tracks, time, playing, loop, the selected keyframe and zoom as given and reports every change (times snapped to 1 / fps), announcing the zoom level through announce() from @moderno-ui/core; it holds no clock. Space plays and pauses, Delete removes the selected keyframe, Page Up/Down move a thumb one second; zoom widens the time area, which scrolls sideways with the ruler and every track under a sticky label column and a sticky ruler; responds to its container (@container) — the label column widens at @sm and every ruler mark shows at @md.",
       "dependencies": [
-        "@moderno-ui/solid"
+        "@moderno-ui/solid",
+        "@moderno-ui/core"
       ],
       "registryDependencies": [],
       "files": [

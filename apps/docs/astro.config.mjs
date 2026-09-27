@@ -56,6 +56,12 @@ export default defineConfig({
           find: "@moderno-ui/svelte",
           replacement: fileURLToPath(new URL("./node_modules/@moderno-ui/svelte", import.meta.url)),
         },
+        // Same reason: a block that announces a change imports `announce()`
+        // from core by name.
+        {
+          find: /^@moderno-ui\/core$/,
+          replacement: fileURLToPath(new URL("./node_modules/@moderno-ui/core", import.meta.url)),
+        },
         // A screen composes blocks — and a flow composes screens — through the
         // path `moderno add` writes them to in a consumer project
         // (`@/components/blocks/…`, `@/components/screens/…`). Mounting that
