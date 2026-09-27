@@ -38,11 +38,18 @@
   background-color: var(--primary);
   color: var(--primary-foreground);
 }
-/* A long label truncates instead of pushing the remove button out. */
+/* A long label truncates instead of pushing the remove button out. The clip
+   that truncation needs would also cut descenders off a line-height: 1 box,
+   so the label takes its size's leading: the fixed chip height still centres
+   it. */
 [data-scope="chip"][data-part="label"] {
   min-width: 0;
   overflow: hidden;
+  line-height: var(--leading-ui-sm);
   text-overflow: ellipsis;
+}
+[data-scope="chip"][data-part="root"][data-size="sm"] [data-part="label"] {
+  line-height: var(--leading-ui-xs);
 }
 /* The trigger pulls into the end padding so the × sits optically centred
    in the gap it closes. The glyph is text in the chip's own colour. */
