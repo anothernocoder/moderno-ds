@@ -1,0 +1,170 @@
+---
+title: Incentive Strip
+description: Una fila de garantías de la tienda — envío gratis, devoluciones fáciles, pago seguro — que da confianza antes de comprar.
+group: Bloques
+order: 125
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import IncentiveStripBlockDemo from "../../../islands/IncentiveStripBlockDemo.svelte";
+import incentiveStripReact from "../../../../../../registry/blocks/incentive-strip/react/incentive-strip.tsx?raw";
+import incentiveStripVue from "../../../../../../registry/blocks/incentive-strip/vue/IncentiveStrip.vue?raw";
+import incentiveStripSolid from "../../../../../../registry/blocks/incentive-strip/solid/incentive-strip.tsx?raw";
+import incentiveStripSvelte from "../../../../../../registry/blocks/incentive-strip/svelte/IncentiveStrip.svelte?raw";
+
+export const examples = {
+  react: incentiveStripReact,
+  vue: incentiveStripVue,
+  solid: incentiveStripSolid,
+  svelte: incentiveStripSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <IncentiveStripBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="incentive-strip" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { IncentiveStrip } from "@/components/blocks/incentive-strip";
+```
+
+```tsx
+<IncentiveStrip heading="Por qué comprar aquí" incentives={incentives} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import IncentiveStrip from "@/components/blocks/IncentiveStrip.vue";
+</script>
+```
+
+```vue
+<IncentiveStrip heading="Por qué comprar aquí" :incentives="incentives" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import IncentiveStrip from "@/components/blocks/IncentiveStrip.svelte";
+</script>
+```
+
+```svelte
+<IncentiveStrip heading="Por qué comprar aquí" {incentives} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { IncentiveStrip } from "@/components/blocks/incentive-strip";
+```
+
+```tsx
+<IncentiveStrip heading="Por qué comprar aquí" incentives={incentives} />
+```
+
+</ForFramework>
+
+## Referencia de la API
+
+### Props
+
+| Prop          | Tipo                   | Por defecto                 | Descripción                                                                     |
+| ------------- | ---------------------- | --------------------------- | ------------------------------------------------------------------------------- |
+| `heading`     | `string`               | una frase                   | El título sobre las garantías. Se muestra como `h2`.                            |
+| `description` | `string`               | una frase                   | Una línea breve bajo el encabezado. `""` la oculta.                             |
+| `incentives`  | `IncentiveStripItem[]` | cuatro garantías de muestra | Las garantías, en orden. `[]` muestra el mensaje de vacío.                      |
+| `error`       | `string`               | —                           | Falló la carga de las garantías; un Alert de error con reintento las sustituye. |
+| `loading`     | `boolean`              | `false`                     | Marcadores de esqueleto en una región ocupada sustituyen a las garantías.       |
+| `disabled`    | `boolean`              | `false`                     | Las garantías se quedan; sus enlaces y el reintento quedan fuera de alcance.    |
+| `onRetry`     | `() => void`           | —                           | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.                     |
+
+### Garantía
+
+| Campo         | Tipo                                         | Descripción                                          |
+| ------------- | -------------------------------------------- | ---------------------------------------------------- |
+| `id`          | `string`                                     | Una clave estable para la garantía.                  |
+| `icon`        | `"truck" \| "returns" \| "shield" \| "gift"` | El icono del recuadro.                               |
+| `title`       | `string`                                     | La promesa, en pocas palabras. Se muestra como `h3`. |
+| `description` | `string`                                     | Una frase que la respalda.                           |
+| `link`        | `{ label: string; href: string }`            | Opcional. Un enlace a la política que hay detrás.    |
+
+### Estados
+
+| Estado        | Prop              | Qué se muestra                                                        |
+| ------------- | ----------------- | --------------------------------------------------------------------- |
+| Por defecto   | —                 | El encabezado y cada garantía.                                        |
+| Vacío         | `incentives={[]}` | El encabezado y "No incentives to show yet." en un recuadro punteado. |
+| Cargando      | `loading`         | El encabezado y cuatro marcadores.                                    |
+| Error         | `error`           | El encabezado y un Alert de error con "Try again".                    |
+| Deshabilitado | `disabled`        | Las mismas garantías; los enlaces se atenúan y no se pueden abrir.    |
+
+### Tamaño
+
+| Paso del contenedor      | Qué cambia                                                        |
+| ------------------------ | ----------------------------------------------------------------- |
+| bajo `@sm`               | Una garantía por fila, con el icono junto al texto.               |
+| `@sm` (`--container-sm`) | Dos garantías por fila, cada icono sobre su texto.                |
+| `@md` (`--container-md`) | El encabezado sube un tamaño.                                     |
+| `@lg` (`--container-lg`) | Las cuatro garantías en una fila, con más espacio arriba y abajo. |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+El mismo bloque a 18rem, 30rem, 40rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <IncentiveStripBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Vacío
+
+Pasa un array `incentives` vacío.
+
+<Preview examples={examples} layout="fill">
+  <IncentiveStripBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <IncentiveStripBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+Pulsa "Try again" para quitar el mensaje y recuperar las garantías.
+
+<Preview examples={examples} layout="fill">
+  <IncentiveStripBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+<Preview examples={examples} layout="fill">
+  <IncentiveStripBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
+
+## Notas
+
+- Promete solo lo que la tienda cumple. Pon las cifras en la frase: "más de 50 €", "en 30 días".
+- Enlaza cada promesa con la página que la explica, para que se pueda leer la letra pequeña.

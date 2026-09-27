@@ -1722,6 +1722,78 @@
       ]
     },
     {
+      "name": "incentive-strip-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Incentive Strip (React)",
+      "description": "A row of store promises — shipping, returns, secure payment — composing the @moderno-ui/react Alert, Button and Skeleton primitives: a serif heading and a short line over a list of incentives, each an icon in a muted tile, a title, a sentence and an optional policy link, with its own loading, empty and error renders; responds to its container (@container) — two incentives per row with the icon above its text at @sm, a larger heading at @md, and all four on one row with more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/incentive-strip/react/incentive-strip.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/incentive-strip.tsx"
+        }
+      ]
+    },
+    {
+      "name": "incentive-strip-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Incentive Strip (Vue)",
+      "description": "A row of store promises — shipping, returns, secure payment — composing the @moderno-ui/vue Alert, Button and Skeleton primitives: a serif heading and a short line over a list of incentives, each an icon in a muted tile, a title, a sentence and an optional policy link, with its own loading, empty and error renders; responds to its container (@container) — two incentives per row with the icon above its text at @sm, a larger heading at @md, and all four on one row with more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/incentive-strip/vue/IncentiveStrip.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/IncentiveStrip.vue"
+        }
+      ]
+    },
+    {
+      "name": "incentive-strip-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Incentive Strip (Svelte)",
+      "description": "A row of store promises — shipping, returns, secure payment — composing the @moderno-ui/svelte Alert, Button and Skeleton primitives: a serif heading and a short line over a list of incentives, each an icon in a muted tile, a title, a sentence and an optional policy link, with its own loading, empty and error renders; responds to its container (@container) — two incentives per row with the icon above its text at @sm, a larger heading at @md, and all four on one row with more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/incentive-strip/svelte/IncentiveStrip.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/IncentiveStrip.svelte"
+        }
+      ]
+    },
+    {
+      "name": "incentive-strip-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Incentive Strip (Solid)",
+      "description": "A row of store promises — shipping, returns, secure payment — composing the @moderno-ui/solid Alert, Button and Skeleton primitives: a serif heading and a short line over a list of incentives, each an icon in a muted tile, a title, a sentence and an optional policy link, with its own loading, empty and error renders; responds to its container (@container) — two incentives per row with the icon above its text at @sm, a larger heading at @md, and all four on one row with more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/incentive-strip/solid/incentive-strip.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/incentive-strip.tsx"
+        }
+      ]
+    },
+    {
       "name": "list-react",
       "type": "registry:block",
       "version": "0.1.0",
