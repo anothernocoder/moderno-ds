@@ -5074,6 +5074,86 @@
       ]
     },
     {
+      "name": "referral-reward-react",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Referral reward (React)",
+      "description": "Full-viewport referral screen composing the kpi-card block: what a member's referrals have earned them — friends invited, friends joined, rewards earned — one KPI card each with its change and its trend, with the block's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm, @md and @lg contract steps: the masthead lines up at @sm; the title grows and the footer lines up at @md; the cards sit side by side at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [
+        "kpi-card-react"
+      ],
+      "files": [
+        {
+          "path": "screens/referral-reward/react/referral-reward.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/referral-reward.tsx"
+        }
+      ]
+    },
+    {
+      "name": "referral-reward-vue",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Referral reward (Vue)",
+      "description": "Full-viewport referral screen composing the kpi-card block: what a member's referrals have earned them — friends invited, friends joined, rewards earned — one KPI card each with its change and its trend, with the block's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm, @md and @lg contract steps: the masthead lines up at @sm; the title grows and the footer lines up at @md; the cards sit side by side at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [
+        "kpi-card-vue"
+      ],
+      "files": [
+        {
+          "path": "screens/referral-reward/vue/ReferralReward.vue",
+          "type": "registry:screen",
+          "target": "src/components/screens/ReferralReward.vue"
+        }
+      ]
+    },
+    {
+      "name": "referral-reward-svelte",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Referral reward (Svelte)",
+      "description": "Full-viewport referral screen composing the kpi-card block: what a member's referrals have earned them — friends invited, friends joined, rewards earned — one KPI card each with its change and its trend, with the block's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm, @md and @lg contract steps: the masthead lines up at @sm; the title grows and the footer lines up at @md; the cards sit side by side at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [
+        "kpi-card-svelte"
+      ],
+      "files": [
+        {
+          "path": "screens/referral-reward/svelte/ReferralReward.svelte",
+          "type": "registry:screen",
+          "target": "src/components/screens/ReferralReward.svelte"
+        }
+      ]
+    },
+    {
+      "name": "referral-reward-solid",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Referral reward (Solid)",
+      "description": "Full-viewport referral screen composing the kpi-card block: what a member's referrals have earned them — friends invited, friends joined, rewards earned — one KPI card each with its change and its trend, with the block's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm, @md and @lg contract steps: the masthead lines up at @sm; the title grows and the footer lines up at @md; the cards sit side by side at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [
+        "kpi-card-solid"
+      ],
+      "files": [
+        {
+          "path": "screens/referral-reward/solid/referral-reward.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/referral-reward.tsx"
+        }
+      ]
+    },
+    {
       "name": "referral-share-react",
       "type": "registry:screen",
       "version": "0.1.0",

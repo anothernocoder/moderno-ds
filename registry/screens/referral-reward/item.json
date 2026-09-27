@@ -1,0 +1,37 @@
+{
+  "title": "Referral reward",
+  "description": "Full-viewport referral screen composing the kpi-card block: what a member's referrals have earned them — friends invited, friends joined, rewards earned — one KPI card each with its change and its trend, with the block's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm, @md and @lg contract steps: the masthead lines up at @sm; the title grows and the footer lines up at @md; the cards sit side by side at @lg.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": ["kpi-card-{framework}"],
+  "files": {
+    "react": [
+      {
+        "path": "screens/referral-reward/react/referral-reward.tsx",
+        "type": "registry:screen",
+        "target": "src/components/screens/referral-reward.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "screens/referral-reward/vue/ReferralReward.vue",
+        "type": "registry:screen",
+        "target": "src/components/screens/ReferralReward.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "screens/referral-reward/svelte/ReferralReward.svelte",
+        "type": "registry:screen",
+        "target": "src/components/screens/ReferralReward.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "screens/referral-reward/solid/referral-reward.tsx",
+        "type": "registry:screen",
+        "target": "src/components/screens/referral-reward.tsx"
+      }
+    ]
+  }
+}
