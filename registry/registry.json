@@ -4754,6 +4754,86 @@
       ]
     },
     {
+      "name": "confirmation-react",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Confirmation (React)",
+      "description": "Full-viewport order confirmation screen composing the order-summary block: the thank-you a shopper sees once the order is placed — an \"Order placed\" badge, the heading, the order number, the estimated delivery, where the receipt went and a Continue shopping button — beside a read-only recap of the lines and the totals that were paid, with the loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container): the masthead lines up at @sm, the heading grows and the footer lines up at @md, and the order summary moves beside the thank-you at @lg; the block keeps reading its own container.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [
+        "order-summary-react"
+      ],
+      "files": [
+        {
+          "path": "screens/confirmation/react/confirmation.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/confirmation.tsx"
+        }
+      ]
+    },
+    {
+      "name": "confirmation-vue",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Confirmation (Vue)",
+      "description": "Full-viewport order confirmation screen composing the order-summary block: the thank-you a shopper sees once the order is placed — an \"Order placed\" badge, the heading, the order number, the estimated delivery, where the receipt went and a Continue shopping button — beside a read-only recap of the lines and the totals that were paid, with the loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container): the masthead lines up at @sm, the heading grows and the footer lines up at @md, and the order summary moves beside the thank-you at @lg; the block keeps reading its own container.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [
+        "order-summary-vue"
+      ],
+      "files": [
+        {
+          "path": "screens/confirmation/vue/Confirmation.vue",
+          "type": "registry:screen",
+          "target": "src/components/screens/Confirmation.vue"
+        }
+      ]
+    },
+    {
+      "name": "confirmation-svelte",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Confirmation (Svelte)",
+      "description": "Full-viewport order confirmation screen composing the order-summary block: the thank-you a shopper sees once the order is placed — an \"Order placed\" badge, the heading, the order number, the estimated delivery, where the receipt went and a Continue shopping button — beside a read-only recap of the lines and the totals that were paid, with the loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container): the masthead lines up at @sm, the heading grows and the footer lines up at @md, and the order summary moves beside the thank-you at @lg; the block keeps reading its own container.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [
+        "order-summary-svelte"
+      ],
+      "files": [
+        {
+          "path": "screens/confirmation/svelte/Confirmation.svelte",
+          "type": "registry:screen",
+          "target": "src/components/screens/Confirmation.svelte"
+        }
+      ]
+    },
+    {
+      "name": "confirmation-solid",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Confirmation (Solid)",
+      "description": "Full-viewport order confirmation screen composing the order-summary block: the thank-you a shopper sees once the order is placed — an \"Order placed\" badge, the heading, the order number, the estimated delivery, where the receipt went and a Continue shopping button — beside a read-only recap of the lines and the totals that were paid, with the loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container): the masthead lines up at @sm, the heading grows and the footer lines up at @md, and the order summary moves beside the thank-you at @lg; the block keeps reading its own container.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [
+        "order-summary-solid"
+      ],
+      "files": [
+        {
+          "path": "screens/confirmation/solid/confirmation.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/confirmation.tsx"
+        }
+      ]
+    },
+    {
       "name": "forgot-password-react",
       "type": "registry:screen",
       "version": "0.1.1",
