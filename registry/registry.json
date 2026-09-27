@@ -2082,6 +2082,78 @@
       ]
     },
     {
+      "name": "long-form-content-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Long-form content (React)",
+      "description": "A case study layout for a portfolio, agency or customer-story page, composing the @moderno-ui/react Alert, Avatar, Button and Skeleton primitives: a kicker, a serif heading and a lead, a list of project facts, then titled sections of paragraphs with a pull-quote after the first one (the words in the serif face, the speaker with an Avatar, a name and a role) and one call to action, with its own loading, empty and error renders; responds to its container (@container) — the lead steps up and the quote moves inward at @sm, the heading and the quote step up and the facts go to one row at @md, and the facts move beside the story with more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/long-form-content/react/long-form-content.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/long-form-content.tsx"
+        }
+      ]
+    },
+    {
+      "name": "long-form-content-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Long-form content (Vue)",
+      "description": "A case study layout for a portfolio, agency or customer-story page, composing the @moderno-ui/vue Alert, Avatar, Button and Skeleton primitives: a kicker, a serif heading and a lead, a list of project facts, then titled sections of paragraphs with a pull-quote after the first one (the words in the serif face, the speaker with an Avatar, a name and a role) and one call to action, with its own loading, empty and error renders; responds to its container (@container) — the lead steps up and the quote moves inward at @sm, the heading and the quote step up and the facts go to one row at @md, and the facts move beside the story with more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/long-form-content/vue/LongFormContent.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/LongFormContent.vue"
+        }
+      ]
+    },
+    {
+      "name": "long-form-content-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Long-form content (Svelte)",
+      "description": "A case study layout for a portfolio, agency or customer-story page, composing the @moderno-ui/svelte Alert, Avatar, Button and Skeleton primitives: a kicker, a serif heading and a lead, a list of project facts, then titled sections of paragraphs with a pull-quote after the first one (the words in the serif face, the speaker with an Avatar, a name and a role) and one call to action, with its own loading, empty and error renders; responds to its container (@container) — the lead steps up and the quote moves inward at @sm, the heading and the quote step up and the facts go to one row at @md, and the facts move beside the story with more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/long-form-content/svelte/LongFormContent.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/LongFormContent.svelte"
+        }
+      ]
+    },
+    {
+      "name": "long-form-content-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Long-form content (Solid)",
+      "description": "A case study layout for a portfolio, agency or customer-story page, composing the @moderno-ui/solid Alert, Avatar, Button and Skeleton primitives: a kicker, a serif heading and a lead, a list of project facts, then titled sections of paragraphs with a pull-quote after the first one (the words in the serif face, the speaker with an Avatar, a name and a role) and one call to action, with its own loading, empty and error renders; responds to its container (@container) — the lead steps up and the quote moves inward at @sm, the heading and the quote step up and the facts go to one row at @md, and the facts move beside the story with more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/long-form-content/solid/long-form-content.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/long-form-content.tsx"
+        }
+      ]
+    },
+    {
       "name": "media-object-react",
       "type": "registry:block",
       "version": "0.1.0",

@@ -1,0 +1,231 @@
+---
+title: Long-form content
+description: A case study layout — a serif heading, a lead, the project's facts, the story in titled sections and a pull-quote from the client.
+group: Blocks
+order: 126
+agent:
+  intent: The body of a case study or customer story — a kicker, a serif heading, a lead, a list of project facts, titled sections of paragraphs with a pull-quote after the first one, and one call to action.
+  whenToUse: "A page that tells how one project went: a portfolio case study, an agency's client story, a customer story on a product site."
+  whenNotToUse:
+    - case: A few paragraphs that explain something, with no project behind them
+      use: Content — one reading column of sections and a quote, no facts
+    - case: Many short quotes from different customers
+      use: Testimonials — a grid of quote cards
+    - case: The intro at the top of a personal portfolio
+      use: PortfolioHeader — a photo, a name, a role and links
+  gotchas:
+    - "`facts` is an array of `{ id, label, value }`, shown as a description list: `label` is the `dt`, `value` the `dd`. Pass `[]` to hide the list."
+    - "`sections` is an array of `{ id, heading, paragraphs }`. Each section renders an `h3` and one `p` per string in `paragraphs`."
+    - "The pull-quote sits after the first section. `quote` is `{ text, author, role, initials, avatarUrl? }`; the Avatar shows `initials` until `avatarUrl` loads. Pass `null` to hide the quote."
+    - '`kicker`, `lead` and `action` hide when you pass `""`.'
+    - '`sections={[]}` shows "This case study has no story yet." in place of the story, and hides the quote and the action. The facts stay.'
+    - "Presentational: `onAction` and `onRetry` report which button was pressed. Opening a page and retrying stay yours."
+    - "`loading` keeps the kicker, heading and lead, and replaces the facts and the story with skeleton lines in one busy `status` region."
+    - '`error` keeps the kicker, heading and lead, and puts an error Alert with your message and a "Try again" button where the facts and the story were. An empty string counts as no error.'
+    - "The layout follows the block's own width, not the viewport: the lead steps up and the quote moves inward from `--container-sm`; the heading and the quote step up and the facts go to one row from `--container-md`; the facts move beside the story, with more room above and below, from `--container-lg`. The block is capped at `--container-lg`."
+  theming:
+    - "The block paints three rules of its own: the quote's left rule (--primary), the lines above and below the facts (--border) and the dashed empty box (--border). The speaker is Avatar's md size, the action is Button's outline variant, the error is Alert's error variant and the loading placeholders are Skeleton."
+    - "The heading and the quote read --font-serif and --foreground; the facts' values, the section headings and the speaker's name read --foreground; the kicker, the lead, the facts' labels, each paragraph and the speaker's role read --muted-foreground."
+    - "Type sizes come from the contract scale: text-heading-sm and text-heading for the heading, text-body-lg and text-heading-sm for the quote, text-body and text-body-lg for the prose, text-ui-sm and text-ui-md for the kicker, the facts and the speaker. The three steps are --container-sm, --container-md and --container-lg."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import LongFormContentBlockDemo from "../../../islands/LongFormContentBlockDemo.svelte";
+import longFormContentReact from "../../../../../../registry/blocks/long-form-content/react/long-form-content.tsx?raw";
+import longFormContentVue from "../../../../../../registry/blocks/long-form-content/vue/LongFormContent.vue?raw";
+import longFormContentSolid from "../../../../../../registry/blocks/long-form-content/solid/long-form-content.tsx?raw";
+import longFormContentSvelte from "../../../../../../registry/blocks/long-form-content/svelte/LongFormContent.svelte?raw";
+
+export const examples = {
+  react: longFormContentReact,
+  vue: longFormContentVue,
+  solid: longFormContentSolid,
+  svelte: longFormContentSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <LongFormContentBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="long-form-content" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { LongFormContent } from "@/components/blocks/long-form-content";
+```
+
+```tsx
+<LongFormContent
+  heading="How Acme halved its churn"
+  facts={facts}
+  sections={sections}
+  quote={quote}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import LongFormContent from "@/components/blocks/LongFormContent.vue";
+</script>
+```
+
+```vue
+<LongFormContent
+  heading="How Acme halved its churn"
+  :facts="facts"
+  :sections="sections"
+  :quote="quote"
+/>
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import LongFormContent from "@/components/blocks/LongFormContent.svelte";
+</script>
+```
+
+```svelte
+<LongFormContent heading="How Acme halved its churn" {facts} {sections} {quote} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { LongFormContent } from "@/components/blocks/long-form-content";
+```
+
+```tsx
+<LongFormContent
+  heading="How Acme halved its churn"
+  facts={facts}
+  sections={sections}
+  quote={quote}
+/>
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+| Prop       | Type                    | Default                                     | Description                                                                          |
+| ---------- | ----------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------ |
+| `kicker`   | `string`                | `"Case study"`                              | A few words above the heading; `""` hides them.                                      |
+| `heading`  | `string`                | `"How Northwind closes its books in a day"` | The case study's heading. Set in the serif face.                                     |
+| `lead`     | `string`                | a sentence                                  | The summary under the heading; `""` hides it.                                        |
+| `facts`    | `LongFormFact[]`        | four sample facts                           | The project at a glance: client, industry, team, timeline. `[]` hides the list.      |
+| `sections` | `LongFormSection[]`     | three sample sections                       | The story, in order. `[]` shows the empty message.                                   |
+| `quote`    | `LongFormQuote \| null` | a sample quote                              | The pull-quote after the first section; `null` hides it.                             |
+| `action`   | `string`                | `"Read the next case study"`                | The outline button's label under the story; `""` hides it.                           |
+| `error`    | `string`                | —                                           | Loading the case study failed; an error Alert with a retry replaces facts and story. |
+| `loading`  | `boolean`               | `false`                                     | Skeleton lines in a busy region replace the facts and the story.                     |
+| `disabled` | `boolean`               | `false`                                     | The content stays and every button is disabled.                                      |
+| `onAction` | `() => void`            | —                                           | The button under the story was pressed. Svelte: `onaction`. Vue: `@action`.          |
+| `onRetry`  | `() => void`            | —                                           | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.                         |
+
+### Fact
+
+| Field   | Type     | Description                                    |
+| ------- | -------- | ---------------------------------------------- |
+| `id`    | `string` | A stable key for the fact.                     |
+| `label` | `string` | What the fact is, like `"Client"`. The `dt`.   |
+| `value` | `string` | The fact itself, like `"Northwind"`. The `dd`. |
+
+### Section
+
+| Field        | Type       | Description                           |
+| ------------ | ---------- | ------------------------------------- |
+| `id`         | `string`   | A stable key for the section.         |
+| `heading`    | `string`   | A few words. Rendered as an `h3`.     |
+| `paragraphs` | `string[]` | The section's text, one `p` per item. |
+
+### Quote
+
+| Field       | Type     | Description                                      |
+| ----------- | -------- | ------------------------------------------------ |
+| `text`      | `string` | The quoted words, in the serif face.             |
+| `author`    | `string` | Who said it.                                     |
+| `role`      | `string` | Their role and company, under the name.          |
+| `initials`  | `string` | Shown in the Avatar until the photo loads.       |
+| `avatarUrl` | `string` | Optional. A photo of the speaker for the Avatar. |
+
+### States
+
+| State    | Prop            | What renders                                                                 |
+| -------- | --------------- | ---------------------------------------------------------------------------- |
+| Default  | —               | Kicker, heading, lead, the facts, every section, the pull-quote, the action. |
+| Empty    | `sections={[]}` | Kicker, heading, lead, the facts and "This case study has no story yet."     |
+| Loading  | `loading`       | Kicker, heading, lead and placeholders for the facts and two sections.       |
+| Error    | `error`         | Kicker, heading, lead, then an error Alert with "Try again".                 |
+| Disabled | `disabled`      | The same content with the action disabled.                                   |
+
+### Sizing
+
+| Container step           | What changes                                                            |
+| ------------------------ | ----------------------------------------------------------------------- |
+| below `@sm`              | The lead at body size; the facts in two columns.                        |
+| `@sm` (`--container-sm`) | The lead steps up a size; the quote moves inward.                       |
+| `@md` (`--container-md`) | The heading and the quote step up a size; the facts sit in one row.     |
+| `@lg` (`--container-lg`) | The facts move beside the story; more room above and below the section. |
+
+## Examples
+
+### Container widths
+
+The same block at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <LongFormContentBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Empty
+
+Pass an empty `sections` array.
+
+<Preview examples={examples} layout="fill">
+  <LongFormContentBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <LongFormContentBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+Press "Try again" to clear the message and bring the case study back.
+
+<Preview examples={examples} layout="fill">
+  <LongFormContentBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <LongFormContentBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Three sections read best: the challenge, the approach, the outcome.
+- Keep the facts short: one or two words each, four at most.
+- Quote a person by name. A real name and role make the story believable.
