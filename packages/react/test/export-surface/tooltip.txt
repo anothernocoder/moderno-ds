@@ -1,0 +1,10 @@
+value Tooltip
+type ModernoTooltipRootProps
+type TooltipArrowProps
+type TooltipArrowTipProps
+type TooltipContentProps
+type TooltipOpenChangeDetails
+type TooltipPositionerProps
+type TooltipRootProps
+type TooltipSize
+type TooltipTriggerProps

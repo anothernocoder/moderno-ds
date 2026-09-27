@@ -43,6 +43,7 @@
   import TagsInput from "./sections/TagsInput.svelte";
   import Toggle from "./sections/Toggle.svelte";
   import ToggleGroup from "./sections/ToggleGroup.svelte";
+  import Tooltip from "./sections/Tooltip.svelte";
 
   let { open = false }: { open?: boolean } = $props();
 </script>
@@ -81,4 +82,5 @@
   <TagsInput {open} />
   <Toggle {open} />
   <ToggleGroup {open} />
+  <Tooltip {open} />
 </main>

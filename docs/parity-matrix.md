@@ -435,45 +435,66 @@ document. The Solid and Svelte roots hand Ark `serverDocument` (from
 | disabled group → every item disabled               |  ✅   | ✅  |   ✅   |  ✅   |
 | native props forwarded to the root                 |  ✅   | ✅  |   ✅   |  ✅   |
 
+### Tooltip (`tooltipRecipe`: `data-size`; Ark tooltip machine)
+
+| State                                                                  | React | Vue | Svelte | Solid |
+| ---------------------------------------------------------------------- | :---: | :-: | :----: | :---: |
+| size on the root → content `data-size` (+ `md`); a size change follows |  ✅   | ✅  |   ✅   |  ✅   |
+| every Ark part exposed                                                 |  ✅   | ✅  |   ✅   |  ✅   |
+| closed by default: content `hidden`, `data-state="closed"`             |  ✅   | ✅  |   ✅   |  ✅   |
+| hover opens a `tooltip` the trigger's `aria-describedby` names         |  ✅   | ✅  |   ✅   |  ✅   |
+| pointer leaving closes it                                              |  ✅   | ✅  |   ✅   |  ✅   |
+| keyboard focus opens it; Escape closes it                              |  ✅   | ✅  |   ✅   |  ✅   |
+| arrow inside the content, sized by Ark from `--arrow-size`             |  ✅   | ✅  |   ✅   |  ✅   |
+| controlled `open` followed; `onOpenChange` reports the change †        |  ✅   | ✅  |   ✅   |  ✅   |
+| `disabled` never opens                                                 |  ✅   | ✅  |   ✅   |  ✅   |
+| native props forwarded to the content                                  |  ✅   | ✅  |   ✅   |  ✅   |
+
+† Ark's Svelte Tooltip.Root (5.22) never hands `open` to the machine, so a
+controlled `open` did nothing there. The Svelte binding builds its Root on Ark's
+`useTooltip` + `Tooltip.RootProvider` and passes `open` the way Ark's Dialog and
+Popover roots do; `bind:open` stays in step.
+
 ## SSR (F3.3 / F3.5)
 
 The first rows hold for the whole playground. Then one row per component: its
 SSR test server-renders the component's playground section and checks what the
 row names.
 
-| Guarantee                                           | React | Vue | Svelte | Solid |
-| --------------------------------------------------- | :---: | :-: | :----: | :---: |
-| warning-free hydration (id path)                    |  ✅   | ✅¹ |   —²   |  —²   |
-| static server-only island (zero `<script>`)         |   —   |  —  |   ✅   |   —   |
-| Accordion open items, hidden contents + ids         |  ✅   | ✅  |   ✅   |  ✅   |
-| Alert anatomy + resolved `role` (status / alert)    |  ✅   | ✅  |   ✅   |  ✅   |
-| Avatar fallback shown / image hidden                |  ✅   | ✅  |   ✅   |  ✅   |
-| Badge variants + dot part                           |  ✅   | ✅  |   ✅   |  ✅   |
-| Button scope/part + recipe `data-*`                 |  ✅   | ✅  |   ✅   |  ✅   |
-| Callout `role="note"`, variants + hidden icon       |  ✅   | ✅  |   ✅   |  ✅   |
-| Card scope + every part                             |  ✅   | ✅  |   ✅   |  ✅   |
-| Carousel region, slides, current dot + ends         |  ✅   | ✅  |   ✅   |  ✅   |
-| Checkbox `data-state` (checked / indeterminate)     |  ✅   | ✅  |   ✅   |  ✅   |
-| Chip sizes + named remove trigger                   |  ✅   | ✅  |   ✅   |  ✅   |
-| Dialog trigger; `defaultOpen` survives              |  ✅   | ✅  |   ✅   |  ✅   |
-| Divider separator role, label + vertical label      |  ✅   | ✅  |   ✅   |  ✅   |
-| Field sizes + textarea                              |  ✅   | ✅  |   ✅   |  ✅   |
-| Indicator bare `data-pulse`, dot + label parts      |  ✅   | ✅  |   ✅   |  ✅   |
-| NumberInput value, bounds, format + steppers        |  ✅   | ✅  |   ✅   |  ✅   |
-| Pagination pages, ellipses, current + ends          |  ✅   | ✅  |   ✅   |  ✅   |
-| PinInput `count` → correct server aria              |  ✅   | ✅  |   ✅   |  ✅   |
-| Progress value, state + circle geometry             |  ✅   | ✅  |   ✅   |  ✅   |
-| RadioGroup checked item + orientation               |  ✅   | ✅  |   ✅   |  ✅   |
-| Select trigger; `defaultOpen` survives              |  ✅   | ✅  |   ✅   |  ✅   |
-| Skeleton shapes, `aria-hidden`                      |  ✅   | ✅  |   ✅   |  ✅   |
-| Slider thumbs, bounds, range offsets + marks        |  ✅   | ✅  |   ✅   |  ✅   |
-| Spinner `role="status"`, sizes, hidden ring + label |  ✅   | ✅  |   ✅   |  ✅   |
-| Splitter panel sizes, separator bounds + controls   |  ✅   | ✅  |   ✅   |  ✅   |
-| Switch on/off state + switch role                   |  ✅   | ✅  |   ✅   |  ✅   |
-| Tabs selected tab, hidden panels + tab ids          |  ✅   | ✅  |   ✅   |  ✅   |
-| TagsInput tags, delete labels + hidden value        |  ✅   | ✅  |   ✅   |  ✅   |
-| Toggle pressed state + indicator content            |  ✅   | ✅  |   ✅   |  ✅   |
-| ToggleGroup pressed items, roles + orientation      |  ✅   | ✅  |   ✅   |  ✅   |
+| Guarantee                                                           | React | Vue | Svelte | Solid |
+| ------------------------------------------------------------------- | :---: | :-: | :----: | :---: |
+| warning-free hydration (id path)                                    |  ✅   | ✅¹ |   —²   |  —²   |
+| static server-only island (zero `<script>`)                         |   —   |  —  |   ✅   |   —   |
+| Accordion open items, hidden contents + ids                         |  ✅   | ✅  |   ✅   |  ✅   |
+| Alert anatomy + resolved `role` (status / alert)                    |  ✅   | ✅  |   ✅   |  ✅   |
+| Avatar fallback shown / image hidden                                |  ✅   | ✅  |   ✅   |  ✅   |
+| Badge variants + dot part                                           |  ✅   | ✅  |   ✅   |  ✅   |
+| Button scope/part + recipe `data-*`                                 |  ✅   | ✅  |   ✅   |  ✅   |
+| Callout `role="note"`, variants + hidden icon                       |  ✅   | ✅  |   ✅   |  ✅   |
+| Card scope + every part                                             |  ✅   | ✅  |   ✅   |  ✅   |
+| Carousel region, slides, current dot + ends                         |  ✅   | ✅  |   ✅   |  ✅   |
+| Checkbox `data-state` (checked / indeterminate)                     |  ✅   | ✅  |   ✅   |  ✅   |
+| Chip sizes + named remove trigger                                   |  ✅   | ✅  |   ✅   |  ✅   |
+| Dialog trigger; `defaultOpen` survives                              |  ✅   | ✅  |   ✅   |  ✅   |
+| Divider separator role, label + vertical label                      |  ✅   | ✅  |   ✅   |  ✅   |
+| Field sizes + textarea                                              |  ✅   | ✅  |   ✅   |  ✅   |
+| Indicator bare `data-pulse`, dot + label parts                      |  ✅   | ✅  |   ✅   |  ✅   |
+| NumberInput value, bounds, format + steppers                        |  ✅   | ✅  |   ✅   |  ✅   |
+| Pagination pages, ellipses, current + ends                          |  ✅   | ✅  |   ✅   |  ✅   |
+| PinInput `count` → correct server aria                              |  ✅   | ✅  |   ✅   |  ✅   |
+| Progress value, state + circle geometry                             |  ✅   | ✅  |   ✅   |  ✅   |
+| RadioGroup checked item + orientation                               |  ✅   | ✅  |   ✅   |  ✅   |
+| Select trigger; `defaultOpen` survives                              |  ✅   | ✅  |   ✅   |  ✅   |
+| Skeleton shapes, `aria-hidden`                                      |  ✅   | ✅  |   ✅   |  ✅   |
+| Slider thumbs, bounds, range offsets + marks                        |  ✅   | ✅  |   ✅   |  ✅   |
+| Spinner `role="status"`, sizes, hidden ring + label                 |  ✅   | ✅  |   ✅   |  ✅   |
+| Splitter panel sizes, separator bounds + controls                   |  ✅   | ✅  |   ✅   |  ✅   |
+| Switch on/off state + switch role                                   |  ✅   | ✅  |   ✅   |  ✅   |
+| Tabs selected tab, hidden panels + tab ids                          |  ✅   | ✅  |   ✅   |  ✅   |
+| TagsInput tags, delete labels + hidden value                        |  ✅   | ✅  |   ✅   |  ✅   |
+| Toggle pressed state + indicator content                            |  ✅   | ✅  |   ✅   |  ✅   |
+| ToggleGroup pressed items, roles + orientation                      |  ✅   | ✅  |   ✅   |  ✅   |
+| Tooltip content hidden + sized; `defaultOpen` describes the trigger |  ✅   | ✅  |   ✅   |  ✅   |
 
 ¹ Vue hydration is verified on every portal-free component (all but Dialog and
 Select), where the deterministic `useId` hazard lives; Ark's portaled popovers

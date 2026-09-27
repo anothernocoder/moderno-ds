@@ -3723,6 +3723,94 @@
     }
   }
 
+  /* ─────────────────────────── Tooltip ─────────────────────────── *
+   * Ark's Root renders no element, so `tooltipRecipe` size lands on the
+   * content, the surface. Parts: trigger, positioner > content > arrow >
+   * arrow-tip. Ark places the positioner inline and shows the content
+   * while open; its side is `data-side`, an instant open `data-instant`. */
+  /* @runtime-vars --transform-origin — the side the content grows from, set on the positioner by Ark. */
+  /* The surface is the popover's: its own 1px --border is the edge, and
+     the elevation slot is the soft drop under it, as it is. Ark copies the
+     content's z-index onto the positioner, so the tooltip clears an app's
+     sticky chrome like a dialog does. */
+  [data-scope="tooltip"][data-part="content"] {
+    z-index: 50;
+    max-width: calc(var(--spacing-8) * 10);
+    padding: calc(var(--spacing-1) * 1.5) var(--spacing-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--popover);
+    color: var(--popover-foreground);
+    box-shadow: var(--shadow-md);
+    font-family: var(--font-sans);
+    font-size: var(--text-ui-sm);
+    font-weight: var(--font-weight-normal);
+    line-height: var(--leading-ui-sm);
+    overflow-wrap: break-word;
+    transform-origin: var(--transform-origin);
+  }
+  [data-scope="tooltip"][data-part="content"][data-state="open"] {
+    animation: moderno-tooltip-in var(--motion-instant) ease-out;
+  }
+  [data-scope="tooltip"][data-part="content"][data-state="closed"] {
+    animation: moderno-tooltip-out var(--motion-instant) ease-in;
+  }
+  /* Moving from one tooltip to the next opens it at once: no fade. */
+  [data-scope="tooltip"][data-part="content"][data-instant] {
+    animation: none;
+  }
+  /* The arrow is a square Ark turns to point at the trigger: it takes the
+     surface's fill, and its top and left edges, the ones that face out
+     after the turn, carry the surface's border. */
+  [data-scope="tooltip"][data-part="arrow"] {
+    --arrow-size: calc(var(--spacing-1) * 2.5);
+    --arrow-background: var(--popover);
+  }
+  [data-scope="tooltip"][data-part="arrow-tip"] {
+    border-top: 1px solid var(--border);
+    border-left: 1px solid var(--border);
+  }
+
+  /* Density driven by the recipe's data-size on the content: its padding,
+     its type and its arrow. */
+  [data-scope="tooltip"][data-part="content"][data-size="sm"] {
+    padding: var(--spacing-1) var(--spacing-2);
+    font-size: var(--text-ui-xs);
+    line-height: var(--leading-ui-xs);
+  }
+  [data-scope="tooltip"][data-part="content"][data-size="sm"] > [data-part="arrow"] {
+    --arrow-size: var(--spacing-2);
+  }
+  [data-scope="tooltip"][data-part="content"][data-size="lg"] {
+    padding: var(--spacing-2) var(--spacing-4);
+    font-size: var(--text-ui-md);
+    line-height: var(--leading-ui-md);
+  }
+  [data-scope="tooltip"][data-part="content"][data-size="lg"] > [data-part="arrow"] {
+    --arrow-size: var(--spacing-3);
+  }
+
+  @keyframes moderno-tooltip-in {
+    from {
+      opacity: 0;
+      scale: 0.96;
+    }
+  }
+  @keyframes moderno-tooltip-out {
+    to {
+      opacity: 0;
+      scale: 0.96;
+    }
+  }
+
+  /* Less motion: the tooltip shows and hides at once. The selector matches
+     the open and closed rules' weight, and follows them. */
+  @media (prefers-reduced-motion: reduce) {
+    [data-scope="tooltip"][data-part="content"][data-state] {
+      animation: none;
+    }
+  }
+
   /* ──────────────────────── Hidden parts ──────────────────────── *
    * Ark takes a part out of the layout with the `hidden` attribute — a closed
    * Dialog's content, a Select's menu, a Checkbox's inactive indicator. The UA

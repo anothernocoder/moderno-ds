@@ -43,6 +43,7 @@ import TabsSection from "./sections/tabs.js";
 import TagsInputSection from "./sections/tags-input.js";
 import ToggleSection from "./sections/toggle.js";
 import ToggleGroupSection from "./sections/toggle-group.js";
+import TooltipSection from "./sections/tooltip.js";
 
 export const App = defineComponent({
   name: "VueSsrApp",
@@ -86,6 +87,7 @@ export const App = defineComponent({
         h(TagsInputSection, { open: props.open }),
         h(ToggleSection, { open: props.open }),
         h(ToggleGroupSection, { open: props.open }),
+        h(TooltipSection, { open: props.open }),
       ]);
   },
 });

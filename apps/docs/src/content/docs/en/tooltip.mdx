@@ -1,0 +1,281 @@
+---
+title: Tooltip
+description: A short label that shows when the pointer rests on a control or it has keyboard focus.
+group: Components
+order: 38
+component: Tooltip
+pkg: "@moderno-ui/react"
+agentPropsHash: "sha256:10aa2ee1e3a8a9cc1374cb8f2613579b5c191bde53f02aa456353e72f93f2e92"
+agent:
+  intent: Name or explain a control in a few words, shown while the pointer rests on it or it has keyboard focus.
+  whenToUse: An icon button that needs a name, a keyboard shortcut, or a label cut short that the reader may want in full.
+  whenNotToUse:
+    - case: Content the reader must act on, like a link, a button or a form
+      use: Dialog
+    - case: Text every reader needs to see, like an error or a hint under a field
+      use: Field
+  gotchas:
+    - "Put the Trigger on the control itself with asChild. A bare Tooltip.Trigger renders its own unstyled <button>."
+    - "The tooltip must never hold the only copy of something important: touch screens have no hover."
+    - "size goes on Tooltip.Root and lands on Tooltip.Content as data-size. Tooltip.RootProvider takes no size."
+    - "Wrap Tooltip.Positioner in Portal, so a parent's overflow: hidden does not cut the tooltip off."
+    - "Tooltip.Arrow needs a Tooltip.ArrowTip inside it: the tip is the part you see."
+  theming:
+    - "The content is a --popover surface with --popover-foreground text, its own 1px --border as the edge and --shadow-md under it. Do not add a ring in box-shadow."
+    - "The arrow takes the same --popover fill and --border edge, so restyle the surface through those slots, not the arrow."
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import TooltipDemo from "../../../examples/tooltip/tooltip.svelte";
+import baseReact from "../../../examples/tooltip/react.tsx?raw";
+import baseVue from "../../../examples/tooltip/vue.vue?raw";
+import baseSolid from "../../../examples/tooltip/solid.tsx?raw";
+import baseSvelte from "../../../examples/tooltip/tooltip.svelte?raw";
+import TooltipPlacementDemo from "../../../examples/tooltip/placement/tooltip-placement.svelte";
+import placementReact from "../../../examples/tooltip/placement/react.tsx?raw";
+import placementVue from "../../../examples/tooltip/placement/vue.vue?raw";
+import placementSolid from "../../../examples/tooltip/placement/solid.tsx?raw";
+import placementSvelte from "../../../examples/tooltip/placement/tooltip-placement.svelte?raw";
+import TooltipSizesDemo from "../../../examples/tooltip/sizes/tooltip-sizes.svelte";
+import sizesReact from "../../../examples/tooltip/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/tooltip/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/tooltip/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/tooltip/sizes/tooltip-sizes.svelte?raw";
+import TooltipDelayDemo from "../../../examples/tooltip/delay/tooltip-delay.svelte";
+import delayReact from "../../../examples/tooltip/delay/react.tsx?raw";
+import delayVue from "../../../examples/tooltip/delay/vue.vue?raw";
+import delaySolid from "../../../examples/tooltip/delay/solid.tsx?raw";
+import delaySvelte from "../../../examples/tooltip/delay/tooltip-delay.svelte?raw";
+
+<FrameworkSelect locale="en" />
+
+<Preview
+  examples={{
+    react: baseReact,
+    vue: baseVue,
+    solid: baseSolid,
+    svelte: baseSvelte,
+  }}
+>
+  <TooltipDemo client:visible />
+</Preview>
+
+## Installation
+
+<Install pkg="@moderno-ui/react" />
+
+## Usage
+
+A Tooltip is a short label for a control. It shows while the pointer rests on the control, or while the control has keyboard focus, and hides on Escape. Use it to name an icon button or show a shortcut.
+
+<ForFramework fw="react">
+
+```tsx
+import { Button, Portal, Tooltip } from "@moderno-ui/react";
+```
+
+```tsx
+<Tooltip.Root>
+  <Tooltip.Trigger asChild>
+    <Button variant="outline">Save</Button>
+  </Tooltip.Trigger>
+  <Portal>
+    <Tooltip.Positioner>
+      <Tooltip.Content>
+        <Tooltip.Arrow>
+          <Tooltip.ArrowTip />
+        </Tooltip.Arrow>
+        Save your changes
+      </Tooltip.Content>
+    </Tooltip.Positioner>
+  </Portal>
+</Tooltip.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Button, Portal, Tooltip } from "@moderno-ui/vue";
+```
+
+```vue
+<Tooltip.Root>
+  <Tooltip.Trigger as-child>
+    <Button variant="outline">Save</Button>
+  </Tooltip.Trigger>
+  <Portal>
+    <Tooltip.Positioner>
+      <Tooltip.Content>
+        <Tooltip.Arrow>
+          <Tooltip.ArrowTip />
+        </Tooltip.Arrow>
+        Save your changes
+      </Tooltip.Content>
+    </Tooltip.Positioner>
+  </Portal>
+</Tooltip.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Button, Portal, Tooltip } from "@moderno-ui/svelte";
+```
+
+```svelte
+<Tooltip.Root>
+  <Tooltip.Trigger>
+    {#snippet asChild(triggerProps)}
+      <Button variant="outline" {...triggerProps()}>Save</Button>
+    {/snippet}
+  </Tooltip.Trigger>
+  <Portal>
+    <Tooltip.Positioner>
+      <Tooltip.Content>
+        <Tooltip.Arrow>
+          <Tooltip.ArrowTip />
+        </Tooltip.Arrow>
+        Save your changes
+      </Tooltip.Content>
+    </Tooltip.Positioner>
+  </Portal>
+</Tooltip.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Button, Portal, Tooltip } from "@moderno-ui/solid";
+```
+
+```tsx
+<Tooltip.Root>
+  <Tooltip.Trigger
+    asChild={(triggerProps) => (
+      <Button {...triggerProps()} variant="outline">
+        Save
+      </Button>
+    )}
+  />
+  <Portal>
+    <Tooltip.Positioner>
+      <Tooltip.Content>
+        <Tooltip.Arrow>
+          <Tooltip.ArrowTip />
+        </Tooltip.Arrow>
+        Save your changes
+      </Tooltip.Content>
+    </Tooltip.Positioner>
+  </Portal>
+</Tooltip.Root>
+```
+
+</ForFramework>
+
+`asChild` puts the trigger on your own button, so the tooltip describes it. `Portal` keeps the tooltip out of any parent that clips.
+
+## API Reference
+
+### Tooltip.Root
+
+`size` is the Moderno addition; the content's padding, type and arrow follow it. The other props come from Ark's Tooltip.
+
+<PropsTable component="Tooltip" />
+
+| Prop            | Type                                   | Default                   | Description                                                    |
+| --------------- | -------------------------------------- | ------------------------- | -------------------------------------------------------------- |
+| `openDelay`     | `number`                               | `400`                     | Milliseconds the pointer rests on the trigger before it opens. |
+| `closeDelay`    | `number`                               | `150`                     | Milliseconds before it closes once the pointer leaves.         |
+| `positioning`   | `PositioningOptions`                   | `{ placement: "bottom" }` | Where it sits: `placement`, `gutter`, `offset`, …              |
+| `open`          | `boolean`                              | —                         | Controlled open state.                                         |
+| `defaultOpen`   | `boolean`                              | `false`                   | Open at first, when uncontrolled.                              |
+| `onOpenChange`  | `(details: { open: boolean }) => void` | —                         | Called when it opens or closes.                                |
+| `disabled`      | `boolean`                              | `false`                   | Never open.                                                    |
+| `interactive`   | `boolean`                              | `false`                   | Let the pointer move onto the content without closing it.      |
+| `closeOnClick`  | `boolean`                              | `true`                    | Close when the trigger is clicked.                             |
+| `closeOnEscape` | `boolean`                              | `true`                    | Close on Escape.                                               |
+| `aria-label`    | `string`                               | —                         | A label for screen readers when the content is not plain text. |
+
+In Vue, bind the state with `v-model:open`, and listen with `@open-change`. In Svelte, use `bind:open`.
+
+### Parts
+
+| Part                 | Element    | Description                                                       |
+| -------------------- | ---------- | ----------------------------------------------------------------- |
+| `Tooltip.Root`       | —          | Holds the state. Renders no element; hands `size` to the content. |
+| `Tooltip.Trigger`    | `<button>` | The control it describes. Use `asChild` to put it on your own.    |
+| `Tooltip.Positioner` | `<div>`    | Places the content next to the trigger.                           |
+| `Tooltip.Content`    | `<div>`    | The label, with the `tooltip` role. Carries `data-size`.          |
+| `Tooltip.Arrow`      | `<div>`    | Optional. Points the content at the trigger.                      |
+| `Tooltip.ArrowTip`   | `<div>`    | The tip you see, inside the arrow.                                |
+| `Tooltip.Context`    | —          | Hands you the tooltip: `open`, `setOpen`, `reposition`.           |
+
+### Data attributes
+
+| Attribute      | Values                                                       |
+| -------------- | ------------------------------------------------------------ |
+| `data-state`   | On the trigger and content: `"open"` or `"closed"`           |
+| `data-side`    | On the content: `"top"`, `"right"`, `"bottom"` or `"left"`   |
+| `data-instant` | On the content, when it opened at once after another tooltip |
+| `data-size`    | On the content: `"sm"`, `"md"` or `"lg"`                     |
+
+## Examples
+
+### Placement
+
+`positioning.placement` picks the side. If there is no room, it flips to the other side.
+
+<Preview
+  examples={{
+    react: placementReact,
+    vue: placementVue,
+    solid: placementSolid,
+    svelte: placementSvelte,
+  }}
+>
+  <TooltipPlacementDemo client:visible />
+</Preview>
+
+### Sizes
+
+<Preview
+  examples={{
+    react: sizesReact,
+    vue: sizesVue,
+    solid: sizesSolid,
+    svelte: sizesSvelte,
+  }}
+>
+  <TooltipSizesDemo client:visible />
+</Preview>
+
+### Show at once
+
+`openDelay={0}` opens the tooltip as soon as the pointer arrives. Keep the default when tooltips sit close together, so they do not flash while the pointer passes.
+
+<Preview
+  examples={{
+    react: delayReact,
+    vue: delayVue,
+    solid: delaySolid,
+    svelte: delaySvelte,
+  }}
+>
+  <TooltipDelayDemo client:visible />
+</Preview>
+
+## Notes
+
+- `Tooltip.Root` and `Tooltip.Content` are wrapped to carry `size`; every other part is Ark's unchanged.
+- Moving from one tooltip to the next opens it at once, without the fade. When the reader prefers reduced motion there is no fade at all.
+- Touch screens have no hover. Keep what the tooltip says available some other way.

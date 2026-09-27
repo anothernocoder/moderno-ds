@@ -45,6 +45,7 @@ import tabsComponent from "./components/tabs.ts";
 import tagsInputComponent from "./components/tags-input.ts";
 import toggleComponent from "./components/toggle.ts";
 import toggleGroupComponent from "./components/toggle-group.ts";
+import tooltipComponent from "./components/tooltip.ts";
 
 export const { ENTRIES, AGENT_COMPONENTS, AGENT_EXAMPLES } = assembleComponents([
   accordionComponent,
@@ -83,4 +84,5 @@ export const { ENTRIES, AGENT_COMPONENTS, AGENT_EXAMPLES } = assembleComponents(
   tagsInputComponent,
   toggleComponent,
   toggleGroupComponent,
+  tooltipComponent,
 ]);

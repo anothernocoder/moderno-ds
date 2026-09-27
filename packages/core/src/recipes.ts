@@ -47,3 +47,4 @@ export * from "./recipes/tabs.js";
 export * from "./recipes/tags-input.js";
 export * from "./recipes/toggle.js";
 export * from "./recipes/toggle-group.js";
+export * from "./recipes/tooltip.js";

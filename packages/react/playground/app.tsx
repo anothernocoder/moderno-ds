@@ -47,6 +47,7 @@ import TabsSection from "./sections/tabs.js";
 import TagsInputSection from "./sections/tags-input.js";
 import ToggleSection from "./sections/toggle.js";
 import ToggleGroupSection from "./sections/toggle-group.js";
+import TooltipSection from "./sections/tooltip.js";
 
 export interface AppProps {
   /** Mount the Dialog + Select popovers open (exercises the portal/id path). */
@@ -89,6 +90,7 @@ export function App({ open = false }: AppProps) {
       <TagsInputSection open={open} />
       <ToggleSection open={open} />
       <ToggleGroupSection open={open} />
+      <TooltipSection open={open} />
     </main>
   );
 }
