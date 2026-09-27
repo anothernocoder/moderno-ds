@@ -1,0 +1,37 @@
+{
+  "title": "Input Group",
+  "description": "Inputs joined to their prefix, suffix and add-ons, composing the @moderno-ui/{framework} Field, Button and Spinner primitives: a store address behind an https:// prefix, a price between a $ prefix and a USD suffix, a read-only API key with a Copy button, and a product search with a Search button. Each add-on shares the input's edge and radius, and turns red with it when the field is invalid. Responds to its container (@container) — the heading steps up at @md while the fields go two-up, and the heading moves beside the fields at @lg — and renders its default, empty, disabled, loading and error states from props.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": [],
+  "files": {
+    "react": [
+      {
+        "path": "blocks/input-group/react/input-group.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/input-group.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "blocks/input-group/vue/InputGroup.vue",
+        "type": "registry:block",
+        "target": "src/components/blocks/InputGroup.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "blocks/input-group/svelte/InputGroup.svelte",
+        "type": "registry:block",
+        "target": "src/components/blocks/InputGroup.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "blocks/input-group/solid/input-group.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/input-group.tsx"
+      }
+    ]
+  }
+}

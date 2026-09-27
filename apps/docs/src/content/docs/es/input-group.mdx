@@ -1,0 +1,168 @@
+---
+title: Grupo de entrada
+description: Campos unidos a un prefijo, un sufijo o un botón adjunto.
+group: Bloques
+order: 117
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import InputGroupBlockDemo from "../../../islands/InputGroupBlockDemo.svelte";
+import inputGroupReact from "../../../../../../registry/blocks/input-group/react/input-group.tsx?raw";
+import inputGroupVue from "../../../../../../registry/blocks/input-group/vue/InputGroup.vue?raw";
+import inputGroupSolid from "../../../../../../registry/blocks/input-group/solid/input-group.tsx?raw";
+import inputGroupSvelte from "../../../../../../registry/blocks/input-group/svelte/InputGroup.svelte?raw";
+
+export const examples = {
+  react: inputGroupReact,
+  vue: inputGroupVue,
+  solid: inputGroupSolid,
+  svelte: inputGroupSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <InputGroupBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="input-group" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { InputGroup } from "@/components/blocks/input-group";
+```
+
+```tsx
+<InputGroup apiKey={key} onCopy={(key) => navigator.clipboard.writeText(key)} onSearch={search} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import InputGroup from "@/components/blocks/InputGroup.vue";
+</script>
+```
+
+```vue
+<InputGroup :api-key="key" @copy="(key) => navigator.clipboard.writeText(key)" @search="search" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import InputGroup from "@/components/blocks/InputGroup.svelte";
+</script>
+```
+
+```svelte
+<InputGroup apiKey={key} oncopy={(key) => navigator.clipboard.writeText(key)} onsearch={search} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { InputGroup } from "@/components/blocks/input-group";
+```
+
+```tsx
+<InputGroup apiKey={key()} onCopy={(key) => navigator.clipboard.writeText(key)} onSearch={search} />
+```
+
+</ForFramework>
+
+## Referencia de la API
+
+### Props
+
+| Prop       | Tipo                                                       | Por defecto          | Descripción                                                                              |
+| ---------- | ---------------------------------------------------------- | -------------------- | ---------------------------------------------------------------------------------------- |
+| `website`  | `string`                                                   | `"acme.shop"`        | La dirección de la tienda tras el prefijo `https://`.                                    |
+| `price`    | `string`                                                   | `"49.00"`            | El importe entre el prefijo `$` y el sufijo `USD`.                                       |
+| `apiKey`   | `string`                                                   | una clave de muestra | La clave de solo lectura junto a Copy. `""` muestra `No key yet` y deshabilita Copy.     |
+| `query`    | `string`                                                   | `""`                 | El texto de búsqueda junto al botón Search.                                              |
+| `errors`   | `Partial<Record<"website" \| "price" \| "query", string>>` | —                    | Un mensaje por campo no válido, bajo el campo.                                           |
+| `loading`  | `boolean`                                                  | `false`              | Hay una búsqueda en curso: todo control queda deshabilitado y Search muestra un spinner. |
+| `disabled` | `boolean`                                                  | `false`              | Todos los campos y botones quedan deshabilitados.                                        |
+| `onCopy`   | `(apiKey: string) => void`                                 | —                    | Se pulsó Copy. Svelte: `oncopy`. Vue: `@copy`.                                           |
+| `onSearch` | `(query: string) => void`                                  | —                    | Se envió la búsqueda. Svelte: `onsearch`. Vue: `@search`.                                |
+
+### Grupos
+
+| Grupo          | Adjuntos                  | Nombre del campo |
+| -------------- | ------------------------- | ---------------- |
+| Store address  | `https://` delante        | `website`        |
+| Price          | `$` delante, `USD` detrás | `price`          |
+| API key        | un botón Copy detrás      | `apiKey`         |
+| Find a product | un botón Search detrás    | `query`          |
+
+### Estados
+
+| Estado        | Prop                       | Qué se muestra                                                       |
+| ------------- | -------------------------- | -------------------------------------------------------------------- |
+| Por defecto   | —                          | Los cuatro grupos con valores de muestra.                            |
+| Vacío         | `website=""`, `apiKey=""`… | Textos de ejemplo en cada campo, y Copy deshabilitado.               |
+| Cargando      | `loading`                  | Todo control deshabilitado; Search muestra un spinner y `Searching`. |
+| Error         | `errors`                   | Campos y adjuntos en rojo, cada uno con su mensaje debajo.           |
+| Deshabilitado | `disabled`                 | Todos los campos y botones deshabilitados.                           |
+
+El hover y el foco de teclado vienen de las primitivas Field y Button.
+
+### Tamaño
+
+| Paso del contenedor      | Qué cambia                                                         |
+| ------------------------ | ------------------------------------------------------------------ |
+| bajo `@md`               | Una columna: cada grupo bajo el anterior.                          |
+| `@md` (`--container-md`) | El título sube un tamaño, y los grupos van de dos en dos por fila. |
+| `@lg` (`--container-lg`) | El título va en una columna junto a los grupos, de un tercio.      |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+El mismo bloque a 18rem, 30rem, 40rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <InputGroupBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Vacío
+
+<Preview examples={examples} layout="fill">
+  <InputGroupBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <InputGroupBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+<Preview examples={examples} layout="fill">
+  <InputGroupBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+<Preview examples={examples} layout="fill">
+  <InputGroupBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
+
+## Notas
+
+- Presentacional: no copia ni busca nada. Actúa sobre `onCopy` y `onSearch`.
+- Cada adjunto comparte el borde y el radio de su campo, así el par se lee como un solo control.
