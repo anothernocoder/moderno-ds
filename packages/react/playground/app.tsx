@@ -21,6 +21,7 @@ import BadgeSection from "./sections/badge.js";
 import ButtonSection from "./sections/button.js";
 import CalloutSection from "./sections/callout.js";
 import CardSection from "./sections/card.js";
+import CarouselSection from "./sections/carousel.js";
 import ChartsSection from "./sections/charts.js";
 import CheckboxSection from "./sections/checkbox.js";
 import ChipSection from "./sections/chip.js";
@@ -59,6 +60,7 @@ export function App({ open = false }: AppProps) {
       <ButtonSection open={open} />
       <CalloutSection open={open} />
       <CardSection open={open} />
+      <CarouselSection open={open} />
       <ChartsSection open={open} />
       <CheckboxSection open={open} />
       <ChipSection open={open} />

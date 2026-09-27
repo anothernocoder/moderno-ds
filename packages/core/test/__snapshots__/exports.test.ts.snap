@@ -2,6 +2,7 @@
 
 exports[`@moderno-ui/core exports > exports exactly the pinned names 1`] = `
 [
+  "REDUCED_MOTION_QUERY",
   "accordionRecipe",
   "alertRecipe",
   "alertRole",
@@ -10,6 +11,8 @@ exports[`@moderno-ui/core exports > exports exactly the pinned names 1`] = `
   "buttonRecipe",
   "calloutRecipe",
   "cardRecipe",
+  "carouselMotion",
+  "carouselRecipe",
   "checkboxRecipe",
   "chipRecipe",
   "cva",

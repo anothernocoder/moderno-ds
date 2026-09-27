@@ -1,0 +1,291 @@
+---
+title: Carousel
+description: Slides that scroll one page at a time, with previous and next buttons and one dot per page.
+group: Components
+order: 37
+component: Carousel
+pkg: "@moderno-ui/react"
+agentPropsHash: "sha256:01de6c4183db665f87b408ae28c5365eacc36cff2a07ae99628c285e6afcd567"
+agent:
+  intent: Show a set of slides one page at a time, and let the user move between them.
+  whenToUse: A few pictures, cards or quotes that share one spot on the page — a product gallery, featured posts, testimonials.
+  whenNotToUse:
+    - case: A few views of one thing the user switches between, like Overview and Settings
+      use: Tabs
+    - case: A long list shown a page at a time, like search results
+      use: Pagination
+  gotchas:
+    - "slideCount is required: pass the number of Carousel.Item you render, and give each Item its index, from 0."
+    - "Render one Carousel.Indicator per page, not per slide. With slidesPerPage above 1, map carousel.pageSnapPoints from Carousel.Context."
+    - "The triggers have no content of their own: pass a glyph or an icon, like ‹ and ›. Ark names every button for screen readers."
+    - "autoplay does not start when the reader prefers reduced motion. Add a Carousel.AutoplayTrigger so they can start and stop it."
+    - 'spacing is a CSS length string, like "var(--spacing-3)", not a number.'
+  theming:
+    - "The triggers are round --background buttons with an --border edge, and fill with --accent on hover. Do not pass a hex."
+    - "A dot is --muted-foreground; the current one is --primary and wider. The focus ring is --ring, drawn inside the button."
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import CarouselDemo from "../../../examples/carousel/carousel.svelte";
+import baseReact from "../../../examples/carousel/react.tsx?raw";
+import baseVue from "../../../examples/carousel/vue.vue?raw";
+import baseSolid from "../../../examples/carousel/solid.tsx?raw";
+import baseSvelte from "../../../examples/carousel/carousel.svelte?raw";
+import CarouselSlidesPerPageDemo from "../../../examples/carousel/slides-per-page/carousel-slides-per-page.svelte";
+import slidesPerPageReact from "../../../examples/carousel/slides-per-page/react.tsx?raw";
+import slidesPerPageVue from "../../../examples/carousel/slides-per-page/vue.vue?raw";
+import slidesPerPageSolid from "../../../examples/carousel/slides-per-page/solid.tsx?raw";
+import slidesPerPageSvelte from "../../../examples/carousel/slides-per-page/carousel-slides-per-page.svelte?raw";
+import CarouselAutoplayDemo from "../../../examples/carousel/autoplay/carousel-autoplay.svelte";
+import autoplayReact from "../../../examples/carousel/autoplay/react.tsx?raw";
+import autoplayVue from "../../../examples/carousel/autoplay/vue.vue?raw";
+import autoplaySolid from "../../../examples/carousel/autoplay/solid.tsx?raw";
+import autoplaySvelte from "../../../examples/carousel/autoplay/carousel-autoplay.svelte?raw";
+import CarouselSizesDemo from "../../../examples/carousel/sizes/carousel-sizes.svelte";
+import sizesReact from "../../../examples/carousel/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/carousel/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/carousel/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/carousel/sizes/carousel-sizes.svelte?raw";
+
+<FrameworkSelect locale="en" />
+
+<Preview
+  examples={{
+    react: baseReact,
+    vue: baseVue,
+    solid: baseSolid,
+    svelte: baseSvelte,
+  }}
+>
+  <CarouselDemo client:visible />
+</Preview>
+
+## Installation
+
+<Install pkg="@moderno-ui/react" />
+
+## Usage
+
+A Carousel shows slides one page at a time. Use it when a few pictures, cards or quotes share one spot on the page. Previous and next buttons move a page, and each dot jumps to its page.
+
+<ForFramework fw="react">
+
+```tsx
+import { Carousel } from "@moderno-ui/react";
+```
+
+```tsx
+<Carousel.Root slideCount={slides.length}>
+  <Carousel.ItemGroup>
+    {slides.map((slide, index) => (
+      <Carousel.Item key={slide.id} index={index}>
+        <img src={slide.src} alt={slide.alt} />
+      </Carousel.Item>
+    ))}
+  </Carousel.ItemGroup>
+  <Carousel.Control>
+    <Carousel.PrevTrigger>‹</Carousel.PrevTrigger>
+    <Carousel.IndicatorGroup>
+      {slides.map((slide, index) => (
+        <Carousel.Indicator key={slide.id} index={index} />
+      ))}
+    </Carousel.IndicatorGroup>
+    <Carousel.NextTrigger>›</Carousel.NextTrigger>
+  </Carousel.Control>
+</Carousel.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Carousel } from "@moderno-ui/vue";
+```
+
+```vue
+<Carousel.Root :slide-count="slides.length">
+  <Carousel.ItemGroup>
+    <Carousel.Item v-for="(slide, index) in slides" :key="slide.id" :index="index">
+      <img :src="slide.src" :alt="slide.alt" />
+    </Carousel.Item>
+  </Carousel.ItemGroup>
+  <Carousel.Control>
+    <Carousel.PrevTrigger>‹</Carousel.PrevTrigger>
+    <Carousel.IndicatorGroup>
+      <Carousel.Indicator v-for="(slide, index) in slides" :key="slide.id" :index="index" />
+    </Carousel.IndicatorGroup>
+    <Carousel.NextTrigger>›</Carousel.NextTrigger>
+  </Carousel.Control>
+</Carousel.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Carousel } from "@moderno-ui/svelte";
+```
+
+```svelte
+<Carousel.Root slideCount={slides.length}>
+  <Carousel.ItemGroup>
+    {#each slides as slide, index (slide.id)}
+      <Carousel.Item {index}><img src={slide.src} alt={slide.alt} /></Carousel.Item>
+    {/each}
+  </Carousel.ItemGroup>
+  <Carousel.Control>
+    <Carousel.PrevTrigger>‹</Carousel.PrevTrigger>
+    <Carousel.IndicatorGroup>
+      {#each slides as slide, index (slide.id)}
+        <Carousel.Indicator {index} />
+      {/each}
+    </Carousel.IndicatorGroup>
+    <Carousel.NextTrigger>›</Carousel.NextTrigger>
+  </Carousel.Control>
+</Carousel.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Index } from "solid-js";
+import { Carousel } from "@moderno-ui/solid";
+```
+
+```tsx
+<Carousel.Root slideCount={slides.length}>
+  <Carousel.ItemGroup>
+    <Index each={slides}>
+      {(slide, index) => (
+        <Carousel.Item index={index}>
+          <img src={slide().src} alt={slide().alt} />
+        </Carousel.Item>
+      )}
+    </Index>
+  </Carousel.ItemGroup>
+  <Carousel.Control>
+    <Carousel.PrevTrigger>‹</Carousel.PrevTrigger>
+    <Carousel.IndicatorGroup>
+      <Index each={slides}>{(_, index) => <Carousel.Indicator index={index} />}</Index>
+    </Carousel.IndicatorGroup>
+    <Carousel.NextTrigger>›</Carousel.NextTrigger>
+  </Carousel.Control>
+</Carousel.Root>
+```
+
+</ForFramework>
+
+`slideCount` is how many slides you render. Give each `Carousel.Item` its `index`, from 0. Pages start at 0 too.
+
+## API Reference
+
+### Carousel.Root
+
+`size` is the Moderno addition; the triggers, dots and progress text follow it. The other props come from Ark's Carousel.
+
+<PropsTable component="Carousel" />
+
+| Prop             | Type                                                         | Default        | Description                                                              |
+| ---------------- | ------------------------------------------------------------ | -------------- | ------------------------------------------------------------------------ |
+| `slideCount`     | `number`                                                     | —              | Required. How many slides there are.                                     |
+| `slidesPerPage`  | `number`                                                     | `1`            | How many slides show at once.                                            |
+| `slidesPerMove`  | `number \| "auto"`                                           | `"auto"`       | How many slides one step moves. `"auto"` moves a whole page.             |
+| `spacing`        | `string`                                                     | `"0px"`        | The gap between slides, as a CSS length.                                 |
+| `padding`        | `string`                                                     | —              | Space at each end, so the next slide peeks in.                           |
+| `page`           | `number`                                                     | —              | Controlled current page, from 0.                                         |
+| `defaultPage`    | `number`                                                     | `0`            | Page at first, when uncontrolled.                                        |
+| `onPageChange`   | `(details: { page: number; pageSnapPoint: number }) => void` | —              | Called when the page changes.                                            |
+| `loop`           | `boolean`                                                    | `false`        | Go from the last page back to the first. On by default with `autoplay`.  |
+| `autoplay`       | `boolean \| { delay: number }`                               | `false`        | Move on every 4 seconds, or every `delay` ms. Held under reduced motion. |
+| `allowMouseDrag` | `boolean`                                                    | `false`        | Let a mouse drag the slides, not only a touch.                           |
+| `orientation`    | `"horizontal" \| "vertical"`                                 | `"horizontal"` | Which way the slides scroll.                                             |
+| `translations`   | `IntlTranslations`                                           | —              | What a screen reader says for each slide, dot and trigger.               |
+
+In Vue, bind the page with `v-model:page`, and listen with `@page-change`.
+
+### Parts
+
+| Part                         | Element    | Description                                                        |
+| ---------------------------- | ---------- | ------------------------------------------------------------------ |
+| `Carousel.Root`              | `<div>`    | The region a screen reader calls a carousel. Carries `data-size`.  |
+| `Carousel.ItemGroup`         | `<div>`    | Scrolls the slides and snaps to each page.                         |
+| `Carousel.Item`              | `<div>`    | One slide. Takes its `index`, from 0.                              |
+| `Carousel.Control`           | `<div>`    | Holds the triggers and the dots in a centred row.                  |
+| `Carousel.PrevTrigger`       | `<button>` | Goes one page back. Off on the first page, unless it loops.        |
+| `Carousel.NextTrigger`       | `<button>` | Goes one page on. Off on the last page, unless it loops.           |
+| `Carousel.IndicatorGroup`    | `<div>`    | Holds the dots. Arrow keys move between pages here.                |
+| `Carousel.Indicator`         | `<button>` | One dot per page. Takes its page `index`.                          |
+| `Carousel.AutoplayTrigger`   | `<button>` | Optional. Starts and stops autoplay.                               |
+| `Carousel.AutoplayIndicator` | `<span>`   | Optional. Shows its content while playing, `fallback` when paused. |
+| `Carousel.ProgressText`      | `<span>`   | Optional. The page as text, like "2 / 5".                          |
+| `Carousel.Context`           | —          | Hands you the carousel: `page`, `pageSnapPoints`, `isPlaying`.     |
+
+### Data attributes
+
+| Attribute      | Values                                 |
+| -------------- | -------------------------------------- |
+| `data-current` | On the current page's dot              |
+| `data-inview`  | On each slide in view                  |
+| `data-pressed` | On the autoplay trigger while it plays |
+| `data-index`   | On each slide and dot: its index       |
+| `data-size`    | On the root: `"sm"`, `"md"` or `"lg"`  |
+
+## Examples
+
+### Several slides at a time
+
+`slidesPerPage` shows more than one slide, and `spacing` sets the gap. Render one dot per page from `Carousel.Context`.
+
+<Preview
+  examples={{
+    react: slidesPerPageReact,
+    vue: slidesPerPageVue,
+    solid: slidesPerPageSolid,
+    svelte: slidesPerPageSvelte,
+  }}
+>
+  <CarouselSlidesPerPageDemo client:visible />
+</Preview>
+
+### Autoplay
+
+`autoplay` moves on by itself and loops. Add `Carousel.AutoplayTrigger` so the reader can pause it.
+
+<Preview
+  examples={{
+    react: autoplayReact,
+    vue: autoplayVue,
+    solid: autoplaySolid,
+    svelte: autoplaySvelte,
+  }}
+>
+  <CarouselAutoplayDemo client:visible />
+</Preview>
+
+### Sizes
+
+<Preview
+  examples={{
+    react: sizesReact,
+    vue: sizesVue,
+    solid: sizesSolid,
+    svelte: sizesSvelte,
+  }}
+>
+  <CarouselSizesDemo client:visible />
+</Preview>
+
+## Notes
+
+- `Carousel.Root` is wrapped to add `size` and to respect reduced motion; every other part is Ark's unchanged.
+- When the reader prefers reduced motion, `autoplay` does not start, and the buttons and dots do not animate. The reader can still start autoplay with `Carousel.AutoplayTrigger`.
+- A carousel takes the width of its container. Give a vertical one a height.
+- In a right-to-left page the slides run from the right. Pass the mirrored glyphs, `›` for previous and `‹` for next.

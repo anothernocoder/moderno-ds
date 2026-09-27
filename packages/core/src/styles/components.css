@@ -728,6 +728,244 @@
     gap: var(--spacing-3);
   }
 
+  /* ───────────────────────── Carousel ───────────────────────── *
+   * Ark's carousel machine: root (a region) > item-group > item…, then
+   * control > prev-trigger + indicator-group > indicator… + next-trigger,
+   * with an autoplay-trigger and a progress-text where the consumer puts
+   * them. Ark lays the slides out inline on the item-group (a scrolling,
+   * snapping grid sized from slidesPerPage and spacing), so the rules below
+   * only frame the slides and paint the controls. The triggers and the
+   * indicators are native <button>s. Ark disables prev/next at either end
+   * (unless the carousel loops), stamps data-current on the current
+   * indicator, data-inview on each slide in view and data-pressed on the
+   * autoplay trigger while it plays. `carouselRecipe` puts size on the root;
+   * the controls follow it. Under reduced motion the wrapper holds autoplay
+   * off (`carouselMotion`) and the controls drop their transitions.    */
+  [data-scope="carousel"][data-part="root"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+    min-width: 0;
+  }
+  /* A standing carousel puts its controls beside the slides, not under. */
+  [data-scope="carousel"][data-part="root"][data-orientation="vertical"] {
+    flex-direction: row;
+  }
+  /* The slides scroll inside rounded corners. Ark hides Firefox's scrollbar
+     inline (scrollbar-width: none); the rule after this hides WebKit's. */
+  [data-scope="carousel"][data-part="item-group"] {
+    min-width: 0;
+    border-radius: var(--radius);
+  }
+  [data-scope="carousel"][data-part="item-group"]::-webkit-scrollbar {
+    display: none;
+  }
+  /* Ark makes the item group a tab stop, so the arrow keys can scroll it.
+     Its ring is drawn inside, over the slides, where the page cannot clip it. */
+  [data-scope="carousel"][data-part="item-group"]:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+  }
+  /* Standing, the slides take the width the controls leave. */
+  [data-scope="carousel"][data-part="item-group"][data-orientation="vertical"] {
+    flex: 1;
+  }
+  [data-scope="carousel"][data-part="item-group"][data-dragging] {
+    cursor: grabbing;
+  }
+  [data-scope="carousel"][data-part="item"] {
+    min-width: 0;
+  }
+  [data-scope="carousel"][data-part="control"] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-2);
+  }
+  [data-scope="carousel"][data-part="control"][data-orientation="vertical"] {
+    flex-direction: column;
+  }
+  [data-scope="carousel"][data-part="indicator-group"] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-1);
+  }
+  [data-scope="carousel"][data-part="indicator-group"][data-orientation="vertical"] {
+    flex-direction: column;
+  }
+
+  /* Prev, next and autoplay: round outline buttons on --background, so they
+     read over a slide as well as beside one. */
+  [data-scope="carousel"]:is(
+    [data-part="prev-trigger"],
+    [data-part="next-trigger"],
+    [data-part="autoplay-trigger"]
+  ) {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-1);
+    height: var(--spacing-8);
+    min-width: var(--spacing-8);
+    padding-inline: var(--spacing-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-full);
+    /* Paints its own fill over the UA `buttonface` grey. */
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: var(--text-ui-md);
+    font-weight: var(--font-weight-medium);
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    transition:
+      background-color var(--motion-fast),
+      color var(--motion-fast);
+  }
+  /* An icon passed as the content keeps a control's size, not its own. */
+  [data-scope="carousel"]:is(
+      [data-part="prev-trigger"],
+      [data-part="next-trigger"],
+      [data-part="autoplay-trigger"]
+    )
+    > svg {
+    width: var(--spacing-4);
+    height: var(--spacing-4);
+  }
+  [data-scope="carousel"]:is(
+      [data-part="prev-trigger"],
+      [data-part="next-trigger"],
+      [data-part="autoplay-trigger"]
+    ):hover {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+
+  /* One dot per page. The button itself has no fill (it clears the UA
+     `buttonface` grey) and is a comfortable target; the dot is its ::before.
+     The current page's dot is --primary and stretches into a pill. */
+  [data-scope="carousel"][data-part="indicator"] {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    height: var(--spacing-5);
+    padding: 0 var(--spacing-1);
+    border: 0;
+    border-radius: var(--radius-full);
+    background-color: transparent;
+    cursor: pointer;
+  }
+  [data-scope="carousel"][data-part="indicator"]::before {
+    content: "";
+    width: var(--spacing-2);
+    height: var(--spacing-2);
+    border-radius: var(--radius-full);
+    background-color: var(--muted-foreground);
+    transition:
+      width var(--motion-fast),
+      background-color var(--motion-fast);
+  }
+  [data-scope="carousel"][data-part="indicator"]:hover::before {
+    background-color: var(--foreground);
+  }
+  [data-scope="carousel"][data-part="indicator"][data-current]::before {
+    width: var(--spacing-5);
+    background-color: var(--primary);
+  }
+  /* A read-only indicator shows the page; it does not go there. */
+  [data-scope="carousel"][data-part="indicator"][data-readonly] {
+    cursor: default;
+  }
+
+  /* The ring is drawn inside each button, where a neighbour one gap away
+     cannot cover it and a trigger's border does not double it. */
+  [data-scope="carousel"]:is(
+      [data-part="prev-trigger"],
+      [data-part="next-trigger"],
+      [data-part="autoplay-trigger"],
+      [data-part="indicator"]
+    ):focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+  }
+  /* A trigger with nowhere to go is dead: Ark sets the native `disabled` on
+     prev at the first page and next at the last. It looks the same as
+     data-disabled, so a trigger disabled before Ark hydrates reads as one too. */
+  [data-scope="carousel"][data-part="prev-trigger"]:disabled,
+  [data-scope="carousel"][data-part="next-trigger"]:disabled,
+  [data-scope="carousel"][data-part="autoplay-trigger"]:disabled,
+  [data-scope="carousel"][data-part="indicator"]:disabled,
+  [data-scope="carousel"][data-part="prev-trigger"][data-disabled],
+  [data-scope="carousel"][data-part="next-trigger"][data-disabled],
+  [data-scope="carousel"][data-part="autoplay-trigger"][data-disabled],
+  [data-scope="carousel"][data-part="indicator"][data-disabled] {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+
+  [data-scope="carousel"][data-part="progress-text"] {
+    color: var(--muted-foreground);
+    font-size: var(--text-ui-sm);
+    line-height: var(--leading-ui-sm);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Density driven by the recipe's data-size on the root. Descendant
+     combinators, so a consumer may wrap the controls. `lg` exceeds the top
+     spacing slot, so it sums two slots rather than inventing a token. */
+  [data-scope="carousel"][data-part="root"][data-size="sm"]
+    :is([data-part="prev-trigger"], [data-part="next-trigger"], [data-part="autoplay-trigger"]) {
+    height: var(--spacing-7);
+    min-width: var(--spacing-7);
+    padding-inline: var(--spacing-1);
+    font-size: var(--text-ui-sm);
+  }
+  [data-scope="carousel"][data-part="root"][data-size="sm"] [data-part="indicator"] {
+    height: var(--spacing-4);
+  }
+  [data-scope="carousel"][data-part="root"][data-size="sm"] [data-part="indicator"]::before {
+    width: calc(var(--spacing-1) * 1.5);
+    height: calc(var(--spacing-1) * 1.5);
+  }
+  [data-scope="carousel"][data-part="root"][data-size="sm"]
+    [data-part="indicator"][data-current]::before {
+    width: var(--spacing-4);
+  }
+  [data-scope="carousel"][data-part="root"][data-size="lg"]
+    :is([data-part="prev-trigger"], [data-part="next-trigger"], [data-part="autoplay-trigger"]) {
+    height: calc(var(--spacing-8) + var(--spacing-2));
+    min-width: calc(var(--spacing-8) + var(--spacing-2));
+    padding-inline: var(--spacing-3);
+    font-size: var(--text-ui-lg);
+  }
+  [data-scope="carousel"][data-part="root"][data-size="lg"] [data-part="indicator"] {
+    height: var(--spacing-6);
+  }
+  [data-scope="carousel"][data-part="root"][data-size="lg"] [data-part="indicator"]::before {
+    width: var(--spacing-3);
+    height: var(--spacing-3);
+  }
+  [data-scope="carousel"][data-part="root"][data-size="lg"]
+    [data-part="indicator"][data-current]::before {
+    width: var(--spacing-6);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-scope="carousel"]:is(
+      [data-part="prev-trigger"],
+      [data-part="next-trigger"],
+      [data-part="autoplay-trigger"]
+    ),
+    [data-scope="carousel"][data-part="indicator"]::before {
+      transition: none;
+    }
+  }
+
   /* ─────────────────────────── Charts ─────────────────────────── *
    * Custom SVG charts (line/area/bar/scatter). All geometry is computed in
    * @moderno-ui/charts-core; this only paints. Series colour is decoupled from

@@ -17,6 +17,7 @@ import BadgeSection from "./sections/badge.js";
 import ButtonSection from "./sections/button.js";
 import CalloutSection from "./sections/callout.js";
 import CardSection from "./sections/card.js";
+import CarouselSection from "./sections/carousel.js";
 import ChartsSection from "./sections/charts.js";
 import CheckboxSection from "./sections/checkbox.js";
 import ChipSection from "./sections/chip.js";
@@ -56,6 +57,7 @@ export const App = defineComponent({
         h(ButtonSection, { open: props.open }),
         h(CalloutSection, { open: props.open }),
         h(CardSection, { open: props.open }),
+        h(CarouselSection, { open: props.open }),
         h(ChartsSection, { open: props.open }),
         h(CheckboxSection, { open: props.open }),
         h(ChipSection, { open: props.open }),

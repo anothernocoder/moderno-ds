@@ -17,6 +17,7 @@
   import Button from "./sections/Button.svelte";
   import Callout from "./sections/Callout.svelte";
   import Card from "./sections/Card.svelte";
+  import Carousel from "./sections/Carousel.svelte";
   import Charts from "./sections/Charts.svelte";
   import Checkbox from "./sections/Checkbox.svelte";
   import Chip from "./sections/Chip.svelte";
@@ -51,6 +52,7 @@
   <Button {open} />
   <Callout {open} />
   <Card {open} />
+  <Carousel {open} />
   <Charts {open} />
   <Checkbox {open} />
   <Chip {open} />

@@ -18,6 +18,7 @@ import barChartComponent from "./components/bar-chart.ts";
 import buttonComponent from "./components/button.ts";
 import calloutComponent from "./components/callout.ts";
 import cardComponent from "./components/card.ts";
+import carouselComponent from "./components/carousel.ts";
 import checkboxComponent from "./components/checkbox.ts";
 import chipComponent from "./components/chip.ts";
 import dialogComponent from "./components/dialog.ts";
@@ -52,6 +53,7 @@ export const { ENTRIES, AGENT_COMPONENTS, AGENT_EXAMPLES } = assembleComponents(
   buttonComponent,
   calloutComponent,
   cardComponent,
+  carouselComponent,
   checkboxComponent,
   chipComponent,
   dialogComponent,

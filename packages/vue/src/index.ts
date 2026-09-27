@@ -18,6 +18,7 @@ export * from "./exports/bar-chart.js";
 export * from "./exports/button.js";
 export * from "./exports/callout.js";
 export * from "./exports/card.js";
+export * from "./exports/carousel.js";
 export * from "./exports/checkbox.js";
 export * from "./exports/chip.js";
 export * from "./exports/dialog.js";

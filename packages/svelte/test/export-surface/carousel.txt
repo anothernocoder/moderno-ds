@@ -1,0 +1,5 @@
+value Carousel
+type CarouselAutoplayStatusDetails
+type CarouselDragStatusDetails
+type CarouselPageChangeDetails
+type CarouselSize

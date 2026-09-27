@@ -26,6 +26,7 @@ export * from "./recipes/badge.js";
 export * from "./recipes/button.js";
 export * from "./recipes/callout.js";
 export * from "./recipes/card.js";
+export * from "./recipes/carousel.js";
 export * from "./recipes/checkbox.js";
 export * from "./recipes/chip.js";
 export * from "./recipes/divider.js";
