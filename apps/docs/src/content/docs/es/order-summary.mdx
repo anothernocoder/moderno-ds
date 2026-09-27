@@ -1,0 +1,202 @@
+---
+title: Order Summary
+description: Un resumen de solo lectura de un pedido — cada artículo con su imagen, su nombre, sus opciones, su cantidad y su precio — y los totales, del subtotal al total.
+group: Bloques
+order: 124
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import OrderSummaryBlockDemo from "../../../islands/OrderSummaryBlockDemo.svelte";
+import orderSummaryReact from "../../../../../../registry/blocks/order-summary/react/order-summary.tsx?raw";
+import orderSummaryVue from "../../../../../../registry/blocks/order-summary/vue/OrderSummary.vue?raw";
+import orderSummarySolid from "../../../../../../registry/blocks/order-summary/solid/order-summary.tsx?raw";
+import orderSummarySvelte from "../../../../../../registry/blocks/order-summary/svelte/OrderSummary.svelte?raw";
+
+export const examples = {
+  react: orderSummaryReact,
+  vue: orderSummaryVue,
+  solid: orderSummarySolid,
+  svelte: orderSummarySvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <OrderSummaryBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="order-summary" />
+
+## Uso
+
+Usa Order Summary para mostrar al cliente lo que va a pagar, junto a un formulario de pago o en una página de confirmación. Solo muestra el pedido; nada en él cambia el pedido.
+
+<ForFramework fw="react">
+
+```tsx
+import { OrderSummary } from "@/components/blocks/order-summary";
+```
+
+```tsx
+<OrderSummary items={items} totals={totals} total={total} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import OrderSummary from "@/components/blocks/OrderSummary.vue";
+</script>
+```
+
+```vue
+<OrderSummary :items="items" :totals="totals" :total="total" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import OrderSummary from "@/components/blocks/OrderSummary.svelte";
+</script>
+```
+
+```svelte
+<OrderSummary {items} {totals} {total} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { OrderSummary } from "@/components/blocks/order-summary";
+```
+
+```tsx
+<OrderSummary items={items()} totals={totals()} total={total()} />
+```
+
+</ForFramework>
+
+`totals` es una lista de filas, como `[{ label: "Subtotal", amount: "€134" }, { label: "Shipping", amount: "€6" }]`. El bloque no hace cuentas: pasa cada importe tal como se lee.
+
+## Referencia de la API
+
+### Props
+
+| Prop       | Tipo           | Por defecto                   | Descripción                                                                                      |
+| ---------- | -------------- | ----------------------------- | ------------------------------------------------------------------------------------------------ |
+| `heading`  | `string`       | `"Order summary"`             | El título de la sección. Va en la fuente con serifa.                                             |
+| `items`    | `OrderItem[]`  | tres de muestra               | Las líneas del pedido. `[]` muestra el mensaje de vacío.                                         |
+| `totals`   | `OrderTotal[]` | tres filas con los de muestra | Las filas sobre el total, en orden. Sin ellas, no hay ninguna.                                   |
+| `total`    | `string`       | `"€168"` con los de muestra   | El total final, al final y más grande. Sin él, no hay fila de total.                             |
+| `error`    | `string`       | —                             | No se pudo cargar el pedido; un Alert de error con reintento sustituye las líneas y los totales. |
+| `loading`  | `boolean`      | `false`                       | Líneas de marcador en una región ocupada sustituyen las líneas y los totales.                    |
+| `disabled` | `boolean`      | `false`                       | Las líneas se quedan; cada enlace queda inerte y el reintento apagado.                           |
+| `onRetry`  | `() => void`   | —                             | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.                                      |
+
+### OrderItem
+
+| Campo      | Tipo             | Descripción                                                          |
+| ---------- | ---------------- | -------------------------------------------------------------------- |
+| `id`       | `string`         | Una clave estable para la línea.                                     |
+| `name`     | `string`         | El nombre del producto.                                              |
+| `price`    | `string`         | El precio de la línea por toda su cantidad, como `"€56"`.            |
+| `quantity` | `number`         | Cuántos hay en el pedido. Se lee "Qty 2".                            |
+| `options`  | `string`         | Opcional. Lo que eligió el cliente, como `"Sage · 350 ml"`.          |
+| `href`     | `string`         | Opcional. Convierte el nombre en un enlace a la página del producto. |
+| `image`    | `OrderItemImage` | Opcional. La foto: `{ src, alt }`. Sin ella, una caja atenuada.      |
+
+### OrderTotal
+
+| Campo    | Tipo     | Descripción                                         |
+| -------- | -------- | --------------------------------------------------- |
+| `label`  | `string` | Qué es la fila, como `"Shipping"`.                  |
+| `amount` | `string` | El importe tal como se lee, como `"€6"` o `"Free"`. |
+
+### Estados
+
+| Estado        | Prop         | Qué se muestra                                                        |
+| ------------- | ------------ | --------------------------------------------------------------------- |
+| Por defecto   | —            | El título, una línea por artículo y los totales.                      |
+| Vacío         | `items={[]}` | El título y "Your order is empty." en una caja discontinua.           |
+| Cargando      | `loading`    | El título y tres líneas de marcador.                                  |
+| Error         | `error`      | El título y un Alert de error con "Try again".                        |
+| Deshabilitado | `disabled`   | Las mismas líneas y totales, con los enlaces y el reintento apagados. |
+
+### Tamaño
+
+| Paso del contenedor      | Qué cambia                                                                          |
+| ------------------------ | ----------------------------------------------------------------------------------- |
+| bajo `@sm`               | Una imagen pequeña. La cantidad va bajo el nombre. Los totales van bajo las líneas. |
+| `@sm` (`--container-sm`) | La imagen crece, y la cantidad pasa a su propia columna, justo antes del precio.    |
+| `@md` (`--container-md`) | La imagen crece otra vez, y el título sube un tamaño.                               |
+| `@lg` (`--container-lg`) | Los totales pasan al lado de las líneas.                                            |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+El mismo bloque a 18rem, 30rem, 40rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <OrderSummaryBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Con un descuento
+
+Añade cualquier fila a `totals`: aquí un descuento y el envío gratis.
+
+<Preview examples={examples} layout="fill">
+  <OrderSummaryBlockDemo client:visible locale="es" state="discount" />
+</Preview>
+
+### Sin imágenes
+
+Sin `image`, el área de cada imagen es una caja atenuada.
+
+<Preview examples={examples} layout="fill">
+  <OrderSummaryBlockDemo client:visible locale="es" state="no-images" />
+</Preview>
+
+### Vacío
+
+Pasa un array `items` vacío.
+
+<Preview examples={examples} layout="fill">
+  <OrderSummaryBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <OrderSummaryBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+Pulsa "Try again" para borrar el mensaje y volver a mostrar el pedido.
+
+<Preview examples={examples} layout="fill">
+  <OrderSummaryBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+Úsalo mientras se confirma el pedido, para que el cliente no salga de la página a medias.
+
+<Preview examples={examples} layout="fill">
+  <OrderSummaryBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
+
+## Notas
+
+- Mantén `options` corto: el color y la talla bastan.
+- Usa pocas filas de totales. Subtotal, envío e impuestos suelen bastar.
