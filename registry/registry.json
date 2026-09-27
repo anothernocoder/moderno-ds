@@ -1652,9 +1652,9 @@
     {
       "name": "form-layout-react",
       "type": "registry:block",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "Form Layout (React)",
-      "description": "Grouped settings form composing the @moderno-ui/react Field, Checkbox, Divider, Button and Alert primitives; responds to its container (@container) across all three contract steps — actions row at @sm, two-up field grid at @md, group headings beside their fields at @lg — and renders its default, disabled, loading and error states from props.",
+      "description": "Grouped settings form composing the @moderno-ui/react Field, Checkbox, Divider, Button and Alert primitives; responds to its container (@container) across all three contract steps — actions row at @sm, two-up field grid at @md, group headings beside their fields at @lg — renders its default, disabled, loading and error states from props, and takes its title, description, action labels and its groups of fields as props (children, or the default slot in Vue), so a screen can reuse the layout for its own fields.",
       "dependencies": [
         "@moderno-ui/react"
       ],
@@ -1670,9 +1670,9 @@
     {
       "name": "form-layout-vue",
       "type": "registry:block",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "Form Layout (Vue)",
-      "description": "Grouped settings form composing the @moderno-ui/vue Field, Checkbox, Divider, Button and Alert primitives; responds to its container (@container) across all three contract steps — actions row at @sm, two-up field grid at @md, group headings beside their fields at @lg — and renders its default, disabled, loading and error states from props.",
+      "description": "Grouped settings form composing the @moderno-ui/vue Field, Checkbox, Divider, Button and Alert primitives; responds to its container (@container) across all three contract steps — actions row at @sm, two-up field grid at @md, group headings beside their fields at @lg — renders its default, disabled, loading and error states from props, and takes its title, description, action labels and its groups of fields as props (children, or the default slot in Vue), so a screen can reuse the layout for its own fields.",
       "dependencies": [
         "@moderno-ui/vue"
       ],
@@ -1688,9 +1688,9 @@
     {
       "name": "form-layout-svelte",
       "type": "registry:block",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "Form Layout (Svelte)",
-      "description": "Grouped settings form composing the @moderno-ui/svelte Field, Checkbox, Divider, Button and Alert primitives; responds to its container (@container) across all three contract steps — actions row at @sm, two-up field grid at @md, group headings beside their fields at @lg — and renders its default, disabled, loading and error states from props.",
+      "description": "Grouped settings form composing the @moderno-ui/svelte Field, Checkbox, Divider, Button and Alert primitives; responds to its container (@container) across all three contract steps — actions row at @sm, two-up field grid at @md, group headings beside their fields at @lg — renders its default, disabled, loading and error states from props, and takes its title, description, action labels and its groups of fields as props (children, or the default slot in Vue), so a screen can reuse the layout for its own fields.",
       "dependencies": [
         "@moderno-ui/svelte"
       ],
@@ -1706,9 +1706,9 @@
     {
       "name": "form-layout-solid",
       "type": "registry:block",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "Form Layout (Solid)",
-      "description": "Grouped settings form composing the @moderno-ui/solid Field, Checkbox, Divider, Button and Alert primitives; responds to its container (@container) across all three contract steps — actions row at @sm, two-up field grid at @md, group headings beside their fields at @lg — and renders its default, disabled, loading and error states from props.",
+      "description": "Grouped settings form composing the @moderno-ui/solid Field, Checkbox, Divider, Button and Alert primitives; responds to its container (@container) across all three contract steps — actions row at @sm, two-up field grid at @md, group headings beside their fields at @lg — renders its default, disabled, loading and error states from props, and takes its title, description, action labels and its groups of fields as props (children, or the default slot in Vue), so a screen can reuse the layout for its own fields.",
       "dependencies": [
         "@moderno-ui/solid"
       ],
@@ -4990,6 +4990,86 @@
           "path": "screens/profile-setup/solid/profile-setup.tsx",
           "type": "registry:screen",
           "target": "src/components/screens/profile-setup.tsx"
+        }
+      ]
+    },
+    {
+      "name": "referral-invite-react",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Referral invite (React)",
+      "description": "Full-viewport referral screen composing the form-layout block: what the referral gives in three steps, then a form for friends' email addresses and an optional note, with a success alert naming the addresses the last send reached and the form's error, loading and disabled states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm, the title grows, the steps sit side by side and the footer lines up at @md.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [
+        "form-layout-react"
+      ],
+      "files": [
+        {
+          "path": "screens/referral-invite/react/referral-invite.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/referral-invite.tsx"
+        }
+      ]
+    },
+    {
+      "name": "referral-invite-vue",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Referral invite (Vue)",
+      "description": "Full-viewport referral screen composing the form-layout block: what the referral gives in three steps, then a form for friends' email addresses and an optional note, with a success alert naming the addresses the last send reached and the form's error, loading and disabled states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm, the title grows, the steps sit side by side and the footer lines up at @md.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [
+        "form-layout-vue"
+      ],
+      "files": [
+        {
+          "path": "screens/referral-invite/vue/ReferralInvite.vue",
+          "type": "registry:screen",
+          "target": "src/components/screens/ReferralInvite.vue"
+        }
+      ]
+    },
+    {
+      "name": "referral-invite-svelte",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Referral invite (Svelte)",
+      "description": "Full-viewport referral screen composing the form-layout block: what the referral gives in three steps, then a form for friends' email addresses and an optional note, with a success alert naming the addresses the last send reached and the form's error, loading and disabled states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm, the title grows, the steps sit side by side and the footer lines up at @md.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [
+        "form-layout-svelte"
+      ],
+      "files": [
+        {
+          "path": "screens/referral-invite/svelte/ReferralInvite.svelte",
+          "type": "registry:screen",
+          "target": "src/components/screens/ReferralInvite.svelte"
+        }
+      ]
+    },
+    {
+      "name": "referral-invite-solid",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Referral invite (Solid)",
+      "description": "Full-viewport referral screen composing the form-layout block: what the referral gives in three steps, then a form for friends' email addresses and an optional note, with a success alert naming the addresses the last send reached and the form's error, loading and disabled states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm, the title grows, the steps sit side by side and the footer lines up at @md.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [
+        "form-layout-solid"
+      ],
+      "files": [
+        {
+          "path": "screens/referral-invite/solid/referral-invite.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/referral-invite.tsx"
         }
       ]
     },

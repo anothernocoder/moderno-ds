@@ -1,0 +1,202 @@
+---
+title: Invitación de referidos
+description: Una pantalla a viewport completo donde una persona invita a sus amigos por correo para ganar una recompensa por referido.
+group: Pantallas
+order: 119
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ReferralInviteScreenDemo from "../../../islands/ReferralInviteScreenDemo.svelte";
+import referralInviteReact from "../../../../../../registry/screens/referral-invite/react/referral-invite.tsx?raw";
+import referralInviteVue from "../../../../../../registry/screens/referral-invite/vue/ReferralInvite.vue?raw";
+import referralInviteSolid from "../../../../../../registry/screens/referral-invite/solid/referral-invite.tsx?raw";
+import referralInviteSvelte from "../../../../../../registry/screens/referral-invite/svelte/ReferralInvite.svelte?raw";
+
+<FrameworkSelect locale="es" />
+
+<Preview
+  examples={{
+    react: referralInviteReact,
+    vue: referralInviteVue,
+    solid: referralInviteSolid,
+    svelte: referralInviteSvelte,
+  }}
+  layout="fill"
+>
+  <ReferralInviteScreenDemo client:visible locale="es" />
+</Preview>
+
+Úsala en el paso de un programa de referidos donde una persona invita a sus amigos por correo. Explica la recompensa y recoge las direcciones; tu página envía las invitaciones.
+
+## Instalación
+
+<Install item="referral-invite" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { ReferralInvite } from "@/components/screens/referral-invite";
+```
+
+```tsx
+<ReferralInvite sent={sent} loading={sending} onSubmit={handleSubmit} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```ts
+import ReferralInvite from "@/components/screens/ReferralInvite.vue";
+```
+
+```vue
+<ReferralInvite :sent="sent" :loading="sending" @submit="handleSubmit" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```ts
+import ReferralInvite from "@/components/screens/ReferralInvite.svelte";
+```
+
+```svelte
+<ReferralInvite {sent} loading={sending} onsubmit={handleSubmit} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { ReferralInvite } from "@/components/screens/referral-invite";
+```
+
+```tsx
+<ReferralInvite sent={sent()} loading={sending()} onSubmit={handleSubmit} />
+```
+
+</ForFramework>
+
+## Referencia de API
+
+### Props
+
+Los callbacks son props `on…` en React y Solid, en minúsculas (`onsubmit`) en Svelte y eventos (`submit`, `cancel`, `navigate`) en Vue.
+
+| Prop          | Tipo                     | Por defecto | Descripción                                                              |
+| ------------- | ------------------------ | ----------- | ------------------------------------------------------------------------ |
+| `sent`        | `string[]`               | —           | Direcciones a las que llegó el último envío. Muestra la alerta de éxito. |
+| `error`       | `string`                 | —           | Falló el envío: muestra la alerta del formulario.                        |
+| `errors`      | `Record<string, string>` | —           | Errores por campo: `emails`, `message`.                                  |
+| `loading`     | `boolean`                | `false`     | Envío en curso: todos los controles inertes, el botón ocupado.           |
+| `disabled`    | `boolean`                | `false`     | Ahora no se pueden enviar invitaciones.                                  |
+| `onSubmit`    | `(event) => void`        | —           | Envío nativo del formulario.                                             |
+| `onCancel`    | `() => void`             | —           | Se pulsó el botón «Not now» del formulario.                              |
+| `onNavigate`  | `(to, event) => void`    | —           | Se pulsó un enlace de la pantalla: `home`, `rules`, `privacy` o `terms`. |
+| `homeHref`    | `string`                 | `"#"`       | Destino del logotipo.                                                    |
+| `rulesHref`   | `string`                 | `"#"`       | Destino de «How referrals work».                                         |
+| `privacyHref` | `string`                 | `"#"`       | Destino del enlace de privacidad.                                        |
+| `termsHref`   | `string`                 | `"#"`       | Destino del enlace de términos.                                          |
+
+### Estados
+
+| Estado          | Props             | Qué se renderiza                                       |
+| --------------- | ----------------- | ------------------------------------------------------ |
+| Vacío           | —                 | Los pasos y el formulario vacío. Aún no se envió nada. |
+| Enviado         | `sent`            | Una alerta de éxito con las direcciones.               |
+| Error al enviar | `error`, `errors` | La alerta del formulario y los campos inválidos.       |
+| Enviando        | `loading`         | Controles inertes, el botón de enviar `aria-busy`.     |
+| Deshabilitado   | `disabled`        | La pantalla se ve pero no se puede usar.               |
+
+### Campos del formulario
+
+| Nombre    | Control       | Se envía                                           |
+| --------- | ------------- | -------------------------------------------------- |
+| `emails`  | Área de texto | Siempre. Direcciones separadas por comas o líneas. |
+| `message` | Área de texto | Siempre. Vacío si la nota queda en blanco.         |
+
+### Tamaño
+
+| Paso del contenedor      | Cambio                                                        |
+| ------------------------ | ------------------------------------------------------------- |
+| `@sm` (`--container-sm`) | La cabecera pasa a una fila.                                  |
+| `@md` (`--container-md`) | El título crece, los pasos quedan en fila y el pie se alinea. |
+
+### Composición
+
+| Parte                          | Papel                                                      |
+| ------------------------------ | ---------------------------------------------------------- |
+| [FormLayout](/es/form-layout/) | El formulario: su título, los campos y el botón de enviar. |
+| [Alert](/es/alert/)            | El mensaje de éxito tras un envío.                         |
+| [Field](/es/field/)            | Las direcciones y la nota, dentro del formulario.          |
+
+## Ejemplos
+
+### Enviado
+
+<Preview
+  examples={{
+    react: referralInviteReact,
+    vue: referralInviteVue,
+    solid: referralInviteSolid,
+    svelte: referralInviteSvelte,
+  }}
+  layout="fill"
+>
+  <ReferralInviteScreenDemo client:visible locale="es" state="sent" />
+</Preview>
+
+### Error al enviar
+
+<Preview
+  examples={{
+    react: referralInviteReact,
+    vue: referralInviteVue,
+    solid: referralInviteSolid,
+    svelte: referralInviteSvelte,
+  }}
+  layout="fill"
+>
+  <ReferralInviteScreenDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Enviando
+
+<Preview
+  examples={{
+    react: referralInviteReact,
+    vue: referralInviteVue,
+    solid: referralInviteSolid,
+    svelte: referralInviteSvelte,
+  }}
+  layout="fill"
+>
+  <ReferralInviteScreenDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Deshabilitado
+
+<Preview
+  examples={{
+    react: referralInviteReact,
+    vue: referralInviteVue,
+    solid: referralInviteSolid,
+    svelte: referralInviteSvelte,
+  }}
+  layout="fill"
+>
+  <ReferralInviteScreenDemo client:visible locale="es" state="disabled" />
+</Preview>
+
+## Notas
+
+- Presentacional: sin petición, sin análisis de texto, sin router. La página que la monta se encarga de eso.
+- Separa `emails` por comas y saltos de línea, recorta cada parte y descarta las vacías antes de validarlas.
+- Acompaña `disabled` con un `error` que diga por qué, como un límite semanal, para que la persona sepa cuándo volver.
+- `onNavigate` pasa el evento del clic: deja pasar los clics con `metaKey`/`ctrlKey` y luego llama a `preventDefault()` para enrutar.
+- La pantalla importa el bloque FormLayout desde `@/components/blocks/…`; cambia esa línea si tu alias es otro.
