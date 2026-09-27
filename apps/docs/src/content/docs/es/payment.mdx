@@ -1,0 +1,190 @@
+---
+title: Pago
+description: Una pantalla a viewport completo donde un cliente paga — el formulario de la tarjeta y un resumen del pedido — con los bloques de checkout y de resumen del pedido entre una cabecera y un pie.
+group: Pantallas
+order: 124
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import PaymentScreenDemo from "../../../islands/PaymentScreenDemo.svelte";
+import paymentReact from "../../../../../../registry/screens/payment/react/payment.tsx?raw";
+import paymentVue from "../../../../../../registry/screens/payment/vue/Payment.vue?raw";
+import paymentSolid from "../../../../../../registry/screens/payment/solid/payment.tsx?raw";
+import paymentSvelte from "../../../../../../registry/screens/payment/svelte/Payment.svelte?raw";
+
+export const examples = {
+  react: paymentReact,
+  vue: paymentVue,
+  solid: paymentSolid,
+  svelte: paymentSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <PaymentScreenDemo client:visible locale="es" />
+</Preview>
+
+Úsala en el paso de pago del checkout. El cliente escribe su tarjeta y ve lo que paga; tu página cobra la tarjeta.
+
+## Instalación
+
+<Install item="payment" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { Payment } from "@/components/screens/payment";
+```
+
+```tsx
+<Payment items={items} totals={totals} total={total} onSubmit={pay} onBack={goToShipping} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```ts
+import Payment from "@/components/screens/Payment.vue";
+```
+
+```vue
+<Payment :items="items" :totals="totals" :total="total" @submit="pay" @back="goToShipping" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```ts
+import Payment from "@/components/screens/Payment.svelte";
+```
+
+```svelte
+<Payment {items} {totals} {total} onsubmit={pay} onback={goToShipping} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { Payment } from "@/components/screens/payment";
+```
+
+```tsx
+<Payment items={items()} totals={totals()} total={total()} onSubmit={pay} onBack={goToShipping} />
+```
+
+</ForFramework>
+
+`pay` recibe el evento de envío del formulario. Evita que la página se recargue y envía la tarjeta:
+
+```ts
+function pay(event) {
+  event.preventDefault();
+  const card = new FormData(event.currentTarget);
+  // Envía card.get("cardNumber"), card.get("expiry"), … a tu proveedor de pagos.
+}
+```
+
+## Referencia de API
+
+### Props
+
+Los callbacks son props `on…` en React y Solid, en minúsculas (`onsubmit`) en Svelte y eventos (`submit`, `back`, `retry`, `navigate`) en Vue.
+
+| Prop          | Tipo                     | Por defecto             | Descripción                                                                        |
+| ------------- | ------------------------ | ----------------------- | ---------------------------------------------------------------------------------- |
+| `heading`     | `string`                 | `"Payment"`             | El `h1` de la página, el título del bloque de checkout.                            |
+| `description` | `string`                 | la línea del bloque     | La línea bajo el título; `""` la oculta.                                           |
+| `items`       | `OrderItem[]`            | los ejemplos del bloque | Los artículos que se pagan. `[]` muestra el mensaje de vacío.                      |
+| `totals`      | `OrderTotal[]`           | los ejemplos del bloque | Las filas sobre el total: `{ label, amount }`.                                     |
+| `total`       | `string`                 | el ejemplo del bloque   | El importe a pagar tal como se lee, como `"€168"`.                                 |
+| `error`       | `string`                 | —                       | Falló el pago: una alerta sobre los campos de la tarjeta.                          |
+| `errors`      | `Record<string, string>` | —                       | Un mensaje bajo cada campo erróneo, por su `name`.                                 |
+| `submitting`  | `boolean`                | `false`                 | Se está haciendo el pedido: Place order gira y todos los controles quedan inertes. |
+| `loading`     | `boolean`                | `false`                 | El pedido está cargando: líneas de marcador reemplazan el resumen.                 |
+| `orderError`  | `string`                 | —                       | Falló la carga del pedido: una alerta con reintento reemplaza el resumen.          |
+| `disabled`    | `boolean`                | `false`                 | Todo se queda en pantalla; todos los controles quedan inertes.                     |
+| `onSubmit`    | `(event) => void`        | —                       | Se pulsó Place order. Llama a `preventDefault()` para quedarte en la página.       |
+| `onBack`      | `() => void`             | —                       | Se pulsó Back to shipping.                                                         |
+| `onRetry`     | `() => void`             | —                       | «Try again» tras `orderError`.                                                     |
+| `onNavigate`  | `(to, event) => void`    | —                       | Se pulsó un enlace de la pantalla: `home`, `cart`, `privacy` o `terms`.            |
+| `homeHref`    | `string`                 | `"#"`                   | Destino del logotipo.                                                              |
+| `cartHref`    | `string`                 | `"#"`                   | Destino de «Edit cart».                                                            |
+| `privacyHref` | `string`                 | `"#"`                   | Destino del enlace de privacidad.                                                  |
+| `termsHref`   | `string`                 | `"#"`                   | Destino del enlace de términos.                                                    |
+
+Los campos de la tarjeta se llaman `cardName`, `cardNumber`, `expiry`, `cvc` y `saveCard`.
+
+### Estados
+
+| Estado             | Props        | Qué se renderiza                                                      |
+| ------------------ | ------------ | --------------------------------------------------------------------- |
+| Por defecto        | —            | El formulario de la tarjeta y el resumen del pedido con su total.     |
+| Rechazada          | `error`      | Una alerta sobre los campos de la tarjeta; `errors` marca cada campo. |
+| Haciendo el pedido | `submitting` | «Placing order» con un indicador; todos los controles inertes.        |
+| Cargando           | `loading`    | El formulario, y líneas de marcador en lugar del resumen.             |
+| Error del pedido   | `orderError` | El formulario, y una alerta con «Try again» en lugar del resumen.     |
+| Vacío              | `items=[]`   | El formulario, y «Your order is empty.» en lugar del resumen.         |
+| Deshabilitado      | `disabled`   | Todo se muestra, todos los controles inertes.                         |
+
+### Tamaño
+
+| Paso del contenedor      | Cambio                                          |
+| ------------------------ | ----------------------------------------------- |
+| `@sm` (`--container-sm`) | La cabecera pasa a una sola fila.               |
+| `@md` (`--container-md`) | El pie pasa a una sola fila.                    |
+| `@lg` (`--container-lg`) | El resumen del pedido pasa junto al formulario. |
+
+### Composición
+
+| Parte                               | Papel                                                                   |
+| ----------------------------------- | ----------------------------------------------------------------------- |
+| [Checkout Form](/es/checkout-form/) | El formulario de la tarjeta, con `step="payment"` y `headingLevel={1}`. |
+| [Order Summary](/es/order-summary/) | Los artículos y los totales que se pagan, solo lectura.                 |
+
+## Ejemplos
+
+### Tarjeta rechazada
+
+<Preview examples={examples} layout="fill">
+  <PaymentScreenDemo client:visible locale="es" state="declined" />
+</Preview>
+
+### Haciendo el pedido
+
+<Preview examples={examples} layout="fill">
+  <PaymentScreenDemo client:visible locale="es" state="placing" />
+</Preview>
+
+### Cargando el pedido
+
+<Preview examples={examples} layout="fill">
+  <PaymentScreenDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error del pedido
+
+Pulsa «Try again» para borrar el mensaje y recuperar el pedido.
+
+<Preview examples={examples} layout="fill">
+  <PaymentScreenDemo client:visible locale="es" state="order-error" />
+</Preview>
+
+### Pedido vacío
+
+<Preview examples={examples} layout="fill">
+  <PaymentScreenDemo client:visible locale="es" state="empty" />
+</Preview>
+
+## Notas
+
+- Presentacional: no se cobra ninguna tarjeta y no hay router. La página que la monta hace las dos cosas.
+- `onNavigate` pasa el evento del clic: ignora los clics con `metaKey`/`ctrlKey` y luego llama a `preventDefault()` para enrutar.
+- La raíz es un `<div>`, no un `<main>`. Conviértela en tu `<main>` si la ruta no tiene uno.
+- La pantalla importa sus dos bloques desde `@/components/blocks/…`; cambia esas líneas si tu alias es otro.
