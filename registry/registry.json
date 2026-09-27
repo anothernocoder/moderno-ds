@@ -4674,6 +4674,78 @@
       ]
     },
     {
+      "name": "timeline-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Timeline (React)",
+      "description": "An animation timeline for an editor panel, composing the @moderno-ui/react Toggle, Tooltip and Slider primitives: play/pause and loop toggles with a \"current / duration\" readout in m:ss:ff, a time ruler that is a single-thumb Slider (the playhead, with its time marks as markers), and one row per animated property whose keyframes are the thumbs of a Slider with no range; a playhead line crosses every track. Controlled only: it renders tracks, time, playing, loop and the selected keyframe as given and reports every change (times snapped to 1 / fps); it holds no clock. Space plays and pauses, Page Up/Down move a thumb one second; the track list scrolls under a sticky ruler; responds to its container (@container) — the label column widens at @sm and every ruler mark shows at @md.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/timeline/react/timeline.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/timeline.tsx"
+        }
+      ]
+    },
+    {
+      "name": "timeline-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Timeline (Vue)",
+      "description": "An animation timeline for an editor panel, composing the @moderno-ui/vue Toggle, Tooltip and Slider primitives: play/pause and loop toggles with a \"current / duration\" readout in m:ss:ff, a time ruler that is a single-thumb Slider (the playhead, with its time marks as markers), and one row per animated property whose keyframes are the thumbs of a Slider with no range; a playhead line crosses every track. Controlled only: it renders tracks, time, playing, loop and the selected keyframe as given and reports every change (times snapped to 1 / fps); it holds no clock. Space plays and pauses, Page Up/Down move a thumb one second; the track list scrolls under a sticky ruler; responds to its container (@container) — the label column widens at @sm and every ruler mark shows at @md.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/timeline/vue/Timeline.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/Timeline.vue"
+        }
+      ]
+    },
+    {
+      "name": "timeline-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Timeline (Svelte)",
+      "description": "An animation timeline for an editor panel, composing the @moderno-ui/svelte Toggle, Tooltip and Slider primitives: play/pause and loop toggles with a \"current / duration\" readout in m:ss:ff, a time ruler that is a single-thumb Slider (the playhead, with its time marks as markers), and one row per animated property whose keyframes are the thumbs of a Slider with no range; a playhead line crosses every track. Controlled only: it renders tracks, time, playing, loop and the selected keyframe as given and reports every change (times snapped to 1 / fps); it holds no clock. Space plays and pauses, Page Up/Down move a thumb one second; the track list scrolls under a sticky ruler; responds to its container (@container) — the label column widens at @sm and every ruler mark shows at @md.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/timeline/svelte/Timeline.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/Timeline.svelte"
+        }
+      ]
+    },
+    {
+      "name": "timeline-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Timeline (Solid)",
+      "description": "An animation timeline for an editor panel, composing the @moderno-ui/solid Toggle, Tooltip and Slider primitives: play/pause and loop toggles with a \"current / duration\" readout in m:ss:ff, a time ruler that is a single-thumb Slider (the playhead, with its time marks as markers), and one row per animated property whose keyframes are the thumbs of a Slider with no range; a playhead line crosses every track. Controlled only: it renders tracks, time, playing, loop and the selected keyframe as given and reports every change (times snapped to 1 / fps); it holds no clock. Space plays and pauses, Page Up/Down move a thumb one second; the track list scrolls under a sticky ruler; responds to its container (@container) — the label column widens at @sm and every ruler mark shows at @md.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/timeline/solid/timeline.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/timeline.tsx"
+        }
+      ]
+    },
+    {
       "name": "cart-react",
       "type": "registry:screen",
       "version": "0.1.0",
