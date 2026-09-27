@@ -180,6 +180,14 @@
 [data-scope="combobox"][data-part="item-indicator"] {
   flex: none;
 }
+/*
+ * Ark stamps data-disabled on a disabled item and on its item-text, and the
+ * base layer dims anything carrying it — nesting would multiply the opacity.
+ * Dim the item once and leave what is inside it opaque.
+ */
+[data-scope="combobox"][data-part="item"][data-disabled] :where([data-part]) {
+  opacity: 1;
+}
 /* What the list says when the filter leaves nothing: quiet, and as tall as
    one item so the surface does not jump. */
 [data-scope="combobox"][data-part="empty"] {

@@ -81,6 +81,19 @@ describe("@moderno-ui/core components.css — Combobox", () => {
     ).toBe("1");
   });
 
+  /*
+   * Ark stamps data-disabled on a disabled item and on its item-text; the base
+   * layer dims each, so without a reset the label multiplies to 0.25.
+   */
+  it("dims a disabled item once: its parts are reset", () => {
+    expect(
+      prop(
+        ruleDecls(root, `${SCOPE}[data-part="item"][data-disabled] :where([data-part])`),
+        "opacity",
+      ),
+    ).toBe("1");
+  });
+
   it("sizes the box from spacing slots and the type from --text-ui-* at every size", () => {
     const controls = [
       `${SCOPE}[data-part="control"]`,

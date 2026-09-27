@@ -205,6 +205,11 @@ describe("Combobox", () => {
     const solid = await screen.findByRole("option", { name: /Solid/ });
     expect(solid.getAttribute("aria-disabled")).toBe("true");
     expect(solid.hasAttribute("data-disabled")).toBe(true);
+    // The item-text carries data-disabled too, so the stylesheet dims the item
+    // once and resets its parts rather than dimming the label again.
+    expect(solid.querySelector('[data-part="item-text"]')?.hasAttribute("data-disabled")).toBe(
+      true,
+    );
     solid.click();
     expect(onValueChange).not.toHaveBeenCalled();
   });
