@@ -42,6 +42,7 @@ exports[`@moderno-ui/core exports > exports exactly the pinned names 1`] = `
   "switchRecipe",
   "tabsRecipe",
   "tagsInputRecipe",
+  "toastRecipe",
   "toggleGroupRecipe",
   "toggleRecipe",
   "tooltipRecipe",

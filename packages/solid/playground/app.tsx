@@ -46,6 +46,7 @@ import SplitterSection from "./sections/splitter.jsx";
 import SwitchSection from "./sections/switch.jsx";
 import TabsSection from "./sections/tabs.jsx";
 import TagsInputSection from "./sections/tags-input.jsx";
+import ToastSection from "./sections/toast.jsx";
 import ToggleSection from "./sections/toggle.jsx";
 import ToggleGroupSection from "./sections/toggle-group.jsx";
 import TooltipSection from "./sections/tooltip.jsx";
@@ -94,6 +95,7 @@ export function App(props: AppProps) {
       <SwitchSection open={props.open ?? false} />
       <TabsSection open={props.open ?? false} />
       <TagsInputSection open={props.open ?? false} />
+      <ToastSection open={props.open ?? false} />
       <ToggleSection open={props.open ?? false} />
       <ToggleGroupSection open={props.open ?? false} />
       <TooltipSection open={props.open ?? false} />

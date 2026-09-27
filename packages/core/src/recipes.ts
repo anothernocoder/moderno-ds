@@ -50,6 +50,7 @@ export * from "./recipes/splitter.js";
 export * from "./recipes/switch.js";
 export * from "./recipes/tabs.js";
 export * from "./recipes/tags-input.js";
+export * from "./recipes/toast.js";
 export * from "./recipes/toggle.js";
 export * from "./recipes/toggle-group.js";
 export * from "./recipes/tooltip.js";

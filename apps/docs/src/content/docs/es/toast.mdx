@@ -1,0 +1,276 @@
+---
+title: Toast
+description: Un mensaje corto que aparece sobre la página unos segundos y luego se va solo.
+group: Componentes
+order: 42
+component: Toast
+pkg: "@moderno-ui/react"
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ToastDemo from "../../../examples/toast/toast.svelte";
+import baseReact from "../../../examples/toast/react.tsx?raw";
+import baseVue from "../../../examples/toast/vue.vue?raw";
+import baseSolid from "../../../examples/toast/solid.tsx?raw";
+import baseSvelte from "../../../examples/toast/toast.svelte?raw";
+import ToastStatusDemo from "../../../examples/toast/status/toast-status.svelte";
+import statusReact from "../../../examples/toast/status/react.tsx?raw";
+import statusVue from "../../../examples/toast/status/vue.vue?raw";
+import statusSolid from "../../../examples/toast/status/solid.tsx?raw";
+import statusSvelte from "../../../examples/toast/status/toast-status.svelte?raw";
+import ToastActionDemo from "../../../examples/toast/action/toast-action.svelte";
+import actionReact from "../../../examples/toast/action/react.tsx?raw";
+import actionVue from "../../../examples/toast/action/vue.vue?raw";
+import actionSolid from "../../../examples/toast/action/solid.tsx?raw";
+import actionSvelte from "../../../examples/toast/action/toast-action.svelte?raw";
+import ToastPlacementDemo from "../../../examples/toast/placement/toast-placement.svelte";
+import placementReact from "../../../examples/toast/placement/react.tsx?raw";
+import placementVue from "../../../examples/toast/placement/vue.vue?raw";
+import placementSolid from "../../../examples/toast/placement/solid.tsx?raw";
+import placementSvelte from "../../../examples/toast/placement/toast-placement.svelte?raw";
+import ToastSizesDemo from "../../../examples/toast/sizes/toast-sizes.svelte";
+import sizesReact from "../../../examples/toast/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/toast/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/toast/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/toast/sizes/toast-sizes.svelte?raw";
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
+  <ToastDemo client:visible />
+</Preview>
+
+Usa un toast para confirmar que algo pasó: se guardó un archivo, se envió un mensaje, falló una subida. Aparece en una esquina de la pantalla, no bloquea la página y se va a los pocos segundos.
+
+## Instalación
+
+<Install pkg="@moderno-ui/react" />
+
+## Uso
+
+Crea un toaster, renderiza su `Toaster` una vez y llámalo desde cualquier sitio.
+
+<ForFramework fw="react">
+
+```tsx
+import { Toast, Toaster, createToaster } from "@moderno-ui/react";
+```
+
+```tsx
+const toaster = createToaster({ placement: "bottom-end" });
+
+toaster.create({ title: "Cambios guardados" });
+
+<Toaster toaster={toaster}>
+  {(toast) => (
+    <Toast.Root>
+      <Toast.Title>{toast.title}</Toast.Title>
+    </Toast.Root>
+  )}
+</Toaster>;
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Toast, Toaster, createToaster } from "@moderno-ui/vue";
+```
+
+```vue
+<script setup lang="ts">
+const toaster = createToaster({ placement: "bottom-end" });
+
+toaster.create({ title: "Cambios guardados" });
+</script>
+
+<template>
+  <Toaster v-slot="toast" :toaster="toaster">
+    <Toast.Root>
+      <Toast.Title>{{ toast.title }}</Toast.Title>
+    </Toast.Root>
+  </Toaster>
+</template>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Toast, Toaster, createToaster } from "@moderno-ui/svelte";
+```
+
+```svelte
+<script lang="ts">
+  const toaster = createToaster({ placement: "bottom-end" });
+
+  toaster.create({ title: "Cambios guardados" });
+</script>
+
+<Toaster {toaster}>
+  {#snippet children(toast)}
+    <Toast.Root>
+      <Toast.Title>{toast().title}</Toast.Title>
+    </Toast.Root>
+  {/snippet}
+</Toaster>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Toast, Toaster, createToaster } from "@moderno-ui/solid";
+```
+
+```tsx
+const toaster = createToaster({ placement: "bottom-end" });
+
+toaster.create({ title: "Cambios guardados" });
+
+<Toaster toaster={toaster}>
+  {(toast) => (
+    <Toast.Root>
+      <Toast.Title>{toast().title}</Toast.Title>
+    </Toast.Root>
+  )}
+</Toaster>;
+```
+
+</ForFramework>
+
+## Referencia de la API
+
+### Toast.Root
+
+`size` es lo que añade Moderno. Todo lo demás que muestra un toast viene de lo que le pasas al toaster.
+
+<PropsTable component="Toast" />
+
+### createToaster
+
+Crea el toaster: un store que guarda los toasts. Créalo una vez, fuera de tus componentes.
+
+| Opción        | Tipo                   | Por defecto          | Descripción                                                                                  |
+| ------------- | ---------------------- | -------------------- | -------------------------------------------------------------------------------------------- |
+| `placement`   | `ToastPlacement`       | `"bottom"`           | Dónde aparecen: `top-start`, `top`, `top-end`, `bottom-start`, `bottom` o `bottom-end`.      |
+| `max`         | `number`               | `24`                 | Cuántos toasts se ven a la vez. Los demás esperan en cola.                                   |
+| `duration`    | `number`               | —                    | Cuánto dura un toast, en ms. Por defecto 5000, 2000 para `success` y sin fin para `loading`. |
+| `removeDelay` | `number`               | `200`                | Cuánto tarda en irse un toast descartado, en ms.                                             |
+| `gap`         | `number`               | `16`                 | Espacio entre toasts, en px.                                                                 |
+| `offsets`     | `string \| { top, … }` | `"1rem"`             | Distancia a los bordes de la pantalla.                                                       |
+| `overlap`     | `boolean`              | `false`              | Apila los toasts uno encima de otro y los separa al pasar el puntero.                        |
+| `hotkey`      | `string[]`             | `["altKey", "KeyT"]` | Teclas que llevan el foco a los toasts.                                                      |
+
+### El toaster
+
+Llama a estos métodos desde cualquier sitio. Cada llamada que crea un toast devuelve su `id`.
+
+| Método                                               | Qué hace                                                         |
+| ---------------------------------------------------- | ---------------------------------------------------------------- |
+| `create(options)`                                    | Muestra un toast.                                                |
+| `success` / `error` / `warning` / `info` / `loading` | Muestra un toast con ese `type`.                                 |
+| `promise(promise, { loading, success, error })`      | Muestra un toast de carga y luego lo convierte en éxito o error. |
+| `update(id, options)`                                | Cambia un toast que ya se ve.                                    |
+| `dismiss(id?)`                                       | Descarta un toast, o todos si no pasas `id`.                     |
+
+Las opciones de un toast:
+
+| Opción        | Tipo                                                       | Descripción                                                              |
+| ------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `title`       | `string`                                                   | La línea principal.                                                      |
+| `description` | `string`                                                   | Una segunda línea, más discreta.                                         |
+| `type`        | `"success" \| "error" \| "warning" \| "info" \| "loading"` | El estado. Por defecto `info`.                                           |
+| `duration`    | `number`                                                   | Cuánto dura este toast, en ms.                                           |
+| `action`      | `{ label: string; onClick: () => void }`                   | Un botón en el toast. Al pulsarlo ejecuta `onClick` y descarta el toast. |
+| `closable`    | `boolean`                                                  | Si el usuario puede descartarlo.                                         |
+| `meta`        | `Record<string, any>`                                      | Cualquier otra cosa que necesite tu función de render, como un `size`.   |
+
+### Partes
+
+Cada parte acepta los atributos de su elemento y `asChild`.
+
+| Parte                 | Elemento   | Descripción                                                                                |
+| --------------------- | ---------- | ------------------------------------------------------------------------------------------ |
+| `Toaster`             | `<div>`    | La región que contiene los toasts, fijada en la posición del toaster. Renderízala una vez. |
+| `Toast.Root`          | `<div>`    | Un toast, con `role="status"`. Lleva `data-size` y `data-type`. Una columna.               |
+| `Toast.Title`         | `<div>`    | El nombre accesible, conectado vía `aria-labelledby`.                                      |
+| `Toast.Description`   | `<div>`    | Conectada vía `aria-describedby`, en un color apagado.                                     |
+| `Toast.ActionTrigger` | `<button>` | Un botón pequeño con borde bajo el texto. Ejecuta la acción del toast y lo descarta.       |
+| `Toast.CloseTrigger`  | `<button>` | Un botón de icono pequeño en la esquina superior. Ark lo etiqueta `Dismiss notification`.  |
+
+### Atributos data
+
+| Atributo         | Valores                                                                   |
+| ---------------- | ------------------------------------------------------------------------- |
+| `data-size`      | En el root: `"sm"`, `"md"` o `"lg"`                                       |
+| `data-type`      | En el root: `"success"`, `"error"`, `"warning"`, `"info"`, `"loading"`, … |
+| `data-state`     | En el root: `"open"`, o `"closed"` mientras se va                         |
+| `data-placement` | En el toaster y en cada root: la posición del toaster                     |
+| `data-paused`    | En el root mientras el puntero o el foco están sobre los toasts           |
+
+### Teclado
+
+| Tecla   | Acción                             |
+| ------- | ---------------------------------- |
+| `Alt+T` | Lleva el foco a los toasts.        |
+| `Tab`   | Recorre los toasts y sus botones.  |
+| `Esc`   | En un toast con foco, lo descarta. |
+
+## Ejemplos
+
+### Estado
+
+Llama a `success`, `error` o `warning` y el toast toma el color de su estado. `info` es lo que crea un `create` simple: se queda neutro.
+
+<Preview
+  examples={{ react: statusReact, vue: statusVue, solid: statusSolid, svelte: statusSvelte }}
+>
+  <ToastStatusDemo client:visible />
+</Preview>
+
+### Acción
+
+Pasa una `action` para poner un botón en el toast, como deshacer.
+
+<Preview
+  examples={{ react: actionReact, vue: actionVue, solid: actionSolid, svelte: actionSvelte }}
+>
+  <ToastActionDemo client:visible />
+</Preview>
+
+### Posición
+
+Pasa `placement` a `createToaster` para mostrar los toasts en otro sitio.
+
+<Preview
+  examples={{
+    react: placementReact,
+    vue: placementVue,
+    solid: placementSolid,
+    svelte: placementSvelte,
+  }}
+>
+  <ToastPlacementDemo client:visible />
+</Preview>
+
+### Tamaños
+
+Pon `size` en `Toast.Root`. Aquí cada toast lleva su tamaño en `meta`.
+
+<Preview examples={{ react: sizesReact, vue: sizesVue, solid: sizesSolid, svelte: sizesSvelte }}>
+  <ToastSizesDemo client:visible />
+</Preview>
+
+## Notas
+
+- `Toast.Root` está envuelto para añadir `size`; las demás partes, `Toaster` y `createToaster` son las de Ark sin cambios.
+- Un toast se pausa mientras el puntero o el foco están sobre él, para que dé tiempo a leerlo.
+- Mantén los toasts cortos. Para algo que el usuario debe resolver, usa un `Dialog`.

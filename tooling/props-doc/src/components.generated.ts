@@ -48,6 +48,7 @@ import splitterComponent from "./components/splitter.ts";
 import switchComponent from "./components/switch.ts";
 import tabsComponent from "./components/tabs.ts";
 import tagsInputComponent from "./components/tags-input.ts";
+import toastComponent from "./components/toast.ts";
 import toggleComponent from "./components/toggle.ts";
 import toggleGroupComponent from "./components/toggle-group.ts";
 import tooltipComponent from "./components/tooltip.ts";
@@ -92,6 +93,7 @@ export const { ENTRIES, AGENT_COMPONENTS, AGENT_EXAMPLES } = assembleComponents(
   switchComponent,
   tabsComponent,
   tagsInputComponent,
+  toastComponent,
   toggleComponent,
   toggleGroupComponent,
   tooltipComponent,

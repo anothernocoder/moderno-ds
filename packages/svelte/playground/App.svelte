@@ -46,6 +46,7 @@
   import Switch from "./sections/Switch.svelte";
   import Tabs from "./sections/Tabs.svelte";
   import TagsInput from "./sections/TagsInput.svelte";
+  import Toast from "./sections/Toast.svelte";
   import Toggle from "./sections/Toggle.svelte";
   import ToggleGroup from "./sections/ToggleGroup.svelte";
   import Tooltip from "./sections/Tooltip.svelte";
@@ -90,6 +91,7 @@
   <Switch {open} />
   <Tabs {open} />
   <TagsInput {open} />
+  <Toast {open} />
   <Toggle {open} />
   <ToggleGroup {open} />
   <Tooltip {open} />
