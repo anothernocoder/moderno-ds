@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { AtRule } from "postcss";
-import { parsePartial, prop, ruleDecls } from "./stylesheet.ts";
+import { normalizeSelector, parsePartial, prop, ruleDecls } from "./stylesheet.ts";
 
 const root = parsePartial("carousel");
 
@@ -63,6 +63,44 @@ describe("@moderno-ui/core components.css — Carousel", () => {
       if (decl.value === "0") return; // min-width: 0 lets a grid or flex child shrink
       expect(decl.value, `${decl.parent?.toString().split("{")[0]} ${decl.prop}`).toMatch(
         /^(calc\()?var\(--spacing-\d\)/,
+      );
+    });
+  });
+
+  /*
+   * A slide holds whatever the consumer puts in it, so the size rules, which
+   * reach down from the root, must match only this carousel's own parts: not
+   * another component's `indicator` or `prev-trigger` in a slide (Checkbox,
+   * Toggle, Pagination use those names), and not the parts of a carousel
+   * nested in a slide, which follow their own root's size. jsdom cannot match
+   * a complex :not(), so the selector's shape is pinned here; Chromium was
+   * checked by hand.
+   */
+  describe("size rules reach only the carousel's own parts", () => {
+    const ROOT = `${SCOPE}[data-part="root"]`;
+    const sizeSelectors: string[] = [];
+    root.walkRules((rule) => {
+      for (const selector of rule.selectors) {
+        if (!selector.includes("[data-size=")) continue;
+        sizeSelectors.push(
+          normalizeSelector(selector).replace(/\(\s+/g, "(").replace(/\s+\)/g, ")"),
+        );
+      }
+    });
+    const sizeOf = (selector: string) => /\[data-size="(\w+)"\]/.exec(selector)![1]!;
+
+    it("reads the size rules (guards the cases below from vacuous passes)", () => {
+      expect(sizeSelectors).toHaveLength(8);
+    });
+
+    it.each(sizeSelectors)("matches a part of the carousel scope only: %s", (selector) => {
+      expect(selector.startsWith(`${ROOT}[data-size="${sizeOf(selector)}"] ${SCOPE}`)).toBe(true);
+    });
+
+    it.each(sizeSelectors)("stops at a nested carousel of another size: %s", (selector) => {
+      const size = sizeOf(selector);
+      expect(selector).toContain(
+        `:where(:not(${ROOT}[data-size="${size}"] ${ROOT}:not([data-size="${size}"]) *))`,
       );
     });
   });

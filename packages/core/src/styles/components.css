@@ -916,42 +916,106 @@
   }
 
   /* Density driven by the recipe's data-size on the root. Descendant
-     combinators, so a consumer may wrap the controls. `lg` exceeds the top
-     spacing slot, so it sums two slots rather than inventing a token. */
+     combinators, so a consumer may wrap the controls; every part is matched by
+     its own scope, so a Checkbox indicator or a Pagination trigger put in a
+     slide keeps its own size. The :where(:not(…)) guard (no specificity) stops
+     at a carousel nested in a slide, which follows its own data-size. `lg`
+     exceeds the top spacing slot, so it sums two slots rather than inventing a
+     token. */
   [data-scope="carousel"][data-part="root"][data-size="sm"]
-    :is([data-part="prev-trigger"], [data-part="next-trigger"], [data-part="autoplay-trigger"]) {
+    [data-scope="carousel"]:is(
+      [data-part="prev-trigger"],
+      [data-part="next-trigger"],
+      [data-part="autoplay-trigger"]
+    ):where(
+      :not(
+        [data-scope="carousel"][data-part="root"][data-size="sm"]
+          [data-scope="carousel"][data-part="root"]:not([data-size="sm"])
+          *
+      )
+    ) {
     height: var(--spacing-7);
     min-width: var(--spacing-7);
     padding-inline: var(--spacing-1);
     font-size: var(--text-ui-sm);
   }
-  [data-scope="carousel"][data-part="root"][data-size="sm"] [data-part="indicator"] {
+  [data-scope="carousel"][data-part="root"][data-size="sm"]
+    [data-scope="carousel"][data-part="indicator"]:where(
+      :not(
+        [data-scope="carousel"][data-part="root"][data-size="sm"]
+          [data-scope="carousel"][data-part="root"]:not([data-size="sm"])
+          *
+      )
+    ) {
     height: var(--spacing-4);
   }
-  [data-scope="carousel"][data-part="root"][data-size="sm"] [data-part="indicator"]::before {
+  [data-scope="carousel"][data-part="root"][data-size="sm"]
+    [data-scope="carousel"][data-part="indicator"]:where(
+      :not(
+        [data-scope="carousel"][data-part="root"][data-size="sm"]
+          [data-scope="carousel"][data-part="root"]:not([data-size="sm"])
+          *
+      )
+    )::before {
     width: calc(var(--spacing-1) * 1.5);
     height: calc(var(--spacing-1) * 1.5);
   }
   [data-scope="carousel"][data-part="root"][data-size="sm"]
-    [data-part="indicator"][data-current]::before {
+    [data-scope="carousel"][data-part="indicator"][data-current]:where(
+      :not(
+        [data-scope="carousel"][data-part="root"][data-size="sm"]
+          [data-scope="carousel"][data-part="root"]:not([data-size="sm"])
+          *
+      )
+    )::before {
     width: var(--spacing-4);
   }
   [data-scope="carousel"][data-part="root"][data-size="lg"]
-    :is([data-part="prev-trigger"], [data-part="next-trigger"], [data-part="autoplay-trigger"]) {
+    [data-scope="carousel"]:is(
+      [data-part="prev-trigger"],
+      [data-part="next-trigger"],
+      [data-part="autoplay-trigger"]
+    ):where(
+      :not(
+        [data-scope="carousel"][data-part="root"][data-size="lg"]
+          [data-scope="carousel"][data-part="root"]:not([data-size="lg"])
+          *
+      )
+    ) {
     height: calc(var(--spacing-8) + var(--spacing-2));
     min-width: calc(var(--spacing-8) + var(--spacing-2));
     padding-inline: var(--spacing-3);
     font-size: var(--text-ui-lg);
   }
-  [data-scope="carousel"][data-part="root"][data-size="lg"] [data-part="indicator"] {
+  [data-scope="carousel"][data-part="root"][data-size="lg"]
+    [data-scope="carousel"][data-part="indicator"]:where(
+      :not(
+        [data-scope="carousel"][data-part="root"][data-size="lg"]
+          [data-scope="carousel"][data-part="root"]:not([data-size="lg"])
+          *
+      )
+    ) {
     height: var(--spacing-6);
   }
-  [data-scope="carousel"][data-part="root"][data-size="lg"] [data-part="indicator"]::before {
+  [data-scope="carousel"][data-part="root"][data-size="lg"]
+    [data-scope="carousel"][data-part="indicator"]:where(
+      :not(
+        [data-scope="carousel"][data-part="root"][data-size="lg"]
+          [data-scope="carousel"][data-part="root"]:not([data-size="lg"])
+          *
+      )
+    )::before {
     width: var(--spacing-3);
     height: var(--spacing-3);
   }
   [data-scope="carousel"][data-part="root"][data-size="lg"]
-    [data-part="indicator"][data-current]::before {
+    [data-scope="carousel"][data-part="indicator"][data-current]:where(
+      :not(
+        [data-scope="carousel"][data-part="root"][data-size="lg"]
+          [data-scope="carousel"][data-part="root"]:not([data-size="lg"])
+          *
+      )
+    )::before {
     width: var(--spacing-6);
   }
 
