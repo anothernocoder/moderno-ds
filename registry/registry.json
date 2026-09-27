@@ -2730,6 +2730,78 @@
       ]
     },
     {
+      "name": "reviews-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Reviews (React)",
+      "description": "What customers think of a product, composing the @moderno-ui/react Alert, Avatar, Badge, Button, Card, Progress and Skeleton primitives: a serif heading over the average rating with its stars and the number of reviews, one Progress bar per star rating with its share, a \"Write a review\" button, then one Card per review with the author's Avatar, name, an optional \"Verified purchase\" Badge, the stars, the date and the text, with its own loading, empty and error renders; responds to its container (@container) — the reviews read a size larger at @sm, the average and the bars sit side by side and the heading steps up at @md, and the summary moves into a column beside the reviews with more room at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/reviews/react/reviews.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/reviews.tsx"
+        }
+      ]
+    },
+    {
+      "name": "reviews-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Reviews (Vue)",
+      "description": "What customers think of a product, composing the @moderno-ui/vue Alert, Avatar, Badge, Button, Card, Progress and Skeleton primitives: a serif heading over the average rating with its stars and the number of reviews, one Progress bar per star rating with its share, a \"Write a review\" button, then one Card per review with the author's Avatar, name, an optional \"Verified purchase\" Badge, the stars, the date and the text, with its own loading, empty and error renders; responds to its container (@container) — the reviews read a size larger at @sm, the average and the bars sit side by side and the heading steps up at @md, and the summary moves into a column beside the reviews with more room at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/reviews/vue/Reviews.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/Reviews.vue"
+        }
+      ]
+    },
+    {
+      "name": "reviews-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Reviews (Svelte)",
+      "description": "What customers think of a product, composing the @moderno-ui/svelte Alert, Avatar, Badge, Button, Card, Progress and Skeleton primitives: a serif heading over the average rating with its stars and the number of reviews, one Progress bar per star rating with its share, a \"Write a review\" button, then one Card per review with the author's Avatar, name, an optional \"Verified purchase\" Badge, the stars, the date and the text, with its own loading, empty and error renders; responds to its container (@container) — the reviews read a size larger at @sm, the average and the bars sit side by side and the heading steps up at @md, and the summary moves into a column beside the reviews with more room at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/reviews/svelte/Reviews.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/Reviews.svelte"
+        }
+      ]
+    },
+    {
+      "name": "reviews-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Reviews (Solid)",
+      "description": "What customers think of a product, composing the @moderno-ui/solid Alert, Avatar, Badge, Button, Card, Progress and Skeleton primitives: a serif heading over the average rating with its stars and the number of reviews, one Progress bar per star rating with its share, a \"Write a review\" button, then one Card per review with the author's Avatar, name, an optional \"Verified purchase\" Badge, the stars, the date and the text, with its own loading, empty and error renders; responds to its container (@container) — the reviews read a size larger at @sm, the average and the bars sit side by side and the heading steps up at @md, and the summary moves into a column beside the reviews with more room at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/reviews/solid/reviews.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/reviews.tsx"
+        }
+      ]
+    },
+    {
       "name": "section-header-react",
       "type": "registry:block",
       "version": "0.1.0",
