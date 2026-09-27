@@ -129,7 +129,7 @@
   onValueChange={(details) => {
     reported = details.value;
     const hex = hexOf(details.value);
-    if (value !== undefined) value = hex;
+    value = hex;
     onValueChange?.({ value: hex });
   }}
 >

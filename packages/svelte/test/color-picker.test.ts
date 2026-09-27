@@ -157,7 +157,7 @@ describe("ColorPicker (Svelte)", () => {
   });
 
   it("follows a bound value (bind:value) both ways", async () => {
-    render(Bound);
+    render(Bound, { props: { value: "#1E90FF" } });
     const user = userEvent.setup();
     await user.click(screen.getByRole("button", { name: "Green" }));
     await waitFor(() => expect(trigger().textContent?.trim()).toBe("#00FF00"));
@@ -167,8 +167,18 @@ describe("ColorPicker (Svelte)", () => {
     expect(trigger().textContent?.trim()).toBe("#FF0000");
   });
 
-  it("keeps its hue while a bound value passes through grey", async () => {
+  it("writes a picked colour back to a bound value that starts unset", async () => {
     render(Bound);
+    const user = userEvent.setup();
+    expect(screen.getByTestId("value").textContent).toBe("");
+    await user.click(trigger());
+    await user.click(await screen.findByRole("button", { name: "Select #FF0000" }));
+    await waitFor(() => expect(screen.getByTestId("value").textContent).toBe("#FF0000"));
+    expect(trigger().textContent?.trim()).toBe("#FF0000");
+  });
+
+  it("keeps its hue while a bound value passes through grey", async () => {
+    render(Bound, { props: { value: "#1E90FF" } });
     const user = userEvent.setup();
     await user.click(trigger());
     const area = await screen.findByRole("slider", { name: "Saturation and brightness" });
