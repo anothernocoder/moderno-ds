@@ -11,6 +11,7 @@
  */
 import { buildAreaChart, type AreaChartOptions } from "./area.js";
 import { buildBarChart, type BarChartOptions } from "./bar.js";
+import { buildDonutChart, type DonutChartOptions } from "./donut.js";
 import { buildLineChart, type LineChartOptions } from "./line.js";
 import { buildScatterChart, type ScatterChartOptions } from "./scatter.js";
 import type { AxisTick, PlotArea } from "./types.js";
@@ -93,18 +94,28 @@ function frameNodes(model: FrameModel): ChartNode[] {
   ];
 }
 
-function chartRoot(type: string, model: FrameModel, series: ChartNode[]): ChartNode {
+/** The root `<svg>`: viewport, image role and the chart's scope attributes. */
+function svgRoot(
+  type: string,
+  size: { width: number; height: number },
+  children: ChartNode[],
+): ChartNode {
   return {
     tag: "svg",
     attrs: {
-      viewBox: `0 0 ${model.width} ${model.height}`,
+      viewBox: `0 0 ${size.width} ${size.height}`,
       role: "img",
       preserveAspectRatio: "xMidYMid meet",
       ...part("root"),
       "data-chart": type,
     },
-    children: [...frameNodes(model), ...series],
+    children,
   };
+}
+
+/** A Cartesian chart: the shared frame under its series. */
+function chartRoot(type: string, model: FrameModel, series: ChartNode[]): ChartNode {
+  return svgRoot(type, model, [...frameNodes(model), ...series]);
 }
 
 function seriesGroup(index: number, children: ChartNode[]): ChartNode {
@@ -170,6 +181,22 @@ export function scatterChartNodes(options: ScatterChartOptions): ChartNode {
           attrs: { ...part("point"), cx: p.cx, cy: p.cy, r: p.r },
         })),
       ),
+    ),
+  );
+}
+
+/**
+ * The full donut chart: one slice per positive value and no frame, since a
+ * ring has no axes. Each slice sits in its own series group, so it takes the
+ * `--chart-*` slot of its index in `data`.
+ */
+export function donutChartNodes(options: DonutChartOptions): ChartNode {
+  const model = buildDonutChart(options);
+  return svgRoot(
+    "donut",
+    model,
+    model.slices.map((s) =>
+      seriesGroup(s.index, [{ tag: "path", attrs: { ...part("slice"), d: s.path } }]),
     ),
   );
 }

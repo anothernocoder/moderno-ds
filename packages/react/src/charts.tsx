@@ -23,13 +23,14 @@ import {
 
 // `width`/`height` are numeric chart dimensions and `format` is the chart's
 // tick formatter — both collide with native SVG attributes, so drop them here.
-type SvgProps = Omit<ComponentPropsWithRef<"svg">, "width" | "height" | "format" | "radius">;
+export type SvgProps = Omit<ComponentPropsWithRef<"svg">, "width" | "height" | "format" | "radius">;
 
 function walk(node: ChartNode, key: number): ReactNode {
   return createElement(node.tag, { key, ...node.attrs }, node.text ?? node.children?.map(walk));
 }
 
-function Chart({ node, ...rest }: { node: ChartNode } & SvgProps) {
+/** The walker every chart shares; a chart in a file of its own imports it from here. */
+export function Chart({ node, ...rest }: { node: ChartNode } & SvgProps) {
   // Consumer props spread first; the contract attrs land last and can't be
   // clobbered.
   return createElement("svg", { ...rest, ...node.attrs }, node.children?.map(walk));

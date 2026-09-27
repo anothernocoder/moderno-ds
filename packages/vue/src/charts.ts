@@ -34,7 +34,8 @@ function walk(node: ChartNode): VNode {
   return h(node.tag, { ...node.attrs }, node.text ?? (node.children ?? []).map(walk));
 }
 
-function chartVNode(node: ChartNode, attrs: Record<string, unknown>): VNode {
+/** The walker every chart shares; a chart in a file of its own imports it from here. */
+export function chartVNode(node: ChartNode, attrs: Record<string, unknown>): VNode {
   return h("svg", { ...attrs, ...node.attrs }, (node.children ?? []).map(walk));
 }
 

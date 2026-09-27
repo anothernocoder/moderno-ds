@@ -1090,6 +1090,12 @@
   [data-scope="chart"][data-part="point"] {
     fill: currentColor;
   }
+  /* A donut slice is a series of its own, so neighbouring slices take
+     neighbouring --chart-* slots. Gaps come from padAngle, not a stroke. */
+  [data-scope="chart"][data-part="slice"] {
+    fill: currentColor;
+    stroke: none;
+  }
 
   /* Grid + axes read neutral semantic slots, not the series palette. */
   [data-scope="chart"][data-part="grid-line"],

@@ -23,6 +23,7 @@ export * from "./exports/checkbox.js";
 export * from "./exports/chip.js";
 export * from "./exports/dialog.js";
 export * from "./exports/divider.js";
+export * from "./exports/donut-chart.js";
 export * from "./exports/field.js";
 export * from "./exports/indicator.js";
 export * from "./exports/line-chart.js";

@@ -23,6 +23,7 @@ import checkboxComponent from "./components/checkbox.ts";
 import chipComponent from "./components/chip.ts";
 import dialogComponent from "./components/dialog.ts";
 import dividerComponent from "./components/divider.ts";
+import donutChartComponent from "./components/donut-chart.ts";
 import fieldComponent from "./components/field.ts";
 import indicatorComponent from "./components/indicator.ts";
 import lineChartComponent from "./components/line-chart.ts";
@@ -58,6 +59,7 @@ export const { ENTRIES, AGENT_COMPONENTS, AGENT_EXAMPLES } = assembleComponents(
   chipComponent,
   dialogComponent,
   dividerComponent,
+  donutChartComponent,
   fieldComponent,
   indicatorComponent,
   lineChartComponent,

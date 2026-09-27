@@ -23,6 +23,7 @@
   import Chip from "./sections/Chip.svelte";
   import Dialog from "./sections/Dialog.svelte";
   import Divider from "./sections/Divider.svelte";
+  import DonutChart from "./sections/DonutChart.svelte";
   import Field from "./sections/Field.svelte";
   import Indicator from "./sections/Indicator.svelte";
   import NumberInput from "./sections/NumberInput.svelte";
@@ -58,6 +59,7 @@
   <Chip {open} />
   <Dialog {open} />
   <Divider {open} />
+  <DonutChart {open} />
   <Field {open} />
   <Indicator {open} />
   <NumberInput {open} />

@@ -23,6 +23,7 @@ import CheckboxSection from "./sections/checkbox.jsx";
 import ChipSection from "./sections/chip.jsx";
 import DialogSection from "./sections/dialog.jsx";
 import DividerSection from "./sections/divider.jsx";
+import DonutChartSection from "./sections/donut-chart.jsx";
 import FieldSection from "./sections/field.jsx";
 import IndicatorSection from "./sections/indicator.jsx";
 import NumberInputSection from "./sections/number-input.jsx";
@@ -62,6 +63,7 @@ export function App(props: AppProps) {
       <ChipSection open={props.open ?? false} />
       <DialogSection open={props.open ?? false} />
       <DividerSection open={props.open ?? false} />
+      <DonutChartSection open={props.open ?? false} />
       <FieldSection open={props.open ?? false} />
       <IndicatorSection open={props.open ?? false} />
       <NumberInputSection open={props.open ?? false} />

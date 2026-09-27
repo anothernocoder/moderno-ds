@@ -23,6 +23,7 @@ import CheckboxSection from "./sections/checkbox.js";
 import ChipSection from "./sections/chip.js";
 import DialogSection from "./sections/dialog.js";
 import DividerSection from "./sections/divider.js";
+import DonutChartSection from "./sections/donut-chart.js";
 import FieldSection from "./sections/field.js";
 import IndicatorSection from "./sections/indicator.js";
 import NumberInputSection from "./sections/number-input.js";
@@ -63,6 +64,7 @@ export const App = defineComponent({
         h(ChipSection, { open: props.open }),
         h(DialogSection, { open: props.open }),
         h(DividerSection, { open: props.open }),
+        h(DonutChartSection, { open: props.open }),
         h(FieldSection, { open: props.open }),
         h(IndicatorSection, { open: props.open }),
         h(NumberInputSection, { open: props.open }),

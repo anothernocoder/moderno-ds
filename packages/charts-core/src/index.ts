@@ -64,11 +64,15 @@ export type {
   ScatterSeriesModel,
 } from "./scatter.js";
 
+export { buildDonutChart } from "./donut.js";
+export type { DonutChartModel, DonutChartOptions, DonutDatum, DonutSlice } from "./donut.js";
+
 // ── Render tree: the complete render description, one walker per framework ──
 export {
   areaChartNodes,
   barChartNodes,
   chartNodeToSvg,
+  donutChartNodes,
   lineChartNodes,
   scatterChartNodes,
 } from "./render.js";
