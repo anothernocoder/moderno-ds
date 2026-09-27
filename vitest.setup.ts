@@ -99,4 +99,24 @@ if (typeof window !== "undefined") {
   };
   el.setPointerCapture ??= function setPointerCapture() {};
   el.releasePointerCapture ??= function releasePointerCapture() {};
+
+  /**
+   * `requestAnimationFrame` on `performance.now()`'s clock. A browser hands the
+   * callback a timestamp on the same timeline as `performance.now()`; jsdom
+   * hands it the time since its window was created, which trails
+   * `performance.now()` by however long the test worker took to build that
+   * window. zag's `setRafTimeout` (toast duration, toast remove delay) measures
+   * `rafTimestamp - performance.now()`-at-start, so under jsdom every such
+   * timer ran that much late: a 50ms toast took 50ms plus twice the worker's
+   * setup time to go away, past `waitFor`'s 1s on a busy CI runner. Same frames,
+   * same handles (so `cancelAnimationFrame` still works); only the timestamp
+   * is corrected.
+   */
+  const jsdomRequestAnimationFrame = window.requestAnimationFrame?.bind(window);
+  if (jsdomRequestAnimationFrame) {
+    const requestAnimationFrame = (callback: FrameRequestCallback) =>
+      jsdomRequestAnimationFrame(() => callback(performance.now()));
+    window.requestAnimationFrame = requestAnimationFrame;
+    g.requestAnimationFrame = requestAnimationFrame;
+  }
 }
