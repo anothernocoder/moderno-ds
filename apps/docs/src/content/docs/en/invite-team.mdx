@@ -1,0 +1,278 @@
+---
+title: Invite team
+description: A full-viewport screen where a new workspace owner invites teammates by email and sees who has not joined yet.
+group: Screens
+order: 118
+agent:
+  intent: The full-viewport invite team screen — an email field for invites, then the pending invites. Presentational.
+  whenToUse: "The onboarding step where the first member of a workspace invites their teammates: /onboarding/team, /welcome/invite, a first-run invite route."
+  whenNotToUse:
+    - case: Sharing one document or project with people, inside a page you already own
+      use: the ShareInvite block — a block never owns the viewport
+    - case: Managing the members of an existing workspace (a settings tab)
+      use: the List block
+  gotchas:
+    - "Presentational: no request, no router. `onSubmit` hands you the native form event; read `emails` from the form, send the invites, then pass the new rows back in `invites`."
+    - "`emails` is one field that takes several addresses separated by commas. It posts the text as typed; split it and check each address yourself, then pass `emailsError` for the bad ones."
+    - "Full-viewport is a height (`min-h-dvh`). Every width decision is read off the screen's own container, so it is still correct mounted in a pane that is not the window."
+    - "The screen imports the List block from `@/components/blocks/…`, where `moderno add` puts it. If your project uses a different path alias, that one import line is the only thing to change."
+    - "The root is a `<div>`, not a `<main>` — most app shells already provide the `main` landmark. If your route has none, change that one element."
+  theming:
+    - "The screen's own chrome is `text-foreground` / `text-muted-foreground` on `bg-background`; the email field is the Field primitive and the pending invites are the List block."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the two steps are --container-sm and --container-md."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import InviteTeamScreenDemo from "../../../islands/InviteTeamScreenDemo.svelte";
+import inviteTeamReact from "../../../../../../registry/screens/invite-team/react/invite-team.tsx?raw";
+import inviteTeamVue from "../../../../../../registry/screens/invite-team/vue/InviteTeam.vue?raw";
+import inviteTeamSolid from "../../../../../../registry/screens/invite-team/solid/invite-team.tsx?raw";
+import inviteTeamSvelte from "../../../../../../registry/screens/invite-team/svelte/InviteTeam.svelte?raw";
+
+<FrameworkSelect locale="en" />
+
+<Preview
+  examples={{
+    react: inviteTeamReact,
+    vue: inviteTeamVue,
+    solid: inviteTeamSolid,
+    svelte: inviteTeamSvelte,
+  }}
+  layout="fill"
+>
+  <InviteTeamScreenDemo client:visible locale="en" />
+</Preview>
+
+Use it for the onboarding step where someone invites their team. It shows an email field and the invites nobody has accepted yet; your page sends the invites and loads the list.
+
+## Installation
+
+<Install item="invite-team" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { InviteTeam } from "@/components/screens/invite-team";
+```
+
+```tsx
+<InviteTeam
+  invites={pending}
+  sending={sending}
+  onSubmit={handleSubmit}
+  onRemoveInvite={(id) => revoke(id)}
+  onContinue={next}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```ts
+import InviteTeam from "@/components/screens/InviteTeam.vue";
+```
+
+```vue
+<InviteTeam
+  :invites="pending"
+  :sending="sending"
+  @submit="handleSubmit"
+  @remove-invite="(id) => revoke(id)"
+  @continue="next"
+/>
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```ts
+import InviteTeam from "@/components/screens/InviteTeam.svelte";
+```
+
+```svelte
+<InviteTeam
+  invites={pending}
+  {sending}
+  onsubmit={handleSubmit}
+  onremoveinvite={(id) => revoke(id)}
+  oncontinue={next}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { InviteTeam } from "@/components/screens/invite-team";
+```
+
+```tsx
+<InviteTeam
+  invites={pending()}
+  sending={sending()}
+  onSubmit={handleSubmit}
+  onRemoveInvite={(id) => revoke(id)}
+  onContinue={next}
+/>
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+Callbacks are `on…` props in React and Solid, lowercase (`onremoveinvite`) in Svelte, and emits (`submit`, `removeInvite`, `navigate`) in Vue.
+
+| Prop             | Type                  | Default | Description                                                      |
+| ---------------- | --------------------- | ------- | ---------------------------------------------------------------- |
+| `invites`        | `ListItem[]`          | samples | The invites nobody has accepted yet. `[]` is the empty state.    |
+| `invitesLoading` | `boolean`             | `false` | The pending invites are loading: placeholder rows.               |
+| `invitesError`   | `string`              | —       | Loading the invites failed: an alert with "Try again".           |
+| `sendError`      | `string`              | —       | Sending failed: an alert over the email field.                   |
+| `emailsError`    | `string`              | —       | What is wrong with the addresses. Marks the field invalid.       |
+| `sending`        | `boolean`             | `false` | Invites on their way: the field is inert, the send button busy.  |
+| `disabled`       | `boolean`             | `false` | Nothing on the screen can be used right now.                     |
+| `onSubmit`       | `(event) => void`     | —       | Native form submit.                                              |
+| `onEditInvite`   | `(id) => void`        | —       | An invite's Edit button was pressed.                             |
+| `onRemoveInvite` | `(id) => void`        | —       | An invite's Remove button was pressed.                           |
+| `onRetry`        | `() => void`          | —       | "Try again" after `invitesError`.                                |
+| `onContinue`     | `() => void`          | —       | The Continue button was pressed.                                 |
+| `onNavigate`     | `(to, event) => void` | —       | A screen link was clicked: `home`, `skip`, `privacy` or `terms`. |
+| `homeHref`       | `string`              | `"#"`   | Target of the wordmark.                                          |
+| `skipHref`       | `string`              | `"#"`   | Target of "Skip for now".                                        |
+| `privacyHref`    | `string`              | `"#"`   | Target of the privacy link.                                      |
+| `termsHref`      | `string`              | `"#"`   | Target of the terms link.                                        |
+
+`ListItem` is the [List](/en/list/) block's row: `id`, `title`, `subtitle`, `initials`, `avatarUrl`, `status`, `statusVariant` and `meta`.
+
+### States
+
+| State          | Props            | Renders                                              |
+| -------------- | ---------------- | ---------------------------------------------------- |
+| Default        | `invites`        | The email field and one row per pending invite.      |
+| Invalid emails | `emailsError`    | The field marked invalid, with the message under it. |
+| Send error     | `sendError`      | An alert over the email field.                       |
+| Sending        | `sending`        | The field inert, the send button `aria-busy`.        |
+| Loading        | `invitesLoading` | Placeholder rows in a busy region.                   |
+| List error     | `invitesError`   | An alert with "Try again" in place of the rows.      |
+| Empty          | `invites={[]}`   | "No members yet" in place of the rows.               |
+| Disabled       | `disabled`       | The screen is shown but can't be used.               |
+
+### Form fields
+
+| Name     | Control                  | Posted            |
+| -------- | ------------------------ | ----------------- |
+| `emails` | Email, several addresses | Always, as typed. |
+
+### Sizing
+
+| Container step           | Change                                                                |
+| ------------------------ | --------------------------------------------------------------------- |
+| `@sm` (`--container-sm`) | The masthead, the send button and the Continue row move onto one row. |
+| `@md` (`--container-md`) | The title grows and the footer moves onto one row.                    |
+
+### Composition
+
+| Part                | Role                                                               |
+| ------------------- | ------------------------------------------------------------------ |
+| [Field](/en/field/) | The email field.                                                   |
+| [List](/en/list/)   | The pending invites. Its "Invite member" button focuses the field. |
+
+## Examples
+
+### Invalid emails
+
+<Preview
+  examples={{
+    react: inviteTeamReact,
+    vue: inviteTeamVue,
+    solid: inviteTeamSolid,
+    svelte: inviteTeamSvelte,
+  }}
+  layout="fill"
+>
+  <InviteTeamScreenDemo client:visible locale="en" state="invalid" />
+</Preview>
+
+### Send error
+
+<Preview
+  examples={{
+    react: inviteTeamReact,
+    vue: inviteTeamVue,
+    solid: inviteTeamSolid,
+    svelte: inviteTeamSvelte,
+  }}
+  layout="fill"
+>
+  <InviteTeamScreenDemo client:visible locale="en" state="send-error" />
+</Preview>
+
+### Sending
+
+<Preview
+  examples={{
+    react: inviteTeamReact,
+    vue: inviteTeamVue,
+    solid: inviteTeamSolid,
+    svelte: inviteTeamSvelte,
+  }}
+  layout="fill"
+>
+  <InviteTeamScreenDemo client:visible locale="en" state="sending" />
+</Preview>
+
+### Loading the invites
+
+<Preview
+  examples={{
+    react: inviteTeamReact,
+    vue: inviteTeamVue,
+    solid: inviteTeamSolid,
+    svelte: inviteTeamSvelte,
+  }}
+  layout="fill"
+>
+  <InviteTeamScreenDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### The invites failed to load
+
+<Preview
+  examples={{
+    react: inviteTeamReact,
+    vue: inviteTeamVue,
+    solid: inviteTeamSolid,
+    svelte: inviteTeamSvelte,
+  }}
+  layout="fill"
+>
+  <InviteTeamScreenDemo client:visible locale="en" state="list-error" />
+</Preview>
+
+### Empty
+
+<Preview
+  examples={{
+    react: inviteTeamReact,
+    vue: inviteTeamVue,
+    solid: inviteTeamSolid,
+    svelte: inviteTeamSvelte,
+  }}
+  layout="fill"
+>
+  <InviteTeamScreenDemo client:visible locale="en" state="empty" />
+</Preview>
+
+## Notes
+
+- Presentational: no request, no router. The page that mounts it sends the invites and loads the list.
+- The field does not check the addresses. Split `emails` on commas, check each one, and pass `emailsError` when one is wrong.
+- `onNavigate` passes the click event: skip `metaKey`/`ctrlKey` clicks, then `preventDefault()` to route.
+- The screen imports the List block from `@/components/blocks/…`; edit that line if your alias differs.

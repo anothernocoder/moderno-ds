@@ -4754,6 +4754,86 @@
       ]
     },
     {
+      "name": "invite-team-react",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Invite team (React)",
+      "description": "Full-viewport invite team screen composing the list block: an email field to invite teammates, then the invites nobody has accepted yet, with the send's error, invalid-address and busy states and the list's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead, the send button and the continue row line up at @sm, the title grows and the footer lines up at @md.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [
+        "list-react"
+      ],
+      "files": [
+        {
+          "path": "screens/invite-team/react/invite-team.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/invite-team.tsx"
+        }
+      ]
+    },
+    {
+      "name": "invite-team-vue",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Invite team (Vue)",
+      "description": "Full-viewport invite team screen composing the list block: an email field to invite teammates, then the invites nobody has accepted yet, with the send's error, invalid-address and busy states and the list's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead, the send button and the continue row line up at @sm, the title grows and the footer lines up at @md.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [
+        "list-vue"
+      ],
+      "files": [
+        {
+          "path": "screens/invite-team/vue/InviteTeam.vue",
+          "type": "registry:screen",
+          "target": "src/components/screens/InviteTeam.vue"
+        }
+      ]
+    },
+    {
+      "name": "invite-team-svelte",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Invite team (Svelte)",
+      "description": "Full-viewport invite team screen composing the list block: an email field to invite teammates, then the invites nobody has accepted yet, with the send's error, invalid-address and busy states and the list's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead, the send button and the continue row line up at @sm, the title grows and the footer lines up at @md.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [
+        "list-svelte"
+      ],
+      "files": [
+        {
+          "path": "screens/invite-team/svelte/InviteTeam.svelte",
+          "type": "registry:screen",
+          "target": "src/components/screens/InviteTeam.svelte"
+        }
+      ]
+    },
+    {
+      "name": "invite-team-solid",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Invite team (Solid)",
+      "description": "Full-viewport invite team screen composing the list block: an email field to invite teammates, then the invites nobody has accepted yet, with the send's error, invalid-address and busy states and the list's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead, the send button and the continue row line up at @sm, the title grows and the footer lines up at @md.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [
+        "list-solid"
+      ],
+      "files": [
+        {
+          "path": "screens/invite-team/solid/invite-team.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/invite-team.tsx"
+        }
+      ]
+    },
+    {
       "name": "plan-select-react",
       "type": "registry:screen",
       "version": "0.1.0",
