@@ -1,0 +1,20 @@
+export { TagsInput } from "../tags-input.js";
+export type {
+  TagsInputSize,
+  ModernoTagsInputRootProps,
+  TagsInputRootProps,
+  TagsInputLabelProps,
+  TagsInputControlProps,
+  TagsInputInputProps,
+  TagsInputClearTriggerProps,
+  TagsInputItemProps,
+  TagsInputItemPreviewProps,
+  TagsInputItemTextProps,
+  TagsInputItemDeleteTriggerProps,
+  TagsInputItemInputProps,
+  TagsInputHiddenInputProps,
+  TagsInputValueChangeDetails,
+  TagsInputInputValueChangeDetails,
+  TagsInputHighlightChangeDetails,
+  TagsInputValidityChangeDetails,
+} from "../tags-input.js";

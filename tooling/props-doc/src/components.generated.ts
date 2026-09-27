@@ -37,6 +37,7 @@ import sliderComponent from "./components/slider.ts";
 import spinnerComponent from "./components/spinner.ts";
 import switchComponent from "./components/switch.ts";
 import tabsComponent from "./components/tabs.ts";
+import tagsInputComponent from "./components/tags-input.ts";
 import toggleComponent from "./components/toggle.ts";
 import toggleGroupComponent from "./components/toggle-group.ts";
 
@@ -69,6 +70,7 @@ export const { ENTRIES, AGENT_COMPONENTS, AGENT_EXAMPLES } = assembleComponents(
   spinnerComponent,
   switchComponent,
   tabsComponent,
+  tagsInputComponent,
   toggleComponent,
   toggleGroupComponent,
 ]);

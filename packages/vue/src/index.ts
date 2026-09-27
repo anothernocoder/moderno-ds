@@ -39,5 +39,6 @@ export * from "./exports/slider.js";
 export * from "./exports/spinner.js";
 export * from "./exports/switch.js";
 export * from "./exports/tabs.js";
+export * from "./exports/tags-input.js";
 export * from "./exports/toggle-group.js";
 export * from "./exports/toggle.js";

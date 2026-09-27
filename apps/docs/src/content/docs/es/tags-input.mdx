@@ -1,0 +1,308 @@
+---
+title: Tags Input
+description: Un campo de texto que convierte lo que escribe el usuario en etiquetas que puede editar y quitar.
+group: Componentes
+order: 37
+component: TagsInput
+pkg: "@moderno-ui/react"
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import TagsInputDemo from "../../../examples/tags-input/tags-input.svelte";
+import baseReact from "../../../examples/tags-input/react.tsx?raw";
+import baseVue from "../../../examples/tags-input/vue.vue?raw";
+import baseSolid from "../../../examples/tags-input/solid.tsx?raw";
+import baseSvelte from "../../../examples/tags-input/tags-input.svelte?raw";
+import TagsInputMaxDemo from "../../../examples/tags-input/max/tags-input-max.svelte";
+import maxReact from "../../../examples/tags-input/max/react.tsx?raw";
+import maxVue from "../../../examples/tags-input/max/vue.vue?raw";
+import maxSolid from "../../../examples/tags-input/max/solid.tsx?raw";
+import maxSvelte from "../../../examples/tags-input/max/tags-input-max.svelte?raw";
+import TagsInputClearDemo from "../../../examples/tags-input/clear/tags-input-clear.svelte";
+import clearReact from "../../../examples/tags-input/clear/react.tsx?raw";
+import clearVue from "../../../examples/tags-input/clear/vue.vue?raw";
+import clearSolid from "../../../examples/tags-input/clear/solid.tsx?raw";
+import clearSvelte from "../../../examples/tags-input/clear/tags-input-clear.svelte?raw";
+import TagsInputPasteDemo from "../../../examples/tags-input/paste/tags-input-paste.svelte";
+import pasteReact from "../../../examples/tags-input/paste/react.tsx?raw";
+import pasteVue from "../../../examples/tags-input/paste/vue.vue?raw";
+import pasteSolid from "../../../examples/tags-input/paste/solid.tsx?raw";
+import pasteSvelte from "../../../examples/tags-input/paste/tags-input-paste.svelte?raw";
+import TagsInputSizesDemo from "../../../examples/tags-input/sizes/tags-input-sizes.svelte";
+import sizesReact from "../../../examples/tags-input/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/tags-input/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/tags-input/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/tags-input/sizes/tags-input-sizes.svelte?raw";
+
+<FrameworkSelect locale="es" />
+
+<Preview
+  examples={{
+    react: baseReact,
+    vue: baseVue,
+    solid: baseSolid,
+    svelte: baseSvelte,
+  }}
+>
+  <TagsInputDemo client:visible />
+</Preview>
+
+## Instalación
+
+<Install pkg="@moderno-ui/react" />
+
+## Uso
+
+Tags Input es un campo de texto que convierte lo que escribe el usuario en etiquetas. Úsalo para una lista corta de valores libres, como palabras clave o temas. Enter o una coma añade una etiqueta; la × de una etiqueta la quita.
+
+<ForFramework fw="react">
+
+```tsx
+import { TagsInput } from "@moderno-ui/react";
+```
+
+```tsx
+<TagsInput.Root value={tags} onValueChange={(details) => setTags(details.value)}>
+  <TagsInput.Label>Frameworks</TagsInput.Label>
+  <TagsInput.Control>
+    <TagsInput.Context>
+      {(tagsInput) =>
+        tagsInput.value.map((value, index) => (
+          <TagsInput.Item key={index} index={index} value={value}>
+            <TagsInput.ItemPreview>
+              <TagsInput.ItemText>{value}</TagsInput.ItemText>
+              <TagsInput.ItemDeleteTrigger>×</TagsInput.ItemDeleteTrigger>
+            </TagsInput.ItemPreview>
+            <TagsInput.ItemInput />
+          </TagsInput.Item>
+        ))
+      }
+    </TagsInput.Context>
+    <TagsInput.Input placeholder="Añade un framework" />
+  </TagsInput.Control>
+</TagsInput.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { TagsInput } from "@moderno-ui/vue";
+```
+
+```vue
+<TagsInput.Root v-model="tags">
+  <TagsInput.Label>Frameworks</TagsInput.Label>
+  <TagsInput.Control>
+    <TagsInput.Context v-slot="{ value }">
+      <TagsInput.Item v-for="(tag, index) in value" :key="index" :index="index" :value="tag">
+        <TagsInput.ItemPreview>
+          <TagsInput.ItemText>{{ tag }}</TagsInput.ItemText>
+          <TagsInput.ItemDeleteTrigger>×</TagsInput.ItemDeleteTrigger>
+        </TagsInput.ItemPreview>
+        <TagsInput.ItemInput />
+      </TagsInput.Item>
+    </TagsInput.Context>
+    <TagsInput.Input placeholder="Añade un framework" />
+  </TagsInput.Control>
+</TagsInput.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { TagsInput } from "@moderno-ui/svelte";
+```
+
+```svelte
+<TagsInput.Root value={tags} onValueChange={(details) => (tags = details.value)}>
+  <TagsInput.Label>Frameworks</TagsInput.Label>
+  <TagsInput.Control>
+    <TagsInput.Context>
+      {#snippet render(tagsInput)}
+        {#each tagsInput().value as value, index (index)}
+          <TagsInput.Item {index} {value}>
+            <TagsInput.ItemPreview>
+              <TagsInput.ItemText>{value}</TagsInput.ItemText>
+              <TagsInput.ItemDeleteTrigger>×</TagsInput.ItemDeleteTrigger>
+            </TagsInput.ItemPreview>
+            <TagsInput.ItemInput />
+          </TagsInput.Item>
+        {/each}
+      {/snippet}
+    </TagsInput.Context>
+    <TagsInput.Input placeholder="Añade un framework" />
+  </TagsInput.Control>
+</TagsInput.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Index } from "solid-js";
+import { TagsInput } from "@moderno-ui/solid";
+```
+
+```tsx
+<TagsInput.Root value={tags()} onValueChange={(details) => setTags(details.value)}>
+  <TagsInput.Label>Frameworks</TagsInput.Label>
+  <TagsInput.Control>
+    <TagsInput.Context>
+      {(tagsInput) => (
+        <Index each={tagsInput().value}>
+          {(value, index) => (
+            <TagsInput.Item index={index} value={value()}>
+              <TagsInput.ItemPreview>
+                <TagsInput.ItemText>{value()}</TagsInput.ItemText>
+                <TagsInput.ItemDeleteTrigger>×</TagsInput.ItemDeleteTrigger>
+              </TagsInput.ItemPreview>
+              <TagsInput.ItemInput />
+            </TagsInput.Item>
+          )}
+        </Index>
+      )}
+    </TagsInput.Context>
+    <TagsInput.Input placeholder="Añade un framework" />
+  </TagsInput.Control>
+</TagsInput.Root>
+```
+
+</ForFramework>
+
+El valor es una lista de textos, como `["React", "Vue"]`. `TagsInput.Context` te la pasa para que dibujes un item por etiqueta.
+
+## Referencia de la API
+
+### TagsInput.Root
+
+`size` es el añadido de Moderno; todas las partes lo siguen. El resto de props vienen del TagsInput de Ark.
+
+<PropsTable component="TagsInput" />
+
+| Prop              | Tipo                                                             | Por defecto | Descripción                                                           |
+| ----------------- | ---------------------------------------------------------------- | ----------- | --------------------------------------------------------------------- |
+| `value`           | `string[]`                                                       | —           | Etiquetas controladas.                                                |
+| `defaultValue`    | `string[]`                                                       | `[]`        | Etiquetas al principio, sin control.                                  |
+| `onValueChange`   | `(details: { value: string[] }) => void`                         | —           | Se llama al añadir, editar o quitar una etiqueta.                     |
+| `inputValue`      | `string`                                                         | —           | Texto controlado del input.                                           |
+| `max`             | `number`                                                         | `Infinity`  | El máximo de etiquetas. Pasado ese número, rechaza una nueva.         |
+| `allowOverflow`   | `boolean`                                                        | `false`     | Acepta etiquetas por encima de `max` y marca el campo como erróneo.   |
+| `delimiter`       | `string \| RegExp`                                               | `","`       | La tecla que añade una etiqueta, y lo que separa el texto pegado.     |
+| `addOnPaste`      | `boolean`                                                        | `false`     | Convierte el texto pegado en etiquetas, separadas por el delimitador. |
+| `blurBehavior`    | `"add" \| "clear"`                                               | —           | Qué pasa con el texto escrito cuando el input pierde el foco.         |
+| `editable`        | `boolean`                                                        | `true`      | Deja editar una etiqueta con doble clic o Enter.                      |
+| `allowDuplicates` | `boolean`                                                        | `false`     | Acepta una etiqueta que ya está en la lista.                          |
+| `validate`        | `(details: { inputValue: string; value: string[] }) => boolean`  | —           | Devuelve `false` para rechazar una etiqueta.                          |
+| `onValueInvalid`  | `(details: { reason: "rangeOverflow" \| "invalidTag" }) => void` | —           | Se llama cuando `validate` rechaza una etiqueta, o se pasa de `max`.  |
+| `maxLength`       | `number`                                                         | —           | El máximo de caracteres de una etiqueta.                              |
+| `disabled`        | `boolean`                                                        | `false`     | Atenúa el campo e ignora la entrada.                                  |
+| `readOnly`        | `boolean`                                                        | `false`     | Muestra las etiquetas pero ignora la entrada.                         |
+| `invalid`         | `boolean`                                                        | —           | Marca las etiquetas como erróneas.                                    |
+| `required`        | `boolean`                                                        | `false`     | Marca el campo como obligatorio en un formulario.                     |
+| `name`            | `string`                                                         | —           | El nombre de campo del input oculto.                                  |
+
+En Vue, enlaza el valor con `:model-value` o `v-model`, y escucha con `@value-change`.
+
+### Partes
+
+| Parte                         | Elemento   | Descripción                                                               |
+| ----------------------------- | ---------- | ------------------------------------------------------------------------- |
+| `TagsInput.Root`              | `<div>`    | Lleva `data-size`.                                                        |
+| `TagsInput.Label`             | `<label>`  | Opcional. Nombra el campo. Al pulsarla, enfoca el input.                  |
+| `TagsInput.Control`           | `<div>`    | La caja con borde. Contiene las etiquetas y el input.                     |
+| `TagsInput.Item`              | `<div>`    | Una etiqueta. Recibe `index` y `value`.                                   |
+| `TagsInput.ItemPreview`       | `<div>`    | El chip de la etiqueta. Con doble clic se edita.                          |
+| `TagsInput.ItemText`          | `<span>`   | El texto de la etiqueta.                                                  |
+| `TagsInput.ItemDeleteTrigger` | `<button>` | Quita la etiqueta. Ark le pone nombre para los lectores de pantalla.      |
+| `TagsInput.ItemInput`         | `<input>`  | Sustituye al chip mientras se edita la etiqueta.                          |
+| `TagsInput.Input`             | `<input>`  | El campo de texto. Enter o el delimitador convierte el texto en etiqueta. |
+| `TagsInput.ClearTrigger`      | `<button>` | Opcional. Quita todas las etiquetas. Se oculta si no hay ninguna.         |
+| `TagsInput.HiddenInput`       | `<input>`  | Opcional. Envía las etiquetas con un formulario.                          |
+| `TagsInput.Context`           | —          | Te pasa las etiquetas como `value`, para dibujar un item por cada una.    |
+
+### Atributos data
+
+| Atributo           | Valores                                                               |
+| ------------------ | --------------------------------------------------------------------- |
+| `data-focus`       | Mientras el campo tiene el foco, en la raíz y la caja                 |
+| `data-invalid`     | Cuando las etiquetas son erróneas, en la raíz, etiqueta, caja e input |
+| `data-disabled`    | Con `disabled`, en todas las partes                                   |
+| `data-readonly`    | Con `readOnly`, en la raíz, la etiqueta, la caja y el input           |
+| `data-empty`       | Mientras no hay etiquetas, en la raíz y el input                      |
+| `data-highlighted` | En la etiqueta elegida con las flechas                                |
+| `data-size`        | En la raíz: `"sm"`, `"md"` o `"lg"`                                   |
+
+## Ejemplos
+
+### Máximo
+
+`max` fija cuántas etiquetas caben. Pasado ese número, rechaza una nueva.
+
+<Preview
+  examples={{
+    react: maxReact,
+    vue: maxVue,
+    solid: maxSolid,
+    svelte: maxSvelte,
+  }}
+>
+  <TagsInputMaxDemo client:visible />
+</Preview>
+
+### Quitar todas
+
+Pon `TagsInput.ClearTrigger` al final de la caja. Quita todas las etiquetas y se oculta si no hay ninguna.
+
+<Preview
+  examples={{
+    react: clearReact,
+    vue: clearVue,
+    solid: clearSolid,
+    svelte: clearSvelte,
+  }}
+>
+  <TagsInputClearDemo client:visible />
+</Preview>
+
+### Pegar una lista
+
+Con `addOnPaste`, el texto pegado se convierte en una etiqueta por cada coma.
+
+<Preview
+  examples={{
+    react: pasteReact,
+    vue: pasteVue,
+    solid: pasteSolid,
+    svelte: pasteSvelte,
+  }}
+>
+  <TagsInputPasteDemo client:visible />
+</Preview>
+
+### Tamaños
+
+<Preview
+  examples={{
+    react: sizesReact,
+    vue: sizesVue,
+    solid: sizesSolid,
+    svelte: sizesSvelte,
+  }}
+>
+  <TagsInputSizesDemo client:visible />
+</Preview>
+
+## Notas
+
+- `TagsInput.Root` está envuelto para añadir `size`; el resto de partes son las de Ark sin cambios.
+- El teclado: las flechas izquierda y derecha se mueven entre etiquetas, Retroceso o Suprimir quita la resaltada, Enter la edita y Escape cancela la edición.
+- Los botones de quitar no entran en el orden de tabulación; Retroceso hace lo mismo desde el input.

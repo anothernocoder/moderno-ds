@@ -112,6 +112,7 @@ describe("@moderno-ui/core components.css — bordered controls ring inset", () 
     `[data-scope="select"][data-part="trigger"]:focus-visible`,
     `[data-scope="pin-input"][data-part="input"]:focus-visible`,
     `[data-scope="number-input"][data-part="control"]:focus-within`,
+    `[data-scope="tags-input"][data-part="control"]:focus-within`,
   ])("%s", (selector) => {
     const decls = ruleDecls(root, selector);
     expect(prop(decls, "outline")).toBe("2px solid var(--ring)");

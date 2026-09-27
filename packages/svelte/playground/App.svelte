@@ -35,6 +35,7 @@
   import Spinner from "./sections/Spinner.svelte";
   import Switch from "./sections/Switch.svelte";
   import Tabs from "./sections/Tabs.svelte";
+  import TagsInput from "./sections/TagsInput.svelte";
   import Toggle from "./sections/Toggle.svelte";
   import ToggleGroup from "./sections/ToggleGroup.svelte";
 
@@ -67,6 +68,7 @@
   <Spinner {open} />
   <Switch {open} />
   <Tabs {open} />
+  <TagsInput {open} />
   <Toggle {open} />
   <ToggleGroup {open} />
 </main>

@@ -1,0 +1,283 @@
+/* ───────────────────────── Tags Input ───────────────────────── *
+ * Ark's tags-input machine: root > label + control > item* + input (+ an
+ * optional clear-trigger). Each item holds an item-preview (the chip:
+ * item-text + item-delete-trigger) and an item-input, the box that replaces
+ * the chip while the tag is edited. The control is the one bordered box,
+ * like Field's input: the tags and the input sit inside it and wrap onto
+ * more rows as tags are added. Ark adds a tag on Enter or the delimiter,
+ * removes one on Backspace or its delete trigger, stamps data-focus,
+ * data-invalid, data-disabled, data-readonly and data-highlighted on the
+ * parts, and hides the preview (or the item-input) with `hidden`.
+ * `tagsInputRecipe` puts size on the root; the parts follow it through
+ * child combinators (root > control > part).                            */
+[data-scope="tags-input"][data-part="root"] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+[data-scope="tags-input"][data-part="label"] {
+  color: var(--foreground);
+  font-size: var(--text-ui-md);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--leading-ui-md);
+}
+/* The box grows downward as the tags wrap; its floor is Field's height. The
+   thin block padding keeps a tag one step shorter than the box, so a single
+   row reads like a one-line input. */
+[data-scope="tags-input"][data-part="control"] {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-1);
+  width: 100%;
+  min-height: var(--spacing-8);
+  padding: calc(var(--spacing-1) / 2) var(--spacing-1);
+  border: 1px solid var(--input);
+  border-radius: var(--radius);
+  background-color: var(--background);
+  cursor: text;
+  transition:
+    border-color var(--motion-fast),
+    background-color var(--motion-fast);
+}
+/* Hover raises the border to the focus colour, as on Field's input; an
+   invalid, disabled or read-only box keeps its own border. */
+[data-scope="tags-input"][data-part="control"]:hover:not(
+    [data-disabled],
+    [data-invalid],
+    [data-readonly]
+  ) {
+  border-color: var(--ring);
+}
+/* The ring is the box's, drawn INSIDE it (a -2px offset covers the 1px
+   border and one more px), whether the caret is in the input or a tag is
+   being edited. An offset ring would leave the resting border visible
+   inside it — a double border. Field, Select, Pin Input and Number Input do
+   the same. */
+[data-scope="tags-input"][data-part="control"]:focus-within {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+[data-scope="tags-input"][data-part="control"][data-invalid] {
+  border-color: var(--destructive);
+  background-color: color-mix(in oklab, var(--destructive) 4%, var(--background));
+}
+/* An invalid box keeps its error colour while focused; a neutral ring over
+   a red border reads as "fixed" before it is. */
+[data-scope="tags-input"][data-part="control"][data-invalid]:focus-within {
+  outline-color: var(--destructive);
+}
+[data-scope="tags-input"][data-part="control"][data-disabled] {
+  background-color: var(--muted);
+}
+[data-scope="tags-input"][data-part="control"][data-readonly] {
+  cursor: default;
+}
+/* The input takes the rest of the row, and a new row once the tags leave it
+   less than its floor. The box draws the border and the ring. */
+[data-scope="tags-input"][data-part="input"] {
+  flex: 1;
+  min-width: calc(var(--spacing-8) * 2);
+  height: var(--spacing-6);
+  padding: 0 var(--spacing-2);
+  border: 0;
+  outline: none;
+  background-color: transparent;
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-size: var(--text-ui-md);
+}
+[data-scope="tags-input"][data-part="input"]::placeholder {
+  color: var(--muted-foreground);
+}
+[data-scope="tags-input"][data-part="item"] {
+  display: inline-flex;
+  min-width: 0;
+  max-width: 100%;
+}
+/* One tag: a muted chip whose corner nests inside the box's. */
+[data-scope="tags-input"][data-part="item-preview"] {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  min-width: 0;
+  max-width: 100%;
+  height: var(--spacing-6);
+  padding-inline: var(--spacing-2);
+  border-radius: calc(var(--radius) - var(--spacing-1) / 2);
+  background-color: var(--muted);
+  color: var(--foreground);
+  font-size: var(--text-ui-sm);
+  line-height: 1;
+  white-space: nowrap;
+  cursor: default;
+  user-select: none;
+}
+/* Arrow Left from an empty input highlights the last tag; Backspace or
+   Delete then removes it. The highlight is a ring inside the chip. */
+[data-scope="tags-input"][data-part="item-preview"][data-highlighted] {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+/* A long tag truncates instead of pushing its delete trigger out. The clip
+   that truncation needs would cut descenders off a line-height: 1 box, so
+   the text takes its size's leading. */
+[data-scope="tags-input"][data-part="item-text"] {
+  min-width: 0;
+  overflow: hidden;
+  line-height: var(--leading-ui-sm);
+  text-overflow: ellipsis;
+}
+/* The × pulls into the end padding so it sits optically centred in the gap
+   it closes. Ark keeps it out of the tab order: Backspace does its job. */
+[data-scope="tags-input"][data-part="item-delete-trigger"] {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-4);
+  height: var(--spacing-4);
+  margin-inline-end: calc(var(--spacing-1) * -1);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-full);
+  background-color: transparent;
+  color: var(--muted-foreground);
+  font-family: var(--font-sans);
+  font-size: var(--text-ui-md);
+  line-height: 1;
+  cursor: pointer;
+  transition: color var(--motion-fast);
+}
+[data-scope="tags-input"][data-part="item-delete-trigger"]:hover:not(:disabled) {
+  color: var(--foreground);
+}
+/* Double-click or Enter on a highlighted tag swaps the chip for this box.
+   It fits its text where the browser can, and carries the ring while it is
+   open. */
+[data-scope="tags-input"][data-part="item-input"] {
+  field-sizing: content;
+  min-width: calc(var(--spacing-8) * 2);
+  max-width: 100%;
+  height: var(--spacing-6);
+  padding: 0 var(--spacing-2);
+  border: 0;
+  border-radius: calc(var(--radius) - var(--spacing-1) / 2);
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-size: var(--text-ui-sm);
+}
+/* Placed last in the control, the clear trigger is pushed to the end of its
+   row. Ark hides it while there are no tags. It is a real, tabbable button,
+   so it draws its own ring. */
+[data-scope="tags-input"][data-part="clear-trigger"] {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-6);
+  height: var(--spacing-6);
+  margin-inline-start: auto;
+  padding: 0;
+  border: 0;
+  border-radius: calc(var(--radius) - var(--spacing-1) / 2);
+  background-color: transparent;
+  color: var(--muted-foreground);
+  font-family: var(--font-sans);
+  font-size: var(--text-ui-md);
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background-color var(--motion-fast),
+    color var(--motion-fast);
+}
+[data-scope="tags-input"][data-part="clear-trigger"]:hover:not(:disabled) {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+[data-scope="tags-input"][data-part="clear-trigger"]:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+/*
+ * Ark stamps data-disabled on EVERY part of a disabled tags input, and the
+ * base layer dims anything carrying it — nesting would multiply the
+ * opacity. Dim the root once and leave its parts opaque.
+ */
+[data-scope="tags-input"][data-part="root"][data-disabled] :where([data-part]) {
+  opacity: 1;
+}
+
+/* Density driven by the recipe's data-size on the root: the box's floor,
+   each tag's height and the type. `lg` exceeds the top spacing slot, so it
+   sums two slots rather than inventing a token. */
+[data-scope="tags-input"][data-part="root"][data-size="sm"] {
+  gap: var(--spacing-1);
+}
+[data-scope="tags-input"][data-part="root"][data-size="sm"] > [data-part="label"] {
+  font-size: var(--text-ui-sm);
+  line-height: var(--leading-ui-sm);
+}
+[data-scope="tags-input"][data-part="root"][data-size="lg"] > [data-part="label"] {
+  font-size: var(--text-ui-lg);
+  line-height: var(--leading-ui-lg);
+}
+[data-scope="tags-input"][data-part="root"][data-size="sm"] > [data-part="control"] {
+  min-height: var(--spacing-7);
+}
+[data-scope="tags-input"][data-part="root"][data-size="lg"] > [data-part="control"] {
+  min-height: calc(var(--spacing-8) + var(--spacing-2));
+}
+[data-scope="tags-input"][data-part="root"][data-size="sm"]
+  > [data-part="control"]
+  > :is([data-part="input"], [data-part="clear-trigger"]) {
+  height: var(--spacing-5);
+  font-size: var(--text-ui-sm);
+}
+[data-scope="tags-input"][data-part="root"][data-size="lg"]
+  > [data-part="control"]
+  > :is([data-part="input"], [data-part="clear-trigger"]) {
+  height: var(--spacing-7);
+  font-size: var(--text-ui-lg);
+}
+[data-scope="tags-input"][data-part="root"][data-size="sm"]
+  > [data-part="control"]
+  > [data-part="clear-trigger"] {
+  width: var(--spacing-5);
+}
+[data-scope="tags-input"][data-part="root"][data-size="lg"]
+  > [data-part="control"]
+  > [data-part="clear-trigger"] {
+  width: var(--spacing-7);
+}
+[data-scope="tags-input"][data-part="root"][data-size="sm"]
+  > [data-part="control"]
+  > [data-part="item"]
+  > :is([data-part="item-preview"], [data-part="item-input"]) {
+  height: var(--spacing-5);
+  font-size: var(--text-ui-xs);
+}
+[data-scope="tags-input"][data-part="root"][data-size="lg"]
+  > [data-part="control"]
+  > [data-part="item"]
+  > :is([data-part="item-preview"], [data-part="item-input"]) {
+  height: var(--spacing-7);
+  font-size: var(--text-ui-md);
+}
+[data-scope="tags-input"][data-part="root"][data-size="sm"]
+  > [data-part="control"]
+  > [data-part="item"]
+  > [data-part="item-preview"]
+  > [data-part="item-text"] {
+  line-height: var(--leading-ui-xs);
+}
+[data-scope="tags-input"][data-part="root"][data-size="lg"]
+  > [data-part="control"]
+  > [data-part="item"]
+  > [data-part="item-preview"]
+  > [data-part="item-text"] {
+  line-height: var(--leading-ui-md);
+}

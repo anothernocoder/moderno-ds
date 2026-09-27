@@ -42,5 +42,6 @@ export * from "./recipes/slider.js";
 export * from "./recipes/spinner.js";
 export * from "./recipes/switch.js";
 export * from "./recipes/tabs.js";
+export * from "./recipes/tags-input.js";
 export * from "./recipes/toggle.js";
 export * from "./recipes/toggle-group.js";

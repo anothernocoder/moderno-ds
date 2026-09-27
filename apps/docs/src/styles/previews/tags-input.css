@@ -1,0 +1,6 @@
+/* A lone tags input centred on the stage gets a reading width with room for a
+   few tags, instead of shrinking to the tags it holds, without the example
+   having to carry a docs-only class. */
+.preview-panel--demo > astro-island > [data-scope="tags-input"][data-part="root"] {
+  width: min(100%, 22rem);
+}

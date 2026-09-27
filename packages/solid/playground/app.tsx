@@ -35,6 +35,7 @@ import SliderSection from "./sections/slider.jsx";
 import SpinnerSection from "./sections/spinner.jsx";
 import SwitchSection from "./sections/switch.jsx";
 import TabsSection from "./sections/tabs.jsx";
+import TagsInputSection from "./sections/tags-input.jsx";
 import ToggleSection from "./sections/toggle.jsx";
 import ToggleGroupSection from "./sections/toggle-group.jsx";
 
@@ -71,6 +72,7 @@ export function App(props: AppProps) {
       <SpinnerSection open={props.open ?? false} />
       <SwitchSection open={props.open ?? false} />
       <TabsSection open={props.open ?? false} />
+      <TagsInputSection open={props.open ?? false} />
       <ToggleSection open={props.open ?? false} />
       <ToggleGroupSection open={props.open ?? false} />
     </main>

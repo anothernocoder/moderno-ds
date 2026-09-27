@@ -35,6 +35,7 @@ import SliderSection from "./sections/slider.js";
 import SpinnerSection from "./sections/spinner.js";
 import SwitchSection from "./sections/switch.js";
 import TabsSection from "./sections/tabs.js";
+import TagsInputSection from "./sections/tags-input.js";
 import ToggleSection from "./sections/toggle.js";
 import ToggleGroupSection from "./sections/toggle-group.js";
 
@@ -72,6 +73,7 @@ export const App = defineComponent({
         h(SpinnerSection, { open: props.open }),
         h(SwitchSection, { open: props.open }),
         h(TabsSection, { open: props.open }),
+        h(TagsInputSection, { open: props.open }),
         h(ToggleSection, { open: props.open }),
         h(ToggleGroupSection, { open: props.open }),
       ]);
