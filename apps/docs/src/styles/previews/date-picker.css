@@ -1,0 +1,6 @@
+/* A lone date picker centred on the stage gets a reading width with room for
+   two dates in range mode, instead of shrinking to its placeholder, without
+   the example having to carry a docs-only class. */
+.preview-panel--demo > astro-island > [data-scope="date-picker"][data-part="root"] {
+  width: min(100%, 18rem);
+}

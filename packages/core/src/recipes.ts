@@ -30,6 +30,7 @@ export * from "./recipes/carousel.js";
 export * from "./recipes/checkbox.js";
 export * from "./recipes/chip.js";
 export * from "./recipes/combobox.js";
+export * from "./recipes/date-picker.js";
 export * from "./recipes/divider.js";
 export * from "./recipes/drawer.js";
 export * from "./recipes/field.js";

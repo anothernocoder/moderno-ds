@@ -1,0 +1,483 @@
+/* ───────────────────────── Date Picker ───────────────────────── *
+ * Ark's date-picker machine: root > label + control > input (two in range
+ * mode) + trigger (+ clear-trigger), then positioner > content > view* >
+ * view-control (prev-trigger, view-trigger > range-text, next-trigger) +
+ * table > table-head > table-row > table-header* + table-body >
+ * table-row > table-cell > table-cell-trigger. Month-select, year-select
+ * and preset-trigger are optional. The control is the one bordered box,
+ * like Number Input's; the content is a floating surface, like Popover's.
+ * Ark lays out the weeks, formats and parses dates for the locale, moves
+ * focus through the grid and stamps data-selected, data-today,
+ * data-in-range, data-range-start/end, data-outside-range,
+ * data-unavailable and data-disabled on each day. floating-ui lays the
+ * positioner out inline, so this partial never styles it.
+ * `datePickerRecipe` puts size on the root (the label and the box follow
+ * through child combinators) and on the content (the calendar follows).  */
+[data-scope="date-picker"][data-part="root"] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+[data-scope="date-picker"][data-part="label"] {
+  color: var(--foreground);
+  font-size: var(--text-ui-md);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--leading-ui-md);
+}
+[data-scope="date-picker"][data-part="control"] {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  height: var(--spacing-8);
+  border: 1px solid var(--input);
+  border-radius: var(--radius);
+  background-color: var(--background);
+  /* The trigger's hover fill stays inside the box's corners. */
+  overflow: hidden;
+  transition:
+    border-color var(--motion-fast),
+    background-color var(--motion-fast);
+}
+/* Hover raises the border to the focus colour, as on Field's input; an
+   invalid or disabled box keeps its own border. */
+[data-scope="date-picker"][data-part="control"]:hover:not([data-disabled]):not(
+    :has(> [data-invalid])
+  ) {
+  border-color: var(--ring);
+}
+/* The ring is the box's, drawn INSIDE it (a -2px offset covers the 1px
+   border and one more px), whether the caret is in the input or the
+   trigger has focus. An offset ring would leave the resting border visible
+   inside it — a double border. Field, Select, Pin Input and Number Input
+   do the same. */
+[data-scope="date-picker"][data-part="control"]:focus-within {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+/* Ark marks the input invalid, not the box; the box shows it. */
+[data-scope="date-picker"][data-part="control"]:has(> [data-invalid]) {
+  border-color: var(--destructive);
+  background-color: color-mix(in oklab, var(--destructive) 4%, var(--background));
+}
+/* An invalid box keeps its error colour while focused; a neutral ring over
+   a red border reads as "fixed" before it is. */
+[data-scope="date-picker"][data-part="control"]:has(> [data-invalid]):focus-within {
+  outline-color: var(--destructive);
+}
+[data-scope="date-picker"][data-part="control"][data-disabled] {
+  background-color: var(--muted);
+}
+/* The input fills the box; the box draws the border and the ring. Tabular
+   figures keep the digits from jittering as the user types. In range mode
+   the second input (data-index 1) is split off by a hairline. */
+[data-scope="date-picker"][data-part="input"] {
+  flex: 1;
+  min-width: 0;
+  padding: 0 var(--spacing-3);
+  border: 0;
+  outline: none;
+  background-color: transparent;
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-size: var(--text-ui-md);
+  font-variant-numeric: tabular-nums;
+}
+[data-scope="date-picker"][data-part="input"][data-index="1"] {
+  border-inline-start: 1px solid var(--input);
+}
+[data-scope="date-picker"][data-part="input"]::placeholder {
+  color: var(--muted-foreground);
+}
+/* The trigger and the clear trigger are square icon buttons at the end of
+   the box, with no fill until hovered (this clears the UA `buttonface`
+   grey). Ark hides the clear trigger while nothing is picked. */
+[data-scope="date-picker"]:is([data-part="trigger"], [data-part="clear-trigger"]) {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-8);
+  padding: 0;
+  border: 0;
+  background-color: transparent;
+  color: var(--muted-foreground);
+  font-family: var(--font-sans);
+  font-size: var(--text-ui-md);
+  line-height: 1;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background-color var(--motion-fast),
+    color var(--motion-fast);
+}
+[data-scope="date-picker"]:is([data-part="trigger"], [data-part="clear-trigger"]):hover:not(
+    :disabled
+  ),
+[data-scope="date-picker"]:is([data-part="trigger"], [data-part="clear-trigger"]):focus-visible,
+[data-scope="date-picker"][data-part="trigger"][data-state="open"] {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+/* The box already rings while a button inside it has focus; the button
+   shows it with its fill, not with a second ring of its own. */
+[data-scope="date-picker"]:is([data-part="trigger"], [data-part="clear-trigger"]):focus-visible {
+  outline: none;
+}
+/*
+ * Ark stamps data-disabled on the label and the box of a disabled picker as
+ * well as on the root, and the base layer dims anything carrying it —
+ * nesting would multiply the opacity. Dim the root once and leave its parts
+ * opaque.
+ */
+[data-scope="date-picker"][data-part="root"][data-disabled] :where([data-part]) {
+  opacity: 1;
+}
+
+/* The calendar: a floating surface, the popover fill with the 1px --border
+   edge, lifted by the --shadow-md drop alone (never a ring stacked in
+   box-shadow, which would double the border). Above an app's sticky
+   chrome, the same layer as Dialog; Ark copies the z-index onto the
+   positioner. Focus lives on a day, never on the surface. */
+[data-scope="date-picker"][data-part="content"] {
+  position: relative;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background-color: var(--popover);
+  color: var(--popover-foreground);
+  font-family: var(--font-sans);
+  font-size: var(--text-ui-md);
+  line-height: var(--leading-ui-md);
+  box-shadow: var(--shadow-md);
+}
+[data-scope="date-picker"][data-part="content"]:focus-visible {
+  outline: none;
+}
+/* An inline calendar sits in the page: it keeps its edge, not the lift. */
+[data-scope="date-picker"][data-part="content"][data-inline] {
+  z-index: auto;
+  box-shadow: none;
+}
+[data-scope="date-picker"][data-part="view"] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+/* The month and the arrows either side of it. */
+[data-scope="date-picker"][data-part="view-control"] {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-1);
+}
+/* The arrows and the month title are borderless buttons: --accent on hover,
+   a ring inside their box on focus. */
+[data-scope="date-picker"]:is(
+  [data-part="prev-trigger"],
+  [data-part="next-trigger"],
+  [data-part="view-trigger"]
+) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--spacing-8);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius);
+  background-color: transparent;
+  color: var(--foreground);
+  font: inherit;
+  cursor: pointer;
+  transition: background-color var(--motion-fast);
+}
+[data-scope="date-picker"]:is([data-part="prev-trigger"], [data-part="next-trigger"]) {
+  flex: none;
+  width: var(--spacing-8);
+  color: var(--muted-foreground);
+}
+[data-scope="date-picker"][data-part="view-trigger"] {
+  padding-inline: var(--spacing-2);
+  font-weight: var(--font-weight-semibold);
+}
+[data-scope="date-picker"]:is(
+    [data-part="prev-trigger"],
+    [data-part="next-trigger"],
+    [data-part="view-trigger"]
+  ):hover:not(:disabled) {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+[data-scope="date-picker"]:is(
+    [data-part="prev-trigger"],
+    [data-part="next-trigger"],
+    [data-part="view-trigger"],
+    [data-part="table-cell-trigger"]
+  ):focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+/* The month's name. Weight set here too, for a range text outside the
+   view trigger. */
+[data-scope="date-picker"][data-part="range-text"] {
+  font-weight: var(--font-weight-semibold);
+}
+
+/* The grid. No gaps between the days, so a range reads as one band. */
+[data-scope="date-picker"][data-part="table"] {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+[data-scope="date-picker"][data-part="table-header"] {
+  width: var(--spacing-8);
+  height: var(--spacing-8);
+  padding: 0;
+  color: var(--muted-foreground);
+  font-size: var(--text-ui-xs);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--leading-ui-xs);
+  text-align: center;
+}
+/* Every cell sits flush (no UA padding), so a range reads as one band. The
+   rule keys on the row, not on the cell part: Svelte's Ark renders a cell as
+   a bare <td> that carries none of Ark's attributes. */
+[data-scope="date-picker"][data-part="table-row"] > * {
+  padding: 0;
+  text-align: center;
+}
+/* A week number (showWeekNumbers) reads as a label, not a day. */
+[data-scope="date-picker"][data-part="table-cell"][data-type="week-number"] {
+  color: var(--muted-foreground);
+  font-size: var(--text-ui-xs);
+}
+/* One day: a square button. Ark renders a <div role="button"> in most
+   bindings and a native <button> in Svelte, so the UA button look (padding,
+   outset border, `buttonface` fill, its own font) is cleared for both.
+   Tabular figures keep the columns aligned. */
+[data-scope="date-picker"][data-part="table-cell-trigger"] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-8);
+  height: var(--spacing-8);
+  padding: 0;
+  border: 0;
+  background-color: transparent;
+  color: var(--foreground);
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  user-select: none;
+  outline: none;
+  transition:
+    background-color var(--motion-fast),
+    color var(--motion-fast);
+}
+/* A month or a year is a wider cell: four across fill the width seven days
+   take, so the calendar keeps its width from view to view. */
+[data-scope="date-picker"][data-part="table-cell-trigger"]:is(
+    [data-view="month"],
+    [data-view="year"]
+  ) {
+  width: calc(var(--spacing-8) * 7 / 4);
+  height: calc(var(--spacing-8) * 3 / 2);
+}
+[data-scope="date-picker"][data-part="table-cell-trigger"]:hover:not(
+    [data-disabled],
+    [data-selected]
+  ) {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+/* Today is marked by weight alone, so it never reads as picked. */
+[data-scope="date-picker"][data-part="table-cell-trigger"][data-today] {
+  font-weight: var(--font-weight-semibold);
+  text-decoration: underline;
+}
+/* A day Ark will not let the user pick (isDateUnavailable) is struck out;
+   the base layer already dims it as disabled. */
+[data-scope="date-picker"][data-part="table-cell-trigger"][data-unavailable] {
+  text-decoration: line-through;
+}
+/* A range: the days between the ends are one --accent band, square inside
+   and rounded at the ends; every other day is rounded all round. The same
+   band follows the pointer while the end is being picked. */
+[data-scope="date-picker"][data-part="table-cell-trigger"]:not(
+    [data-in-range],
+    [data-in-hover-range]
+  ) {
+  border-radius: var(--radius);
+}
+[data-scope="date-picker"][data-part="table-cell-trigger"]:is(
+    [data-in-range],
+    [data-in-hover-range]
+  ) {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+[data-scope="date-picker"][data-part="table-cell-trigger"]:is(
+    [data-range-start],
+    [data-hover-range-start]
+  ) {
+  border-start-start-radius: var(--radius);
+  border-end-start-radius: var(--radius);
+}
+[data-scope="date-picker"][data-part="table-cell-trigger"]:is(
+    [data-range-end],
+    [data-hover-range-end]
+  ) {
+  border-start-end-radius: var(--radius);
+  border-end-end-radius: var(--radius);
+}
+/* A picked day (or each end of a range) is filled with --primary. */
+[data-scope="date-picker"][data-part="table-cell-trigger"][data-selected] {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+/* Optional month and year dropdowns (native <select>s) and preset buttons
+   ("Last 7 days"): small bordered controls, ringed inside their box. */
+[data-scope="date-picker"]:is(
+  [data-part="month-select"],
+  [data-part="year-select"],
+  [data-part="preset-trigger"]
+) {
+  height: var(--spacing-7);
+  padding: 0 var(--spacing-2);
+  border: 1px solid var(--input);
+  border-radius: var(--radius);
+  background-color: var(--background);
+  color: var(--foreground);
+  font: inherit;
+  cursor: pointer;
+}
+[data-scope="date-picker"][data-part="preset-trigger"]:hover {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+[data-scope="date-picker"]:is(
+    [data-part="month-select"],
+    [data-part="year-select"],
+    [data-part="preset-trigger"]
+  ):focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+
+/* Density driven by the recipe's data-size. On the root: the box's height,
+   the trigger's width (square with the box) and the type. `lg` exceeds the
+   top spacing slot, so it sums two slots rather than inventing a token. */
+[data-scope="date-picker"][data-part="root"][data-size="sm"] {
+  gap: var(--spacing-1);
+}
+[data-scope="date-picker"][data-part="root"][data-size="sm"] > [data-part="label"] {
+  font-size: var(--text-ui-sm);
+  line-height: var(--leading-ui-sm);
+}
+[data-scope="date-picker"][data-part="root"][data-size="lg"] > [data-part="label"] {
+  font-size: var(--text-ui-lg);
+  line-height: var(--leading-ui-lg);
+}
+[data-scope="date-picker"][data-part="root"][data-size="sm"] > [data-part="control"] {
+  height: var(--spacing-7);
+}
+[data-scope="date-picker"][data-part="root"][data-size="lg"] > [data-part="control"] {
+  height: calc(var(--spacing-8) + var(--spacing-2));
+}
+[data-scope="date-picker"][data-part="root"][data-size="sm"]
+  > [data-part="control"]
+  > [data-part="input"] {
+  padding-inline: var(--spacing-2);
+  font-size: var(--text-ui-sm);
+}
+[data-scope="date-picker"][data-part="root"][data-size="lg"]
+  > [data-part="control"]
+  > [data-part="input"] {
+  padding-inline: var(--spacing-4);
+  font-size: var(--text-ui-lg);
+}
+[data-scope="date-picker"][data-part="root"][data-size="sm"]
+  > [data-part="control"]
+  > :is([data-part="trigger"], [data-part="clear-trigger"]) {
+  width: var(--spacing-7);
+  font-size: var(--text-ui-sm);
+}
+[data-scope="date-picker"][data-part="root"][data-size="lg"]
+  > [data-part="control"]
+  > :is([data-part="trigger"], [data-part="clear-trigger"]) {
+  width: calc(var(--spacing-8) + var(--spacing-2));
+  font-size: var(--text-ui-lg);
+}
+/* On the content: the padding, the type and every square in the calendar
+   (a day, a weekday, an arrow). Descendant combinators, so a consumer may
+   wrap the grid in elements of their own. */
+[data-scope="date-picker"][data-part="content"][data-size="sm"] {
+  gap: var(--spacing-2);
+  padding: var(--spacing-2);
+  font-size: var(--text-ui-sm);
+  line-height: var(--leading-ui-sm);
+}
+[data-scope="date-picker"][data-part="content"][data-size="lg"] {
+  gap: var(--spacing-4);
+  padding: var(--spacing-4);
+  font-size: var(--text-ui-lg);
+  line-height: var(--leading-ui-lg);
+}
+[data-scope="date-picker"][data-part="content"][data-size="sm"]
+  :is(
+    [data-part="table-header"],
+    [data-part="table-cell-trigger"],
+    [data-part="prev-trigger"],
+    [data-part="next-trigger"]
+  ) {
+  width: var(--spacing-7);
+  height: var(--spacing-7);
+}
+[data-scope="date-picker"][data-part="content"][data-size="sm"] [data-part="view-trigger"] {
+  height: var(--spacing-7);
+}
+[data-scope="date-picker"][data-part="content"][data-size="lg"]
+  :is(
+    [data-part="table-header"],
+    [data-part="table-cell-trigger"],
+    [data-part="prev-trigger"],
+    [data-part="next-trigger"]
+  ) {
+  width: calc(var(--spacing-8) + var(--spacing-2));
+  height: calc(var(--spacing-8) + var(--spacing-2));
+}
+[data-scope="date-picker"][data-part="content"][data-size="lg"] [data-part="view-trigger"] {
+  height: calc(var(--spacing-8) + var(--spacing-2));
+}
+[data-scope="date-picker"][data-part="content"][data-size="sm"]
+  [data-part="table-cell-trigger"]:is([data-view="month"], [data-view="year"]) {
+  width: calc(var(--spacing-7) * 7 / 4);
+  height: calc(var(--spacing-7) * 3 / 2);
+}
+[data-scope="date-picker"][data-part="content"][data-size="lg"]
+  [data-part="table-cell-trigger"]:is([data-view="month"], [data-view="year"]) {
+  width: calc((var(--spacing-8) + var(--spacing-2)) * 7 / 4);
+  height: calc((var(--spacing-8) + var(--spacing-2)) * 3 / 2);
+}
+[data-scope="date-picker"][data-part="content"][data-size="lg"] [data-part="table-header"] {
+  font-size: var(--text-ui-sm);
+  line-height: var(--leading-ui-sm);
+}
+
+/* Less motion: the box, the buttons and the days change at once. */
+@media (prefers-reduced-motion: reduce) {
+  [data-scope="date-picker"]:is(
+    [data-part="control"],
+    [data-part="trigger"],
+    [data-part="clear-trigger"],
+    [data-part="prev-trigger"],
+    [data-part="next-trigger"],
+    [data-part="view-trigger"],
+    [data-part="table-cell-trigger"]
+  ) {
+    transition: none;
+  }
+}

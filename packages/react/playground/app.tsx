@@ -27,6 +27,7 @@ import ChartsSection from "./sections/charts.js";
 import CheckboxSection from "./sections/checkbox.js";
 import ChipSection from "./sections/chip.js";
 import ComboboxSection from "./sections/combobox.js";
+import DatePickerSection from "./sections/date-picker.js";
 import DialogSection from "./sections/dialog.js";
 import DividerSection from "./sections/divider.js";
 import DonutChartSection from "./sections/donut-chart.js";
@@ -74,6 +75,7 @@ export function App({ open = false }: AppProps) {
       <CheckboxSection open={open} />
       <ChipSection open={open} />
       <ComboboxSection open={open} />
+      <DatePickerSection open={open} />
       <DialogSection open={open} />
       <DividerSection open={open} />
       <DonutChartSection open={open} />

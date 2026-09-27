@@ -23,6 +23,7 @@
   import Checkbox from "./sections/Checkbox.svelte";
   import Chip from "./sections/Chip.svelte";
   import Combobox from "./sections/Combobox.svelte";
+  import DatePicker from "./sections/DatePicker.svelte";
   import Dialog from "./sections/Dialog.svelte";
   import Divider from "./sections/Divider.svelte";
   import DonutChart from "./sections/DonutChart.svelte";
@@ -66,6 +67,7 @@
   <Checkbox {open} />
   <Chip {open} />
   <Combobox {open} />
+  <DatePicker {open} />
   <Dialog {open} />
   <Divider {open} />
   <DonutChart {open} />

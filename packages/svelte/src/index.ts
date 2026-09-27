@@ -23,6 +23,7 @@ export * from "./exports/carousel.js";
 export * from "./exports/checkbox.js";
 export * from "./exports/chip.js";
 export * from "./exports/combobox.js";
+export * from "./exports/date-picker.js";
 export * from "./exports/dialog.js";
 export * from "./exports/divider.js";
 export * from "./exports/donut-chart.js";

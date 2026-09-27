@@ -1,0 +1,40 @@
+{
+  "name": "DatePicker",
+  "scope": "date-picker",
+  "import": "import { DatePicker } from \"@moderno-ui/react\"",
+  "propsHash": "sha256:fixture-date-picker",
+  "props": [{ "name": "size", "type": "\"sm\" | \"md\" | \"lg\"", "required": false }],
+  "propsComplete": false,
+  "parts": [
+    { "name": "root" },
+    { "name": "label" },
+    { "name": "control" },
+    { "name": "input" },
+    { "name": "trigger" },
+    { "name": "clear-trigger" },
+    { "name": "value-text" },
+    { "name": "positioner" },
+    { "name": "content" },
+    { "name": "view" },
+    { "name": "view-control" },
+    { "name": "prev-trigger" },
+    { "name": "view-trigger" },
+    { "name": "range-text" },
+    { "name": "next-trigger" },
+    { "name": "table" },
+    { "name": "table-head" },
+    { "name": "table-header" },
+    { "name": "table-body" },
+    { "name": "table-row" },
+    { "name": "table-cell" },
+    { "name": "table-cell-trigger" },
+    { "name": "month-select" },
+    { "name": "year-select" },
+    { "name": "preset-trigger" }
+  ],
+  "variants": { "size": ["sm", "md", "lg"] },
+  "guidance": {
+    "intent": "Let the user type or pick a date, several dates or a range from a calendar.",
+    "whenToUse": "A due date, a birthday, a booking's check-in and check-out: any value that is a calendar date."
+  }
+}

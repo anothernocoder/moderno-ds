@@ -23,6 +23,7 @@ import ChartsSection from "./sections/charts.js";
 import CheckboxSection from "./sections/checkbox.js";
 import ChipSection from "./sections/chip.js";
 import ComboboxSection from "./sections/combobox.js";
+import DatePickerSection from "./sections/date-picker.js";
 import DialogSection from "./sections/dialog.js";
 import DividerSection from "./sections/divider.js";
 import DonutChartSection from "./sections/donut-chart.js";
@@ -71,6 +72,7 @@ export const App = defineComponent({
         h(CheckboxSection, { open: props.open }),
         h(ChipSection, { open: props.open }),
         h(ComboboxSection, { open: props.open }),
+        h(DatePickerSection, { open: props.open }),
         h(DialogSection, { open: props.open }),
         h(DividerSection, { open: props.open }),
         h(DonutChartSection, { open: props.open }),
