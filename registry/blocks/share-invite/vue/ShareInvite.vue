@@ -14,6 +14,9 @@ import {
   createToaster,
 } from "@moderno-ui/vue";
 
+// Two roots (the section and its Toaster), so attributes go on the section by hand.
+defineOptions({ inheritAttrs: false });
+
 interface ShareInviteMember {
   id: string;
   name: string;
@@ -140,7 +143,7 @@ async function share(channel: ShareInviteChannel) {
 </script>
 
 <template>
-  <section class="@container moderno-block-share-invite text-foreground">
+  <section v-bind="$attrs" class="@container moderno-block-share-invite text-foreground">
     <Card.Root>
       <Card.Header>
         <Card.Title>{{ heading }}</Card.Title>
