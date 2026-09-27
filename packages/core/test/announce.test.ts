@@ -48,4 +48,16 @@ describe("announce", () => {
     expect(liveRegions()).toHaveLength(1);
     expect(liveRegions()[0]?.textContent).toBe("Dropped.");
   });
+
+  it("keeps announcing after a client-side router replaces <body>", () => {
+    announce("Moved to position 2.");
+    vi.runAllTimers();
+    document.documentElement.replaceChild(document.createElement("body"), document.body);
+
+    announce("Moved to position 3.");
+    vi.runAllTimers();
+
+    expect(liveRegions()).toHaveLength(1);
+    expect(liveRegions()[0]?.textContent).toBe("Moved to position 3.");
+  });
 });
