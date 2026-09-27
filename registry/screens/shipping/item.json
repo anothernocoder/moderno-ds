@@ -1,0 +1,37 @@
+{
+  "title": "Shipping",
+  "description": "Full-viewport checkout screen composing the checkout-form and order-summary blocks: the shipping step, where a shopper gives an email for the receipt, the shipping address and a delivery method beside the order they are paying for, with the form's saving and error states and the summary's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm, @md and @lg contract steps: the masthead lines up at @sm; the footer lines up at @md; the order summary moves beside the form at @lg.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": ["checkout-form-{framework}", "order-summary-{framework}"],
+  "files": {
+    "react": [
+      {
+        "path": "screens/shipping/react/shipping.tsx",
+        "type": "registry:screen",
+        "target": "src/components/screens/shipping.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "screens/shipping/vue/Shipping.vue",
+        "type": "registry:screen",
+        "target": "src/components/screens/Shipping.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "screens/shipping/svelte/Shipping.svelte",
+        "type": "registry:screen",
+        "target": "src/components/screens/Shipping.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "screens/shipping/solid/shipping.tsx",
+        "type": "registry:screen",
+        "target": "src/components/screens/shipping.tsx"
+      }
+    ]
+  }
+}

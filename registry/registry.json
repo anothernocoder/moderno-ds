@@ -5394,6 +5394,90 @@
       ]
     },
     {
+      "name": "shipping-react",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Shipping (React)",
+      "description": "Full-viewport checkout screen composing the checkout-form and order-summary blocks: the shipping step, where a shopper gives an email for the receipt, the shipping address and a delivery method beside the order they are paying for, with the form's saving and error states and the summary's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm, @md and @lg contract steps: the masthead lines up at @sm; the footer lines up at @md; the order summary moves beside the form at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [
+        "checkout-form-react",
+        "order-summary-react"
+      ],
+      "files": [
+        {
+          "path": "screens/shipping/react/shipping.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/shipping.tsx"
+        }
+      ]
+    },
+    {
+      "name": "shipping-vue",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Shipping (Vue)",
+      "description": "Full-viewport checkout screen composing the checkout-form and order-summary blocks: the shipping step, where a shopper gives an email for the receipt, the shipping address and a delivery method beside the order they are paying for, with the form's saving and error states and the summary's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm, @md and @lg contract steps: the masthead lines up at @sm; the footer lines up at @md; the order summary moves beside the form at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [
+        "checkout-form-vue",
+        "order-summary-vue"
+      ],
+      "files": [
+        {
+          "path": "screens/shipping/vue/Shipping.vue",
+          "type": "registry:screen",
+          "target": "src/components/screens/Shipping.vue"
+        }
+      ]
+    },
+    {
+      "name": "shipping-svelte",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Shipping (Svelte)",
+      "description": "Full-viewport checkout screen composing the checkout-form and order-summary blocks: the shipping step, where a shopper gives an email for the receipt, the shipping address and a delivery method beside the order they are paying for, with the form's saving and error states and the summary's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm, @md and @lg contract steps: the masthead lines up at @sm; the footer lines up at @md; the order summary moves beside the form at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [
+        "checkout-form-svelte",
+        "order-summary-svelte"
+      ],
+      "files": [
+        {
+          "path": "screens/shipping/svelte/Shipping.svelte",
+          "type": "registry:screen",
+          "target": "src/components/screens/Shipping.svelte"
+        }
+      ]
+    },
+    {
+      "name": "shipping-solid",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Shipping (Solid)",
+      "description": "Full-viewport checkout screen composing the checkout-form and order-summary blocks: the shipping step, where a shopper gives an email for the receipt, the shipping address and a delivery method beside the order they are paying for, with the form's saving and error states and the summary's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm, @md and @lg contract steps: the masthead lines up at @sm; the footer lines up at @md; the order summary moves beside the form at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [
+        "checkout-form-solid",
+        "order-summary-solid"
+      ],
+      "files": [
+        {
+          "path": "screens/shipping/solid/shipping.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/shipping.tsx"
+        }
+      ]
+    },
+    {
       "name": "sign-in-react",
       "type": "registry:screen",
       "version": "0.1.1",
