@@ -1,0 +1,9 @@
+value Combobox
+value useFilter
+value useListCollection
+type ComboboxHighlightChangeDetails
+type ComboboxInputValueChangeDetails
+type ComboboxOpenChangeDetails
+type ComboboxSize
+type ComboboxValueChangeDetails
+type ModernoComboboxRootProps

@@ -22,6 +22,7 @@ import cardComponent from "./components/card.ts";
 import carouselComponent from "./components/carousel.ts";
 import checkboxComponent from "./components/checkbox.ts";
 import chipComponent from "./components/chip.ts";
+import comboboxComponent from "./components/combobox.ts";
 import dialogComponent from "./components/dialog.ts";
 import dividerComponent from "./components/divider.ts";
 import donutChartComponent from "./components/donut-chart.ts";
@@ -63,6 +64,7 @@ export const { ENTRIES, AGENT_COMPONENTS, AGENT_EXAMPLES } = assembleComponents(
   carouselComponent,
   checkboxComponent,
   chipComponent,
+  comboboxComponent,
   dialogComponent,
   dividerComponent,
   donutChartComponent,

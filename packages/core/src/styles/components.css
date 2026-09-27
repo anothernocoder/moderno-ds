@@ -1323,6 +1323,241 @@
     outline-offset: 1px;
   }
 
+  /* ─────────────────────────── Combobox ─────────────────────────── *
+   * Ark's combobox machine: root > label + control > input (+ trigger,
+   * clear-trigger), and positioner > content > (list >) item-group* >
+   * item-group-label + item > item-text + item-indicator, with an empty part
+   * shown while the filter leaves no items. The control is the one bordered
+   * box, like Tags Input's: the input and its buttons sit inside it. Ark
+   * filters nothing itself — the app narrows the collection as the user
+   * types — and stamps data-focus, data-invalid, data-disabled,
+   * data-highlighted, data-state and data-empty on the parts; it hides the
+   * closed content, an unchecked item's indicator and the clear trigger of an
+   * empty value with `hidden`. `comboboxRecipe` puts size on the root; the
+   * control follows it through child combinators (root > control > part).
+   * The content is portalled out of the root, so it keeps one density.       */
+  /* @runtime-vars --reference-width --available-height — the control's width and the room below it, set by Ark's positioner. */
+  [data-scope="combobox"][data-part="root"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+  }
+  [data-scope="combobox"][data-part="label"] {
+    color: var(--foreground);
+    font-size: var(--text-ui-md);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--leading-ui-md);
+  }
+  /* The box: the input takes the row, the buttons sit at its end. */
+  [data-scope="combobox"][data-part="control"] {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--spacing-1) / 2);
+    width: 100%;
+    height: var(--spacing-8);
+    padding-inline-end: var(--spacing-1);
+    border: 1px solid var(--input);
+    border-radius: var(--radius);
+    background-color: var(--background);
+    cursor: text;
+    transition: border-color var(--motion-fast);
+  }
+  /* Hover raises the border to the focus colour, as on Field's input; an
+     invalid or disabled box keeps its own border. */
+  [data-scope="combobox"][data-part="control"]:hover:not([data-disabled], [data-invalid]) {
+    border-color: var(--ring);
+  }
+  /* The ring is the box's, drawn INSIDE it (a -2px offset covers the 1px
+     border and one more px). An offset ring would leave the resting border
+     visible inside it — a double border. Field, Select, Pin Input, Number
+     Input and Tags Input do the same. */
+  [data-scope="combobox"][data-part="control"]:focus-within {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+  }
+  [data-scope="combobox"][data-part="control"][data-invalid] {
+    border-color: var(--destructive);
+    background-color: color-mix(in oklab, var(--destructive) 4%, var(--background));
+  }
+  /* An invalid box keeps its error colour while focused; a neutral ring over
+     a red border reads as "fixed" before it is. */
+  [data-scope="combobox"][data-part="control"][data-invalid]:focus-within {
+    outline-color: var(--destructive);
+  }
+  [data-scope="combobox"][data-part="control"][data-disabled] {
+    background-color: var(--muted);
+  }
+  /*
+   * Ark stamps data-disabled on the control AND on the buttons inside it, and
+   * the base layer dims anything carrying it — nesting would multiply the
+   * opacity. Dim the control once and leave its parts opaque.
+   */
+  [data-scope="combobox"][data-part="control"][data-disabled] :where([data-part]) {
+    opacity: 1;
+  }
+  /* The input fills the box and draws no border or ring: the box does. */
+  [data-scope="combobox"][data-part="input"] {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    padding: 0 var(--spacing-3);
+    border: 0;
+    outline: none;
+    background-color: transparent;
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: var(--text-ui-md);
+  }
+  [data-scope="combobox"][data-part="input"]::placeholder {
+    color: var(--muted-foreground);
+  }
+  /* The open-list and clear buttons: small, quiet squares whose corner nests
+     inside the box's. Ark keeps both out of the tab order (the input's arrow
+     keys and Escape do their jobs); a trigger made `focusable` draws its own
+     ring. */
+  [data-scope="combobox"]:is([data-part="trigger"], [data-part="clear-trigger"]) {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: var(--spacing-6);
+    height: var(--spacing-6);
+    padding: 0;
+    border: 0;
+    border-radius: calc(var(--radius) - var(--spacing-1) / 2);
+    background-color: transparent;
+    color: var(--muted-foreground);
+    font-family: var(--font-sans);
+    font-size: var(--text-ui-md);
+    line-height: 1;
+    cursor: pointer;
+    transition:
+      background-color var(--motion-fast),
+      color var(--motion-fast);
+  }
+  [data-scope="combobox"]:is([data-part="trigger"], [data-part="clear-trigger"]):hover:not(
+      :disabled
+    ) {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+  [data-scope="combobox"]:is([data-part="trigger"], [data-part="clear-trigger"]):focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+  }
+
+  /* The list: a floating surface as wide as the box, with the 1px --border
+     edge and the --shadow-md drop alone (never a ring stacked in box-shadow,
+     which would double the border). It scrolls past eight rows, or sooner if
+     the page leaves less room. Above an app's sticky chrome, the same layer
+     as Dialog and Popover. */
+  [data-scope="combobox"][data-part="content"] {
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--spacing-1) / 2);
+    min-width: var(--reference-width);
+    max-height: min(var(--available-height), calc(var(--spacing-8) * 8));
+    padding: var(--spacing-1);
+    overflow-y: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--popover);
+    color: var(--popover-foreground);
+    font-size: var(--text-ui-md);
+    line-height: var(--leading-ui-md);
+    box-shadow: var(--shadow-md);
+  }
+  /* Focus stays in the input; the highlighted item is the cue. */
+  [data-scope="combobox"][data-part="content"]:focus-visible {
+    outline: none;
+  }
+  [data-scope="combobox"]:is([data-part="list"], [data-part="item-group"]) {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--spacing-1) / 2);
+  }
+  [data-scope="combobox"][data-part="item-group-label"] {
+    padding: var(--spacing-1) var(--spacing-3);
+    color: var(--muted-foreground);
+    font-size: var(--text-ui-xs);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--leading-ui-xs);
+  }
+  /* One option. The arrow keys (or the pointer) highlight it; a checked one is
+     set in the heavier weight and shows its indicator. */
+  [data-scope="combobox"][data-part="item"] {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-2);
+    padding: var(--spacing-2) var(--spacing-3);
+    border-radius: calc(var(--radius) - var(--spacing-1) / 2);
+    cursor: pointer;
+  }
+  [data-scope="combobox"][data-part="item"][data-highlighted] {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+  [data-scope="combobox"][data-part="item"][data-state="checked"] {
+    font-weight: var(--font-weight-semibold);
+  }
+  [data-scope="combobox"][data-part="item-indicator"] {
+    flex: none;
+  }
+  /* What the list says when the filter leaves nothing: quiet, and as tall as
+     one item so the surface does not jump. */
+  [data-scope="combobox"][data-part="empty"] {
+    padding: var(--spacing-2) var(--spacing-3);
+    color: var(--muted-foreground);
+  }
+
+  /* Density driven by the recipe's data-size on the root: the box's height and
+     the type. `lg` exceeds the top spacing slot, so it sums two slots rather
+     than inventing a token. */
+  [data-scope="combobox"][data-part="root"][data-size="sm"] {
+    gap: var(--spacing-1);
+  }
+  [data-scope="combobox"][data-part="root"][data-size="sm"] > [data-part="label"] {
+    font-size: var(--text-ui-sm);
+    line-height: var(--leading-ui-sm);
+  }
+  [data-scope="combobox"][data-part="root"][data-size="lg"] > [data-part="label"] {
+    font-size: var(--text-ui-lg);
+    line-height: var(--leading-ui-lg);
+  }
+  [data-scope="combobox"][data-part="root"][data-size="sm"] > [data-part="control"] {
+    height: var(--spacing-7);
+  }
+  [data-scope="combobox"][data-part="root"][data-size="lg"] > [data-part="control"] {
+    height: calc(var(--spacing-8) + var(--spacing-2));
+  }
+  [data-scope="combobox"][data-part="root"][data-size="sm"]
+    > [data-part="control"]
+    > [data-part="input"] {
+    padding: 0 var(--spacing-2);
+    font-size: var(--text-ui-sm);
+  }
+  [data-scope="combobox"][data-part="root"][data-size="lg"]
+    > [data-part="control"]
+    > [data-part="input"] {
+    font-size: var(--text-ui-lg);
+  }
+  [data-scope="combobox"][data-part="root"][data-size="sm"]
+    > [data-part="control"]
+    > :is([data-part="trigger"], [data-part="clear-trigger"]) {
+    width: var(--spacing-5);
+    height: var(--spacing-5);
+    font-size: var(--text-ui-sm);
+  }
+  [data-scope="combobox"][data-part="root"][data-size="lg"]
+    > [data-part="control"]
+    > :is([data-part="trigger"], [data-part="clear-trigger"]) {
+    width: var(--spacing-7);
+    height: var(--spacing-7);
+    font-size: var(--text-ui-lg);
+  }
+
   /* ─────────────────────────── Dialog ─────────────────────────── *
    * Ark owns portal + focus trap + ids. Scope "dialog".               */
   /* The scrim is its own slot, not a mix of --foreground: that slot is

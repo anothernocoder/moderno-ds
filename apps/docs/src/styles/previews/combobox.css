@@ -1,0 +1,6 @@
+/* A lone combobox centred on the stage gets a reading width instead of
+   shrinking to its input's intrinsic size, without the example having to carry
+   a docs-only class. */
+.preview-panel--demo > astro-island > [data-scope="combobox"][data-part="root"] {
+  width: min(100%, 20rem);
+}

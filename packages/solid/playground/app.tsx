@@ -22,6 +22,7 @@ import CarouselSection from "./sections/carousel.jsx";
 import ChartsSection from "./sections/charts.jsx";
 import CheckboxSection from "./sections/checkbox.jsx";
 import ChipSection from "./sections/chip.jsx";
+import ComboboxSection from "./sections/combobox.jsx";
 import DialogSection from "./sections/dialog.jsx";
 import DividerSection from "./sections/divider.jsx";
 import DonutChartSection from "./sections/donut-chart.jsx";
@@ -67,6 +68,7 @@ export function App(props: AppProps) {
       <ChartsSection open={props.open ?? false} />
       <CheckboxSection open={props.open ?? false} />
       <ChipSection open={props.open ?? false} />
+      <ComboboxSection open={props.open ?? false} />
       <DialogSection open={props.open ?? false} />
       <DividerSection open={props.open ?? false} />
       <DonutChartSection open={props.open ?? false} />

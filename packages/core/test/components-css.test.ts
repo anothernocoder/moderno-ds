@@ -120,6 +120,7 @@ describe("@moderno-ui/core components.css — bordered controls ring inset", () 
     `[data-scope="pin-input"][data-part="input"]:focus-visible`,
     `[data-scope="number-input"][data-part="control"]:focus-within`,
     `[data-scope="tags-input"][data-part="control"]:focus-within`,
+    `[data-scope="combobox"][data-part="control"]:focus-within`,
     `[data-scope="toggle"][data-part="root"][data-variant="outline"]:focus-visible`,
     `[data-scope="button"][data-part="root"][data-variant="outline"]:focus-visible`,
   ])("%s", (selector) => {

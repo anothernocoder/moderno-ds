@@ -1,0 +1,368 @@
+---
+title: Combobox
+description: A text input that filters a list of options as the user types.
+group: Components
+order: 41
+component: Combobox
+pkg: "@moderno-ui/react"
+agentPropsHash: "sha256:bea97a83b9cc9a326d9e427675a626b97ed54342ba49ba8642946039f12b34a0"
+agent:
+  intent: Let the user pick from a long list by typing to narrow it down.
+  whenToUse: Countries, people, tags or any list too long to scan — the user types a few letters and picks a match.
+  whenNotToUse:
+    - case: A short list the user can read at a glance
+      use: Select
+    - case: Free values the user makes up, one tag each
+      use: TagsInput
+    - case: 2–5 visible mutually exclusive options
+      use: RadioGroup
+  gotchas:
+    - "Ark does not filter for you: build the collection with useListCollection({ initialItems, filter: contains }) and call filter(details.inputValue) in onInputValueChange. useFilter gives contains."
+    - "Map collection.items (not your raw array) to Combobox.Item with item={item}; put Combobox.Empty first in the Content for the no-results message."
+    - "The value is a string array, even for one pick: defaultValue={['react']}. onValueChange gives details.value and details.items."
+    - "With multiple, the input clears after each pick. Show the picks yourself, for example Combobox.Context's valueAsString (the picked labels)."
+    - "Wrap the Positioner in Portal so the list is not clipped by an overflow: hidden parent."
+    - "In Vue, bind the value with v-model or :model-value; value is not a Vue prop. useFilter returns a ref: call filters.value.contains."
+  theming:
+    - "The box is --background with an --input border and a --ring focus ring drawn inside it. Do not pass a hex."
+    - "The list is the --popover surface with a --border edge and --shadow-md; the highlighted item is --accent."
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ComboboxDemo from "../../../examples/combobox/combobox.svelte";
+import baseReact from "../../../examples/combobox/react.tsx?raw";
+import baseVue from "../../../examples/combobox/vue.vue?raw";
+import baseSolid from "../../../examples/combobox/solid.tsx?raw";
+import baseSvelte from "../../../examples/combobox/combobox.svelte?raw";
+import ComboboxMultipleDemo from "../../../examples/combobox/multiple/combobox-multiple.svelte";
+import multipleReact from "../../../examples/combobox/multiple/react.tsx?raw";
+import multipleVue from "../../../examples/combobox/multiple/vue.vue?raw";
+import multipleSolid from "../../../examples/combobox/multiple/solid.tsx?raw";
+import multipleSvelte from "../../../examples/combobox/multiple/combobox-multiple.svelte?raw";
+import ComboboxGroupsDemo from "../../../examples/combobox/groups/combobox-groups.svelte";
+import groupsReact from "../../../examples/combobox/groups/react.tsx?raw";
+import groupsVue from "../../../examples/combobox/groups/vue.vue?raw";
+import groupsSolid from "../../../examples/combobox/groups/solid.tsx?raw";
+import groupsSvelte from "../../../examples/combobox/groups/combobox-groups.svelte?raw";
+import ComboboxSizesDemo from "../../../examples/combobox/sizes/combobox-sizes.svelte";
+import sizesReact from "../../../examples/combobox/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/combobox/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/combobox/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/combobox/sizes/combobox-sizes.svelte?raw";
+
+<FrameworkSelect locale="en" />
+
+<Preview
+  examples={{
+    react: baseReact,
+    vue: baseVue,
+    solid: baseSolid,
+    svelte: baseSvelte,
+  }}
+>
+  <ComboboxDemo client:visible />
+</Preview>
+
+## Installation
+
+<Install pkg="@moderno-ui/react" />
+
+## Usage
+
+Combobox is a text input with a list of options under it. The user types a few letters, the list shows only the matches, and they pick one. Use it when the list is too long to scan. When nothing matches, `Combobox.Empty` says so.
+
+<ForFramework fw="react">
+
+```tsx
+import { Combobox, Portal, useFilter, useListCollection } from "@moderno-ui/react";
+```
+
+```tsx
+const { contains } = useFilter({ sensitivity: "base" });
+const { collection, filter } = useListCollection({ initialItems: frameworks, filter: contains });
+
+<Combobox.Root collection={collection} onInputValueChange={(details) => filter(details.inputValue)}>
+  <Combobox.Label>Framework</Combobox.Label>
+  <Combobox.Control>
+    <Combobox.Input placeholder="Search frameworks" />
+    <Combobox.Trigger>▾</Combobox.Trigger>
+  </Combobox.Control>
+  <Portal>
+    <Combobox.Positioner>
+      <Combobox.Content>
+        <Combobox.Empty>No frameworks found</Combobox.Empty>
+        {collection.items.map((item) => (
+          <Combobox.Item key={item.value} item={item}>
+            <Combobox.ItemText>{item.label}</Combobox.ItemText>
+            <Combobox.ItemIndicator>✓</Combobox.ItemIndicator>
+          </Combobox.Item>
+        ))}
+      </Combobox.Content>
+    </Combobox.Positioner>
+  </Portal>
+</Combobox.Root>;
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import {
+  Combobox,
+  Portal,
+  useFilter,
+  useListCollection,
+  type ComboboxInputValueChangeDetails,
+} from "@moderno-ui/vue";
+```
+
+```vue
+<script setup lang="ts">
+const filters = useFilter({ sensitivity: "base" });
+const { collection, filter } = useListCollection({
+  initialItems: frameworks,
+  filter: (text, query) => filters.value.contains(text, query),
+});
+
+const onInputValueChange = (details: ComboboxInputValueChangeDetails) => filter(details.inputValue);
+</script>
+
+<template>
+  <Combobox.Root :collection="collection" @input-value-change="onInputValueChange">
+    <Combobox.Label>Framework</Combobox.Label>
+    <Combobox.Control>
+      <Combobox.Input placeholder="Search frameworks" />
+      <Combobox.Trigger>▾</Combobox.Trigger>
+    </Combobox.Control>
+    <Portal>
+      <Combobox.Positioner>
+        <Combobox.Content>
+          <Combobox.Empty>No frameworks found</Combobox.Empty>
+          <Combobox.Item v-for="item in collection.items" :key="item.value" :item="item">
+            <Combobox.ItemText>{{ item.label }}</Combobox.ItemText>
+            <Combobox.ItemIndicator>✓</Combobox.ItemIndicator>
+          </Combobox.Item>
+        </Combobox.Content>
+      </Combobox.Positioner>
+    </Portal>
+  </Combobox.Root>
+</template>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Combobox, Portal, useFilter, useListCollection } from "@moderno-ui/svelte";
+```
+
+```svelte
+<script lang="ts">
+  const filters = useFilter({ sensitivity: "base" });
+  const { collection, filter } = useListCollection({
+    initialItems: frameworks,
+    filter: (text, query) => filters().contains(text, query),
+  });
+</script>
+
+<Combobox.Root collection={collection()} onInputValueChange={(details) => filter(details.inputValue)}>
+  <Combobox.Label>Framework</Combobox.Label>
+  <Combobox.Control>
+    <Combobox.Input placeholder="Search frameworks" />
+    <Combobox.Trigger>▾</Combobox.Trigger>
+  </Combobox.Control>
+  <Portal>
+    <Combobox.Positioner>
+      <Combobox.Content>
+        <Combobox.Empty>No frameworks found</Combobox.Empty>
+        {#each collection().items as item (item.value)}
+          <Combobox.Item {item}>
+            <Combobox.ItemText>{item.label}</Combobox.ItemText>
+            <Combobox.ItemIndicator>✓</Combobox.ItemIndicator>
+          </Combobox.Item>
+        {/each}
+      </Combobox.Content>
+    </Combobox.Positioner>
+  </Portal>
+</Combobox.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { For } from "solid-js";
+import { Combobox, Portal, useFilter, useListCollection } from "@moderno-ui/solid";
+```
+
+```tsx
+const filters = useFilter({ sensitivity: "base" });
+const { collection, filter } = useListCollection({
+  initialItems: frameworks,
+  filter: (text, query) => filters().contains(text, query),
+});
+
+<Combobox.Root
+  collection={collection()}
+  onInputValueChange={(details) => filter(details.inputValue)}
+>
+  <Combobox.Label>Framework</Combobox.Label>
+  <Combobox.Control>
+    <Combobox.Input placeholder="Search frameworks" />
+    <Combobox.Trigger>▾</Combobox.Trigger>
+  </Combobox.Control>
+  <Portal>
+    <Combobox.Positioner>
+      <Combobox.Content>
+        <Combobox.Empty>No frameworks found</Combobox.Empty>
+        <For each={collection().items}>
+          {(item) => (
+            <Combobox.Item item={item}>
+              <Combobox.ItemText>{item.label}</Combobox.ItemText>
+              <Combobox.ItemIndicator>✓</Combobox.ItemIndicator>
+            </Combobox.Item>
+          )}
+        </For>
+      </Combobox.Content>
+    </Combobox.Positioner>
+  </Portal>
+</Combobox.Root>;
+```
+
+</ForFramework>
+
+`frameworks` is a plain array of `{ label, value }` objects. Ark does not filter the list itself: `useListCollection` keeps the items, and `filter` narrows them to what the user typed. `useFilter` gives a `contains` check that ignores case and accents.
+
+## API Reference
+
+### Combobox.Root
+
+`size` is the Moderno addition; it sets the height and type of the control. The other props come from Ark's Combobox.
+
+<PropsTable component="Combobox" />
+
+| Prop                 | Type                                                 | Default     | Description                                                   |
+| -------------------- | ---------------------------------------------------- | ----------- | ------------------------------------------------------------- |
+| `collection`         | `ListCollection`                                     | —           | Required. The options, from `useListCollection`.              |
+| `onInputValueChange` | `(details: { inputValue: string }) => void`          | —           | Called as the user types. Filter the collection here.         |
+| `value`              | `string[]`                                           | —           | Controlled picks.                                             |
+| `defaultValue`       | `string[]`                                           | `[]`        | Picks at the start, uncontrolled.                             |
+| `onValueChange`      | `(details: { value: string[]; items: T[] }) => void` | —           | Called when the picks change.                                 |
+| `multiple`           | `boolean`                                            | `false`     | Lets the user pick more than one option.                      |
+| `inputValue`         | `string`                                             | —           | Controlled text in the input.                                 |
+| `open`               | `boolean`                                            | —           | Controlled open state of the list.                            |
+| `onOpenChange`       | `(details: { open: boolean }) => void`               | —           | Called when the list opens or closes.                         |
+| `openOnClick`        | `boolean`                                            | `false`     | Opens the list when the input is clicked.                     |
+| `allowCustomValue`   | `boolean`                                            | `false`     | Keeps typed text that matches no option.                      |
+| `closeOnSelect`      | `boolean`                                            | `true`      | Closes the list after a pick.                                 |
+| `selectionBehavior`  | `"replace" \| "clear" \| "preserve"`                 | `"replace"` | What the input shows after a pick. `"clear"` with `multiple`. |
+| `placeholder`        | `string`                                             | —           | Text shown in the empty input.                                |
+| `disabled`           | `boolean`                                            | `false`     | Dims the control and ignores input.                           |
+| `readOnly`           | `boolean`                                            | `false`     | Shows the value but ignores input.                            |
+| `invalid`            | `boolean`                                            | —           | Marks the value as wrong.                                     |
+| `required`           | `boolean`                                            | `false`     | Marks the field as required in a form.                        |
+| `name`               | `string`                                             | —           | The form field name of the input.                             |
+| `positioning`        | `PositioningOptions`                                 | —           | Where the list opens, like `{ placement: "top-start" }`.      |
+
+In Vue, bind the value with `:model-value` or `v-model`, and listen with `@value-change` and `@input-value-change`.
+
+### Hooks
+
+| Hook                | Returns                              | Description                                                                                |
+| ------------------- | ------------------------------------ | ------------------------------------------------------------------------------------------ |
+| `useListCollection` | `{ collection, filter, … }`          | Keeps `initialItems` as a collection. `filter(text)` narrows it with your `filter` check.  |
+| `useFilter`         | `{ contains, startsWith, endsWith }` | Text checks that follow the page's locale. `sensitivity: "base"` ignores case and accents. |
+
+In Vue, `collection` and `useFilter`'s result are refs; in Svelte and Solid, call them: `collection()`, `filters()`.
+
+### Parts
+
+| Part                      | Element    | Description                                                         |
+| ------------------------- | ---------- | ------------------------------------------------------------------- |
+| `Combobox.Root`           | `<div>`    | Carries `data-size`.                                                |
+| `Combobox.Label`          | `<label>`  | Optional. Names the input.                                          |
+| `Combobox.Control`        | `<div>`    | The bordered box. Holds the input and its buttons.                  |
+| `Combobox.Input`          | `<input>`  | The text box the user types in. Its role is `combobox`.             |
+| `Combobox.Trigger`        | `<button>` | Optional. Opens and closes the list.                                |
+| `Combobox.ClearTrigger`   | `<button>` | Optional. Clears the value. Hidden while it is empty.               |
+| `Combobox.Positioner`     | `<div>`    | Placed by Ark below the control. Wrap it in `Portal`.               |
+| `Combobox.Content`        | `<div>`    | The list surface. Its role is `listbox`.                            |
+| `Combobox.List`           | `<div>`    | Optional. Wraps the items inside the content.                       |
+| `Combobox.ItemGroup`      | `<div>`    | Optional. A group of items.                                         |
+| `Combobox.ItemGroupLabel` | `<div>`    | The group's heading.                                                |
+| `Combobox.Item`           | `<div>`    | One option. Takes `item`.                                           |
+| `Combobox.ItemText`       | `<span>`   | The option's text.                                                  |
+| `Combobox.ItemIndicator`  | `<div>`    | Shown while the option is picked, like a ✓.                         |
+| `Combobox.Empty`          | `<div>`    | Shown while the collection is empty: the no-results message.        |
+| `Combobox.Context`        | —          | Hands you the combobox, such as `valueAsString`: the picked labels. |
+
+### Data attributes
+
+| Attribute          | Values                                                         |
+| ------------------ | -------------------------------------------------------------- |
+| `data-state`       | `"open"` or `"closed"` on the control, input, trigger, content |
+| `data-state`       | `"checked"` or `"unchecked"` on each item                      |
+| `data-highlighted` | On the item chosen with the arrow keys or the pointer          |
+| `data-focus`       | While the input has focus, on the label and control            |
+| `data-invalid`     | When `invalid`, on the root, label, control and input          |
+| `data-disabled`    | When `disabled`, on the label, control and buttons; on an item |
+| `data-empty`       | On the content while the collection is empty                   |
+| `data-size`        | On the root: `"sm"`, `"md"` or `"lg"`                          |
+
+## Examples
+
+### Multiple
+
+`multiple` lets the user pick several options. The input clears after each pick, so show the picks yourself. Here `Combobox.Context` lists them.
+
+<Preview
+  examples={{
+    react: multipleReact,
+    vue: multipleVue,
+    solid: multipleSolid,
+    svelte: multipleSvelte,
+  }}
+>
+  <ComboboxMultipleDemo client:visible />
+</Preview>
+
+### Groups
+
+Give `useListCollection` a `groupBy`, then draw one `Combobox.ItemGroup` per entry of `collection.group()`.
+
+<Preview
+  examples={{
+    react: groupsReact,
+    vue: groupsVue,
+    solid: groupsSolid,
+    svelte: groupsSvelte,
+  }}
+>
+  <ComboboxGroupsDemo client:visible />
+</Preview>
+
+### Sizes
+
+<Preview
+  examples={{
+    react: sizesReact,
+    vue: sizesVue,
+    solid: sizesSolid,
+    svelte: sizesSvelte,
+  }}
+>
+  <ComboboxSizesDemo client:visible />
+</Preview>
+
+## Notes
+
+- `Combobox.Root` is wrapped to add `size`; every other part is Ark's unchanged. `size` sets the control; the list keeps one density.
+- The keyboard: Arrow Down opens the list and moves the highlight, Enter picks the highlighted option, and Escape closes the list.
+- The trigger and the clear trigger are out of the tab order; the input's keys do their jobs.

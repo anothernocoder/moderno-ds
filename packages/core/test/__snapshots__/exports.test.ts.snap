@@ -15,6 +15,7 @@ exports[`@moderno-ui/core exports > exports exactly the pinned names 1`] = `
   "carouselRecipe",
   "checkboxRecipe",
   "chipRecipe",
+  "comboboxRecipe",
   "cva",
   "cx",
   "dividerRecipe",
