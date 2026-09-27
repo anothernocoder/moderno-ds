@@ -6132,6 +6132,90 @@
           "target": "src/components/flows/auth-flow.tsx"
         }
       ]
+    },
+    {
+      "name": "onboarding-react",
+      "type": "registry:flow",
+      "version": "0.1.0",
+      "title": "Onboarding flow (React)",
+      "description": "Example assembly for the onboarding flow: welcome → profile-setup → plan-select → invite-team. It owns the navigation state the four screens refuse to hold — which step is on the route, the name carried from the profile back to the greeting, the photo picked for the avatar, the plan chosen and the invites sent — and it moves between them through the screens' own callbacks: Continue, a saved profile, a chosen plan and each Skip for now move one step forward, and a plain left click on a skip link is routed while a modified click is left to the browser. Rewrite it against your own router and API; the screens under it stay presentational.",
+      "dependencies": [],
+      "registryDependencies": [
+        "welcome-react",
+        "profile-setup-react",
+        "plan-select-react",
+        "invite-team-react"
+      ],
+      "files": [
+        {
+          "path": "flows/onboarding/react/onboarding-flow.tsx",
+          "type": "registry:flow",
+          "target": "src/components/flows/onboarding-flow.tsx"
+        }
+      ]
+    },
+    {
+      "name": "onboarding-vue",
+      "type": "registry:flow",
+      "version": "0.1.0",
+      "title": "Onboarding flow (Vue)",
+      "description": "Example assembly for the onboarding flow: welcome → profile-setup → plan-select → invite-team. It owns the navigation state the four screens refuse to hold — which step is on the route, the name carried from the profile back to the greeting, the photo picked for the avatar, the plan chosen and the invites sent — and it moves between them through the screens' own callbacks: Continue, a saved profile, a chosen plan and each Skip for now move one step forward, and a plain left click on a skip link is routed while a modified click is left to the browser. Rewrite it against your own router and API; the screens under it stay presentational.",
+      "dependencies": [],
+      "registryDependencies": [
+        "welcome-vue",
+        "profile-setup-vue",
+        "plan-select-vue",
+        "invite-team-vue"
+      ],
+      "files": [
+        {
+          "path": "flows/onboarding/vue/OnboardingFlow.vue",
+          "type": "registry:flow",
+          "target": "src/components/flows/OnboardingFlow.vue"
+        }
+      ]
+    },
+    {
+      "name": "onboarding-svelte",
+      "type": "registry:flow",
+      "version": "0.1.0",
+      "title": "Onboarding flow (Svelte)",
+      "description": "Example assembly for the onboarding flow: welcome → profile-setup → plan-select → invite-team. It owns the navigation state the four screens refuse to hold — which step is on the route, the name carried from the profile back to the greeting, the photo picked for the avatar, the plan chosen and the invites sent — and it moves between them through the screens' own callbacks: Continue, a saved profile, a chosen plan and each Skip for now move one step forward, and a plain left click on a skip link is routed while a modified click is left to the browser. Rewrite it against your own router and API; the screens under it stay presentational.",
+      "dependencies": [],
+      "registryDependencies": [
+        "welcome-svelte",
+        "profile-setup-svelte",
+        "plan-select-svelte",
+        "invite-team-svelte"
+      ],
+      "files": [
+        {
+          "path": "flows/onboarding/svelte/OnboardingFlow.svelte",
+          "type": "registry:flow",
+          "target": "src/components/flows/OnboardingFlow.svelte"
+        }
+      ]
+    },
+    {
+      "name": "onboarding-solid",
+      "type": "registry:flow",
+      "version": "0.1.0",
+      "title": "Onboarding flow (Solid)",
+      "description": "Example assembly for the onboarding flow: welcome → profile-setup → plan-select → invite-team. It owns the navigation state the four screens refuse to hold — which step is on the route, the name carried from the profile back to the greeting, the photo picked for the avatar, the plan chosen and the invites sent — and it moves between them through the screens' own callbacks: Continue, a saved profile, a chosen plan and each Skip for now move one step forward, and a plain left click on a skip link is routed while a modified click is left to the browser. Rewrite it against your own router and API; the screens under it stay presentational.",
+      "dependencies": [],
+      "registryDependencies": [
+        "welcome-solid",
+        "profile-setup-solid",
+        "plan-select-solid",
+        "invite-team-solid"
+      ],
+      "files": [
+        {
+          "path": "flows/onboarding/solid/onboarding-flow.tsx",
+          "type": "registry:flow",
+          "target": "src/components/flows/onboarding-flow.tsx"
+        }
+      ]
     }
   ]
 }
