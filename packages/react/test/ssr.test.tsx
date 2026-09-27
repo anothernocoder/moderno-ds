@@ -34,6 +34,21 @@ describe("SSR + hydration (React 19)", () => {
     expect(slugsIn("./ssr/", ".test.tsx")).toEqual(components);
   });
 
+  it("gives every component a section in the parity matrix", () => {
+    // `docs/parity/<slug>.md` is the component's section and SSR row in
+    // `docs/parity-matrix.md`; the `_`-prefixed fragments are the shared text.
+    const fragments = slugsIn("../../../docs/parity/", ".md").filter(
+      (slug) => !slug.startsWith("_"),
+    );
+    expect(fragments).toEqual(slugsIn("../src/", ".tsx"));
+  });
+
+  it("server-renders every section of the playground once", () => {
+    const html = renderToString(<App />);
+    const sections = html.match(/<section\b/g) ?? [];
+    expect(sections).toHaveLength(slugsIn("../playground/sections/", ".tsx").length);
+  });
+
   async function hydrateAndCountWarnings(tree: ReactElement): Promise<number> {
     // Seed the container with our own trusted server markup, then hydrate it.
     const html = renderToString(tree);
