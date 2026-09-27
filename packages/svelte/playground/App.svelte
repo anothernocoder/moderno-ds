@@ -32,6 +32,7 @@
   import Drawer from "./sections/Drawer.svelte";
   import Editable from "./sections/Editable.svelte";
   import Field from "./sections/Field.svelte";
+  import FileUpload from "./sections/FileUpload.svelte";
   import Indicator from "./sections/Indicator.svelte";
   import Menu from "./sections/Menu.svelte";
   import NumberInput from "./sections/NumberInput.svelte";
@@ -80,6 +81,7 @@
   <Drawer {open} />
   <Editable {open} />
   <Field {open} />
+  <FileUpload {open} />
   <Indicator {open} />
   <Menu {open} />
   <NumberInput {open} />

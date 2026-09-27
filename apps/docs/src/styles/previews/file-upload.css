@@ -1,0 +1,6 @@
+/* A drop zone fills its container. A lone one centred on the stage gets a
+   form's width instead of the whole stage, without the example having to
+   carry a docs-only class. */
+.preview-panel--demo > astro-island > [data-scope="file-upload"][data-part="root"] {
+  width: min(100%, 26rem);
+}

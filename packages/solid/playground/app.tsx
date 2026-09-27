@@ -32,6 +32,7 @@ import DonutChartSection from "./sections/donut-chart.jsx";
 import DrawerSection from "./sections/drawer.jsx";
 import EditableSection from "./sections/editable.jsx";
 import FieldSection from "./sections/field.jsx";
+import FileUploadSection from "./sections/file-upload.jsx";
 import IndicatorSection from "./sections/indicator.jsx";
 import MenuSection from "./sections/menu.jsx";
 import NumberInputSection from "./sections/number-input.jsx";
@@ -84,6 +85,7 @@ export function App(props: AppProps) {
       <DrawerSection open={props.open ?? false} />
       <EditableSection open={props.open ?? false} />
       <FieldSection open={props.open ?? false} />
+      <FileUploadSection open={props.open ?? false} />
       <IndicatorSection open={props.open ?? false} />
       <MenuSection open={props.open ?? false} />
       <NumberInputSection open={props.open ?? false} />

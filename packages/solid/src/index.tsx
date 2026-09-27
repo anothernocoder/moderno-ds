@@ -32,6 +32,7 @@ export * from "./exports/donut-chart.js";
 export * from "./exports/drawer.js";
 export * from "./exports/editable.js";
 export * from "./exports/field.js";
+export * from "./exports/file-upload.js";
 export * from "./exports/indicator.js";
 export * from "./exports/line-chart.js";
 export * from "./exports/list-collection.js";

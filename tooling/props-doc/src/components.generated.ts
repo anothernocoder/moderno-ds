@@ -32,6 +32,7 @@ import donutChartComponent from "./components/donut-chart.ts";
 import drawerComponent from "./components/drawer.ts";
 import editableComponent from "./components/editable.ts";
 import fieldComponent from "./components/field.ts";
+import fileUploadComponent from "./components/file-upload.ts";
 import indicatorComponent from "./components/indicator.ts";
 import lineChartComponent from "./components/line-chart.ts";
 import menuComponent from "./components/menu.ts";
@@ -80,6 +81,7 @@ export const { ENTRIES, AGENT_COMPONENTS, AGENT_EXAMPLES } = assembleComponents(
   drawerComponent,
   editableComponent,
   fieldComponent,
+  fileUploadComponent,
   indicatorComponent,
   lineChartComponent,
   menuComponent,

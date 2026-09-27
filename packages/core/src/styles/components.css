@@ -3325,6 +3325,278 @@
     font-size: var(--text-ui-md);
   }
 
+  /* ───────────────────────── File Upload ───────────────────────── *
+   * Ark's file-upload machine, assembled: root > dropzone (> dropzone-icon,
+   * dropzone-title, dropzone-hint) + the hidden file input, then one
+   * item-group per list (data-type="accepted", then "rejected") > item >
+   * item-preview (> item-preview-image for an image, a file glyph otherwise),
+   * item-name (> item-name-full, item-name-start, item-name-end),
+   * item-size-text, item-error (rejected only) and item-delete-trigger.
+   * dropzone-icon, dropzone-title, dropzone-hint, item-name-*, and item-error
+   * are the component's own parts; the rest are Ark's.
+   * The drop zone is a dashed box as wide as its container; a file dragged
+   * over it (Ark's data-dragging) turns the edge solid --primary and tints
+   * the fill. Each file is a bordered row: thumbnail, name over size, remove.
+   * `fileUploadRecipe` puts size on the root; the zone follows through child
+   * combinators. The file list keeps one density.                         */
+  [data-scope="file-upload"][data-part="root"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+    width: 100%;
+    font-family: var(--font-sans);
+    color: var(--foreground);
+  }
+
+  /* The drop zone: the whole width, tall enough to hit easily, its title and
+     hint centred. Ark makes it a focusable button. */
+  [data-scope="file-upload"][data-part="dropzone"] {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-1);
+    width: 100%;
+    min-height: calc(var(--spacing-8) * 4);
+    padding: var(--spacing-6) var(--spacing-4);
+    border: 1px dashed var(--input);
+    border-radius: var(--radius);
+    background-color: var(--background);
+    text-align: center;
+    cursor: pointer;
+    transition:
+      border-color var(--motion-fast),
+      background-color var(--motion-fast);
+  }
+  [data-scope="file-upload"][data-part="dropzone"]:hover:not([data-invalid]) {
+    border-color: var(--ring);
+  }
+  /* The ring is drawn inside the box, as on a Field's input: an offset ring
+     would leave the dashed edge visible inside it. */
+  [data-scope="file-upload"][data-part="dropzone"]:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+  }
+  /* A file over the zone: a solid --primary edge and a --primary tint, so the
+     drop target is plain before the pointer lets go. */
+  [data-scope="file-upload"][data-part="dropzone"][data-dragging] {
+    border-style: solid;
+    border-color: var(--primary);
+    background-color: color-mix(in oklab, var(--primary) 8%, var(--background));
+  }
+  /* Ark marks the zone invalid inside an invalid Field, or with `invalid`. */
+  [data-scope="file-upload"][data-part="dropzone"][data-invalid] {
+    border-color: var(--destructive);
+  }
+  [data-scope="file-upload"][data-part="dropzone"][data-invalid]:focus-visible {
+    outline-color: var(--destructive);
+  }
+  [data-scope="file-upload"][data-part="dropzone-icon"] {
+    width: var(--spacing-6);
+    height: var(--spacing-6);
+    margin-block-end: var(--spacing-1);
+    color: var(--muted-foreground);
+    transition: color var(--motion-fast);
+  }
+  [data-scope="file-upload"][data-part="dropzone"][data-dragging] > [data-part="dropzone-icon"] {
+    color: var(--primary);
+  }
+  [data-scope="file-upload"][data-part="dropzone-title"] {
+    font-size: var(--text-ui-md);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--leading-ui-md);
+  }
+  [data-scope="file-upload"][data-part="dropzone-hint"] {
+    font-size: var(--text-ui-sm);
+    line-height: var(--leading-ui-sm);
+    color: var(--muted-foreground);
+  }
+
+  /*
+   * Ark stamps data-disabled on the zone, the lists, each row and each remove
+   * button of a disabled upload as well as on the root, and the base layer
+   * dims anything carrying it — nesting would multiply the opacity. Dim the
+   * root once and leave its parts opaque.
+   */
+  [data-scope="file-upload"][data-part="root"][data-disabled] :where([data-part]) {
+    opacity: 1;
+  }
+
+  /* The lists: one row per file, accepted files first, then the ones turned
+     away. */
+  [data-scope="file-upload"][data-part="item-group"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  /* A row: the thumbnail, the name over the size (and, for a file turned
+     away, the reason), and the remove button. The thumbnail and the button
+     span every line of text. */
+  [data-scope="file-upload"][data-part="item"] {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    column-gap: var(--spacing-3);
+    align-items: center;
+    padding: var(--spacing-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--background);
+  }
+  [data-scope="file-upload"][data-part="item"][data-type="rejected"] {
+    border-color: var(--destructive);
+    background-color: color-mix(in oklab, var(--destructive) 4%, var(--background));
+  }
+  [data-scope="file-upload"][data-part="item-preview"] {
+    grid-column: 1;
+    grid-row: 1 / span 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(var(--spacing-8) + var(--spacing-2));
+    height: calc(var(--spacing-8) + var(--spacing-2));
+    overflow: hidden;
+    border-radius: calc(var(--radius) - var(--spacing-1));
+    background-color: var(--muted);
+    color: var(--muted-foreground);
+  }
+  [data-scope="file-upload"][data-part="item-preview"] > svg {
+    width: var(--spacing-5);
+    height: var(--spacing-5);
+  }
+  [data-scope="file-upload"][data-part="item-preview-image"] {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  /* A long name gives way in the middle: the start ends in an ellipsis, the
+     end (the extension and a few characters before it) always shows. Screen
+     readers read the whole name from item-name-full instead. */
+  [data-scope="file-upload"][data-part="item-name"] {
+    grid-column: 2;
+    display: flex;
+    min-width: 0;
+    font-size: var(--text-ui-sm);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--leading-ui-sm);
+  }
+  [data-scope="file-upload"][data-part="item-name-start"] {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: pre;
+  }
+  [data-scope="file-upload"][data-part="item-name-end"] {
+    flex: none;
+    white-space: pre;
+  }
+  /* Visually hidden, still read. The 1px box is a rendering primitive (like
+     a 1px border), not a size on the spacing scale: a zero-size box is
+     skipped by some screen readers. */
+  [data-scope="file-upload"][data-part="item-name-full"] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  [data-scope="file-upload"]:is([data-part="item-size-text"], [data-part="item-error"]) {
+    grid-column: 2;
+    font-size: var(--text-ui-xs);
+    line-height: var(--leading-ui-xs);
+  }
+  [data-scope="file-upload"][data-part="item-size-text"] {
+    color: var(--muted-foreground);
+    font-variant-numeric: tabular-nums;
+  }
+  [data-scope="file-upload"][data-part="item-error"] {
+    color: var(--destructive);
+  }
+  /* The remove button: a square icon button with no fill until hovered (this
+     clears the UA `buttonface` grey). */
+  [data-scope="file-upload"][data-part="item-delete-trigger"] {
+    grid-column: 3;
+    grid-row: 1 / span 3;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--spacing-7);
+    height: var(--spacing-7);
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius);
+    background-color: transparent;
+    color: var(--muted-foreground);
+    cursor: pointer;
+    transition:
+      background-color var(--motion-fast),
+      color var(--motion-fast);
+  }
+  [data-scope="file-upload"][data-part="item-delete-trigger"]:hover:not(:disabled) {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+  [data-scope="file-upload"][data-part="item-delete-trigger"]:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+  }
+  [data-scope="file-upload"][data-part="item-delete-trigger"] > svg {
+    width: var(--spacing-4);
+    height: var(--spacing-4);
+  }
+
+  /* Density driven by the recipe's data-size on the root: the zone's height,
+     padding, icon and type. `lg` sums two slots rather than inventing a
+     token. */
+  [data-scope="file-upload"][data-part="root"][data-size="sm"] > [data-part="dropzone"] {
+    min-height: calc(var(--spacing-8) * 3);
+    padding: var(--spacing-4) var(--spacing-3);
+  }
+  [data-scope="file-upload"][data-part="root"][data-size="sm"]
+    > [data-part="dropzone"]
+    > [data-part="dropzone-icon"] {
+    width: var(--spacing-5);
+    height: var(--spacing-5);
+  }
+  [data-scope="file-upload"][data-part="root"][data-size="sm"]
+    > [data-part="dropzone"]
+    > [data-part="dropzone-title"] {
+    font-size: var(--text-ui-sm);
+    line-height: var(--leading-ui-sm);
+  }
+  [data-scope="file-upload"][data-part="root"][data-size="sm"]
+    > [data-part="dropzone"]
+    > [data-part="dropzone-hint"] {
+    font-size: var(--text-ui-xs);
+    line-height: var(--leading-ui-xs);
+  }
+  [data-scope="file-upload"][data-part="root"][data-size="lg"] > [data-part="dropzone"] {
+    min-height: calc(var(--spacing-8) * 5);
+    padding: var(--spacing-8) var(--spacing-6);
+  }
+  [data-scope="file-upload"][data-part="root"][data-size="lg"]
+    > [data-part="dropzone"]
+    > [data-part="dropzone-icon"] {
+    width: var(--spacing-8);
+    height: var(--spacing-8);
+  }
+  [data-scope="file-upload"][data-part="root"][data-size="lg"]
+    > [data-part="dropzone"]
+    > [data-part="dropzone-title"] {
+    font-size: var(--text-ui-lg);
+    line-height: var(--leading-ui-lg);
+  }
+  [data-scope="file-upload"][data-part="root"][data-size="lg"]
+    > [data-part="dropzone"]
+    > [data-part="dropzone-hint"] {
+    font-size: var(--text-ui-md);
+    line-height: var(--leading-ui-md);
+  }
+
   /* ───────────────────────── Indicator ────────────────────────── *
    * `indicatorAttrs` on the root: `data-variant` × `data-size`, plus a bare
    * `data-pulse`. Parts root > dot + label. The dot sets its own `color` from

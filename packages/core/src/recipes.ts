@@ -37,6 +37,7 @@ export * from "./recipes/divider.js";
 export * from "./recipes/drawer.js";
 export * from "./recipes/editable.js";
 export * from "./recipes/field.js";
+export * from "./recipes/file-upload.js";
 export * from "./recipes/indicator.js";
 export * from "./recipes/menu.js";
 export * from "./recipes/number-input.js";

@@ -350,6 +350,25 @@ Svelte's `value` is bindable, and `bind:value` receives each change.
 | size → root `data-size` only    |  ✅   | ✅  |   ✅   |  ✅   |
 | textarea control → `data-part`  |  ✅   | ✅  |   ✅   |  ✅   |
 
+### FileUpload (`fileUploadRecipe`: `data-size` on the root; Ark file-upload machine)
+
+| State / prop                                                                    | React | Vue | Svelte | Solid |
+| ------------------------------------------------------------------------------- | :---: | :-: | :----: | :---: |
+| size → root `data-size` (+ `md`); native props forwarded to the root            |  ✅   | ✅  |   ✅   |  ✅   |
+| zone is a focusable button named for what it takes; hint written inside         |  ✅   | ✅  |   ✅   |  ✅   |
+| click, Enter and Space open the file dialog                                     |  ✅   | ✅  |   ✅   |  ✅   |
+| picked or dropped files listed: thumbnail (images), name, size, remove button   |  ✅   | ✅  |   ✅   |  ✅   |
+| `data-dragging` on the zone while files are over it                             |  ✅   | ✅  |   ✅   |  ✅   |
+| `accept`, `maxFiles`, `maxFileSize`: rejected files listed with the reason      |  ✅   | ✅  |   ✅   |  ✅   |
+| one `onFileChange` per change with both lists (`@file-change` in Vue)           |  ✅   | ✅  |   ✅   |  ✅   |
+| remove button named "Remove <file>"; focus moves to the zone                    |  ✅   | ✅  |   ✅   |  ✅   |
+| added, removed and rejected files announced through `announce()`                |  ✅   | ✅  |   ✅   |  ✅   |
+| long names truncated in the middle, extension kept                              |  ✅   | ✅  |   ✅   |  ✅   |
+| `disabled`: no dialog, zone `aria-disabled`                                     |  ✅   | ✅  |   ✅   |  ✅   |
+| inside a Field: its label names the zone, helper/error describe it, state flows |  ✅   | ✅  |   ✅   |  ✅   |
+| controlled list (`v-model:accepted-files` in Vue, `bind:acceptedFiles` Svelte)  |  ✅   | ✅  |   ✅   |  ✅   |
+| `translations` rename the words                                                 |  ✅   | ✅  |   ✅   |  ✅   |
+
 ### Indicator (`indicatorAttrs`: `data-variant` × `data-size` + bare `data-pulse`; CSS-only)
 
 | State / prop                              | React | Vue | Svelte | Solid |
@@ -677,53 +696,54 @@ The first rows hold for the whole playground. Then one row per component: its
 SSR test server-renders the component's playground section and checks what the
 row names.
 
-| Guarantee                                                                                   | React | Vue | Svelte | Solid |
-| ------------------------------------------------------------------------------------------- | :---: | :-: | :----: | :---: |
-| warning-free hydration (id path)                                                            |  ✅   | ✅¹ |   —²   |  —²   |
-| static server-only island (zero `<script>`)                                                 |   —   |  —  |   ✅   |   —   |
-| Accordion open items, hidden contents + ids                                                 |  ✅   | ✅  |   ✅   |  ✅   |
-| Alert anatomy + resolved `role` (status / alert)                                            |  ✅   | ✅  |   ✅   |  ✅   |
-| AngleSlider thumb angle + spoken value, --angle, marks, field text                          |  ✅   | ✅  |   ✅   |  ✅   |
-| Avatar fallback shown / image hidden                                                        |  ✅   | ✅  |   ✅   |  ✅   |
-| Badge variants + dot part                                                                   |  ✅   | ✅  |   ✅   |  ✅   |
-| BarList rows sorted largest first, bar widths + label                                       |  ✅   | ✅  |   ✅   |  ✅   |
-| Button scope/part + recipe `data-*`                                                         |  ✅   | ✅  |   ✅   |  ✅   |
-| Callout `role="note"`, variants + hidden icon                                               |  ✅   | ✅  |   ✅   |  ✅   |
-| Card scope + every part                                                                     |  ✅   | ✅  |   ✅   |  ✅   |
-| Carousel region, slides, current dot + ends                                                 |  ✅   | ✅  |   ✅   |  ✅   |
-| LineChart, AreaChart, BarChart, ScatterChart drawn SVG + series                             |  ✅   | ✅  |   ✅   |  ✅   |
-| Checkbox `data-state` (checked / indeterminate)                                             |  ✅   | ✅  |   ✅   |  ✅   |
-| Chip sizes + named remove trigger                                                           |  ✅   | ✅  |   ✅   |  ✅   |
-| ColorPicker root `data-size`, trigger hex + dialog ids, named area and sliders, Field label |  ✅   | ✅  |   ✅   |  ✅   |
-| Combobox listbox ids, selected items, multiple + empty state                                |  ✅   | ✅  |   ✅   |  ✅   |
-| DatePicker root/content `data-size`, trigger ids, locale inputs + range days                |  ✅   | ✅  |   ✅   |  ✅   |
-| Dialog trigger; `defaultOpen` survives                                                      |  ✅   | ✅  |   ✅   |  ✅   |
-| Divider separator role, label + vertical label                                              |  ✅   | ✅  |   ✅   |  ✅   |
-| DonutChart slices, series index + label                                                     |  ✅   | ✅  |   ✅   |  ✅   |
-| Drawer trigger/content ids + `data-placement`, drawer scope                                 |  ✅   | ✅  |   ✅   |  ✅   |
-| Editable text as a named button, hidden input named by the label, button names              |  ✅   | ✅  |   ✅   |  ✅   |
-| Field sizes + textarea                                                                      |  ✅   | ✅  |   ✅   |  ✅   |
-| Indicator bare `data-pulse`, dot + label parts                                              |  ✅   | ✅  |   ✅   |  ✅   |
-| Menu trigger + hidden content wired by id; items, separator, submenu size                   |  ✅   | ✅  |   ✅   |  ✅   |
-| NumberInput value, bounds, format + steppers                                                |  ✅   | ✅  |   ✅   |  ✅   |
-| Pagination pages, ellipses, current + ends                                                  |  ✅   | ✅  |   ✅   |  ✅   |
-| PinInput `count` → correct server aria                                                      |  ✅   | ✅  |   ✅   |  ✅   |
-| Popover trigger/content ids + content `data-size`                                           |  ✅   | ✅  |   ✅   |  ✅   |
-| Progress value, state + circle geometry                                                     |  ✅   | ✅  |   ✅   |  ✅   |
-| RadioGroup checked item + orientation + tile grid                                           |  ✅   | ✅  |   ✅   |  ✅   |
-| Select trigger; `defaultOpen` survives                                                      |  ✅   | ✅  |   ✅   |  ✅   |
-| Skeleton shapes, `aria-hidden`                                                              |  ✅   | ✅  |   ✅   |  ✅   |
-| Slider thumbs, bounds, range offsets + marks                                                |  ✅   | ✅  |   ✅   |  ✅   |
-| SparkChart line, optional fill + last point                                                 |  ✅   | ✅  |   ✅   |  ✅   |
-| Spinner `role="status"`, sizes, hidden ring + label                                         |  ✅   | ✅  |   ✅   |  ✅   |
-| Splitter panel sizes, separator bounds + controls                                           |  ✅   | ✅  |   ✅   |  ✅   |
-| Switch on/off state + switch role                                                           |  ✅   | ✅  |   ✅   |  ✅   |
-| Tabs selected tab, hidden panels + tab ids                                                  |  ✅   | ✅  |   ✅   |  ✅   |
-| TagsInput tags, delete labels + hidden value                                                |  ✅   | ✅  |   ✅   |  ✅   |
-| Toast group region: id, `role`, `aria-live`, label and placement                            |  ✅   | ✅  |   ✅   |  ✅   |
-| Toggle pressed state + indicator content                                                    |  ✅   | ✅  |   ✅   |  ✅   |
-| ToggleGroup pressed items, roles + orientation                                              |  ✅   | ✅  |   ✅   |  ✅   |
-| Tooltip content hidden + sized; `defaultOpen` describes the trigger                         |  ✅   | ✅  |   ✅   |  ✅   |
+| Guarantee                                                                                                                | React | Vue | Svelte | Solid |
+| ------------------------------------------------------------------------------------------------------------------------ | :---: | :-: | :----: | :---: |
+| warning-free hydration (id path)                                                                                         |  ✅   | ✅¹ |   —²   |  —²   |
+| static server-only island (zero `<script>`)                                                                              |   —   |  —  |   ✅   |   —   |
+| Accordion open items, hidden contents + ids                                                                              |  ✅   | ✅  |   ✅   |  ✅   |
+| Alert anatomy + resolved `role` (status / alert)                                                                         |  ✅   | ✅  |   ✅   |  ✅   |
+| AngleSlider thumb angle + spoken value, --angle, marks, field text                                                       |  ✅   | ✅  |   ✅   |  ✅   |
+| Avatar fallback shown / image hidden                                                                                     |  ✅   | ✅  |   ✅   |  ✅   |
+| Badge variants + dot part                                                                                                |  ✅   | ✅  |   ✅   |  ✅   |
+| BarList rows sorted largest first, bar widths + label                                                                    |  ✅   | ✅  |   ✅   |  ✅   |
+| Button scope/part + recipe `data-*`                                                                                      |  ✅   | ✅  |   ✅   |  ✅   |
+| Callout `role="note"`, variants + hidden icon                                                                            |  ✅   | ✅  |   ✅   |  ✅   |
+| Card scope + every part                                                                                                  |  ✅   | ✅  |   ✅   |  ✅   |
+| Carousel region, slides, current dot + ends                                                                              |  ✅   | ✅  |   ✅   |  ✅   |
+| LineChart, AreaChart, BarChart, ScatterChart drawn SVG + series                                                          |  ✅   | ✅  |   ✅   |  ✅   |
+| Checkbox `data-state` (checked / indeterminate)                                                                          |  ✅   | ✅  |   ✅   |  ✅   |
+| Chip sizes + named remove trigger                                                                                        |  ✅   | ✅  |   ✅   |  ✅   |
+| ColorPicker root `data-size`, trigger hex + dialog ids, named area and sliders, Field label                              |  ✅   | ✅  |   ✅   |  ✅   |
+| Combobox listbox ids, selected items, multiple + empty state                                                             |  ✅   | ✅  |   ✅   |  ✅   |
+| DatePicker root/content `data-size`, trigger ids, locale inputs + range days                                             |  ✅   | ✅  |   ✅   |  ✅   |
+| Dialog trigger; `defaultOpen` survives                                                                                   |  ✅   | ✅  |   ✅   |  ✅   |
+| Divider separator role, label + vertical label                                                                           |  ✅   | ✅  |   ✅   |  ✅   |
+| DonutChart slices, series index + label                                                                                  |  ✅   | ✅  |   ✅   |  ✅   |
+| Drawer trigger/content ids + `data-placement`, drawer scope                                                              |  ✅   | ✅  |   ✅   |  ✅   |
+| Editable text as a named button, hidden input named by the label, button names                                           |  ✅   | ✅  |   ✅   |  ✅   |
+| Field sizes + textarea                                                                                                   |  ✅   | ✅  |   ✅   |  ✅   |
+| FileUpload root `data-size`, zone role/tabindex/name from the hint, Field label → file input, zone labelled by the Field |  ✅   | ✅  |   ✅   |  ✅   |
+| Indicator bare `data-pulse`, dot + label parts                                                                           |  ✅   | ✅  |   ✅   |  ✅   |
+| Menu trigger + hidden content wired by id; items, separator, submenu size                                                |  ✅   | ✅  |   ✅   |  ✅   |
+| NumberInput value, bounds, format + steppers                                                                             |  ✅   | ✅  |   ✅   |  ✅   |
+| Pagination pages, ellipses, current + ends                                                                               |  ✅   | ✅  |   ✅   |  ✅   |
+| PinInput `count` → correct server aria                                                                                   |  ✅   | ✅  |   ✅   |  ✅   |
+| Popover trigger/content ids + content `data-size`                                                                        |  ✅   | ✅  |   ✅   |  ✅   |
+| Progress value, state + circle geometry                                                                                  |  ✅   | ✅  |   ✅   |  ✅   |
+| RadioGroup checked item + orientation + tile grid                                                                        |  ✅   | ✅  |   ✅   |  ✅   |
+| Select trigger; `defaultOpen` survives                                                                                   |  ✅   | ✅  |   ✅   |  ✅   |
+| Skeleton shapes, `aria-hidden`                                                                                           |  ✅   | ✅  |   ✅   |  ✅   |
+| Slider thumbs, bounds, range offsets + marks                                                                             |  ✅   | ✅  |   ✅   |  ✅   |
+| SparkChart line, optional fill + last point                                                                              |  ✅   | ✅  |   ✅   |  ✅   |
+| Spinner `role="status"`, sizes, hidden ring + label                                                                      |  ✅   | ✅  |   ✅   |  ✅   |
+| Splitter panel sizes, separator bounds + controls                                                                        |  ✅   | ✅  |   ✅   |  ✅   |
+| Switch on/off state + switch role                                                                                        |  ✅   | ✅  |   ✅   |  ✅   |
+| Tabs selected tab, hidden panels + tab ids                                                                               |  ✅   | ✅  |   ✅   |  ✅   |
+| TagsInput tags, delete labels + hidden value                                                                             |  ✅   | ✅  |   ✅   |  ✅   |
+| Toast group region: id, `role`, `aria-live`, label and placement                                                         |  ✅   | ✅  |   ✅   |  ✅   |
+| Toggle pressed state + indicator content                                                                                 |  ✅   | ✅  |   ✅   |  ✅   |
+| ToggleGroup pressed items, roles + orientation                                                                           |  ✅   | ✅  |   ✅   |  ✅   |
+| Tooltip content hidden + sized; `defaultOpen` describes the trigger                                                      |  ✅   | ✅  |   ✅   |  ✅   |
 
 ¹ Vue hydration is verified on every portal-free component (all but Dialog and
 Select), where the deterministic `useId` hazard lives; Ark's portaled popovers

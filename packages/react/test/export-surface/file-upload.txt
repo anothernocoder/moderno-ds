@@ -1,0 +1,6 @@
+value FileUpload
+type FileUploadAccept
+type FileUploadFileChangeDetails
+type FileUploadProps
+type FileUploadSize
+type FileUploadTranslations
