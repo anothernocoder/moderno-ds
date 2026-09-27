@@ -1,0 +1,189 @@
+---
+title: Checkout Form
+description: Los pasos de dirección y de pago de una compra — una dirección de envío con su método de entrega, o los datos de la tarjeta — bajo un encabezado con serifa.
+group: Bloques
+order: 124
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import CheckoutFormBlockDemo from "../../../islands/CheckoutFormBlockDemo.svelte";
+import checkoutFormReact from "../../../../../../registry/blocks/checkout-form/react/checkout-form.tsx?raw";
+import checkoutFormVue from "../../../../../../registry/blocks/checkout-form/vue/CheckoutForm.vue?raw";
+import checkoutFormSolid from "../../../../../../registry/blocks/checkout-form/solid/checkout-form.tsx?raw";
+import checkoutFormSvelte from "../../../../../../registry/blocks/checkout-form/svelte/CheckoutForm.svelte?raw";
+
+export const examples = {
+  react: checkoutFormReact,
+  vue: checkoutFormVue,
+  solid: checkoutFormSolid,
+  svelte: checkoutFormSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <CheckoutFormBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="checkout-form" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { CheckoutForm } from "@/components/blocks/checkout-form";
+```
+
+```tsx
+<CheckoutForm step={step} onSubmit={next} onBack={back} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import CheckoutForm from "@/components/blocks/CheckoutForm.vue";
+</script>
+```
+
+```vue
+<CheckoutForm :step="step" @submit="next" @back="back" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import CheckoutForm from "@/components/blocks/CheckoutForm.svelte";
+</script>
+```
+
+```svelte
+<CheckoutForm {step} onsubmit={next} onback={back} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { CheckoutForm } from "@/components/blocks/checkout-form";
+```
+
+```tsx
+<CheckoutForm step={step()} onSubmit={next} onBack={back} />
+```
+
+</ForFramework>
+
+## Referencia de la API
+
+### Props
+
+| Prop              | Tipo                      | Por defecto       | Descripción                                                            |
+| ----------------- | ------------------------- | ----------------- | ---------------------------------------------------------------------- |
+| `step`            | `"shipping" \| "payment"` | `"shipping"`      | Qué paso pide el formulario.                                           |
+| `heading`         | `string`                  | según el paso     | El encabezado. Va en la fuente con serifa.                             |
+| `description`     | `string`                  | según el paso     | Una frase bajo el encabezado; `""` la oculta.                          |
+| `headingLevel`    | `1 \| 2`                  | `2`               | `1` hace del encabezado un h1 y del título de cada grupo un h2.        |
+| `deliveryOptions` | `DeliveryOption[]`        | estándar y exprés | Los métodos de entrega del paso de envío. `[]` los oculta.             |
+| `error`           | `string`                  | —                 | Falló el paso; un Alert de error va arriba del formulario.             |
+| `errors`          | `Record<string, string>`  | —                 | Un mensaje por campo, bajo el nombre del campo.                        |
+| `loading`         | `boolean`                 | `false`           | Todos los controles deshabilitados y el botón de seguir ocupado.       |
+| `disabled`        | `boolean`                 | `false`           | Todos los controles y los dos botones deshabilitados.                  |
+| `onSubmit`        | `(event) => void`         | —                 | El evento de envío del formulario. Svelte: `onsubmit`. Vue: `@submit`. |
+| `onBack`          | `() => void`              | —                 | Se pulsó el botón de volver. Svelte: `onback`. Vue: `@back`.           |
+
+### Campos
+
+| Paso       | Grupo            | Nombres de campo                                                  |
+| ---------- | ---------------- | ----------------------------------------------------------------- |
+| `shipping` | Contact          | `email`                                                           |
+| `shipping` | Shipping address | `fullName`, `address`, `city`, `region`, `postalCode`, `country`  |
+| `shipping` | Delivery method  | `delivery` (el `id` de la opción elegida)                         |
+| `payment`  | Card details     | `cardName`, `cardNumber`, `expiry`, `cvc`, `saveCard` (el switch) |
+
+### DeliveryOption
+
+| Campo         | Tipo     | Descripción                                       |
+| ------------- | -------- | ------------------------------------------------- |
+| `id`          | `string` | El valor que el formulario envía bajo `delivery`. |
+| `label`       | `string` | El nombre de la opción, como `"Express"`.         |
+| `description` | `string` | Cuánto tarda, como `"2–5 business days"`.         |
+| `price`       | `string` | Lo que cuesta, ya con formato, como `"$16.00"`.   |
+
+### Estados
+
+| Estado        | Prop                   | Qué se muestra                                               |
+| ------------- | ---------------------- | ------------------------------------------------------------ |
+| Por defecto   | —                      | El paso de envío: contacto, dirección y método de entrega.   |
+| Pago          | `step="payment"`       | Los datos de la tarjeta y el switch para guardarla.          |
+| Vacío         | `deliveryOptions={[]}` | El paso de envío sin método de entrega.                      |
+| Cargando      | `loading`              | Todos los controles deshabilitados y un "Saving" ocupado.    |
+| Error         | `error`/`errors`       | Un Alert de error arriba del formulario y campos no válidos. |
+| Deshabilitado | `disabled`             | Todos los controles y los dos botones deshabilitados.        |
+
+### Tamaño
+
+| Paso del contenedor      | Qué cambia                                                                                          |
+| ------------------------ | --------------------------------------------------------------------------------------------------- |
+| bajo `@sm`               | Cada campo en su propia fila. Los botones se apilan a todo el ancho, seguir arriba.                 |
+| `@sm` (`--container-sm`) | Ciudad y estado, código postal y país, vencimiento y CVC van en pareja. Los botones comparten fila. |
+| `@md` (`--container-md`) | El encabezado sube un tamaño. Las opciones de entrega van lado a lado.                              |
+| `@lg` (`--container-lg`) | El título de cada grupo va junto a sus campos, con más espacio arriba y abajo.                      |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+El mismo bloque a 18rem, 30rem, 40rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <CheckoutFormBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Pago
+
+<Preview examples={examples} layout="fill">
+  <CheckoutFormBlockDemo client:visible locale="es" state="payment" />
+</Preview>
+
+### Vacío
+
+Pasa un array `deliveryOptions` vacío cuando nada se envía, como una tarjeta regalo.
+
+<Preview examples={examples} layout="fill">
+  <CheckoutFormBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <CheckoutFormBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+Pulsa "Continue to payment" para quitar los mensajes.
+
+<Preview examples={examples} layout="fill">
+  <CheckoutFormBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+<Preview examples={examples} layout="fill">
+  <CheckoutFormBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
+
+## Notas
+
+- Envía los datos de la tarjeta directamente a tu proveedor de pagos, nunca a tu propio servidor.
+- Deja `error` corto y di qué falló. El formulario conserva lo escrito, así el comprador puede corregirlo e intentarlo otra vez.

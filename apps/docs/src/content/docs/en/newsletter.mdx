@@ -1,0 +1,191 @@
+---
+title: Newsletter
+description: An inline subscribe form — a serif heading, one line of description and an email field beside a Subscribe button, in a bordered panel.
+group: Blocks
+order: 119
+agent:
+  intent: A section that asks the reader to subscribe — a serif heading, one line of description, an email field beside a Subscribe button and a short note, in a bordered panel.
+  whenToUse: "The end of a blog post, a changelog or a landing page: the place where a reader leaves an email to hear from you again."
+  whenNotToUse:
+    - case: One call to action that leads somewhere else, like a trial or a demo
+      use: CTA — two buttons, no field
+    - case: A form where visitors write a message to the team
+      use: Contact — a name, email and message form beside the ways to reach you
+    - case: Signing in or creating an account
+      use: LoginForm — it has a mode for each of those
+  gotchas:
+    - "The field is named `email` and has a label only screen readers read, `Email address`. The placeholder shows what to type."
+    - '`description` and `note` hide when you pass `""`. Hide both and the heading stands over the form alone.'
+    - "Presentational: `onSubmit` receives the form's submit event. Subscribing the address, and setting `loading`, `error` or `subscribed` from the result, stays yours."
+    - '`loading` disables the field and turns the button into a busy "Subscribing". `disabled` disables the field and the button.'
+    - "`error` marks the field invalid and shows your message under it; what the reader typed stays. An empty string counts as no error."
+    - '`subscribed` replaces the form with a success Alert, "You are subscribed".'
+    - "The heading is an `h2`, so the block can sit anywhere under the page's `h1`."
+    - "The layout follows the block's own width, not the viewport: the field and the button share a row from `--container-sm`, and the text moves beside the form from `--container-lg`."
+  theming:
+    - "The panel is --card and --card-foreground with a --border hairline and the --radius corner. The field is Field, the button is Button's primary variant and the success message is Alert's success variant."
+    - "The heading reads --font-serif and --card-foreground; the description and the note read --muted-foreground; the field's error reads --destructive."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg, and the text and the form are each capped at --container-md."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import NewsletterBlockDemo from "../../../islands/NewsletterBlockDemo.svelte";
+import newsletterReact from "../../../../../../registry/blocks/newsletter/react/newsletter.tsx?raw";
+import newsletterVue from "../../../../../../registry/blocks/newsletter/vue/Newsletter.vue?raw";
+import newsletterSolid from "../../../../../../registry/blocks/newsletter/solid/newsletter.tsx?raw";
+import newsletterSvelte from "../../../../../../registry/blocks/newsletter/svelte/Newsletter.svelte?raw";
+
+export const examples = {
+  react: newsletterReact,
+  vue: newsletterVue,
+  solid: newsletterSolid,
+  svelte: newsletterSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <NewsletterBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="newsletter" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { Newsletter } from "@/components/blocks/newsletter";
+```
+
+```tsx
+<Newsletter heading="Get the changelog" onSubmit={subscribe} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import Newsletter from "@/components/blocks/Newsletter.vue";
+</script>
+```
+
+```vue
+<Newsletter heading="Get the changelog" @submit="subscribe" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import Newsletter from "@/components/blocks/Newsletter.svelte";
+</script>
+```
+
+```svelte
+<Newsletter heading="Get the changelog" onsubmit={subscribe} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { Newsletter } from "@/components/blocks/newsletter";
+```
+
+```tsx
+<Newsletter heading="Get the changelog" onSubmit={subscribe} />
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+| Prop          | Type              | Default                                  | Description                                                  |
+| ------------- | ----------------- | ---------------------------------------- | ------------------------------------------------------------ |
+| `heading`     | `string`          | `"One calm email a month"`               | What the reader gets. Set in the serif face.                 |
+| `description` | `string`          | a sentence                               | One line under the heading; `""` hides it.                   |
+| `note`        | `string`          | `"No spam. Unsubscribe with one click."` | A short line under the form; `""` hides it.                  |
+| `error`       | `string`          | —                                        | The field turns invalid and shows this message under it.     |
+| `loading`     | `boolean`         | `false`                                  | The field disabled and the button a busy "Subscribing".      |
+| `disabled`    | `boolean`         | `false`                                  | The field and the button disabled.                           |
+| `subscribed`  | `boolean`         | `false`                                  | A success Alert replaces the form.                           |
+| `onSubmit`    | `(event) => void` | —                                        | The form's submit event. Svelte: `onsubmit`. Vue: `@submit`. |
+
+### States
+
+| State      | Prop                  | What renders                                             |
+| ---------- | --------------------- | -------------------------------------------------------- |
+| Default    | —                     | Heading, description, the form and the note.             |
+| Empty      | `description`, `note` | The heading and the form alone, when both are `""`.      |
+| Loading    | `loading`             | The same form with the field disabled and "Subscribing". |
+| Error      | `error`               | The field invalid, with your message under it.           |
+| Disabled   | `disabled`            | The same form with the field and the button disabled.    |
+| Subscribed | `subscribed`          | "You are subscribed" in place of the form.               |
+
+### Sizing
+
+| Container step           | What changes                                                    |
+| ------------------------ | --------------------------------------------------------------- |
+| below `@sm`              | Everything is centred and stacked; the button is full width.    |
+| `@sm` (`--container-sm`) | The field and the button share one row.                         |
+| `@md` (`--container-md`) | The heading steps up a size.                                    |
+| `@lg` (`--container-lg`) | The text moves to the start and the form beside it, in columns. |
+
+## Examples
+
+### Container widths
+
+The same block at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <NewsletterBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Heading and form only
+
+Pass `""` for the description and the note.
+
+<Preview examples={examples} layout="fill">
+  <NewsletterBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <NewsletterBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+Press "Subscribe" to clear the message.
+
+<Preview examples={examples} layout="fill">
+  <NewsletterBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <NewsletterBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+### Subscribed
+
+<Preview examples={examples} layout="fill">
+  <NewsletterBlockDemo client:visible locale="en" state="subscribed" />
+</Preview>
+
+## Notes
+
+- Say what the reader gets and how often. "One email a month" beats "Stay in the loop".
+- Keep `error` short and say how to fix it. The field keeps what the reader typed.

@@ -1,0 +1,191 @@
+---
+title: Input group
+description: Inputs joined to a prefix, a suffix or a button add-on.
+group: Blocks
+order: 117
+agent:
+  intent: Text inputs joined to what they need beside them — a text prefix like https://, a unit suffix like USD, or a button like Copy or Search — so the pair reads as one control.
+  whenToUse: "A form field whose value has a fixed part (a URL scheme, a currency, a unit), a read-only value people copy (an API key, an invite link), or a one-field form with its own button (a search, a coupon code)."
+  whenNotToUse:
+    - case: A plain field with nothing beside it
+      use: Field — a label, an input and its helper or error text
+    - case: A whole form saved with one submit button
+      use: FormLayout — this block's fields do not submit together
+    - case: Picking one value from a fixed list
+      use: Select — an add-on is fixed text, not a choice
+  gotchas:
+    - "Presentational: `onCopy` reports the API key and `onSearch` reports the typed query. Writing to the clipboard and running the search stay yours."
+    - 'Only the search is a form (`role="search"`). The other fields carry a `name` (`website`, `price`, `apiKey`) so a form you wrap around them collects them.'
+    - "The add-ons are fixed text in the source. Change `https://`, `$` or `USD` by editing the file, which is yours after `moderno add`."
+    - "`errors` takes a message per field (`website`, `price`, `query`). An invalid field turns its input and its add-ons red and shows the message under them."
+    - "An empty `apiKey` shows `No key yet` and disables Copy: there is nothing to copy."
+    - "`loading` is a search in flight: every control is disabled and the Search button shows a spinner and `Searching`."
+    - "The layout follows the block's own width, not the viewport: one column below `--container-md`, the fields two-up from there on, and the heading beside the fields from `--container-lg`."
+  theming:
+    - "Nothing is painted here beyond the add-ons. The inputs are Field, the buttons are Button, and the busy ring is Spinner."
+    - "An add-on paints --muted with --muted-foreground text and borrows the input's --input edge and --radius; an invalid field turns that edge --destructive."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the steps are --container-md and --container-lg."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import InputGroupBlockDemo from "../../../islands/InputGroupBlockDemo.svelte";
+import inputGroupReact from "../../../../../../registry/blocks/input-group/react/input-group.tsx?raw";
+import inputGroupVue from "../../../../../../registry/blocks/input-group/vue/InputGroup.vue?raw";
+import inputGroupSolid from "../../../../../../registry/blocks/input-group/solid/input-group.tsx?raw";
+import inputGroupSvelte from "../../../../../../registry/blocks/input-group/svelte/InputGroup.svelte?raw";
+
+export const examples = {
+  react: inputGroupReact,
+  vue: inputGroupVue,
+  solid: inputGroupSolid,
+  svelte: inputGroupSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <InputGroupBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="input-group" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { InputGroup } from "@/components/blocks/input-group";
+```
+
+```tsx
+<InputGroup apiKey={key} onCopy={(key) => navigator.clipboard.writeText(key)} onSearch={search} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import InputGroup from "@/components/blocks/InputGroup.vue";
+</script>
+```
+
+```vue
+<InputGroup :api-key="key" @copy="(key) => navigator.clipboard.writeText(key)" @search="search" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import InputGroup from "@/components/blocks/InputGroup.svelte";
+</script>
+```
+
+```svelte
+<InputGroup apiKey={key} oncopy={(key) => navigator.clipboard.writeText(key)} onsearch={search} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { InputGroup } from "@/components/blocks/input-group";
+```
+
+```tsx
+<InputGroup apiKey={key()} onCopy={(key) => navigator.clipboard.writeText(key)} onSearch={search} />
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+| Prop       | Type                                                       | Default       | Description                                                                |
+| ---------- | ---------------------------------------------------------- | ------------- | -------------------------------------------------------------------------- |
+| `website`  | `string`                                                   | `"acme.shop"` | The store address after the `https://` prefix.                             |
+| `price`    | `string`                                                   | `"49.00"`     | The amount between the `$` prefix and the `USD` suffix.                    |
+| `apiKey`   | `string`                                                   | a sample key  | The read-only key beside Copy. `""` shows `No key yet` and disables Copy.  |
+| `query`    | `string`                                                   | `""`          | The search text beside the Search button.                                  |
+| `errors`   | `Partial<Record<"website" \| "price" \| "query", string>>` | —             | A message per invalid field, shown under it.                               |
+| `loading`  | `boolean`                                                  | `false`       | A search is running: every control is disabled and Search shows a spinner. |
+| `disabled` | `boolean`                                                  | `false`       | Every input and button is disabled.                                        |
+| `onCopy`   | `(apiKey: string) => void`                                 | —             | Copy was pressed. Svelte: `oncopy`. Vue: `@copy`.                          |
+| `onSearch` | `(query: string) => void`                                  | —             | The search was submitted. Svelte: `onsearch`. Vue: `@search`.              |
+
+### Groups
+
+| Group          | Add-ons                 | Field name |
+| -------------- | ----------------------- | ---------- |
+| Store address  | `https://` before       | `website`  |
+| Price          | `$` before, `USD` after | `price`    |
+| API key        | a Copy button after     | `apiKey`   |
+| Find a product | a Search button after   | `query`    |
+
+### States
+
+| State    | Prop                       | What renders                                                    |
+| -------- | -------------------------- | --------------------------------------------------------------- |
+| Default  | —                          | The four groups with sample values.                             |
+| Empty    | `website=""`, `apiKey=""`… | Placeholders in every input, and Copy disabled.                 |
+| Loading  | `loading`                  | Every control disabled; Search shows a spinner and `Searching`. |
+| Error    | `errors`                   | Red inputs and add-ons, each with its message under it.         |
+| Disabled | `disabled`                 | Every input and button disabled.                                |
+
+Hover and keyboard focus come from the Field and Button primitives.
+
+### Sizing
+
+| Container step           | What changes                                                          |
+| ------------------------ | --------------------------------------------------------------------- |
+| below `@sm`              | One column: each group under the one before it.                       |
+| `@sm` (`--container-sm`) | More room between the heading and the groups, and between the groups. |
+| `@md` (`--container-md`) | The heading steps up a size, and the groups sit two to a row.         |
+| `@lg` (`--container-lg`) | The heading sits in a column beside the groups, a third wide.         |
+
+## Examples
+
+### Container widths
+
+The same block at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <InputGroupBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Empty
+
+<Preview examples={examples} layout="fill">
+  <InputGroupBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <InputGroupBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+<Preview examples={examples} layout="fill">
+  <InputGroupBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <InputGroupBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Presentational: it copies nothing and searches nothing. Act on `onCopy` and `onSearch`.
+- Each add-on shares its input's edge and radius, so the pair reads as one control.

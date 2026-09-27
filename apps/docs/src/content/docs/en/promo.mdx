@@ -1,0 +1,204 @@
+---
+title: Promo
+description: A sitewide promo bar — an offer, a promo code that copies on press, one action and a dismiss.
+group: Blocks
+order: 119
+agent:
+  intent: A bar across the top of every page that runs one offer — a bold offer, a short detail such as the deadline, a promo code the visitor copies with one press, and one action — and hides itself when the visitor dismisses it.
+  whenToUse: "One time-boxed offer every visitor should see on every page: a sale, a discount code, a launch price or a free-trial extension."
+  whenNotToUse:
+    - case: A launch, an event or a new feature with no offer or code
+      use: Banner — the announcement strip with a badge and a message
+    - case: A notice about the signed-in user's session — a trial ending, an incident
+      use: AppBanner — it stacks several tinted notices, each with its own action
+  gotchas:
+    - 'Pressing the code writes it to the clipboard, swaps the copy icon for a check, announces "Code copied" and calls `onCopy(code)`. If the browser refuses the clipboard, nothing changes and `onCopy` is not called.'
+    - "Dismissing hides the bar at once and calls `onDismiss`. The block does not remember it: to keep it hidden on the next visit, store that in `onDismiss` and stop rendering the block."
+    - "The action is a Button, not a link: `onAction` reports the press. Navigate in it, or edit the file — it is yours after `moderno add`."
+    - 'Every text prop has sample copy so the block renders standalone. Pass `code=""` or `actionLabel=""` to drop that button; `dismissible={false}` drops the dismiss.'
+    - "`offer` and `detail` both empty renders nothing, so the page keeps its space. `loading` shows one skeleton bar inside a busy `status` region; `error` shows one alert with a retry."
+    - 'The bar is a `section` named "Promotion", so screen readers list it as a region; the code button is named "Copy code <code>" and the dismiss "Dismiss promotion".'
+    - "The layout follows the block's own width, not the viewport: the detail joins the offer's line from `--container-sm`; from `--container-md` the code and action move beside the text and the detail steps back under the offer; from `--container-lg` everything shares one line, centred in the bar."
+  theming:
+    - "The bar paints --muted with a --border hairline under it; the offer is --foreground and the detail --muted-foreground."
+    - "The code is an outline Button in --font-mono, the action a primary Button, the dismiss a ghost Button; the loading bar is Skeleton on --muted and the failed load an error Alert."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import PromoBlockDemo from "../../../islands/PromoBlockDemo.svelte";
+import promoReact from "../../../../../../registry/blocks/promo/react/promo.tsx?raw";
+import promoVue from "../../../../../../registry/blocks/promo/vue/Promo.vue?raw";
+import promoSolid from "../../../../../../registry/blocks/promo/solid/promo.tsx?raw";
+import promoSvelte from "../../../../../../registry/blocks/promo/svelte/Promo.svelte?raw";
+
+export const examples = {
+  react: promoReact,
+  vue: promoVue,
+  solid: promoSolid,
+  svelte: promoSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <PromoBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="promo" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { Promo } from "@/components/blocks/promo";
+```
+
+```tsx
+<Promo
+  offer="Free shipping this weekend"
+  detail="Orders over $50"
+  code="SHIPFREE"
+  onAction={() => open("/shop")}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import Promo from "@/components/blocks/Promo.vue";
+</script>
+```
+
+```vue
+<Promo
+  offer="Free shipping this weekend"
+  detail="Orders over $50"
+  code="SHIPFREE"
+  @action="open('/shop')"
+/>
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import Promo from "@/components/blocks/Promo.svelte";
+</script>
+```
+
+```svelte
+<Promo
+  offer="Free shipping this weekend"
+  detail="Orders over $50"
+  code="SHIPFREE"
+  onaction={() => open("/shop")}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { Promo } from "@/components/blocks/promo";
+```
+
+```tsx
+<Promo
+  offer="Free shipping this weekend"
+  detail="Orders over $50"
+  code="SHIPFREE"
+  onAction={() => open("/shop")}
+/>
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+| Prop          | Type                     | Default         | Description                                                   |
+| ------------- | ------------------------ | --------------- | ------------------------------------------------------------- |
+| `offer`       | `string`                 | sample copy     | The offer, in bold.                                           |
+| `detail`      | `string`                 | `"Ends Sunday"` | A short line after the offer, such as the deadline.           |
+| `code`        | `string`                 | `"MONTHEND20"`  | The promo code. Pressing it copies it. `""` drops the button. |
+| `actionLabel` | `string`                 | `"Claim offer"` | The action button's label. `""` drops the button.             |
+| `dismissible` | `boolean`                | `true`          | Shows the dismiss button.                                     |
+| `error`       | `string`                 | —               | The offer failed to load; an alert with a retry replaces it.  |
+| `loading`     | `boolean`                | `false`         | One skeleton bar in a busy region replaces it.                |
+| `disabled`    | `boolean`                | `false`         | The bar stays readable and every button is disabled.          |
+| `onAction`    | `() => void`             | —               | The action was pressed. Svelte: `onaction`. Vue: `@action`.   |
+| `onCopy`      | `(code: string) => void` | —               | The code was copied. Svelte: `oncopy`. Vue: `@copy`.          |
+| `onDismiss`   | `() => void`             | —               | The bar was dismissed. Svelte: `ondismiss`. Vue: `@dismiss`.  |
+| `onRetry`     | `() => void`             | —               | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.  |
+
+### States
+
+| State     | Prop                   | What renders                                                   |
+| --------- | ---------------------- | -------------------------------------------------------------- |
+| Default   | —                      | The bar with its offer, detail, code, action and dismiss.      |
+| Copied    | pressing the code      | A check in place of the copy icon, and "Code copied" is read.  |
+| Dismissed | pressing the dismiss   | Nothing: the bar hides itself and calls `onDismiss`.           |
+| Empty     | `offer=""` `detail=""` | Nothing: the block takes no space.                             |
+| Loading   | `loading`              | One skeleton bar in a busy `status` region.                    |
+| Error     | `error`                | One error alert with a "Try again" button in place of the bar. |
+| Disabled  | `disabled`             | The bar with every button disabled.                            |
+
+### Sizing
+
+| Container step           | What changes                                                                     |
+| ------------------------ | -------------------------------------------------------------------------------- |
+| below `@sm`              | The offer and detail stack; buttons below.                                       |
+| `@sm` (`--container-sm`) | The detail joins the offer's line.                                               |
+| `@md` (`--container-md`) | The code and action move beside the text; the detail steps back under the offer. |
+| `@lg` (`--container-lg`) | Everything shares one line, centred in the bar.                                  |
+
+## Examples
+
+### Container widths
+
+The same bar at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <PromoBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Empty
+
+<Preview examples={examples} layout="fill">
+  <PromoBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <PromoBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+<Preview examples={examples} layout="fill">
+  <PromoBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <PromoBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Put it once, above the page header, so it spans the full width.
+- Keep the offer short: it shares one line with the detail, the code and the action on a wide page.
+- To keep it dismissed across visits, save that in `onDismiss` and skip rendering the block.

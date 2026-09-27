@@ -1,0 +1,182 @@
+---
+title: Acciones con diálogo
+description: Filas de acciones que abren cada una un diálogo — una confirmación, un aviso destructivo o un formulario de un campo.
+group: Bloques
+order: 116
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ModalActionsBlockDemo from "../../../islands/ModalActionsBlockDemo.svelte";
+import modalActionsReact from "../../../../../../registry/blocks/modal-actions/react/modal-actions.tsx?raw";
+import modalActionsVue from "../../../../../../registry/blocks/modal-actions/vue/ModalActions.vue?raw";
+import modalActionsSolid from "../../../../../../registry/blocks/modal-actions/solid/modal-actions.tsx?raw";
+import modalActionsSvelte from "../../../../../../registry/blocks/modal-actions/svelte/ModalActions.svelte?raw";
+
+export const examples = {
+  react: modalActionsReact,
+  vue: modalActionsVue,
+  solid: modalActionsSolid,
+  svelte: modalActionsSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <ModalActionsBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="modal-actions" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { ModalActions } from "@/components/blocks/modal-actions";
+```
+
+```tsx
+<ModalActions heading="Cuenta" actions={actions} onConfirm={(id, value) => run(id, value)} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import ModalActions from "@/components/blocks/ModalActions.vue";
+</script>
+```
+
+```vue
+<ModalActions heading="Cuenta" :actions="actions" @confirm="run" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import ModalActions from "@/components/blocks/ModalActions.svelte";
+</script>
+```
+
+```svelte
+<ModalActions heading="Cuenta" {actions} onconfirm={run} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { ModalActions } from "@/components/blocks/modal-actions";
+```
+
+```tsx
+<ModalActions heading="Cuenta" actions={actions()} onConfirm={(id, value) => run(id, value)} />
+```
+
+</ForFramework>
+
+## Referencia de API
+
+### Props
+
+| Prop          | Tipo                                   | Por defecto          | Descripción                                                              |
+| ------------- | -------------------------------------- | -------------------- | ------------------------------------------------------------------------ |
+| `actions`     | `ModalAction[]`                        | una lista de muestra | Las filas, en el orden en que se muestran. `[]` muestra el estado vacío. |
+| `heading`     | `string`                               | `"Workspace"`        | El título junto a la lista o sobre ella.                                 |
+| `description` | `string`                               | una frase            | La línea bajo el título; `""` la oculta.                                 |
+| `error`       | `string`                               | —                    | Las acciones no cargaron; una alerta con reintento sustituye las filas.  |
+| `loading`     | `boolean`                              | `false`              | Filas esqueleto en una región ocupada sustituyen las filas.              |
+| `disabled`    | `boolean`                              | `false`              | Las filas siguen legibles y todos sus botones quedan deshabilitados.     |
+| `onConfirm`   | `(id: string, value?: string) => void` | —                    | Se confirmó una acción. Svelte: `onconfirm`. Vue: `@confirm`.            |
+| `onRetry`     | `() => void`                           | —                    | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.              |
+
+### ModalAction
+
+| Campo               | Tipo                         | Descripción                                                             |
+| ------------------- | ---------------------------- | ----------------------------------------------------------------------- |
+| `id`                | `string`                     | Identidad estable, la que devuelve `onConfirm`.                         |
+| `title`             | `string`                     | El nombre de la acción en la fila, como "Export data".                  |
+| `description`       | `string`                     | Una línea sobre lo que hace la acción. Describe el botón de la fila.    |
+| `trigger`           | `string`                     | El texto del botón de la fila, como "Export".                           |
+| `dialogTitle`       | `string`                     | El título del diálogo. Da nombre al diálogo.                            |
+| `dialogDescription` | `string`                     | La línea bajo el título del diálogo. Describe el diálogo.               |
+| `confirm`           | `string`                     | El texto del botón que confirma o envía.                                |
+| `tone`              | `"default" \| "destructive"` | Opcional. `destructive` añade la insignia Irreversible y un botón rojo. |
+| `field`             | `ModalActionField`           | Opcional. Convierte el diálogo en un formulario con este único campo.   |
+
+### ModalActionField
+
+| Campo          | Tipo     | Descripción                                       |
+| -------------- | -------- | ------------------------------------------------- |
+| `label`        | `string` | La etiqueta del campo.                            |
+| `defaultValue` | `string` | Opcional. El valor con el que empieza el campo.   |
+| `placeholder`  | `string` | Opcional. La pista que se ve mientras está vacío. |
+
+### Estados
+
+| Estado        | Prop           | Qué se muestra                                                                       |
+| ------------- | -------------- | ------------------------------------------------------------------------------------ |
+| Por defecto   | —              | Una fila por acción, cada una con un botón que abre su diálogo.                      |
+| Vacío         | `actions={[]}` | Un mensaje "No actions yet" dentro de la lista.                                      |
+| Cargando      | `loading`      | Tres filas esqueleto en una región `status` ocupada.                                 |
+| Error         | `error`        | Una alerta de error con el botón "Try again" en lugar de las filas.                  |
+| Deshabilitado | `disabled`     | Las filas con todos sus botones deshabilitados.                                      |
+| Inválido      | un campo vacío | El diálogo del formulario sigue abierto; el campo muestra un error y recibe el foco. |
+
+### Tamaño
+
+| Paso del contenedor      | Qué cambia                                                                 |
+| ------------------------ | -------------------------------------------------------------------------- |
+| bajo `@sm`               | Cada botón va bajo su título y su descripción.                             |
+| `@sm` (`--container-sm`) | Cada botón pasa junto a su texto, y el relleno de la lista crece un paso.  |
+| `@md` (`--container-md`) | El título sube un tamaño.                                                  |
+| `@lg` (`--container-lg`) | El título va en una columna junto a la lista, de un tercio de ancho.       |
+| diálogo bajo `@sm`       | Los botones del diálogo se apilan a todo el ancho, el de confirmar arriba. |
+| diálogo desde `@sm`      | Los botones del diálogo van en fila, al final.                             |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+La misma lista a 18rem, 30rem, 40rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <ModalActionsBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Vacío
+
+<Preview examples={examples} layout="fill">
+  <ModalActionsBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <ModalActionsBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+<Preview examples={examples} layout="fill">
+  <ModalActionsBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+<Preview examples={examples} layout="fill">
+  <ModalActionsBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
+
+## Notas
+
+- Presentacional: no cambia nada por sí mismo. Haz el trabajo en `onConfirm`.
+- Para ver el error del formulario, abre "Rename", vacía el campo y pulsa "Save".

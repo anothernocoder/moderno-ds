@@ -1,0 +1,170 @@
+---
+title: Blog Header
+description: La cabecera de un blog — un antetítulo, un título con serifa y una frase de introducción sobre una fila de chips de categoría.
+group: Bloques
+order: 119
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import BlogHeaderBlockDemo from "../../../islands/BlogHeaderBlockDemo.svelte";
+import blogHeaderReact from "../../../../../../registry/blocks/blog-header/react/blog-header.tsx?raw";
+import blogHeaderVue from "../../../../../../registry/blocks/blog-header/vue/BlogHeader.vue?raw";
+import blogHeaderSolid from "../../../../../../registry/blocks/blog-header/solid/blog-header.tsx?raw";
+import blogHeaderSvelte from "../../../../../../registry/blocks/blog-header/svelte/BlogHeader.svelte?raw";
+
+export const examples = {
+  react: blogHeaderReact,
+  vue: blogHeaderVue,
+  solid: blogHeaderSolid,
+  svelte: blogHeaderSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <BlogHeaderBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="blog-header" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { BlogHeader } from "@/components/blocks/blog-header";
+```
+
+```tsx
+<BlogHeader title="Novedades" categories={categories} activeCategory="all" />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import BlogHeader from "@/components/blocks/BlogHeader.vue";
+</script>
+```
+
+```vue
+<BlogHeader title="Novedades" :categories="categories" active-category="all" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import BlogHeader from "@/components/blocks/BlogHeader.svelte";
+</script>
+```
+
+```svelte
+<BlogHeader title="Novedades" {categories} activeCategory="all" />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { BlogHeader } from "@/components/blocks/blog-header";
+```
+
+```tsx
+<BlogHeader title="Novedades" categories={categories} activeCategory="all" />
+```
+
+</ForFramework>
+
+## Referencia de la API
+
+### Props
+
+| Prop             | Tipo             | Por defecto               | Descripción                                                                              |
+| ---------------- | ---------------- | ------------------------- | ---------------------------------------------------------------------------------------- |
+| `kicker`         | `string`         | `"Blog"`                  | Una línea corta sobre el título; `""` la oculta.                                         |
+| `title`          | `string`         | `"Notes from the ledger"` | El `h1` de la página. Va en la fuente con serifa.                                        |
+| `description`    | `string`         | una frase                 | Una frase bajo el título; `""` la oculta.                                                |
+| `categories`     | `BlogCategory[]` | seis categorías           | Un chip por categoría, en orden. `[]` muestra el mensaje de vacío.                       |
+| `activeCategory` | `string`         | `"all"`                   | El `id` de la categoría actual. Su chip va relleno.                                      |
+| `error`          | `string`         | —                         | Falló la carga de las categorías; un Alert de error con reintento las reemplaza.         |
+| `loading`        | `boolean`        | `false`                   | Chips de marcador en una región ocupada reemplazan las categorías.                       |
+| `disabled`       | `boolean`        | `false`                   | Los chips se quedan; cada enlace de categoría queda inerte y el reintento deshabilitado. |
+| `onRetry`        | `() => void`     | —                         | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.                              |
+
+### BlogCategory
+
+| Campo   | Tipo     | Descripción                                       |
+| ------- | -------- | ------------------------------------------------- |
+| `id`    | `string` | Una clave estable, la que busca `activeCategory`. |
+| `label` | `string` | El texto del chip, como `"Product"`.              |
+| `href`  | `string` | La página de la categoría.                        |
+
+### Estados
+
+| Estado        | Prop              | Qué se muestra                                                               |
+| ------------- | ----------------- | ---------------------------------------------------------------------------- |
+| Por defecto   | —                 | Antetítulo, título, descripción y un chip por categoría.                     |
+| Vacío         | `categories={[]}` | Antetítulo, título, descripción y "No categories yet."                       |
+| Cargando      | `loading`         | Antetítulo, título, descripción y cinco chips de marcador.                   |
+| Error         | `error`           | Antetítulo, título, descripción y después un Alert de error con "Try again". |
+| Deshabilitado | `disabled`        | Los mismos chips con cada enlace de categoría inerte.                        |
+
+### Tamaño
+
+| Paso del contenedor      | Qué cambia                                            |
+| ------------------------ | ----------------------------------------------------- |
+| bajo `@sm`               | El título y la descripción más pequeños.              |
+| `@sm` (`--container-sm`) | La descripción sube un tamaño.                        |
+| `@md` (`--container-md`) | El título sube un tamaño, y los chips se separan más. |
+| `@lg` (`--container-lg`) | Más espacio arriba y abajo, y entre las partes.       |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+El mismo bloque a 18rem, 30rem, 40rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <BlogHeaderBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Vacío
+
+Pasa un array `categories` vacío.
+
+<Preview examples={examples} layout="fill">
+  <BlogHeaderBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <BlogHeaderBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+Pulsa "Try again" para quitar el mensaje y recuperar las categorías.
+
+<Preview examples={examples} layout="fill">
+  <BlogHeaderBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+<Preview examples={examples} layout="fill">
+  <BlogHeaderBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
+
+## Notas
+
+- Deja el antetítulo en una o dos palabras, como el nombre del blog.
+- Pon "All posts" primero, para que el lector siempre pueda volver a todas las entradas.

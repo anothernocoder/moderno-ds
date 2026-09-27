@@ -1,0 +1,37 @@
+{
+  "title": "Status Monitoring",
+  "description": "Service status with uptime bars, composing the @moderno-ui/{framework} Alert, Badge, Button, Card, Indicator and Skeleton primitives: an overall status badge, then one card per service with its live status, a bar per day tinted by how that day went, and its uptime, with its own empty, loading and error renders; responds to its container (@container) across all three contract steps — the header and each service's name and status line up at @sm, taller bars and a larger heading at @md, two services a row at @lg.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": [],
+  "files": {
+    "react": [
+      {
+        "path": "blocks/status-monitoring/react/status-monitoring.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/status-monitoring.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "blocks/status-monitoring/vue/StatusMonitoring.vue",
+        "type": "registry:block",
+        "target": "src/components/blocks/StatusMonitoring.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "blocks/status-monitoring/svelte/StatusMonitoring.svelte",
+        "type": "registry:block",
+        "target": "src/components/blocks/StatusMonitoring.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "blocks/status-monitoring/solid/status-monitoring.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/status-monitoring.tsx"
+      }
+    ]
+  }
+}

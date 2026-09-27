@@ -1,0 +1,238 @@
+---
+title: Product List
+description: A page of products as a grid — each with its image, name and price — under a serif heading, with pagination to move between pages.
+group: Blocks
+order: 122
+agent:
+  intent: A shop's category or collection page — a serif heading, a sentence of introduction and the number of products, then a grid of product tiles (image, optional badge, name as a link, price) and pagination under it.
+  whenToUse: "A shop's catalogue, a category or collection page, or search results for products — any list of products too long for one screen."
+  whenNotToUse:
+    - case: One product on its own, with a description and an Add to cart button
+      use: ProductCard — it shows one product in full
+    - case: Articles or blog posts
+      use: PostGrid — its cards carry a date, an excerpt and an author
+    - case: Projects or records in an app, each with a status and an Open action
+      use: GridList — its cards carry a status and an action each
+  gotchas:
+    - "`products` is the current page only: an array of `{ id, name, price, compareAtPrice?, badge?, href?, image?: { src, alt } }`."
+    - "`total` is how many products there are across every page. With `pageSize` (12 by default) it sets the number of pages. Without `total`, the block counts `products`."
+    - "Pagination shows only when `total` is more than `pageSize`."
+    - "Pages start at 1. Without `page`, the block keeps its own page. Pass `page` and update it in `onPageChange` (Svelte `onpagechange`, Vue `@page-change`) to control it, then load that page's products."
+    - "`price` and `compareAtPrice` are strings. Format them in the reader's currency and language before you pass them, like `€28`."
+    - '`compareAtPrice` is the old price. It shows struck through after `price`, and screen readers hear "Was" before it.'
+    - "With `href`, the product's name is a link to it. Without it, the name is plain text."
+    - "Give `image.alt` a short description of the photo. Without `image`, the image area is an empty muted box."
+    - "Each name is an `h3` under the block's `h2`, so the products show in the page outline."
+    - '`description` hides when you pass `""`.'
+    - '`products={[]}` shows "No products match yet." in place of the grid and hides the pagination.'
+    - "`loading` keeps the heading and the pagination, and shows `pageSize` placeholder tiles in one busy `status` region."
+    - '`error` keeps the heading and puts an error Alert with your message and a "Try again" button where the grid and the pagination were. An empty string counts as no error.'
+    - "`disabled` keeps every product, makes each name link inert (no `href`, `aria-disabled`) and disables every page button and the retry button."
+    - "Presentational: `onPageChange` reports the page picked and `onRetry` that Try again was pressed. Loading the products stays yours."
+    - "The layout follows the block's own width, not the viewport: two columns at first, with the product count under the introduction; the count moves beside the heading from `--container-sm`; three columns and a larger heading from `--container-md`; four columns with more room from `--container-lg`."
+  theming:
+    - "The block paints only the muted box behind each image (--muted) and its dashed empty box (--border). The badge is Badge's solid variant, the page row is Pagination, the error is Alert's error variant, the retry is Button's outline variant and the loading tiles are Skeleton."
+    - "The heading reads --font-serif and --foreground; the introduction, the product count and the old prices read --muted-foreground; the name links read --foreground and their focus ring --ring."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg. The heading block is capped at --container-md."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ProductListBlockDemo from "../../../islands/ProductListBlockDemo.svelte";
+import productListReact from "../../../../../../registry/blocks/product-list/react/product-list.tsx?raw";
+import productListVue from "../../../../../../registry/blocks/product-list/vue/ProductList.vue?raw";
+import productListSolid from "../../../../../../registry/blocks/product-list/solid/product-list.tsx?raw";
+import productListSvelte from "../../../../../../registry/blocks/product-list/svelte/ProductList.svelte?raw";
+
+export const examples = {
+  react: productListReact,
+  vue: productListVue,
+  solid: productListSolid,
+  svelte: productListSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <ProductListBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="product-list" />
+
+## Usage
+
+Use Product List for a shop's catalogue or a category page. It shows one page of products and the pagination to reach the others.
+
+<ForFramework fw="react">
+
+```tsx
+import { ProductList } from "@/components/blocks/product-list";
+```
+
+```tsx
+<ProductList
+  heading="Tableware"
+  products={products}
+  total={total}
+  page={page}
+  onPageChange={setPage}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import ProductList from "@/components/blocks/ProductList.vue";
+</script>
+```
+
+```vue
+<ProductList
+  heading="Tableware"
+  :products="products"
+  :total="total"
+  :page="page"
+  @page-change="page = $event"
+/>
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import ProductList from "@/components/blocks/ProductList.svelte";
+</script>
+```
+
+```svelte
+<ProductList heading="Tableware" {products} {total} {page} onpagechange={(next) => (page = next)} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { ProductList } from "@/components/blocks/product-list";
+```
+
+```tsx
+<ProductList
+  heading="Tableware"
+  products={products()}
+  total={total()}
+  page={page()}
+  onPageChange={setPage}
+/>
+```
+
+</ForFramework>
+
+`products` holds the current page only. `total` counts every product, so the block knows how many pages there are.
+
+## API Reference
+
+### Props
+
+| Prop           | Type                     | Default             | Description                                                                 |
+| -------------- | ------------------------ | ------------------- | --------------------------------------------------------------------------- |
+| `heading`      | `string`                 | `"The collection"`  | The section's heading. Set in the serif face.                               |
+| `description`  | `string`                 | a sentence          | One sentence under the heading; `""` hides it.                              |
+| `products`     | `ProductSummary[]`       | twelve sample items | The products on the current page. `[]` shows the empty message.             |
+| `total`        | `number`                 | `products.length`   | How many products there are across every page. 48 with the sample products. |
+| `pageSize`     | `number`                 | `12`                | How many products one page holds.                                           |
+| `page`         | `number`                 | —                   | The current page, from 1. Leave it out and the block keeps its own page.    |
+| `error`        | `string`                 | —                   | Loading the products failed; an error Alert with a retry replaces the grid. |
+| `loading`      | `boolean`                | `false`             | Placeholder tiles in a busy region replace the grid.                        |
+| `disabled`     | `boolean`                | `false`             | The products stay; every link is inert and every button disabled.           |
+| `onPageChange` | `(page: number) => void` | —                   | A page was picked. Svelte: `onpagechange`. Vue: `@page-change`.             |
+| `onRetry`      | `() => void`             | —                   | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.                |
+
+### ProductSummary
+
+| Field            | Type           | Description                                                   |
+| ---------------- | -------------- | ------------------------------------------------------------- |
+| `id`             | `string`       | A stable key for the product.                                 |
+| `name`           | `string`       | The product's name.                                           |
+| `price`          | `string`       | The price as people read it, like `"€28"`.                    |
+| `compareAtPrice` | `string`       | Optional. The old price, struck through after `price`.        |
+| `badge`          | `string`       | Optional. One word on the image, like `"New"` or `"Sale"`.    |
+| `href`           | `string`       | Optional. Turns the name into a link to the product's page.   |
+| `image`          | `ProductImage` | Optional. The photo: `{ src, alt }`. Without it, a muted box. |
+
+### States
+
+| State    | Prop            | What renders                                                       |
+| -------- | --------------- | ------------------------------------------------------------------ |
+| Default  | —               | Heading, product count, one tile per product and the pagination.   |
+| Empty    | `products={[]}` | Heading and "No products match yet." in a dashed box.              |
+| Loading  | `loading`       | Heading, placeholder tiles and the pagination.                     |
+| Error    | `error`         | Heading, then an error Alert with "Try again".                     |
+| Disabled | `disabled`      | The same products with every link inert and every page button off. |
+
+### Sizing
+
+| Container step           | What changes                                           |
+| ------------------------ | ------------------------------------------------------ |
+| below `@sm`              | Two columns; the product count under the introduction. |
+| `@sm` (`--container-sm`) | The product count moves beside the heading.            |
+| `@md` (`--container-md`) | Three columns, and the heading steps up.               |
+| `@lg` (`--container-lg`) | Four columns, with more room between and around.       |
+
+## Examples
+
+### Container widths
+
+The same block at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <ProductListBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Without images
+
+Leave out `image`, and each image area is a muted box.
+
+<Preview examples={examples} layout="fill">
+  <ProductListBlockDemo client:visible locale="en" state="no-images" />
+</Preview>
+
+### Empty
+
+Pass an empty `products` array.
+
+<Preview examples={examples} layout="fill">
+  <ProductListBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <ProductListBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+Press "Try again" to clear the message and bring the products back.
+
+<Preview examples={examples} layout="fill">
+  <ProductListBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <ProductListBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Twelve products fill two, three or four columns evenly. Keep `pageSize` a multiple of 12 for the same effect.
+- Use photos that still read when they are cropped to a square, and the same kind of photo for every product, so the rows look even.
+- Scroll the page back to the heading after a page change, so people start reading at the top of the new page.

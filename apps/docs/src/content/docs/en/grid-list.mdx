@@ -1,0 +1,191 @@
+---
+title: Grid list
+description: A responsive grid of cards, one per project, with empty, loading and error states.
+group: Blocks
+order: 110
+agent:
+  intent: A responsive grid of cards, one per item — projects, workspaces, apps or teams you open from an overview.
+  whenToUse: "An overview of a handful to a few dozen items the reader picks one of: a projects page, a workspace switcher, an apps directory, a dashboard's recent items."
+  whenNotToUse:
+    - case: Long lists the reader scans row by row or sorts
+      use: a table or a stacked list — a grid hides order and is slow to scan past a few dozen items
+    - case: One item with its details
+      use: the Card primitive on its own
+    - case: A feature nobody has used yet
+      use: EmptyState — this block's empty render is for a grid that loaded with nothing in it
+  gotchas:
+    - "Presentational: `onOpen` reports which card the reader picked and `onCreate` the header button; routing and data stay yours."
+    - "`items` defaults to a sample set so the block renders standalone. Pass your own array — or edit the constant, the file is yours after `moderno add`."
+    - "`items={[]}` is the empty state, not a bug: the grid loaded and there is nothing in it."
+    - "`loading` replaces the grid with skeleton cards inside a busy `status` region; `error` replaces it with one alert and a retry, because an empty grid and a grid that failed to load are different facts."
+    - "Every Open button's accessible name carries the card's title, so screen readers and voice control hear which card it opens."
+    - "Columns follow the block's own width, not the viewport: one column below `--container-md`, two up to `--container-lg`, three above it."
+  theming:
+    - "Nothing is painted here. Tiles are Card, the thumbnail is a square Avatar, the status is a Badge, the controls are Button, the loading tiles are Skeleton and the failed load is an error Alert."
+    - "The heading and its sentence are props, defaulting to a projects overview: the same grid lists workspaces, apps or teams."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import GridListBlockDemo from "../../../islands/GridListBlockDemo.svelte";
+import gridListReact from "../../../../../../registry/blocks/grid-list/react/grid-list.tsx?raw";
+import gridListVue from "../../../../../../registry/blocks/grid-list/vue/GridList.vue?raw";
+import gridListSolid from "../../../../../../registry/blocks/grid-list/solid/grid-list.tsx?raw";
+import gridListSvelte from "../../../../../../registry/blocks/grid-list/svelte/GridList.svelte?raw";
+
+export const examples = {
+  react: gridListReact,
+  vue: gridListVue,
+  solid: gridListSolid,
+  svelte: gridListSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <GridListBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="grid-list" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { GridList } from "@/components/blocks/grid-list";
+```
+
+```tsx
+<GridList items={projects} onOpen={(id) => navigate(`/projects/${id}`)} onCreate={openNew} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import GridList from "@/components/blocks/GridList.vue";
+</script>
+```
+
+```vue
+<GridList :items="projects" @open="goTo" @create="openNew" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import GridList from "@/components/blocks/GridList.svelte";
+</script>
+```
+
+```svelte
+<GridList items={projects} onopen={goTo} oncreate={openNew} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { GridList } from "@/components/blocks/grid-list";
+```
+
+```tsx
+<GridList items={projects()} onOpen={(id) => navigate(`/projects/${id}`)} onCreate={openNew} />
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+| Prop          | Type                   | Default      | Description                                                  |
+| ------------- | ---------------------- | ------------ | ------------------------------------------------------------ |
+| `items`       | `GridListItem[]`       | a sample set | The cards, in the order shown. `[]` renders the empty state. |
+| `heading`     | `string`               | `"Projects"` | The heading over the grid.                                   |
+| `description` | `string`               | a sentence   | The line under the heading; `""` hides it.                   |
+| `error`       | `string`               | —            | The grid failed to load; an alert with a retry replaces it.  |
+| `loading`     | `boolean`              | `false`      | Skeleton cards in a busy region replace the grid.            |
+| `disabled`    | `boolean`              | `false`      | The cards stay readable and every button is disabled.        |
+| `onOpen`      | `(id: string) => void` | —            | A card's Open button. Svelte: `onopen`. Vue: `@open`.        |
+| `onCreate`    | `() => void`           | —            | "New project". Svelte: `oncreate`. Vue: `@create`.           |
+| `onRetry`     | `() => void`           | —            | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`. |
+
+### GridListItem
+
+| Field           | Type                                                       | Description                                    |
+| --------------- | ---------------------------------------------------------- | ---------------------------------------------- |
+| `id`            | `string`                                                   | Stable identity, reported by `onOpen`.         |
+| `title`         | `string`                                                   | The card title.                                |
+| `subtitle`      | `string`                                                   | Optional line under the title, like a team.    |
+| `initials`      | `string`                                                   | The avatar's fallback when there is no image.  |
+| `image`         | `string`                                                   | Optional thumbnail URL for the avatar.         |
+| `status`        | `string`                                                   | Optional badge text.                           |
+| `statusVariant` | `"neutral" \| "info" \| "success" \| "warning" \| "error"` | The badge colour. Default `"neutral"`.         |
+| `meta`          | `string`                                                   | Optional muted line, like "Updated 2 hrs ago". |
+
+### States
+
+| State    | Prop         | What renders                                                    |
+| -------- | ------------ | --------------------------------------------------------------- |
+| Default  | —            | One card per item.                                              |
+| Empty    | `items={[]}` | A "No projects yet" card.                                       |
+| Loading  | `loading`    | Three skeleton cards in a busy `status` region.                 |
+| Error    | `error`      | One error alert with a "Try again" button in place of the grid. |
+| Disabled | `disabled`   | The grid with every button disabled.                            |
+
+### Sizing
+
+| Container step           | What changes                               |
+| ------------------------ | ------------------------------------------ |
+| `@sm` (`--container-sm`) | The heading and "New project" share a row. |
+| `@md` (`--container-md`) | Two columns; the heading steps up a size.  |
+| `@lg` (`--container-lg`) | Three columns.                             |
+
+## Examples
+
+### Container widths
+
+The same grid at 18rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <GridListBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Empty
+
+<Preview examples={examples} layout="fill">
+  <GridListBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <GridListBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+<Preview examples={examples} layout="fill">
+  <GridListBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <GridListBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Presentational: it navigates nowhere. The callbacks report what the reader asked for.
+- Every Open button's accessible name includes the card's title.

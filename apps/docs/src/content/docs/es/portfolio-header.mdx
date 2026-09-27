@@ -1,0 +1,172 @@
+---
+title: Portfolio header
+description: La presentación al inicio de un portafolio personal — una foto, si estás disponible, tu nombre, tu rol, una breve biografía y tus enlaces.
+group: Bloques
+order: 125
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import PortfolioHeaderBlockDemo from "../../../islands/PortfolioHeaderBlockDemo.svelte";
+import portfolioHeaderReact from "../../../../../../registry/blocks/portfolio-header/react/portfolio-header.tsx?raw";
+import portfolioHeaderVue from "../../../../../../registry/blocks/portfolio-header/vue/PortfolioHeader.vue?raw";
+import portfolioHeaderSolid from "../../../../../../registry/blocks/portfolio-header/solid/portfolio-header.tsx?raw";
+import portfolioHeaderSvelte from "../../../../../../registry/blocks/portfolio-header/svelte/PortfolioHeader.svelte?raw";
+
+export const examples = {
+  react: portfolioHeaderReact,
+  vue: portfolioHeaderVue,
+  solid: portfolioHeaderSolid,
+  svelte: portfolioHeaderSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <PortfolioHeaderBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="portfolio-header" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { PortfolioHeader } from "@/components/blocks/portfolio-header";
+```
+
+```tsx
+<PortfolioHeader name={me.name} role={me.role} bio={me.bio} links={me.links} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import PortfolioHeader from "@/components/blocks/PortfolioHeader.vue";
+</script>
+```
+
+```vue
+<PortfolioHeader :name="me.name" :role="me.role" :bio="me.bio" :links="me.links" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import PortfolioHeader from "@/components/blocks/PortfolioHeader.svelte";
+</script>
+```
+
+```svelte
+<PortfolioHeader name={me.name} role={me.role} bio={me.bio} links={me.links} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { PortfolioHeader } from "@/components/blocks/portfolio-header";
+```
+
+```tsx
+<PortfolioHeader name={me.name} role={me.role} bio={me.bio} links={me.links} />
+```
+
+</ForFramework>
+
+## Referencia de la API
+
+### Props
+
+| Prop           | Tipo              | Por defecto                    | Descripción                                                      |
+| -------------- | ----------------- | ------------------------------ | ---------------------------------------------------------------- |
+| `name`         | `string`          | `"Lena Ortiz"`                 | Tu nombre, el `h1` de la página. Va con serifa.                  |
+| `role`         | `string`          | `"Product designer in Lisbon"` | A qué te dedicas, bajo el nombre; `""` lo oculta.                |
+| `bio`          | `string`          | dos frases                     | Una breve biografía bajo el rol; `""` la oculta.                 |
+| `initials`     | `string`          | `"LO"`                         | Una o dos letras. El avatar las muestra hasta que carga la foto. |
+| `avatarUrl`    | `string`          | —                              | Tu foto.                                                         |
+| `availability` | `string`          | `"Available for new projects"` | Un estado junto a un punto verde; `""` lo oculta.                |
+| `links`        | `PortfolioLink[]` | cuatro enlaces de ejemplo      | Dónde encontrarte. `[]` oculta la fila.                          |
+| `error`        | `string`          | —                              | Falló la carga del perfil; se muestra un Alert con reintento.    |
+| `loading`      | `boolean`         | `false`                        | Marcadores en una región ocupada reemplazan el encabezado.       |
+| `disabled`     | `boolean`         | `false`                        | El encabezado se queda; los enlaces y el reintento, no.          |
+| `onRetry`      | `() => void`      | —                              | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.      |
+
+### PortfolioLink
+
+| Campo   | Tipo     | Descripción                                   |
+| ------- | -------- | --------------------------------------------- |
+| `id`    | `string` | Una clave única para el enlace.               |
+| `label` | `string` | El texto que lee la gente, como `"LinkedIn"`. |
+| `href`  | `string` | A dónde lleva, como un perfil o un `mailto:`. |
+
+### Estados
+
+| Estado        | Prop                                                      | Qué se muestra                                                |
+| ------------- | --------------------------------------------------------- | ------------------------------------------------------------- |
+| Por defecto   | —                                                         | Avatar, disponibilidad, nombre, rol, biografía y enlaces.     |
+| Vacío         | todo texto `""` salvo `name`, `initials=""`, `links={[]}` | Solo el nombre.                                               |
+| Cargando      | `loading`                                                 | Marcadores para el avatar, el estado, el texto y los enlaces. |
+| Error         | `error`                                                   | Un Alert de error con "Try again".                            |
+| Deshabilitado | `disabled`                                                | El mismo encabezado con todos los enlaces inertes.            |
+
+### Tamaño
+
+| Paso del contenedor      | Qué cambia                                           |
+| ------------------------ | ---------------------------------------------------- |
+| bajo `@sm`               | El avatar va sobre el texto.                         |
+| `@sm` (`--container-sm`) | El rol y la biografía suben un tamaño.               |
+| `@md` (`--container-md`) | El nombre sube un tamaño y el avatar pasa a su lado. |
+| `@lg` (`--container-lg`) | Más espacio arriba, abajo y entre las partes.        |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+El mismo bloque a 18rem, 30rem, 40rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <PortfolioHeaderBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Solo el nombre
+
+Pasa `""` en `role`, `bio`, `availability` e `initials`, y `links={[]}`.
+
+<Preview examples={examples} layout="fill">
+  <PortfolioHeaderBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <PortfolioHeaderBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+Pulsa "Try again" para quitar el mensaje y recuperar el encabezado.
+
+<Preview examples={examples} layout="fill">
+  <PortfolioHeaderBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+<Preview examples={examples} layout="fill">
+  <PortfolioHeaderBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
+
+## Notas
+
+- Deja la biografía en una o dos frases. Tus proyectos cuentan el resto.
+- Pon tu trabajo justo debajo, como una cuadrícula de tus proyectos.

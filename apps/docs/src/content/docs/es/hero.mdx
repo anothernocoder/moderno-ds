@@ -1,0 +1,164 @@
+---
+title: Hero
+description: La sección de apertura de una landing page — un antetítulo, un título con serifa, un subtítulo y dos llamadas a la acción.
+group: Bloques
+order: 117
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import HeroBlockDemo from "../../../islands/HeroBlockDemo.svelte";
+import heroReact from "../../../../../../registry/blocks/hero/react/hero.tsx?raw";
+import heroVue from "../../../../../../registry/blocks/hero/vue/Hero.vue?raw";
+import heroSolid from "../../../../../../registry/blocks/hero/solid/hero.tsx?raw";
+import heroSvelte from "../../../../../../registry/blocks/hero/svelte/Hero.svelte?raw";
+
+export const examples = {
+  react: heroReact,
+  vue: heroVue,
+  solid: heroSolid,
+  svelte: heroSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <HeroBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="hero" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { Hero } from "@/components/blocks/hero";
+```
+
+```tsx
+<Hero title="Factura en minutos" primaryAction="Empezar" onPrimaryAction={signUp} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import Hero from "@/components/blocks/Hero.vue";
+</script>
+```
+
+```vue
+<Hero title="Factura en minutos" primary-action="Empezar" @primary-action="signUp" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import Hero from "@/components/blocks/Hero.svelte";
+</script>
+```
+
+```svelte
+<Hero title="Factura en minutos" primaryAction="Empezar" onprimaryaction={signUp} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { Hero } from "@/components/blocks/hero";
+```
+
+```tsx
+<Hero title="Factura en minutos" primaryAction="Empezar" onPrimaryAction={signUp} />
+```
+
+</ForFramework>
+
+## Referencia de la API
+
+### Props
+
+| Prop                | Tipo         | Por defecto                           | Descripción                                                                                  |
+| ------------------- | ------------ | ------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `kicker`            | `string`     | `"Now in public beta"`                | Una etiqueta corta sobre el título; `""` la oculta.                                          |
+| `title`             | `string`     | `"Run your business, not your books"` | Qué hace el producto, en pocas palabras. Va en la fuente con serifa.                         |
+| `subtitle`          | `string`     | una frase                             | Una o dos frases bajo el título; `""` lo oculta.                                             |
+| `primaryAction`     | `string`     | `"Start free trial"`                  | La etiqueta del botón principal; `""` lo oculta.                                             |
+| `secondaryAction`   | `string`     | `"Book a demo"`                       | La etiqueta del botón con contorno; `""` lo oculta.                                          |
+| `error`             | `string`     | —                                     | Algo detrás de las acciones falló; un Alert de error con reintento sustituye a las acciones. |
+| `loading`           | `boolean`    | `false`                               | Marcadores de esqueleto en una región ocupada sustituyen al contenido.                       |
+| `disabled`          | `boolean`    | `false`                               | El contenido se queda y todos los botones se deshabilitan.                                   |
+| `onPrimaryAction`   | `() => void` | —                                     | Se pulsó el botón principal. Svelte: `onprimaryaction`. Vue: `@primary-action`.              |
+| `onSecondaryAction` | `() => void` | —                                     | Se pulsó el botón con contorno. Svelte: `onsecondaryaction`. Vue: `@secondary-action`.       |
+| `onRetry`           | `() => void` | —                                     | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.                                  |
+
+### Estados
+
+| Estado        | Prop                     | Qué se muestra                                                                      |
+| ------------- | ------------------------ | ----------------------------------------------------------------------------------- |
+| Por defecto   | —                        | Antetítulo, título, subtítulo y las dos acciones.                                   |
+| Vacío         | todo texto menos `title` | Solo el título, cuando pasas `""` al antetítulo, al subtítulo y a las dos acciones. |
+| Cargando      | `loading`                | Marcadores para el antetítulo, el título, el subtítulo y un botón.                  |
+| Error         | `error`                  | El título y el subtítulo, y después un Alert de error con "Try again".              |
+| Deshabilitado | `disabled`               | El mismo contenido con los dos botones deshabilitados.                              |
+
+### Tamaño
+
+| Paso del contenedor      | Qué cambia                                                                      |
+| ------------------------ | ------------------------------------------------------------------------------- |
+| bajo `@sm`               | Las acciones se apilan, cada una tan ancha como el bloque, la principal arriba. |
+| `@sm` (`--container-sm`) | Las acciones van una junto a otra, centradas, con su propio ancho.              |
+| `@md` (`--container-md`) | El título y el subtítulo suben un tamaño.                                       |
+| `@lg` (`--container-lg`) | El bloque toma el doble de espacio arriba y abajo.                              |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+El mismo bloque a 18rem, 30rem, 40rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <HeroBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Solo título
+
+Pasa `""` a todo menos al título.
+
+<Preview examples={examples} layout="fill">
+  <HeroBlockDemo client:visible locale="es" state="title-only" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <HeroBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+Pulsa "Try again" para quitar el mensaje y recuperar las acciones.
+
+<Preview examples={examples} layout="fill">
+  <HeroBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+<Preview examples={examples} layout="fill">
+  <HeroBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
+
+## Notas
+
+- Usa un solo hero por página, arriba del todo.
+- Mantén el título corto. Di qué hace el producto, no cómo se llama.

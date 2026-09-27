@@ -1,0 +1,189 @@
+---
+title: List container
+description: A header, a scrolling list and a footer in one bordered surface.
+group: Blocks
+order: 113
+agent:
+  intent: Hold a list of rows in a bounded box, with a header that names it and a footer that sums it up, while only the rows scroll.
+  whenToUse: "A list that can grow past the space it is given: tasks on a dashboard, members of a team, recent orders, open tickets."
+  whenNotToUse:
+    - case: Rows the reader sorts, filters or compares column by column
+      use: a table
+    - case: A timeline of events with avatars and timestamps
+      use: ActivityFeed
+    - case: A few items shown as tiles
+      use: GridList
+  gotchas:
+    - "Presentational: it fetches, sorts and pages nothing. `onAction` is the footer button; opening the full list is yours."
+    - "The body scrolls inside a fixed height from the spacing scale; the header and footer stay put. The scroll area is a labelled, focusable region so keyboard users can scroll it."
+    - "`statusVariant` is a Badge status (`info`, `success`, `warning`, `error`, `neutral`). The status text says the same thing, so the colour is never the only cue."
+    - "`items` defaults to a sample set so the block renders standalone. Pass your own array — or edit the constant, the file is yours after `moderno add`."
+    - "`items={[]}` is the empty state. `loading` puts placeholder rows in the body and `error` puts a retry there; the header and footer stay."
+    - "The block responds to its container, never the viewport: status and time move to a trailing column at --container-sm, sit side by side at --container-md, and the times line up at --container-lg."
+  theming:
+    - "Nothing is painted here. The surface is Card, each person is Avatar, each status is a Badge, the placeholders are Skeleton and the failed load is Alert's error variant."
+    - "Row rules and the body's edges read --border; the scroll area's focus ring reads --ring and is drawn inside its edge."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ListContainerBlockDemo from "../../../islands/ListContainerBlockDemo.svelte";
+import listContainerReact from "../../../../../../registry/blocks/list-container/react/list-container.tsx?raw";
+import listContainerVue from "../../../../../../registry/blocks/list-container/vue/ListContainer.vue?raw";
+import listContainerSolid from "../../../../../../registry/blocks/list-container/solid/list-container.tsx?raw";
+import listContainerSvelte from "../../../../../../registry/blocks/list-container/svelte/ListContainer.svelte?raw";
+
+export const examples = {
+  react: listContainerReact,
+  vue: listContainerVue,
+  solid: listContainerSolid,
+  svelte: listContainerSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <ListContainerBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="list-container" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { ListContainer } from "@/components/blocks/list-container";
+```
+
+```tsx
+<ListContainer items={tasks} onAction={openAllTasks} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import ListContainer from "@/components/blocks/ListContainer.vue";
+</script>
+```
+
+```vue
+<ListContainer :items="tasks" @action="openAllTasks" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import ListContainer from "@/components/blocks/ListContainer.svelte";
+</script>
+```
+
+```svelte
+<ListContainer items={tasks} onaction={openAllTasks} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { ListContainer } from "@/components/blocks/list-container";
+```
+
+```tsx
+<ListContainer items={tasks()} onAction={openAllTasks} />
+```
+
+</ForFramework>
+
+Each row is `{ id, title, subtitle, meta, initials, avatarUrl, status, statusVariant }`. Only `id`, `title` and `initials` are required.
+
+## API Reference
+
+### Props
+
+| Prop          | Type                  | Default            | Description                                                    |
+| ------------- | --------------------- | ------------------ | -------------------------------------------------------------- |
+| `items`       | `ListContainerItem[]` | a sample set       | The rows, in reading order. `[]` renders the empty state.      |
+| `heading`     | `string`              | `"Sprint tasks"`   | The heading in the header. It also names the scroll area.      |
+| `description` | `string`              | a sentence         | The line under the heading; `""` hides it.                     |
+| `actionLabel` | `string`              | `"View all tasks"` | The footer button's label; `""` hides the button.              |
+| `error`       | `string`              | —                  | The rows failed to load; an alert with a retry fills the body. |
+| `loading`     | `boolean`             | `false`            | Placeholder rows in a busy region fill the body.               |
+| `disabled`    | `boolean`             | `false`            | The rows stay readable and every button is disabled.           |
+| `onAction`    | `() => void`          | —                  | The footer button. Svelte: `onaction`. Vue: `@action`.         |
+| `onRetry`     | `() => void`          | —                  | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.   |
+
+### ListContainerItem
+
+| Field           | Type           | Description                                          |
+| --------------- | -------------- | ---------------------------------------------------- |
+| `id`            | `string`       | Stable identity.                                     |
+| `title`         | `string`       | The row's main line. Cut with an ellipsis when long. |
+| `subtitle`      | `string`       | Optional second line.                                |
+| `meta`          | `string`       | Optional short fact, such as a due date.             |
+| `initials`      | `string`       | Shown in the avatar when there is no picture.        |
+| `avatarUrl`     | `string`       | Optional picture for the avatar.                     |
+| `status`        | `string`       | Optional status text, shown as a badge.              |
+| `statusVariant` | `BadgeVariant` | The badge's colour. Default `"neutral"`.             |
+
+### States
+
+| State    | Prop         | What renders                                               |
+| -------- | ------------ | ---------------------------------------------------------- |
+| Default  | —            | The rows in a scroll area, with a count in the footer.     |
+| Empty    | `items={[]}` | "No tasks yet" in the body; the footer button is disabled. |
+| Loading  | `loading`    | Four placeholder rows in a busy `status` region.           |
+| Error    | `error`      | One error alert with a "Try again" button in the body.     |
+| Disabled | `disabled`   | The rows with every button disabled.                       |
+
+### Sizing
+
+| Container step           | What changes                                                    |
+| ------------------------ | --------------------------------------------------------------- |
+| below `@sm`              | Status and time sit under each row's title.                     |
+| `@sm` (`--container-sm`) | Status and time move to a trailing column, one above the other. |
+| `@md` (`--container-md`) | Status and time sit side by side; the heading grows.            |
+| `@lg` (`--container-lg`) | The times line up in one column.                                |
+
+## Examples
+
+### Container widths
+
+The same list at 18rem, 30rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <ListContainerBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Empty
+
+<Preview examples={examples} layout="fill">
+  <ListContainerBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <ListContainerBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+<Preview examples={examples} layout="fill">
+  <ListContainerBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <ListContainerBlockDemo client:visible locale="en" state="disabled" />
+</Preview>

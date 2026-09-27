@@ -1,0 +1,182 @@
+---
+title: Panel de acciones
+description: Filas de ajustes con un interruptor o un botón cada una, y una variante destructiva para una zona de peligro.
+group: Bloques
+order: 115
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ActionPanelBlockDemo from "../../../islands/ActionPanelBlockDemo.svelte";
+import actionPanelReact from "../../../../../../registry/blocks/action-panel/react/action-panel.tsx?raw";
+import actionPanelVue from "../../../../../../registry/blocks/action-panel/vue/ActionPanel.vue?raw";
+import actionPanelSolid from "../../../../../../registry/blocks/action-panel/solid/action-panel.tsx?raw";
+import actionPanelSvelte from "../../../../../../registry/blocks/action-panel/svelte/ActionPanel.svelte?raw";
+
+export const examples = {
+  react: actionPanelReact,
+  vue: actionPanelVue,
+  solid: actionPanelSolid,
+  svelte: actionPanelSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <ActionPanelBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="action-panel" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { ActionPanel } from "@/components/blocks/action-panel";
+```
+
+```tsx
+<ActionPanel heading="Notificaciones" items={settings} onCheckedChange={(id, on) => save(id, on)} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import ActionPanel from "@/components/blocks/ActionPanel.vue";
+</script>
+```
+
+```vue
+<ActionPanel heading="Notificaciones" :items="settings" @checked-change="save" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import ActionPanel from "@/components/blocks/ActionPanel.svelte";
+</script>
+```
+
+```svelte
+<ActionPanel heading="Notificaciones" items={settings} oncheckedchange={save} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { ActionPanel } from "@/components/blocks/action-panel";
+```
+
+```tsx
+<ActionPanel
+  heading="Notificaciones"
+  items={settings()}
+  onCheckedChange={(id, on) => save(id, on)}
+/>
+```
+
+</ForFramework>
+
+## Referencia de API
+
+### Props
+
+| Prop              | Tipo                                     | Por defecto            | Descripción                                                                          |
+| ----------------- | ---------------------------------------- | ---------------------- | ------------------------------------------------------------------------------------ |
+| `items`           | `ActionPanelItem[]`                      | un panel de muestra    | Las filas, en el orden en que se muestran. `[]` muestra el estado vacío.             |
+| `heading`         | `string`                                 | `"Workspace settings"` | El título junto al panel o sobre él.                                                 |
+| `description`     | `string`                                 | una frase              | La línea bajo el título; `""` la oculta.                                             |
+| `variant`         | `"default" \| "destructive"`             | `"default"`            | `destructive` marca una zona de peligro: título y borde rojos, botones destructivos. |
+| `error`           | `string`                                 | —                      | Los ajustes no cargaron; una alerta con reintento sustituye las filas.               |
+| `loading`         | `boolean`                                | `false`                | Filas esqueleto en una región ocupada sustituyen las filas.                          |
+| `disabled`        | `boolean`                                | `false`                | Las filas siguen legibles y todos los interruptores y botones quedan deshabilitados. |
+| `onCheckedChange` | `(id: string, checked: boolean) => void` | —                      | Un interruptor cambió. Svelte: `oncheckedchange`. Vue: `@checked-change`.            |
+| `onAction`        | `(id: string) => void`                   | —                      | Se pulsó el botón de una fila. Svelte: `onaction`. Vue: `@action`.                   |
+| `onRetry`         | `() => void`                             | —                      | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.                          |
+
+### ActionPanelItem
+
+| Campo            | Tipo      | Descripción                                                           |
+| ---------------- | --------- | --------------------------------------------------------------------- |
+| `id`             | `string`  | Identidad estable, la que devuelven `onCheckedChange` y `onAction`.   |
+| `title`          | `string`  | El nombre del ajuste, como "Mentions". Da nombre al interruptor.      |
+| `description`    | `string`  | Una línea sobre lo que hace el ajuste. Describe el control.           |
+| `defaultChecked` | `boolean` | Opcional. El interruptor empieza activado.                            |
+| `action`         | `string`  | Opcional. Muestra un botón con este texto en lugar de un interruptor. |
+
+### Estados
+
+| Estado        | Prop                    | Qué se muestra                                                      |
+| ------------- | ----------------------- | ------------------------------------------------------------------- |
+| Por defecto   | —                       | Una fila por elemento, cada una con un interruptor o un botón.      |
+| Destructivo   | `variant="destructive"` | Las mismas filas con título y borde rojos y botones rojos.          |
+| Vacío         | `items={[]}`            | Un mensaje "No settings yet" dentro del panel.                      |
+| Cargando      | `loading`               | Tres filas esqueleto en una región `status` ocupada.                |
+| Error         | `error`                 | Una alerta de error con el botón "Try again" en lugar de las filas. |
+| Deshabilitado | `disabled`              | Las filas con todos los interruptores y botones deshabilitados.     |
+
+### Tamaño
+
+| Paso del contenedor      | Qué cambia                                                                |
+| ------------------------ | ------------------------------------------------------------------------- |
+| bajo `@sm`               | Cada interruptor o botón va bajo su título y su descripción.              |
+| `@sm` (`--container-sm`) | Cada control pasa junto a su texto, y el relleno del panel crece un paso. |
+| `@md` (`--container-md`) | El título sube un tamaño.                                                 |
+| `@lg` (`--container-lg`) | El título va en una columna junto al panel, de un tercio de ancho.        |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+El mismo panel a 18rem, 30rem, 40rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <ActionPanelBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Destructivo
+
+Una zona de peligro: pasa `variant="destructive"` y filas con `action`.
+
+<Preview examples={examples} layout="fill">
+  <ActionPanelBlockDemo client:visible locale="es" state="destructive" />
+</Preview>
+
+### Vacío
+
+<Preview examples={examples} layout="fill">
+  <ActionPanelBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <ActionPanelBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+<Preview examples={examples} layout="fill">
+  <ActionPanelBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+<Preview examples={examples} layout="fill">
+  <ActionPanelBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
+
+## Notas
+
+- Presentacional: no guarda nada. Confirma una acción destructiva antes de actuar sobre `onAction`.
+- Un interruptor se aplica al momento. Para ajustes que se guardan juntos, usa un formulario con un botón de envío.

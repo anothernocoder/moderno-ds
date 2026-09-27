@@ -1,0 +1,171 @@
+---
+title: Feature Grid
+description: Una cuadrícula de funciones para una landing page — un icono, un título y una descripción por cada una, bajo un encabezado con serifa.
+group: Bloques
+order: 118
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import FeatureGridBlockDemo from "../../../islands/FeatureGridBlockDemo.svelte";
+import featureGridReact from "../../../../../../registry/blocks/feature-grid/react/feature-grid.tsx?raw";
+import featureGridVue from "../../../../../../registry/blocks/feature-grid/vue/FeatureGrid.vue?raw";
+import featureGridSolid from "../../../../../../registry/blocks/feature-grid/solid/feature-grid.tsx?raw";
+import featureGridSvelte from "../../../../../../registry/blocks/feature-grid/svelte/FeatureGrid.svelte?raw";
+
+export const examples = {
+  react: featureGridReact,
+  vue: featureGridVue,
+  solid: featureGridSolid,
+  svelte: featureGridSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <FeatureGridBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="feature-grid" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { FeatureGrid } from "@/components/blocks/feature-grid";
+```
+
+```tsx
+<FeatureGrid heading="Por qué se cambian los equipos" features={features} onAction={openTour} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import FeatureGrid from "@/components/blocks/FeatureGrid.vue";
+</script>
+```
+
+```vue
+<FeatureGrid heading="Por qué se cambian los equipos" :features="features" @action="openTour" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import FeatureGrid from "@/components/blocks/FeatureGrid.svelte";
+</script>
+```
+
+```svelte
+<FeatureGrid heading="Por qué se cambian los equipos" {features} onaction={openTour} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { FeatureGrid } from "@/components/blocks/feature-grid";
+```
+
+```tsx
+<FeatureGrid heading="Por qué se cambian los equipos" features={features} onAction={openTour} />
+```
+
+</ForFramework>
+
+## Referencia de la API
+
+### Props
+
+| Prop          | Tipo                | Por defecto                         | Descripción                                                                               |
+| ------------- | ------------------- | ----------------------------------- | ----------------------------------------------------------------------------------------- |
+| `heading`     | `string`            | `"Everything you need to get paid"` | El encabezado de la sección. Va en la fuente con serifa.                                  |
+| `description` | `string`            | una frase                           | Una frase bajo el encabezado; `""` la oculta.                                             |
+| `features`    | `FeatureGridItem[]` | seis funciones de ejemplo           | Las funciones, en orden. `[]` muestra el mensaje de vacío.                                |
+| `action`      | `string`            | `"See all features"`                | La etiqueta del botón con contorno bajo la cuadrícula; `""` lo oculta.                    |
+| `error`       | `string`            | —                                   | Falló la carga de las funciones; un Alert de error con reintento sustituye la cuadrícula. |
+| `loading`     | `boolean`           | `false`                             | Funciones de esqueleto en una región ocupada sustituyen a la cuadrícula.                  |
+| `disabled`    | `boolean`           | `false`                             | El contenido se queda y todos los botones se deshabilitan.                                |
+| `onAction`    | `() => void`        | —                                   | Se pulsó el botón bajo la cuadrícula. Svelte: `onaction`. Vue: `@action`.                 |
+| `onRetry`     | `() => void`        | —                                   | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.                               |
+
+### Función
+
+| Campo         | Tipo                                                              | Descripción                           |
+| ------------- | ----------------------------------------------------------------- | ------------------------------------- |
+| `id`          | `string`                                                          | Una clave estable para la función.    |
+| `icon`        | `"zap" \| "clock" \| "receipt" \| "chart" \| "shield" \| "users"` | El glifo de la baldosa.               |
+| `title`       | `string`                                                          | Pocas palabras. Se muestra como `h3`. |
+| `description` | `string`                                                          | Una frase sobre lo que hace.          |
+
+### Estados
+
+| Estado        | Prop            | Qué se muestra                                                        |
+| ------------- | --------------- | --------------------------------------------------------------------- |
+| Por defecto   | —               | Encabezado, introducción, todas las funciones y la acción.            |
+| Vacío         | `features={[]}` | Encabezado, introducción y "No features to show yet."                 |
+| Cargando      | `loading`       | Encabezado, introducción y tres funciones de marcador.                |
+| Error         | `error`         | Encabezado, introducción y después un Alert de error con "Try again". |
+| Deshabilitado | `disabled`      | El mismo contenido con la acción deshabilitada.                       |
+
+### Tamaño
+
+| Paso del contenedor      | Qué cambia                                                 |
+| ------------------------ | ---------------------------------------------------------- |
+| bajo `@sm`               | Una función por fila.                                      |
+| `@sm` (`--container-sm`) | Dos columnas.                                              |
+| `@md` (`--container-md`) | El encabezado sube un tamaño.                              |
+| `@lg` (`--container-lg`) | Tres columnas, y más espacio arriba y abajo de la sección. |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+El mismo bloque a 18rem, 30rem, 40rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <FeatureGridBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Vacío
+
+Pasa un array `features` vacío.
+
+<Preview examples={examples} layout="fill">
+  <FeatureGridBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <FeatureGridBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+Pulsa "Try again" para quitar el mensaje y recuperar las funciones.
+
+<Preview examples={examples} layout="fill">
+  <FeatureGridBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+<Preview examples={examples} layout="fill">
+  <FeatureGridBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
+
+## Notas
+
+- Tres o seis funciones se leen mejor: llenan cada fila a dos y a tres columnas.
+- Deja cada descripción en una frase. Pon los detalles en la página que abre la acción.

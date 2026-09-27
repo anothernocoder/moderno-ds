@@ -1,0 +1,245 @@
+---
+title: Shopping Cart
+description: The items in a shopper's cart — each with its image, name, price, a quantity box and a Remove button — and an order summary with the subtotal and a Checkout button.
+group: Blocks
+order: 123
+agent:
+  intent: A shop's cart page — a serif heading, one line per item (image, name as a link, options such as colour or size, price, a NumberInput for the quantity and a Remove button), then an order summary card with the subtotal, a short note and a Checkout button.
+  whenToUse: "A shop's cart page, or the cart step before checkout — anywhere a shopper reviews what they picked and changes quantities before paying."
+  whenNotToUse:
+    - case: A grid of products to browse, with pagination
+      use: ProductList — it shows a page of products to pick from
+    - case: One product on its own, with an Add to cart button
+      use: ProductCard — it shows one product in full
+    - case: A list of records in an app, each with a status and actions
+      use: StackedList — its rows carry a status and actions
+  gotchas:
+    - "`items` is an array of `{ id, name, price, quantity, maxQuantity?, options?, href?, image?: { src, alt } }`."
+    - "`price` is the line's price as people read it, for its whole quantity, like `€56` for two €28 mugs. Format it in the reader's currency and language before you pass it."
+    - "`subtotal` is a string too, like `€134`. The block does no maths: when a quantity changes, work out the new prices and subtotal and pass them back in. Without `subtotal`, the summary shows no subtotal row."
+    - "Each quantity is a NumberInput for whole numbers from 1 to `maxQuantity` (99 by default). The block keeps each box's own value; `onQuantityChange(id, quantity)` (Svelte `onquantitychange`, Vue `@quantity-change`) reports each new quantity, always a whole number from 1 to `maxQuantity`. The box refuses a typed decimal point. A number outside that range, or a pasted fraction, is not reported; when the box loses focus it moves back into the range and rounds to a whole number, and that number is reported."
+    - "`onRemove(id)` (Svelte `onremove`, Vue `@remove`) reports that a line's Remove button was pressed. Drop that item from `items` to remove the line."
+    - "`onCheckout` (Svelte `oncheckout`, Vue `@checkout`) reports that Checkout was pressed. Moving to checkout stays yours."
+    - "With `href`, the item's name is a link to its product page. Without it, the name is plain text."
+    - "Give `image.alt` a short description of the photo. Without `image`, the image area is an empty muted box."
+    - 'Each name is an `h3` under the block''s `h2`, and so is "Order summary".'
+    - '`note` sits under the subtotal ("Shipping and taxes are added at checkout." by default). `""` hides it.'
+    - '`items={[]}` shows "Your cart is empty." in place of the lines and the summary.'
+    - "`loading` keeps the heading and shows three placeholder lines in one busy `status` region."
+    - '`error` keeps the heading and puts an error Alert with your message and a "Try again" button where the lines and the summary were. An empty string counts as no error.'
+    - "`disabled` keeps every line, makes each name link inert (no `href`, `aria-disabled`), and disables every quantity box, every Remove button, Checkout and the retry button."
+    - "The layout follows the block's own width, not the viewport: a small image with the quantity on its own row under it at first; a larger image with the quantity beside it, under the name, from `--container-sm`; a larger image again and a larger heading from `--container-md`; the summary beside the lines from `--container-lg`."
+  theming:
+    - "The block paints only the muted box behind each image (--muted), the lines' dividers (--border) and its dashed empty box (--border). The quantity is NumberInput, Remove is Button's ghost variant, the summary is Card's muted variant, Checkout is Button's primary variant, the error is Alert's error variant, the retry is Button's outline variant and the loading lines are Skeleton."
+    - "The heading reads --font-serif and --foreground; the options, the subtotal label and the note read --muted-foreground; the name links read --foreground and their focus ring --ring."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ShoppingCartBlockDemo from "../../../islands/ShoppingCartBlockDemo.svelte";
+import shoppingCartReact from "../../../../../../registry/blocks/shopping-cart/react/shopping-cart.tsx?raw";
+import shoppingCartVue from "../../../../../../registry/blocks/shopping-cart/vue/ShoppingCart.vue?raw";
+import shoppingCartSolid from "../../../../../../registry/blocks/shopping-cart/solid/shopping-cart.tsx?raw";
+import shoppingCartSvelte from "../../../../../../registry/blocks/shopping-cart/svelte/ShoppingCart.svelte?raw";
+
+export const examples = {
+  react: shoppingCartReact,
+  vue: shoppingCartVue,
+  solid: shoppingCartSolid,
+  svelte: shoppingCartSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <ShoppingCartBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="shopping-cart" />
+
+## Usage
+
+Use Shopping Cart for a shop's cart page. Shoppers see what they picked, change quantities, remove items and go to checkout.
+
+<ForFramework fw="react">
+
+```tsx
+import { ShoppingCart } from "@/components/blocks/shopping-cart";
+```
+
+```tsx
+<ShoppingCart
+  items={items}
+  subtotal={subtotal}
+  onQuantityChange={setQuantity}
+  onRemove={removeItem}
+  onCheckout={goToCheckout}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import ShoppingCart from "@/components/blocks/ShoppingCart.vue";
+</script>
+```
+
+```vue
+<ShoppingCart
+  :items="items"
+  :subtotal="subtotal"
+  @quantity-change="setQuantity"
+  @remove="removeItem"
+  @checkout="goToCheckout"
+/>
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import ShoppingCart from "@/components/blocks/ShoppingCart.svelte";
+</script>
+```
+
+```svelte
+<ShoppingCart
+  {items}
+  {subtotal}
+  onquantitychange={setQuantity}
+  onremove={removeItem}
+  oncheckout={goToCheckout}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { ShoppingCart } from "@/components/blocks/shopping-cart";
+```
+
+```tsx
+<ShoppingCart
+  items={items()}
+  subtotal={subtotal()}
+  onQuantityChange={setQuantity}
+  onRemove={removeItem}
+  onCheckout={goToCheckout}
+/>
+```
+
+</ForFramework>
+
+The block does no maths. When a quantity changes, work out the line's price and the subtotal, and pass them back in.
+
+## API Reference
+
+### Props
+
+| Prop               | Type                                     | Default                                       | Description                                                                                                                    |
+| ------------------ | ---------------------------------------- | --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `heading`          | `string`                                 | `"Shopping cart"`                             | The section's heading. It is set in the serif face.                                                                            |
+| `items`            | `CartItem[]`                             | three sample items                            | The lines in the cart. `[]` shows the empty message.                                                                           |
+| `subtotal`         | `string`                                 | `"€134"` with the samples                     | The subtotal as people read it. Left out, the summary has no subtotal row.                                                     |
+| `note`             | `string`                                 | `"Shipping and taxes are added at checkout."` | A line under the subtotal; `""` hides it.                                                                                      |
+| `error`            | `string`                                 | —                                             | Loading the cart failed; an error Alert with a retry replaces the lines and the summary.                                       |
+| `loading`          | `boolean`                                | `false`                                       | Placeholder lines in a busy region replace the lines and the summary.                                                          |
+| `disabled`         | `boolean`                                | `false`                                       | The lines stay; every link is inert and every quantity box and button is off.                                                  |
+| `onQuantityChange` | `(id: string, quantity: number) => void` | —                                             | A line's quantity changed, always a whole number from 1 to `maxQuantity`. Svelte: `onquantitychange`. Vue: `@quantity-change`. |
+| `onRemove`         | `(id: string) => void`                   | —                                             | A line's "Remove" was pressed. Svelte: `onremove`. Vue: `@remove`.                                                             |
+| `onCheckout`       | `() => void`                             | —                                             | "Checkout" was pressed. Svelte: `oncheckout`. Vue: `@checkout`.                                                                |
+| `onRetry`          | `() => void`                             | —                                             | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.                                                                   |
+
+### CartItem
+
+| Field         | Type            | Description                                                   |
+| ------------- | --------------- | ------------------------------------------------------------- |
+| `id`          | `string`        | A stable key for the line. The callbacks report it.           |
+| `name`        | `string`        | The product's name.                                           |
+| `price`       | `string`        | The line's price for its whole quantity, like `"€56"`.        |
+| `quantity`    | `number`        | How many are in the cart. The quantity box starts at it.      |
+| `maxQuantity` | `number`        | Optional. The most a shopper can pick; `99` when left out.    |
+| `options`     | `string`        | Optional. What the shopper chose, like `"Sage · 350 ml"`.     |
+| `href`        | `string`        | Optional. Turns the name into a link to the product's page.   |
+| `image`       | `CartItemImage` | Optional. The photo: `{ src, alt }`. Without it, a muted box. |
+
+### States
+
+| State    | Prop         | What renders                                                         |
+| -------- | ------------ | -------------------------------------------------------------------- |
+| Default  | —            | The heading, one line per item and the order summary.                |
+| Empty    | `items={[]}` | The heading and "Your cart is empty." in a dashed box.               |
+| Loading  | `loading`    | The heading and three placeholder lines.                             |
+| Error    | `error`      | The heading and an error Alert with "Try again".                     |
+| Disabled | `disabled`   | The same lines with links inert, and quantity boxes and buttons off. |
+
+### Sizing
+
+| Container step           | What changes                                                                                                    |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------- |
+| below `@sm`              | A small image. The quantity and Remove sit on their own row, under the image. The summary sits under the lines. |
+| `@sm` (`--container-sm`) | The image grows, and the quantity and Remove move beside it, under the name.                                    |
+| `@md` (`--container-md`) | The image grows again, and the heading steps up.                                                                |
+| `@lg` (`--container-lg`) | The summary moves beside the lines.                                                                             |
+
+## Examples
+
+### Container widths
+
+The same block at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <ShoppingCartBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Without images
+
+Leave out `image`, and each image area is a muted box.
+
+<Preview examples={examples} layout="fill">
+  <ShoppingCartBlockDemo client:visible locale="en" state="no-images" />
+</Preview>
+
+### Empty
+
+Pass an empty `items` array.
+
+<Preview examples={examples} layout="fill">
+  <ShoppingCartBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <ShoppingCartBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+Press "Try again" to clear the message and bring the cart back.
+
+<Preview examples={examples} layout="fill">
+  <ShoppingCartBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+Use it while the cart saves a change, so the shopper cannot change it twice.
+
+<Preview examples={examples} layout="fill">
+  <ShoppingCartBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- The Preview at the top is live: change a quantity or remove a line, and the prices and the subtotal follow.
+- Keep `options` short: the colour and the size are enough.

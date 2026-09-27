@@ -1,0 +1,179 @@
+---
+title: Content
+description: Una sección de prosa larga — un encabezado con serifa, una entradilla, secciones de párrafos con título y una cita destacada, en una sola columna de lectura.
+group: Bloques
+order: 119
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ContentBlockDemo from "../../../islands/ContentBlockDemo.svelte";
+import contentReact from "../../../../../../registry/blocks/content/react/content.tsx?raw";
+import contentVue from "../../../../../../registry/blocks/content/vue/Content.vue?raw";
+import contentSolid from "../../../../../../registry/blocks/content/solid/content.tsx?raw";
+import contentSvelte from "../../../../../../registry/blocks/content/svelte/Content.svelte?raw";
+
+export const examples = {
+  react: contentReact,
+  vue: contentVue,
+  solid: contentSolid,
+  svelte: contentSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <ContentBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="content" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { Content } from "@/components/blocks/content";
+```
+
+```tsx
+<Content heading="Cómo cerramos el mes" sections={sections} onAction={openGuide} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import Content from "@/components/blocks/Content.vue";
+</script>
+```
+
+```vue
+<Content heading="Cómo cerramos el mes" :sections="sections" @action="openGuide" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import Content from "@/components/blocks/Content.svelte";
+</script>
+```
+
+```svelte
+<Content heading="Cómo cerramos el mes" {sections} onaction={openGuide} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { Content } from "@/components/blocks/content";
+```
+
+```tsx
+<Content heading="Cómo cerramos el mes" sections={sections} onAction={openGuide} />
+```
+
+</ForFramework>
+
+## Referencia de la API
+
+### Props
+
+| Prop       | Tipo                   | Por defecto                                 | Descripción                                                                |
+| ---------- | ---------------------- | ------------------------------------------- | -------------------------------------------------------------------------- |
+| `kicker`   | `string`               | `"Field notes"`                             | Unas palabras sobre el encabezado; `""` las oculta.                        |
+| `heading`  | `string`               | `"Close the month without the spreadsheet"` | El encabezado de la sección. Va en la fuente con serifa.                   |
+| `lead`     | `string`               | una frase                                   | La introducción bajo el encabezado; `""` la oculta.                        |
+| `sections` | `ContentSection[]`     | dos secciones de ejemplo                    | El artículo, en orden. `[]` muestra el mensaje de vacío.                   |
+| `quote`    | `ContentQuote \| null` | una cita de ejemplo                         | Una cita destacada tras las secciones; `null` la oculta.                   |
+| `action`   | `string`               | `"Read the full guide"`                     | La etiqueta del botón con contorno bajo el artículo; `""` lo oculta.       |
+| `error`    | `string`               | —                                           | Falló la carga del artículo; un Alert de error con reintento lo sustituye. |
+| `loading`  | `boolean`              | `false`                                     | Líneas de esqueleto en una región ocupada sustituyen al artículo.          |
+| `disabled` | `boolean`              | `false`                                     | El contenido se queda y todos los botones se deshabilitan.                 |
+| `onAction` | `() => void`           | —                                           | Se pulsó el botón bajo el artículo. Svelte: `onaction`. Vue: `@action`.    |
+| `onRetry`  | `() => void`           | —                                           | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.                |
+
+### Sección
+
+| Campo        | Tipo       | Descripción                                  |
+| ------------ | ---------- | -------------------------------------------- |
+| `id`         | `string`   | Una clave estable para la sección.           |
+| `heading`    | `string`   | Pocas palabras. Se muestra como `h3`.        |
+| `paragraphs` | `string[]` | El texto de la sección, un `p` por elemento. |
+
+### Cita
+
+| Campo    | Tipo     | Descripción                                    |
+| -------- | -------- | ---------------------------------------------- |
+| `text`   | `string` | Las palabras citadas, en la fuente con serifa. |
+| `author` | `string` | Quién lo dijo, bajo la cita.                   |
+
+### Estados
+
+| Estado        | Prop            | Qué se muestra                                                                |
+| ------------- | --------------- | ----------------------------------------------------------------------------- |
+| Por defecto   | —               | Antetítulo, encabezado, entradilla, todas las secciones, la cita y la acción. |
+| Vacío         | `sections={[]}` | Antetítulo, encabezado, entradilla y "Nothing to read here yet."              |
+| Cargando      | `loading`       | Antetítulo, encabezado, entradilla y dos secciones de marcador.               |
+| Error         | `error`         | Antetítulo, encabezado, entradilla y un Alert de error con "Try again".       |
+| Deshabilitado | `disabled`      | El mismo contenido con la acción deshabilitada.                               |
+
+### Tamaño
+
+| Paso del contenedor      | Qué cambia                                                  |
+| ------------------------ | ----------------------------------------------------------- |
+| bajo `@sm`               | La entradilla a tamaño de cuerpo.                           |
+| `@sm` (`--container-sm`) | La entradilla sube un tamaño; la cita se mete hacia dentro. |
+| `@md` (`--container-md`) | El encabezado sube un tamaño.                               |
+| `@lg` (`--container-lg`) | Más espacio arriba y abajo de la sección.                   |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+El mismo bloque a 18rem, 30rem, 40rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <ContentBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Vacío
+
+Pasa un array `sections` vacío.
+
+<Preview examples={examples} layout="fill">
+  <ContentBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <ContentBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+Pulsa "Try again" para quitar el mensaje y recuperar el artículo.
+
+<Preview examples={examples} layout="fill">
+  <ContentBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+<Preview examples={examples} layout="fill">
+  <ContentBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
+
+## Notas
+
+- De dos a cuatro secciones se leen mejor. Pon un artículo más largo en su propia página.
+- Deja los párrafos cortos: tres o cuatro frases cada uno.

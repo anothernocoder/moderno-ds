@@ -1,0 +1,184 @@
+---
+title: CTA
+description: A call-to-action section — a serif title, one line of description and two buttons in a bordered panel.
+group: Blocks
+order: 118
+agent:
+  intent: A section that asks the reader to act — a short serif title, one line of description and a primary and a secondary button, in a bordered panel.
+  whenToUse: "Near the end of a landing, pricing or feature page, or between two long sections: the place that repeats the one thing to do next."
+  whenNotToUse:
+    - case: The first section of a landing page
+      use: Hero — it opens the page with a kicker, a large h1 and the same two actions
+    - case: A short notice across the top of the page
+      use: Banner — a one-line strip with a badge, one action and a dismiss
+    - case: A collection with nothing in it yet
+      use: EmptyState — it says what is missing and leads to the first item
+  gotchas:
+    - '`description`, `primaryAction` and `secondaryAction` hide when you pass `""`. Hide them all and the title stands alone.'
+    - "The title is an `h2`, so the block can sit anywhere under the page's `h1`."
+    - "Presentational: `onPrimaryAction`, `onSecondaryAction` and `onRetry` report which button was pressed. Signing up, booking and retrying stay yours."
+    - "`loading` replaces the content with skeleton placeholders in one busy `status` region."
+    - '`error` keeps the title and description and puts an error Alert with your message and a "Try again" button where the actions were. An empty string counts as no error.'
+    - "The layout follows the block's own width, not the viewport: the text and the actions are centred and stacked until `--container-lg`, then share one row."
+  theming:
+    - "The panel is --card and --card-foreground with a --border hairline and the --radius corner. The actions are Button's primary and outline variants, the error is Alert's error variant and the loading placeholders are Skeleton."
+    - "The title reads --font-serif and --card-foreground; the description reads --muted-foreground."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg, and the text is capped at --container-md."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import CtaBlockDemo from "../../../islands/CtaBlockDemo.svelte";
+import ctaReact from "../../../../../../registry/blocks/cta/react/cta.tsx?raw";
+import ctaVue from "../../../../../../registry/blocks/cta/vue/Cta.vue?raw";
+import ctaSolid from "../../../../../../registry/blocks/cta/solid/cta.tsx?raw";
+import ctaSvelte from "../../../../../../registry/blocks/cta/svelte/Cta.svelte?raw";
+
+export const examples = {
+  react: ctaReact,
+  vue: ctaVue,
+  solid: ctaSolid,
+  svelte: ctaSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <CtaBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="cta" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { Cta } from "@/components/blocks/cta";
+```
+
+```tsx
+<Cta title="Ready to get paid faster?" primaryAction="Get started" onPrimaryAction={signUp} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import Cta from "@/components/blocks/Cta.vue";
+</script>
+```
+
+```vue
+<Cta title="Ready to get paid faster?" primary-action="Get started" @primary-action="signUp" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import Cta from "@/components/blocks/Cta.svelte";
+</script>
+```
+
+```svelte
+<Cta title="Ready to get paid faster?" primaryAction="Get started" onprimaryaction={signUp} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { Cta } from "@/components/blocks/cta";
+```
+
+```tsx
+<Cta title="Ready to get paid faster?" primaryAction="Get started" onPrimaryAction={signUp} />
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+| Prop                | Type         | Default                                  | Description                                                                            |
+| ------------------- | ------------ | ---------------------------------------- | -------------------------------------------------------------------------------------- |
+| `title`             | `string`     | `"Close the month in minutes, not days"` | What the reader gets, in a few words. Set in the serif face.                           |
+| `description`       | `string`     | a sentence                               | One line under the title; `""` hides it.                                               |
+| `primaryAction`     | `string`     | `"Start free trial"`                     | The primary button's label; `""` hides it.                                             |
+| `secondaryAction`   | `string`     | `"Talk to sales"`                        | The outline button's label; `""` hides it.                                             |
+| `error`             | `string`     | —                                        | Something behind the actions failed; an error Alert with a retry replaces the actions. |
+| `loading`           | `boolean`    | `false`                                  | Skeleton placeholders in a busy region replace the content.                            |
+| `disabled`          | `boolean`    | `false`                                  | The content stays and every button is disabled.                                        |
+| `onPrimaryAction`   | `() => void` | —                                        | The primary button was pressed. Svelte: `onprimaryaction`. Vue: `@primary-action`.     |
+| `onSecondaryAction` | `() => void` | —                                        | The outline button was pressed. Svelte: `onsecondaryaction`. Vue: `@secondary-action`. |
+| `onRetry`           | `() => void` | —                                        | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.                           |
+
+### States
+
+| State    | Prop                   | What renders                                                              |
+| -------- | ---------------------- | ------------------------------------------------------------------------- |
+| Default  | —                      | Title, description and both actions.                                      |
+| Empty    | every text but `title` | The title alone, when you pass `""` for the description and both actions. |
+| Loading  | `loading`              | Placeholders for the title, the description and two buttons.              |
+| Error    | `error`                | The title and description, then an error Alert with "Try again".          |
+| Disabled | `disabled`             | The same content with both buttons disabled.                              |
+
+### Sizing
+
+| Container step           | What changes                                                         |
+| ------------------------ | -------------------------------------------------------------------- |
+| below `@sm`              | Everything is centred; the actions stack, each as wide as the panel. |
+| `@sm` (`--container-sm`) | The actions sit side by side, centred, at their own width.           |
+| `@md` (`--container-md`) | The title steps up a size.                                           |
+| `@lg` (`--container-lg`) | The text moves to the start and the actions to the end, in one row.  |
+
+## Examples
+
+### Container widths
+
+The same block at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <CtaBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Title only
+
+Pass `""` for everything but the title.
+
+<Preview examples={examples} layout="fill">
+  <CtaBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <CtaBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+Press "Try again" to clear the message and bring the actions back.
+
+<Preview examples={examples} layout="fill">
+  <CtaBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <CtaBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Ask for one thing. The secondary action is for readers who are not ready yet.
+- Keep the title to one line at wide sizes: say what the reader gets.

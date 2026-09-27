@@ -116,12 +116,16 @@ const CANDIDATE_SEPARATOR = /[\s,`'"{}()]/;
  * The one bracket that is not a candidate's is the host dialect's own array
  * (`class:list={['p-6', 'grid']}`), recognised by the quote or space that
  * follows it, and skipped.
+ *
+ * A token with an `=` outside its brackets is the host's own code (`===` in a
+ * JSX expression), not a class; inside them it is an attribute variant
+ * (`data-[size=sm]:max-w-sm`), which is kept.
  */
 function candidatesIn(value: string, found: Set<string>): void {
   let token = "";
   let depth = 0;
   const flush = () => {
-    if (token.length > 0 && !token.includes("=")) found.add(token);
+    if (token.length > 0 && !token.replace(/\[[^\]]*\]/g, "").includes("=")) found.add(token);
     token = "";
   };
   for (let i = 0; i < value.length; i += 1) {

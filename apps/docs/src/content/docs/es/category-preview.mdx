@@ -1,0 +1,172 @@
+---
+title: Category Preview
+description: Las categorías de una tienda como una cuadrícula de mosaicos — cada uno con una imagen, un nombre, una línea sobre él y cuántos productos tiene, bajo un encabezado con serifa.
+group: Bloques
+order: 121
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import CategoryPreviewBlockDemo from "../../../islands/CategoryPreviewBlockDemo.svelte";
+import categoryPreviewReact from "../../../../../../registry/blocks/category-preview/react/category-preview.tsx?raw";
+import categoryPreviewVue from "../../../../../../registry/blocks/category-preview/vue/CategoryPreview.vue?raw";
+import categoryPreviewSolid from "../../../../../../registry/blocks/category-preview/solid/category-preview.tsx?raw";
+import categoryPreviewSvelte from "../../../../../../registry/blocks/category-preview/svelte/CategoryPreview.svelte?raw";
+
+export const examples = {
+  react: categoryPreviewReact,
+  vue: categoryPreviewVue,
+  solid: categoryPreviewSolid,
+  svelte: categoryPreviewSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <CategoryPreviewBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="category-preview" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { CategoryPreview } from "@/components/blocks/category-preview";
+```
+
+```tsx
+<CategoryPreview categories={categories} allCategoriesHref="/tienda" />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import CategoryPreview from "@/components/blocks/CategoryPreview.vue";
+</script>
+```
+
+```vue
+<CategoryPreview :categories="categories" all-categories-href="/tienda" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import CategoryPreview from "@/components/blocks/CategoryPreview.svelte";
+</script>
+```
+
+```svelte
+<CategoryPreview {categories} allCategoriesHref="/tienda" />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { CategoryPreview } from "@/components/blocks/category-preview";
+```
+
+```tsx
+<CategoryPreview categories={categories} allCategoriesHref="/tienda" />
+```
+
+</ForFramework>
+
+## Referencia de la API
+
+### Props
+
+| Prop                | Tipo                | Por defecto          | Descripción                                                                                |
+| ------------------- | ------------------- | -------------------- | ------------------------------------------------------------------------------------------ |
+| `heading`           | `string`            | `"Shop by category"` | El encabezado de la sección. Va en la fuente con serifa.                                   |
+| `description`       | `string`            | una frase            | Una frase bajo el encabezado; `""` la oculta.                                              |
+| `allCategoriesHref` | `string`            | `"#"`                | A dónde lleva "Browse all categories", como tu página de tienda; `""` oculta el enlace.    |
+| `categories`        | `CategorySummary[]` | cuatro mosaicos      | Las categorías, en el orden en que se muestran. `[]` muestra el mensaje de vacío.          |
+| `error`             | `string`            | —                    | Falló la carga de las categorías; un Alert de error con reintento reemplaza la cuadrícula. |
+| `loading`           | `boolean`           | `false`              | Mosaicos de marcador en una región ocupada reemplazan la cuadrícula.                       |
+| `disabled`          | `boolean`           | `false`              | Los mosaicos se quedan; cada enlace queda inerte y el reintento deshabilitado.             |
+| `onRetry`           | `() => void`        | —                    | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.                                |
+
+### CategorySummary
+
+| Campo         | Tipo     | Descripción                                                                 |
+| ------------- | -------- | --------------------------------------------------------------------------- |
+| `id`          | `string` | Una clave estable para la categoría.                                        |
+| `name`        | `string` | El nombre de la categoría.                                                  |
+| `description` | `string` | Una línea sobre lo que contiene.                                            |
+| `countLabel`  | `string` | Opcional. Cuántos productos tiene, como lo lee la gente.                    |
+| `imageUrl`    | `string` | Opcional. Una imagen para el mosaico. Sin ella, la inicial del nombre.      |
+| `href`        | `string` | Opcional. Convierte el nombre, y todo el mosaico, en un enlace a su página. |
+
+### Estados
+
+| Estado        | Prop              | Qué se muestra                                                        |
+| ------------- | ----------------- | --------------------------------------------------------------------- |
+| Por defecto   | —                 | Encabezado, introducción y un mosaico por categoría.                  |
+| Vacío         | `categories={[]}` | Encabezado, introducción y "No categories to show yet."               |
+| Cargando      | `loading`         | Encabezado, introducción y cuatro mosaicos de marcador.               |
+| Error         | `error`           | Encabezado, introducción y después un Alert de error con "Try again". |
+| Deshabilitado | `disabled`        | Los mismos mosaicos con cada enlace inerte.                           |
+
+### Tamaño
+
+| Paso del contenedor      | Qué cambia                                                           |
+| ------------------------ | -------------------------------------------------------------------- |
+| bajo `@sm`               | Una columna; "Browse all categories" bajo la introducción.           |
+| `@sm` (`--container-sm`) | Dos columnas, y "Browse all categories" pasa al lado del encabezado. |
+| `@md` (`--container-md`) | El encabezado sube un tamaño.                                        |
+| `@lg` (`--container-lg`) | Cuatro columnas, con más espacio entre ellas y alrededor.            |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+El mismo bloque a 18rem, 30rem, 40rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <CategoryPreviewBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Vacío
+
+Pasa un array `categories` vacío.
+
+<Preview examples={examples} layout="fill">
+  <CategoryPreviewBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <CategoryPreviewBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+Pulsa "Try again" para quitar el mensaje y recuperar las categorías.
+
+<Preview examples={examples} layout="fill">
+  <CategoryPreviewBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+<Preview examples={examples} layout="fill">
+  <CategoryPreviewBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
+
+## Notas
+
+- Deja cada descripción en una línea, para que los mosaicos de una fila tengan una altura parecida.
+- Cuatro categorías llenan dos o cuatro columnas por igual. Usa imágenes de la misma forma; el mosaico las recorta a 4:3.

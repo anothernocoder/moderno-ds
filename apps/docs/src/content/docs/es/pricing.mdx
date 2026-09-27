@@ -1,0 +1,199 @@
+---
+title: Precios
+description: Una comparación de planes — una tarjeta por plan con su precio, sus funciones y una llamada a la acción, con el plan recomendado destacado.
+group: Bloques
+order: 118
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import PricingBlockDemo from "../../../islands/PricingBlockDemo.svelte";
+import pricingReact from "../../../../../../registry/blocks/pricing/react/pricing.tsx?raw";
+import pricingVue from "../../../../../../registry/blocks/pricing/vue/Pricing.vue?raw";
+import pricingSolid from "../../../../../../registry/blocks/pricing/solid/pricing.tsx?raw";
+import pricingSvelte from "../../../../../../registry/blocks/pricing/svelte/Pricing.svelte?raw";
+
+export const examples = {
+  react: pricingReact,
+  vue: pricingVue,
+  solid: pricingSolid,
+  svelte: pricingSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <PricingBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="pricing" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { Pricing } from "@/components/blocks/pricing";
+```
+
+```tsx
+<Pricing plans={plans} onSelect={(id) => startCheckout(id)} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import Pricing from "@/components/blocks/Pricing.vue";
+</script>
+```
+
+```vue
+<Pricing :plans="plans" @select="startCheckout" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import Pricing from "@/components/blocks/Pricing.svelte";
+</script>
+```
+
+```svelte
+<Pricing {plans} onselect={startCheckout} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { Pricing } from "@/components/blocks/pricing";
+```
+
+```tsx
+<Pricing plans={plans} onSelect={(id) => startCheckout(id)} />
+```
+
+</ForFramework>
+
+Cada plan es un objeto simple:
+
+```ts
+const plans = [
+  {
+    id: "pro",
+    name: "Pro",
+    price: "29 $",
+    period: "/mes",
+    description: "Para equipos pequeños que facturan cada semana.",
+    features: ["Conexiones bancarias ilimitadas", "Control de horas", "Soporte por correo"],
+    action: "Empezar la prueba gratis",
+    highlighted: true,
+    badge: "El más elegido",
+  },
+];
+```
+
+## Referencia de la API
+
+### Props
+
+| Prop          | Tipo                   | Por defecto                     | Descripción                                                                                |
+| ------------- | ---------------------- | ------------------------------- | ------------------------------------------------------------------------------------------ |
+| `title`       | `string`               | `"Pricing that grows with you"` | El título de la sección, con la tipografía con serifa.                                     |
+| `description` | `string`               | una frase                       | Una o dos frases bajo el título; `""` la oculta.                                           |
+| `plans`       | `PricingPlan[]`        | tres planes de ejemplo          | Los planes que se comparan, en orden. `[]` muestra el mensaje de vacío.                    |
+| `error`       | `string`               | —                               | Falló la carga de los planes; un Alert de error con reintento los sustituye.               |
+| `loading`     | `boolean`              | `false`                         | Tarjetas de esqueleto en una región ocupada sustituyen a los planes.                       |
+| `disabled`    | `boolean`              | `false`                         | Los planes se quedan y todos los botones se deshabilitan.                                  |
+| `onSelect`    | `(id: string) => void` | —                               | Se pulsó el botón de un plan, con el `id` de ese plan. Svelte: `onselect`. Vue: `@select`. |
+| `onRetry`     | `() => void`           | —                               | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.                                |
+
+### PricingPlan
+
+| Campo         | Tipo       | Descripción                                                     |
+| ------------- | ---------- | --------------------------------------------------------------- |
+| `id`          | `string`   | Lo que recibe `onSelect`.                                       |
+| `name`        | `string`   | El nombre del plan, el título de la tarjeta.                    |
+| `price`       | `string`   | El importe tal como quieres mostrarlo, con la moneda: `"29 $"`. |
+| `period`      | `string?`  | Se muestra tras el precio en texto atenuado: `"/mes"`.          |
+| `description` | `string?`  | Una línea bajo el nombre.                                       |
+| `features`    | `string[]` | Lo que incluye el plan, con una marca de verificación cada uno. |
+| `action`      | `string`   | La etiqueta del botón.                                          |
+| `highlighted` | `boolean?` | El plan recomendado: un borde --primary y el botón principal.   |
+| `badge`       | `string?`  | Una etiqueta corta junto al nombre, como `"El más elegido"`.    |
+
+### Estados
+
+| Estado        | Prop       | Qué se muestra                                                          |
+| ------------- | ---------- | ----------------------------------------------------------------------- |
+| Por defecto   | —          | Título, descripción y una tarjeta por plan, con la destacada remarcada. |
+| Vacío         | `plans=[]` | Título, descripción y un mensaje "No plans to show yet".                |
+| Cargando      | `loading`  | Título, descripción y tres tarjetas de marcador.                        |
+| Error         | `error`    | Título, descripción y un Alert de error con "Try again".                |
+| Deshabilitado | `disabled` | Los mismos planes con todos los botones deshabilitados.                 |
+
+### Tamaño
+
+| Paso del contenedor      | Qué cambia                                                                          |
+| ------------------------ | ----------------------------------------------------------------------------------- |
+| bajo `@sm`               | Los planes se apilan, una función por línea.                                        |
+| `@sm` (`--container-sm`) | Los planes siguen apilados; cada uno reparte sus funciones en dos columnas.         |
+| `@md` (`--container-md`) | Los planes van uno junto a otro, una función por línea, y el título sube un tamaño. |
+| `@lg` (`--container-lg`) | Más espacio arriba y abajo del bloque y entre los planes.                           |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+El mismo bloque a 18rem, 30rem, 40rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <PricingBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Dos planes
+
+Pasa dos planes y comparten la fila. Aquí la insignia indica el ahorro.
+
+<Preview examples={examples} layout="fill">
+  <PricingBlockDemo client:visible locale="es" state="two-plans" />
+</Preview>
+
+### Vacío
+
+<Preview examples={examples} layout="fill">
+  <PricingBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <PricingBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+Pulsa "Try again" para quitar el mensaje y recuperar los planes.
+
+<Preview examples={examples} layout="fill">
+  <PricingBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+<Preview examples={examples} layout="fill">
+  <PricingBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
+
+## Notas
+
+- Destaca un plan como mucho. Dos planes destacados se anulan entre sí.
+- Mantén cada lista de funciones corta y en el mismo orden en todos los planes, para que se puedan comparar línea a línea.

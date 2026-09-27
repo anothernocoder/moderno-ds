@@ -1,0 +1,189 @@
+---
+title: Media object
+description: An avatar beside a heading and a body, for a comment, a note or a review.
+group: Blocks
+order: 116
+agent:
+  intent: One avatar beside a heading, an optional line of meta and a body — a comment, a note or a review — with one quiet action and the avatar at the start or the end.
+  whenToUse: "One person's words next to their picture: a comment on a document, a pinned note, a review, a message in a thread."
+  whenNotToUse:
+    - case: A timeline of many events, each with a time
+      use: ActivityFeed — it lists events in order with a line between them
+    - case: Rows of people or records in a scrolling list
+      use: ListContainer — a media object is one item, not a list
+    - case: A picture with no text beside it
+      use: Avatar — the block earns its place with the heading and body
+  gotchas:
+    - 'The avatar shows `initials` until `avatarUrl` loads, and whenever it fails. The picture is decorative (`alt=""`): the heading names the person.'
+    - 'Presentational: `onAction` reports that the action was pressed. Replying, and saving, stay yours. The action''s name is its label; it is described by the heading, so several "Reply" buttons on one page stay tellable apart.'
+    - '`body=""` is the empty state: the avatar and heading stay and a muted line says nothing was written. `meta=""` and `actionLabel=""` hide those parts.'
+    - "`loading` replaces the whole object with placeholders inside a busy `status` region; `error` keeps the avatar and heading and puts one alert with a retry in place of the body and action."
+    - "The heading is an h3. If your page outline needs another level, change it in the file — it is yours after `moderno add`."
+    - 'The layout follows the block''s own width, not the viewport: the avatar sits over the text below `--container-sm` and beside it from there on (`mediaPosition="end"` puts it on the far side), and the meta moves to the heading''s far edge from `--container-lg`.'
+  theming:
+    - "Nothing is painted here. The picture is an Avatar, the action a ghost Button, the placeholders Skeleton and the failed load an error Alert."
+    - "The body reads --foreground; the meta and the empty line read --muted-foreground."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import MediaObjectBlockDemo from "../../../islands/MediaObjectBlockDemo.svelte";
+import mediaObjectReact from "../../../../../../registry/blocks/media-object/react/media-object.tsx?raw";
+import mediaObjectVue from "../../../../../../registry/blocks/media-object/vue/MediaObject.vue?raw";
+import mediaObjectSolid from "../../../../../../registry/blocks/media-object/solid/media-object.tsx?raw";
+import mediaObjectSvelte from "../../../../../../registry/blocks/media-object/svelte/MediaObject.svelte?raw";
+
+export const examples = {
+  react: mediaObjectReact,
+  vue: mediaObjectVue,
+  solid: mediaObjectSolid,
+  svelte: mediaObjectSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <MediaObjectBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="media-object" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { MediaObject } from "@/components/blocks/media-object";
+```
+
+```tsx
+<MediaObject heading="Ada Lovelace" initials="AL" body={comment} onAction={reply} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import MediaObject from "@/components/blocks/MediaObject.vue";
+</script>
+```
+
+```vue
+<MediaObject heading="Ada Lovelace" initials="AL" :body="comment" @action="reply" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import MediaObject from "@/components/blocks/MediaObject.svelte";
+</script>
+```
+
+```svelte
+<MediaObject heading="Ada Lovelace" initials="AL" body={comment} onaction={reply} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { MediaObject } from "@/components/blocks/media-object";
+```
+
+```tsx
+<MediaObject heading="Ada Lovelace" initials="AL" body={comment()} onAction={reply} />
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+| Prop            | Type               | Default                   | Description                                                   |
+| --------------- | ------------------ | ------------------------- | ------------------------------------------------------------- |
+| `heading`       | `string`           | `"Ada Lovelace"`          | Who or what the object is about. It renders as an h3.         |
+| `meta`          | `string`           | `"Commented 2 hours ago"` | A short line next to the heading, like a time; `""` hides it. |
+| `body`          | `string`           | a sample comment          | The text under the heading. `""` renders the empty state.     |
+| `initials`      | `string`           | `"AL"`                    | Shown in the avatar while there is no picture.                |
+| `avatarUrl`     | `string`           | —                         | The picture. The initials stay if it fails to load.           |
+| `mediaPosition` | `"start" \| "end"` | `"start"`                 | Which side of the text the avatar sits on, from `@sm`.        |
+| `actionLabel`   | `string`           | `"Reply"`                 | The ghost button under the body; `""` hides it.               |
+| `error`         | `string`           | —                         | The body failed to load; an alert with a retry replaces it.   |
+| `loading`       | `boolean`          | `false`                   | Placeholders in a busy region replace the whole object.       |
+| `disabled`      | `boolean`          | `false`                   | Everything stays readable and the buttons are disabled.       |
+| `onAction`      | `() => void`       | —                         | The action was pressed. Svelte: `onaction`. Vue: `@action`.   |
+| `onRetry`       | `() => void`       | —                         | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.  |
+
+### States
+
+| State    | Prop       | What renders                                                           |
+| -------- | ---------- | ---------------------------------------------------------------------- |
+| Default  | —          | The avatar, the heading and meta, the body and the action.             |
+| Empty    | `body=""`  | The avatar and heading, then a muted "Nothing written yet." line.      |
+| Loading  | `loading`  | A round placeholder and three lines in a busy `status` region.         |
+| Error    | `error`    | The avatar and heading, then an error alert with a "Try again" button. |
+| Disabled | `disabled` | Everything readable; the action is disabled.                           |
+
+### Sizing
+
+| Container step           | What changes                                                         |
+| ------------------------ | -------------------------------------------------------------------- |
+| below `@sm`              | The avatar sits over the text.                                       |
+| `@sm` (`--container-sm`) | The avatar moves beside the text, on the side `mediaPosition` names. |
+| `@md` (`--container-md`) | The heading and the body step up a size.                             |
+| `@lg` (`--container-lg`) | The meta moves to the far edge of the heading's line.                |
+
+## Examples
+
+### Container widths
+
+The same object at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <MediaObjectBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Avatar at the end
+
+Pass `mediaPosition="end"` to put the avatar on the far side of the text.
+
+<Preview examples={examples} layout="fill">
+  <MediaObjectBlockDemo client:visible locale="en" state="end" />
+</Preview>
+
+### Empty
+
+<Preview examples={examples} layout="fill">
+  <MediaObjectBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <MediaObjectBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+<Preview examples={examples} layout="fill">
+  <MediaObjectBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <MediaObjectBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- For a thread, stack several media objects in a list. For replies, indent a nested list under the body.

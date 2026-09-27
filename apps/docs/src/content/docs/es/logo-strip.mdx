@@ -1,0 +1,168 @@
+---
+title: Logo Strip
+description: Una fila de logotipos de clientes bajo un encabezado breve — la línea de "confían en nosotros" de una página de producto.
+group: Bloques
+order: 119
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import LogoStripBlockDemo from "../../../islands/LogoStripBlockDemo.svelte";
+import logoStripReact from "../../../../../../registry/blocks/logo-strip/react/logo-strip.tsx?raw";
+import logoStripVue from "../../../../../../registry/blocks/logo-strip/vue/LogoStrip.vue?raw";
+import logoStripSolid from "../../../../../../registry/blocks/logo-strip/solid/logo-strip.tsx?raw";
+import logoStripSvelte from "../../../../../../registry/blocks/logo-strip/svelte/LogoStrip.svelte?raw";
+
+export const examples = {
+  react: logoStripReact,
+  vue: logoStripVue,
+  solid: logoStripSolid,
+  svelte: logoStripSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <LogoStripBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="logo-strip" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { LogoStrip } from "@/components/blocks/logo-strip";
+```
+
+```tsx
+<LogoStrip heading="Confían en nosotros" logos={logos} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import LogoStrip from "@/components/blocks/LogoStrip.vue";
+</script>
+```
+
+```vue
+<LogoStrip heading="Confían en nosotros" :logos="logos" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import LogoStrip from "@/components/blocks/LogoStrip.svelte";
+</script>
+```
+
+```svelte
+<LogoStrip heading="Confían en nosotros" {logos} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { LogoStrip } from "@/components/blocks/logo-strip";
+```
+
+```tsx
+<LogoStrip heading="Confían en nosotros" logos={logos} />
+```
+
+</ForFramework>
+
+## Referencia de la API
+
+### Props
+
+| Prop       | Tipo              | Por defecto               | Descripción                                                                      |
+| ---------- | ----------------- | ------------------------- | -------------------------------------------------------------------------------- |
+| `heading`  | `string`          | una frase                 | La línea breve sobre los logotipos. Se muestra como `h2`.                        |
+| `logos`    | `LogoStripLogo[]` | seis logotipos de muestra | Los logotipos, en orden. `[]` muestra el mensaje de vacío.                       |
+| `error`    | `string`          | —                         | Falló la carga de los logotipos; un Alert de error con reintento los sustituye.  |
+| `loading`  | `boolean`         | `false`                   | Líneas de esqueleto en una región ocupada sustituyen a los logotipos.            |
+| `disabled` | `boolean`         | `false`                   | Los logotipos se quedan; cada enlace queda inerte y el reintento, deshabilitado. |
+| `onRetry`  | `() => void`      | —                         | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.                      |
+
+### Logotipo
+
+| Campo  | Tipo                                                                     | Descripción                                         |
+| ------ | ------------------------------------------------------------------------ | --------------------------------------------------- |
+| `id`   | `string`                                                                 | Una clave estable para el logotipo.                 |
+| `name` | `string`                                                                 | El nombre escrito. También es el nombre del enlace. |
+| `mark` | `"circle" \| "ring" \| "square" \| "triangle" \| "diamond" \| "hexagon"` | La forma que va antes del nombre.                   |
+| `href` | `string`                                                                 | Adónde lleva el logotipo, como un caso de cliente.  |
+
+### Estados
+
+| Estado        | Prop         | Qué se muestra                                                   |
+| ------------- | ------------ | ---------------------------------------------------------------- |
+| Por defecto   | —            | El encabezado y cada logotipo.                                   |
+| Vacío         | `logos={[]}` | El encabezado y "No logos to show yet." en un recuadro punteado. |
+| Cargando      | `loading`    | El encabezado y seis líneas de marcador.                         |
+| Error         | `error`      | El encabezado y un Alert de error con "Try again".               |
+| Deshabilitado | `disabled`   | Los mismos logotipos, cada enlace inerte.                        |
+
+### Tamaño
+
+| Paso del contenedor      | Qué cambia                                                      |
+| ------------------------ | --------------------------------------------------------------- |
+| bajo `@sm`               | Dos logotipos por fila.                                         |
+| `@sm` (`--container-sm`) | Tres logotipos por fila.                                        |
+| `@md` (`--container-md`) | Las formas y los nombres suben un tamaño.                       |
+| `@lg` (`--container-lg`) | Los seis logotipos en una fila, con más espacio arriba y abajo. |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+El mismo bloque a 18rem, 30rem, 40rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <LogoStripBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Vacío
+
+Pasa un array `logos` vacío.
+
+<Preview examples={examples} layout="fill">
+  <LogoStripBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <LogoStripBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+Pulsa "Try again" para quitar el mensaje y recuperar los logotipos.
+
+<Preview examples={examples} layout="fill">
+  <LogoStripBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+<Preview examples={examples} layout="fill">
+  <LogoStripBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
+
+## Notas
+
+- Muestra un logotipo solo con el permiso de su cliente.
+- Mantenlos todos de un solo color. Un logotipo a todo color aparta la vista del resto.

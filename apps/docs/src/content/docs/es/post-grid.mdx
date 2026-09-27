@@ -1,0 +1,182 @@
+---
+title: Post Grid
+description: Las últimas entradas del blog como una cuadrícula de tarjetas — cada una con su categoría, su fecha, su título, un extracto y su autor, bajo un encabezado con serifa.
+group: Bloques
+order: 119
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import PostGridBlockDemo from "../../../islands/PostGridBlockDemo.svelte";
+import postGridReact from "../../../../../../registry/blocks/post-grid/react/post-grid.tsx?raw";
+import postGridVue from "../../../../../../registry/blocks/post-grid/vue/PostGrid.vue?raw";
+import postGridSolid from "../../../../../../registry/blocks/post-grid/solid/post-grid.tsx?raw";
+import postGridSvelte from "../../../../../../registry/blocks/post-grid/svelte/PostGrid.svelte?raw";
+
+export const examples = {
+  react: postGridReact,
+  vue: postGridVue,
+  solid: postGridSolid,
+  svelte: postGridSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <PostGridBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="post-grid" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { PostGrid } from "@/components/blocks/post-grid";
+```
+
+```tsx
+<PostGrid heading="Últimos artículos" posts={posts} allPostsHref="/blog" />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import PostGrid from "@/components/blocks/PostGrid.vue";
+</script>
+```
+
+```vue
+<PostGrid heading="Últimos artículos" :posts="posts" all-posts-href="/blog" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import PostGrid from "@/components/blocks/PostGrid.svelte";
+</script>
+```
+
+```svelte
+<PostGrid heading="Últimos artículos" {posts} allPostsHref="/blog" />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { PostGrid } from "@/components/blocks/post-grid";
+```
+
+```tsx
+<PostGrid heading="Últimos artículos" posts={posts} allPostsHref="/blog" />
+```
+
+</ForFramework>
+
+## Referencia de la API
+
+### Props
+
+| Prop           | Tipo            | Por defecto       | Descripción                                                                              |
+| -------------- | --------------- | ----------------- | ---------------------------------------------------------------------------------------- |
+| `heading`      | `string`        | `"From the blog"` | El encabezado de la sección. Va en la fuente con serifa.                                 |
+| `description`  | `string`        | una frase         | Una frase bajo el encabezado; `""` la oculta.                                            |
+| `allPostsHref` | `string`        | `"#"`             | A dónde lleva "View all posts", como el índice de tu blog; `""` oculta el enlace.        |
+| `posts`        | `PostSummary[]` | seis entradas     | Las entradas, la más reciente primero. `[]` muestra el mensaje de vacío.                 |
+| `error`        | `string`        | —                 | Falló la carga de las entradas; un Alert de error con reintento reemplaza la cuadrícula. |
+| `loading`      | `boolean`       | `false`           | Tarjetas de marcador en una región ocupada reemplazan la cuadrícula.                     |
+| `disabled`     | `boolean`       | `false`           | Las entradas se quedan; cada enlace queda inerte y el reintento deshabilitado.           |
+| `onRetry`      | `() => void`    | —                 | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.                              |
+
+### PostSummary
+
+| Campo       | Tipo         | Descripción                                                        |
+| ----------- | ------------ | ------------------------------------------------------------------ |
+| `id`        | `string`     | Una clave estable para la entrada.                                 |
+| `title`     | `string`     | El título de la entrada.                                           |
+| `excerpt`   | `string`     | Una o dos frases de la entrada.                                    |
+| `category`  | `string`     | Una etiqueta corta, como `"Guides"`. Va en un Badge.               |
+| `date`      | `string`     | La fecha de publicación como `YYYY-MM-DD`, para `<time datetime>`. |
+| `dateLabel` | `string`     | La misma fecha como la lee la gente, como `"18 sep 2026"`.         |
+| `author`    | `PostAuthor` | Quién la escribió: `{ name, initials, avatarUrl? }`.               |
+| `href`      | `string`     | Opcional. Convierte el título en un enlace a la entrada.           |
+
+### PostAuthor
+
+| Campo       | Tipo     | Descripción                                                       |
+| ----------- | -------- | ----------------------------------------------------------------- |
+| `name`      | `string` | El nombre del autor.                                              |
+| `initials`  | `string` | Una o dos letras. El avatar las muestra hasta que carga una foto. |
+| `avatarUrl` | `string` | Opcional. Su foto.                                                |
+
+### Estados
+
+| Estado        | Prop         | Qué se muestra                                                        |
+| ------------- | ------------ | --------------------------------------------------------------------- |
+| Por defecto   | —            | Encabezado, introducción y una tarjeta por entrada.                   |
+| Vacío         | `posts={[]}` | Encabezado, introducción y "No posts to show yet."                    |
+| Cargando      | `loading`    | Encabezado, introducción y tres tarjetas de marcador.                 |
+| Error         | `error`      | Encabezado, introducción y después un Alert de error con "Try again". |
+| Deshabilitado | `disabled`   | Las mismas entradas con cada enlace inerte.                           |
+
+### Tamaño
+
+| Paso del contenedor      | Qué cambia                                              |
+| ------------------------ | ------------------------------------------------------- |
+| bajo `@sm`               | Una columna; "View all posts" bajo la introducción.     |
+| `@sm` (`--container-sm`) | "View all posts" pasa al lado del encabezado.           |
+| `@md` (`--container-md`) | Dos columnas, y el encabezado sube un tamaño.           |
+| `@lg` (`--container-lg`) | Tres columnas, con más espacio entre ellas y alrededor. |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+El mismo bloque a 18rem, 30rem, 40rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <PostGridBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Vacío
+
+Pasa un array `posts` vacío.
+
+<Preview examples={examples} layout="fill">
+  <PostGridBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <PostGridBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+Pulsa "Try again" para quitar el mensaje y recuperar las entradas.
+
+<Preview examples={examples} layout="fill">
+  <PostGridBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+<Preview examples={examples} layout="fill">
+  <PostGridBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
+
+## Notas
+
+- Deja cada extracto en una o dos frases, para que las tarjetas de una fila tengan una altura parecida.
+- Seis entradas llenan dos o tres columnas por igual.

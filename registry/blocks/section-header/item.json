@@ -1,0 +1,37 @@
+{
+  "title": "Section Header",
+  "description": "A header bar with actions for a page, a section or a card, composing the @moderno-ui/{framework} Alert, Badge, Button, Card and Skeleton primitives: a page header carries a breadcrumb trail, a display heading and a status line, a section header sits on a rule and a card header tops a card that holds the body passed to it, each with a secondary and a primary action and its own empty, loading and error renders; responds to its container (@container) across all three contract steps — the full trail and the actions beside the heading at @sm, a larger heading at @md, the largest heading and a larger description at @lg.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": [],
+  "files": {
+    "react": [
+      {
+        "path": "blocks/section-header/react/section-header.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/section-header.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "blocks/section-header/vue/SectionHeader.vue",
+        "type": "registry:block",
+        "target": "src/components/blocks/SectionHeader.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "blocks/section-header/svelte/SectionHeader.svelte",
+        "type": "registry:block",
+        "target": "src/components/blocks/SectionHeader.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "blocks/section-header/solid/section-header.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/section-header.tsx"
+      }
+    ]
+  }
+}

@@ -1,0 +1,199 @@
+---
+title: Category Preview
+description: A store's categories as a grid of tiles — each with a picture, a name, one line about it and how many products it holds, under a serif heading.
+group: Blocks
+order: 121
+agent:
+  intent: A section of a storefront's home page that sends shoppers into its categories — a serif heading, a sentence of introduction and a link to every category, then one tile per category with its picture, name, one line about it and its product count.
+  whenToUse: "A store's home page, or the top of a shop page, where shoppers pick a category before they see products."
+  whenNotToUse:
+    - case: The products inside one category
+      use: A product list — it shows each product with its price
+    - case: Blog posts, each with a date and an author
+      use: PostGrid — its cards carry a date, an excerpt and an author
+    - case: Records in an app, each with a status and an Open action
+      use: GridList — its cards carry a status and an action each
+  gotchas:
+    - "`categories` is an array of `{ id, name, description, countLabel?, imageUrl?, href? }`."
+    - "With `href`, the category's name is a link, and the link covers the whole tile. Without it, the name is plain text."
+    - '`imageUrl` fills the top of the tile. Without it, the tile shows the name''s first letter, large, in the serif face. The picture is decorative (`alt=""`), because the name already says what it shows.'
+    - "`countLabel` is the text people read, like `32 products`. Write it in the reader's language before you pass it; the tile has no footer without it."
+    - "Each name is an `h3` under the block's `h2`, so the categories show in the page outline."
+    - '`description` hides when you pass `""`, and so does the "Browse all categories" link when `allCategoriesHref` is `""`.'
+    - '`categories={[]}` shows "No categories to show yet." in place of the grid.'
+    - '`disabled` keeps every tile and makes each name link and the "Browse all categories" link inert: they drop their `href` and carry `aria-disabled`. The retry button is disabled too.'
+    - 'Presentational: `onRetry` reports that "Try again" was pressed. Loading the categories again stays yours.'
+    - "`loading` keeps the heading and replaces the grid with four placeholder tiles in one busy `status` region."
+    - '`error` keeps the heading and puts an error Alert with your message and a "Try again" button where the grid was. An empty string counts as no error.'
+    - 'The layout follows the block''s own width, not the viewport: one column below `--container-sm`; two columns, with the "Browse all categories" link beside the heading, from there; four columns from `--container-lg`.'
+  theming:
+    - "The block paints the picture well at the top of each tile (--muted, with the initial in --muted-foreground) and its dashed empty box (--border). Each tile is Card's outline variant at the sm size, the error is Alert's error variant, the retry is Button's outline variant and the loading tiles are Skeleton."
+    - "The heading and each initial read --font-serif; the heading reads --foreground; the introduction, each description and each product count read --muted-foreground; the name links and the Browse all categories link read --foreground, and their focus ring --ring."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg. The heading block is capped at --container-md."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import CategoryPreviewBlockDemo from "../../../islands/CategoryPreviewBlockDemo.svelte";
+import categoryPreviewReact from "../../../../../../registry/blocks/category-preview/react/category-preview.tsx?raw";
+import categoryPreviewVue from "../../../../../../registry/blocks/category-preview/vue/CategoryPreview.vue?raw";
+import categoryPreviewSolid from "../../../../../../registry/blocks/category-preview/solid/category-preview.tsx?raw";
+import categoryPreviewSvelte from "../../../../../../registry/blocks/category-preview/svelte/CategoryPreview.svelte?raw";
+
+export const examples = {
+  react: categoryPreviewReact,
+  vue: categoryPreviewVue,
+  solid: categoryPreviewSolid,
+  svelte: categoryPreviewSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <CategoryPreviewBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="category-preview" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { CategoryPreview } from "@/components/blocks/category-preview";
+```
+
+```tsx
+<CategoryPreview categories={categories} allCategoriesHref="/shop" />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import CategoryPreview from "@/components/blocks/CategoryPreview.vue";
+</script>
+```
+
+```vue
+<CategoryPreview :categories="categories" all-categories-href="/shop" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import CategoryPreview from "@/components/blocks/CategoryPreview.svelte";
+</script>
+```
+
+```svelte
+<CategoryPreview {categories} allCategoriesHref="/shop" />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { CategoryPreview } from "@/components/blocks/category-preview";
+```
+
+```tsx
+<CategoryPreview categories={categories} allCategoriesHref="/shop" />
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+| Prop                | Type                | Default              | Description                                                                   |
+| ------------------- | ------------------- | -------------------- | ----------------------------------------------------------------------------- |
+| `heading`           | `string`            | `"Shop by category"` | The section's heading. Set in the serif face.                                 |
+| `description`       | `string`            | a sentence           | One sentence under the heading; `""` hides it.                                |
+| `allCategoriesHref` | `string`            | `"#"`                | Where "Browse all categories" goes, like your shop page; `""` hides the link. |
+| `categories`        | `CategorySummary[]` | four sample tiles    | The categories, in the order to show them. `[]` shows the empty message.      |
+| `error`             | `string`            | —                    | Loading the categories failed; an error Alert with a retry replaces the grid. |
+| `loading`           | `boolean`           | `false`              | Placeholder tiles in a busy region replace the grid.                          |
+| `disabled`          | `boolean`           | `false`              | The tiles stay; every link is inert and the retry button disabled.            |
+| `onRetry`           | `() => void`        | —                    | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.                  |
+
+### CategorySummary
+
+| Field         | Type     | Description                                                            |
+| ------------- | -------- | ---------------------------------------------------------------------- |
+| `id`          | `string` | A stable key for the category.                                         |
+| `name`        | `string` | The category's name.                                                   |
+| `description` | `string` | One line about what is in it.                                          |
+| `countLabel`  | `string` | Optional. How many products it holds, as people read it.               |
+| `imageUrl`    | `string` | Optional. A picture for the tile. Without it, the name's initial.      |
+| `href`        | `string` | Optional. Turns the name, and the whole tile, into a link to the page. |
+
+### States
+
+| State    | Prop              | What renders                                                 |
+| -------- | ----------------- | ------------------------------------------------------------ |
+| Default  | —                 | Heading, introduction and one tile per category.             |
+| Empty    | `categories={[]}` | Heading, introduction and "No categories to show yet."       |
+| Loading  | `loading`         | Heading, introduction and four placeholder tiles.            |
+| Error    | `error`           | Heading, introduction, then an error Alert with "Try again". |
+| Disabled | `disabled`        | The same tiles with every link inert.                        |
+
+### Sizing
+
+| Container step           | What changes                                                       |
+| ------------------------ | ------------------------------------------------------------------ |
+| below `@sm`              | One column; "Browse all categories" under the introduction.        |
+| `@sm` (`--container-sm`) | Two columns, and "Browse all categories" moves beside the heading. |
+| `@md` (`--container-md`) | The heading steps up.                                              |
+| `@lg` (`--container-lg`) | Four columns, with more room between and around.                   |
+
+## Examples
+
+### Container widths
+
+The same block at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <CategoryPreviewBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Empty
+
+Pass an empty `categories` array.
+
+<Preview examples={examples} layout="fill">
+  <CategoryPreviewBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <CategoryPreviewBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+Press "Try again" to clear the message and bring the categories back.
+
+<Preview examples={examples} layout="fill">
+  <CategoryPreviewBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <CategoryPreviewBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Keep each description to one line, so the tiles in a row stay close in height.
+- Four categories fill two or four columns evenly. Use pictures of the same shape; the tile crops them to 4:3.

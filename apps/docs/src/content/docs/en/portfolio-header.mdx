@@ -1,0 +1,197 @@
+---
+title: Portfolio header
+description: The intro at the top of a personal portfolio — a photo, whether you are available, your name, your role, a short bio and your links.
+group: Blocks
+order: 125
+agent:
+  intent: The intro at the top of a personal portfolio — an Avatar, an availability Indicator, the person's name as the page's h1, their role, a short bio and a row of links.
+  whenToUse: "The first thing on a designer's, developer's or freelancer's portfolio page, above their projects."
+  whenNotToUse:
+    - case: The top of a product's landing page, with calls to action
+      use: Hero — it leads with a title and one or two buttons
+    - case: The header of a blog post, with its date and author
+      use: BlogPostHeader — it shows the post's title, excerpt and byline
+    - case: A grid of people on a team
+      use: Team — it lists many people, each with a photo, name and role
+  gotchas:
+    - "The name is an `h1`: use the block once per page, as the page's main heading."
+    - 'The avatar shows `initials` until `avatarUrl` loads, and keeps them when there is no `avatarUrl` or the image fails. With `initials` `""` and no `avatarUrl`, the avatar is hidden.'
+    - '`links` is `{ id, label, href }[]`. Each link sits in a `<nav aria-label="Links">`. Pass `[]` to hide the row.'
+    - '`role`, `bio` and `availability` each hide when you pass `""`. With all of them `""`, `initials=""` and `links={[]}`, the name stands alone.'
+    - '`availability` is a green status dot with your text, like `"Available for new projects"`. Pass `""` when you are not taking work.'
+    - "`disabled` keeps the header and makes every link inert: each drops its `href` and carries `aria-disabled`. The retry button is disabled too."
+    - 'Presentational: `onRetry` reports that "Try again" was pressed. Loading the profile again stays yours.'
+    - "`loading` replaces the header with placeholders for the avatar, the status, the name, the role, the bio and the links, in one busy `status` region."
+    - '`error` replaces the header with an error Alert holding your message and a "Try again" button. An empty string counts as no error.'
+    - "The layout follows the block's own width, not the viewport: the role and the bio step up from `--container-sm`; the name steps up and the avatar moves beside the text from `--container-md`; more room above, below and between the parts from `--container-lg`."
+  theming:
+    - "The block paints no surface of its own. The photo is Avatar's lg size, the availability is Indicator's success variant, the error is Alert's error variant, the retry is Button's outline variant and the loading placeholders are Skeleton."
+    - "The name reads --font-serif and --foreground; the role and the links read --foreground; the bio reads --muted-foreground; the links' focus ring reads --ring."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg. The header is capped at --container-lg."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import PortfolioHeaderBlockDemo from "../../../islands/PortfolioHeaderBlockDemo.svelte";
+import portfolioHeaderReact from "../../../../../../registry/blocks/portfolio-header/react/portfolio-header.tsx?raw";
+import portfolioHeaderVue from "../../../../../../registry/blocks/portfolio-header/vue/PortfolioHeader.vue?raw";
+import portfolioHeaderSolid from "../../../../../../registry/blocks/portfolio-header/solid/portfolio-header.tsx?raw";
+import portfolioHeaderSvelte from "../../../../../../registry/blocks/portfolio-header/svelte/PortfolioHeader.svelte?raw";
+
+export const examples = {
+  react: portfolioHeaderReact,
+  vue: portfolioHeaderVue,
+  solid: portfolioHeaderSolid,
+  svelte: portfolioHeaderSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <PortfolioHeaderBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="portfolio-header" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { PortfolioHeader } from "@/components/blocks/portfolio-header";
+```
+
+```tsx
+<PortfolioHeader name={me.name} role={me.role} bio={me.bio} links={me.links} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import PortfolioHeader from "@/components/blocks/PortfolioHeader.vue";
+</script>
+```
+
+```vue
+<PortfolioHeader :name="me.name" :role="me.role" :bio="me.bio" :links="me.links" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import PortfolioHeader from "@/components/blocks/PortfolioHeader.svelte";
+</script>
+```
+
+```svelte
+<PortfolioHeader name={me.name} role={me.role} bio={me.bio} links={me.links} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { PortfolioHeader } from "@/components/blocks/portfolio-header";
+```
+
+```tsx
+<PortfolioHeader name={me.name} role={me.role} bio={me.bio} links={me.links} />
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+| Prop           | Type              | Default                        | Description                                                    |
+| -------------- | ----------------- | ------------------------------ | -------------------------------------------------------------- |
+| `name`         | `string`          | `"Lena Ortiz"`                 | Your name, the page's `h1`. Set in the serif face.             |
+| `role`         | `string`          | `"Product designer in Lisbon"` | What you do, under the name; `""` hides it.                    |
+| `bio`          | `string`          | two sentences                  | A short bio under the role; `""` hides it.                     |
+| `initials`     | `string`          | `"LO"`                         | One or two letters. The avatar shows them until a photo loads. |
+| `avatarUrl`    | `string`          | —                              | Your photo.                                                    |
+| `availability` | `string`          | `"Available for new projects"` | A status next to a green dot; `""` hides it.                   |
+| `links`        | `PortfolioLink[]` | four sample links              | Where to find you. `[]` hides the row.                         |
+| `error`        | `string`          | —                              | Loading the profile failed; an error Alert with a retry shows. |
+| `loading`      | `boolean`         | `false`                        | Placeholders in a busy region replace the header.              |
+| `disabled`     | `boolean`         | `false`                        | The header stays; the links are inert, the retry too.          |
+| `onRetry`      | `() => void`      | —                              | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.   |
+
+### PortfolioLink
+
+| Field   | Type     | Description                                 |
+| ------- | -------- | ------------------------------------------- |
+| `id`    | `string` | A unique key for the link.                  |
+| `label` | `string` | The text people read, like `"LinkedIn"`.    |
+| `href`  | `string` | Where it goes, like a profile or `mailto:`. |
+
+### States
+
+| State    | Prop                                                    | What renders                                                     |
+| -------- | ------------------------------------------------------- | ---------------------------------------------------------------- |
+| Default  | —                                                       | Avatar, availability, name, role, bio and links.                 |
+| Empty    | every text `""` but `name`, `initials=""`, `links={[]}` | The name alone.                                                  |
+| Loading  | `loading`                                               | Placeholders for the avatar, the status, the text and the links. |
+| Error    | `error`                                                 | An error Alert with "Try again".                                 |
+| Disabled | `disabled`                                              | The same header with every link inert.                           |
+
+### Sizing
+
+| Container step           | What changes                                              |
+| ------------------------ | --------------------------------------------------------- |
+| below `@sm`              | The avatar sits above the text.                           |
+| `@sm` (`--container-sm`) | The role and the bio step up a size.                      |
+| `@md` (`--container-md`) | The name steps up a size, and the avatar moves beside it. |
+| `@lg` (`--container-lg`) | More room above, below and between the parts.             |
+
+## Examples
+
+### Container widths
+
+The same block at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <PortfolioHeaderBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Name only
+
+Pass `""` for `role`, `bio`, `availability` and `initials`, and `links={[]}`.
+
+<Preview examples={examples} layout="fill">
+  <PortfolioHeaderBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <PortfolioHeaderBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+Press "Try again" to clear the message and bring the header back.
+
+<Preview examples={examples} layout="fill">
+  <PortfolioHeaderBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <PortfolioHeaderBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Keep the bio to one or two sentences. Your projects say the rest.
+- Put your work right under it, like a grid of your projects.

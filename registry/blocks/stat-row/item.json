@@ -1,0 +1,37 @@
+{
+  "title": "Stat Row",
+  "description": "A row of KPI stats with deltas, composing the @moderno-ui/{framework} Alert, Badge, Button, Card and Skeleton primitives: each stat is a card with its label, its value in the display face and its change tinted by whether that change is good news, with its own empty, loading and error renders; responds to its container (@container) across all three contract steps — two stats a row and the header lined up at @sm, larger values at @md, four stats a row at @lg.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": [],
+  "files": {
+    "react": [
+      {
+        "path": "blocks/stat-row/react/stat-row.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/stat-row.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "blocks/stat-row/vue/StatRow.vue",
+        "type": "registry:block",
+        "target": "src/components/blocks/StatRow.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "blocks/stat-row/svelte/StatRow.svelte",
+        "type": "registry:block",
+        "target": "src/components/blocks/StatRow.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "blocks/stat-row/solid/stat-row.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/stat-row.tsx"
+      }
+    ]
+  }
+}

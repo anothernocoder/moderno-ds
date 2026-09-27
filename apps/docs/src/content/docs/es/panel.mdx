@@ -1,0 +1,163 @@
+---
+title: Panel
+description: Superficies con borde que agrupan opciones relacionadas, cada una con un título, una frase y su propia acción.
+group: Bloques
+order: 112
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import PanelBlockDemo from "../../../islands/PanelBlockDemo.svelte";
+import panelReact from "../../../../../../registry/blocks/panel/react/panel.tsx?raw";
+import panelVue from "../../../../../../registry/blocks/panel/vue/Panel.vue?raw";
+import panelSolid from "../../../../../../registry/blocks/panel/solid/panel.tsx?raw";
+import panelSvelte from "../../../../../../registry/blocks/panel/svelte/Panel.svelte?raw";
+
+export const examples = {
+  react: panelReact,
+  vue: panelVue,
+  solid: panelSolid,
+  svelte: panelSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <PanelBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="panel" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { Panel } from "@/components/blocks/panel";
+```
+
+```tsx
+<Panel panels={panels} onAction={(id) => navigate(`/settings/${id}`)} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import Panel from "@/components/blocks/Panel.vue";
+</script>
+```
+
+```vue
+<Panel :panels="panels" @action="(id) => navigate(`/settings/${id}`)" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import Panel from "@/components/blocks/Panel.svelte";
+</script>
+```
+
+```svelte
+<Panel {panels} onaction={(id) => navigate(`/settings/${id}`)} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { Panel } from "@/components/blocks/panel";
+```
+
+```tsx
+<Panel panels={panels()} onAction={(id) => navigate(`/settings/${id}`)} />
+```
+
+</ForFramework>
+
+Cada panel es `{ id, title, description, actionLabel }`. Omite `actionLabel` para un panel sin botón.
+
+## Referencia de API
+
+### Propiedades
+
+| Propiedad     | Tipo                   | Por defecto          | Descripción                                                            |
+| ------------- | ---------------------- | -------------------- | ---------------------------------------------------------------------- |
+| `panels`      | `PanelItem[]`          | un ejemplo           | Los paneles, en orden de lectura. `[]` muestra el estado vacío.        |
+| `heading`     | `string`               | `"Account settings"` | El título sobre los paneles.                                           |
+| `description` | `string`               | una frase            | La línea bajo el título; `""` la oculta.                               |
+| `error`       | `string`               | —                    | Los paneles no cargaron; una alerta con reintento los reemplaza.       |
+| `loading`     | `boolean`              | `false`              | Paneles de marcador en una región ocupada reemplazan los paneles.      |
+| `disabled`    | `boolean`              | `false`              | Los paneles siguen legibles y todos los botones quedan desactivados.   |
+| `onAction`    | `(id: string) => void` | —                    | El botón de un panel, con su `id`. Svelte: `onaction`. Vue: `@action`. |
+| `onRetry`     | `() => void`           | —                    | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.            |
+
+### PanelItem
+
+| Campo         | Tipo     | Descripción                                      |
+| ------------- | -------- | ------------------------------------------------ |
+| `id`          | `string` | Identidad estable, la que devuelve `onAction`.   |
+| `title`       | `string` | Lo que agrupa el panel.                          |
+| `description` | `string` | Una frase sobre lo que hay dentro.               |
+| `actionLabel` | `string` | Texto opcional del botón; nombra el panel en él. |
+
+### Estados
+
+| Estado        | Propiedad     | Qué se muestra                                                        |
+| ------------- | ------------- | --------------------------------------------------------------------- |
+| Por defecto   | —             | Una tarjeta por panel.                                                |
+| Vacío         | `panels={[]}` | Una tarjeta "Nothing to set up yet".                                  |
+| Cargando      | `loading`     | Cuatro paneles de marcador en una región `status` ocupada.            |
+| Error         | `error`       | Una alerta de error con el botón "Try again" en lugar de los paneles. |
+| Deshabilitado | `disabled`    | Los paneles con todos los botones desactivados.                       |
+
+### Dimensionado
+
+| Paso del contenedor      | Qué cambia                                         |
+| ------------------------ | -------------------------------------------------- |
+| bajo `@sm`               | Un panel por fila; cada botón ocupa todo su panel. |
+| `@sm` (`--container-sm`) | Cada botón se ajusta a su texto.                   |
+| `@md` (`--container-md`) | Dos paneles por fila y un título más grande.       |
+| `@lg` (`--container-lg`) | Más espacio entre los paneles.                     |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+Los mismos paneles a 18rem, 30rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <PanelBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Vacío
+
+<Preview examples={examples} layout="fill">
+  <PanelBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <PanelBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+<Preview examples={examples} layout="fill">
+  <PanelBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+<Preview examples={examples} layout="fill">
+  <PanelBlockDemo client:visible locale="es" state="disabled" />
+</Preview>

@@ -1,0 +1,200 @@
+---
+title: Blog post header
+description: The top of a blog post — its category, date and reading time, a serif title, a short excerpt and the author's byline.
+group: Blocks
+order: 120
+agent:
+  intent: The header at the top of a blog post or article — a category Badge with the date and reading time, the post's title as the page's h1, a one-sentence excerpt, then the author's avatar, name and role.
+  whenToUse: "The first thing on a blog post, a changelog entry or a long-form article page, above the post's body."
+  whenNotToUse:
+    - case: The top of a landing page, with calls to action
+      use: Hero — it leads with a title and one or two buttons
+    - case: The body of the post, with its sections and a pulled quote
+      use: Content — it sets long-form prose in one reading column
+    - case: A short heading that introduces a section further down the page
+      use: SectionHeader — it titles a section without a byline
+  gotchas:
+    - "The title is an `h1`: use the block once per page, as the page's main heading."
+    - "`author` is `{ name, role, initials, avatarUrl?, href? }`, or `null` to hide the byline."
+    - "The avatar shows `initials` until `avatarUrl` loads, and keeps them when there is no `avatarUrl` or the image fails."
+    - "With `author.href`, the author's name is a link to it, like their profile. Without it, the name is plain text."
+    - '`date` is the text people read, like `"September 12, 2026"`; `dateTime` is the machine-readable `<time>` value, like `"2026-09-12"`. Format the date yourself, in the reader''s language.'
+    - '`category`, `excerpt`, `date` and `readingTime` each hide when you pass `""`. With all of them `""` and `author={null}`, the title stands alone.'
+    - "`disabled` keeps the header and makes the author link inert: it drops its `href` and carries `aria-disabled`. The retry button is disabled too."
+    - 'Presentational: `onRetry` reports that "Try again" was pressed. Loading the post again stays yours.'
+    - "`loading` replaces the header with placeholders for the meta line, the title, the excerpt and the byline, in one busy `status` region."
+    - '`error` replaces the header with an error Alert holding your message and a "Try again" button. An empty string counts as no error.'
+    - "The layout follows the block's own width, not the viewport: the excerpt steps up from `--container-sm`; the title steps up and everything centres from `--container-md`; more room above and below from `--container-lg`."
+  theming:
+    - "The block paints no surface of its own. The category is Badge's neutral variant, the author's photo is Avatar's md size, the error is Alert's error variant, the retry is Button's outline variant and the loading placeholders are Skeleton."
+    - "The title reads --font-serif and --foreground; the meta line, the excerpt and the author's role read --muted-foreground; the author link reads --foreground, and its focus ring --ring."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg. The header is capped at --container-lg and the excerpt at --container-md."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import BlogPostHeaderBlockDemo from "../../../islands/BlogPostHeaderBlockDemo.svelte";
+import blogPostHeaderReact from "../../../../../../registry/blocks/blog-post-header/react/blog-post-header.tsx?raw";
+import blogPostHeaderVue from "../../../../../../registry/blocks/blog-post-header/vue/BlogPostHeader.vue?raw";
+import blogPostHeaderSolid from "../../../../../../registry/blocks/blog-post-header/solid/blog-post-header.tsx?raw";
+import blogPostHeaderSvelte from "../../../../../../registry/blocks/blog-post-header/svelte/BlogPostHeader.svelte?raw";
+
+export const examples = {
+  react: blogPostHeaderReact,
+  vue: blogPostHeaderVue,
+  solid: blogPostHeaderSolid,
+  svelte: blogPostHeaderSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <BlogPostHeaderBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="blog-post-header" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { BlogPostHeader } from "@/components/blocks/blog-post-header";
+```
+
+```tsx
+<BlogPostHeader title={post.title} excerpt={post.excerpt} author={post.author} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import BlogPostHeader from "@/components/blocks/BlogPostHeader.vue";
+</script>
+```
+
+```vue
+<BlogPostHeader :title="post.title" :excerpt="post.excerpt" :author="post.author" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import BlogPostHeader from "@/components/blocks/BlogPostHeader.svelte";
+</script>
+```
+
+```svelte
+<BlogPostHeader title={post.title} excerpt={post.excerpt} author={post.author} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { BlogPostHeader } from "@/components/blocks/blog-post-header";
+```
+
+```tsx
+<BlogPostHeader title={post.title} excerpt={post.excerpt} author={post.author} />
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+| Prop          | Type                     | Default                | Description                                                  |
+| ------------- | ------------------------ | ---------------------- | ------------------------------------------------------------ |
+| `category`    | `string`                 | `"Product"`            | A short label in a Badge; `""` hides it.                     |
+| `title`       | `string`                 | a sample title         | The post's title, the page's `h1`. Set in the serif face.    |
+| `excerpt`     | `string`                 | a sentence             | One or two sentences under the title; `""` hides it.         |
+| `author`      | `BlogPostAuthor \| null` | a sample author        | The byline. `null` hides it.                                 |
+| `date`        | `string`                 | `"September 12, 2026"` | The date people read; `""` hides it.                         |
+| `dateTime`    | `string`                 | `"2026-09-12"`         | The `<time>` element's machine-readable value.               |
+| `readingTime` | `string`                 | `"6 min read"`         | How long the post takes to read; `""` hides it.              |
+| `error`       | `string`                 | —                      | Loading the post failed; an error Alert with a retry shows.  |
+| `loading`     | `boolean`                | `false`                | Placeholders in a busy region replace the header.            |
+| `disabled`    | `boolean`                | `false`                | The header stays; the author link is inert, the retry too.   |
+| `onRetry`     | `() => void`             | —                      | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`. |
+
+### BlogPostAuthor
+
+| Field       | Type     | Description                                                    |
+| ----------- | -------- | -------------------------------------------------------------- |
+| `name`      | `string` | The author's name.                                             |
+| `role`      | `string` | Their job, like `"Co-founder, CEO"`.                           |
+| `initials`  | `string` | One or two letters. The avatar shows them until a photo loads. |
+| `avatarUrl` | `string` | Optional. Their photo.                                         |
+| `href`      | `string` | Optional. Turns the name into a link to this page.             |
+
+### States
+
+| State    | Prop                                         | What renders                                                       |
+| -------- | -------------------------------------------- | ------------------------------------------------------------------ |
+| Default  | —                                            | Meta line, title, excerpt and byline.                              |
+| Empty    | every text `""` but `title`, `author={null}` | The title alone.                                                   |
+| Loading  | `loading`                                    | Placeholders for the meta line, the title, the excerpt and byline. |
+| Error    | `error`                                      | An error Alert with "Try again".                                   |
+| Disabled | `disabled`                                   | The same header with the author link inert.                        |
+
+### Sizing
+
+| Container step           | What changes                                       |
+| ------------------------ | -------------------------------------------------- |
+| below `@sm`              | Everything lines up at the start.                  |
+| `@sm` (`--container-sm`) | The excerpt steps up a size.                       |
+| `@md` (`--container-md`) | The title steps up a size, and everything centres. |
+| `@lg` (`--container-lg`) | More room above, below and between the parts.      |
+
+## Examples
+
+### Container widths
+
+The same block at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <BlogPostHeaderBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Title only
+
+Pass `""` for every text but the title, and `author={null}`.
+
+<Preview examples={examples} layout="fill">
+  <BlogPostHeaderBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <BlogPostHeaderBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+Press "Try again" to clear the message and bring the header back.
+
+<Preview examples={examples} layout="fill">
+  <BlogPostHeaderBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <BlogPostHeaderBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Keep the excerpt to one or two sentences. The post's body says the rest.
+- Put the post's body right under it, for example in the Content block.

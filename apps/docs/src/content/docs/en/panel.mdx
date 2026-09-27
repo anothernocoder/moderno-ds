@@ -1,0 +1,182 @@
+---
+title: Panel
+description: Bordered surfaces that group related options, each with a title, a sentence and its own action.
+group: Blocks
+order: 112
+agent:
+  intent: Group a screen's related options into separate bordered panels, each saying what it holds and offering one way in.
+  whenToUse: "A settings or account page, a project's overview, an admin home: any screen split into a few areas that each lead somewhere."
+  whenNotToUse:
+    - case: One surface with free-form content
+      use: Card — Panel is a group of cards with a heading and states
+    - case: Items the reader browses, scans or opens by the dozen
+      use: GridList or ListContainer
+    - case: Numbers read at a glance
+      use: StatRow
+  gotchas:
+    - "Presentational: `onAction` hands back the panel's `id`; routing or opening a dialog is yours."
+    - "Give each action a label that names its panel (`Edit profile`, not `Edit`). A screen reader lists the buttons without their cards."
+    - "`panels` defaults to a sample set so the block renders standalone. Pass your own array — or edit the constant, the file is yours after `moderno add`."
+    - "`panels={[]}` is the empty state. `loading` replaces the panels with placeholders, and `error` replaces them with a retry."
+    - "The block responds to its container, never the viewport: full-width actions below --container-sm, two panels a row from --container-md, wider gaps from --container-lg."
+  theming:
+    - "Nothing is painted here. Each panel is Card's outline surface, the actions are Button's outline variant, the placeholders are Skeleton and the failed load is Alert's error variant."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import PanelBlockDemo from "../../../islands/PanelBlockDemo.svelte";
+import panelReact from "../../../../../../registry/blocks/panel/react/panel.tsx?raw";
+import panelVue from "../../../../../../registry/blocks/panel/vue/Panel.vue?raw";
+import panelSolid from "../../../../../../registry/blocks/panel/solid/panel.tsx?raw";
+import panelSvelte from "../../../../../../registry/blocks/panel/svelte/Panel.svelte?raw";
+
+export const examples = {
+  react: panelReact,
+  vue: panelVue,
+  solid: panelSolid,
+  svelte: panelSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <PanelBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="panel" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { Panel } from "@/components/blocks/panel";
+```
+
+```tsx
+<Panel panels={panels} onAction={(id) => navigate(`/settings/${id}`)} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import Panel from "@/components/blocks/Panel.vue";
+</script>
+```
+
+```vue
+<Panel :panels="panels" @action="(id) => navigate(`/settings/${id}`)" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import Panel from "@/components/blocks/Panel.svelte";
+</script>
+```
+
+```svelte
+<Panel {panels} onaction={(id) => navigate(`/settings/${id}`)} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { Panel } from "@/components/blocks/panel";
+```
+
+```tsx
+<Panel panels={panels()} onAction={(id) => navigate(`/settings/${id}`)} />
+```
+
+</ForFramework>
+
+Each panel is `{ id, title, description, actionLabel }`. Leave out `actionLabel` for a panel with no button.
+
+## API Reference
+
+### Props
+
+| Prop          | Type                   | Default              | Description                                                                   |
+| ------------- | ---------------------- | -------------------- | ----------------------------------------------------------------------------- |
+| `panels`      | `PanelItem[]`          | a sample set         | The panels, in reading order. `[]` renders the empty state.                   |
+| `heading`     | `string`               | `"Account settings"` | The heading over the panels.                                                  |
+| `description` | `string`               | a sentence           | The line under the heading; `""` hides it.                                    |
+| `error`       | `string`               | —                    | The panels failed to load; an alert with a retry replaces them.               |
+| `loading`     | `boolean`              | `false`              | Placeholder panels in a busy region replace the panels.                       |
+| `disabled`    | `boolean`              | `false`              | The panels stay readable and every button is disabled.                        |
+| `onAction`    | `(id: string) => void` | —                    | A panel's button, with that panel's `id`. Svelte: `onaction`. Vue: `@action`. |
+| `onRetry`     | `() => void`           | —                    | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.                  |
+
+### PanelItem
+
+| Field         | Type     | Description                                  |
+| ------------- | -------- | -------------------------------------------- |
+| `id`          | `string` | Stable identity, handed back by `onAction`.  |
+| `title`       | `string` | What the panel groups.                       |
+| `description` | `string` | One sentence on what is inside.              |
+| `actionLabel` | `string` | Optional button label; name the panel in it. |
+
+### States
+
+| State    | Prop          | What renders                                                      |
+| -------- | ------------- | ----------------------------------------------------------------- |
+| Default  | —             | One card per panel.                                               |
+| Empty    | `panels={[]}` | A "Nothing to set up yet" card.                                   |
+| Loading  | `loading`     | Four placeholder panels in a busy `status` region.                |
+| Error    | `error`       | One error alert with a "Try again" button in place of the panels. |
+| Disabled | `disabled`    | The panels with every button disabled.                            |
+
+### Sizing
+
+| Container step           | What changes                                  |
+| ------------------------ | --------------------------------------------- |
+| below `@sm`              | One panel a row; each button spans its panel. |
+| `@sm` (`--container-sm`) | Each button shrinks to its label.             |
+| `@md` (`--container-md`) | Two panels a row and a larger heading.        |
+| `@lg` (`--container-lg`) | Wider gaps between the panels.                |
+
+## Examples
+
+### Container widths
+
+The same panels at 18rem, 30rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <PanelBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Empty
+
+<Preview examples={examples} layout="fill">
+  <PanelBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <PanelBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+<Preview examples={examples} layout="fill">
+  <PanelBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <PanelBlockDemo client:visible locale="en" state="disabled" />
+</Preview>

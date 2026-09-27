@@ -1,0 +1,198 @@
+---
+title: Team
+description: The people behind the product — each with an avatar, a name, a role and a short bio, under a serif heading.
+group: Blocks
+order: 119
+agent:
+  intent: A section of an about or careers page that introduces the people behind the product — a serif heading, a sentence of introduction, then each member's avatar, name, role and a short bio.
+  whenToUse: "An about page, a careers page or a landing page that puts faces and names to the company."
+  whenNotToUse:
+    - case: Quotes from customers
+      use: Testimonials — it shows what customers say
+    - case: People in an app, like workspace members, each with a status and an action
+      use: StackedList — its rows carry a status and an action each
+    - case: The open roles at the company
+      use: Careers — it lists the jobs with an apply link
+  gotchas:
+    - "`members` is an array of `{ id, name, role, bio, initials, avatarUrl?, href? }`."
+    - "The avatar shows `initials` until `avatarUrl` loads, and keeps them when there is no `avatarUrl` or the image fails."
+    - "With `href`, the member's name is a link to it, like their profile. Without it, the name is plain text."
+    - "Each name is an `h3` under the block's `h2`, so the team shows in the page outline."
+    - '`description` hides when you pass `""`.'
+    - '`members={[]}` shows "No team members to show yet." in place of the grid.'
+    - "`disabled` keeps every member and makes each name link inert: it drops its `href` and carries `aria-disabled`. The retry button is disabled too."
+    - 'Presentational: `onRetry` reports that "Try again" was pressed. Loading the team again stays yours.'
+    - "`loading` keeps the heading and replaces the grid with three placeholder members in one busy `status` region."
+    - '`error` keeps the heading and puts an error Alert with your message and a "Try again" button where the grid was. An empty string counts as no error.'
+    - "The layout follows the block's own width, not the viewport: each avatar sits above its name below `--container-sm` and beside it from there; one column below `--container-md`, two from there and three from `--container-lg`."
+  theming:
+    - "The block paints only its dashed empty box (--border). Each member's photo is Avatar's lg size, the error is Alert's error variant, the retry is Button's outline variant and the loading members are Skeleton."
+    - "The heading reads --font-serif and --foreground; the introduction and each member's role and bio read --muted-foreground; the name link reads --foreground, and its focus ring --ring."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg. The heading is capped at --container-md."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import TeamBlockDemo from "../../../islands/TeamBlockDemo.svelte";
+import teamReact from "../../../../../../registry/blocks/team/react/team.tsx?raw";
+import teamVue from "../../../../../../registry/blocks/team/vue/Team.vue?raw";
+import teamSolid from "../../../../../../registry/blocks/team/solid/team.tsx?raw";
+import teamSvelte from "../../../../../../registry/blocks/team/svelte/Team.svelte?raw";
+
+export const examples = {
+  react: teamReact,
+  vue: teamVue,
+  solid: teamSolid,
+  svelte: teamSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <TeamBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="team" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { Team } from "@/components/blocks/team";
+```
+
+```tsx
+<Team heading="The people behind it" members={members} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import Team from "@/components/blocks/Team.vue";
+</script>
+```
+
+```vue
+<Team heading="The people behind it" :members="members" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import Team from "@/components/blocks/Team.svelte";
+</script>
+```
+
+```svelte
+<Team heading="The people behind it" {members} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { Team } from "@/components/blocks/team";
+```
+
+```tsx
+<Team heading="The people behind it" members={members} />
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+| Prop          | Type           | Default           | Description                                                               |
+| ------------- | -------------- | ----------------- | ------------------------------------------------------------------------- |
+| `heading`     | `string`       | `"Meet the team"` | The section's heading. Set in the serif face.                             |
+| `description` | `string`       | a sentence        | One sentence under the heading; `""` hides it.                            |
+| `members`     | `TeamMember[]` | six sample people | The people, in order. `[]` shows the empty message.                       |
+| `error`       | `string`       | —                 | Loading the team failed; an error Alert with a retry replaces the grid.   |
+| `loading`     | `boolean`      | `false`           | Placeholder members in a busy region replace the grid.                    |
+| `disabled`    | `boolean`      | `false`           | The members stay; every name link is inert and the retry button disabled. |
+| `onRetry`     | `() => void`   | —                 | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.              |
+
+### TeamMember
+
+| Field       | Type     | Description                                                    |
+| ----------- | -------- | -------------------------------------------------------------- |
+| `id`        | `string` | A stable key for the person.                                   |
+| `name`      | `string` | The person's name.                                             |
+| `role`      | `string` | Their job, like `"Head of Design"`.                            |
+| `bio`       | `string` | One or two sentences about them.                               |
+| `initials`  | `string` | One or two letters. The avatar shows them until a photo loads. |
+| `avatarUrl` | `string` | Optional. Their photo.                                         |
+| `href`      | `string` | Optional. Turns the name into a link to this page.             |
+
+### States
+
+| State    | Prop           | What renders                                                 |
+| -------- | -------------- | ------------------------------------------------------------ |
+| Default  | —              | Heading, introduction and one entry per person.              |
+| Empty    | `members={[]}` | Heading, introduction and "No team members to show yet."     |
+| Loading  | `loading`      | Heading, introduction and three placeholder members.         |
+| Error    | `error`        | Heading, introduction, then an error Alert with "Try again". |
+| Disabled | `disabled`     | The same people with every name link inert.                  |
+
+### Sizing
+
+| Container step           | What changes                                      |
+| ------------------------ | ------------------------------------------------- |
+| below `@sm`              | One column, each avatar above its name.           |
+| `@sm` (`--container-sm`) | The avatar moves beside the name.                 |
+| `@md` (`--container-md`) | Two columns, and the heading steps up.            |
+| `@lg` (`--container-lg`) | Three columns, with more room between and around. |
+
+## Examples
+
+### Container widths
+
+The same block at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <TeamBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Empty
+
+Pass an empty `members` array.
+
+<Preview examples={examples} layout="fill">
+  <TeamBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <TeamBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+Press "Try again" to clear the message and bring the team back.
+
+<Preview examples={examples} layout="fill">
+  <TeamBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <TeamBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Keep each bio to one or two sentences. Link to a longer profile with `href`.
+- Six people fill two or three columns evenly.

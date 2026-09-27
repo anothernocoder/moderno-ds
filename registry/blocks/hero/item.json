@@ -1,0 +1,37 @@
+{
+  "title": "Hero",
+  "description": "The opening section of a landing page, composing the @moderno-ui/{framework} Alert, Badge, Button and Skeleton primitives: a kicker, a serif title, a subtitle and a primary and a secondary call to action, with its own loading and error renders; responds to its container (@container) — the actions move side by side at @sm, the title and subtitle step up at @md and the block takes more room above and below at @lg.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": [],
+  "files": {
+    "react": [
+      {
+        "path": "blocks/hero/react/hero.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/hero.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "blocks/hero/vue/Hero.vue",
+        "type": "registry:block",
+        "target": "src/components/blocks/Hero.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "blocks/hero/svelte/Hero.svelte",
+        "type": "registry:block",
+        "target": "src/components/blocks/Hero.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "blocks/hero/solid/hero.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/hero.tsx"
+      }
+    ]
+  }
+}

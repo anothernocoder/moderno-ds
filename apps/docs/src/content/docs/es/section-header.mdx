@@ -1,0 +1,229 @@
+---
+title: Cabecera de sección
+description: La barra de cabecera de una página, una sección o una tarjeta, con su título, su contexto y sus acciones.
+group: Bloques
+order: 112
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import SectionHeaderBlockDemo from "../../../islands/SectionHeaderBlockDemo.svelte";
+import sectionHeaderReact from "../../../../../../registry/blocks/section-header/react/section-header.tsx?raw";
+import sectionHeaderVue from "../../../../../../registry/blocks/section-header/vue/SectionHeader.vue?raw";
+import sectionHeaderSolid from "../../../../../../registry/blocks/section-header/solid/section-header.tsx?raw";
+import sectionHeaderSvelte from "../../../../../../registry/blocks/section-header/svelte/SectionHeader.svelte?raw";
+
+export const examples = {
+  react: sectionHeaderReact,
+  vue: sectionHeaderVue,
+  solid: sectionHeaderSolid,
+  svelte: sectionHeaderSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <SectionHeaderBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="section-header" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { SectionHeader } from "@/components/blocks/section-header";
+```
+
+```tsx
+<SectionHeader variant="section" heading="Tareas abiertas" count={12} onPrimaryAction={addTask} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import SectionHeader from "@/components/blocks/SectionHeader.vue";
+</script>
+```
+
+```vue
+<SectionHeader variant="section" heading="Tareas abiertas" :count="12" @primary-action="addTask" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import SectionHeader from "@/components/blocks/SectionHeader.svelte";
+</script>
+```
+
+```svelte
+<SectionHeader variant="section" heading="Tareas abiertas" count={12} onprimaryaction={addTask} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { SectionHeader } from "@/components/blocks/section-header";
+```
+
+```tsx
+<SectionHeader variant="section" heading="Tareas abiertas" count={12} onPrimaryAction={addTask} />
+```
+
+</ForFramework>
+
+Elige la `variant` según lo que encabeza: la página entera, una sección de ella o una tarjeta.
+
+## Referencia de API
+
+### Propiedades
+
+| Propiedad           | Tipo                            | Por defecto     | Descripción                                                                           |
+| ------------------- | ------------------------------- | --------------- | ------------------------------------------------------------------------------------- |
+| `variant`           | `"page" \| "section" \| "card"` | `"page"`        | Lo que encabeza. Fija el rango del título (h1, h2, h3) y su tamaño.                   |
+| `heading`           | `string`                        | `"Q3 redesign"` | El título.                                                                            |
+| `description`       | `string`                        | una frase       | La línea bajo el título; `""` la oculta.                                              |
+| `breadcrumbs`       | `SectionHeaderCrumb[]`          | una ruta        | Solo página. La ruta sobre el título, terminada en la página actual.                  |
+| `status`            | `SectionHeaderStatus \| null`   | `Active`        | Solo página. Una insignia con punto al inicio de la línea de datos; `null` la oculta. |
+| `meta`              | `string[]`                      | dos datos       | Solo página. Datos breves tras el estado, como una fecha límite o un responsable.     |
+| `count`             | `number`                        | —               | Cuántos elementos encabeza, como una insignia tras el título.                         |
+| `primaryLabel`      | `string`                        | `"New task"`    | El texto del botón principal; `""` lo oculta.                                         |
+| `secondaryLabel`    | `string`                        | `"Share"`       | El texto del botón con borde; `""` lo oculta.                                         |
+| `error`             | `string`                        | —               | Los detalles no cargaron; una alerta con reintento va bajo el título.                 |
+| `loading`           | `boolean`                       | `false`         | Marcadores en una región ocupada reemplazan el título y su contexto.                  |
+| `disabled`          | `boolean`                       | `false`         | Todos los botones quedan desactivados.                                                |
+| `onPrimaryAction`   | `() => void`                    | —               | El botón principal. Svelte: `onprimaryaction`. Vue: `@primary-action`.                |
+| `onSecondaryAction` | `() => void`                    | —               | El botón con borde. Svelte: `onsecondaryaction`. Vue: `@secondary-action`.            |
+| `onRetry`           | `() => void`                    | —               | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.                           |
+| `children`          | contenido                       | —               | Solo tarjeta. El cuerpo de la tarjeta, bajo la cabecera y dentro. Vue: el slot.       |
+
+### SectionHeaderCrumb
+
+| Campo   | Tipo     | Descripción                                                       |
+| ------- | -------- | ----------------------------------------------------------------- |
+| `label` | `string` | El texto del paso.                                                |
+| `href`  | `string` | A dónde enlaza. El último paso nunca enlaza: es la página actual. |
+
+### SectionHeaderStatus
+
+| Campo   | Tipo                                                       | Descripción                                       |
+| ------- | ---------------------------------------------------------- | ------------------------------------------------- |
+| `label` | `string`                                                   | El estado, en palabras.                           |
+| `tone`  | `"neutral" \| "info" \| "success" \| "warning" \| "error"` | El tinte de la insignia. Por defecto `"neutral"`. |
+
+### Estados
+
+| Estado        | Propiedad   | Qué se muestra                                                                            |
+| ------------- | ----------- | ----------------------------------------------------------------------------------------- |
+| Por defecto   | —           | El título, su contexto y las dos acciones.                                                |
+| Vacío         | `count={0}` | El recuento marca 0; la acción con borde se desactiva y la principal sigue disponible.    |
+| Cargando      | `loading`   | Marcadores en una región `status` ocupada; las dos acciones desactivadas.                 |
+| Error         | `error`     | El título y, debajo, una alerta de error con el botón "Try again"; acciones desactivadas. |
+| Deshabilitado | `disabled`  | Todo legible y todos los botones desactivados. Los enlaces de la ruta siguen funcionando. |
+
+### Dimensionado
+
+| Paso del contenedor      | Qué cambia                                                                              |
+| ------------------------ | --------------------------------------------------------------------------------------- |
+| bajo `@sm`               | Las acciones van bajo el título y se reparten su ancho; la ruta solo muestra la vuelta. |
+| `@sm` (`--container-sm`) | Las acciones pasan junto al título; se ve la ruta completa.                             |
+| `@md` (`--container-md`) | Los títulos de página y de sección suben un tamaño.                                     |
+| `@lg` (`--container-lg`) | El título de página toma el tamaño mayor y la descripción sube a texto de cuerpo.       |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+La misma cabecera de página a 18rem, 30rem y 50rem. El marco de 50rem se desplaza por dentro.
+
+<Preview examples={examples} layout="fill">
+  <SectionHeaderBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Sección
+
+Una cabecera de sección se apoya en una línea, con un h2.
+
+<Preview examples={examples} layout="fill">
+  <SectionHeaderBlockDemo client:visible locale="es" state="section" />
+</Preview>
+
+### Tarjeta
+
+Una cabecera de tarjeta va arriba de una tarjeta, con un h3. Pon el cuerpo de la tarjeta entre las etiquetas: se muestra bajo la cabecera, dentro de la misma tarjeta.
+
+<Preview examples={examples} layout="fill">
+  <SectionHeaderBlockDemo client:visible locale="es" state="card" />
+</Preview>
+
+<ForFramework fw="react">
+
+```tsx
+<SectionHeader variant="card" heading="Miembros del equipo" count={8}>
+  <MemberList />
+</SectionHeader>
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<SectionHeader variant="card" heading="Miembros del equipo" :count="8">
+  <MemberList />
+</SectionHeader>
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<SectionHeader variant="card" heading="Miembros del equipo" count={8}>
+  <MemberList />
+</SectionHeader>
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+<SectionHeader variant="card" heading="Miembros del equipo" count={8}>
+  <MemberList />
+</SectionHeader>
+```
+
+</ForFramework>
+
+### Vacío
+
+<Preview examples={examples} layout="fill">
+  <SectionHeaderBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <SectionHeaderBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+<Preview examples={examples} layout="fill">
+  <SectionHeaderBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+<Preview examples={examples} layout="fill">
+  <SectionHeaderBlockDemo client:visible locale="es" state="disabled" />
+</Preview>

@@ -1,0 +1,204 @@
+---
+title: Action panel
+description: Settings rows with a switch or a button each, and a destructive variant for a danger zone.
+group: Blocks
+order: 115
+agent:
+  intent: A panel of settings rows — each row a title, one line of description and a control that acts at once, a Switch or a Button — with a destructive variant for irreversible actions.
+  whenToUse: "A settings page section: notification preferences, privacy toggles, an export action, or a danger zone with transfer and delete."
+  whenNotToUse:
+    - case: Settings that are saved together with a submit button
+      use: FormLayout — this block's switches apply one by one, as soon as they change
+    - case: A single confirm step before a destructive action
+      use: Dialog — this block only reports which action was pressed
+    - case: Reading a record's fields
+      use: DescriptionList — an action panel changes settings, it does not list facts
+  gotchas:
+    - "A row with `action` shows a Button with that label; any other row shows a Switch. `defaultChecked` sets a switch's first state."
+    - "Presentational: `onCheckedChange` reports a switch's id and its new state, and `onAction` reports which button was pressed. Saving, and confirming a delete, stay yours."
+    - '`variant="destructive"` tints the heading and the panel''s border with --destructive and turns every row button into a destructive Button.'
+    - "Each switch is named by its row title and described by its row description; each button is described by its row description."
+    - "`items` defaults to a sample notifications panel so the block renders standalone. Pass your own array — or edit the constant, the file is yours after `moderno add`."
+    - "`loading` replaces the rows with skeleton rows inside a busy `status` region; `error` replaces them with one alert and a retry; `items={[]}` shows an empty message."
+    - "The layout follows the block's own width, not the viewport: each control sits under its text below `--container-sm`, beside it from there on, and the heading moves beside the panel from `--container-lg`."
+  theming:
+    - "Nothing is painted here. The panel is a Card, the toggles are Switches, the actions are outline or destructive Buttons, the loading rows are Skeleton and the failed load is an error Alert."
+    - "The rows share the --border hairline; the destructive variant reads --destructive for the heading and the panel's edge."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ActionPanelBlockDemo from "../../../islands/ActionPanelBlockDemo.svelte";
+import actionPanelReact from "../../../../../../registry/blocks/action-panel/react/action-panel.tsx?raw";
+import actionPanelVue from "../../../../../../registry/blocks/action-panel/vue/ActionPanel.vue?raw";
+import actionPanelSolid from "../../../../../../registry/blocks/action-panel/solid/action-panel.tsx?raw";
+import actionPanelSvelte from "../../../../../../registry/blocks/action-panel/svelte/ActionPanel.svelte?raw";
+
+export const examples = {
+  react: actionPanelReact,
+  vue: actionPanelVue,
+  solid: actionPanelSolid,
+  svelte: actionPanelSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <ActionPanelBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="action-panel" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { ActionPanel } from "@/components/blocks/action-panel";
+```
+
+```tsx
+<ActionPanel heading="Notifications" items={settings} onCheckedChange={(id, on) => save(id, on)} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import ActionPanel from "@/components/blocks/ActionPanel.vue";
+</script>
+```
+
+```vue
+<ActionPanel heading="Notifications" :items="settings" @checked-change="save" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import ActionPanel from "@/components/blocks/ActionPanel.svelte";
+</script>
+```
+
+```svelte
+<ActionPanel heading="Notifications" items={settings} oncheckedchange={save} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { ActionPanel } from "@/components/blocks/action-panel";
+```
+
+```tsx
+<ActionPanel
+  heading="Notifications"
+  items={settings()}
+  onCheckedChange={(id, on) => save(id, on)}
+/>
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+| Prop              | Type                                     | Default                | Description                                                                   |
+| ----------------- | ---------------------------------------- | ---------------------- | ----------------------------------------------------------------------------- |
+| `items`           | `ActionPanelItem[]`                      | a sample panel         | The rows, in the order shown. `[]` renders the empty state.                   |
+| `heading`         | `string`                                 | `"Workspace settings"` | The heading beside or over the panel.                                         |
+| `description`     | `string`                                 | a sentence             | The line under the heading; `""` hides it.                                    |
+| `variant`         | `"default" \| "destructive"`             | `"default"`            | `destructive` marks a danger zone: red heading and edge, destructive buttons. |
+| `error`           | `string`                                 | —                      | The settings failed to load; an alert with a retry replaces the rows.         |
+| `loading`         | `boolean`                                | `false`                | Skeleton rows in a busy region replace the rows.                              |
+| `disabled`        | `boolean`                                | `false`                | The rows stay readable and every switch and button is disabled.               |
+| `onCheckedChange` | `(id: string, checked: boolean) => void` | —                      | A switch changed. Svelte: `oncheckedchange`. Vue: `@checked-change`.          |
+| `onAction`        | `(id: string) => void`                   | —                      | A row's button was pressed. Svelte: `onaction`. Vue: `@action`.               |
+| `onRetry`         | `() => void`                             | —                      | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.                  |
+
+### ActionPanelItem
+
+| Field            | Type      | Description                                                    |
+| ---------------- | --------- | -------------------------------------------------------------- |
+| `id`             | `string`  | Stable identity, reported by `onCheckedChange` and `onAction`. |
+| `title`          | `string`  | The setting's name, like "Mentions". It names the switch.      |
+| `description`    | `string`  | One line on what the setting does. It describes the control.   |
+| `defaultChecked` | `boolean` | Optional. The switch starts on.                                |
+| `action`         | `string`  | Optional. Shows a Button with this label instead of a Switch.  |
+
+### States
+
+| State       | Prop                    | What renders                                                    |
+| ----------- | ----------------------- | --------------------------------------------------------------- |
+| Default     | —                       | One row per item, each with a Switch or a Button.               |
+| Destructive | `variant="destructive"` | The same rows with a red heading and edge and red buttons.      |
+| Empty       | `items={[]}`            | A "No settings yet" message inside the panel.                   |
+| Loading     | `loading`               | Three skeleton rows in a busy `status` region.                  |
+| Error       | `error`                 | One error alert with a "Try again" button in place of the rows. |
+| Disabled    | `disabled`              | The rows with every switch and button disabled.                 |
+
+### Sizing
+
+| Container step           | What changes                                                              |
+| ------------------------ | ------------------------------------------------------------------------- |
+| below `@sm`              | Each switch or button sits under its title and description.               |
+| `@sm` (`--container-sm`) | Each control moves beside its text, and the panel's padding grows a step. |
+| `@md` (`--container-md`) | The heading steps up a size.                                              |
+| `@lg` (`--container-lg`) | The heading sits in a column beside the panel, a third wide.              |
+
+## Examples
+
+### Container widths
+
+The same panel at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <ActionPanelBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Destructive
+
+A danger zone: pass `variant="destructive"` and rows with an `action`.
+
+<Preview examples={examples} layout="fill">
+  <ActionPanelBlockDemo client:visible locale="en" state="destructive" />
+</Preview>
+
+### Empty
+
+<Preview examples={examples} layout="fill">
+  <ActionPanelBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <ActionPanelBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+<Preview examples={examples} layout="fill">
+  <ActionPanelBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <ActionPanelBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Presentational: it saves nothing. Confirm a destructive action before you act on `onAction`.
+- A switch applies at once. For settings saved together, use a form with a submit button.

@@ -1,0 +1,192 @@
+---
+title: Empty state
+description: What a list, table or page shows when it has nothing in it yet — an icon, a title, one line of description and up to two actions.
+group: Blocks
+order: 116
+agent:
+  intent: The placeholder a list, table, grid or page shows when it has nothing in it yet — an icon, a title, one line of description and a primary and a secondary action that lead to the first item.
+  whenToUse: "A collection that is empty: a first-use screen with no projects yet, a search or filter with no results, an inbox that is all caught up, or a collection that failed to load."
+  whenNotToUse:
+    - case: A list that has items and needs one of its own empty messages
+      use: the collection block itself (AlertList, ActivityFeed, GridList) — each draws its own empty render in place of its rows
+    - case: A message beside content that is still there, like a warning over a table
+      use: Callout or Alert — an empty state replaces the content, it does not sit next to it
+    - case: A whole page that failed or does not exist, like a 404
+      use: a screen — this block is a section, it does not own the viewport
+  gotchas:
+    - '`primaryAction` and `secondaryAction` are button labels. Pass `""` to hide one; hide both and the block shows the message alone.'
+    - "Presentational: `onPrimaryAction`, `onSecondaryAction` and `onRetry` report which button was pressed. Creating, importing and retrying stay yours."
+    - "`icon` picks one of three inline glyphs — `folder` (the default), `search` or `inbox`. They stroke `currentColor`, so no icon package is installed; swap the path for your own after `moderno add`."
+    - '`loading` replaces the message with skeleton placeholders in one busy `status` region, so it never claims "No projects yet" before the data arrives.'
+    - '`error` replaces the title with your message, turns the glyph into an alert in --destructive, announces itself as an `alert` and offers one "Try again" button.'
+    - "The layout follows the block's own width, not the viewport: the actions stack full width below `--container-sm` and sit side by side from there on."
+  theming:
+    - "Nothing is painted here but the icon tile, which reads --muted, --border and --radius. The actions are Button's primary and outline variants, and the loading placeholders are Skeleton."
+    - "Text reads --foreground and --muted-foreground; the error glyph reads --destructive."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg, and the text is capped at --container-sm."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import EmptyStateBlockDemo from "../../../islands/EmptyStateBlockDemo.svelte";
+import emptyStateReact from "../../../../../../registry/blocks/empty-state/react/empty-state.tsx?raw";
+import emptyStateVue from "../../../../../../registry/blocks/empty-state/vue/EmptyState.vue?raw";
+import emptyStateSolid from "../../../../../../registry/blocks/empty-state/solid/empty-state.tsx?raw";
+import emptyStateSvelte from "../../../../../../registry/blocks/empty-state/svelte/EmptyState.svelte?raw";
+
+export const examples = {
+  react: emptyStateReact,
+  vue: emptyStateVue,
+  solid: emptyStateSolid,
+  svelte: emptyStateSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <EmptyStateBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="empty-state" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { EmptyState } from "@/components/blocks/empty-state";
+```
+
+```tsx
+<EmptyState title="No invoices yet" primaryAction="New invoice" onPrimaryAction={create} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import EmptyState from "@/components/blocks/EmptyState.vue";
+</script>
+```
+
+```vue
+<EmptyState title="No invoices yet" primary-action="New invoice" @primary-action="create" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import EmptyState from "@/components/blocks/EmptyState.svelte";
+</script>
+```
+
+```svelte
+<EmptyState title="No invoices yet" primaryAction="New invoice" onprimaryaction={create} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { EmptyState } from "@/components/blocks/empty-state";
+```
+
+```tsx
+<EmptyState title="No invoices yet" primaryAction="New invoice" onPrimaryAction={create} />
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+| Prop                | Type                              | Default             | Description                                                                            |
+| ------------------- | --------------------------------- | ------------------- | -------------------------------------------------------------------------------------- |
+| `icon`              | `"folder" \| "search" \| "inbox"` | `"folder"`          | The glyph in the tile above the title.                                                 |
+| `title`             | `string`                          | `"No projects yet"` | What is missing, in a few words.                                                       |
+| `description`       | `string`                          | a sentence          | One line on why it matters or what to do; `""` hides it.                               |
+| `primaryAction`     | `string`                          | `"New project"`     | The primary button's label; `""` hides it.                                             |
+| `secondaryAction`   | `string`                          | `"Import"`          | The outline button's label; `""` hides it.                                             |
+| `error`             | `string`                          | —                   | The content failed to load; your message replaces the title and a retry the actions.   |
+| `loading`           | `boolean`                         | `false`             | Skeleton placeholders in a busy region replace the message.                            |
+| `disabled`          | `boolean`                         | `false`             | The message stays and every button is disabled.                                        |
+| `onPrimaryAction`   | `() => void`                      | —                   | The primary button was pressed. Svelte: `onprimaryaction`. Vue: `@primary-action`.     |
+| `onSecondaryAction` | `() => void`                      | —                   | The outline button was pressed. Svelte: `onsecondaryaction`. Vue: `@secondary-action`. |
+| `onRetry`           | `() => void`                      | —                   | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.                           |
+
+### States
+
+| State    | Prop       | What renders                                                                              |
+| -------- | ---------- | ----------------------------------------------------------------------------------------- |
+| Empty    | —          | The default: icon, title, description and both actions. Show it where the items would be. |
+| Loading  | `loading`  | Placeholders for the icon, the text and a button, in a busy `status` region.              |
+| Error    | `error`    | An alert glyph, your message, a fixed hint and one "Try again" button, as an `alert`.     |
+| Disabled | `disabled` | The same message with both buttons disabled.                                              |
+
+### Sizing
+
+| Container step           | What changes                                                          |
+| ------------------------ | --------------------------------------------------------------------- |
+| below `@sm`              | The actions stack, each as wide as the block, the primary one on top. |
+| `@sm` (`--container-sm`) | The actions sit side by side, centred, at their own width.            |
+| `@md` (`--container-md`) | The icon tile and the title step up a size.                           |
+| `@lg` (`--container-lg`) | The block takes twice the room above and below.                       |
+
+## Examples
+
+### Container widths
+
+The same block at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <EmptyStateBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### No results
+
+A search or filter that matched nothing: the `search` glyph and one action.
+
+<Preview examples={examples} layout="fill">
+  <EmptyStateBlockDemo client:visible locale="en" state="no-results" />
+</Preview>
+
+### Message only
+
+Nothing to do yet: hide both actions.
+
+<Preview examples={examples} layout="fill">
+  <EmptyStateBlockDemo client:visible locale="en" state="message-only" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <EmptyStateBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+An empty string counts as no error. Press "Try again" to clear the message and bring the title back.
+
+<Preview examples={examples} layout="fill">
+  <EmptyStateBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <EmptyStateBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Show the empty state in place of the list, not above it.
+- Say what is missing and what to do next. One action is often enough.

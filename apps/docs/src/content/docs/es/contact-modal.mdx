@@ -1,0 +1,181 @@
+---
+title: Contact modal
+description: Una invitación a hablar con ventas — un encabezado con serifa, una frase y un botón que abre un formulario de contacto en un diálogo.
+group: Bloques
+order: 120
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ContactModalBlockDemo from "../../../islands/ContactModalBlockDemo.svelte";
+import contactModalReact from "../../../../../../registry/blocks/contact-modal/react/contact-modal.tsx?raw";
+import contactModalVue from "../../../../../../registry/blocks/contact-modal/vue/ContactModal.vue?raw";
+import contactModalSolid from "../../../../../../registry/blocks/contact-modal/solid/contact-modal.tsx?raw";
+import contactModalSvelte from "../../../../../../registry/blocks/contact-modal/svelte/ContactModal.svelte?raw";
+
+export const examples = {
+  react: contactModalReact,
+  vue: contactModalVue,
+  solid: contactModalSolid,
+  svelte: contactModalSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <ContactModalBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="contact-modal" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { ContactModal } from "@/components/blocks/contact-modal";
+```
+
+```tsx
+<ContactModal heading="Habla con ventas" onSubmit={(lead) => send(lead)} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import ContactModal from "@/components/blocks/ContactModal.vue";
+</script>
+```
+
+```vue
+<ContactModal heading="Habla con ventas" @submit="send" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import ContactModal from "@/components/blocks/ContactModal.svelte";
+</script>
+```
+
+```svelte
+<ContactModal heading="Habla con ventas" onsubmit={send} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { ContactModal } from "@/components/blocks/contact-modal";
+```
+
+```tsx
+<ContactModal heading="Habla con ventas" onSubmit={(lead) => send(lead)} />
+```
+
+</ForFramework>
+
+## Referencia de la API
+
+### Props
+
+| Prop          | Tipo                          | Por defecto          | Descripción                                                          |
+| ------------- | ----------------------------- | -------------------- | -------------------------------------------------------------------- |
+| `heading`     | `string`                      | `"Talk to our team"` | El encabezado con serifa del panel.                                  |
+| `description` | `string`                      | una frase            | La línea bajo el encabezado; `""` la oculta.                         |
+| `trigger`     | `string`                      | `"Contact sales"`    | La etiqueta del botón que abre el diálogo.                           |
+| `error`       | `string`                      | —                    | Falló el envío; un Alert de error va arriba del formulario.          |
+| `loading`     | `boolean`                     | `false`              | Los campos deshabilitados y el botón de envío ocupado en "Sending".  |
+| `disabled`    | `boolean`                     | `false`              | El botón está deshabilitado, así que el diálogo no se abre.          |
+| `sent`        | `boolean`                     | `false`              | Un Alert de éxito y un botón Close sustituyen al formulario.         |
+| `onSubmit`    | `(lead: ContactLead) => void` | —                    | Se envió un formulario completo. Svelte: `onsubmit`. Vue: `@submit`. |
+
+### ContactLead
+
+| Campo     | Tipo     | Descripción                                      |
+| --------- | -------- | ------------------------------------------------ |
+| `name`    | `string` | Obligatorio. El nombre del visitante.            |
+| `email`   | `string` | Obligatorio. El correo de trabajo del visitante. |
+| `company` | `string` | Opcional. `""` si el visitante lo dejó vacío.    |
+| `message` | `string` | Opcional. `""` si el visitante lo dejó vacío.    |
+
+### Estados
+
+| Estado        | Prop                | Qué se muestra                                                                                  |
+| ------------- | ------------------- | ----------------------------------------------------------------------------------------------- |
+| Por defecto   | —                   | El panel y su botón; el diálogo tiene el formulario vacío.                                      |
+| Vacío         | un formulario vacío | Enviado vacío, nombre y correo pasan a no válidos, muestran un error y el primero toma el foco. |
+| Cargando      | `loading`           | El formulario con los campos deshabilitados y un botón ocupado en "Sending".                    |
+| Error         | `error`             | Un Alert de error arriba del formulario; lo escrito se conserva.                                |
+| Deshabilitado | `disabled`          | El panel con su botón deshabilitado.                                                            |
+| Enviado       | `sent`              | "Message sent" y un botón Close en lugar del formulario.                                        |
+
+### Tamaño
+
+| Paso del contenedor      | Qué cambia                                                                    |
+| ------------------------ | ----------------------------------------------------------------------------- |
+| bajo `@sm`               | Todo va centrado y el botón ocupa todo el ancho.                              |
+| `@sm` (`--container-sm`) | El botón toma su propio ancho y el panel gana relleno.                        |
+| `@md` (`--container-md`) | El encabezado sube un tamaño.                                                 |
+| `@lg` (`--container-lg`) | El texto va junto al botón, con más espacio arriba y abajo.                   |
+| diálogo bajo `@sm`       | Los campos se apilan; los botones se apilan a todo el ancho, el envío arriba. |
+| diálogo desde `@sm`      | Nombre y correo van lado a lado; los botones van en fila al final.            |
+
+## Ejemplos
+
+Casi todos los estados viven en el diálogo. Pulsa el botón de cada ejemplo para verlo.
+
+### Anchos de contenedor
+
+El mismo bloque a 18rem, 30rem, 40rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <ContactModalBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Vacío
+
+Pulsa "Send message" sin escribir nada.
+
+<Preview examples={examples} layout="fill">
+  <ContactModalBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <ContactModalBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+Escribe nombre y correo y pulsa "Send message" para quitar el error.
+
+<Preview examples={examples} layout="fill">
+  <ContactModalBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+<Preview examples={examples} layout="fill">
+  <ContactModalBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
+
+### Enviado
+
+<Preview examples={examples} layout="fill">
+  <ContactModalBlockDemo client:visible locale="es" state="sent" />
+</Preview>
+
+## Notas
+
+- Deja `error` corto y di qué falló. El formulario conserva lo que escribió el visitante, así puede enviarlo otra vez.
+- Pide solo lo que ventas necesita para responder. Cada campo de más hace que algunos visitantes se vayan.

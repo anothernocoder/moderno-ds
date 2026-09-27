@@ -1,0 +1,195 @@
+---
+title: Blog Header
+description: The top of a blog — a kicker, a serif title and a sentence of introduction over a row of category chips.
+group: Blocks
+order: 119
+agent:
+  intent: The header of a blog index or a category page — a short kicker, a serif title, a sentence of introduction, then one chip per category, each a link to it, with the current category filled.
+  whenToUse: "The top of a blog, a changelog or a news page whose posts are sorted into categories the reader can switch between."
+  whenNotToUse:
+    - case: The first screen of a landing page, with a call to action
+      use: Hero — it carries a primary and a secondary button
+    - case: A heading with actions over a section of an app
+      use: SectionHeader — it carries a breadcrumb, a status and buttons
+    - case: Filters the user adds and removes, like search facets
+      use: Chip with `removable` — each chip reports its own removal
+  gotchas:
+    - "`categories` is an array of `{ id, label, href }`. Each category is a link to its `href`."
+    - '`activeCategory` is the `id` of the current category. Its chip is filled and its link carries `aria-current="page"`.'
+    - "The title is an `h1`: the block tops the page. Keep one per page."
+    - '`kicker` and `description` hide when you pass `""`.'
+    - '`categories={[]}` shows "No categories yet." in place of the chips.'
+    - "`disabled` keeps every chip and makes each link inert: it drops its `href` and carries `aria-disabled`. The other chips turn muted, and the retry button is disabled too."
+    - 'Presentational: `onRetry` reports that "Try again" was pressed. Loading the categories again stays yours.'
+    - "`loading` keeps the kicker, title and description and replaces the chips with placeholders in one busy `status` region."
+    - '`error` keeps the kicker, title and description and puts an error Alert with your message and a "Try again" button where the chips were. An empty string counts as no error.'
+    - "The layout follows the block's own width, not the viewport: the description grows from `--container-sm`, the title grows and the chips spread out from `--container-md`, and the header gets more room from `--container-lg`."
+  theming:
+    - "The block paints only its dashed empty box (--border). Each category is Chip: outline for the others, solid for the current one, muted while disabled. The error is Alert's error variant, the retry is Button's outline variant and the loading chips are Skeleton."
+    - "The title reads --font-serif and --foreground; the kicker and description read --muted-foreground; on hover a category link sets --border to --foreground inside it, so the chip's outline darkens; its focus ring reads --ring."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg. The text is capped at --container-md."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import BlogHeaderBlockDemo from "../../../islands/BlogHeaderBlockDemo.svelte";
+import blogHeaderReact from "../../../../../../registry/blocks/blog-header/react/blog-header.tsx?raw";
+import blogHeaderVue from "../../../../../../registry/blocks/blog-header/vue/BlogHeader.vue?raw";
+import blogHeaderSolid from "../../../../../../registry/blocks/blog-header/solid/blog-header.tsx?raw";
+import blogHeaderSvelte from "../../../../../../registry/blocks/blog-header/svelte/BlogHeader.svelte?raw";
+
+export const examples = {
+  react: blogHeaderReact,
+  vue: blogHeaderVue,
+  solid: blogHeaderSolid,
+  svelte: blogHeaderSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <BlogHeaderBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="blog-header" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { BlogHeader } from "@/components/blocks/blog-header";
+```
+
+```tsx
+<BlogHeader title="The changelog" categories={categories} activeCategory="all" />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import BlogHeader from "@/components/blocks/BlogHeader.vue";
+</script>
+```
+
+```vue
+<BlogHeader title="The changelog" :categories="categories" active-category="all" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import BlogHeader from "@/components/blocks/BlogHeader.svelte";
+</script>
+```
+
+```svelte
+<BlogHeader title="The changelog" {categories} activeCategory="all" />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { BlogHeader } from "@/components/blocks/blog-header";
+```
+
+```tsx
+<BlogHeader title="The changelog" categories={categories} activeCategory="all" />
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+| Prop             | Type             | Default                   | Description                                                                 |
+| ---------------- | ---------------- | ------------------------- | --------------------------------------------------------------------------- |
+| `kicker`         | `string`         | `"Blog"`                  | A short line above the title; `""` hides it.                                |
+| `title`          | `string`         | `"Notes from the ledger"` | The page's `h1`. Set in the serif face.                                     |
+| `description`    | `string`         | a sentence                | One sentence under the title; `""` hides it.                                |
+| `categories`     | `BlogCategory[]` | six sample categories     | One chip per category, in order. `[]` shows the empty message.              |
+| `activeCategory` | `string`         | `"all"`                   | The `id` of the current category. Its chip is filled.                       |
+| `error`          | `string`         | —                         | Loading the categories failed; an error Alert with a retry replaces them.   |
+| `loading`        | `boolean`        | `false`                   | Placeholder chips in a busy region replace the categories.                  |
+| `disabled`       | `boolean`        | `false`                   | The chips stay; every category link is inert and the retry button disabled. |
+| `onRetry`        | `() => void`     | —                         | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.                |
+
+### BlogCategory
+
+| Field   | Type     | Description                                |
+| ------- | -------- | ------------------------------------------ |
+| `id`    | `string` | A stable key, matched by `activeCategory`. |
+| `label` | `string` | The chip's text, like `"Product"`.         |
+| `href`  | `string` | The category's page.                       |
+
+### States
+
+| State    | Prop              | What renders                                                      |
+| -------- | ----------------- | ----------------------------------------------------------------- |
+| Default  | —                 | Kicker, title, description and one chip per category.             |
+| Empty    | `categories={[]}` | Kicker, title, description and "No categories yet."               |
+| Loading  | `loading`         | Kicker, title, description and five placeholder chips.            |
+| Error    | `error`           | Kicker, title, description, then an error Alert with "Try again". |
+| Disabled | `disabled`        | The same chips with every category link inert.                    |
+
+### Sizing
+
+| Container step           | What changes                                      |
+| ------------------------ | ------------------------------------------------- |
+| below `@sm`              | The smallest title and description.               |
+| `@sm` (`--container-sm`) | The description steps up.                         |
+| `@md` (`--container-md`) | The title steps up, and the chips spread out.     |
+| `@lg` (`--container-lg`) | More room above and below, and between the parts. |
+
+## Examples
+
+### Container widths
+
+The same block at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <BlogHeaderBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Empty
+
+Pass an empty `categories` array.
+
+<Preview examples={examples} layout="fill">
+  <BlogHeaderBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <BlogHeaderBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+Press "Try again" to clear the message and bring the categories back.
+
+<Preview examples={examples} layout="fill">
+  <BlogHeaderBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <BlogHeaderBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Keep the kicker to one or two words, like the name of the blog.
+- Put "All posts" first, so the reader can always get back to every post.

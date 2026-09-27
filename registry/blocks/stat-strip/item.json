@@ -1,0 +1,37 @@
+{
+  "title": "Stat Strip",
+  "description": "An editorial row of headline figures, composing the @moderno-ui/{framework} Alert, Button and Skeleton primitives: a serif heading and a short line over a grid of large serif values, each above its muted label on a hairline rule, with an optional action and its own loading, empty and error renders; responds to its container (@container) — the action beside the heading at @sm, a larger heading and values at @md, and all four figures on one row with more room above and below at @lg.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": [],
+  "files": {
+    "react": [
+      {
+        "path": "blocks/stat-strip/react/stat-strip.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/stat-strip.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "blocks/stat-strip/vue/StatStrip.vue",
+        "type": "registry:block",
+        "target": "src/components/blocks/StatStrip.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "blocks/stat-strip/svelte/StatStrip.svelte",
+        "type": "registry:block",
+        "target": "src/components/blocks/StatStrip.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "blocks/stat-strip/solid/stat-strip.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/stat-strip.tsx"
+      }
+    ]
+  }
+}

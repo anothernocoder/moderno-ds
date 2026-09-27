@@ -1,0 +1,168 @@
+---
+title: Feed de actividad
+description: Una línea de tiempo de eventos con avatares y marcas de tiempo, con estados vacío, cargando y de error.
+group: Bloques
+order: 104
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ActivityFeedBlockDemo from "../../../islands/ActivityFeedBlockDemo.svelte";
+import activityFeedReact from "../../../../../../registry/blocks/activity-feed/react/activity-feed.tsx?raw";
+import activityFeedVue from "../../../../../../registry/blocks/activity-feed/vue/ActivityFeed.vue?raw";
+import activityFeedSolid from "../../../../../../registry/blocks/activity-feed/solid/activity-feed.tsx?raw";
+import activityFeedSvelte from "../../../../../../registry/blocks/activity-feed/svelte/ActivityFeed.svelte?raw";
+
+export const examples = {
+  react: activityFeedReact,
+  vue: activityFeedVue,
+  solid: activityFeedSolid,
+  svelte: activityFeedSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <ActivityFeedBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="activity-feed" />
+
+## Uso
+
+Usa un feed de actividad para mostrar qué pasó, quién lo hizo y cuándo, lo más reciente primero.
+
+<ForFramework fw="react">
+
+```tsx
+import { ActivityFeed } from "@/components/blocks/activity-feed";
+```
+
+```tsx
+<ActivityFeed events={events} onAction={(id) => open(id)} onViewAll={showHistory} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import ActivityFeed from "@/components/blocks/ActivityFeed.vue";
+</script>
+```
+
+```vue
+<ActivityFeed :events="events" @action="open" @view-all="showHistory" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import ActivityFeed from "@/components/blocks/ActivityFeed.svelte";
+</script>
+```
+
+```svelte
+<ActivityFeed {events} onaction={open} onviewall={showHistory} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { ActivityFeed } from "@/components/blocks/activity-feed";
+```
+
+```tsx
+<ActivityFeed events={events()} onAction={(id) => open(id)} onViewAll={showHistory} />
+```
+
+</ForFramework>
+
+## Referencia de la API
+
+### Props
+
+| Prop          | Tipo                   | Por defecto        | Descripción                                                            |
+| ------------- | ---------------------- | ------------------ | ---------------------------------------------------------------------- |
+| `events`      | `ActivityFeedEvent[]`  | un feed de ejemplo | Los eventos, lo más reciente primero. `[]` muestra el estado vacío.    |
+| `heading`     | `string`               | `"Activity"`       | El título sobre el feed.                                               |
+| `description` | `string`               | una frase          | La línea bajo el título; `""` la oculta.                               |
+| `error`       | `string`               | —                  | El feed no cargó; una alerta con reintento lo reemplaza.               |
+| `loading`     | `boolean`              | `false`            | Filas de esqueleto reemplazan el feed.                                 |
+| `disabled`    | `boolean`              | `false`            | Los eventos siguen legibles y todos los controles quedan desactivados. |
+| `onViewAll`   | `() => void`           | —                  | "View all". Svelte: `onviewall`. Vue: `@view-all`.                     |
+| `onAction`    | `(id: string) => void` | —                  | El botón de acción de una fila. Svelte: `onaction`. Vue: `@action`.    |
+| `onRetry`     | `() => void`           | —                  | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.            |
+
+### ActivityFeedEvent
+
+| Campo         | Tipo                                                     | Descripción                                                  |
+| ------------- | -------------------------------------------------------- | ------------------------------------------------------------ |
+| `id`          | `string`                                                 | Identidad estable, la que reporta `onAction`.                |
+| `actor`       | `{ name: string; initials: string; avatarUrl?: string }` | Quién lo hizo. Las iniciales se ven cuando no hay imagen.    |
+| `action`      | `string`                                                 | Qué hizo, como frase verbal: `"commented on"`.               |
+| `target`      | `string`                                                 | Opcional: sobre qué lo hizo, `"Q3 roadmap"`.                 |
+| `time`        | `string`                                                 | Cuándo, ya redactado para el lector: `"2 min ago"`.          |
+| `datetime`    | `string`                                                 | Opcional: la hora legible por máquina del elemento `<time>`. |
+| `comment`     | `string`                                                 | Opcional: texto citado, en un marco bajo el evento.          |
+| `actionLabel` | `string`                                                 | Opcional: la acción de la fila; dispara `onAction`.          |
+
+### Estados
+
+| Estado      | Prop          | Qué se muestra                                                  |
+| ----------- | ------------- | --------------------------------------------------------------- |
+| Por defecto | —             | Una fila por evento, unidas por una línea.                      |
+| Hover, foco | —             | El hover y el anillo de foco de Button, en cada control.        |
+| Vacío       | `events={[]}` | Una tarjeta "No activity yet".                                  |
+| Cargando    | `loading`     | Tres filas de esqueleto en una región `status` ocupada.         |
+| Error       | `error`       | Una alerta de error con un botón "Try again" en lugar del feed. |
+| Desactivado | `disabled`    | El feed con todos los controles desactivados.                   |
+
+### Tamaños
+
+| Paso del contenedor      | Qué cambia                                                              |
+| ------------------------ | ----------------------------------------------------------------------- |
+| `@sm` (`--container-sm`) | El título y "View all" comparten fila; los comentarios ya no se cortan. |
+| `@md` (`--container-md`) | Cada marca de tiempo pasa al borde final de su fila.                    |
+| `@lg` (`--container-lg`) | Cada marca de tiempo pasa a una columna de horas antes de los avatares. |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+El mismo feed a 18rem, 30rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <ActivityFeedBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Vacío
+
+<Preview examples={examples} layout="fill">
+  <ActivityFeedBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <ActivityFeedBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+<Preview examples={examples} layout="fill">
+  <ActivityFeedBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Desactivado
+
+<Preview examples={examples} layout="fill">
+  <ActivityFeedBlockDemo client:visible locale="es" state="disabled" />
+</Preview>

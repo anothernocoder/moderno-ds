@@ -1,9 +1,115 @@
 <script lang="ts">
-  import { Button } from "@moderno-ui/svelte";
+  import { Button, Skeleton } from "@moderno-ui/svelte";
+
+  type EmptyStateIcon = "folder" | "search" | "inbox";
+
+  interface Props {
+    icon?: EmptyStateIcon;
+    title?: string;
+    description?: string;
+    primaryAction?: string;
+    secondaryAction?: string;
+    error?: string;
+    loading?: boolean;
+    disabled?: boolean;
+    onprimaryaction?: () => void;
+    onsecondaryaction?: () => void;
+    onretry?: () => void;
+  }
+
+  const iconPaths: Record<EmptyStateIcon | "error", string[]> = {
+    folder: [
+      "M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z",
+      "M12 10v6",
+      "M9 13h6",
+    ],
+    search: ["M19 11a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z", "m21 21-4.3-4.3"],
+    inbox: [
+      "M22 12h-6l-2 3h-4l-2-3H2",
+      "M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11Z",
+    ],
+    error: ["M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0Z", "M12 8v4", "M12 16h.01"],
+  };
+
+  let {
+    icon = "folder",
+    title = "No projects yet",
+    description = "Projects keep your documents, tasks and teammates in one place. Create one to get started.",
+    primaryAction = "New project",
+    secondaryAction = "Import",
+    error,
+    loading = false,
+    disabled = false,
+    onprimaryaction,
+    onsecondaryaction,
+    onretry,
+  }: Props = $props();
+
+  const glyph = $derived(iconPaths[error ? "error" : icon]);
+  const hasActions = $derived(Boolean(error || primaryAction || secondaryAction));
 </script>
 
-<div class="moderno-block-empty">
-  <h2>No projects yet</h2>
-  <p>Create your first project to get started.</p>
-  <Button type="button">New project</Button>
-</div>
+<section class="@container moderno-block-empty-state text-foreground">
+  {#if loading}
+    <div role="status" aria-busy="true" class="grid justify-items-center gap-4 px-4 py-8 @lg:py-16">
+      <Skeleton aria-hidden="true" shape="rect" class="size-10 @md:size-12" />
+      <div aria-hidden="true" class="grid w-full max-w-sm justify-items-center gap-2">
+        <Skeleton shape="text" class="w-1/2" />
+        <Skeleton shape="text" class="w-3/4" />
+      </div>
+      <Skeleton aria-hidden="true" shape="rect" class="h-9 w-32" />
+      <span class="sr-only">Loading…</span>
+    </div>
+  {:else}
+    <div class="grid justify-items-center gap-4 px-4 py-8 text-center @lg:py-16">
+      <div
+        class={error
+          ? "grid size-10 place-items-center rounded-lg border border-border bg-muted text-destructive @md:size-12"
+          : "grid size-10 place-items-center rounded-lg border border-border bg-muted text-muted-foreground @md:size-12"}
+      >
+        <svg
+          class="size-5 @md:size-6"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          {#each glyph as d (d)}
+            <path {d} />
+          {/each}
+        </svg>
+      </div>
+
+      <div role={error ? "alert" : undefined} class="grid max-w-sm gap-1">
+        <h2 class="text-body-lg font-semibold @md:text-heading-sm">{error || title}</h2>
+        {#if error}
+          <p class="text-ui-md text-muted-foreground">
+            Nothing was lost. Check your connection, then try again.
+          </p>
+        {:else if description}
+          <p class="text-ui-md text-muted-foreground">{description}</p>
+        {/if}
+      </div>
+
+      {#if hasActions}
+        <div class="mt-2 grid w-full gap-2 @sm:flex @sm:w-auto @sm:justify-center @sm:gap-3">
+          {#if error}
+            <Button type="button" {disabled} onclick={onretry}>Try again</Button>
+          {:else}
+            {#if primaryAction}
+              <Button type="button" {disabled} onclick={onprimaryaction}>{primaryAction}</Button>
+            {/if}
+            {#if secondaryAction}
+              <Button type="button" variant="outline" {disabled} onclick={onsecondaryaction}>
+                {secondaryAction}
+              </Button>
+            {/if}
+          {/if}
+        </div>
+      {/if}
+    </div>
+  {/if}
+</section>

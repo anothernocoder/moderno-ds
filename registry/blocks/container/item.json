@@ -1,0 +1,37 @@
+{
+  "title": "Container",
+  "description": "A max-width page wrapper, composing the @moderno-ui/{framework} Card primitive for its sample content: it centres whatever it holds at one of the contract's widths (sm, md, lg or full) with a gutter on both sides; responds to its container (@container) across all three contract steps — a wider gutter at @sm and again at @md, more room above and below at @lg.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": [],
+  "files": {
+    "react": [
+      {
+        "path": "blocks/container/react/container.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/container.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "blocks/container/vue/Container.vue",
+        "type": "registry:block",
+        "target": "src/components/blocks/Container.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "blocks/container/svelte/Container.svelte",
+        "type": "registry:block",
+        "target": "src/components/blocks/Container.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "blocks/container/solid/container.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/container.tsx"
+      }
+    ]
+  }
+}

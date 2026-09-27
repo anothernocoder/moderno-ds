@@ -1,0 +1,174 @@
+---
+title: Blog post header
+description: La parte de arriba de un artículo del blog — su categoría, fecha y tiempo de lectura, un título con serifa, un breve resumen y la firma del autor.
+group: Bloques
+order: 120
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import BlogPostHeaderBlockDemo from "../../../islands/BlogPostHeaderBlockDemo.svelte";
+import blogPostHeaderReact from "../../../../../../registry/blocks/blog-post-header/react/blog-post-header.tsx?raw";
+import blogPostHeaderVue from "../../../../../../registry/blocks/blog-post-header/vue/BlogPostHeader.vue?raw";
+import blogPostHeaderSolid from "../../../../../../registry/blocks/blog-post-header/solid/blog-post-header.tsx?raw";
+import blogPostHeaderSvelte from "../../../../../../registry/blocks/blog-post-header/svelte/BlogPostHeader.svelte?raw";
+
+export const examples = {
+  react: blogPostHeaderReact,
+  vue: blogPostHeaderVue,
+  solid: blogPostHeaderSolid,
+  svelte: blogPostHeaderSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <BlogPostHeaderBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="blog-post-header" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { BlogPostHeader } from "@/components/blocks/blog-post-header";
+```
+
+```tsx
+<BlogPostHeader title={post.title} excerpt={post.excerpt} author={post.author} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import BlogPostHeader from "@/components/blocks/BlogPostHeader.vue";
+</script>
+```
+
+```vue
+<BlogPostHeader :title="post.title" :excerpt="post.excerpt" :author="post.author" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import BlogPostHeader from "@/components/blocks/BlogPostHeader.svelte";
+</script>
+```
+
+```svelte
+<BlogPostHeader title={post.title} excerpt={post.excerpt} author={post.author} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { BlogPostHeader } from "@/components/blocks/blog-post-header";
+```
+
+```tsx
+<BlogPostHeader title={post.title} excerpt={post.excerpt} author={post.author} />
+```
+
+</ForFramework>
+
+## Referencia de la API
+
+### Props
+
+| Prop          | Tipo                     | Por defecto            | Descripción                                                     |
+| ------------- | ------------------------ | ---------------------- | --------------------------------------------------------------- |
+| `category`    | `string`                 | `"Product"`            | Una etiqueta corta en un Badge; `""` la oculta.                 |
+| `title`       | `string`                 | un título de ejemplo   | El título del artículo, el `h1` de la página. Va con serifa.    |
+| `excerpt`     | `string`                 | una frase              | Una o dos frases bajo el título; `""` lo oculta.                |
+| `author`      | `BlogPostAuthor \| null` | un autor de ejemplo    | La firma. `null` la oculta.                                     |
+| `date`        | `string`                 | `"September 12, 2026"` | La fecha que lee la gente; `""` la oculta.                      |
+| `dateTime`    | `string`                 | `"2026-09-12"`         | El valor legible por máquina del elemento `<time>`.             |
+| `readingTime` | `string`                 | `"6 min read"`         | Cuánto se tarda en leer; `""` lo oculta.                        |
+| `error`       | `string`                 | —                      | Falló la carga del artículo; se muestra un Alert con reintento. |
+| `loading`     | `boolean`                | `false`                | Marcadores en una región ocupada reemplazan el encabezado.      |
+| `disabled`    | `boolean`                | `false`                | El encabezado se queda; el enlace del autor y el reintento, no. |
+| `onRetry`     | `() => void`             | —                      | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.     |
+
+### BlogPostAuthor
+
+| Campo       | Tipo     | Descripción                                                       |
+| ----------- | -------- | ----------------------------------------------------------------- |
+| `name`      | `string` | El nombre del autor.                                              |
+| `role`      | `string` | Su cargo, como `"Co-founder, CEO"`.                               |
+| `initials`  | `string` | Una o dos letras. El avatar las muestra hasta que carga una foto. |
+| `avatarUrl` | `string` | Opcional. Su foto.                                                |
+| `href`      | `string` | Opcional. Convierte el nombre en un enlace a esta página.         |
+
+### Estados
+
+| Estado        | Prop                                           | Qué se muestra                                                    |
+| ------------- | ---------------------------------------------- | ----------------------------------------------------------------- |
+| Por defecto   | —                                              | Línea de datos, título, resumen y firma.                          |
+| Vacío         | todo texto `""` salvo `title`, `author={null}` | Solo el título.                                                   |
+| Cargando      | `loading`                                      | Marcadores para la línea de datos, el título, el resumen y firma. |
+| Error         | `error`                                        | Un Alert de error con "Try again".                                |
+| Deshabilitado | `disabled`                                     | El mismo encabezado con el enlace del autor inerte.               |
+
+### Tamaño
+
+| Paso del contenedor      | Qué cambia                                    |
+| ------------------------ | --------------------------------------------- |
+| bajo `@sm`               | Todo se alinea al inicio.                     |
+| `@sm` (`--container-sm`) | El resumen sube un tamaño.                    |
+| `@md` (`--container-md`) | El título sube un tamaño y todo se centra.    |
+| `@lg` (`--container-lg`) | Más espacio arriba, abajo y entre las partes. |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+El mismo bloque a 18rem, 30rem, 40rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <BlogPostHeaderBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Solo el título
+
+Pasa `""` en todo texto salvo el título, y `author={null}`.
+
+<Preview examples={examples} layout="fill">
+  <BlogPostHeaderBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <BlogPostHeaderBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+Pulsa "Try again" para quitar el mensaje y recuperar el encabezado.
+
+<Preview examples={examples} layout="fill">
+  <BlogPostHeaderBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+<Preview examples={examples} layout="fill">
+  <BlogPostHeaderBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
+
+## Notas
+
+- Deja el resumen en una o dos frases. El cuerpo del artículo cuenta el resto.
+- Pon el cuerpo del artículo justo debajo, por ejemplo en el bloque Content.

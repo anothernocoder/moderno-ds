@@ -1,0 +1,37 @@
+{
+  "title": "FAQ",
+  "description": "Frequently asked questions in an accordion, composing the @moderno-ui/{framework} Accordion, Alert, Button and Skeleton primitives: a serif heading, a sentence of introduction, then one question per item that opens onto its answer, and a line that points to support, with its own loading, empty and error renders; responds to its container (@container) — the support line sits on one row at @sm, the heading steps up at @md and the section gets more room above and below at @lg.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": [],
+  "files": {
+    "react": [
+      {
+        "path": "blocks/faq/react/faq.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/faq.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "blocks/faq/vue/Faq.vue",
+        "type": "registry:block",
+        "target": "src/components/blocks/Faq.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "blocks/faq/svelte/Faq.svelte",
+        "type": "registry:block",
+        "target": "src/components/blocks/Faq.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "blocks/faq/solid/faq.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/faq.tsx"
+      }
+    ]
+  }
+}

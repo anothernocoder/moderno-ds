@@ -1,0 +1,211 @@
+---
+title: Product Feature List
+description: A product's features and specifications — an icon, a title and a sentence per feature, then each specification's label and value.
+group: Blocks
+order: 123
+agent:
+  intent: A section of a product page that says what makes one product good and what it is made of — a serif heading, a sentence of introduction, an icon, a short title and one sentence per feature, then a list of specifications (label and value) and one call to action.
+  whenToUse: "A product page that needs to show a few selling points and the product's facts (material, size, weight, care) in one section."
+  whenNotToUse:
+    - case: What a whole product or service does, on a landing page
+      use: FeatureGrid — it lists the features of a product, not one item for sale
+    - case: The fields of a record the user owns, like an account or an invoice
+      use: DescriptionList — its rows carry actions and fit inside an app
+    - case: A product in a grid, with its image and price
+      use: ProductCard — it links to the product page this block sits on
+  gotchas:
+    - "`features` is an array of `{ id, icon, title, description }`. `icon` is one of `leaf`, `flame`, `droplet`, `shield`, `truck` or `package`; add your own path to `iconPaths` in the copied file for more."
+    - "`specs` is an array of `{ label, value }`, rendered as a `dl`. Labels are keys, so keep them unique."
+    - '`description` and `action` hide when you pass `""`.'
+    - '`features={[]}` hides the features and `specs={[]}` hides the specifications. With both empty the block shows "No details for this product yet." and hides the action.'
+    - "Presentational: `onAction` and `onRetry` report which button was pressed. Downloading a file and retrying stay yours."
+    - "`loading` keeps the heading and replaces the details with four skeleton features and four skeleton rows in one busy `status` region."
+    - '`error` keeps the heading and puts an error Alert with your message and a "Try again" button where the details were. An empty string counts as no error.'
+    - "The layout follows the block's own width, not the viewport: one feature per row below `--container-sm`, two from there with each label beside its value, four from `--container-lg` with the specifications in two columns."
+  theming:
+    - "The only paint of its own is the icon tile (--muted, --border, rounded-lg), the hairlines between specifications (--border) and the dashed empty box (--border). The action is Button's outline variant, the error is Alert's error variant and the loading placeholders are Skeleton."
+    - "The heading reads --font-serif and --foreground; the introduction, each feature's description and each specification's value read --muted-foreground."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg, and the heading and introduction are capped at --container-md."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ProductFeatureListBlockDemo from "../../../islands/ProductFeatureListBlockDemo.svelte";
+import productFeatureListReact from "../../../../../../registry/blocks/product-feature-list/react/product-feature-list.tsx?raw";
+import productFeatureListVue from "../../../../../../registry/blocks/product-feature-list/vue/ProductFeatureList.vue?raw";
+import productFeatureListSolid from "../../../../../../registry/blocks/product-feature-list/solid/product-feature-list.tsx?raw";
+import productFeatureListSvelte from "../../../../../../registry/blocks/product-feature-list/svelte/ProductFeatureList.svelte?raw";
+
+export const examples = {
+  react: productFeatureListReact,
+  vue: productFeatureListVue,
+  solid: productFeatureListSolid,
+  svelte: productFeatureListSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <ProductFeatureListBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="product-feature-list" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { ProductFeatureList } from "@/components/blocks/product-feature-list";
+```
+
+```tsx
+<ProductFeatureList heading="Why you will love it" features={features} specs={specs} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import ProductFeatureList from "@/components/blocks/ProductFeatureList.vue";
+</script>
+```
+
+```vue
+<ProductFeatureList heading="Why you will love it" :features="features" :specs="specs" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import ProductFeatureList from "@/components/blocks/ProductFeatureList.svelte";
+</script>
+```
+
+```svelte
+<ProductFeatureList heading="Why you will love it" {features} {specs} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { ProductFeatureList } from "@/components/blocks/product-feature-list";
+```
+
+```tsx
+<ProductFeatureList heading="Why you will love it" features={features} specs={specs} />
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+| Prop          | Type               | Default                       | Description                                                                   |
+| ------------- | ------------------ | ----------------------------- | ----------------------------------------------------------------------------- |
+| `heading`     | `string`           | `"Made to be used every day"` | The section's heading. Set in the serif face.                                 |
+| `description` | `string`           | a sentence                    | One sentence under the heading; `""` hides it.                                |
+| `features`    | `ProductFeature[]` | four sample features          | The features, in order. `[]` hides them.                                      |
+| `specs`       | `ProductSpec[]`    | six sample specifications     | The specifications, in order. `[]` hides them.                                |
+| `action`      | `string`           | `"Download the spec sheet"`   | The outline button's label under the details; `""` hides it.                  |
+| `error`       | `string`           | —                             | Loading the details failed; an error Alert with a retry replaces them.        |
+| `loading`     | `boolean`          | `false`                       | Skeleton features and rows in a busy region replace the details.              |
+| `disabled`    | `boolean`          | `false`                       | The content stays and every button is disabled.                               |
+| `onAction`    | `() => void`       | —                             | The button under the details was pressed. Svelte: `onaction`. Vue: `@action`. |
+| `onRetry`     | `() => void`       | —                             | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.                  |
+
+### Feature
+
+| Field         | Type                                                                 | Description                        |
+| ------------- | -------------------------------------------------------------------- | ---------------------------------- |
+| `id`          | `string`                                                             | A stable key for the feature.      |
+| `icon`        | `"leaf" \| "flame" \| "droplet" \| "shield" \| "truck" \| "package"` | The glyph in the tile.             |
+| `title`       | `string`                                                             | A few words. Rendered as an `h3`.  |
+| `description` | `string`                                                             | One sentence about why it matters. |
+
+### Spec
+
+| Field   | Type     | Description                                          |
+| ------- | -------- | ---------------------------------------------------- |
+| `label` | `string` | What is measured, like "Weight". Rendered as a `dt`. |
+| `value` | `string` | The fact itself, like "380 g". Rendered as a `dd`.   |
+
+### States
+
+| State    | Prop                         | What renders                                                    |
+| -------- | ---------------------------- | --------------------------------------------------------------- |
+| Default  | —                            | Heading, introduction, features, specifications and the action. |
+| Empty    | `features={[]}` `specs={[]}` | Heading, introduction and "No details for this product yet."    |
+| Loading  | `loading`                    | Heading, introduction, four placeholder features and four rows. |
+| Error    | `error`                      | Heading, introduction, then an error Alert with "Try again".    |
+| Disabled | `disabled`                   | The same content with the action disabled.                      |
+
+### Sizing
+
+| Container step           | What changes                                                                        |
+| ------------------------ | ----------------------------------------------------------------------------------- |
+| below `@sm`              | One feature per row. Each label sits above its value.                               |
+| `@sm` (`--container-sm`) | Two feature columns. Each label sits beside its value.                              |
+| `@md` (`--container-md`) | The heading steps up a size.                                                        |
+| `@lg` (`--container-lg`) | Four feature columns, two columns of specifications, and more room above and below. |
+
+## Examples
+
+### Container widths
+
+The same block at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <ProductFeatureListBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Specifications only
+
+Pass an empty `features` array. The specifications stay.
+
+<Preview examples={examples} layout="fill">
+  <ProductFeatureListBlockDemo client:visible locale="en" state="specs-only" />
+</Preview>
+
+### Empty
+
+Pass empty `features` and `specs` arrays.
+
+<Preview examples={examples} layout="fill">
+  <ProductFeatureListBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <ProductFeatureListBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+Press "Try again" to clear the message and bring the details back.
+
+<Preview examples={examples} layout="fill">
+  <ProductFeatureListBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <ProductFeatureListBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Four features fill one row at the widest step, and two rows at two columns.
+- An even number of specifications keeps both columns the same height.
+- Keep each value short. Put long care instructions on a page the action opens.

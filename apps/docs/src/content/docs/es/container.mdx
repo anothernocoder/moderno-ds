@@ -1,0 +1,151 @@
+---
+title: Contenedor
+description: Un envoltorio de página con ancho máximo que centra su contenido con un margen a cada lado.
+group: Bloques
+order: 111
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ContainerBlockDemo from "../../../islands/ContainerBlockDemo.svelte";
+import containerReact from "../../../../../../registry/blocks/container/react/container.tsx?raw";
+import containerVue from "../../../../../../registry/blocks/container/vue/Container.vue?raw";
+import containerSolid from "../../../../../../registry/blocks/container/solid/container.tsx?raw";
+import containerSvelte from "../../../../../../registry/blocks/container/svelte/Container.svelte?raw";
+
+export const examples = {
+  react: containerReact,
+  vue: containerVue,
+  solid: containerSolid,
+  svelte: containerSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <ContainerBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="container" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { Container } from "@/components/blocks/container";
+```
+
+```tsx
+<Container size="md">
+  <SettingsForm />
+</Container>
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import Container from "@/components/blocks/Container.vue";
+</script>
+```
+
+```vue
+<Container size="md">
+  <SettingsForm />
+</Container>
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import Container from "@/components/blocks/Container.svelte";
+</script>
+```
+
+```svelte
+<Container size="md">
+  <SettingsForm />
+</Container>
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { Container } from "@/components/blocks/container";
+```
+
+```tsx
+<Container size="md">
+  <SettingsForm />
+</Container>
+```
+
+</ForFramework>
+
+Usa `sm` para lectura y formularios cortos, `md` para la mayoría de las páginas y `lg` para vistas densas.
+
+## Referencia de API
+
+### Propiedades
+
+| Propiedad  | Tipo                              | Por defecto         | Descripción                                                        |
+| ---------- | --------------------------------- | ------------------- | ------------------------------------------------------------------ |
+| `size`     | `"sm" \| "md" \| "lg" \| "full"`  | `"lg"`              | El ancho máximo del contenido; `full` no tiene límite.             |
+| `children` | contenido (Vue y Svelte: el slot) | una tarjeta ejemplo | Lo que el contenedor centra. Sin él, se ve una tarjeta de ejemplo. |
+
+### Tamaños
+
+| Tamaño | Ancho máximo                    |
+| ------ | ------------------------------- |
+| `sm`   | `--container-sm` (24rem)        |
+| `md`   | `--container-md` (36rem)        |
+| `lg`   | `--container-lg` (48rem)        |
+| `full` | ninguno: el ancho de su espacio |
+
+### Estados
+
+El contenedor no tiene estados propios. Cargando, vacío y error son de su contenido.
+
+### Dimensionado
+
+| Paso del contenedor      | Qué cambia                                |
+| ------------------------ | ----------------------------------------- |
+| bajo `@sm`               | Un margen estrecho a cada lado.           |
+| `@sm` (`--container-sm`) | Un margen más ancho.                      |
+| `@md` (`--container-md`) | Un margen más ancho todavía.              |
+| `@lg` (`--container-lg`) | Más espacio arriba y abajo del contenido. |
+
+## Ejemplos
+
+### Cada tamaño
+
+El mismo contenido en cada `size`. Un tamaño más ancho que su espacio simplemente lo llena.
+
+<Preview examples={examples} layout="fill">
+  <ContainerBlockDemo client:visible locale="es" state="sizes" />
+</Preview>
+
+### Anchos de contenedor
+
+El mismo contenedor a 18rem, 30rem y 50rem. El margen crece con el espacio. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <ContainerBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Tu propio contenido
+
+Lo que pongas dentro reemplaza la tarjeta de ejemplo.
+
+<Preview examples={examples} layout="fill">
+  <ContainerBlockDemo client:visible locale="es" state="content" />
+</Preview>

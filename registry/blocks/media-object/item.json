@@ -1,0 +1,37 @@
+{
+  "title": "Media Object",
+  "description": "An avatar beside a heading and a body, composing the @moderno-ui/{framework} Avatar, Button, Skeleton and Alert primitives: a comment, a note or a review with an optional line of meta and one quiet action, the avatar at the start or the end, and its own empty, loading and error renders; responds to its container (@container) — the avatar moves beside the text at @sm, the heading and body step up at @md and the meta moves to the heading's far edge at @lg.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": [],
+  "files": {
+    "react": [
+      {
+        "path": "blocks/media-object/react/media-object.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/media-object.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "blocks/media-object/vue/MediaObject.vue",
+        "type": "registry:block",
+        "target": "src/components/blocks/MediaObject.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "blocks/media-object/svelte/MediaObject.svelte",
+        "type": "registry:block",
+        "target": "src/components/blocks/MediaObject.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "blocks/media-object/solid/media-object.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/media-object.tsx"
+      }
+    ]
+  }
+}

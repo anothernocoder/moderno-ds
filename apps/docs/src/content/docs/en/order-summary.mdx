@@ -1,0 +1,231 @@
+---
+title: Order Summary
+description: A read-only summary of an order — each item with its image, name, options, quantity and price — and the totals, from the subtotal down to the total.
+group: Blocks
+order: 124
+agent:
+  intent: A read-only order summary — a serif heading, one line per item (image, name as a link, options such as colour or size, quantity and price), then a muted card with the totals rows (subtotal, shipping, taxes…), a divider and the total.
+  whenToUse: "Beside a checkout form, on an order review step or on an order confirmation page — anywhere a shopper reads what they are paying for without changing it."
+  whenNotToUse:
+    - case: A cart where the shopper changes quantities and removes items
+      use: ShoppingCart — each line has a quantity box and a Remove button
+    - case: A grid of products to browse, with pagination
+      use: ProductList — it shows a page of products to pick from
+    - case: Label and value pairs about one record, with no prices
+      use: DescriptionList — it lays out any field and its value
+  gotchas:
+    - "`items` is an array of `{ id, name, price, quantity, options?, href?, image?: { src, alt } }`."
+    - "`price` is the line's price as people read it, for its whole quantity, like `€56` for two €28 mugs. Format it in the reader's currency and language before you pass it."
+    - "`totals` is an array of `{ label, amount }` rows, in the order you pass them — like Subtotal, Discount, Shipping and Taxes. `total` is the grand total, shown last and larger, under a divider."
+    - "The block does no maths: work out every amount yourself and pass it as a string."
+    - "The block is read-only: it has no quantity box, no Remove button and no Checkout button. Put your own Pay or Place order button next to it."
+    - "With `href`, the item's name is a link to its product page. Without it, the name is plain text."
+    - "Give `image.alt` a short description of the photo. Without `image`, the image area is an empty muted box."
+    - "Each name is an `h3` under the block's `h2`."
+    - "Pass `items` without `totals` and `total`, and the totals card is left out."
+    - '`items={[]}` shows "Your order is empty." in place of the lines and the totals.'
+    - "`loading` keeps the heading and shows three placeholder lines in one busy `status` region."
+    - '`error` keeps the heading and puts an error Alert with your message and a "Try again" button where the lines and the totals were. An empty string counts as no error.'
+    - "`disabled` keeps every line and makes each name link inert (no `href`, `aria-disabled`), and disables the retry button."
+    - "The layout follows the block's own width, not the viewport: a small image with the quantity under the name at first; a larger image with the quantity in its own column, before the price, from `--container-sm`; a larger image again and a larger heading from `--container-md`; the totals beside the lines from `--container-lg`."
+  theming:
+    - "The block paints only the muted box behind each image (--muted), the lines' dividers (--border) and its dashed empty box (--border). The totals are Card's muted variant with a Divider above the total, the error is Alert's error variant, the retry is Button's outline variant and the loading lines are Skeleton."
+    - "The heading reads --font-serif and --foreground; the options, the quantity and the totals labels read --muted-foreground; the name links read --foreground and their focus ring --ring."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import OrderSummaryBlockDemo from "../../../islands/OrderSummaryBlockDemo.svelte";
+import orderSummaryReact from "../../../../../../registry/blocks/order-summary/react/order-summary.tsx?raw";
+import orderSummaryVue from "../../../../../../registry/blocks/order-summary/vue/OrderSummary.vue?raw";
+import orderSummarySolid from "../../../../../../registry/blocks/order-summary/solid/order-summary.tsx?raw";
+import orderSummarySvelte from "../../../../../../registry/blocks/order-summary/svelte/OrderSummary.svelte?raw";
+
+export const examples = {
+  react: orderSummaryReact,
+  vue: orderSummaryVue,
+  solid: orderSummarySolid,
+  svelte: orderSummarySvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <OrderSummaryBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="order-summary" />
+
+## Usage
+
+Use Order Summary to show a shopper what they are paying for, next to a checkout form or on a confirmation page. It only shows the order; nothing in it changes the order.
+
+<ForFramework fw="react">
+
+```tsx
+import { OrderSummary } from "@/components/blocks/order-summary";
+```
+
+```tsx
+<OrderSummary items={items} totals={totals} total={total} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import OrderSummary from "@/components/blocks/OrderSummary.vue";
+</script>
+```
+
+```vue
+<OrderSummary :items="items" :totals="totals" :total="total" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import OrderSummary from "@/components/blocks/OrderSummary.svelte";
+</script>
+```
+
+```svelte
+<OrderSummary {items} {totals} {total} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { OrderSummary } from "@/components/blocks/order-summary";
+```
+
+```tsx
+<OrderSummary items={items()} totals={totals()} total={total()} />
+```
+
+</ForFramework>
+
+`totals` is a list of rows, like `[{ label: "Subtotal", amount: "€134" }, { label: "Shipping", amount: "€6" }]`. The block does no maths: pass every amount as people read it.
+
+## API Reference
+
+### Props
+
+| Prop       | Type           | Default                    | Description                                                                              |
+| ---------- | -------------- | -------------------------- | ---------------------------------------------------------------------------------------- |
+| `heading`  | `string`       | `"Order summary"`          | The section's heading. It is set in the serif face.                                      |
+| `items`    | `OrderItem[]`  | three sample items         | The lines in the order. `[]` shows the empty message.                                    |
+| `totals`   | `OrderTotal[]` | three rows with the sample | The rows above the total, in order. Left out, there are none.                            |
+| `total`    | `string`       | `"€168"` with the samples  | The grand total, last and larger. Left out, there is no total row.                       |
+| `error`    | `string`       | —                          | Loading the order failed; an error Alert with a retry replaces the lines and the totals. |
+| `loading`  | `boolean`      | `false`                    | Placeholder lines in a busy region replace the lines and the totals.                     |
+| `disabled` | `boolean`      | `false`                    | The lines stay; every link is inert and the retry is off.                                |
+| `onRetry`  | `() => void`   | —                          | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.                             |
+
+### OrderItem
+
+| Field      | Type             | Description                                                   |
+| ---------- | ---------------- | ------------------------------------------------------------- |
+| `id`       | `string`         | A stable key for the line.                                    |
+| `name`     | `string`         | The product's name.                                           |
+| `price`    | `string`         | The line's price for its whole quantity, like `"€56"`.        |
+| `quantity` | `number`         | How many are in the order. It reads "Qty 2".                  |
+| `options`  | `string`         | Optional. What the shopper chose, like `"Sage · 350 ml"`.     |
+| `href`     | `string`         | Optional. Turns the name into a link to the product's page.   |
+| `image`    | `OrderItemImage` | Optional. The photo: `{ src, alt }`. Without it, a muted box. |
+
+### OrderTotal
+
+| Field    | Type     | Description                                            |
+| -------- | -------- | ------------------------------------------------------ |
+| `label`  | `string` | What the row is, like `"Shipping"`.                    |
+| `amount` | `string` | The amount as people read it, like `"€6"` or `"Free"`. |
+
+### States
+
+| State    | Prop         | What renders                                                 |
+| -------- | ------------ | ------------------------------------------------------------ |
+| Default  | —            | The heading, one line per item and the totals.               |
+| Empty    | `items={[]}` | The heading and "Your order is empty." in a dashed box.      |
+| Loading  | `loading`    | The heading and three placeholder lines.                     |
+| Error    | `error`      | The heading and an error Alert with "Try again".             |
+| Disabled | `disabled`   | The same lines and totals, with the links and the retry off. |
+
+### Sizing
+
+| Container step           | What changes                                                                        |
+| ------------------------ | ----------------------------------------------------------------------------------- |
+| below `@sm`              | A small image. The quantity sits under the name. The totals sit under the lines.    |
+| `@sm` (`--container-sm`) | The image grows, and the quantity moves into its own column, just before the price. |
+| `@md` (`--container-md`) | The image grows again, and the heading steps up.                                    |
+| `@lg` (`--container-lg`) | The totals move beside the lines.                                                   |
+
+## Examples
+
+### Container widths
+
+The same block at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <OrderSummaryBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### With a discount
+
+Add any row to `totals`: here a discount and free shipping.
+
+<Preview examples={examples} layout="fill">
+  <OrderSummaryBlockDemo client:visible locale="en" state="discount" />
+</Preview>
+
+### Without images
+
+Leave out `image`, and each image area is a muted box.
+
+<Preview examples={examples} layout="fill">
+  <OrderSummaryBlockDemo client:visible locale="en" state="no-images" />
+</Preview>
+
+### Empty
+
+Pass an empty `items` array.
+
+<Preview examples={examples} layout="fill">
+  <OrderSummaryBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <OrderSummaryBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+Press "Try again" to clear the message and bring the order back.
+
+<Preview examples={examples} layout="fill">
+  <OrderSummaryBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+Use it while the order is being placed, so the shopper does not leave the page halfway.
+
+<Preview examples={examples} layout="fill">
+  <OrderSummaryBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Keep `options` short: the colour and the size are enough.
+- Keep the totals rows few. Subtotal, shipping and taxes are usually all a shopper needs.

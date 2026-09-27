@@ -1,0 +1,188 @@
+---
+title: Product Feature List
+description: Las funciones y especificaciones de un producto — un icono, un título y una frase por función, y después la etiqueta y el valor de cada especificación.
+group: Bloques
+order: 123
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ProductFeatureListBlockDemo from "../../../islands/ProductFeatureListBlockDemo.svelte";
+import productFeatureListReact from "../../../../../../registry/blocks/product-feature-list/react/product-feature-list.tsx?raw";
+import productFeatureListVue from "../../../../../../registry/blocks/product-feature-list/vue/ProductFeatureList.vue?raw";
+import productFeatureListSolid from "../../../../../../registry/blocks/product-feature-list/solid/product-feature-list.tsx?raw";
+import productFeatureListSvelte from "../../../../../../registry/blocks/product-feature-list/svelte/ProductFeatureList.svelte?raw";
+
+export const examples = {
+  react: productFeatureListReact,
+  vue: productFeatureListVue,
+  solid: productFeatureListSolid,
+  svelte: productFeatureListSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <ProductFeatureListBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="product-feature-list" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { ProductFeatureList } from "@/components/blocks/product-feature-list";
+```
+
+```tsx
+<ProductFeatureList heading="Por qué te va a gustar" features={features} specs={specs} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import ProductFeatureList from "@/components/blocks/ProductFeatureList.vue";
+</script>
+```
+
+```vue
+<ProductFeatureList heading="Por qué te va a gustar" :features="features" :specs="specs" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import ProductFeatureList from "@/components/blocks/ProductFeatureList.svelte";
+</script>
+```
+
+```svelte
+<ProductFeatureList heading="Por qué te va a gustar" {features} {specs} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { ProductFeatureList } from "@/components/blocks/product-feature-list";
+```
+
+```tsx
+<ProductFeatureList heading="Por qué te va a gustar" features={features} specs={specs} />
+```
+
+</ForFramework>
+
+## Referencia de la API
+
+### Props
+
+| Prop          | Tipo               | Por defecto                   | Descripción                                                                     |
+| ------------- | ------------------ | ----------------------------- | ------------------------------------------------------------------------------- |
+| `heading`     | `string`           | `"Made to be used every day"` | El encabezado de la sección. Va en la fuente con serifa.                        |
+| `description` | `string`           | una frase                     | Una frase bajo el encabezado; `""` la oculta.                                   |
+| `features`    | `ProductFeature[]` | cuatro funciones de ejemplo   | Las funciones, en orden. `[]` las oculta.                                       |
+| `specs`       | `ProductSpec[]`    | seis especificaciones         | Las especificaciones, en orden. `[]` las oculta.                                |
+| `action`      | `string`           | `"Download the spec sheet"`   | La etiqueta del botón con contorno bajo los detalles; `""` lo oculta.           |
+| `error`       | `string`           | —                             | Falló la carga de los detalles; un Alert de error con reintento los sustituye.  |
+| `loading`     | `boolean`          | `false`                       | Funciones y filas de esqueleto en una región ocupada sustituyen a los detalles. |
+| `disabled`    | `boolean`          | `false`                       | El contenido se queda y todos los botones se deshabilitan.                      |
+| `onAction`    | `() => void`       | —                             | Se pulsó el botón bajo los detalles. Svelte: `onaction`. Vue: `@action`.        |
+| `onRetry`     | `() => void`       | —                             | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.                     |
+
+### Función
+
+| Campo         | Tipo                                                                 | Descripción                           |
+| ------------- | -------------------------------------------------------------------- | ------------------------------------- |
+| `id`          | `string`                                                             | Una clave estable para la función.    |
+| `icon`        | `"leaf" \| "flame" \| "droplet" \| "shield" \| "truck" \| "package"` | El glifo de la baldosa.               |
+| `title`       | `string`                                                             | Pocas palabras. Se muestra como `h3`. |
+| `description` | `string`                                                             | Una frase sobre por qué importa.      |
+
+### Especificación
+
+| Campo   | Tipo     | Descripción                                        |
+| ------- | -------- | -------------------------------------------------- |
+| `label` | `string` | Lo que se mide, como "Peso". Se muestra como `dt`. |
+| `value` | `string` | El dato, como "380 g". Se muestra como `dd`.       |
+
+### Estados
+
+| Estado        | Prop                         | Qué se muestra                                                         |
+| ------------- | ---------------------------- | ---------------------------------------------------------------------- |
+| Por defecto   | —                            | Encabezado, introducción, funciones, especificaciones y la acción.     |
+| Vacío         | `features={[]}` `specs={[]}` | Encabezado, introducción y "No details for this product yet."          |
+| Cargando      | `loading`                    | Encabezado, introducción, cuatro funciones y cuatro filas de marcador. |
+| Error         | `error`                      | Encabezado, introducción y después un Alert de error con "Try again".  |
+| Deshabilitado | `disabled`                   | El mismo contenido con la acción deshabilitada.                        |
+
+### Tamaño
+
+| Paso del contenedor      | Qué cambia                                                                           |
+| ------------------------ | ------------------------------------------------------------------------------------ |
+| bajo `@sm`               | Una función por fila. Cada etiqueta va sobre su valor.                               |
+| `@sm` (`--container-sm`) | Dos columnas de funciones. Cada etiqueta va junto a su valor.                        |
+| `@md` (`--container-md`) | El encabezado sube un tamaño.                                                        |
+| `@lg` (`--container-lg`) | Cuatro columnas de funciones, dos de especificaciones, y más espacio arriba y abajo. |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+El mismo bloque a 18rem, 30rem, 40rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <ProductFeatureListBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Solo especificaciones
+
+Pasa un array `features` vacío. Las especificaciones se quedan.
+
+<Preview examples={examples} layout="fill">
+  <ProductFeatureListBlockDemo client:visible locale="es" state="specs-only" />
+</Preview>
+
+### Vacío
+
+Pasa los arrays `features` y `specs` vacíos.
+
+<Preview examples={examples} layout="fill">
+  <ProductFeatureListBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <ProductFeatureListBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+Pulsa "Try again" para quitar el mensaje y recuperar los detalles.
+
+<Preview examples={examples} layout="fill">
+  <ProductFeatureListBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+<Preview examples={examples} layout="fill">
+  <ProductFeatureListBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
+
+## Notas
+
+- Cuatro funciones llenan una fila en el paso más ancho, y dos filas a dos columnas.
+- Un número par de especificaciones deja las dos columnas a la misma altura.
+- Deja cada valor corto. Pon las instrucciones de cuidado largas en una página que abra la acción.

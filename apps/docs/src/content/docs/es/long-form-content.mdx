@@ -1,0 +1,207 @@
+---
+title: Long-form content
+description: Una maqueta de caso de estudio — un encabezado con serifa, una entradilla, los datos del proyecto, la historia en secciones con título y una cita destacada del cliente.
+group: Bloques
+order: 126
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import LongFormContentBlockDemo from "../../../islands/LongFormContentBlockDemo.svelte";
+import longFormContentReact from "../../../../../../registry/blocks/long-form-content/react/long-form-content.tsx?raw";
+import longFormContentVue from "../../../../../../registry/blocks/long-form-content/vue/LongFormContent.vue?raw";
+import longFormContentSolid from "../../../../../../registry/blocks/long-form-content/solid/long-form-content.tsx?raw";
+import longFormContentSvelte from "../../../../../../registry/blocks/long-form-content/svelte/LongFormContent.svelte?raw";
+
+export const examples = {
+  react: longFormContentReact,
+  vue: longFormContentVue,
+  solid: longFormContentSolid,
+  svelte: longFormContentSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <LongFormContentBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="long-form-content" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { LongFormContent } from "@/components/blocks/long-form-content";
+```
+
+```tsx
+<LongFormContent
+  heading="Cómo Acme redujo su abandono a la mitad"
+  facts={facts}
+  sections={sections}
+  quote={quote}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import LongFormContent from "@/components/blocks/LongFormContent.vue";
+</script>
+```
+
+```vue
+<LongFormContent
+  heading="Cómo Acme redujo su abandono a la mitad"
+  :facts="facts"
+  :sections="sections"
+  :quote="quote"
+/>
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import LongFormContent from "@/components/blocks/LongFormContent.svelte";
+</script>
+```
+
+```svelte
+<LongFormContent heading="Cómo Acme redujo su abandono a la mitad" {facts} {sections} {quote} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { LongFormContent } from "@/components/blocks/long-form-content";
+```
+
+```tsx
+<LongFormContent
+  heading="Cómo Acme redujo su abandono a la mitad"
+  facts={facts}
+  sections={sections}
+  quote={quote}
+/>
+```
+
+</ForFramework>
+
+## Referencia de la API
+
+### Props
+
+| Prop       | Tipo                    | Por defecto                                 | Descripción                                                                          |
+| ---------- | ----------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------ |
+| `kicker`   | `string`                | `"Case study"`                              | Unas palabras sobre el encabezado; `""` las oculta.                                  |
+| `heading`  | `string`                | `"How Northwind closes its books in a day"` | El encabezado del caso de estudio. Va en la fuente con serifa.                       |
+| `lead`     | `string`                | una frase                                   | El resumen bajo el encabezado; `""` lo oculta.                                       |
+| `facts`    | `LongFormFact[]`        | cuatro datos de ejemplo                     | El proyecto de un vistazo: cliente, sector, equipo, plazo. `[]` oculta la lista.     |
+| `sections` | `LongFormSection[]`     | tres secciones de ejemplo                   | La historia, en orden. `[]` muestra el mensaje de vacío.                             |
+| `quote`    | `LongFormQuote \| null` | una cita de ejemplo                         | La cita destacada tras la primera sección; `null` la oculta.                         |
+| `action`   | `string`                | `"Read the next case study"`                | La etiqueta del botón con contorno bajo la historia; `""` lo oculta.                 |
+| `error`    | `string`                | —                                           | Falló la carga; un Alert de error con reintento sustituye a los datos y la historia. |
+| `loading`  | `boolean`               | `false`                                     | Líneas de esqueleto en una región ocupada sustituyen a los datos y la historia.      |
+| `disabled` | `boolean`               | `false`                                     | El contenido se queda y todos los botones se deshabilitan.                           |
+| `onAction` | `() => void`            | —                                           | Se pulsó el botón bajo la historia. Svelte: `onaction`. Vue: `@action`.              |
+| `onRetry`  | `() => void`            | —                                           | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.                          |
+
+### Dato
+
+| Campo   | Tipo     | Descripción                                 |
+| ------- | -------- | ------------------------------------------- |
+| `id`    | `string` | Una clave estable para el dato.             |
+| `label` | `string` | Qué es el dato, como `"Client"`. El `dt`.   |
+| `value` | `string` | El dato en sí, como `"Northwind"`. El `dd`. |
+
+### Sección
+
+| Campo        | Tipo       | Descripción                                  |
+| ------------ | ---------- | -------------------------------------------- |
+| `id`         | `string`   | Una clave estable para la sección.           |
+| `heading`    | `string`   | Pocas palabras. Se muestra como `h3`.        |
+| `paragraphs` | `string[]` | El texto de la sección, un `p` por elemento. |
+
+### Cita
+
+| Campo       | Tipo     | Descripción                                       |
+| ----------- | -------- | ------------------------------------------------- |
+| `text`      | `string` | Las palabras citadas, en la fuente con serifa.    |
+| `author`    | `string` | Quién lo dijo.                                    |
+| `role`      | `string` | Su cargo y empresa, bajo el nombre.               |
+| `initials`  | `string` | Se muestran en el Avatar hasta que carga la foto. |
+| `avatarUrl` | `string` | Opcional. Una foto de quien habla para el Avatar. |
+
+### Estados
+
+| Estado        | Prop            | Qué se muestra                                                                          |
+| ------------- | --------------- | --------------------------------------------------------------------------------------- |
+| Por defecto   | —               | Antetítulo, encabezado, entradilla, los datos, todas las secciones, la cita, la acción. |
+| Vacío         | `sections={[]}` | Antetítulo, encabezado, entradilla, los datos y "This case study has no story yet."     |
+| Cargando      | `loading`       | Antetítulo, encabezado, entradilla y marcadores para los datos y dos secciones.         |
+| Error         | `error`         | Antetítulo, encabezado, entradilla y un Alert de error con "Try again".                 |
+| Deshabilitado | `disabled`      | El mismo contenido con la acción deshabilitada.                                         |
+
+### Tamaño
+
+| Paso del contenedor      | Qué cambia                                                               |
+| ------------------------ | ------------------------------------------------------------------------ |
+| bajo `@sm`               | La entradilla a tamaño de cuerpo; los datos en dos columnas.             |
+| `@sm` (`--container-sm`) | La entradilla sube un tamaño; la cita se mete hacia dentro.              |
+| `@md` (`--container-md`) | El encabezado y la cita suben un tamaño; los datos van en una sola fila. |
+| `@lg` (`--container-lg`) | Los datos pasan al lado de la historia; más espacio arriba y abajo.      |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+El mismo bloque a 18rem, 30rem, 40rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <LongFormContentBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Vacío
+
+Pasa un array `sections` vacío.
+
+<Preview examples={examples} layout="fill">
+  <LongFormContentBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <LongFormContentBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+Pulsa "Try again" para quitar el mensaje y recuperar el caso de estudio.
+
+<Preview examples={examples} layout="fill">
+  <LongFormContentBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+<Preview examples={examples} layout="fill">
+  <LongFormContentBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
+
+## Notas
+
+- Tres secciones se leen mejor: el reto, el enfoque, el resultado.
+- Deja los datos cortos: una o dos palabras cada uno, cuatro como mucho.
+- Cita a una persona con su nombre. Un nombre y un cargo reales hacen creíble la historia.

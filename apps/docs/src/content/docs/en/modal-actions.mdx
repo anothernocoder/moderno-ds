@@ -1,0 +1,204 @@
+---
+title: Modal actions
+description: Action rows that each open a dialog — a confirmation, a destructive warning or a one-field form.
+group: Blocks
+order: 116
+agent:
+  intent: A list of account actions — each row a title, one line of description and a Button that opens a Dialog to confirm the action or to fill in one field first.
+  whenToUse: "An account or workspace settings section where every action asks first: rename, export, transfer, delete."
+  whenNotToUse:
+    - case: Settings that apply at once, like notification toggles
+      use: ActionPanel — its switches and buttons act without a dialog
+    - case: One dialog on its own, outside a list of actions
+      use: Dialog — compose the primitive directly
+    - case: A form with several fields saved together
+      use: FormLayout — this block's form dialog holds one field
+  gotchas:
+    - 'A row with `field` opens a form dialog with that one field; any other row opens a confirmation. `tone: "destructive"` marks the row Irreversible, opens an `alertdialog` and paints its confirm button destructive.'
+    - "Presentational: `onConfirm(id, value)` reports the confirmed action, with the field's trimmed value for a form. The dialog closes on confirm; doing the work stays yours."
+    - "A form dialog will not close on an empty value: the field turns invalid, shows its error and takes focus."
+    - "Each row button is described by its row description; each dialog is named by its title and described by its description, and focus returns to the row button when it closes."
+    - "`actions` defaults to a sample list so the block renders standalone. Pass your own array — or edit the constant, the file is yours after `moderno add`."
+    - "`loading` replaces the rows with skeleton rows inside a busy `status` region; `error` replaces them with one alert and a retry; `actions={[]}` shows an empty message."
+    - "The layout follows the block's own width, not the viewport: each button sits under its text below `--container-sm`, beside it from there on, and the heading moves beside the list from `--container-lg`. A dialog is a container too: its buttons stack below `--container-sm` and sit in a row from there on."
+  theming:
+    - "Nothing is painted here. The list is a Card, the row buttons are outline Buttons, the overlays are Dialogs, the form is a Field, the Irreversible mark is an error Badge, the loading rows are Skeleton and the failed load is an error Alert."
+    - "The rows share the --border hairline; a destructive action reads --destructive through the Badge and the destructive Button."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ModalActionsBlockDemo from "../../../islands/ModalActionsBlockDemo.svelte";
+import modalActionsReact from "../../../../../../registry/blocks/modal-actions/react/modal-actions.tsx?raw";
+import modalActionsVue from "../../../../../../registry/blocks/modal-actions/vue/ModalActions.vue?raw";
+import modalActionsSolid from "../../../../../../registry/blocks/modal-actions/solid/modal-actions.tsx?raw";
+import modalActionsSvelte from "../../../../../../registry/blocks/modal-actions/svelte/ModalActions.svelte?raw";
+
+export const examples = {
+  react: modalActionsReact,
+  vue: modalActionsVue,
+  solid: modalActionsSolid,
+  svelte: modalActionsSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <ModalActionsBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="modal-actions" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { ModalActions } from "@/components/blocks/modal-actions";
+```
+
+```tsx
+<ModalActions heading="Account" actions={actions} onConfirm={(id, value) => run(id, value)} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import ModalActions from "@/components/blocks/ModalActions.vue";
+</script>
+```
+
+```vue
+<ModalActions heading="Account" :actions="actions" @confirm="run" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import ModalActions from "@/components/blocks/ModalActions.svelte";
+</script>
+```
+
+```svelte
+<ModalActions heading="Account" {actions} onconfirm={run} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { ModalActions } from "@/components/blocks/modal-actions";
+```
+
+```tsx
+<ModalActions heading="Account" actions={actions()} onConfirm={(id, value) => run(id, value)} />
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+| Prop          | Type                                   | Default       | Description                                                          |
+| ------------- | -------------------------------------- | ------------- | -------------------------------------------------------------------- |
+| `actions`     | `ModalAction[]`                        | a sample list | The rows, in the order shown. `[]` renders the empty state.          |
+| `heading`     | `string`                               | `"Workspace"` | The heading beside or over the list.                                 |
+| `description` | `string`                               | a sentence    | The line under the heading; `""` hides it.                           |
+| `error`       | `string`                               | —             | The actions failed to load; an alert with a retry replaces the rows. |
+| `loading`     | `boolean`                              | `false`       | Skeleton rows in a busy region replace the rows.                     |
+| `disabled`    | `boolean`                              | `false`       | The rows stay readable and every row button is disabled.             |
+| `onConfirm`   | `(id: string, value?: string) => void` | —             | An action was confirmed. Svelte: `onconfirm`. Vue: `@confirm`.       |
+| `onRetry`     | `() => void`                           | —             | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.         |
+
+### ModalAction
+
+| Field               | Type                         | Description                                                            |
+| ------------------- | ---------------------------- | ---------------------------------------------------------------------- |
+| `id`                | `string`                     | Stable identity, reported by `onConfirm`.                              |
+| `title`             | `string`                     | The action's name in the row, like "Export data".                      |
+| `description`       | `string`                     | One line on what the action does. It describes the row button.         |
+| `trigger`           | `string`                     | The row button's label, like "Export".                                 |
+| `dialogTitle`       | `string`                     | The dialog's title. It names the dialog.                               |
+| `dialogDescription` | `string`                     | The dialog's line under the title. It describes the dialog.            |
+| `confirm`           | `string`                     | The dialog's confirm or submit button label.                           |
+| `tone`              | `"default" \| "destructive"` | Optional. `destructive` adds the Irreversible badge and a red confirm. |
+| `field`             | `ModalActionField`           | Optional. Turns the dialog into a form with this one field.            |
+
+### ModalActionField
+
+| Field          | Type     | Description                                        |
+| -------------- | -------- | -------------------------------------------------- |
+| `label`        | `string` | The field's label.                                 |
+| `defaultValue` | `string` | Optional. The value the field starts with.         |
+| `placeholder`  | `string` | Optional. The hint shown while the field is empty. |
+
+### States
+
+| State    | Prop           | What renders                                                          |
+| -------- | -------------- | --------------------------------------------------------------------- |
+| Default  | —              | One row per action, each with a button that opens its dialog.         |
+| Empty    | `actions={[]}` | A "No actions yet" message inside the list.                           |
+| Loading  | `loading`      | Three skeleton rows in a busy `status` region.                        |
+| Error    | `error`        | One error alert with a "Try again" button in place of the rows.       |
+| Disabled | `disabled`     | The rows with every button disabled.                                  |
+| Invalid  | an empty field | The form dialog stays open; its field shows an error and takes focus. |
+
+### Sizing
+
+| Container step           | What changes                                                            |
+| ------------------------ | ----------------------------------------------------------------------- |
+| below `@sm`              | Each row button sits under its title and description.                   |
+| `@sm` (`--container-sm`) | Each button moves beside its text, and the list's padding grows a step. |
+| `@md` (`--container-md`) | The heading steps up a size.                                            |
+| `@lg` (`--container-lg`) | The heading sits in a column beside the list, a third wide.             |
+| dialog below `@sm`       | The dialog's buttons stack, full width, confirm on top.                 |
+| dialog from `@sm`        | The dialog's buttons sit in a row at its end.                           |
+
+## Examples
+
+### Container widths
+
+The same list at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <ModalActionsBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Empty
+
+<Preview examples={examples} layout="fill">
+  <ModalActionsBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <ModalActionsBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+<Preview examples={examples} layout="fill">
+  <ModalActionsBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <ModalActionsBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Presentational: it changes nothing itself. Do the work in `onConfirm`.
+- To see the form's error, open "Rename", clear the field and press "Save".

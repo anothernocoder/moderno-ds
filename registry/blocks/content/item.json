@@ -1,0 +1,37 @@
+{
+  "title": "Content",
+  "description": "A long-form prose section for a landing, guide or article page, composing the @moderno-ui/{framework} Alert, Button and Skeleton primitives: a kicker, a serif heading and a lead, then titled sections of paragraphs on the contract type scale, a pulled quote and one call to action, in one reading column capped at --container-md, with its own loading, empty and error renders; responds to its container (@container) — the lead steps up at @sm, the heading steps up at @md and the section gets more room above and below at @lg.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": [],
+  "files": {
+    "react": [
+      {
+        "path": "blocks/content/react/content.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/content.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "blocks/content/vue/Content.vue",
+        "type": "registry:block",
+        "target": "src/components/blocks/Content.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "blocks/content/svelte/Content.svelte",
+        "type": "registry:block",
+        "target": "src/components/blocks/Content.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "blocks/content/solid/content.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/content.tsx"
+      }
+    ]
+  }
+}

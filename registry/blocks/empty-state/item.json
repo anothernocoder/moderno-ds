@@ -1,7 +1,7 @@
 {
   "title": "Empty State",
-  "description": "Centered no-data placeholder with a primary action, composing the @moderno-ui/{framework} Button primitive.",
-  "version": "0.1.0",
+  "description": "What a list, table or page shows when it has nothing in it yet, composing the @moderno-ui/{framework} Button and Skeleton primitives: an icon, a title, one line of description and up to two actions (primary and secondary), with its own loading and error renders; responds to its container (@container) \u2014 the actions move side by side at @sm, the icon and title step up at @md and the block takes more room above and below at @lg.",
+  "version": "0.2.0",
   "dependencies": ["@moderno-ui/{framework}"],
   "registryDependencies": [],
   "files": {

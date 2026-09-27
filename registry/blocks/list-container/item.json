@@ -1,0 +1,37 @@
+{
+  "title": "List Container",
+  "description": "A header, a scrolling body and a footer around a list, composing the @moderno-ui/{framework} Alert, Avatar, Badge, Button, Card and Skeleton primitives: the header and footer stay put while the rows scroll, with empty, loading and error renders of its own; responds to its container (@container) across all three contract steps — status and time move to a trailing column at @sm, sit side by side and the heading grows at @md, and the times line up in one column at @lg.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": [],
+  "files": {
+    "react": [
+      {
+        "path": "blocks/list-container/react/list-container.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/list-container.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "blocks/list-container/vue/ListContainer.vue",
+        "type": "registry:block",
+        "target": "src/components/blocks/ListContainer.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "blocks/list-container/svelte/ListContainer.svelte",
+        "type": "registry:block",
+        "target": "src/components/blocks/ListContainer.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "blocks/list-container/solid/list-container.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/list-container.tsx"
+      }
+    ]
+  }
+}

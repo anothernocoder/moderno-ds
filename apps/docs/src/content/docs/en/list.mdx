@@ -1,0 +1,200 @@
+---
+title: List
+description: Record rows, one per person or thing, each with its own actions.
+group: Blocks
+order: 116
+agent:
+  intent: Show a set of records as rows — who or what, its status, one short fact — with actions on each row.
+  whenToUse: "Records the reader acts on one at a time: team members, API keys, connected apps, saved addresses."
+  whenNotToUse:
+    - case: Rows the reader sorts, filters or compares column by column
+      use: a table
+    - case: A long list that must scroll inside a fixed box
+      use: ListContainer
+    - case: A few items shown as tiles
+      use: GridList
+  gotchas:
+    - "Presentational: it edits, removes and invites nothing. `onEdit(id)` and `onRemove(id)` hand you the row's id; confirming a removal is yours."
+    - "Each row button is named after its record (`Edit Ana López`, `Remove Ana López`), so a screen reader never hears five buttons called Edit."
+    - "`statusVariant` is a Badge status (`info`, `success`, `warning`, `error`, `neutral`). The status text says the same thing, so the colour is never the only cue."
+    - "`items` defaults to a sample set so the block renders standalone. Pass your own array — or edit the constant, the file is yours after `moderno add`."
+    - "`items={[]}` is the empty state. `loading` puts placeholder rows in the list and `error` puts a retry in its place; the header stays."
+    - "The block responds to its container, never the viewport: the buttons move to the row's end at --container-sm, the status gets its own column at --container-md, and the facts line up at --container-lg."
+  theming:
+    - "Nothing is painted here. The surface is Card, each record is Avatar, each status is a Badge, the actions are Button, the placeholders are Skeleton and the failed load is Alert's error variant."
+    - "Row rules read --border."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ListBlockDemo from "../../../islands/ListBlockDemo.svelte";
+import listReact from "../../../../../../registry/blocks/list/react/list.tsx?raw";
+import listVue from "../../../../../../registry/blocks/list/vue/List.vue?raw";
+import listSolid from "../../../../../../registry/blocks/list/solid/list.tsx?raw";
+import listSvelte from "../../../../../../registry/blocks/list/svelte/List.svelte?raw";
+
+export const examples = {
+  react: listReact,
+  vue: listVue,
+  solid: listSolid,
+  svelte: listSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <ListBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="list" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { List } from "@/components/blocks/list";
+```
+
+```tsx
+<List items={members} onEdit={editMember} onRemove={removeMember} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import List from "@/components/blocks/List.vue";
+</script>
+```
+
+```vue
+<List :items="members" @edit="editMember" @remove="removeMember" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import List from "@/components/blocks/List.svelte";
+</script>
+```
+
+```svelte
+<List items={members} onedit={editMember} onremove={removeMember} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { List } from "@/components/blocks/list";
+```
+
+```tsx
+<List items={members()} onEdit={editMember} onRemove={removeMember} />
+```
+
+</ForFramework>
+
+Each row is `{ id, title, subtitle, initials, avatarUrl, status, statusVariant, meta }`. Only `id`, `title` and `initials` are required.
+
+## API Reference
+
+### Props
+
+| Prop          | Type                   | Default          | Description                                                     |
+| ------------- | ---------------------- | ---------------- | --------------------------------------------------------------- |
+| `items`       | `ListItem[]`           | a sample set     | The rows, in reading order. `[]` renders the empty state.       |
+| `heading`     | `string`               | `"Team members"` | The heading above the list.                                     |
+| `description` | `string`               | a sentence       | The line under the heading; `""` hides it.                      |
+| `error`       | `string`               | —                | The rows failed to load; an alert with a retry takes its place. |
+| `loading`     | `boolean`              | `false`          | Placeholder rows in a busy region; "Invite member" is disabled. |
+| `disabled`    | `boolean`              | `false`          | The rows stay readable and every button is disabled.            |
+| `onInvite`    | `() => void`           | —                | "Invite member". Svelte: `oninvite`. Vue: `@invite`.            |
+| `onEdit`      | `(id: string) => void` | —                | A row's "Edit". Svelte: `onedit`. Vue: `@edit`.                 |
+| `onRemove`    | `(id: string) => void` | —                | A row's "Remove". Svelte: `onremove`. Vue: `@remove`.           |
+| `onRetry`     | `() => void`           | —                | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.    |
+
+### ListItem
+
+| Field           | Type           | Description                                            |
+| --------------- | -------------- | ------------------------------------------------------ |
+| `id`            | `string`       | Stable identity, handed to `onEdit` and `onRemove`.    |
+| `title`         | `string`       | The row's main line. Cut with an ellipsis when long.   |
+| `subtitle`      | `string`       | Optional second line, such as an email.                |
+| `initials`      | `string`       | Shown in the avatar when there is no picture.          |
+| `avatarUrl`     | `string`       | Optional picture for the avatar.                       |
+| `status`        | `string`       | Optional status text, shown as a badge.                |
+| `statusVariant` | `BadgeVariant` | The badge's colour. Default `"neutral"`.               |
+| `meta`          | `string`       | Optional short fact, such as when they were last seen. |
+
+### States
+
+| State    | Prop         | What renders                                      |
+| -------- | ------------ | ------------------------------------------------- |
+| Default  | —            | One row per item, each with Edit and Remove.      |
+| Empty    | `items={[]}` | A "No members yet" card in place of the rows.     |
+| Loading  | `loading`    | Three placeholder rows in a busy `status` region. |
+| Error    | `error`      | One error alert with a "Try again" button.        |
+| Disabled | `disabled`   | The rows with every button disabled.              |
+
+Hover and keyboard focus are the Button's own.
+
+### Sizing
+
+| Container step           | What changes                                                       |
+| ------------------------ | ------------------------------------------------------------------ |
+| below `@sm`              | Status, fact and buttons sit under each row's name.                |
+| `@sm` (`--container-sm`) | The header lines up on one row; the buttons move to the row's end. |
+| `@md` (`--container-md`) | Status and fact get their own column; the heading grows.           |
+| `@lg` (`--container-lg`) | Status and fact sit side by side; the facts line up.               |
+
+## Examples
+
+### Container widths
+
+The same list at 18rem, 30rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <ListBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Without a status
+
+Status and fact are optional. Leave them out and each row keeps its name and its buttons.
+
+<Preview examples={examples} layout="fill">
+  <ListBlockDemo client:visible locale="en" state="bare" />
+</Preview>
+
+### Empty
+
+<Preview examples={examples} layout="fill">
+  <ListBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <ListBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+<Preview examples={examples} layout="fill">
+  <ListBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <ListBlockDemo client:visible locale="en" state="disabled" />
+</Preview>

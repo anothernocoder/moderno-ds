@@ -1,0 +1,203 @@
+---
+title: Contact
+description: A contact section — an email, a phone number and an office address beside a short message form, under a serif heading.
+group: Blocks
+order: 120
+agent:
+  intent: A section of a contact or support page — a serif heading, a sentence of introduction, the ways to reach the team (email, phone, office) and a name, email and message form.
+  whenToUse: "A page where visitors write to the team, with the team's email, phone and address next to the form."
+  whenNotToUse:
+    - case: A settings or profile form with several groups of fields
+      use: FormLayout — it groups fields under their own headings
+    - case: Signing in, signing up or resetting a password
+      use: LoginForm — it has a mode for each of those
+    - case: One call to action for the whole page
+      use: Hero — the contact section comes after it
+  gotchas:
+    - '`channels` is an array of `{ id, kind, label, value, href? }`. `kind` is `"email"`, `"phone"` or `"office"` and picks the icon. A channel with an `href` renders its value as a link; one without renders it as text.'
+    - "`channels={[]}` hides the details. The form then stands alone, centred."
+    - '`description` hides when you pass `""`.'
+    - "The fields are named `name`, `email` and `message`. `errors` takes a message per field under those names, and each field turns invalid when it has one."
+    - "Presentational: `onSubmit` receives the form's submit event. Sending the message, and setting `loading`, `error`, `errors` or `sent` from the result, stays yours."
+    - '`loading` disables every field and turns the button into a busy "Sending". `disabled` disables every field and the button; the channel links stay live.'
+    - "`error` puts an error Alert at the top of the form and keeps what the visitor typed. An empty string counts as no error."
+    - '`sent` replaces the form with a success Alert, "Message sent". The details stay.'
+    - "The layout follows the block's own width, not the viewport: the details move beside the form only from `--container-lg`."
+  theming:
+    - "The block paints only the form's border and the icon boxes (--border). The fields are Field, the button is Button's default variant and the messages are Alert's error and success variants."
+    - "The heading reads --font-serif and --foreground; the introduction, each channel's label and the reply note read --muted-foreground; each channel's value reads --foreground, and a channel link's focus ring --ring."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg. The heading is capped at --container-md, and the details and form together at --container-lg."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ContactBlockDemo from "../../../islands/ContactBlockDemo.svelte";
+import contactReact from "../../../../../../registry/blocks/contact/react/contact.tsx?raw";
+import contactVue from "../../../../../../registry/blocks/contact/vue/Contact.vue?raw";
+import contactSolid from "../../../../../../registry/blocks/contact/solid/contact.tsx?raw";
+import contactSvelte from "../../../../../../registry/blocks/contact/svelte/Contact.svelte?raw";
+
+export const examples = {
+  react: contactReact,
+  vue: contactVue,
+  solid: contactSolid,
+  svelte: contactSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <ContactBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="contact" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { Contact } from "@/components/blocks/contact";
+```
+
+```tsx
+<Contact heading="Talk to us" onSubmit={send} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import Contact from "@/components/blocks/Contact.vue";
+</script>
+```
+
+```vue
+<Contact heading="Talk to us" @submit="send" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import Contact from "@/components/blocks/Contact.svelte";
+</script>
+```
+
+```svelte
+<Contact heading="Talk to us" onsubmit={send} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { Contact } from "@/components/blocks/contact";
+```
+
+```tsx
+<Contact heading="Talk to us" onSubmit={send} />
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+| Prop          | Type                     | Default              | Description                                                  |
+| ------------- | ------------------------ | -------------------- | ------------------------------------------------------------ |
+| `heading`     | `string`                 | `"Get in touch"`     | The section's heading. Set in the serif face.                |
+| `description` | `string`                 | a sentence           | One sentence under the heading; `""` hides it.               |
+| `channels`    | `ContactChannel[]`       | email, phone, office | The ways to reach you, in order. `[]` hides them.            |
+| `error`       | `string`                 | —                    | Sending failed; an error Alert sits at the top of the form.  |
+| `errors`      | `Record<string, string>` | —                    | A message per field, under `name`, `email` or `message`.     |
+| `loading`     | `boolean`                | `false`              | Every field disabled and the button a busy "Sending".        |
+| `disabled`    | `boolean`                | `false`              | Every field and the button disabled. The channel links stay. |
+| `sent`        | `boolean`                | `false`              | A success Alert replaces the form.                           |
+| `onSubmit`    | `(event) => void`        | —                    | The form's submit event. Svelte: `onsubmit`. Vue: `@submit`. |
+
+### Channel
+
+| Field   | Type                             | Description                                            |
+| ------- | -------------------------------- | ------------------------------------------------------ |
+| `id`    | `string`                         | A stable key for the channel.                          |
+| `kind`  | `"email" \| "phone" \| "office"` | Picks the icon: an envelope, a phone or a map pin.     |
+| `label` | `string`                         | The small line above the value, like `"Email"`.        |
+| `value` | `string`                         | What the visitor reads, like `"hello@example.com"`.    |
+| `href`  | `string`                         | Optional. The value becomes a link, like `"mailto:…"`. |
+
+### States
+
+| State    | Prop             | What renders                                               |
+| -------- | ---------------- | ---------------------------------------------------------- |
+| Default  | —                | Heading, introduction, the channels and the form.          |
+| Empty    | `channels={[]}`  | Heading, introduction and the form alone.                  |
+| Loading  | `loading`        | The same form with its fields disabled and "Sending".      |
+| Error    | `error`/`errors` | An error Alert at the top of the form, and invalid fields. |
+| Disabled | `disabled`       | The same form with its fields and button disabled.         |
+| Sent     | `sent`           | The channels and "Message sent" in place of the form.      |
+
+### Sizing
+
+| Container step           | What changes                                                      |
+| ------------------------ | ----------------------------------------------------------------- |
+| below `@sm`              | Everything stacks. The send button is full width.                 |
+| `@sm` (`--container-sm`) | The reply note sits beside the send button.                       |
+| `@md` (`--container-md`) | The heading steps up a size. Name and email sit side by side.     |
+| `@lg` (`--container-lg`) | The channels sit beside the form, with more room above and below. |
+
+## Examples
+
+### Container widths
+
+The same block at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <ContactBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Empty
+
+Pass an empty `channels` array to show the form alone.
+
+<Preview examples={examples} layout="fill">
+  <ContactBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <ContactBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+Press "Send message" to clear the messages.
+
+<Preview examples={examples} layout="fill">
+  <ContactBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <ContactBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+### Sent
+
+<Preview examples={examples} layout="fill">
+  <ContactBlockDemo client:visible locale="en" state="sent" />
+</Preview>
+
+## Notes
+
+- Keep `error` short and say what failed. The form keeps what the visitor typed, so they can send it again.
+- List only the channels someone answers. An email nobody reads is worse than none.

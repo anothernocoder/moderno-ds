@@ -1,0 +1,197 @@
+---
+title: Testimonials
+description: Quotes from customers on cards — each with the author's avatar, name and role, under a serif heading.
+group: Blocks
+order: 119
+agent:
+  intent: A section of a marketing page that shows what customers say — a serif heading, a sentence of introduction, then one card per quote with the author's avatar, name and role.
+  whenToUse: "A landing or pricing page that backs its claims with short quotes from real customers."
+  whenNotToUse:
+    - case: What the product does, with an icon per point
+      use: FeatureGrid — it shows features at a glance
+    - case: One comment in a thread, with a reply action
+      use: MediaObject — it pairs an avatar with a message and an action
+    - case: One call to action for the whole page
+      use: Hero — the testimonials come after it
+  gotchas:
+    - "`testimonials` is an array of `{ id, quote, name, role, initials, avatarUrl?, href? }`. Pass the quote without quotation marks; the block adds them."
+    - "The avatar shows `initials` until `avatarUrl` loads, and keeps them when there is no `avatarUrl` or the image fails."
+    - "With `href`, the author's name is a link to it, like their company or the full story. Without it, the name is plain text."
+    - '`description` hides when you pass `""`.'
+    - '`testimonials={[]}` shows "No testimonials yet. Check back soon." in place of the cards.'
+    - "`disabled` keeps every quote and makes each author link inert: it drops its `href` and carries `aria-disabled`. The retry button is disabled too."
+    - 'Presentational: `onRetry` reports that "Try again" was pressed. Loading the quotes again stays yours.'
+    - "`loading` keeps the heading and replaces the cards with three placeholder cards in one busy `status` region."
+    - '`error` keeps the heading and puts an error Alert with your message and a "Try again" button where the cards were. An empty string counts as no error.'
+    - "The layout follows the block's own width, not the viewport: one column below `--container-md`, two from there and three from `--container-lg`."
+  theming:
+    - "The block paints only its dashed empty box (--border). Each quote is Card's outline variant at size sm, the author is Avatar's initials fallback, the error is Alert's error variant, the retry is Button's outline variant and the loading cards are Skeleton."
+    - "The heading reads --font-serif and --foreground; the introduction, the quote mark and each author's role read --muted-foreground; the quote reads --card-foreground; the author link reads --foreground, and its focus ring --ring."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg. The heading is capped at --container-md."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import TestimonialsBlockDemo from "../../../islands/TestimonialsBlockDemo.svelte";
+import testimonialsReact from "../../../../../../registry/blocks/testimonials/react/testimonials.tsx?raw";
+import testimonialsVue from "../../../../../../registry/blocks/testimonials/vue/Testimonials.vue?raw";
+import testimonialsSolid from "../../../../../../registry/blocks/testimonials/solid/testimonials.tsx?raw";
+import testimonialsSvelte from "../../../../../../registry/blocks/testimonials/svelte/Testimonials.svelte?raw";
+
+export const examples = {
+  react: testimonialsReact,
+  vue: testimonialsVue,
+  solid: testimonialsSolid,
+  svelte: testimonialsSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <TestimonialsBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="testimonials" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { Testimonials } from "@/components/blocks/testimonials";
+```
+
+```tsx
+<Testimonials heading="Loved by small teams" testimonials={testimonials} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import Testimonials from "@/components/blocks/Testimonials.vue";
+</script>
+```
+
+```vue
+<Testimonials heading="Loved by small teams" :testimonials="testimonials" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import Testimonials from "@/components/blocks/Testimonials.svelte";
+</script>
+```
+
+```svelte
+<Testimonials heading="Loved by small teams" {testimonials} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { Testimonials } from "@/components/blocks/testimonials";
+```
+
+```tsx
+<Testimonials heading="Loved by small teams" testimonials={testimonials} />
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+| Prop           | Type            | Default                    | Description                                                                |
+| -------------- | --------------- | -------------------------- | -------------------------------------------------------------------------- |
+| `heading`      | `string`        | `"What our customers say"` | The section's heading. Set in the serif face.                              |
+| `description`  | `string`        | a sentence                 | One sentence under the heading; `""` hides it.                             |
+| `testimonials` | `Testimonial[]` | six sample quotes          | The quotes, in order. `[]` shows the empty message.                        |
+| `error`        | `string`        | —                          | Loading the quotes failed; an error Alert with a retry replaces the cards. |
+| `loading`      | `boolean`       | `false`                    | Placeholder cards in a busy region replace the quotes.                     |
+| `disabled`     | `boolean`       | `false`                    | The quotes stay; every author link is inert and the retry button disabled. |
+| `onRetry`      | `() => void`    | —                          | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.               |
+
+### Testimonial
+
+| Field       | Type     | Description                                                    |
+| ----------- | -------- | -------------------------------------------------------------- |
+| `id`        | `string` | A stable key for the quote.                                    |
+| `quote`     | `string` | What the customer said, without quotation marks.               |
+| `name`      | `string` | The author's name.                                             |
+| `role`      | `string` | The author's job and company, like `"Founder, Northwind"`.     |
+| `initials`  | `string` | One or two letters. The avatar shows them until a photo loads. |
+| `avatarUrl` | `string` | Optional. The author's photo.                                  |
+| `href`      | `string` | Optional. Turns the author's name into a link to this page.    |
+
+### States
+
+| State    | Prop                | What renders                                                 |
+| -------- | ------------------- | ------------------------------------------------------------ |
+| Default  | —                   | Heading, introduction and one card per quote.                |
+| Empty    | `testimonials={[]}` | Heading, introduction and "No testimonials yet."             |
+| Loading  | `loading`           | Heading, introduction and three placeholder cards.           |
+| Error    | `error`             | Heading, introduction, then an error Alert with "Try again". |
+| Disabled | `disabled`          | The same quotes with every author link inert.                |
+
+### Sizing
+
+| Container step           | What changes                                      |
+| ------------------------ | ------------------------------------------------- |
+| below `@sm`              | One column of cards, quotes at the small size.    |
+| `@sm` (`--container-sm`) | The quotes read a size larger.                    |
+| `@md` (`--container-md`) | Two columns of cards, and the heading steps up.   |
+| `@lg` (`--container-lg`) | Three columns, with more room between and around. |
+
+## Examples
+
+### Container widths
+
+The same block at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <TestimonialsBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Empty
+
+Pass an empty `testimonials` array.
+
+<Preview examples={examples} layout="fill">
+  <TestimonialsBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <TestimonialsBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+Press "Try again" to clear the message and bring the quotes back.
+
+<Preview examples={examples} layout="fill">
+  <TestimonialsBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <TestimonialsBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Keep each quote to one or two sentences. Link to the full story with `href`.
+- Six quotes fill two or three columns evenly.

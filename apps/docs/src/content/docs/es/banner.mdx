@@ -1,0 +1,177 @@
+---
+title: Banner
+description: Una franja de aviso para lo alto de una página — una insignia, un mensaje corto, una acción y un botón para descartarla.
+group: Bloques
+order: 118
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import BannerBlockDemo from "../../../islands/BannerBlockDemo.svelte";
+import bannerReact from "../../../../../../registry/blocks/banner/react/banner.tsx?raw";
+import bannerVue from "../../../../../../registry/blocks/banner/vue/Banner.vue?raw";
+import bannerSolid from "../../../../../../registry/blocks/banner/solid/banner.tsx?raw";
+import bannerSvelte from "../../../../../../registry/blocks/banner/svelte/Banner.svelte?raw";
+
+export const examples = {
+  react: bannerReact,
+  vue: bannerVue,
+  solid: bannerSolid,
+  svelte: bannerSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <BannerBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="banner" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { Banner } from "@/components/blocks/banner";
+```
+
+```tsx
+<Banner
+  title="Moderno 1.0 ya está aquí"
+  message="Los bloques ya existen para cuatro frameworks."
+  onAction={() => open("/changelog")}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import Banner from "@/components/blocks/Banner.vue";
+</script>
+```
+
+```vue
+<Banner
+  title="Moderno 1.0 ya está aquí"
+  message="Los bloques ya existen para cuatro frameworks."
+  @action="open('/changelog')"
+/>
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import Banner from "@/components/blocks/Banner.svelte";
+</script>
+```
+
+```svelte
+<Banner
+  title="Moderno 1.0 ya está aquí"
+  message="Los bloques ya existen para cuatro frameworks."
+  onaction={() => open("/changelog")}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { Banner } from "@/components/blocks/banner";
+```
+
+```tsx
+<Banner
+  title="Moderno 1.0 ya está aquí"
+  message="Los bloques ya existen para cuatro frameworks."
+  onAction={() => open("/changelog")}
+/>
+```
+
+</ForFramework>
+
+## Referencia de API
+
+### Props
+
+| Prop          | Tipo         | Por defecto          | Descripción                                                      |
+| ------------- | ------------ | -------------------- | ---------------------------------------------------------------- |
+| `badge`       | `string`     | `"New"`              | Una etiqueta corta antes del título. `""` la quita.              |
+| `title`       | `string`     | texto de muestra     | El aviso, en negrita.                                            |
+| `message`     | `string`     | texto de muestra     | Una línea más, tras el título.                                   |
+| `actionLabel` | `string`     | `"See how it works"` | El texto del botón de acción. `""` quita el botón.               |
+| `dismissible` | `boolean`    | `true`               | Muestra el botón para descartar.                                 |
+| `error`       | `string`     | —                    | El aviso no cargó; una alerta con reintento lo sustituye.        |
+| `loading`     | `boolean`    | `false`              | Una franja esqueleto en una región ocupada lo sustituye.         |
+| `disabled`    | `boolean`    | `false`              | La franja sigue legible y sus dos botones quedan deshabilitados. |
+| `onAction`    | `() => void` | —                    | Se pulsó la acción. Svelte: `onaction`. Vue: `@action`.          |
+| `onDismiss`   | `() => void` | —                    | Se descartó la franja. Svelte: `ondismiss`. Vue: `@dismiss`.     |
+| `onRetry`     | `() => void` | —                    | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.      |
+
+### Estados
+
+| Estado        | Prop                    | Qué se muestra                                                      |
+| ------------- | ----------------------- | ------------------------------------------------------------------- |
+| Por defecto   | —                       | La franja con su insignia, título, mensaje, acción y descarte.      |
+| Descartado    | pulsar descartar        | Nada: la franja se oculta y llama a `onDismiss`.                    |
+| Vacío         | `title=""` `message=""` | Nada: el bloque no ocupa espacio.                                   |
+| Cargando      | `loading`               | Una franja esqueleto en una región `status` ocupada.                |
+| Error         | `error`                 | Una alerta de error con el botón "Try again" en lugar de la franja. |
+| Deshabilitado | `disabled`              | La franja con sus dos botones deshabilitados.                       |
+
+### Tamaño
+
+| Paso del contenedor      | Qué cambia                                               |
+| ------------------------ | -------------------------------------------------------- |
+| bajo `@sm`               | La acción va bajo el mensaje.                            |
+| `@sm` (`--container-sm`) | La acción pasa junto al mensaje.                         |
+| `@md` (`--container-md`) | La insignia, el título y el mensaje comparten una línea. |
+| `@lg` (`--container-lg`) | El mensaje y la acción se centran en la franja.          |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+La misma franja a 18rem, 30rem, 40rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <BannerBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Vacío
+
+<Preview examples={examples} layout="fill">
+  <BannerBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <BannerBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+<Preview examples={examples} layout="fill">
+  <BannerBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+<Preview examples={examples} layout="fill">
+  <BannerBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
+
+## Notas
+
+- Ponlo una sola vez, sobre la cabecera de la página, para que ocupe todo el ancho.
+- Para que siga descartado en la próxima visita, guárdalo en `onDismiss` y deja de mostrar el bloque.

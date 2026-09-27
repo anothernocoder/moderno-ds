@@ -1,0 +1,206 @@
+---
+title: Footer
+description: The last section of a site — the brand, columns of links, then the legal and social links under a rule.
+group: Blocks
+order: 119
+agent:
+  intent: The closing section of a marketing site or app shell — the brand in the serif face with a tagline and one action, columns of navigation links, then a rule over the copyright, the legal links and the social links.
+  whenToUse: "The bottom of every page of a site, to repeat its main destinations, the legal pages and where to find the company elsewhere."
+  whenNotToUse:
+    - case: A strip that asks the reader to do one thing, like sign up
+      use: Banner — it carries one message and its action
+    - case: Links to the sections of a single long page
+      use: Tabs or a table of contents — a footer lists pages, not sections
+    - case: The actions at the end of a form or dialog
+      use: ModalActions — its buttons submit or cancel
+  gotchas:
+    - "`columns` is an array of `{ id, heading, links }`, and each link is `{ label, href }`. Three or four columns read best."
+    - "`social` is an array of `{ network, label, href }`. `network` is one of `github`, `x`, `linkedin` or `youtube`; add your own path to `networkPaths` in the copied file for more. `label` is the link's accessible name, since the mark has no text."
+    - '`tagline` and `action` hide when you pass `""`. `legal={[]}` and `social={[]}` hide their lists.'
+    - "`columns={[]}` is the empty state: the columns go and the footer keeps the brand and the bottom row. No placeholder message is shown."
+    - "Presentational: `onAction` and `onRetry` report which button was pressed. The links are plain anchors to your `href`s."
+    - "`loading` keeps the brand and the bottom row and replaces the columns with three skeleton columns in one busy `status` region."
+    - '`error` keeps the brand and the bottom row and puts an error Alert with your message and a "Try again" button where the columns were. An empty string counts as no error.'
+    - "`disabled` disables every button. Links have no disabled state, so they stay live."
+    - "The layout follows the block's own width, not the viewport: two link columns below `--container-sm`, three from there, the bottom row on one line from `--container-md`, and the brand beside the columns from `--container-lg`."
+  theming:
+    - "It paints no surface of its own: it sits on the page's --background. The rule is Divider (--border), the action is Button's outline variant, the error is Alert's error variant and the loading placeholders are Skeleton."
+    - "The brand reads --font-serif and --foreground; the column headings read --foreground; the tagline, the links, the copyright and the social marks read --muted-foreground and turn --foreground on hover and focus."
+    - "A social link takes a --muted fill on hover; every link shows a --ring outline on focus-visible."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg, and the tagline is capped at --container-sm."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import FooterBlockDemo from "../../../islands/FooterBlockDemo.svelte";
+import footerReact from "../../../../../../registry/blocks/footer/react/footer.tsx?raw";
+import footerVue from "../../../../../../registry/blocks/footer/vue/Footer.vue?raw";
+import footerSolid from "../../../../../../registry/blocks/footer/solid/footer.tsx?raw";
+import footerSvelte from "../../../../../../registry/blocks/footer/svelte/Footer.svelte?raw";
+
+export const examples = {
+  react: footerReact,
+  vue: footerVue,
+  solid: footerSolid,
+  svelte: footerSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <FooterBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="footer" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { Footer } from "@/components/blocks/footer";
+```
+
+```tsx
+<Footer brand="Acme" columns={columns} social={social} onAction={openContact} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import Footer from "@/components/blocks/Footer.vue";
+</script>
+```
+
+```vue
+<Footer brand="Acme" :columns="columns" :social="social" @action="openContact" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import Footer from "@/components/blocks/Footer.svelte";
+</script>
+```
+
+```svelte
+<Footer brand="Acme" {columns} {social} onaction={openContact} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { Footer } from "@/components/blocks/footer";
+```
+
+```tsx
+<Footer brand="Acme" columns={columns} social={social} onAction={openContact} />
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+| Prop        | Type                 | Default                    | Description                                                                   |
+| ----------- | -------------------- | -------------------------- | ----------------------------------------------------------------------------- |
+| `brand`     | `string`             | `"Northwind"`              | The name at the top. Set in the serif face.                                   |
+| `tagline`   | `string`             | a sentence                 | One sentence under the brand; `""` hides it.                                  |
+| `action`    | `string`             | `"Contact us"`             | The outline button's label under the tagline; `""` hides it.                  |
+| `columns`   | `FooterColumn[]`     | three sample columns       | The link columns, in order. `[]` drops them.                                  |
+| `legal`     | `FooterLink[]`       | Privacy, Terms and Cookies | The links beside the copyright. `[]` hides them.                              |
+| `social`    | `FooterSocialLink[]` | four sample networks       | The icon links at the end of the bottom row. `[]` hides them.                 |
+| `copyright` | `string`             | a sample notice            | The line at the start of the bottom row.                                      |
+| `error`     | `string`             | —                          | Loading the links failed; an error Alert with a retry replaces the columns.   |
+| `loading`   | `boolean`            | `false`                    | Skeleton columns in a busy region replace the columns.                        |
+| `disabled`  | `boolean`            | `false`                    | Every button is disabled. The links stay live.                                |
+| `onAction`  | `() => void`         | —                          | The button under the tagline was pressed. Svelte: `onaction`. Vue: `@action`. |
+| `onRetry`   | `() => void`         | —                          | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.                  |
+
+### Column
+
+| Field     | Type           | Description                                      |
+| --------- | -------------- | ------------------------------------------------ |
+| `id`      | `string`       | A stable key for the column.                     |
+| `heading` | `string`       | One or two words. Rendered as an `h2`.           |
+| `links`   | `FooterLink[]` | The column's links, in order: `{ label, href }`. |
+
+### Social link
+
+| Field     | Type                                         | Description                                        |
+| --------- | -------------------------------------------- | -------------------------------------------------- |
+| `network` | `"github" \| "x" \| "linkedin" \| "youtube"` | The mark drawn in the link.                        |
+| `label`   | `string`                                     | The link's accessible name, like "Acme on GitHub". |
+| `href`    | `string`                                     | Where the link goes.                               |
+
+### States
+
+| State    | Prop           | What renders                                                             |
+| -------- | -------------- | ------------------------------------------------------------------------ |
+| Default  | —              | Brand, tagline, action, every column and the bottom row.                 |
+| Empty    | `columns={[]}` | Brand, tagline, action and the bottom row, with no columns.              |
+| Loading  | `loading`      | Brand, tagline, action, three placeholder columns and the bottom row.    |
+| Error    | `error`        | Brand, tagline, action, an error Alert with "Try again", the bottom row. |
+| Disabled | `disabled`     | The same content with every button disabled.                             |
+
+### Sizing
+
+| Container step           | What changes                                                        |
+| ------------------------ | ------------------------------------------------------------------- |
+| below `@sm`              | Two link columns; the copyright, legal and social links stack.      |
+| `@sm` (`--container-sm`) | Three link columns; the copyright and the legal links share a line. |
+| `@md` (`--container-md`) | The bottom row sits on one line, social links at the end.           |
+| `@lg` (`--container-lg`) | The brand sits beside the columns, with more room above and below.  |
+
+## Examples
+
+### Container widths
+
+The same block at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <FooterBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Empty
+
+Pass an empty `columns` array for a short footer.
+
+<Preview examples={examples} layout="fill">
+  <FooterBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <FooterBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+Press "Try again" to clear the message and bring the columns back.
+
+<Preview examples={examples} layout="fill">
+  <FooterBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <FooterBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Keep each column to four or five links. Put the rest on the pages they lead to.
+- Give every social link a `label` that names the company and the network: the mark alone has no text.

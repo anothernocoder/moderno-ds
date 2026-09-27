@@ -73,7 +73,7 @@ describe("the docs Tailwind build compiles what blocks are written with", () => 
   });
 
   it("emits the layout utilities the pricing block uses", () => {
-    for (const utility of ["grid", "gap-4", "p-6", "mt-6", "flex-col"]) {
+    for (const utility of ["grid", "flex", "gap-4", "py-12", "max-w-md", "w-full"]) {
       expect(css, utility).toMatch(new RegExp(`\\.${utility}\\s*\\{`));
     }
     // `@container` reaches the stylesheet CSS-escaped: `.\@container`.
@@ -81,10 +81,10 @@ describe("the docs Tailwind build compiles what blocks are written with", () => 
   });
 
   it("keeps every colour utility pointed at a contract slot, so a theme re-skins the block", () => {
-    expect(css).toMatch(/\.bg-card\s*\{[^}]*var\(--card\)/s);
+    expect(css).toMatch(/\.border-primary\s*\{[^}]*var\(--primary\)/s);
+    expect(css).toMatch(/\.text-primary\s*\{[^}]*var\(--primary\)/s);
     expect(css).toMatch(/\.text-muted-foreground\s*\{[^}]*var\(--muted-foreground\)/s);
-    expect(css).toMatch(/\.rounded-lg\s*\{[^}]*var\(--radius\)/s);
-    expect(css).toMatch(/\.shadow-sm\s*\{[^}]*var\(--shadow-sm\)/s);
+    expect(css).toMatch(/\.font-serif\s*\{[^}]*var\(--font-serif\)/s);
   });
 
   /**
@@ -158,11 +158,13 @@ describe("the docs Tailwind build compiles what blocks are written with", () => 
     const prose = docsCss.slice(docsCss.indexOf("@layer docs.prose"));
     expect(prose, "docs.css must declare @layer docs.prose").not.toBe(docsCss);
     const body = prose.slice(0, prose.indexOf("\n}\n") + 3);
-    for (const rule of ["main h1", "main h2", "main h3", "main p"]) {
+    for (const rule of ["a", "main h1", "main h2", "main h3", "main p"]) {
       expect(body, `${rule} must sit inside @layer docs.prose`).toContain(`${rule} {`);
     }
-    // Nothing outside the layer may select a bare heading or paragraph again.
+    // Nothing outside the layer may select a bare heading, paragraph or link
+    // again: a bare `a { color: inherit }` beats a block's `hover:text-*`.
     const outside = docsCss.replace(body, "");
     expect(outside).not.toMatch(/^\s*main (?:h[1-6]|p)[\s,{]/m);
+    expect(outside).not.toMatch(/^a(?::hover)? \{/m);
   });
 });

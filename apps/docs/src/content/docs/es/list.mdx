@@ -1,0 +1,179 @@
+---
+title: Lista
+description: Filas de registros, una por persona o cosa, cada una con sus propias acciones.
+group: Bloques
+order: 116
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ListBlockDemo from "../../../islands/ListBlockDemo.svelte";
+import listReact from "../../../../../../registry/blocks/list/react/list.tsx?raw";
+import listVue from "../../../../../../registry/blocks/list/vue/List.vue?raw";
+import listSolid from "../../../../../../registry/blocks/list/solid/list.tsx?raw";
+import listSvelte from "../../../../../../registry/blocks/list/svelte/List.svelte?raw";
+
+export const examples = {
+  react: listReact,
+  vue: listVue,
+  solid: listSolid,
+  svelte: listSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <ListBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="list" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { List } from "@/components/blocks/list";
+```
+
+```tsx
+<List items={members} onEdit={editMember} onRemove={removeMember} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import List from "@/components/blocks/List.vue";
+</script>
+```
+
+```vue
+<List :items="members" @edit="editMember" @remove="removeMember" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import List from "@/components/blocks/List.svelte";
+</script>
+```
+
+```svelte
+<List items={members} onedit={editMember} onremove={removeMember} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { List } from "@/components/blocks/list";
+```
+
+```tsx
+<List items={members()} onEdit={editMember} onRemove={removeMember} />
+```
+
+</ForFramework>
+
+Cada fila es `{ id, title, subtitle, initials, avatarUrl, status, statusVariant, meta }`. Solo `id`, `title` e `initials` son obligatorios.
+
+## Referencia de API
+
+### Propiedades
+
+| Propiedad     | Tipo                   | Por defecto      | Descripción                                                            |
+| ------------- | ---------------------- | ---------------- | ---------------------------------------------------------------------- |
+| `items`       | `ListItem[]`           | un ejemplo       | Las filas, en orden de lectura. `[]` muestra el estado vacío.          |
+| `heading`     | `string`               | `"Team members"` | El título sobre la lista.                                              |
+| `description` | `string`               | una frase        | La línea bajo el título; `""` la oculta.                               |
+| `error`       | `string`               | —                | Las filas no cargaron; una alerta con reintento ocupa su lugar.        |
+| `loading`     | `boolean`              | `false`          | Filas de marcador en una región ocupada; "Invite member" se desactiva. |
+| `disabled`    | `boolean`              | `false`          | Las filas siguen legibles y todos los botones quedan desactivados.     |
+| `onInvite`    | `() => void`           | —                | "Invite member". Svelte: `oninvite`. Vue: `@invite`.                   |
+| `onEdit`      | `(id: string) => void` | —                | El "Edit" de una fila. Svelte: `onedit`. Vue: `@edit`.                 |
+| `onRemove`    | `(id: string) => void` | —                | El "Remove" de una fila. Svelte: `onremove`. Vue: `@remove`.           |
+| `onRetry`     | `() => void`           | —                | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.            |
+
+### ListItem
+
+| Campo           | Tipo           | Descripción                                            |
+| --------------- | -------------- | ------------------------------------------------------ |
+| `id`            | `string`       | Identidad estable; llega a `onEdit` y `onRemove`.      |
+| `title`         | `string`       | La línea principal. Se corta con puntos suspensivos.   |
+| `subtitle`      | `string`       | Segunda línea opcional, como un correo.                |
+| `initials`      | `string`       | Se ven en el avatar cuando no hay imagen.              |
+| `avatarUrl`     | `string`       | Imagen opcional para el avatar.                        |
+| `status`        | `string`       | Texto de estado opcional, en una insignia.             |
+| `statusVariant` | `BadgeVariant` | El color de la insignia. Por defecto `"neutral"`.      |
+| `meta`          | `string`       | Dato corto opcional, como la última vez que se le vio. |
+
+### Estados
+
+| Estado        | Propiedad    | Qué se muestra                                         |
+| ------------- | ------------ | ------------------------------------------------------ |
+| Por defecto   | —            | Una fila por elemento, cada una con Edit y Remove.     |
+| Vacío         | `items={[]}` | Una tarjeta "No members yet" en lugar de las filas.    |
+| Cargando      | `loading`    | Tres filas de marcador en una región `status` ocupada. |
+| Error         | `error`      | Una alerta de error con el botón "Try again".          |
+| Deshabilitado | `disabled`   | Las filas con todos los botones desactivados.          |
+
+El hover y el foco de teclado son los del propio Button.
+
+### Dimensionado
+
+| Paso del contenedor      | Qué cambia                                                                |
+| ------------------------ | ------------------------------------------------------------------------- |
+| bajo `@sm`               | Estado, dato y botones quedan bajo el nombre de cada fila.                |
+| `@sm` (`--container-sm`) | La cabecera se alinea en una fila; los botones pasan al final de la fila. |
+| `@md` (`--container-md`) | Estado y dato tienen su propia columna; el título crece.                  |
+| `@lg` (`--container-lg`) | Estado y dato van lado a lado; los datos se alinean.                      |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+La misma lista a 18rem, 30rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <ListBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Sin estado
+
+El estado y el dato son opcionales. Sin ellos, cada fila conserva su nombre y sus botones.
+
+<Preview examples={examples} layout="fill">
+  <ListBlockDemo client:visible locale="es" state="bare" />
+</Preview>
+
+### Vacío
+
+<Preview examples={examples} layout="fill">
+  <ListBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <ListBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+<Preview examples={examples} layout="fill">
+  <ListBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+<Preview examples={examples} layout="fill">
+  <ListBlockDemo client:visible locale="es" state="disabled" />
+</Preview>

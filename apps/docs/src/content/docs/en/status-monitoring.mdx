@@ -1,0 +1,197 @@
+---
+title: Status monitoring
+description: The live status of each service with a bar per day of uptime.
+group: Blocks
+order: 117
+agent:
+  intent: A status page section — one overall status, then each service with its live status, a bar per day of recent uptime and its uptime percentage.
+  whenToUse: "Anywhere people check whether your services are working: a public status page, an operations dashboard, the health panel of an admin area."
+  whenNotToUse:
+    - case: One incident the reader must act on now
+      use: Alert — the status block reports, it does not ask
+    - case: A metric's trend over time, like latency or error rate
+      use: a chart (LineChart or AreaChart) — the bars say how each day went, not by how much
+    - case: A few headline numbers without a per-service history
+      use: StatRow
+  gotchas:
+    - "Presentational: it checks and fetches nothing. `status`, `uptime` and `history` come from your monitoring; `uptime` is a string you have already formatted."
+    - "`history` is one entry per day, oldest first, and the block draws one bar per entry. The labels under the bars count them: 30 entries read `30 days ago`."
+    - "A day is `operational`, `degraded`, `outage`, `maintenance` or `no-data`. Each bar is tinted by a `data-day` attribute, so the colour never has to be built at runtime."
+    - "The bars are one image to assistive tech, named by a count of each kind of day (`Last 30 days: 29 operational, 1 degraded`), so the tint is never the only cue."
+    - "The badge at the top is the worst status among the services: an outage beats degraded, degraded beats maintenance."
+    - "`services={[]}` is the empty state: nothing is monitored yet. `loading` replaces the services with placeholders, and `error` replaces them with a retry."
+    - "The layout follows the block's own width, not the viewport: everything stacks below --container-sm, the bars grow at --container-md and two services share a row from --container-lg."
+  theming:
+    - "The bars paint the contract's status slots: --success, --warning, --destructive, --info and --muted for a day with no data."
+    - "Everything else is a primitive: the overall status is a Badge, each service a Card with an Indicator, the placeholders Skeleton and the failed load an error Alert."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import StatusMonitoringBlockDemo from "../../../islands/StatusMonitoringBlockDemo.svelte";
+import statusMonitoringReact from "../../../../../../registry/blocks/status-monitoring/react/status-monitoring.tsx?raw";
+import statusMonitoringVue from "../../../../../../registry/blocks/status-monitoring/vue/StatusMonitoring.vue?raw";
+import statusMonitoringSolid from "../../../../../../registry/blocks/status-monitoring/solid/status-monitoring.tsx?raw";
+import statusMonitoringSvelte from "../../../../../../registry/blocks/status-monitoring/svelte/StatusMonitoring.svelte?raw";
+
+export const examples = {
+  react: statusMonitoringReact,
+  vue: statusMonitoringVue,
+  solid: statusMonitoringSolid,
+  svelte: statusMonitoringSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <StatusMonitoringBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="status-monitoring" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { StatusMonitoring } from "@/components/blocks/status-monitoring";
+```
+
+```tsx
+<StatusMonitoring services={services} onAction={subscribe} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import StatusMonitoring from "@/components/blocks/StatusMonitoring.vue";
+</script>
+```
+
+```vue
+<StatusMonitoring :services="services" @action="subscribe" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import StatusMonitoring from "@/components/blocks/StatusMonitoring.svelte";
+</script>
+```
+
+```svelte
+<StatusMonitoring {services} onaction={subscribe} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { StatusMonitoring } from "@/components/blocks/status-monitoring";
+```
+
+```tsx
+<StatusMonitoring services={services()} onAction={subscribe} />
+```
+
+</ForFramework>
+
+Each service is `{ id, name, status, uptime, history }`. `history` has one day per entry, oldest first.
+
+## API Reference
+
+### Props
+
+| Prop          | Type                        | Default                  | Description                                                   |
+| ------------- | --------------------------- | ------------------------ | ------------------------------------------------------------- |
+| `services`    | `StatusMonitoringService[]` | a sample set             | The services, in reading order. `[]` renders the empty state. |
+| `heading`     | `string`                    | `"System status"`        | The heading over the services.                                |
+| `description` | `string`                    | a sentence               | The line under the heading; `""` hides it.                    |
+| `actionLabel` | `string`                    | `"Subscribe to updates"` | The header button's label; `""` hides the button.             |
+| `error`       | `string`                    | —                        | The status failed to load; an alert with a retry replaces it. |
+| `loading`     | `boolean`                   | `false`                  | Placeholder cards in a busy region replace the services.      |
+| `disabled`    | `boolean`                   | `false`                  | The services stay readable and every button is disabled.      |
+| `onAction`    | `() => void`                | —                        | The header button. Svelte: `onaction`. Vue: `@action`.        |
+| `onRetry`     | `() => void`                | —                        | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.  |
+
+### StatusMonitoringService
+
+| Field     | Type                                                       | Description                                   |
+| --------- | ---------------------------------------------------------- | --------------------------------------------- |
+| `id`      | `string`                                                   | Stable identity.                              |
+| `name`    | `string`                                                   | The service's name.                           |
+| `status`  | `"operational" \| "degraded" \| "outage" \| "maintenance"` | How the service is doing now.                 |
+| `uptime`  | `string`                                                   | The uptime over `history`, already formatted. |
+| `history` | `UptimeDay[]`                                              | One entry per day, oldest first.              |
+
+`UptimeDay` is a `status` value or `"no-data"`.
+
+### States
+
+| State    | Prop            | What renders                                                        |
+| -------- | --------------- | ------------------------------------------------------------------- |
+| Default  | —               | The overall status badge and one card per service.                  |
+| Empty    | `services={[]}` | A "No services yet" card.                                           |
+| Loading  | `loading`       | Four placeholder cards in a busy `status` region.                   |
+| Error    | `error`         | One error alert with a "Try again" button in place of the services. |
+| Disabled | `disabled`      | The services with every button disabled.                            |
+
+### Sizing
+
+| Container step           | What changes                                                                |
+| ------------------------ | --------------------------------------------------------------------------- |
+| below `@sm`              | Everything stacks: the button under the heading, the status under the name. |
+| `@sm` (`--container-sm`) | The heading and the button share a row; so do each name and its status.     |
+| `@md` (`--container-md`) | Taller bars and a larger heading.                                           |
+| `@lg` (`--container-lg`) | Two services a row.                                                         |
+
+## Examples
+
+### Container widths
+
+The same block at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <StatusMonitoringBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Outage and missing days
+
+A service in `outage` sets the badge to "Service outage". A newer service shows `no-data` days before its checks began.
+
+<Preview examples={examples} layout="fill">
+  <StatusMonitoringBlockDemo client:visible locale="en" state="outage" />
+</Preview>
+
+### Empty
+
+<Preview examples={examples} layout="fill">
+  <StatusMonitoringBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <StatusMonitoringBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+<Preview examples={examples} layout="fill">
+  <StatusMonitoringBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <StatusMonitoringBlockDemo client:visible locale="en" state="disabled" />
+</Preview>

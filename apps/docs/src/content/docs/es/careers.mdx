@@ -1,0 +1,171 @@
+---
+title: Careers
+description: Una lista de puestos abiertos para una página de empleo — un título, un departamento, un lugar y un enlace para postularse en cada uno, bajo un encabezado con serifa.
+group: Bloques
+order: 119
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import CareersBlockDemo from "../../../islands/CareersBlockDemo.svelte";
+import careersReact from "../../../../../../registry/blocks/careers/react/careers.tsx?raw";
+import careersVue from "../../../../../../registry/blocks/careers/vue/Careers.vue?raw";
+import careersSolid from "../../../../../../registry/blocks/careers/solid/careers.tsx?raw";
+import careersSvelte from "../../../../../../registry/blocks/careers/svelte/Careers.svelte?raw";
+
+export const examples = {
+  react: careersReact,
+  vue: careersVue,
+  solid: careersSolid,
+  svelte: careersSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <CareersBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="careers" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { Careers } from "@/components/blocks/careers";
+```
+
+```tsx
+<Careers heading="Puestos abiertos" roles={roles} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import Careers from "@/components/blocks/Careers.vue";
+</script>
+```
+
+```vue
+<Careers heading="Puestos abiertos" :roles="roles" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import Careers from "@/components/blocks/Careers.svelte";
+</script>
+```
+
+```svelte
+<Careers heading="Puestos abiertos" {roles} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { Careers } from "@/components/blocks/careers";
+```
+
+```tsx
+<Careers heading="Puestos abiertos" roles={roles} />
+```
+
+</ForFramework>
+
+## Referencia de la API
+
+### Props
+
+| Prop          | Tipo            | Por defecto              | Descripción                                                                                    |
+| ------------- | --------------- | ------------------------ | ---------------------------------------------------------------------------------------------- |
+| `heading`     | `string`        | `"Come build with us"`   | El encabezado de la sección. Va en la fuente con serifa.                                       |
+| `description` | `string`        | una frase                | Una frase bajo el encabezado; `""` la oculta.                                                  |
+| `roles`       | `CareersRole[]` | cinco puestos de ejemplo | Los puestos abiertos, en orden. `[]` muestra el mensaje de vacío.                              |
+| `error`       | `string`        | —                        | Falló la carga de los puestos; un Alert de error con reintento sustituye la lista.             |
+| `loading`     | `boolean`       | `false`                  | Filas de esqueleto en una región ocupada sustituyen a la lista.                                |
+| `disabled`    | `boolean`       | `false`                  | Los puestos se quedan; cada enlace para postularse queda inerte y el reintento, deshabilitado. |
+| `onRetry`     | `() => void`    | —                        | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.                                    |
+
+### Puesto
+
+| Campo        | Tipo     | Descripción                                                |
+| ------------ | -------- | ---------------------------------------------------------- |
+| `id`         | `string` | Una clave estable para el puesto.                          |
+| `title`      | `string` | El nombre del puesto. Se muestra como `h3`.                |
+| `department` | `string` | El equipo. Se muestra en un Badge con contorno.            |
+| `location`   | `string` | Dónde está el puesto, como `"Remote"`.                     |
+| `type`       | `string` | Cómo es el puesto, como `"Full-time"`.                     |
+| `href`       | `string` | La página para postularse. El enlace "Apply" lleva a ella. |
+
+### Estados
+
+| Estado        | Prop         | Qué se muestra                                                        |
+| ------------- | ------------ | --------------------------------------------------------------------- |
+| Por defecto   | —            | Encabezado, introducción y cada puesto con su enlace para postularse. |
+| Vacío         | `roles={[]}` | Encabezado, introducción y "No open roles right now."                 |
+| Cargando      | `loading`    | Encabezado, introducción y tres filas de marcador.                    |
+| Error         | `error`      | Encabezado, introducción y después un Alert de error con "Try again". |
+| Deshabilitado | `disabled`   | Los mismos puestos con cada enlace para postularse inerte.            |
+
+### Tamaño
+
+| Paso del contenedor      | Qué cambia                                        |
+| ------------------------ | ------------------------------------------------- |
+| bajo `@sm`               | Cada enlace para postularse va bajo su puesto.    |
+| `@sm` (`--container-sm`) | Cada enlace para postularse va junto a su puesto. |
+| `@md` (`--container-md`) | El encabezado sube un tamaño.                     |
+| `@lg` (`--container-lg`) | Más espacio arriba y abajo de la sección.         |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+El mismo bloque a 18rem, 30rem, 40rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <CareersBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Vacío
+
+Pasa un array `roles` vacío.
+
+<Preview examples={examples} layout="fill">
+  <CareersBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <CareersBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+Pulsa "Try again" para quitar el mensaje y recuperar los puestos.
+
+<Preview examples={examples} layout="fill">
+  <CareersBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+<Preview examples={examples} layout="fill">
+  <CareersBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
+
+## Notas
+
+- Deja cada título en el nombre del puesto. Pon los detalles en la página que abre el enlace.
+- Ordena los puestos como los buscan los candidatos, por ejemplo por equipo.

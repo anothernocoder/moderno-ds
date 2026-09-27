@@ -1,0 +1,208 @@
+---
+title: Reviews
+description: What customers think of a product — the average rating, a bar per star rating and the reviews themselves.
+group: Blocks
+order: 123
+agent:
+  intent: A section of a product page that sums up what customers think — a serif heading, the average rating with its stars, one bar per star rating, a "Write a review" button, then one card per review with the author's avatar, name, stars, date and text.
+  whenToUse: "A product page that shows its rating at a glance and the reviews behind it."
+  whenNotToUse:
+    - case: Short quotes that back a marketing claim, with the author's job
+      use: Testimonials — it shows quotes on a landing page
+    - case: One comment in a thread, with a reply action
+      use: MediaObject — it pairs an avatar with a message and an action
+    - case: The products of a category, with their prices
+      use: ProductList — it shows a grid of products
+  gotchas:
+    - "`reviews` is an array of `{ id, author, initials, avatarUrl?, rating, date, content, verified? }`. `rating` is a whole number from 1 to 5, and `date` is a string you format."
+    - "`breakdown` is an array of `{ rating, count }`, one per star rating, in the order the bars show. The average and the number of reviews are worked out from it."
+    - "Leave `breakdown` out and the block counts the `reviews` you pass. Pass it when `reviews` holds only some of the reviews, like the latest three."
+    - '`verified: true` adds a "Verified purchase" Badge next to the author''s name.'
+    - '`reviews={[]}` hides the average and the bars and shows "No reviews yet. Be the first to write one." in place of the reviews.'
+    - 'Presentational: `onWriteReview` reports that "Write a review" was pressed, and `onRetry` that "Try again" was. The form and loading the reviews again stay yours.'
+    - '`disabled` keeps every review and disables the "Write a review" and retry buttons.'
+    - '`loading` keeps the heading and the "Write a review" button; placeholders replace the average, the bars and the reviews, in one busy `status` region.'
+    - '`error` keeps the heading and the "Write a review" button, hides the average and the bars, and puts an error Alert with your message and a "Try again" button where the reviews were. An empty string counts as no error.'
+    - "The layout follows the block's own width, not the viewport: everything in one column below `--container-md`, the average beside the bars from there, and the summary in a column beside the reviews from `--container-lg`."
+  theming:
+    - 'The block paints only its stars and its dashed empty box (--border). Each bar is Progress at size sm, each review is Card''s outline variant at size sm, each author is Avatar''s initials fallback, "Verified purchase" is Badge''s success variant at size sm, the error is Alert''s error variant, the buttons are Button''s outline variant and the placeholders are Skeleton.'
+    - "The heading and the average read --font-serif and --foreground; a filled star reads --foreground and an empty one --muted-foreground; the number of reviews, the date and the sentence over the button read --muted-foreground; the review text reads --card-foreground."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ReviewsBlockDemo from "../../../islands/ReviewsBlockDemo.svelte";
+import reviewsReact from "../../../../../../registry/blocks/reviews/react/reviews.tsx?raw";
+import reviewsVue from "../../../../../../registry/blocks/reviews/vue/Reviews.vue?raw";
+import reviewsSolid from "../../../../../../registry/blocks/reviews/solid/reviews.tsx?raw";
+import reviewsSvelte from "../../../../../../registry/blocks/reviews/svelte/Reviews.svelte?raw";
+
+export const examples = {
+  react: reviewsReact,
+  vue: reviewsVue,
+  solid: reviewsSolid,
+  svelte: reviewsSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <ReviewsBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="reviews" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { Reviews } from "@/components/blocks/reviews";
+```
+
+```tsx
+<Reviews reviews={latestReviews} breakdown={breakdown} onWriteReview={openForm} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import Reviews from "@/components/blocks/Reviews.vue";
+</script>
+```
+
+```vue
+<Reviews :reviews="latestReviews" :breakdown="breakdown" @write-review="openForm" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import Reviews from "@/components/blocks/Reviews.svelte";
+</script>
+```
+
+```svelte
+<Reviews reviews={latestReviews} {breakdown} onwritereview={openForm} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { Reviews } from "@/components/blocks/reviews";
+```
+
+```tsx
+<Reviews reviews={latestReviews} breakdown={breakdown} onWriteReview={openForm} />
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+| Prop            | Type            | Default                | Description                                                                  |
+| --------------- | --------------- | ---------------------- | ---------------------------------------------------------------------------- |
+| `heading`       | `string`        | `"Customer reviews"`   | The section's heading. Set in the serif face.                                |
+| `reviews`       | `Review[]`      | three sample reviews   | The reviews to show, in order. `[]` shows the empty message.                 |
+| `breakdown`     | `RatingCount[]` | counted from `reviews` | How many reviews gave each rating. The average and the total come from it.   |
+| `error`         | `string`        | —                      | Loading the reviews failed; an error Alert with a retry replaces them.       |
+| `loading`       | `boolean`       | `false`                | Placeholders replace the average, the bars and the reviews.                  |
+| `disabled`      | `boolean`       | `false`                | The reviews stay; "Write a review" and the retry button are disabled.        |
+| `onWriteReview` | `() => void`    | —                      | "Write a review" was pressed. Svelte: `onwritereview`. Vue: `@write-review`. |
+| `onRetry`       | `() => void`    | —                      | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.                 |
+
+With both `reviews` and `breakdown` left out, the sample breakdown (132 reviews, 4.4 on average) goes with the sample reviews.
+
+### Review
+
+| Field       | Type      | Description                                                    |
+| ----------- | --------- | -------------------------------------------------------------- |
+| `id`        | `string`  | A stable key for the review.                                   |
+| `author`    | `string`  | The author's name.                                             |
+| `initials`  | `string`  | One or two letters. The avatar shows them until a photo loads. |
+| `avatarUrl` | `string`  | Optional. The author's photo.                                  |
+| `rating`    | `number`  | The stars the author gave, from 1 to 5.                        |
+| `date`      | `string`  | When the review was written, formatted by you.                 |
+| `content`   | `string`  | What the author wrote.                                         |
+| `verified`  | `boolean` | Optional. Adds a "Verified purchase" Badge.                    |
+
+### RatingCount
+
+| Field    | Type     | Description                        |
+| -------- | -------- | ---------------------------------- |
+| `rating` | `number` | A star rating, from 1 to 5.        |
+| `count`  | `number` | How many reviews gave that rating. |
+
+### States
+
+| State    | Prop           | What renders                                                              |
+| -------- | -------------- | ------------------------------------------------------------------------- |
+| Default  | —              | Heading, average, one bar per rating, "Write a review" and the reviews.   |
+| Empty    | `reviews={[]}` | Heading, "Write a review" and "No reviews yet."                           |
+| Loading  | `loading`      | Heading, "Write a review", then placeholders for the summary and reviews. |
+| Error    | `error`        | Heading, "Write a review", then an error Alert with "Try again".          |
+| Disabled | `disabled`     | The same reviews with "Write a review" disabled.                          |
+
+### Sizing
+
+| Container step           | What changes                                                        |
+| ------------------------ | ------------------------------------------------------------------- |
+| below `@sm`              | Everything in one column, the reviews at the small size.            |
+| `@sm` (`--container-sm`) | The reviews read a size larger.                                     |
+| `@md` (`--container-md`) | The average sits beside the bars, and the heading steps up.         |
+| `@lg` (`--container-lg`) | The summary moves into a column beside the reviews, with more room. |
+
+## Examples
+
+### Container widths
+
+The same block at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <ReviewsBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Empty
+
+Pass an empty `reviews` array.
+
+<Preview examples={examples} layout="fill">
+  <ReviewsBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <ReviewsBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+Press "Try again" to clear the message and bring the reviews back.
+
+<Preview examples={examples} layout="fill">
+  <ReviewsBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <ReviewsBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Show the latest few reviews and pass the full `breakdown`, so the average counts every review.
+- Link "Write a review" to your own form with `onWriteReview`.

@@ -1,0 +1,37 @@
+{
+  "title": "Product Feature List",
+  "description": "A product's features and specifications for its product page, composing the @moderno-ui/{framework} Alert, Button and Skeleton primitives: a serif heading and a sentence of introduction, an icon, a title and a sentence per feature, then a list of specifications (label and value) and one call to action, with its own loading, empty and error renders; responds to its container (@container) — two feature columns and each specification's label beside its value at @sm, a larger heading at @md, and four feature columns, two columns of specifications and more room above and below at @lg.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": [],
+  "files": {
+    "react": [
+      {
+        "path": "blocks/product-feature-list/react/product-feature-list.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/product-feature-list.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "blocks/product-feature-list/vue/ProductFeatureList.vue",
+        "type": "registry:block",
+        "target": "src/components/blocks/ProductFeatureList.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "blocks/product-feature-list/svelte/ProductFeatureList.svelte",
+        "type": "registry:block",
+        "target": "src/components/blocks/ProductFeatureList.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "blocks/product-feature-list/solid/product-feature-list.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/product-feature-list.tsx"
+      }
+    ]
+  }
+}

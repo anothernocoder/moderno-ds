@@ -1,0 +1,221 @@
+---
+title: Pricing
+description: A plan comparison — one card per plan with its price, features and a call to action, the recommended plan highlighted.
+group: Blocks
+order: 118
+agent:
+  intent: A section that compares two or three plans side by side — each with a name, a price, a short list of features and a call to action — and highlights the one you recommend.
+  whenToUse: "A pricing page, the pricing section of a landing page, or a plan picker at the end of sign-up: anywhere a visitor chooses one plan out of a few."
+  whenNotToUse:
+    - case: One product with one price and a call to action
+      use: Hero — a single offer does not need a comparison
+    - case: A table of every feature against every plan
+      use: A table of your own — this block lists a few features per plan, not a full matrix
+    - case: Choosing an option inside a form, such as a shipping speed
+      use: RadioGroup — a form field, not a page section
+  gotchas:
+    - "`plans` is an array of `{ id, name, price, period?, description?, features, action, highlighted?, badge? }`. Two or three plans fit side by side; `[]` shows an empty message instead."
+    - "`highlighted` outlines the card in --primary and gives it the primary button; the other plans get the outline button. `badge` is a separate label, so you can badge a plan without highlighting it."
+    - "Presentational: `onSelect(id)` reports which plan's button was pressed and `onRetry` the retry. Checkout and billing stay yours."
+    - "`loading` keeps the title and puts three skeleton cards in one busy `status` region where the plans go."
+    - '`error` keeps the title and puts an error Alert with your message and a "Try again" button where the plans were. An empty string counts as no error.'
+    - "The layout follows the block's own width, not the viewport: the plans stack below `--container-md` and sit side by side from there on."
+    - "Each button's accessible name is its label and the plan name (`Start free trial: Pro`), so three buttons with the same label stay distinct."
+  theming:
+    - "The block paints almost nothing of its own. Each plan is Card's outline variant at size sm, the recommended one with a --primary border; the badge is Badge's solid variant; the buttons are Button's primary and outline variants; the error is Alert's error variant; the empty message is Card's muted variant; the placeholders are Skeleton."
+    - "The title and the prices read --font-serif; the description and the period read --muted-foreground; the check marks read --primary."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg, and the heading is capped at --container-md."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import PricingBlockDemo from "../../../islands/PricingBlockDemo.svelte";
+import pricingReact from "../../../../../../registry/blocks/pricing/react/pricing.tsx?raw";
+import pricingVue from "../../../../../../registry/blocks/pricing/vue/Pricing.vue?raw";
+import pricingSolid from "../../../../../../registry/blocks/pricing/solid/pricing.tsx?raw";
+import pricingSvelte from "../../../../../../registry/blocks/pricing/svelte/Pricing.svelte?raw";
+
+export const examples = {
+  react: pricingReact,
+  vue: pricingVue,
+  solid: pricingSolid,
+  svelte: pricingSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <PricingBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="pricing" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { Pricing } from "@/components/blocks/pricing";
+```
+
+```tsx
+<Pricing plans={plans} onSelect={(id) => startCheckout(id)} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import Pricing from "@/components/blocks/Pricing.vue";
+</script>
+```
+
+```vue
+<Pricing :plans="plans" @select="startCheckout" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import Pricing from "@/components/blocks/Pricing.svelte";
+</script>
+```
+
+```svelte
+<Pricing {plans} onselect={startCheckout} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { Pricing } from "@/components/blocks/pricing";
+```
+
+```tsx
+<Pricing plans={plans} onSelect={(id) => startCheckout(id)} />
+```
+
+</ForFramework>
+
+Each plan is a plain object:
+
+```ts
+const plans = [
+  {
+    id: "pro",
+    name: "Pro",
+    price: "$29",
+    period: "/month",
+    description: "For small teams that bill every week.",
+    features: ["Unlimited bank connections", "Time tracking", "Email support"],
+    action: "Start free trial",
+    highlighted: true,
+    badge: "Most popular",
+  },
+];
+```
+
+## API Reference
+
+### Props
+
+| Prop          | Type                   | Default                         | Description                                                                             |
+| ------------- | ---------------------- | ------------------------------- | --------------------------------------------------------------------------------------- |
+| `title`       | `string`               | `"Pricing that grows with you"` | The section heading, set in the serif face.                                             |
+| `description` | `string`               | a sentence                      | One or two sentences under the title; `""` hides it.                                    |
+| `plans`       | `PricingPlan[]`        | three sample plans              | The plans to compare, in order. `[]` shows the empty message.                           |
+| `error`       | `string`               | —                               | Loading the plans failed; an error Alert with a retry replaces them.                    |
+| `loading`     | `boolean`              | `false`                         | Skeleton cards in a busy region replace the plans.                                      |
+| `disabled`    | `boolean`              | `false`                         | The plans stay and every button is disabled.                                            |
+| `onSelect`    | `(id: string) => void` | —                               | A plan's button was pressed, with that plan's `id`. Svelte: `onselect`. Vue: `@select`. |
+| `onRetry`     | `() => void`           | —                               | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.                            |
+
+### PricingPlan
+
+| Field         | Type       | Description                                                      |
+| ------------- | ---------- | ---------------------------------------------------------------- |
+| `id`          | `string`   | What `onSelect` receives.                                        |
+| `name`        | `string`   | The plan's name, the card's title.                               |
+| `price`       | `string`   | The amount as you want it shown, currency included: `"$29"`.     |
+| `period`      | `string?`  | Shown after the price in muted text: `"/month"`.                 |
+| `description` | `string?`  | One line under the name.                                         |
+| `features`    | `string[]` | What the plan includes, one check mark each.                     |
+| `action`      | `string`   | The button's label.                                              |
+| `highlighted` | `boolean?` | The recommended plan: a --primary border and the primary button. |
+| `badge`       | `string?`  | A short label beside the name, such as `"Most popular"`.         |
+
+### States
+
+| State    | Prop       | What renders                                                            |
+| -------- | ---------- | ----------------------------------------------------------------------- |
+| Default  | —          | Title, description and one card per plan, the highlighted one outlined. |
+| Empty    | `plans=[]` | Title, description and a "No plans to show yet" message.                |
+| Loading  | `loading`  | Title, description and three placeholder cards.                         |
+| Error    | `error`    | Title, description and an error Alert with "Try again".                 |
+| Disabled | `disabled` | The same plans with every button disabled.                              |
+
+### Sizing
+
+| Container step           | What changes                                                              |
+| ------------------------ | ------------------------------------------------------------------------- |
+| below `@sm`              | The plans stack, one feature per line.                                    |
+| `@sm` (`--container-sm`) | The plans still stack; each lists its features in two columns.            |
+| `@md` (`--container-md`) | The plans sit side by side, one feature per line, and the title steps up. |
+| `@lg` (`--container-lg`) | More room above and below the block and between the plans.                |
+
+## Examples
+
+### Container widths
+
+The same block at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <PricingBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Two plans
+
+Pass two plans and they share the row. Here the badge names the saving.
+
+<Preview examples={examples} layout="fill">
+  <PricingBlockDemo client:visible locale="en" state="two-plans" />
+</Preview>
+
+### Empty
+
+<Preview examples={examples} layout="fill">
+  <PricingBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <PricingBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+Press "Try again" to clear the message and bring the plans back.
+
+<Preview examples={examples} layout="fill">
+  <PricingBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <PricingBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Highlight one plan at most. Two highlights cancel each other out.
+- Keep each feature list short and in the same order across plans, so readers can compare line by line.

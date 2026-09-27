@@ -1,0 +1,212 @@
+---
+title: Checkout Form
+description: The address and payment steps of a checkout — a shipping address with a delivery method, or card details — under a serif heading.
+group: Blocks
+order: 124
+agent:
+  intent: One step of a checkout — the shipping step (an email, the shipping address and a delivery method) or the payment step (the card's name, number, expiry and CVC) — in a bordered form with back and continue buttons.
+  whenToUse: "A store's checkout page or screen that asks for where to send an order, or for the card that pays for it."
+  whenNotToUse:
+    - case: A settings or profile form with several groups of fields
+      use: FormLayout — it groups account fields under their own headings
+    - case: A message to the team
+      use: Contact — it has a name, email and message form
+    - case: Signing in or signing up before paying
+      use: LoginForm — it has a mode for each of those
+  gotchas:
+    - '`step` is `"shipping"` or `"payment"` and picks the fields, the heading, the introduction and the button labels. Moving between the steps is yours: set `step` from `onSubmit` and `onBack`.'
+    - "The shipping fields are named `email`, `fullName`, `address`, `city`, `region`, `postalCode` and `country`, the delivery radios `delivery`. The payment fields are `cardName`, `cardNumber`, `expiry` and `cvc`, and the switch `saveCard`. `errors` takes a message per field under those names."
+    - "`deliveryOptions` is an array of `{ id, label, description, price }`; the first is picked by default. `deliveryOptions={[]}` hides the delivery method."
+    - "Presentational: `onSubmit` receives the form's submit event. Checking the fields, charging the card, and setting `loading`, `error` or `errors` from the result stay yours. Never send card details to your own server; hand them to your payment provider."
+    - '`loading` disables every control and turns the continue button into a busy "Saving" or "Placing order". `disabled` disables every control and both buttons.'
+    - "`error` puts an error Alert at the top of the form and keeps what was typed. An empty string counts as no error."
+    - "`headingLevel={1}` makes the heading an h1 and each group's title an h2, for a screen that mounts the block as the whole page."
+    - "The layout follows the block's own width, not the viewport: each group's title moves beside its fields only from `--container-lg`."
+  theming:
+    - "The block paints only the form's border and each delivery option's border (--border; --muted-foreground on hover; --primary once picked). The fields are Field, the delivery method is RadioGroup, the save switch is Switch, the rules are Divider, the buttons are Button's outline and default variants and the failure is Alert's error variant."
+    - "The heading reads --font-serif and --foreground; the introduction, each group's summary and each delivery option's description read --muted-foreground."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg. The heading is capped at --container-md, and the form at --container-lg."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import CheckoutFormBlockDemo from "../../../islands/CheckoutFormBlockDemo.svelte";
+import checkoutFormReact from "../../../../../../registry/blocks/checkout-form/react/checkout-form.tsx?raw";
+import checkoutFormVue from "../../../../../../registry/blocks/checkout-form/vue/CheckoutForm.vue?raw";
+import checkoutFormSolid from "../../../../../../registry/blocks/checkout-form/solid/checkout-form.tsx?raw";
+import checkoutFormSvelte from "../../../../../../registry/blocks/checkout-form/svelte/CheckoutForm.svelte?raw";
+
+export const examples = {
+  react: checkoutFormReact,
+  vue: checkoutFormVue,
+  solid: checkoutFormSolid,
+  svelte: checkoutFormSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <CheckoutFormBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="checkout-form" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { CheckoutForm } from "@/components/blocks/checkout-form";
+```
+
+```tsx
+<CheckoutForm step={step} onSubmit={next} onBack={back} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import CheckoutForm from "@/components/blocks/CheckoutForm.vue";
+</script>
+```
+
+```vue
+<CheckoutForm :step="step" @submit="next" @back="back" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import CheckoutForm from "@/components/blocks/CheckoutForm.svelte";
+</script>
+```
+
+```svelte
+<CheckoutForm {step} onsubmit={next} onback={back} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { CheckoutForm } from "@/components/blocks/checkout-form";
+```
+
+```tsx
+<CheckoutForm step={step()} onSubmit={next} onBack={back} />
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+| Prop              | Type                      | Default           | Description                                                  |
+| ----------------- | ------------------------- | ----------------- | ------------------------------------------------------------ |
+| `step`            | `"shipping" \| "payment"` | `"shipping"`      | Which step the form asks for.                                |
+| `heading`         | `string`                  | per step          | The heading. Set in the serif face.                          |
+| `description`     | `string`                  | per step          | One sentence under the heading; `""` hides it.               |
+| `headingLevel`    | `1 \| 2`                  | `2`               | `1` makes the heading an h1 and each group's title an h2.    |
+| `deliveryOptions` | `DeliveryOption[]`        | standard, express | The delivery methods on the shipping step. `[]` hides them.  |
+| `error`           | `string`                  | —                 | The step failed; an error Alert sits at the top of the form. |
+| `errors`          | `Record<string, string>`  | —                 | A message per field, under the field's name.                 |
+| `loading`         | `boolean`                 | `false`           | Every control disabled and the continue button busy.         |
+| `disabled`        | `boolean`                 | `false`           | Every control and both buttons disabled.                     |
+| `onSubmit`        | `(event) => void`         | —                 | The form's submit event. Svelte: `onsubmit`. Vue: `@submit`. |
+| `onBack`          | `() => void`              | —                 | The back button was pressed. Svelte: `onback`. Vue: `@back`. |
+
+### Fields
+
+| Step       | Group            | Field names                                                        |
+| ---------- | ---------------- | ------------------------------------------------------------------ |
+| `shipping` | Contact          | `email`                                                            |
+| `shipping` | Shipping address | `fullName`, `address`, `city`, `region`, `postalCode`, `country`   |
+| `shipping` | Delivery method  | `delivery` (the picked option's `id`)                              |
+| `payment`  | Card details     | `cardName`, `cardNumber`, `expiry`, `cvc`, `saveCard` (the switch) |
+
+### DeliveryOption
+
+| Field         | Type     | Description                                        |
+| ------------- | -------- | -------------------------------------------------- |
+| `id`          | `string` | The value the form sends under `delivery`.         |
+| `label`       | `string` | The option's name, like `"Express"`.               |
+| `description` | `string` | How long it takes, like `"2–5 business days"`.     |
+| `price`       | `string` | What it costs, already formatted, like `"$16.00"`. |
+
+### States
+
+| State    | Prop                   | What renders                                               |
+| -------- | ---------------------- | ---------------------------------------------------------- |
+| Default  | —                      | The shipping step: contact, address and delivery method.   |
+| Payment  | `step="payment"`       | The card details and the save switch.                      |
+| Empty    | `deliveryOptions={[]}` | The shipping step without a delivery method.               |
+| Loading  | `loading`              | Every control disabled and a busy "Saving".                |
+| Error    | `error`/`errors`       | An error Alert at the top of the form, and invalid fields. |
+| Disabled | `disabled`             | Every control and both buttons disabled.                   |
+
+### Sizing
+
+| Container step           | What changes                                                                               |
+| ------------------------ | ------------------------------------------------------------------------------------------ |
+| below `@sm`              | Every field on its own row. The buttons stack, full width, continue on top.                |
+| `@sm` (`--container-sm`) | City and state, postal code and country, expiry and CVC pair off. The buttons share a row. |
+| `@md` (`--container-md`) | The heading steps up a size. The delivery options sit side by side.                        |
+| `@lg` (`--container-lg`) | Each group's title sits beside its fields, with more room above and below.                 |
+
+## Examples
+
+### Container widths
+
+The same block at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <CheckoutFormBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Payment
+
+<Preview examples={examples} layout="fill">
+  <CheckoutFormBlockDemo client:visible locale="en" state="payment" />
+</Preview>
+
+### Empty
+
+Pass an empty `deliveryOptions` array when nothing ships, like a gift card.
+
+<Preview examples={examples} layout="fill">
+  <CheckoutFormBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <CheckoutFormBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+Press "Continue to payment" to clear the messages.
+
+<Preview examples={examples} layout="fill">
+  <CheckoutFormBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <CheckoutFormBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Send card details straight to your payment provider, never to your own server.
+- Keep `error` short and say what failed. The form keeps what was typed, so the shopper can fix it and try again.

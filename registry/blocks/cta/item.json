@@ -1,0 +1,37 @@
+{
+  "title": "CTA",
+  "description": "A call-to-action section composing the @moderno-ui/{framework} Alert, Button and Skeleton primitives: a serif title, one line of description and a primary and a secondary action in a bordered panel, with its own empty, loading and error renders; responds to its container (@container) — the actions move side by side at @sm, the title steps up at @md and the text and the actions split into one row at @lg.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": [],
+  "files": {
+    "react": [
+      {
+        "path": "blocks/cta/react/cta.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/cta.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "blocks/cta/vue/Cta.vue",
+        "type": "registry:block",
+        "target": "src/components/blocks/Cta.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "blocks/cta/svelte/Cta.svelte",
+        "type": "registry:block",
+        "target": "src/components/blocks/Cta.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "blocks/cta/solid/cta.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/cta.tsx"
+      }
+    ]
+  }
+}

@@ -1,0 +1,167 @@
+---
+title: Banner de la app
+description: Banners en la parte superior de una app — avisos de suplantación, de prueba y de incidencia, cada uno con una acción.
+group: Bloques
+order: 117
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import AppBannerBlockDemo from "../../../islands/AppBannerBlockDemo.svelte";
+import appBannerReact from "../../../../../../registry/blocks/app-banner/react/app-banner.tsx?raw";
+import appBannerVue from "../../../../../../registry/blocks/app-banner/vue/AppBanner.vue?raw";
+import appBannerSolid from "../../../../../../registry/blocks/app-banner/solid/app-banner.tsx?raw";
+import appBannerSvelte from "../../../../../../registry/blocks/app-banner/svelte/AppBanner.svelte?raw";
+
+export const examples = {
+  react: appBannerReact,
+  vue: appBannerVue,
+  solid: appBannerSolid,
+  svelte: appBannerSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <AppBannerBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="app-banner" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { AppBanner } from "@/components/blocks/app-banner";
+```
+
+```tsx
+<AppBanner banners={banners} onAction={(id) => open(id)} onDismiss={(id) => hide(id)} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import AppBanner from "@/components/blocks/AppBanner.vue";
+</script>
+```
+
+```vue
+<AppBanner :banners="banners" @action="open" @dismiss="hide" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import AppBanner from "@/components/blocks/AppBanner.svelte";
+</script>
+```
+
+```svelte
+<AppBanner {banners} onaction={open} ondismiss={hide} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { AppBanner } from "@/components/blocks/app-banner";
+```
+
+```tsx
+<AppBanner banners={banners()} onAction={(id) => open(id)} onDismiss={(id) => hide(id)} />
+```
+
+</ForFramework>
+
+## Referencia de API
+
+### Props
+
+| Prop        | Tipo                   | Por defecto          | Descripción                                                            |
+| ----------- | ---------------------- | -------------------- | ---------------------------------------------------------------------- |
+| `banners`   | `AppBannerItem[]`      | una lista de muestra | Los banners, de arriba abajo. `[]` no muestra nada.                    |
+| `error`     | `string`               | —                    | Los banners no cargaron; una alerta con reintento los sustituye.       |
+| `loading`   | `boolean`              | `false`              | Un banner esqueleto en una región ocupada los sustituye.               |
+| `disabled`  | `boolean`              | `false`              | Los banners siguen legibles y todos sus botones quedan deshabilitados. |
+| `onAction`  | `(id: string) => void` | —                    | Se pulsó la acción de un banner. Svelte: `onaction`. Vue: `@action`.   |
+| `onDismiss` | `(id: string) => void` | —                    | Se pulsó descartar en un banner. Svelte: `ondismiss`. Vue: `@dismiss`. |
+| `onRetry`   | `() => void`           | —                    | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.            |
+
+### AppBannerItem
+
+| Campo         | Tipo                                       | Descripción                                                      |
+| ------------- | ------------------------------------------ | ---------------------------------------------------------------- |
+| `id`          | `string`                                   | Identidad estable, la que devuelven `onAction` y `onDismiss`.    |
+| `kind`        | `"impersonation" \| "trial" \| "incident"` | El tinte y el icono: aviso, información o error.                 |
+| `title`       | `string`                                   | El mensaje del banner, como "12 days left in your trial".        |
+| `description` | `string`                                   | Opcional. Una línea más, como qué pasa cuando termina.           |
+| `actionLabel` | `string`                                   | Opcional. El texto del botón de acción, como "Upgrade".          |
+| `dismissible` | `boolean`                                  | Opcional. Añade un botón para descartar, nombrado con el banner. |
+
+### Estados
+
+| Estado        | Prop           | Qué se muestra                                                        |
+| ------------- | -------------- | --------------------------------------------------------------------- |
+| Por defecto   | —              | Un banner teñido por elemento, cada uno con su acción y su descarte.  |
+| Vacío         | `banners={[]}` | Nada: el bloque no ocupa espacio.                                     |
+| Cargando      | `loading`      | Un banner esqueleto en una región `status` ocupada.                   |
+| Error         | `error`        | Una alerta de error con el botón "Try again" en lugar de los banners. |
+| Deshabilitado | `disabled`     | Los banners con todos sus botones deshabilitados.                     |
+
+### Tamaño
+
+| Paso del contenedor      | Qué cambia                                                      |
+| ------------------------ | --------------------------------------------------------------- |
+| bajo `@sm`               | Los botones de acción y de descarte van bajo el mensaje.        |
+| `@sm` (`--container-sm`) | Los botones pasan junto al mensaje.                             |
+| `@md` (`--container-md`) | El título y la descripción comparten una línea.                 |
+| `@lg` (`--container-lg`) | Cada botón de descarte muestra su texto "Dismiss" junto a la ×. |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+Los mismos banners a 18rem, 30rem, 40rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <AppBannerBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Vacío
+
+<Preview examples={examples} layout="fill">
+  <AppBannerBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <AppBannerBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+<Preview examples={examples} layout="fill">
+  <AppBannerBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+<Preview examples={examples} layout="fill">
+  <AppBannerBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
+
+## Notas
+
+- Presentacional: no cambia nada por sí mismo. Quita un banner en `onDismiss`.
+- Ponlo una sola vez, sobre el contenido de la página, para que todas las páginas muestren los mismos banners.

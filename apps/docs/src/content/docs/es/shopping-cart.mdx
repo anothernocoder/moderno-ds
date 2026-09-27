@@ -1,0 +1,215 @@
+---
+title: Shopping Cart
+description: Los artículos del carrito de un cliente — cada uno con su imagen, su nombre, su precio, una caja de cantidad y un botón para quitarlo — y un resumen del pedido con el subtotal y un botón para pagar.
+group: Bloques
+order: 123
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ShoppingCartBlockDemo from "../../../islands/ShoppingCartBlockDemo.svelte";
+import shoppingCartReact from "../../../../../../registry/blocks/shopping-cart/react/shopping-cart.tsx?raw";
+import shoppingCartVue from "../../../../../../registry/blocks/shopping-cart/vue/ShoppingCart.vue?raw";
+import shoppingCartSolid from "../../../../../../registry/blocks/shopping-cart/solid/shopping-cart.tsx?raw";
+import shoppingCartSvelte from "../../../../../../registry/blocks/shopping-cart/svelte/ShoppingCart.svelte?raw";
+
+export const examples = {
+  react: shoppingCartReact,
+  vue: shoppingCartVue,
+  solid: shoppingCartSolid,
+  svelte: shoppingCartSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <ShoppingCartBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="shopping-cart" />
+
+## Uso
+
+Usa Shopping Cart para la página del carrito de una tienda. El cliente ve lo que eligió, cambia cantidades, quita artículos y pasa a pagar.
+
+<ForFramework fw="react">
+
+```tsx
+import { ShoppingCart } from "@/components/blocks/shopping-cart";
+```
+
+```tsx
+<ShoppingCart
+  items={items}
+  subtotal={subtotal}
+  onQuantityChange={setQuantity}
+  onRemove={removeItem}
+  onCheckout={goToCheckout}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import ShoppingCart from "@/components/blocks/ShoppingCart.vue";
+</script>
+```
+
+```vue
+<ShoppingCart
+  :items="items"
+  :subtotal="subtotal"
+  @quantity-change="setQuantity"
+  @remove="removeItem"
+  @checkout="goToCheckout"
+/>
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import ShoppingCart from "@/components/blocks/ShoppingCart.svelte";
+</script>
+```
+
+```svelte
+<ShoppingCart
+  {items}
+  {subtotal}
+  onquantitychange={setQuantity}
+  onremove={removeItem}
+  oncheckout={goToCheckout}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { ShoppingCart } from "@/components/blocks/shopping-cart";
+```
+
+```tsx
+<ShoppingCart
+  items={items()}
+  subtotal={subtotal()}
+  onQuantityChange={setQuantity}
+  onRemove={removeItem}
+  onCheckout={goToCheckout}
+/>
+```
+
+</ForFramework>
+
+El bloque no hace cuentas. Cuando cambia una cantidad, calcula el precio de la línea y el subtotal, y vuelve a pasarlos.
+
+## Referencia de la API
+
+### Props
+
+| Prop               | Tipo                                     | Por defecto                                   | Descripción                                                                                                                          |
+| ------------------ | ---------------------------------------- | --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `heading`          | `string`                                 | `"Shopping cart"`                             | El título de la sección. Va en la fuente con serifa.                                                                                 |
+| `items`            | `CartItem[]`                             | tres de muestra                               | Las líneas del carrito. `[]` muestra el mensaje de vacío.                                                                            |
+| `subtotal`         | `string`                                 | `"€134"` con los de muestra                   | El subtotal tal como se lee. Sin él, el resumen no tiene fila de subtotal.                                                           |
+| `note`             | `string`                                 | `"Shipping and taxes are added at checkout."` | Una línea bajo el subtotal; `""` la oculta.                                                                                          |
+| `error`            | `string`                                 | —                                             | No se pudo cargar el carrito; un Alert de error con reintento sustituye las líneas y el resumen.                                     |
+| `loading`          | `boolean`                                | `false`                                       | Líneas de marcador en una región ocupada sustituyen las líneas y el resumen.                                                         |
+| `disabled`         | `boolean`                                | `false`                                       | Las líneas se quedan; cada enlace queda inerte y cada caja de cantidad y botón apagado.                                              |
+| `onQuantityChange` | `(id: string, quantity: number) => void` | —                                             | Cambió la cantidad de una línea, siempre un número entero de 1 a `maxQuantity`. Svelte: `onquantitychange`. Vue: `@quantity-change`. |
+| `onRemove`         | `(id: string) => void`                   | —                                             | Se pulsó "Remove" en una línea. Svelte: `onremove`. Vue: `@remove`.                                                                  |
+| `onCheckout`       | `() => void`                             | —                                             | Se pulsó "Checkout". Svelte: `oncheckout`. Vue: `@checkout`.                                                                         |
+| `onRetry`          | `() => void`                             | —                                             | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.                                                                          |
+
+### CartItem
+
+| Campo         | Tipo            | Descripción                                                          |
+| ------------- | --------------- | -------------------------------------------------------------------- |
+| `id`          | `string`        | Una clave estable para la línea. Los callbacks la devuelven.         |
+| `name`        | `string`        | El nombre del producto.                                              |
+| `price`       | `string`        | El precio de la línea por toda su cantidad, como `"€56"`.            |
+| `quantity`    | `number`        | Cuántos hay en el carrito. La caja de cantidad empieza en él.        |
+| `maxQuantity` | `number`        | Opcional. El máximo que se puede elegir; `99` si no se pasa.         |
+| `options`     | `string`        | Opcional. Lo que eligió el cliente, como `"Sage · 350 ml"`.          |
+| `href`        | `string`        | Opcional. Convierte el nombre en un enlace a la página del producto. |
+| `image`       | `CartItemImage` | Opcional. La foto: `{ src, alt }`. Sin ella, una caja atenuada.      |
+
+### Estados
+
+| Estado        | Prop         | Qué se muestra                                                                |
+| ------------- | ------------ | ----------------------------------------------------------------------------- |
+| Por defecto   | —            | El título, una línea por artículo y el resumen del pedido.                    |
+| Vacío         | `items={[]}` | El título y "Your cart is empty." en una caja discontinua.                    |
+| Cargando      | `loading`    | El título y tres líneas de marcador.                                          |
+| Error         | `error`      | El título y un Alert de error con "Try again".                                |
+| Deshabilitado | `disabled`   | Las mismas líneas con los enlaces inertes y las cajas y los botones apagados. |
+
+### Tamaño
+
+| Paso del contenedor      | Qué cambia                                                                                                       |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------- |
+| bajo `@sm`               | Una imagen pequeña. La cantidad y "Remove" van en su propia fila, bajo la imagen. El resumen va bajo las líneas. |
+| `@sm` (`--container-sm`) | La imagen crece, y la cantidad y "Remove" pasan a su lado, bajo el nombre.                                       |
+| `@md` (`--container-md`) | La imagen crece otra vez, y el título sube un tamaño.                                                            |
+| `@lg` (`--container-lg`) | El resumen pasa al lado de las líneas.                                                                           |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+El mismo bloque a 18rem, 30rem, 40rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <ShoppingCartBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Sin imágenes
+
+Sin `image`, el área de cada imagen es una caja atenuada.
+
+<Preview examples={examples} layout="fill">
+  <ShoppingCartBlockDemo client:visible locale="es" state="no-images" />
+</Preview>
+
+### Vacío
+
+Pasa un array `items` vacío.
+
+<Preview examples={examples} layout="fill">
+  <ShoppingCartBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <ShoppingCartBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+Pulsa "Try again" para borrar el mensaje y volver a mostrar el carrito.
+
+<Preview examples={examples} layout="fill">
+  <ShoppingCartBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+Úsalo mientras el carrito guarda un cambio, para que el cliente no lo cambie dos veces.
+
+<Preview examples={examples} layout="fill">
+  <ShoppingCartBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
+
+## Notas
+
+- La vista previa de arriba es real: cambia una cantidad o quita una línea, y los precios y el subtotal la siguen.
+- Mantén `options` corto: el color y la talla bastan.

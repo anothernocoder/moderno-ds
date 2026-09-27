@@ -1,0 +1,37 @@
+{
+  "title": "Order Summary",
+  "description": "A read-only order summary, composing the @moderno-ui/{framework} Alert, Button, Card, Divider and Skeleton primitives: a serif heading, one line per item (its image, linked name, options, quantity and price) and a muted Card with the totals rows, a Divider and the total, with its own loading, empty and error renders; responds to its container (@container) — the image grows and each line's quantity moves into its own column at @sm, the image grows again and the heading steps up at @md, and the totals move beside the lines at @lg.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": [],
+  "files": {
+    "react": [
+      {
+        "path": "blocks/order-summary/react/order-summary.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/order-summary.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "blocks/order-summary/vue/OrderSummary.vue",
+        "type": "registry:block",
+        "target": "src/components/blocks/OrderSummary.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "blocks/order-summary/svelte/OrderSummary.svelte",
+        "type": "registry:block",
+        "target": "src/components/blocks/OrderSummary.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "blocks/order-summary/solid/order-summary.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/order-summary.tsx"
+      }
+    ]
+  }
+}

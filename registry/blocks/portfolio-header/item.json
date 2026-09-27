@@ -1,0 +1,37 @@
+{
+  "title": "Portfolio header",
+  "description": "The intro at the top of a personal portfolio, composing the @moderno-ui/{framework} Alert, Avatar, Button, Indicator and Skeleton primitives: an Avatar, an availability Indicator, the person's name as a serif h1, their role, a short bio and a row of links, with its own loading, empty and error renders; responds to its container (@container) — the role and bio step up at @sm, the name steps up and the avatar moves beside the text at @md, and the header gets more room at @lg.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": [],
+  "files": {
+    "react": [
+      {
+        "path": "blocks/portfolio-header/react/portfolio-header.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/portfolio-header.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "blocks/portfolio-header/vue/PortfolioHeader.vue",
+        "type": "registry:block",
+        "target": "src/components/blocks/PortfolioHeader.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "blocks/portfolio-header/svelte/PortfolioHeader.svelte",
+        "type": "registry:block",
+        "target": "src/components/blocks/PortfolioHeader.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "blocks/portfolio-header/solid/portfolio-header.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/portfolio-header.tsx"
+      }
+    ]
+  }
+}

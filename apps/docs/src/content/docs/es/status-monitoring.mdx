@@ -1,0 +1,175 @@
+---
+title: Monitor de estado
+description: El estado en vivo de cada servicio, con una barra por día de disponibilidad.
+group: Bloques
+order: 117
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import StatusMonitoringBlockDemo from "../../../islands/StatusMonitoringBlockDemo.svelte";
+import statusMonitoringReact from "../../../../../../registry/blocks/status-monitoring/react/status-monitoring.tsx?raw";
+import statusMonitoringVue from "../../../../../../registry/blocks/status-monitoring/vue/StatusMonitoring.vue?raw";
+import statusMonitoringSolid from "../../../../../../registry/blocks/status-monitoring/solid/status-monitoring.tsx?raw";
+import statusMonitoringSvelte from "../../../../../../registry/blocks/status-monitoring/svelte/StatusMonitoring.svelte?raw";
+
+export const examples = {
+  react: statusMonitoringReact,
+  vue: statusMonitoringVue,
+  solid: statusMonitoringSolid,
+  svelte: statusMonitoringSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <StatusMonitoringBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="status-monitoring" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { StatusMonitoring } from "@/components/blocks/status-monitoring";
+```
+
+```tsx
+<StatusMonitoring services={servicios} onAction={suscribirse} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import StatusMonitoring from "@/components/blocks/StatusMonitoring.vue";
+</script>
+```
+
+```vue
+<StatusMonitoring :services="servicios" @action="suscribirse" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import StatusMonitoring from "@/components/blocks/StatusMonitoring.svelte";
+</script>
+```
+
+```svelte
+<StatusMonitoring services={servicios} onaction={suscribirse} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { StatusMonitoring } from "@/components/blocks/status-monitoring";
+```
+
+```tsx
+<StatusMonitoring services={servicios()} onAction={suscribirse} />
+```
+
+</ForFramework>
+
+Cada servicio es `{ id, name, status, uptime, history }`. `history` lleva un día por entrada, del más antiguo al más reciente.
+
+## Referencia de API
+
+### Props
+
+| Prop          | Tipo                        | Por defecto              | Descripción                                                          |
+| ------------- | --------------------------- | ------------------------ | -------------------------------------------------------------------- |
+| `services`    | `StatusMonitoringService[]` | un conjunto de muestra   | Los servicios, en orden de lectura. `[]` muestra el estado vacío.    |
+| `heading`     | `string`                    | `"System status"`        | El título sobre los servicios.                                       |
+| `description` | `string`                    | una frase                | La línea bajo el título; `""` la oculta.                             |
+| `actionLabel` | `string`                    | `"Subscribe to updates"` | La etiqueta del botón de la cabecera; `""` oculta el botón.          |
+| `error`       | `string`                    | —                        | El estado no cargó; una alerta con reintento lo sustituye.           |
+| `loading`     | `boolean`                   | `false`                  | Tarjetas de marcador en una región ocupada sustituyen los servicios. |
+| `disabled`    | `boolean`                   | `false`                  | Los servicios siguen legibles y todos los botones se deshabilitan.   |
+| `onAction`    | `() => void`                | —                        | El botón de la cabecera. Svelte: `onaction`. Vue: `@action`.         |
+| `onRetry`     | `() => void`                | —                        | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.          |
+
+### StatusMonitoringService
+
+| Campo     | Tipo                                                       | Descripción                                         |
+| --------- | ---------------------------------------------------------- | --------------------------------------------------- |
+| `id`      | `string`                                                   | Identidad estable.                                  |
+| `name`    | `string`                                                   | El nombre del servicio.                             |
+| `status`  | `"operational" \| "degraded" \| "outage" \| "maintenance"` | Cómo está el servicio ahora.                        |
+| `uptime`  | `string`                                                   | La disponibilidad en `history`, ya formateada.      |
+| `history` | `UptimeDay[]`                                              | Una entrada por día, de la más antigua a la última. |
+
+`UptimeDay` es un valor de `status` o `"no-data"`.
+
+### Estados
+
+| Estado        | Prop            | Qué se muestra                                                          |
+| ------------- | --------------- | ----------------------------------------------------------------------- |
+| Por defecto   | —               | La insignia del estado general y una tarjeta por servicio.              |
+| Vacío         | `services={[]}` | Una tarjeta "No services yet".                                          |
+| Cargando      | `loading`       | Cuatro tarjetas de marcador en una región `status` ocupada.             |
+| Error         | `error`         | Una alerta de error con el botón "Try again" en lugar de los servicios. |
+| Deshabilitado | `disabled`      | Los servicios, con todos los botones deshabilitados.                    |
+
+### Tamaño
+
+| Paso del contenedor      | Qué cambia                                                            |
+| ------------------------ | --------------------------------------------------------------------- |
+| bajo `@sm`               | Todo se apila: el botón bajo el título, el estado bajo el nombre.     |
+| `@sm` (`--container-sm`) | El título y el botón comparten fila; también cada nombre y su estado. |
+| `@md` (`--container-md`) | Barras más altas y un título más grande.                              |
+| `@lg` (`--container-lg`) | Dos servicios por fila.                                               |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+El mismo bloque a 18rem, 30rem, 40rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <StatusMonitoringBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Caída y días sin datos
+
+Un servicio en `outage` cambia la insignia a "Service outage". Un servicio nuevo muestra días `no-data` antes de que empezaran sus comprobaciones.
+
+<Preview examples={examples} layout="fill">
+  <StatusMonitoringBlockDemo client:visible locale="es" state="outage" />
+</Preview>
+
+### Vacío
+
+<Preview examples={examples} layout="fill">
+  <StatusMonitoringBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <StatusMonitoringBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+<Preview examples={examples} layout="fill">
+  <StatusMonitoringBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+<Preview examples={examples} layout="fill">
+  <StatusMonitoringBlockDemo client:visible locale="es" state="disabled" />
+</Preview>

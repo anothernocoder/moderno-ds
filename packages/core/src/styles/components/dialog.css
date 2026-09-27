@@ -37,6 +37,13 @@
   /* The elevation slot, not a --foreground mix: that glows in dark mode. */
   box-shadow: var(--shadow-lg);
 }
+/* Title and description are an <h2> and a <p>: without a reset, the browser's
+   own margins stack on the content's gap wherever the page has no preflight
+   (a portal renders outside any scoped one), and the text drifts apart. */
+[data-scope="dialog"][data-part="title"],
+[data-scope="dialog"][data-part="description"] {
+  margin: 0;
+}
 [data-scope="dialog"][data-part="title"] {
   font-size: var(--text-body-lg);
   font-weight: var(--font-weight-semibold);

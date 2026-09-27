@@ -1,0 +1,37 @@
+{
+  "title": "Story card",
+  "description": "A vertical 9:16 story or ad, composing the @moderno-ui/{framework} Alert, Avatar, Badge, Button, Card and Skeleton primitives: the brand's Avatar and name with a Sponsored Badge, an optional image, a kicker, a serif title, a short detail and one full-width action Button, with its own loading, empty and error renders; responds to its container (@container) — the title and detail step up at @sm, the card reaches its full size with more room inside at @md, and it gets room above and below at @lg.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": [],
+  "files": {
+    "react": [
+      {
+        "path": "blocks/story-card/react/story-card.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/story-card.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "blocks/story-card/vue/StoryCard.vue",
+        "type": "registry:block",
+        "target": "src/components/blocks/StoryCard.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "blocks/story-card/svelte/StoryCard.svelte",
+        "type": "registry:block",
+        "target": "src/components/blocks/StoryCard.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "blocks/story-card/solid/story-card.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/story-card.tsx"
+      }
+    ]
+  }
+}
