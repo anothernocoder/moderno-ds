@@ -1,0 +1,195 @@
+---
+title: Referral flow
+description: The three referral screens in sequence, plus an example assembly that owns the navigation between them.
+group: Flows
+order: 123
+agent:
+  intent: The three referral screens — invite, share, reward — sequenced by an example assembly that owns the step, the friends invited so far and the invite form's errors, and counts the reward numbers from that one list.
+  whenToUse: "Standing up a whole referral program at once: /referrals/*, where a member invites friends, shares their link and checks what it earned them."
+  whenNotToUse:
+    - case: One state of the journey, mounted under your own router
+      use: the screen itself — referral-invite, referral-share or referral-reward; installing a screen never pulls in the flow
+    - case: Sharing access to a document or a workspace
+      use: the ShareInvite block, which owns no viewport and no navigation
+    - case: A journey that is not a referral program
+      use: the auth flow, or another flow on the Flows page
+  gotchas:
+    - "The assembly is example code. It is the one file in the flow you are expected to rewrite: the screens under it stay as they shipped."
+    - 'Navigation is link interception, not callbacks. "Skip for now" and "Invite more friends" are real `href`s, so they work with no JavaScript; the assembly catches the plain left click and leaves modified and middle clicks to the browser.'
+    - "`hrefFor` is the seam for your router: return `/referrals/referral-share` instead of `#referral-share` and every link and every interception follows, with no other edit."
+    - "`onStepChange` is where you mirror the step into the URL. Without it a reload drops the reader back at referral-invite."
+    - '`friends` is the one list: the invite form and the share screen''s invite field both add to it, the share screen lists it and the reward screen counts it. Seed it with `initialFriends` from your API; a friend with `status: "Joined"` counts as joined.'
+    - "`onInvite` hands up only addresses nobody has invited yet. Send the invitations there."
+    - "The flow has no end step: the reward screen is where a member comes back to. Leaving is the wordmark, a plain link to `homeHref`."
+    - "Installing the flow installs its three screens and the block each one composes, each under its own version in `.moderno/manifest.json`."
+  theming:
+    - "Nothing is painted here at all. The assembly renders one screen at a time and adds a single wrapper element with no styling of its own."
+    - "Everything visible comes from the screens, their blocks and the primitives underneath — which is why a theme swap changes the whole journey at once."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ReferralFlowDemo from "../../../islands/ReferralFlowDemo.svelte";
+import referralReact from "../../../../../../registry/flows/referral/react/referral-flow.tsx?raw";
+import referralVue from "../../../../../../registry/flows/referral/vue/ReferralFlow.vue?raw";
+import referralSolid from "../../../../../../registry/flows/referral/solid/referral-flow.tsx?raw";
+import referralSvelte from "../../../../../../registry/flows/referral/svelte/ReferralFlow.svelte?raw";
+
+<FrameworkSelect locale="en" />
+
+<Preview
+  examples={{
+    react: referralReact,
+    vue: referralVue,
+    solid: referralSolid,
+    svelte: referralSvelte,
+  }}
+  layout="fill"
+>
+  <ReferralFlowDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="referral" />
+
+The flow lands in `src/components/flows/`, its three screens in `screens/` and their blocks in `blocks/`, each versioned on its own.
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { ReferralFlow } from "@/components/flows/referral-flow";
+```
+
+```tsx
+<ReferralFlow
+  hrefFor={(step) => `/referrals/${step}`}
+  initialStep={stepFromUrl}
+  initialFriends={friends}
+  onStepChange={(step) => router.push(`/referrals/${step}`)}
+  onInvite={(emails) => api.invite(emails)}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```ts
+import ReferralFlow from "@/components/flows/ReferralFlow.vue";
+```
+
+```vue
+<ReferralFlow
+  :href-for="(step) => `/referrals/${step}`"
+  :initial-step="stepFromUrl"
+  :initial-friends="friends"
+  @step-change="(step) => router.push(`/referrals/${step}`)"
+  @invite="(emails) => api.invite(emails)"
+/>
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```ts
+import ReferralFlow from "@/components/flows/ReferralFlow.svelte";
+```
+
+```svelte
+<ReferralFlow
+  hrefFor={(step) => `/referrals/${step}`}
+  initialStep={stepFromUrl}
+  initialFriends={friends}
+  onstepchange={(step) => goto(`/referrals/${step}`)}
+  oninvite={(emails) => api.invite(emails)}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { ReferralFlow } from "@/components/flows/referral-flow";
+```
+
+```tsx
+<ReferralFlow
+  hrefFor={(step) => `/referrals/${step}`}
+  initialStep={stepFromUrl()}
+  initialFriends={friends()}
+  onStepChange={(step) => navigate(`/referrals/${step}`)}
+  onInvite={(emails) => api.invite(emails)}
+/>
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+Callbacks are `on…` props in React and Solid, lowercase (`onstepchange`) in Svelte, and emits (`stepChange`, `invite`) in Vue.
+
+| Prop             | Type               | Default                            | Description                                                       |
+| ---------------- | ------------------ | ---------------------------------- | ----------------------------------------------------------------- |
+| `initialStep`    | `ReferralStep`     | `"referral-invite"`                | The screen the flow opens on; in an app, whatever the route says. |
+| `initialFriends` | `ReferralFriend[]` | `[]`                               | Friends invited before this visit: `{ id, name, email, status }`. |
+| `link`           | `string`           | `"https://example.com/r/ana-ruiz"` | The member's own referral link, on the share screen.              |
+| `reward`         | `string`           | `"a free month"`                   | What each side gets when a friend joins.                          |
+| `hrefFor`        | `(step) => string` | `` `#${step}` ``                   | The URL of each step; drives both the links and the interception. |
+| `onStepChange`   | `(step) => void`   | —                                  | The flow moved; mirror it in the URL.                             |
+| `onInvite`       | `(emails) => void` | —                                  | Friends were invited, from either screen. Only new addresses.     |
+| `homeHref`       | `string`           | `"#"`                              | Target of the wordmark on every screen.                           |
+| `rulesHref`      | `string`           | `"#"`                              | Target of "How referrals work" on the invite screen.              |
+| `privacyHref`    | `string`           | `"#"`                              | Target of the privacy links on every screen.                      |
+| `termsHref`      | `string`           | `"#"`                              | Target of the terms links on every screen.                        |
+
+### Steps
+
+`ReferralStep` is one of the three screens, in the order the flow moves through them.
+
+| Step                                      | Reached by                                   | Leaves for                                       |
+| ----------------------------------------- | -------------------------------------------- | ------------------------------------------------ |
+| [`referral-invite`](/en/referral-invite/) | The first step                               | `referral-share`, on "Send invites" or "Not now" |
+| [`referral-share`](/en/referral-share/)   | A sent invite form, or "Invite more friends" | `referral-reward`, on "Skip for now"             |
+| [`referral-reward`](/en/referral-reward/) | "Skip for now"                               | `referral-share`, on "Invite more friends"       |
+
+### State
+
+What the assembly holds so the screens don't have to.
+
+| State     | Holds                                                                     |
+| --------- | ------------------------------------------------------------------------- |
+| `step`    | The screen currently on the route.                                        |
+| `friends` | Everyone invited so far. The share screen lists it; the reward counts it. |
+| `errors`  | Whatever the last invite form rejected.                                   |
+
+## Examples
+
+### Returning member
+
+A member who already invited friends comes back to their rewards. Open the flow on that step and hand it the friends your API returns.
+
+<Preview
+  examples={{
+    react: referralReact,
+    vue: referralVue,
+    solid: referralSolid,
+    svelte: referralSvelte,
+  }}
+  layout="fill"
+>
+  <ReferralFlowDemo client:visible locale="en" example="returning" />
+</Preview>
+
+## Notes
+
+- The assembly is example code, the one file you are expected to rewrite. The screens stay as shipped.
+- Navigation intercepts real `href`s: plain left clicks only; modified and middle clicks go to the browser.
+- The invite form is a plain form submission, read off its `emails` field and split on commas and new lines.
+- `errors` resets on every move.
+- The reward numbers are counted from `friends` on every render, so they never disagree with the share screen's list.
