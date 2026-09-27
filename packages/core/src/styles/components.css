@@ -459,6 +459,36 @@
     color: color-mix(in oklab, var(--destructive) 55%, var(--foreground));
   }
 
+  /* ─────────────────────────── Bar list ─────────────────────────── *
+   * A ranking drawn by @moderno-ui/charts-core's barListNodes: one row per item,
+   * each a name, a track, the bar filling it and a value. It shares the chart
+   * scope, so the root, the series colour and the bar come from chart.css; this
+   * only paints the parts a bar list adds. The track is the series colour, faint,
+   * so the list re-colours from --chart-* alone; the text reads the neutral
+   * foreground slots, like a chart's tick labels. Every rule sits under the
+   * root's data-chart, so another chart can use the same part names (a label, a
+   * track) without picking up the bar list's paint. */
+  [data-chart="bar-list"] [data-scope="chart"][data-part="track"] {
+    fill: currentColor;
+    fill-opacity: 0.15;
+  }
+
+  /* Both texts sit on the row's centre line, which the render tree gives as y. */
+  [data-chart="bar-list"] [data-scope="chart"][data-part="label"],
+  [data-chart="bar-list"] [data-scope="chart"][data-part="value"] {
+    font-size: var(--text-ui-sm);
+    dominant-baseline: central;
+  }
+  [data-chart="bar-list"] [data-scope="chart"][data-part="label"] {
+    fill: var(--foreground);
+    text-anchor: start;
+  }
+  [data-chart="bar-list"] [data-scope="chart"][data-part="value"] {
+    fill: var(--muted-foreground);
+    font-variant-numeric: tabular-nums;
+    text-anchor: end;
+  }
+
   /* ─────────────────────────── Button ─────────────────────────── *
    * data-variant × data-size from `buttonRecipe`. No Ark machine — a
    * plain element on [data-scope="button"][data-part="root"].          */
@@ -521,6 +551,13 @@
     background-color: var(--background);
     border-color: var(--border);
     color: var(--foreground);
+  }
+  /* Outline draws a resting --border, so its ring goes inside the box: an
+     outset ring would leave that border visible inside it, a double border.
+     The other variants have no border and keep the base layer's outset ring. */
+  [data-scope="button"][data-part="root"][data-variant="outline"]:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
   }
   /* Ghost has no fill of its own — the root rule above sets it transparent. */
   [data-scope="button"][data-part="root"][data-variant="ghost"] {
@@ -728,6 +765,308 @@
     gap: var(--spacing-3);
   }
 
+  /* ───────────────────────── Carousel ───────────────────────── *
+   * Ark's carousel machine: root (a region) > item-group > item…, then
+   * control > prev-trigger + indicator-group > indicator… + next-trigger,
+   * with an autoplay-trigger and a progress-text where the consumer puts
+   * them. Ark lays the slides out inline on the item-group (a scrolling,
+   * snapping grid sized from slidesPerPage and spacing), so the rules below
+   * only frame the slides and paint the controls. The triggers and the
+   * indicators are native <button>s. Ark disables prev/next at either end
+   * (unless the carousel loops), stamps data-current on the current
+   * indicator, data-inview on each slide in view and data-pressed on the
+   * autoplay trigger while it plays. `carouselRecipe` puts size on the root;
+   * the controls follow it. Under reduced motion the wrapper holds autoplay
+   * off (`carouselMotion`) and the controls drop their transitions.    */
+  [data-scope="carousel"][data-part="root"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+    min-width: 0;
+  }
+  /* A standing carousel puts its controls beside the slides, not under. */
+  [data-scope="carousel"][data-part="root"][data-orientation="vertical"] {
+    flex-direction: row;
+  }
+  /* The slides scroll inside rounded corners. Ark hides Firefox's scrollbar
+     inline (scrollbar-width: none); the rule after this hides WebKit's. */
+  [data-scope="carousel"][data-part="item-group"] {
+    min-width: 0;
+    border-radius: var(--radius);
+  }
+  [data-scope="carousel"][data-part="item-group"]::-webkit-scrollbar {
+    display: none;
+  }
+  /* Ark makes the item group a tab stop, so the arrow keys can scroll it.
+     Its ring is drawn inside, over the slides, where the page cannot clip it. */
+  [data-scope="carousel"][data-part="item-group"]:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+  }
+  /* Standing, the slides take the width the controls leave. */
+  [data-scope="carousel"][data-part="item-group"][data-orientation="vertical"] {
+    flex: 1;
+  }
+  [data-scope="carousel"][data-part="item-group"][data-dragging] {
+    cursor: grabbing;
+  }
+  [data-scope="carousel"][data-part="item"] {
+    min-width: 0;
+  }
+  [data-scope="carousel"][data-part="control"] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-2);
+  }
+  [data-scope="carousel"][data-part="control"][data-orientation="vertical"] {
+    flex-direction: column;
+  }
+  [data-scope="carousel"][data-part="indicator-group"] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-1);
+  }
+  [data-scope="carousel"][data-part="indicator-group"][data-orientation="vertical"] {
+    flex-direction: column;
+  }
+
+  /* Prev, next and autoplay: round outline buttons on --background, so they
+     read over a slide as well as beside one. */
+  [data-scope="carousel"]:is(
+    [data-part="prev-trigger"],
+    [data-part="next-trigger"],
+    [data-part="autoplay-trigger"]
+  ) {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-1);
+    height: var(--spacing-8);
+    min-width: var(--spacing-8);
+    padding-inline: var(--spacing-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-full);
+    /* Paints its own fill over the UA `buttonface` grey. */
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: var(--text-ui-md);
+    font-weight: var(--font-weight-medium);
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    transition:
+      background-color var(--motion-fast),
+      color var(--motion-fast);
+  }
+  /* An icon passed as the content keeps a control's size, not its own. */
+  [data-scope="carousel"]:is(
+      [data-part="prev-trigger"],
+      [data-part="next-trigger"],
+      [data-part="autoplay-trigger"]
+    )
+    > svg {
+    width: var(--spacing-4);
+    height: var(--spacing-4);
+  }
+  [data-scope="carousel"]:is(
+      [data-part="prev-trigger"],
+      [data-part="next-trigger"],
+      [data-part="autoplay-trigger"]
+    ):hover {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+
+  /* One dot per page. The button itself has no fill (it clears the UA
+     `buttonface` grey) and is a comfortable target; the dot is its ::before.
+     The current page's dot is --primary and stretches into a pill. */
+  [data-scope="carousel"][data-part="indicator"] {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    height: var(--spacing-5);
+    padding: 0 var(--spacing-1);
+    border: 0;
+    border-radius: var(--radius-full);
+    background-color: transparent;
+    cursor: pointer;
+  }
+  [data-scope="carousel"][data-part="indicator"]::before {
+    content: "";
+    width: var(--spacing-2);
+    height: var(--spacing-2);
+    border-radius: var(--radius-full);
+    background-color: var(--muted-foreground);
+    transition:
+      width var(--motion-fast),
+      background-color var(--motion-fast);
+  }
+  [data-scope="carousel"][data-part="indicator"]:hover::before {
+    background-color: var(--foreground);
+  }
+  [data-scope="carousel"][data-part="indicator"][data-current]::before {
+    width: var(--spacing-5);
+    background-color: var(--primary);
+  }
+  /* A read-only indicator shows the page; it does not go there. */
+  [data-scope="carousel"][data-part="indicator"][data-readonly] {
+    cursor: default;
+  }
+
+  /* The ring is drawn inside each button, where a neighbour one gap away
+     cannot cover it and a trigger's border does not double it. */
+  [data-scope="carousel"]:is(
+      [data-part="prev-trigger"],
+      [data-part="next-trigger"],
+      [data-part="autoplay-trigger"],
+      [data-part="indicator"]
+    ):focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+  }
+  /* A trigger with nowhere to go is dead: Ark sets the native `disabled` on
+     prev at the first page and next at the last. It looks the same as
+     data-disabled, so a trigger disabled before Ark hydrates reads as one too. */
+  [data-scope="carousel"][data-part="prev-trigger"]:disabled,
+  [data-scope="carousel"][data-part="next-trigger"]:disabled,
+  [data-scope="carousel"][data-part="autoplay-trigger"]:disabled,
+  [data-scope="carousel"][data-part="indicator"]:disabled,
+  [data-scope="carousel"][data-part="prev-trigger"][data-disabled],
+  [data-scope="carousel"][data-part="next-trigger"][data-disabled],
+  [data-scope="carousel"][data-part="autoplay-trigger"][data-disabled],
+  [data-scope="carousel"][data-part="indicator"][data-disabled] {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+
+  [data-scope="carousel"][data-part="progress-text"] {
+    color: var(--muted-foreground);
+    font-size: var(--text-ui-sm);
+    line-height: var(--leading-ui-sm);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Density driven by the recipe's data-size on the root. Descendant
+     combinators, so a consumer may wrap the controls; every part is matched by
+     its own scope, so a Checkbox indicator or a Pagination trigger put in a
+     slide keeps its own size. The :where(:not(…)) guard (no specificity) stops
+     at a carousel nested in a slide, which follows its own data-size. `lg`
+     exceeds the top spacing slot, so it sums two slots rather than inventing a
+     token. */
+  [data-scope="carousel"][data-part="root"][data-size="sm"]
+    [data-scope="carousel"]:is(
+      [data-part="prev-trigger"],
+      [data-part="next-trigger"],
+      [data-part="autoplay-trigger"]
+    ):where(
+      :not(
+        [data-scope="carousel"][data-part="root"][data-size="sm"]
+          [data-scope="carousel"][data-part="root"]:not([data-size="sm"])
+          *
+      )
+    ) {
+    height: var(--spacing-7);
+    min-width: var(--spacing-7);
+    padding-inline: var(--spacing-1);
+    font-size: var(--text-ui-sm);
+  }
+  [data-scope="carousel"][data-part="root"][data-size="sm"]
+    [data-scope="carousel"][data-part="indicator"]:where(
+      :not(
+        [data-scope="carousel"][data-part="root"][data-size="sm"]
+          [data-scope="carousel"][data-part="root"]:not([data-size="sm"])
+          *
+      )
+    ) {
+    height: var(--spacing-4);
+  }
+  [data-scope="carousel"][data-part="root"][data-size="sm"]
+    [data-scope="carousel"][data-part="indicator"]:where(
+      :not(
+        [data-scope="carousel"][data-part="root"][data-size="sm"]
+          [data-scope="carousel"][data-part="root"]:not([data-size="sm"])
+          *
+      )
+    )::before {
+    width: calc(var(--spacing-1) * 1.5);
+    height: calc(var(--spacing-1) * 1.5);
+  }
+  [data-scope="carousel"][data-part="root"][data-size="sm"]
+    [data-scope="carousel"][data-part="indicator"][data-current]:where(
+      :not(
+        [data-scope="carousel"][data-part="root"][data-size="sm"]
+          [data-scope="carousel"][data-part="root"]:not([data-size="sm"])
+          *
+      )
+    )::before {
+    width: var(--spacing-4);
+  }
+  [data-scope="carousel"][data-part="root"][data-size="lg"]
+    [data-scope="carousel"]:is(
+      [data-part="prev-trigger"],
+      [data-part="next-trigger"],
+      [data-part="autoplay-trigger"]
+    ):where(
+      :not(
+        [data-scope="carousel"][data-part="root"][data-size="lg"]
+          [data-scope="carousel"][data-part="root"]:not([data-size="lg"])
+          *
+      )
+    ) {
+    height: calc(var(--spacing-8) + var(--spacing-2));
+    min-width: calc(var(--spacing-8) + var(--spacing-2));
+    padding-inline: var(--spacing-3);
+    font-size: var(--text-ui-lg);
+  }
+  [data-scope="carousel"][data-part="root"][data-size="lg"]
+    [data-scope="carousel"][data-part="indicator"]:where(
+      :not(
+        [data-scope="carousel"][data-part="root"][data-size="lg"]
+          [data-scope="carousel"][data-part="root"]:not([data-size="lg"])
+          *
+      )
+    ) {
+    height: var(--spacing-6);
+  }
+  [data-scope="carousel"][data-part="root"][data-size="lg"]
+    [data-scope="carousel"][data-part="indicator"]:where(
+      :not(
+        [data-scope="carousel"][data-part="root"][data-size="lg"]
+          [data-scope="carousel"][data-part="root"]:not([data-size="lg"])
+          *
+      )
+    )::before {
+    width: var(--spacing-3);
+    height: var(--spacing-3);
+  }
+  [data-scope="carousel"][data-part="root"][data-size="lg"]
+    [data-scope="carousel"][data-part="indicator"][data-current]:where(
+      :not(
+        [data-scope="carousel"][data-part="root"][data-size="lg"]
+          [data-scope="carousel"][data-part="root"]:not([data-size="lg"])
+          *
+      )
+    )::before {
+    width: var(--spacing-6);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-scope="carousel"]:is(
+      [data-part="prev-trigger"],
+      [data-part="next-trigger"],
+      [data-part="autoplay-trigger"]
+    ),
+    [data-scope="carousel"][data-part="indicator"]::before {
+      transition: none;
+    }
+  }
+
   /* ─────────────────────────── Charts ─────────────────────────── *
    * Custom SVG charts (line/area/bar/scatter). All geometry is computed in
    * @moderno-ui/charts-core; this only paints. Series colour is decoupled from
@@ -787,6 +1126,12 @@
   }
   [data-scope="chart"][data-part="point"] {
     fill: currentColor;
+  }
+  /* A donut slice is a series of its own, so neighbouring slices take
+     neighbouring --chart-* slots. Gaps come from padAngle, not a stroke. */
+  [data-scope="chart"][data-part="slice"] {
+    fill: currentColor;
+    stroke: none;
   }
 
   /* Grid + axes read neutral semantic slots, not the series palette. */
@@ -978,6 +1323,738 @@
     outline-offset: 1px;
   }
 
+  /* ─────────────────────────── Combobox ─────────────────────────── *
+   * Ark's combobox machine: root > label + control > input (+ trigger,
+   * clear-trigger), and positioner > content > (list >) item-group* >
+   * item-group-label + item > item-text + item-indicator, with an empty part
+   * shown while the filter leaves no items. The control is the one bordered
+   * box, like Tags Input's: the input and its buttons sit inside it. Ark
+   * filters nothing itself — the app narrows the collection as the user
+   * types — and stamps data-focus, data-invalid, data-disabled,
+   * data-highlighted, data-state and data-empty on the parts; it hides the
+   * closed content, an unchecked item's indicator and the clear trigger of an
+   * empty value with `hidden`. `comboboxRecipe` puts size on the root; the
+   * control follows it through child combinators (root > control > part).
+   * The content is portalled out of the root, so it keeps one density.       */
+  /* @runtime-vars --reference-width --available-height — the control's width and the room below it, set by Ark's positioner. */
+  [data-scope="combobox"][data-part="root"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+  }
+  [data-scope="combobox"][data-part="label"] {
+    color: var(--foreground);
+    font-size: var(--text-ui-md);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--leading-ui-md);
+  }
+  /* The box: the input takes the row, the buttons sit at its end. */
+  [data-scope="combobox"][data-part="control"] {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--spacing-1) / 2);
+    width: 100%;
+    height: var(--spacing-8);
+    padding-inline-end: var(--spacing-1);
+    border: 1px solid var(--input);
+    border-radius: var(--radius);
+    background-color: var(--background);
+    cursor: text;
+    transition: border-color var(--motion-fast);
+  }
+  /* Hover raises the border to the focus colour, as on Field's input; an
+     invalid or disabled box keeps its own border. */
+  [data-scope="combobox"][data-part="control"]:hover:not([data-disabled], [data-invalid]) {
+    border-color: var(--ring);
+  }
+  /* The ring is the box's, drawn INSIDE it (a -2px offset covers the 1px
+     border and one more px). An offset ring would leave the resting border
+     visible inside it — a double border. Field, Select, Pin Input, Number
+     Input and Tags Input do the same. */
+  [data-scope="combobox"][data-part="control"]:focus-within {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+  }
+  [data-scope="combobox"][data-part="control"][data-invalid] {
+    border-color: var(--destructive);
+    background-color: color-mix(in oklab, var(--destructive) 4%, var(--background));
+  }
+  /* An invalid box keeps its error colour while focused; a neutral ring over
+     a red border reads as "fixed" before it is. */
+  [data-scope="combobox"][data-part="control"][data-invalid]:focus-within {
+    outline-color: var(--destructive);
+  }
+  [data-scope="combobox"][data-part="control"][data-disabled] {
+    background-color: var(--muted);
+  }
+  /*
+   * Ark stamps data-disabled on the control AND on the buttons inside it, and
+   * the base layer dims anything carrying it — nesting would multiply the
+   * opacity. Dim the control once and leave its parts opaque.
+   */
+  [data-scope="combobox"][data-part="control"][data-disabled] :where([data-part]) {
+    opacity: 1;
+  }
+  /* The input fills the box and draws no border or ring: the box does. */
+  [data-scope="combobox"][data-part="input"] {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    padding: 0 var(--spacing-3);
+    border: 0;
+    outline: none;
+    background-color: transparent;
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: var(--text-ui-md);
+  }
+  [data-scope="combobox"][data-part="input"]::placeholder {
+    color: var(--muted-foreground);
+  }
+  /* The open-list and clear buttons: small, quiet squares whose corner nests
+     inside the box's. Ark keeps both out of the tab order (the input's arrow
+     keys and Escape do their jobs); a trigger made `focusable` draws its own
+     ring. */
+  [data-scope="combobox"]:is([data-part="trigger"], [data-part="clear-trigger"]) {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: var(--spacing-6);
+    height: var(--spacing-6);
+    padding: 0;
+    border: 0;
+    border-radius: calc(var(--radius) - var(--spacing-1) / 2);
+    background-color: transparent;
+    color: var(--muted-foreground);
+    font-family: var(--font-sans);
+    font-size: var(--text-ui-md);
+    line-height: 1;
+    cursor: pointer;
+    transition:
+      background-color var(--motion-fast),
+      color var(--motion-fast);
+  }
+  [data-scope="combobox"]:is([data-part="trigger"], [data-part="clear-trigger"]):hover:not(
+      :disabled
+    ) {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+  [data-scope="combobox"]:is([data-part="trigger"], [data-part="clear-trigger"]):focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+  }
+
+  /* The list: a floating surface as wide as the box, with the 1px --border
+     edge and the --shadow-md drop alone (never a ring stacked in box-shadow,
+     which would double the border). It scrolls past eight rows, or sooner if
+     the page leaves less room. Above an app's sticky chrome, the same layer
+     as Dialog and Popover. */
+  [data-scope="combobox"][data-part="content"] {
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--spacing-1) / 2);
+    min-width: var(--reference-width);
+    max-height: min(var(--available-height), calc(var(--spacing-8) * 8));
+    padding: var(--spacing-1);
+    overflow-y: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--popover);
+    color: var(--popover-foreground);
+    font-size: var(--text-ui-md);
+    line-height: var(--leading-ui-md);
+    box-shadow: var(--shadow-md);
+  }
+  /* Focus stays in the input; the highlighted item is the cue. */
+  [data-scope="combobox"][data-part="content"]:focus-visible {
+    outline: none;
+  }
+  [data-scope="combobox"]:is([data-part="list"], [data-part="item-group"]) {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--spacing-1) / 2);
+  }
+  [data-scope="combobox"][data-part="item-group-label"] {
+    padding: var(--spacing-1) var(--spacing-3);
+    color: var(--muted-foreground);
+    font-size: var(--text-ui-xs);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--leading-ui-xs);
+  }
+  /* One option. The arrow keys (or the pointer) highlight it; a checked one is
+     set in the heavier weight and shows its indicator. */
+  [data-scope="combobox"][data-part="item"] {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-2);
+    padding: var(--spacing-2) var(--spacing-3);
+    border-radius: calc(var(--radius) - var(--spacing-1) / 2);
+    cursor: pointer;
+  }
+  [data-scope="combobox"][data-part="item"][data-highlighted] {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+  [data-scope="combobox"][data-part="item"][data-state="checked"] {
+    font-weight: var(--font-weight-semibold);
+  }
+  [data-scope="combobox"][data-part="item-indicator"] {
+    flex: none;
+  }
+  /*
+   * Ark stamps data-disabled on a disabled item and on its item-text, and the
+   * base layer dims anything carrying it — nesting would multiply the opacity.
+   * Dim the item once and leave what is inside it opaque.
+   */
+  [data-scope="combobox"][data-part="item"][data-disabled] :where([data-part]) {
+    opacity: 1;
+  }
+  /* What the list says when the filter leaves nothing: quiet, and as tall as
+     one item so the surface does not jump. */
+  [data-scope="combobox"][data-part="empty"] {
+    padding: var(--spacing-2) var(--spacing-3);
+    color: var(--muted-foreground);
+  }
+
+  /* Density driven by the recipe's data-size on the root: the box's height and
+     the type. `lg` exceeds the top spacing slot, so it sums two slots rather
+     than inventing a token. */
+  [data-scope="combobox"][data-part="root"][data-size="sm"] {
+    gap: var(--spacing-1);
+  }
+  [data-scope="combobox"][data-part="root"][data-size="sm"] > [data-part="label"] {
+    font-size: var(--text-ui-sm);
+    line-height: var(--leading-ui-sm);
+  }
+  [data-scope="combobox"][data-part="root"][data-size="lg"] > [data-part="label"] {
+    font-size: var(--text-ui-lg);
+    line-height: var(--leading-ui-lg);
+  }
+  [data-scope="combobox"][data-part="root"][data-size="sm"] > [data-part="control"] {
+    height: var(--spacing-7);
+  }
+  [data-scope="combobox"][data-part="root"][data-size="lg"] > [data-part="control"] {
+    height: calc(var(--spacing-8) + var(--spacing-2));
+  }
+  [data-scope="combobox"][data-part="root"][data-size="sm"]
+    > [data-part="control"]
+    > [data-part="input"] {
+    padding: 0 var(--spacing-2);
+    font-size: var(--text-ui-sm);
+  }
+  [data-scope="combobox"][data-part="root"][data-size="lg"]
+    > [data-part="control"]
+    > [data-part="input"] {
+    font-size: var(--text-ui-lg);
+  }
+  [data-scope="combobox"][data-part="root"][data-size="sm"]
+    > [data-part="control"]
+    > :is([data-part="trigger"], [data-part="clear-trigger"]) {
+    width: var(--spacing-5);
+    height: var(--spacing-5);
+    font-size: var(--text-ui-sm);
+  }
+  [data-scope="combobox"][data-part="root"][data-size="lg"]
+    > [data-part="control"]
+    > :is([data-part="trigger"], [data-part="clear-trigger"]) {
+    width: var(--spacing-7);
+    height: var(--spacing-7);
+    font-size: var(--text-ui-lg);
+  }
+
+  /* ───────────────────────── Date Picker ───────────────────────── *
+   * Ark's date-picker machine: root > label + control > input (two in range
+   * mode) + trigger (+ clear-trigger), then positioner > content > view* >
+   * view-control (prev-trigger, view-trigger > range-text, next-trigger) +
+   * table > table-head > table-row > table-header* + table-body >
+   * table-row > table-cell > table-cell-trigger. Month-select, year-select
+   * and preset-trigger are optional. The control is the one bordered box,
+   * like Number Input's; the content is a floating surface, like Popover's.
+   * Ark lays out the weeks, formats and parses dates for the locale, moves
+   * focus through the grid and stamps data-selected, data-today,
+   * data-in-range, data-range-start/end, data-outside-range,
+   * data-unavailable and data-disabled on each day. floating-ui lays the
+   * positioner out inline, so this partial never styles it.
+   * `datePickerRecipe` puts size on the root (the label and the box follow
+   * through child combinators) and on the content (the calendar follows).  */
+  [data-scope="date-picker"][data-part="root"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+  }
+  [data-scope="date-picker"][data-part="label"] {
+    color: var(--foreground);
+    font-size: var(--text-ui-md);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--leading-ui-md);
+  }
+  [data-scope="date-picker"][data-part="control"] {
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+    height: var(--spacing-8);
+    border: 1px solid var(--input);
+    border-radius: var(--radius);
+    background-color: var(--background);
+    /* The trigger's hover fill stays inside the box's corners. */
+    overflow: hidden;
+    transition:
+      border-color var(--motion-fast),
+      background-color var(--motion-fast);
+  }
+  /* Hover raises the border to the focus colour, as on Field's input; an
+     invalid or disabled box keeps its own border. */
+  [data-scope="date-picker"][data-part="control"]:hover:not([data-disabled]):not(
+      :has(> [data-invalid])
+    ) {
+    border-color: var(--ring);
+  }
+  /* The ring is the box's, drawn INSIDE it (a -2px offset covers the 1px
+     border and one more px), whether the caret is in the input or the
+     trigger has focus. An offset ring would leave the resting border visible
+     inside it — a double border. Field, Select, Pin Input and Number Input
+     do the same. */
+  [data-scope="date-picker"][data-part="control"]:focus-within {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+  }
+  /* Ark marks the input invalid, not the box; the box shows it. */
+  [data-scope="date-picker"][data-part="control"]:has(> [data-invalid]) {
+    border-color: var(--destructive);
+    background-color: color-mix(in oklab, var(--destructive) 4%, var(--background));
+  }
+  /* An invalid box keeps its error colour while focused; a neutral ring over
+     a red border reads as "fixed" before it is. */
+  [data-scope="date-picker"][data-part="control"]:has(> [data-invalid]):focus-within {
+    outline-color: var(--destructive);
+  }
+  [data-scope="date-picker"][data-part="control"][data-disabled] {
+    background-color: var(--muted);
+  }
+  /* The input fills the box; the box draws the border and the ring. Tabular
+     figures keep the digits from jittering as the user types. In range mode
+     the second input (data-index 1) is split off by a hairline. */
+  [data-scope="date-picker"][data-part="input"] {
+    flex: 1;
+    min-width: 0;
+    padding: 0 var(--spacing-3);
+    border: 0;
+    outline: none;
+    background-color: transparent;
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: var(--text-ui-md);
+    font-variant-numeric: tabular-nums;
+  }
+  [data-scope="date-picker"][data-part="input"][data-index="1"] {
+    border-inline-start: 1px solid var(--input);
+  }
+  [data-scope="date-picker"][data-part="input"]::placeholder {
+    color: var(--muted-foreground);
+  }
+  /* The trigger and the clear trigger are square icon buttons at the end of
+     the box, with no fill until hovered (this clears the UA `buttonface`
+     grey). Ark hides the clear trigger while nothing is picked. */
+  [data-scope="date-picker"]:is([data-part="trigger"], [data-part="clear-trigger"]) {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: var(--spacing-8);
+    padding: 0;
+    border: 0;
+    background-color: transparent;
+    color: var(--muted-foreground);
+    font-family: var(--font-sans);
+    font-size: var(--text-ui-md);
+    line-height: 1;
+    cursor: pointer;
+    user-select: none;
+    transition:
+      background-color var(--motion-fast),
+      color var(--motion-fast);
+  }
+  [data-scope="date-picker"]:is([data-part="trigger"], [data-part="clear-trigger"]):hover:not(
+      :disabled
+    ),
+  [data-scope="date-picker"]:is([data-part="trigger"], [data-part="clear-trigger"]):focus-visible,
+  [data-scope="date-picker"][data-part="trigger"][data-state="open"] {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+  /* The box already rings while a button inside it has focus; the button
+     shows it with its fill, not with a second ring of its own. */
+  [data-scope="date-picker"]:is([data-part="trigger"], [data-part="clear-trigger"]):focus-visible {
+    outline: none;
+  }
+  /*
+   * Ark stamps data-disabled on the label and the box of a disabled picker as
+   * well as on the root, and the base layer dims anything carrying it —
+   * nesting would multiply the opacity. Dim the root once and leave its parts
+   * opaque.
+   */
+  [data-scope="date-picker"][data-part="root"][data-disabled] :where([data-part]) {
+    opacity: 1;
+  }
+
+  /* The calendar: a floating surface, the popover fill with the 1px --border
+     edge, lifted by the --shadow-md drop alone (never a ring stacked in
+     box-shadow, which would double the border). Above an app's sticky
+     chrome, the same layer as Dialog; Ark copies the z-index onto the
+     positioner. Focus lives on a day, never on the surface. */
+  [data-scope="date-picker"][data-part="content"] {
+    position: relative;
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+    padding: var(--spacing-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--popover);
+    color: var(--popover-foreground);
+    font-family: var(--font-sans);
+    font-size: var(--text-ui-md);
+    line-height: var(--leading-ui-md);
+    box-shadow: var(--shadow-md);
+  }
+  [data-scope="date-picker"][data-part="content"]:focus-visible {
+    outline: none;
+  }
+  /* An inline calendar sits in the page: it keeps its edge, not the lift. */
+  [data-scope="date-picker"][data-part="content"][data-inline] {
+    z-index: auto;
+    box-shadow: none;
+  }
+  [data-scope="date-picker"][data-part="view"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+  }
+  /* The month and the arrows either side of it. */
+  [data-scope="date-picker"][data-part="view-control"] {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-1);
+  }
+  /* The arrows and the month title are borderless buttons: --accent on hover,
+     a ring inside their box on focus. */
+  [data-scope="date-picker"]:is(
+    [data-part="prev-trigger"],
+    [data-part="next-trigger"],
+    [data-part="view-trigger"]
+  ) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: var(--spacing-8);
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius);
+    background-color: transparent;
+    color: var(--foreground);
+    font: inherit;
+    cursor: pointer;
+    transition: background-color var(--motion-fast);
+  }
+  [data-scope="date-picker"]:is([data-part="prev-trigger"], [data-part="next-trigger"]) {
+    flex: none;
+    width: var(--spacing-8);
+    color: var(--muted-foreground);
+  }
+  [data-scope="date-picker"][data-part="view-trigger"] {
+    padding-inline: var(--spacing-2);
+    font-weight: var(--font-weight-semibold);
+  }
+  [data-scope="date-picker"]:is(
+      [data-part="prev-trigger"],
+      [data-part="next-trigger"],
+      [data-part="view-trigger"]
+    ):hover:not(:disabled) {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+  [data-scope="date-picker"]:is(
+      [data-part="prev-trigger"],
+      [data-part="next-trigger"],
+      [data-part="view-trigger"],
+      [data-part="table-cell-trigger"]
+    ):focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+  }
+  /* The month's name. Weight set here too, for a range text outside the
+     view trigger. */
+  [data-scope="date-picker"][data-part="range-text"] {
+    font-weight: var(--font-weight-semibold);
+  }
+
+  /* The grid. No gaps between the days, so a range reads as one band. */
+  [data-scope="date-picker"][data-part="table"] {
+    border-collapse: collapse;
+    border-spacing: 0;
+  }
+  [data-scope="date-picker"][data-part="table-header"] {
+    width: var(--spacing-8);
+    height: var(--spacing-8);
+    padding: 0;
+    color: var(--muted-foreground);
+    font-size: var(--text-ui-xs);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--leading-ui-xs);
+    text-align: center;
+  }
+  /* Every cell sits flush (no UA padding), so a range reads as one band. The
+     rule keys on the row, not on the cell part: Svelte's Ark renders a cell as
+     a bare <td> that carries none of Ark's attributes. */
+  [data-scope="date-picker"][data-part="table-row"] > * {
+    padding: 0;
+    text-align: center;
+  }
+  /* A week number (showWeekNumbers) reads as a label, not a day. */
+  [data-scope="date-picker"][data-part="table-cell"][data-type="week-number"] {
+    color: var(--muted-foreground);
+    font-size: var(--text-ui-xs);
+  }
+  /* One day: a square button. Ark renders a <div role="button"> in most
+     bindings and a native <button> in Svelte, so the UA button look (padding,
+     outset border, `buttonface` fill, its own font) is cleared for both.
+     Tabular figures keep the columns aligned. */
+  [data-scope="date-picker"][data-part="table-cell-trigger"] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--spacing-8);
+    height: var(--spacing-8);
+    padding: 0;
+    border: 0;
+    background-color: transparent;
+    color: var(--foreground);
+    font: inherit;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+    user-select: none;
+    outline: none;
+    transition:
+      background-color var(--motion-fast),
+      color var(--motion-fast);
+  }
+  /* A month or a year is a wider cell: four across fill the width seven days
+     take, so the calendar keeps its width from view to view. */
+  [data-scope="date-picker"][data-part="table-cell-trigger"]:is(
+      [data-view="month"],
+      [data-view="year"]
+    ) {
+    width: calc(var(--spacing-8) * 7 / 4);
+    height: calc(var(--spacing-8) * 3 / 2);
+  }
+  [data-scope="date-picker"][data-part="table-cell-trigger"]:hover:not(
+      [data-disabled],
+      [data-selected]
+    ) {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+  /* Today is marked by weight alone, so it never reads as picked. */
+  [data-scope="date-picker"][data-part="table-cell-trigger"][data-today] {
+    font-weight: var(--font-weight-semibold);
+    text-decoration: underline;
+  }
+  /* Ark stamps data-unavailable on a day outside min / max and on a day
+     isDateUnavailable turned off; the base layer dims both as disabled. Only
+     the second is struck out: a booking calendar with min = today dims the
+     past, it does not cross it all out. A day outside min / max is the one
+     that also carries aria-invalid. */
+  [data-scope="date-picker"][data-part="table-cell-trigger"][data-unavailable]:not(
+      [aria-invalid="true"]
+    ) {
+    text-decoration: line-through;
+  }
+  /* A range: the days between the ends are one --accent band, square inside
+     and rounded at the ends; every other day is rounded all round. The same
+     band follows the pointer while the end is being picked. */
+  [data-scope="date-picker"][data-part="table-cell-trigger"]:not(
+      [data-in-range],
+      [data-in-hover-range]
+    ) {
+    border-radius: var(--radius);
+  }
+  [data-scope="date-picker"][data-part="table-cell-trigger"]:is(
+      [data-in-range],
+      [data-in-hover-range]
+    ) {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+  [data-scope="date-picker"][data-part="table-cell-trigger"]:is(
+      [data-range-start],
+      [data-hover-range-start]
+    ) {
+    border-start-start-radius: var(--radius);
+    border-end-start-radius: var(--radius);
+  }
+  [data-scope="date-picker"][data-part="table-cell-trigger"]:is(
+      [data-range-end],
+      [data-hover-range-end]
+    ) {
+    border-start-end-radius: var(--radius);
+    border-end-end-radius: var(--radius);
+  }
+  /* A picked day (or each end of a range) is filled with --primary. */
+  [data-scope="date-picker"][data-part="table-cell-trigger"][data-selected] {
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+  }
+
+  /* Optional month and year dropdowns (native <select>s) and preset buttons
+     ("Last 7 days"): small bordered controls, ringed inside their box. */
+  [data-scope="date-picker"]:is(
+    [data-part="month-select"],
+    [data-part="year-select"],
+    [data-part="preset-trigger"]
+  ) {
+    height: var(--spacing-7);
+    padding: 0 var(--spacing-2);
+    border: 1px solid var(--input);
+    border-radius: var(--radius);
+    background-color: var(--background);
+    color: var(--foreground);
+    font: inherit;
+    cursor: pointer;
+  }
+  [data-scope="date-picker"][data-part="preset-trigger"]:hover {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+  [data-scope="date-picker"]:is(
+      [data-part="month-select"],
+      [data-part="year-select"],
+      [data-part="preset-trigger"]
+    ):focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+  }
+
+  /* Density driven by the recipe's data-size. On the root: the box's height,
+     the trigger's width (square with the box) and the type. `lg` exceeds the
+     top spacing slot, so it sums two slots rather than inventing a token. */
+  [data-scope="date-picker"][data-part="root"][data-size="sm"] {
+    gap: var(--spacing-1);
+  }
+  [data-scope="date-picker"][data-part="root"][data-size="sm"] > [data-part="label"] {
+    font-size: var(--text-ui-sm);
+    line-height: var(--leading-ui-sm);
+  }
+  [data-scope="date-picker"][data-part="root"][data-size="lg"] > [data-part="label"] {
+    font-size: var(--text-ui-lg);
+    line-height: var(--leading-ui-lg);
+  }
+  [data-scope="date-picker"][data-part="root"][data-size="sm"] > [data-part="control"] {
+    height: var(--spacing-7);
+  }
+  [data-scope="date-picker"][data-part="root"][data-size="lg"] > [data-part="control"] {
+    height: calc(var(--spacing-8) + var(--spacing-2));
+  }
+  [data-scope="date-picker"][data-part="root"][data-size="sm"]
+    > [data-part="control"]
+    > [data-part="input"] {
+    padding-inline: var(--spacing-2);
+    font-size: var(--text-ui-sm);
+  }
+  [data-scope="date-picker"][data-part="root"][data-size="lg"]
+    > [data-part="control"]
+    > [data-part="input"] {
+    padding-inline: var(--spacing-4);
+    font-size: var(--text-ui-lg);
+  }
+  [data-scope="date-picker"][data-part="root"][data-size="sm"]
+    > [data-part="control"]
+    > :is([data-part="trigger"], [data-part="clear-trigger"]) {
+    width: var(--spacing-7);
+    font-size: var(--text-ui-sm);
+  }
+  [data-scope="date-picker"][data-part="root"][data-size="lg"]
+    > [data-part="control"]
+    > :is([data-part="trigger"], [data-part="clear-trigger"]) {
+    width: calc(var(--spacing-8) + var(--spacing-2));
+    font-size: var(--text-ui-lg);
+  }
+  /* On the content: the padding, the type and every square in the calendar
+     (a day, a weekday, an arrow). Descendant combinators, so a consumer may
+     wrap the grid in elements of their own. */
+  [data-scope="date-picker"][data-part="content"][data-size="sm"] {
+    gap: var(--spacing-2);
+    padding: var(--spacing-2);
+    font-size: var(--text-ui-sm);
+    line-height: var(--leading-ui-sm);
+  }
+  [data-scope="date-picker"][data-part="content"][data-size="lg"] {
+    gap: var(--spacing-4);
+    padding: var(--spacing-4);
+    font-size: var(--text-ui-lg);
+    line-height: var(--leading-ui-lg);
+  }
+  [data-scope="date-picker"][data-part="content"][data-size="sm"]
+    :is(
+      [data-part="table-header"],
+      [data-part="table-cell-trigger"],
+      [data-part="prev-trigger"],
+      [data-part="next-trigger"]
+    ) {
+    width: var(--spacing-7);
+    height: var(--spacing-7);
+  }
+  [data-scope="date-picker"][data-part="content"][data-size="sm"] [data-part="view-trigger"] {
+    height: var(--spacing-7);
+  }
+  [data-scope="date-picker"][data-part="content"][data-size="lg"]
+    :is(
+      [data-part="table-header"],
+      [data-part="table-cell-trigger"],
+      [data-part="prev-trigger"],
+      [data-part="next-trigger"]
+    ) {
+    width: calc(var(--spacing-8) + var(--spacing-2));
+    height: calc(var(--spacing-8) + var(--spacing-2));
+  }
+  [data-scope="date-picker"][data-part="content"][data-size="lg"] [data-part="view-trigger"] {
+    height: calc(var(--spacing-8) + var(--spacing-2));
+  }
+  [data-scope="date-picker"][data-part="content"][data-size="sm"]
+    [data-part="table-cell-trigger"]:is([data-view="month"], [data-view="year"]) {
+    width: calc(var(--spacing-7) * 7 / 4);
+    height: calc(var(--spacing-7) * 3 / 2);
+  }
+  [data-scope="date-picker"][data-part="content"][data-size="lg"]
+    [data-part="table-cell-trigger"]:is([data-view="month"], [data-view="year"]) {
+    width: calc((var(--spacing-8) + var(--spacing-2)) * 7 / 4);
+    height: calc((var(--spacing-8) + var(--spacing-2)) * 3 / 2);
+  }
+  [data-scope="date-picker"][data-part="content"][data-size="lg"] [data-part="table-header"] {
+    font-size: var(--text-ui-sm);
+    line-height: var(--leading-ui-sm);
+  }
+
+  /* Less motion: the box, the buttons and the days change at once. */
+  @media (prefers-reduced-motion: reduce) {
+    [data-scope="date-picker"]:is(
+      [data-part="control"],
+      [data-part="trigger"],
+      [data-part="clear-trigger"],
+      [data-part="prev-trigger"],
+      [data-part="next-trigger"],
+      [data-part="view-trigger"],
+      [data-part="table-cell-trigger"]
+    ) {
+      transition: none;
+    }
+  }
+
   /* ─────────────────────────── Dialog ─────────────────────────── *
    * Ark owns portal + focus trap + ids. Scope "dialog".               */
   /* The scrim is its own slot, not a mix of --foreground: that slot is
@@ -1032,6 +2109,39 @@
   [data-scope="dialog"][data-part="description"] {
     font-size: var(--text-ui-md);
     color: var(--muted-foreground);
+  }
+
+  /* Small viewports: the dialog presents as a bottom Drawer, with no code in
+     the app. The positioner drops its inset and pins the content to the
+     bottom edge; the content takes the full width, rounds only its top
+     corners, draws its --border edge only along the top (the other sides
+     meet the viewport), scrolls when it is long, and slides up like a
+     bottom Drawer. 40rem is the small-viewport line the shape-changing
+     primitives share; it is literal because a media condition cannot read a
+     custom property. */
+  @media (width < 40rem) {
+    [data-scope="dialog"][data-part="positioner"] {
+      align-items: flex-end;
+      padding: 0;
+    }
+    [data-scope="dialog"][data-part="content"] {
+      max-width: none;
+      max-height: calc(100% - var(--spacing-8));
+      overflow-y: auto;
+      border-width: 1px 0 0;
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+    [data-scope="dialog"][data-part="content"][data-state="open"] {
+      animation: moderno-drawer-in-bottom var(--motion-normal) ease-out;
+    }
+    [data-scope="dialog"][data-part="content"][data-state="closed"] {
+      animation: moderno-drawer-out-bottom var(--motion-fast) ease-in;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-scope="dialog"][data-part="content"][data-state] {
+      animation: none;
+    }
   }
 
   /* ────────────────────────── Divider ─────────────────────────── *
@@ -1102,6 +2212,241 @@
   [data-scope="divider"][data-orientation="vertical"] [data-part="label"] {
     writing-mode: vertical-rl;
     margin-inline: var(--spacing-2);
+  }
+
+  /* ─────────────────────────── Drawer ─────────────────────────── *
+   * A panel that slides in from one edge of the viewport. It is Ark's Dialog
+   * — Ark owns the portal, focus trap, scroll lock and ids — with every part
+   * re-scoped to "drawer". Anatomy: trigger, backdrop, positioner > content >
+   * title, description, close-trigger. Ark's root renders no element, so
+   * `drawerRecipe` puts data-placement on the positioner and the content.
+   * Scope "drawer".                                                        */
+
+  /* The scrim is Dialog's: the --overlay slot and a blur, above an app's
+     sticky chrome. The positioner shares the layer and, portalled after the
+     backdrop, paints on top of it. */
+  [data-scope="drawer"][data-part="backdrop"] {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    background-color: var(--overlay);
+    -webkit-backdrop-filter: blur(var(--spacing-2));
+    backdrop-filter: blur(var(--spacing-2));
+  }
+  [data-scope="drawer"][data-part="backdrop"][data-state="open"] {
+    animation: moderno-drawer-fade-in var(--motion-normal) ease-out;
+  }
+  [data-scope="drawer"][data-part="backdrop"][data-state="closed"] {
+    animation: moderno-drawer-fade-out var(--motion-fast) ease-in;
+  }
+
+  /* The positioner covers the viewport and pins the content to one edge. A
+     side drawer runs the full height, a top or bottom one the full width. */
+  [data-scope="drawer"][data-part="positioner"] {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+  }
+  [data-scope="drawer"][data-part="positioner"][data-placement="left"] {
+    justify-content: flex-start;
+  }
+  [data-scope="drawer"][data-part="positioner"][data-placement="right"] {
+    justify-content: flex-end;
+  }
+  [data-scope="drawer"][data-part="positioner"][data-placement="top"] {
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+  [data-scope="drawer"][data-part="positioner"][data-placement="bottom"] {
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  /* The panel: the popover fill, lifted by the --shadow-lg drop alone (never a
+     ring stacked in box-shadow, which would double the border). Its edge is
+     its own 1px --border on the one side that faces the page, and that side's
+     corners are rounded; the others meet the viewport. Long content scrolls
+     inside it. */
+  [data-scope="drawer"][data-part="content"] {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+    overflow-y: auto;
+    padding: var(--spacing-6);
+    background-color: var(--popover);
+    color: var(--popover-foreground);
+    font-size: var(--text-ui-md);
+    line-height: var(--leading-ui-md);
+    box-shadow: var(--shadow-lg);
+  }
+  /* A side drawer is a column as tall as the viewport, up to the small
+     container width; a top or bottom one is as tall as its content, and
+     leaves a strip of the page showing to tap. */
+  [data-scope="drawer"][data-part="content"][data-placement="left"],
+  [data-scope="drawer"][data-part="content"][data-placement="right"] {
+    width: 100%;
+    max-width: var(--container-sm);
+  }
+  [data-scope="drawer"][data-part="content"][data-placement="top"],
+  [data-scope="drawer"][data-part="content"][data-placement="bottom"] {
+    max-height: calc(100% - var(--spacing-8));
+  }
+  [data-scope="drawer"][data-part="content"][data-placement="left"] {
+    border-right: 1px solid var(--border);
+    border-radius: 0 var(--radius) var(--radius) 0;
+  }
+  [data-scope="drawer"][data-part="content"][data-placement="right"] {
+    border-left: 1px solid var(--border);
+    border-radius: var(--radius) 0 0 var(--radius);
+  }
+  [data-scope="drawer"][data-part="content"][data-placement="top"] {
+    border-bottom: 1px solid var(--border);
+    border-radius: 0 0 var(--radius) var(--radius);
+  }
+  [data-scope="drawer"][data-part="content"][data-placement="bottom"] {
+    border-top: 1px solid var(--border);
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+
+  /* It slides in from its edge and back out to it. Ark keeps a closing
+     content shown until its animation ends. */
+  [data-scope="drawer"][data-part="content"][data-placement="left"][data-state="open"] {
+    animation: moderno-drawer-in-left var(--motion-normal) ease-out;
+  }
+  [data-scope="drawer"][data-part="content"][data-placement="left"][data-state="closed"] {
+    animation: moderno-drawer-out-left var(--motion-fast) ease-in;
+  }
+  [data-scope="drawer"][data-part="content"][data-placement="right"][data-state="open"] {
+    animation: moderno-drawer-in-right var(--motion-normal) ease-out;
+  }
+  [data-scope="drawer"][data-part="content"][data-placement="right"][data-state="closed"] {
+    animation: moderno-drawer-out-right var(--motion-fast) ease-in;
+  }
+  [data-scope="drawer"][data-part="content"][data-placement="top"][data-state="open"] {
+    animation: moderno-drawer-in-top var(--motion-normal) ease-out;
+  }
+  [data-scope="drawer"][data-part="content"][data-placement="top"][data-state="closed"] {
+    animation: moderno-drawer-out-top var(--motion-fast) ease-in;
+  }
+  [data-scope="drawer"][data-part="content"][data-placement="bottom"][data-state="open"] {
+    animation: moderno-drawer-in-bottom var(--motion-normal) ease-out;
+  }
+  [data-scope="drawer"][data-part="content"][data-placement="bottom"][data-state="closed"] {
+    animation: moderno-drawer-out-bottom var(--motion-fast) ease-in;
+  }
+
+  /* Title and description are an <h2> and a <p> in some bindings: without a
+     reset, the browser's own heading size and margins apply wherever the page
+     has no preflight (a portal renders outside any scoped one). */
+  [data-scope="drawer"][data-part="title"],
+  [data-scope="drawer"][data-part="description"] {
+    margin: 0;
+  }
+  [data-scope="drawer"][data-part="title"] {
+    color: var(--foreground);
+    font-size: var(--text-ui-lg);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--leading-ui-lg);
+  }
+  [data-scope="drawer"][data-part="description"] {
+    color: var(--muted-foreground);
+    font-size: var(--text-ui-md);
+    line-height: var(--leading-ui-md);
+  }
+  /* The close button sits in the corner: keep the title clear of it. */
+  [data-scope="drawer"][data-part="content"]:has(> [data-part="close-trigger"])
+    > [data-part="title"] {
+    padding-inline-end: var(--spacing-6);
+  }
+
+  /* A bare close trigger is a small icon button in the top corner. One
+     rendered through asChild keeps its own element's look. */
+  [data-scope="drawer"][data-part="close-trigger"] {
+    position: absolute;
+    inset-block-start: var(--spacing-4);
+    inset-inline-end: var(--spacing-4);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--spacing-6);
+    height: var(--spacing-6);
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius);
+    background-color: transparent;
+    color: var(--muted-foreground);
+    font: inherit;
+    cursor: pointer;
+  }
+  [data-scope="drawer"][data-part="close-trigger"]:hover {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+  [data-scope="drawer"][data-part="close-trigger"]:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+  }
+
+  /* Less motion: the drawer and its scrim show and hide at once. The
+     selectors match the open and closed rules' weight, and follow them. */
+  @media (prefers-reduced-motion: reduce) {
+    [data-scope="drawer"][data-part="backdrop"][data-state],
+    [data-scope="drawer"][data-part="content"][data-placement][data-state] {
+      animation: none;
+    }
+  }
+
+  @keyframes moderno-drawer-fade-in {
+    from {
+      opacity: 0;
+    }
+  }
+  @keyframes moderno-drawer-fade-out {
+    to {
+      opacity: 0;
+    }
+  }
+  @keyframes moderno-drawer-in-left {
+    from {
+      translate: -100% 0;
+    }
+  }
+  @keyframes moderno-drawer-out-left {
+    to {
+      translate: -100% 0;
+    }
+  }
+  @keyframes moderno-drawer-in-right {
+    from {
+      translate: 100% 0;
+    }
+  }
+  @keyframes moderno-drawer-out-right {
+    to {
+      translate: 100% 0;
+    }
+  }
+  @keyframes moderno-drawer-in-top {
+    from {
+      translate: 0 -100%;
+    }
+  }
+  @keyframes moderno-drawer-out-top {
+    to {
+      translate: 0 -100%;
+    }
+  }
+  @keyframes moderno-drawer-in-bottom {
+    from {
+      translate: 0 100%;
+    }
+  }
+  @keyframes moderno-drawer-out-bottom {
+    to {
+      translate: 0 100%;
+    }
   }
 
   /* ─────────────────────────── Field ──────────────────────────── *
@@ -1331,6 +2676,258 @@
   @media (prefers-reduced-motion: reduce) {
     [data-scope="indicator"][data-pulse] [data-part="dot"]::after {
       display: none;
+    }
+  }
+
+  /* ─────────────────────────── Menu ─────────────────────────── *
+   * `menuRecipe` size on the trigger and the content: Ark's Menu.Root
+   * renders no element. Ark drives open state, focus, typeahead and
+   * submenus. Under 40rem the menu is a bottom sheet (ADR-0005).       */
+
+  /* The trigger is a native <button> and paints its own fill over the UA
+     `buttonface` grey: an outline control, like Button's outline variant. */
+  [data-scope="menu"][data-part="trigger"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-2);
+    height: var(--spacing-8);
+    padding-inline: var(--spacing-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: var(--text-ui-md);
+    font-weight: var(--font-weight-medium);
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    transition:
+      background-color var(--motion-fast),
+      color var(--motion-fast);
+  }
+  [data-scope="menu"][data-part="trigger"]:hover,
+  [data-scope="menu"][data-part="trigger"][data-state="open"] {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+  [data-scope="menu"][data-part="trigger"][data-size="sm"] {
+    height: var(--spacing-7);
+    padding-inline: var(--spacing-2);
+    font-size: var(--text-ui-sm);
+  }
+  [data-scope="menu"][data-part="trigger"][data-size="lg"] {
+    height: calc(var(--spacing-8) + var(--spacing-2));
+    padding-inline: var(--spacing-4);
+    font-size: var(--text-ui-lg);
+  }
+
+  /* The context trigger is a native <button> too, wrapped around whatever
+     area opens the menu on right-click or long-press: it clears every UA
+     button default and takes the look of what it wraps. */
+  [data-scope="menu"][data-part="context-trigger"] {
+    padding: 0;
+    border: 0;
+    background-color: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: inherit;
+  }
+
+  /* Both buttons ring inside their box: the trigger's resting border would
+     show inside an outset ring, a double border (7ea4320). */
+  [data-scope="menu"]:is([data-part="trigger"], [data-part="context-trigger"]):focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+  }
+
+  /* A native `disabled` looks the same as Ark's data-disabled (3be5002). */
+  [data-scope="menu"]:is([data-part="trigger"], [data-part="context-trigger"]):disabled,
+  [data-scope="menu"]:is([data-part="trigger"], [data-part="context-trigger"])[data-disabled] {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+
+  /* The open/close affordance inside the trigger turns over while open. */
+  [data-scope="menu"][data-part="indicator"] {
+    display: inline-flex;
+    transition: transform var(--motion-fast);
+  }
+  [data-scope="menu"][data-part="indicator"][data-state="open"] {
+    transform: rotate(180deg);
+  }
+
+  /* The surface. Ark copies the content's z-index onto the positioner, so a
+     menu opens above an app's sticky chrome (the usual z-50 layer), like
+     Dialog. The content holds focus while the highlight moves through the
+     items (aria-activedescendant), so the highlighted item shows focus, not
+     the surface. */
+  [data-scope="menu"][data-part="content"] {
+    position: relative;
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    min-width: calc(var(--spacing-8) * 5);
+    padding: var(--spacing-1);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--popover);
+    color: var(--popover-foreground);
+    font-family: var(--font-sans);
+    box-shadow: var(--shadow-md);
+  }
+  [data-scope="menu"][data-part="content"]:focus-visible {
+    outline: none;
+  }
+
+  /* Arrow: Ark sizes and fills it from these two variables. */
+  [data-scope="menu"][data-part="arrow"] {
+    --arrow-size: var(--spacing-3);
+    --arrow-background: var(--popover);
+  }
+  [data-scope="menu"][data-part="arrow-tip"] {
+    border-top: 1px solid var(--border);
+    border-left: 1px solid var(--border);
+  }
+
+  /* Items. A trigger item opens a submenu; checkbox and radio items are items
+     with a data-type. */
+  [data-scope="menu"]:is([data-part="item"], [data-part="trigger-item"]) {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    min-height: var(--spacing-8);
+    padding-inline: var(--spacing-2);
+    border-radius: calc(var(--radius) - var(--spacing-1));
+    font-size: var(--text-ui-md);
+    line-height: var(--leading-ui-md);
+    cursor: pointer;
+    user-select: none;
+    outline: none;
+  }
+  [data-scope="menu"]:is([data-part="item"], [data-part="trigger-item"])[data-highlighted],
+  [data-scope="menu"][data-part="trigger-item"][data-state="open"] {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+  /* The text takes the free space, so an indicator or a shortcut sits at the
+     end of the row. */
+  [data-scope="menu"][data-part="item-text"] {
+    flex: 1;
+  }
+  [data-scope="menu"][data-part="item-indicator"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--spacing-4);
+  }
+  /*
+   * Ark stamps data-disabled on a disabled item and on its item-text and
+   * item-indicator, and the base layer dims anything carrying it — nesting
+   * would multiply the opacity. Dim the item once and leave what is inside it
+   * opaque.
+   */
+  [data-scope="menu"][data-part="item"][data-disabled] :where([data-part]) {
+    opacity: 1;
+  }
+
+  [data-scope="menu"][data-part="item-group"] {
+    display: flex;
+    flex-direction: column;
+  }
+  [data-scope="menu"][data-part="item-group-label"] {
+    padding: var(--spacing-1) var(--spacing-2);
+    color: var(--muted-foreground);
+    font-size: var(--text-ui-xs);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--leading-ui-xs);
+  }
+
+  /* The separator is an <hr> (a <div> in Svelte): the UA margins and inset
+     border are replaced by one hairline that runs to the surface's edges. */
+  [data-scope="menu"][data-part="separator"] {
+    height: 0;
+    margin: var(--spacing-1) calc(var(--spacing-1) * -1);
+    border: 0;
+    border-top: 1px solid var(--border);
+  }
+
+  /* Density driven by the recipe's data-size on the content. Descendant
+     combinators, so a consumer may wrap the items; the :where(:not(…)) guard
+     (no specificity) stops at a submenu rendered inside this content without
+     a Portal, which follows its own data-size. `lg` exceeds the top spacing
+     slot, so it sums two slots rather than inventing a token. */
+  [data-scope="menu"][data-part="content"][data-size="sm"]
+    [data-scope="menu"]:is([data-part="item"], [data-part="trigger-item"]):where(
+      :not(
+        [data-scope="menu"][data-part="content"][data-size="sm"]
+          [data-scope="menu"][data-part="content"]:not([data-size="sm"])
+          *
+      )
+    ) {
+    min-height: var(--spacing-7);
+    font-size: var(--text-ui-sm);
+    line-height: var(--leading-ui-sm);
+  }
+  [data-scope="menu"][data-part="content"][data-size="lg"]
+    [data-scope="menu"]:is([data-part="item"], [data-part="trigger-item"]):where(
+      :not(
+        [data-scope="menu"][data-part="content"][data-size="lg"]
+          [data-scope="menu"][data-part="content"]:not([data-size="lg"])
+          *
+      )
+    ) {
+    min-height: calc(var(--spacing-8) + var(--spacing-2));
+    padding-inline: var(--spacing-3);
+    font-size: var(--text-ui-lg);
+    line-height: var(--leading-ui-lg);
+  }
+
+  /* Bottom sheet. Under 40rem an open menu leaves its trigger: the positioner
+     covers the viewport and paints the scrim, the same --overlay slot Dialog's
+     backdrop uses, and the content sits at its foot, full width. A tap on the
+     scrim is outside the content, so it closes the menu. Ark's positioner
+     writes its place as inline styles (position, top, left, min-width,
+     transform), and !important is the only way a stylesheet overrides an
+     inline style. 40rem is literal because a media query cannot read a
+     custom property. */
+  @media (width < 40rem) {
+    [data-scope="menu"][data-part="positioner"]:has(> [data-part="content"][data-state="open"]) {
+      position: fixed !important;
+      inset: 0 !important;
+      min-width: 0 !important;
+      transform: none !important;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding-top: var(--spacing-8);
+      background-color: var(--overlay);
+    }
+    [data-scope="menu"][data-part="content"] {
+      width: 100%;
+      max-height: 100%;
+      overflow-y: auto;
+      padding: var(--spacing-2) var(--spacing-2) calc(var(--spacing-2) + env(safe-area-inset-bottom));
+      border-width: 1px 0 0;
+      border-radius: calc(var(--radius) * 2) calc(var(--radius) * 2) 0 0;
+      box-shadow: var(--shadow-lg);
+    }
+    /* A finger needs a taller row than a pointer, whatever the size. */
+    [data-scope="menu"][data-part="content"][data-size]
+      [data-scope="menu"]:is([data-part="item"], [data-part="trigger-item"]) {
+      min-height: calc(var(--spacing-8) + var(--spacing-3));
+    }
+    [data-scope="menu"][data-part="arrow"] {
+      display: none;
+    }
+  }
+
+  /* Less motion: the trigger and its indicator change at once. */
+  @media (prefers-reduced-motion: reduce) {
+    [data-scope="menu"]:is([data-part="trigger"], [data-part="indicator"]) {
+      transition: none;
     }
   }
 
@@ -1754,6 +3351,133 @@
   }
   [data-scope="pin-input"] [data-part="input"][data-invalid] {
     border-color: var(--destructive);
+  }
+
+  /* ─────────────────────────── Popover ─────────────────────────── *
+   * Ark owns placement, focus, dismissal and ids; floating-ui lays the
+   * positioner out inline, so this partial never styles it. Anatomy:
+   * trigger (+ indicator), positioner > content > arrow > arrow-tip, title,
+   * description, close-trigger. Ark's root renders no element, so
+   * `popoverRecipe` puts size on the content part. Scope "popover".         */
+  /* @runtime-vars --available-width — the room beside the anchor, set by Ark's positioner. */
+
+  /* A floating surface: the popover fill with the 1px --border edge, lifted by
+     the --shadow-md drop alone (never a ring stacked in box-shadow, which would
+     double the border). It is as wide as its text up to its measure, and never
+     wider than the room the positioner reports. Above an app's sticky chrome,
+     the same layer as Dialog. */
+  [data-scope="popover"][data-part="content"] {
+    /* Ark sizes and fills the arrow from these two. */
+    --arrow-size: var(--spacing-3);
+    --arrow-background: var(--popover);
+    position: relative;
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+    max-width: min(var(--container-sm), var(--available-width));
+    padding: var(--spacing-4);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--popover);
+    color: var(--popover-foreground);
+    font-size: var(--text-ui-md);
+    line-height: var(--leading-ui-md);
+    box-shadow: var(--shadow-md);
+  }
+
+  /* With nothing focusable inside, Ark focuses the surface itself on open so
+     Tab and Escape work from there. The popover appearing is the cue; a ring
+     around the whole surface would only repeat it. */
+  [data-scope="popover"][data-part="content"]:focus-visible {
+    outline: none;
+  }
+
+  /* Density, from the recipe's data-size on the content. `md` is the base. */
+  [data-scope="popover"][data-part="content"][data-size="sm"] {
+    gap: var(--spacing-1);
+    padding: var(--spacing-3);
+    font-size: var(--text-ui-sm);
+    line-height: var(--leading-ui-sm);
+  }
+  [data-scope="popover"][data-part="content"][data-size="lg"] {
+    gap: var(--spacing-3);
+    max-width: min(var(--container-md), var(--available-width));
+    padding: var(--spacing-6);
+    font-size: var(--text-ui-lg);
+    line-height: var(--leading-ui-lg);
+  }
+
+  /* Title and description take the content's type size; the title is set
+     apart by weight, the description by the muted colour. Some bindings render
+     them as an <h2> and a <p>: without a reset, the browser's own heading size
+     and margins apply wherever the page has no preflight (a portal renders
+     outside any scoped one). */
+  [data-scope="popover"][data-part="title"],
+  [data-scope="popover"][data-part="description"] {
+    margin: 0;
+    font-size: inherit;
+    line-height: inherit;
+  }
+  [data-scope="popover"][data-part="title"] {
+    font-weight: var(--font-weight-semibold);
+  }
+  [data-scope="popover"][data-part="description"] {
+    color: var(--muted-foreground);
+  }
+  /* The close button sits in the corner: keep the title clear of it. */
+  [data-scope="popover"][data-part="content"]:has(> [data-part="close-trigger"])
+    > [data-part="title"] {
+    padding-inline-end: var(--spacing-6);
+  }
+
+  /* The close trigger is a small icon button in the top corner. */
+  [data-scope="popover"][data-part="close-trigger"] {
+    position: absolute;
+    inset-block-start: var(--spacing-2);
+    inset-inline-end: var(--spacing-2);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--spacing-6);
+    height: var(--spacing-6);
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius);
+    background-color: transparent;
+    color: var(--muted-foreground);
+    font: inherit;
+    cursor: pointer;
+  }
+  [data-scope="popover"][data-part="close-trigger"]:hover {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+  [data-scope="popover"][data-part="close-trigger"]:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+  }
+
+  /* Ark places, sizes and rotates the arrow; the tip draws the two outer
+     edges in --border so the surface's edge runs on around the point. The
+     sides are physical because Ark's rotation is. */
+  [data-scope="popover"][data-part="arrow-tip"] {
+    border-top: 1px solid var(--border);
+    border-left: 1px solid var(--border);
+  }
+
+  /* The trigger's optional chevron turns over while the popover is open. */
+  [data-scope="popover"][data-part="indicator"] {
+    display: inline-flex;
+    transition: transform var(--motion-fast);
+  }
+  [data-scope="popover"][data-part="indicator"][data-state="open"] {
+    transform: rotate(180deg);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-scope="popover"][data-part="indicator"] {
+      transition: none;
+    }
   }
 
   /* ────────────────────────── Progress ────────────────────────── *
@@ -2539,6 +4263,120 @@
     }
   }
 
+  /* ────────────────────────── Splitter ────────────────────────── *
+   * Ark's splitter machine: root > panel, resize-trigger (a native <button
+   * role="separator">) > resize-trigger-indicator, panel, … One trigger sits
+   * between each two panels. Ark lays everything out inline: the root is a
+   * flex row (a column when vertical) filling its container, each panel's
+   * flex-grow is its size, and each trigger is `flex: 0 0 auto` with its own
+   * resize cursor. So the rules below only paint: the panels' type, and
+   * each trigger as a hairline rule with a grip at its middle. Ark stamps
+   * data-orientation on every part, and data-dragging, data-focus and
+   * data-disabled on a trigger and its indicator. `splitterRecipe` puts the
+   * variant on the root.                                                   */
+  /* A panel carries no padding: its size is a flex-grow share of the space
+     left after every padding, so any padding would skew the percentages Ark
+     reports. The consumer's content brings its own. */
+  [data-scope="splitter"][data-part="panel"] {
+    font-size: var(--text-ui-md);
+    line-height: var(--leading-ui-md);
+  }
+  /* Enclosed — the panels share one bordered box; Ark's inline
+     `overflow: hidden` on the root clips them to its rounded corners. */
+  [data-scope="splitter"][data-part="root"][data-variant="enclosed"] {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--background);
+  }
+
+  /* The trigger is a native button: the UA `buttonface` fill, border and
+     padding are cleared, so all that shows is the rule drawn through its
+     middle and the grip on it. It is wider than the rule so a pointer can
+     find it. */
+  [data-scope="splitter"][data-part="resize-trigger"] {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-full);
+    background-color: transparent;
+    color: inherit;
+  }
+  [data-scope="splitter"][data-part="resize-trigger"][data-orientation="horizontal"] {
+    width: var(--spacing-3);
+  }
+  [data-scope="splitter"][data-part="resize-trigger"][data-orientation="vertical"] {
+    height: var(--spacing-3);
+  }
+  /* The rule: a hairline along the trigger's length, under the grip. */
+  [data-scope="splitter"][data-part="resize-trigger"]::before {
+    content: "";
+    position: absolute;
+    border: 0 solid var(--border);
+    transition: border-color var(--motion-fast);
+  }
+  [data-scope="splitter"][data-part="resize-trigger"][data-orientation="horizontal"]::before {
+    inset-block: 0;
+    left: 50%;
+    border-inline-start-width: 1px;
+    translate: -50% 0;
+  }
+  [data-scope="splitter"][data-part="resize-trigger"][data-orientation="vertical"]::before {
+    inset-inline: 0;
+    top: 50%;
+    border-block-start-width: 1px;
+    translate: 0 -50%;
+  }
+  /* The ring is drawn inside the trigger, where the root's clipping and the
+     panels beside it cannot cover it. */
+  [data-scope="splitter"][data-part="resize-trigger"]:focus-visible {
+    outline-color: var(--ring);
+    outline-style: solid;
+    outline-width: 2px;
+    outline-offset: -2px;
+  }
+
+  /* The grip: a short pill on the rule that says "drag me". */
+  [data-scope="splitter"][data-part="resize-trigger-indicator"] {
+    position: relative;
+    flex: none;
+    border-radius: var(--radius-full);
+    background-color: var(--border);
+    transition: background-color var(--motion-fast);
+  }
+  [data-scope="splitter"][data-part="resize-trigger-indicator"][data-orientation="horizontal"] {
+    width: var(--spacing-1);
+    height: var(--spacing-6);
+  }
+  [data-scope="splitter"][data-part="resize-trigger-indicator"][data-orientation="vertical"] {
+    width: var(--spacing-6);
+    height: var(--spacing-1);
+  }
+  /* Hovered, focused or dragged, the rule and the grip take the primary
+     colour, so the user sees which boundary will move. */
+  [data-scope="splitter"][data-part="resize-trigger"]:hover::before,
+  [data-scope="splitter"][data-part="resize-trigger"][data-focus]::before,
+  [data-scope="splitter"][data-part="resize-trigger"][data-dragging]::before {
+    border-color: var(--primary);
+  }
+  [data-scope="splitter"][data-part="resize-trigger"]:hover > [data-part="resize-trigger-indicator"],
+  [data-scope="splitter"][data-part="resize-trigger-indicator"][data-focus],
+  [data-scope="splitter"][data-part="resize-trigger-indicator"][data-dragging] {
+    background-color: var(--primary);
+  }
+  /*
+   * Ark stamps data-disabled on a disabled trigger AND its indicator, and the
+   * base layer dims anything carrying it — nesting would multiply the
+   * opacity. Dim the trigger once and leave its grip opaque.
+   */
+  [data-scope="splitter"][data-part="resize-trigger"][data-disabled]
+    > [data-part="resize-trigger-indicator"] {
+    opacity: 1;
+  }
+
   /* ─────────────────────────── Switch ─────────────────────────── *
    * `switchRecipe` size on the root part; every visual state is Ark's own
    * attribute — data-state="checked|unchecked" plus data-disabled /
@@ -2828,6 +4666,476 @@
     }
   }
 
+  /* ───────────────────────── Tags Input ───────────────────────── *
+   * Ark's tags-input machine: root > label + control > item* + input (+ an
+   * optional clear-trigger). Each item holds an item-preview (the chip:
+   * item-text + item-delete-trigger) and an item-input, the box that replaces
+   * the chip while the tag is edited. The control is the one bordered box,
+   * like Field's input: the tags and the input sit inside it and wrap onto
+   * more rows as tags are added. Ark adds a tag on Enter or the delimiter,
+   * removes one on Backspace or its delete trigger, stamps data-focus,
+   * data-invalid, data-disabled, data-readonly and data-highlighted on the
+   * parts, and hides the preview (or the item-input) with `hidden`.
+   * `tagsInputRecipe` puts size on the root; the parts follow it through
+   * child combinators (root > control > part).                            */
+  [data-scope="tags-input"][data-part="root"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+  }
+  [data-scope="tags-input"][data-part="label"] {
+    color: var(--foreground);
+    font-size: var(--text-ui-md);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--leading-ui-md);
+  }
+  /* The box grows downward as the tags wrap; its floor is Field's height. The
+     thin block padding keeps a tag one step shorter than the box, so a single
+     row reads like a one-line input. */
+  [data-scope="tags-input"][data-part="control"] {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-1);
+    width: 100%;
+    min-height: var(--spacing-8);
+    padding: calc(var(--spacing-1) / 2) var(--spacing-1);
+    border: 1px solid var(--input);
+    border-radius: var(--radius);
+    background-color: var(--background);
+    cursor: text;
+    transition:
+      border-color var(--motion-fast),
+      background-color var(--motion-fast);
+  }
+  /* Hover raises the border to the focus colour, as on Field's input; an
+     invalid, disabled or read-only box keeps its own border. */
+  [data-scope="tags-input"][data-part="control"]:hover:not(
+      [data-disabled],
+      [data-invalid],
+      [data-readonly]
+    ) {
+    border-color: var(--ring);
+  }
+  /* The ring is the box's, drawn INSIDE it (a -2px offset covers the 1px
+     border and one more px), whether the caret is in the input or a tag is
+     being edited. An offset ring would leave the resting border visible
+     inside it — a double border. Field, Select, Pin Input and Number Input do
+     the same. */
+  [data-scope="tags-input"][data-part="control"]:focus-within {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+  }
+  [data-scope="tags-input"][data-part="control"][data-invalid] {
+    border-color: var(--destructive);
+    background-color: color-mix(in oklab, var(--destructive) 4%, var(--background));
+  }
+  /* An invalid box keeps its error colour while focused; a neutral ring over
+     a red border reads as "fixed" before it is. */
+  [data-scope="tags-input"][data-part="control"][data-invalid]:focus-within {
+    outline-color: var(--destructive);
+  }
+  [data-scope="tags-input"][data-part="control"][data-disabled] {
+    background-color: var(--muted);
+  }
+  [data-scope="tags-input"][data-part="control"][data-readonly] {
+    cursor: default;
+  }
+  /* The input takes the rest of the row, and a new row once the tags leave it
+     less than its floor. The box draws the border and the ring. */
+  [data-scope="tags-input"][data-part="input"] {
+    flex: 1;
+    min-width: calc(var(--spacing-8) * 2);
+    height: var(--spacing-6);
+    padding: 0 var(--spacing-2);
+    border: 0;
+    outline: none;
+    background-color: transparent;
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: var(--text-ui-md);
+  }
+  [data-scope="tags-input"][data-part="input"]::placeholder {
+    color: var(--muted-foreground);
+  }
+  [data-scope="tags-input"][data-part="item"] {
+    display: inline-flex;
+    min-width: 0;
+    max-width: 100%;
+  }
+  /* One tag: a muted chip whose corner nests inside the box's. */
+  [data-scope="tags-input"][data-part="item-preview"] {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-1);
+    min-width: 0;
+    max-width: 100%;
+    height: var(--spacing-6);
+    padding-inline: var(--spacing-2);
+    border-radius: calc(var(--radius) - var(--spacing-1) / 2);
+    background-color: var(--muted);
+    color: var(--foreground);
+    font-size: var(--text-ui-sm);
+    line-height: 1;
+    white-space: nowrap;
+    cursor: default;
+    user-select: none;
+  }
+  /* Arrow Left from an empty input highlights the last tag; Backspace or
+     Delete then removes it. The highlight is a ring inside the chip. */
+  [data-scope="tags-input"][data-part="item-preview"][data-highlighted] {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+  }
+  /* A long tag truncates instead of pushing its delete trigger out. The clip
+     that truncation needs would cut descenders off a line-height: 1 box, so
+     the text takes its size's leading. */
+  [data-scope="tags-input"][data-part="item-text"] {
+    min-width: 0;
+    overflow: hidden;
+    line-height: var(--leading-ui-sm);
+    text-overflow: ellipsis;
+  }
+  /* The × pulls into the end padding so it sits optically centred in the gap
+     it closes. Ark keeps it out of the tab order: Backspace does its job. */
+  [data-scope="tags-input"][data-part="item-delete-trigger"] {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: var(--spacing-4);
+    height: var(--spacing-4);
+    margin-inline-end: calc(var(--spacing-1) * -1);
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-full);
+    background-color: transparent;
+    color: var(--muted-foreground);
+    font-family: var(--font-sans);
+    font-size: var(--text-ui-md);
+    line-height: 1;
+    cursor: pointer;
+    transition: color var(--motion-fast);
+  }
+  [data-scope="tags-input"][data-part="item-delete-trigger"]:hover:not(:disabled) {
+    color: var(--foreground);
+  }
+  /* Double-click or Enter on a highlighted tag swaps the chip for this box.
+     It fits its text where the browser can, and carries the ring while it is
+     open. */
+  [data-scope="tags-input"][data-part="item-input"] {
+    field-sizing: content;
+    min-width: calc(var(--spacing-8) * 2);
+    max-width: 100%;
+    height: var(--spacing-6);
+    padding: 0 var(--spacing-2);
+    border: 0;
+    border-radius: calc(var(--radius) - var(--spacing-1) / 2);
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: var(--text-ui-sm);
+  }
+  /* Placed last in the control, the clear trigger is pushed to the end of its
+     row. Ark hides it while there are no tags. It is a real, tabbable button,
+     so it draws its own ring. */
+  [data-scope="tags-input"][data-part="clear-trigger"] {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: var(--spacing-6);
+    height: var(--spacing-6);
+    margin-inline-start: auto;
+    padding: 0;
+    border: 0;
+    border-radius: calc(var(--radius) - var(--spacing-1) / 2);
+    background-color: transparent;
+    color: var(--muted-foreground);
+    font-family: var(--font-sans);
+    font-size: var(--text-ui-md);
+    line-height: 1;
+    cursor: pointer;
+    transition:
+      background-color var(--motion-fast),
+      color var(--motion-fast);
+  }
+  [data-scope="tags-input"][data-part="clear-trigger"]:hover:not(:disabled) {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+  [data-scope="tags-input"][data-part="clear-trigger"]:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+  }
+  /*
+   * Ark stamps data-disabled on EVERY part of a disabled tags input, and the
+   * base layer dims anything carrying it — nesting would multiply the
+   * opacity. Dim the root once and leave its parts opaque.
+   */
+  [data-scope="tags-input"][data-part="root"][data-disabled] :where([data-part]) {
+    opacity: 1;
+  }
+
+  /* Density driven by the recipe's data-size on the root: the box's floor,
+     each tag's height and the type. `lg` exceeds the top spacing slot, so it
+     sums two slots rather than inventing a token. */
+  [data-scope="tags-input"][data-part="root"][data-size="sm"] {
+    gap: var(--spacing-1);
+  }
+  [data-scope="tags-input"][data-part="root"][data-size="sm"] > [data-part="label"] {
+    font-size: var(--text-ui-sm);
+    line-height: var(--leading-ui-sm);
+  }
+  [data-scope="tags-input"][data-part="root"][data-size="lg"] > [data-part="label"] {
+    font-size: var(--text-ui-lg);
+    line-height: var(--leading-ui-lg);
+  }
+  [data-scope="tags-input"][data-part="root"][data-size="sm"] > [data-part="control"] {
+    min-height: var(--spacing-7);
+  }
+  [data-scope="tags-input"][data-part="root"][data-size="lg"] > [data-part="control"] {
+    min-height: calc(var(--spacing-8) + var(--spacing-2));
+  }
+  [data-scope="tags-input"][data-part="root"][data-size="sm"]
+    > [data-part="control"]
+    > :is([data-part="input"], [data-part="clear-trigger"]) {
+    height: var(--spacing-5);
+    font-size: var(--text-ui-sm);
+  }
+  [data-scope="tags-input"][data-part="root"][data-size="lg"]
+    > [data-part="control"]
+    > :is([data-part="input"], [data-part="clear-trigger"]) {
+    height: var(--spacing-7);
+    font-size: var(--text-ui-lg);
+  }
+  [data-scope="tags-input"][data-part="root"][data-size="sm"]
+    > [data-part="control"]
+    > [data-part="clear-trigger"] {
+    width: var(--spacing-5);
+  }
+  [data-scope="tags-input"][data-part="root"][data-size="lg"]
+    > [data-part="control"]
+    > [data-part="clear-trigger"] {
+    width: var(--spacing-7);
+  }
+  [data-scope="tags-input"][data-part="root"][data-size="sm"]
+    > [data-part="control"]
+    > [data-part="item"]
+    > :is([data-part="item-preview"], [data-part="item-input"]) {
+    height: var(--spacing-5);
+    font-size: var(--text-ui-xs);
+  }
+  [data-scope="tags-input"][data-part="root"][data-size="lg"]
+    > [data-part="control"]
+    > [data-part="item"]
+    > :is([data-part="item-preview"], [data-part="item-input"]) {
+    height: var(--spacing-7);
+    font-size: var(--text-ui-md);
+  }
+  [data-scope="tags-input"][data-part="root"][data-size="sm"]
+    > [data-part="control"]
+    > [data-part="item"]
+    > [data-part="item-preview"]
+    > [data-part="item-text"] {
+    line-height: var(--leading-ui-xs);
+  }
+  [data-scope="tags-input"][data-part="root"][data-size="lg"]
+    > [data-part="control"]
+    > [data-part="item"]
+    > [data-part="item-preview"]
+    > [data-part="item-text"] {
+    line-height: var(--leading-ui-md);
+  }
+
+  /* ─────────────────────────── Toast ──────────────────────────── *
+   * Ark owns the toaster: `createToaster` holds the queue, the group part is
+   * the live region Ark pins to a corner of the viewport (its inline style),
+   * and each root is laid out absolutely inside it. Ark stacks, lifts and
+   * fades every toast through variables it sets on the root. Anatomy:
+   * group > root > title, description, action-trigger, close-trigger.
+   * `toastRecipe` puts size on the root; the status is Ark's data-type.   */
+  /* @runtime-vars --viewport-offset-left --viewport-offset-right --x --y --scale --opacity --height --z-index — set inline by Ark on the group and on each toast. */
+
+  /* Ark insets the group only from the edge it is pinned to, so a group in
+     a corner is zero wide. Insetting the other inline edge by the toaster's
+     own offset gives each toast the room it may fill, capped below: on a
+     phone a toast spans the screen, on a desktop it keeps its measure. */
+  [data-scope="toast"][data-part="group"] {
+    inset-inline-start: var(--viewport-offset-left);
+    inset-inline-end: var(--viewport-offset-right);
+  }
+
+  /* A floating surface: the popover fill with the 1px --border edge, lifted
+     by the --shadow-lg drop alone (never a ring stacked in box-shadow, which
+     would double the border). Ark's variables move it: --x/--y slide it in
+     and stack it, --scale and --height fold the ones behind the front one,
+     --opacity fades it, --z-index keeps the newest on top. */
+  [data-scope="toast"][data-part="root"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-1);
+    width: 100%;
+    max-width: var(--container-sm);
+    padding: var(--spacing-4);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--popover);
+    color: var(--popover-foreground);
+    box-shadow: var(--shadow-lg);
+    font-family: var(--font-sans);
+    font-size: var(--text-ui-md);
+    line-height: var(--leading-ui-md);
+    overflow-wrap: break-word;
+    translate: var(--x) var(--y);
+    scale: var(--scale);
+    z-index: var(--z-index);
+    height: var(--height);
+    opacity: var(--opacity);
+    will-change: translate, opacity, scale;
+    transition:
+      translate var(--motion-normal) ease-out,
+      scale var(--motion-normal) ease-out,
+      opacity var(--motion-normal) ease-out,
+      height var(--motion-normal) ease-out;
+  }
+  /* A dismissed toast fades faster than it slides away. */
+  [data-scope="toast"][data-part="root"][data-state="closed"] {
+    transition:
+      translate var(--motion-normal) ease-in,
+      scale var(--motion-normal) ease-in,
+      opacity var(--motion-fast) ease-in;
+  }
+
+  /* Density, from the recipe's data-size on the root. `md` is the base. */
+  [data-scope="toast"][data-part="root"][data-size="sm"] {
+    gap: 0;
+    padding: var(--spacing-3);
+    font-size: var(--text-ui-sm);
+    line-height: var(--leading-ui-sm);
+  }
+  [data-scope="toast"][data-part="root"][data-size="lg"] {
+    gap: var(--spacing-2);
+    padding: var(--spacing-5);
+    font-size: var(--text-ui-lg);
+    line-height: var(--leading-ui-lg);
+  }
+
+  /* Title and description take the root's type size; the title is set apart
+     by weight, the description by a muted colour. The muted colour mixes a
+     sixth of --popover-foreground back in, as Alert's does: a status toast
+     sits on a tint of its hue, and plain --muted-foreground loses its AA
+     margin there. */
+  [data-scope="toast"][data-part="title"],
+  [data-scope="toast"][data-part="description"] {
+    margin: 0;
+    font-size: inherit;
+    line-height: inherit;
+  }
+  [data-scope="toast"][data-part="title"] {
+    font-weight: var(--font-weight-semibold);
+  }
+  [data-scope="toast"][data-part="description"] {
+    color: color-mix(in oklab, var(--muted-foreground) 85%, var(--popover-foreground));
+  }
+  /* The close button sits in the corner: keep the title clear of it. */
+  [data-scope="toast"][data-part="root"]:has(> [data-part="close-trigger"]) > [data-part="title"] {
+    padding-inline-end: var(--spacing-6);
+  }
+
+  /* The action is a small outline button under the text, at the start. */
+  [data-scope="toast"][data-part="action-trigger"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    align-self: flex-start;
+    height: var(--spacing-7);
+    margin-block-start: var(--spacing-2);
+    padding-inline: var(--spacing-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: transparent;
+    color: inherit;
+    font-family: var(--font-sans);
+    font-size: var(--text-ui-sm);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--leading-ui-sm);
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color var(--motion-fast);
+  }
+  [data-scope="toast"][data-part="action-trigger"]:hover {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+
+  /* The close trigger is a small icon button in the top corner. */
+  [data-scope="toast"][data-part="close-trigger"] {
+    position: absolute;
+    inset-block-start: var(--spacing-2);
+    inset-inline-end: var(--spacing-2);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--spacing-6);
+    height: var(--spacing-6);
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius);
+    background-color: transparent;
+    color: var(--muted-foreground);
+    font: inherit;
+    cursor: pointer;
+  }
+  [data-scope="toast"][data-part="close-trigger"]:hover {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+
+  /* Both buttons ring inside their own box, and a native `disabled` looks the
+     same as Ark's data-disabled (3be5002). */
+  [data-scope="toast"]:is([data-part="action-trigger"], [data-part="close-trigger"]):focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+  }
+  [data-scope="toast"]:is([data-part="action-trigger"], [data-part="close-trigger"]):disabled,
+  [data-scope="toast"]:is([data-part="action-trigger"], [data-part="close-trigger"])[data-disabled] {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  /* Status tints, from Ark's data-type. Written per type rather than through
+     one shared custom property so every colour traces to a contract slot by
+     name. `error` reads --destructive, as Alert, Badge and Callout do. Ark
+     gives a plain `toaster.create()` the `info` type, so `info` keeps the
+     neutral surface, as `loading` does: only a status worth noticing is
+     tinted. */
+  [data-scope="toast"][data-part="root"][data-type="success"] {
+    border-color: color-mix(in oklab, var(--success) 28%, var(--border));
+    background-color: color-mix(in oklab, var(--success) 8%, var(--popover));
+  }
+  [data-scope="toast"][data-part="root"][data-type="warning"] {
+    border-color: color-mix(in oklab, var(--warning) 28%, var(--border));
+    background-color: color-mix(in oklab, var(--warning) 8%, var(--popover));
+  }
+  [data-scope="toast"][data-part="root"][data-type="error"] {
+    border-color: color-mix(in oklab, var(--destructive) 28%, var(--border));
+    background-color: color-mix(in oklab, var(--destructive) 8%, var(--popover));
+  }
+
+  /* Less motion: a toast appears, moves and leaves at once. The selector
+     matches the closed rule's weight, and follows it. */
+  @media (prefers-reduced-motion: reduce) {
+    [data-scope="toast"][data-part="root"][data-state] {
+      transition: none;
+    }
+    [data-scope="toast"][data-part="action-trigger"] {
+      transition: none;
+    }
+  }
+
   /* ───────────────────── Toggle and ToggleGroup ─────────────────── *
    * A Toggle is a native <button> that stays pressed: Ark stamps
    * aria-pressed and data-state="on|off" (+ data-pressed, data-disabled)
@@ -2894,6 +5202,12 @@
   }
   [data-scope="toggle"][data-part="root"][data-variant="outline"][data-state="on"] {
     background-color: var(--accent);
+  }
+  /* Its ring goes inside the border, like a group item's: an outset ring
+     would leave the resting border visible inside it, a double border. */
+  [data-scope="toggle"][data-part="root"][data-variant="outline"]:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
   }
   [data-scope="toggle"][data-part="indicator"] {
     display: inline-flex;
@@ -2971,6 +5285,94 @@
     [data-scope="toggle"][data-part="root"],
     [data-scope="toggle-group"][data-part="item"] {
       transition: none;
+    }
+  }
+
+  /* ─────────────────────────── Tooltip ─────────────────────────── *
+   * Ark's Root renders no element, so `tooltipRecipe` size lands on the
+   * content, the surface. Parts: trigger, positioner > content > arrow >
+   * arrow-tip. Ark places the positioner inline and shows the content
+   * while open; its side is `data-side`, an instant open `data-instant`. */
+  /* @runtime-vars --transform-origin — the side the content grows from, set on the positioner by Ark. */
+  /* The surface is the popover's: its own 1px --border is the edge, and
+     the elevation slot is the soft drop under it, as it is. Ark copies the
+     content's z-index onto the positioner, so the tooltip clears an app's
+     sticky chrome like a dialog does. */
+  [data-scope="tooltip"][data-part="content"] {
+    z-index: 50;
+    max-width: calc(var(--spacing-8) * 10);
+    padding: calc(var(--spacing-1) * 1.5) var(--spacing-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--popover);
+    color: var(--popover-foreground);
+    box-shadow: var(--shadow-md);
+    font-family: var(--font-sans);
+    font-size: var(--text-ui-sm);
+    font-weight: var(--font-weight-normal);
+    line-height: var(--leading-ui-sm);
+    overflow-wrap: break-word;
+    transform-origin: var(--transform-origin);
+  }
+  [data-scope="tooltip"][data-part="content"][data-state="open"] {
+    animation: moderno-tooltip-in var(--motion-instant) ease-out;
+  }
+  [data-scope="tooltip"][data-part="content"][data-state="closed"] {
+    animation: moderno-tooltip-out var(--motion-instant) ease-in;
+  }
+  /* Moving from one tooltip to the next opens it at once: no fade. */
+  [data-scope="tooltip"][data-part="content"][data-instant] {
+    animation: none;
+  }
+  /* The arrow is a square Ark turns to point at the trigger: it takes the
+     surface's fill, and its top and left edges, the ones that face out
+     after the turn, carry the surface's border. */
+  [data-scope="tooltip"][data-part="arrow"] {
+    --arrow-size: calc(var(--spacing-1) * 2.5);
+    --arrow-background: var(--popover);
+  }
+  [data-scope="tooltip"][data-part="arrow-tip"] {
+    border-top: 1px solid var(--border);
+    border-left: 1px solid var(--border);
+  }
+
+  /* Density driven by the recipe's data-size on the content: its padding,
+     its type and its arrow. */
+  [data-scope="tooltip"][data-part="content"][data-size="sm"] {
+    padding: var(--spacing-1) var(--spacing-2);
+    font-size: var(--text-ui-xs);
+    line-height: var(--leading-ui-xs);
+  }
+  [data-scope="tooltip"][data-part="content"][data-size="sm"] > [data-part="arrow"] {
+    --arrow-size: var(--spacing-2);
+  }
+  [data-scope="tooltip"][data-part="content"][data-size="lg"] {
+    padding: var(--spacing-2) var(--spacing-4);
+    font-size: var(--text-ui-md);
+    line-height: var(--leading-ui-md);
+  }
+  [data-scope="tooltip"][data-part="content"][data-size="lg"] > [data-part="arrow"] {
+    --arrow-size: var(--spacing-3);
+  }
+
+  @keyframes moderno-tooltip-in {
+    from {
+      opacity: 0;
+      scale: 0.96;
+    }
+  }
+  @keyframes moderno-tooltip-out {
+    to {
+      opacity: 0;
+      scale: 0.96;
+    }
+  }
+
+  /* Less motion: the tooltip shows and hides at once. The selector matches
+     the open and closed rules' weight, and follows them. */
+  @media (prefers-reduced-motion: reduce) {
+    [data-scope="tooltip"][data-part="content"][data-state] {
+      animation: none;
     }
   }
 

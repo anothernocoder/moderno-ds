@@ -1,0 +1,452 @@
+---
+title: Date Picker
+description: Un campo de fecha con calendario. Elige una fecha o un rango, en el idioma del usuario.
+group: Componentes
+order: 42
+component: DatePicker
+pkg: "@moderno-ui/react"
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import DatePickerDemo from "../../../examples/date-picker/date-picker.svelte";
+import baseReact from "../../../examples/date-picker/react.tsx?raw";
+import baseVue from "../../../examples/date-picker/vue.vue?raw";
+import baseSolid from "../../../examples/date-picker/solid.tsx?raw";
+import baseSvelte from "../../../examples/date-picker/date-picker.svelte?raw";
+import DatePickerRangeDemo from "../../../examples/date-picker/range/date-picker-range.svelte";
+import rangeReact from "../../../examples/date-picker/range/react.tsx?raw";
+import rangeVue from "../../../examples/date-picker/range/vue.vue?raw";
+import rangeSolid from "../../../examples/date-picker/range/solid.tsx?raw";
+import rangeSvelte from "../../../examples/date-picker/range/date-picker-range.svelte?raw";
+import DatePickerLocaleDemo from "../../../examples/date-picker/locale/date-picker-locale.svelte";
+import localeReact from "../../../examples/date-picker/locale/react.tsx?raw";
+import localeVue from "../../../examples/date-picker/locale/vue.vue?raw";
+import localeSolid from "../../../examples/date-picker/locale/solid.tsx?raw";
+import localeSvelte from "../../../examples/date-picker/locale/date-picker-locale.svelte?raw";
+import DatePickerViewsDemo from "../../../examples/date-picker/views/date-picker-views.svelte";
+import viewsReact from "../../../examples/date-picker/views/react.tsx?raw";
+import viewsVue from "../../../examples/date-picker/views/vue.vue?raw";
+import viewsSolid from "../../../examples/date-picker/views/solid.tsx?raw";
+import viewsSvelte from "../../../examples/date-picker/views/date-picker-views.svelte?raw";
+import DatePickerSizesDemo from "../../../examples/date-picker/sizes/date-picker-sizes.svelte";
+import sizesReact from "../../../examples/date-picker/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/date-picker/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/date-picker/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/date-picker/sizes/date-picker-sizes.svelte?raw";
+
+<FrameworkSelect locale="es" />
+
+<Preview
+  examples={{
+    react: baseReact,
+    vue: baseVue,
+    solid: baseSolid,
+    svelte: baseSvelte,
+  }}
+>
+  <DatePickerDemo client:visible />
+</Preview>
+
+Usa un date picker cuando el usuario escribe una fecha: una entrega, un cumpleaños, un viaje. Puede escribirla o elegirla en un calendario. Elige una fecha o un rango, y escribe las fechas como lo hace el idioma del usuario.
+
+## Instalación
+
+<Install pkg="@moderno-ui/react" />
+
+## Uso
+
+Las fechas son objetos `DateValue`. Usa `parseDate("2024-05-01")` para crear una.
+
+<ForFramework fw="react">
+
+```tsx
+import { DatePicker, Portal } from "@moderno-ui/react";
+```
+
+```tsx
+<DatePicker.Root>
+  <DatePicker.Label>Due date</DatePicker.Label>
+  <DatePicker.Control>
+    <DatePicker.Input />
+    <DatePicker.Trigger aria-label="Open calendar">▾</DatePicker.Trigger>
+  </DatePicker.Control>
+  <Portal>
+    <DatePicker.Positioner>
+      <DatePicker.Content>
+        <DatePicker.View view="day">
+          <DatePicker.Context>
+            {(datePicker) => (
+              <>
+                <DatePicker.ViewControl>
+                  <DatePicker.PrevTrigger>‹</DatePicker.PrevTrigger>
+                  <DatePicker.RangeText />
+                  <DatePicker.NextTrigger>›</DatePicker.NextTrigger>
+                </DatePicker.ViewControl>
+                <DatePicker.Table>
+                  <DatePicker.TableHead>
+                    <DatePicker.TableRow>
+                      {datePicker.weekDays.map((weekDay, i) => (
+                        <DatePicker.TableHeader key={i}>{weekDay.short}</DatePicker.TableHeader>
+                      ))}
+                    </DatePicker.TableRow>
+                  </DatePicker.TableHead>
+                  <DatePicker.TableBody>
+                    {datePicker.weeks.map((week, i) => (
+                      <DatePicker.TableRow key={i}>
+                        {week.map((day, j) => (
+                          <DatePicker.TableCell key={j} value={day}>
+                            <DatePicker.TableCellTrigger>{day.day}</DatePicker.TableCellTrigger>
+                          </DatePicker.TableCell>
+                        ))}
+                      </DatePicker.TableRow>
+                    ))}
+                  </DatePicker.TableBody>
+                </DatePicker.Table>
+              </>
+            )}
+          </DatePicker.Context>
+        </DatePicker.View>
+      </DatePicker.Content>
+    </DatePicker.Positioner>
+  </Portal>
+</DatePicker.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { DatePicker, Portal } from "@moderno-ui/vue";
+```
+
+```vue
+<DatePicker.Root>
+  <DatePicker.Label>Due date</DatePicker.Label>
+  <DatePicker.Control>
+    <DatePicker.Input />
+    <DatePicker.Trigger aria-label="Open calendar">▾</DatePicker.Trigger>
+  </DatePicker.Control>
+  <Portal>
+    <DatePicker.Positioner>
+      <DatePicker.Content>
+        <DatePicker.View view="day">
+          <DatePicker.Context v-slot="datePicker">
+            <DatePicker.ViewControl>
+              <DatePicker.PrevTrigger>‹</DatePicker.PrevTrigger>
+              <DatePicker.RangeText />
+              <DatePicker.NextTrigger>›</DatePicker.NextTrigger>
+            </DatePicker.ViewControl>
+            <DatePicker.Table>
+              <DatePicker.TableHead>
+                <DatePicker.TableRow>
+                  <DatePicker.TableHeader v-for="(weekDay, i) in datePicker.weekDays" :key="i">
+                    {{ weekDay.short }}
+                  </DatePicker.TableHeader>
+                </DatePicker.TableRow>
+              </DatePicker.TableHead>
+              <DatePicker.TableBody>
+                <DatePicker.TableRow v-for="(week, i) in datePicker.weeks" :key="i">
+                  <DatePicker.TableCell v-for="(day, j) in week" :key="j" :value="day">
+                    <DatePicker.TableCellTrigger>{{ day.day }}</DatePicker.TableCellTrigger>
+                  </DatePicker.TableCell>
+                </DatePicker.TableRow>
+              </DatePicker.TableBody>
+            </DatePicker.Table>
+          </DatePicker.Context>
+        </DatePicker.View>
+      </DatePicker.Content>
+    </DatePicker.Positioner>
+  </Portal>
+</DatePicker.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { DatePicker, Portal } from "@moderno-ui/svelte";
+```
+
+```svelte
+<DatePicker.Root>
+  <DatePicker.Label>Due date</DatePicker.Label>
+  <DatePicker.Control>
+    <DatePicker.Input />
+    <DatePicker.Trigger aria-label="Open calendar">▾</DatePicker.Trigger>
+  </DatePicker.Control>
+  <Portal>
+    <DatePicker.Positioner>
+      <DatePicker.Content>
+        <DatePicker.View view="day">
+          <DatePicker.Context>
+            {#snippet render(datePicker)}
+              <DatePicker.ViewControl>
+                <DatePicker.PrevTrigger>‹</DatePicker.PrevTrigger>
+                <DatePicker.RangeText />
+                <DatePicker.NextTrigger>›</DatePicker.NextTrigger>
+              </DatePicker.ViewControl>
+              <DatePicker.Table>
+                <DatePicker.TableHead>
+                  <DatePicker.TableRow>
+                    {#each datePicker().weekDays as weekDay, i (i)}
+                      <DatePicker.TableHeader>{weekDay.short}</DatePicker.TableHeader>
+                    {/each}
+                  </DatePicker.TableRow>
+                </DatePicker.TableHead>
+                <DatePicker.TableBody>
+                  {#each datePicker().weeks as week, i (i)}
+                    <DatePicker.TableRow>
+                      {#each week as day, j (j)}
+                        <DatePicker.TableCell value={day}>
+                          <DatePicker.TableCellTrigger>{day.day}</DatePicker.TableCellTrigger>
+                        </DatePicker.TableCell>
+                      {/each}
+                    </DatePicker.TableRow>
+                  {/each}
+                </DatePicker.TableBody>
+              </DatePicker.Table>
+            {/snippet}
+          </DatePicker.Context>
+        </DatePicker.View>
+      </DatePicker.Content>
+    </DatePicker.Positioner>
+  </Portal>
+</DatePicker.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Index } from "solid-js";
+import { DatePicker, Portal } from "@moderno-ui/solid";
+```
+
+```tsx
+<DatePicker.Root>
+  <DatePicker.Label>Due date</DatePicker.Label>
+  <DatePicker.Control>
+    <DatePicker.Input />
+    <DatePicker.Trigger aria-label="Open calendar">▾</DatePicker.Trigger>
+  </DatePicker.Control>
+  <Portal>
+    <DatePicker.Positioner>
+      <DatePicker.Content>
+        <DatePicker.View view="day">
+          <DatePicker.Context>
+            {(datePicker) => (
+              <>
+                <DatePicker.ViewControl>
+                  <DatePicker.PrevTrigger>‹</DatePicker.PrevTrigger>
+                  <DatePicker.RangeText />
+                  <DatePicker.NextTrigger>›</DatePicker.NextTrigger>
+                </DatePicker.ViewControl>
+                <DatePicker.Table>
+                  <DatePicker.TableHead>
+                    <DatePicker.TableRow>
+                      <Index each={datePicker().weekDays}>
+                        {(weekDay) => (
+                          <DatePicker.TableHeader>{weekDay().short}</DatePicker.TableHeader>
+                        )}
+                      </Index>
+                    </DatePicker.TableRow>
+                  </DatePicker.TableHead>
+                  <DatePicker.TableBody>
+                    <Index each={datePicker().weeks}>
+                      {(week) => (
+                        <DatePicker.TableRow>
+                          <Index each={week()}>
+                            {(day) => (
+                              <DatePicker.TableCell value={day()}>
+                                <DatePicker.TableCellTrigger>
+                                  {day().day}
+                                </DatePicker.TableCellTrigger>
+                              </DatePicker.TableCell>
+                            )}
+                          </Index>
+                        </DatePicker.TableRow>
+                      )}
+                    </Index>
+                  </DatePicker.TableBody>
+                </DatePicker.Table>
+              </>
+            )}
+          </DatePicker.Context>
+        </DatePicker.View>
+      </DatePicker.Content>
+    </DatePicker.Positioner>
+  </Portal>
+</DatePicker.Root>
+```
+
+</ForFramework>
+
+## Referencia de API
+
+### DatePicker.Root
+
+`size` es lo que añade Moderno. Las demás props vienen del DatePicker de Ark.
+
+<PropsTable component="DatePicker" />
+
+| Prop                | Tipo                                                | Por defecto | Descripción                                                                                         |
+| ------------------- | --------------------------------------------------- | ----------- | --------------------------------------------------------------------------------------------------- |
+| `value`             | `DateValue[]`                                       | —           | Valor controlado. Úsalo con `onValueChange` (`bind:value` en Svelte, `v-model` en Vue).             |
+| `defaultValue`      | `DateValue[]`                                       | `[]`        | Valor inicial cuando no está controlado.                                                            |
+| `onValueChange`     | `(details: { value, valueAsString, view }) => void` | —           | Se llama cuando el usuario elige o escribe una fecha.                                               |
+| `selectionMode`     | `"single" \| "multiple" \| "range"`                 | `"single"`  | Una fecha, varias, o un inicio y un fin.                                                            |
+| `locale`            | `string`                                            | `"en-US"`   | Idioma y región del formato del input, los nombres de los meses y los días.                         |
+| `timeZone`          | `string`                                            | `"UTC"`     | Zona horaria con la que se calcula hoy.                                                             |
+| `startOfWeek`       | `number`                                            | —           | Primer día de la semana, de `0` (domingo) a `6`. Por defecto, el del idioma.                        |
+| `min` / `max`       | `DateValue`                                         | —           | La primera y la última fecha que se pueden elegir.                                                  |
+| `isDateUnavailable` | `(date, locale) => boolean`                         | —           | Marca días sueltos que no se pueden elegir.                                                         |
+| `open`              | `boolean`                                           | —           | Estado abierto controlado. Úsalo con `onOpenChange`.                                                |
+| `defaultOpen`       | `boolean`                                           | `false`     | Estado abierto inicial cuando no está controlado.                                                   |
+| `closeOnSelect`     | `boolean`                                           | `true`      | Cierra el calendario al elegir una fecha (o el final de un rango).                                  |
+| `numOfMonths`       | `number`                                            | `1`         | Meses que se muestran uno al lado del otro.                                                         |
+| `defaultView`       | `"day" \| "month" \| "year"`                        | `"day"`     | La vista con la que abre el calendario. `minView` y `maxView` limitan las vistas.                   |
+| `fixedWeeks`        | `boolean`                                           | `false`     | Muestra siempre seis semanas, así el calendario no cambia de alto.                                  |
+| `disabled`          | `boolean`                                           | `false`     | Desactiva todo el campo.                                                                            |
+| `readOnly`          | `boolean`                                           | `false`     | Muestra el valor, pero el usuario no lo puede cambiar.                                              |
+| `invalid`           | `boolean`                                           | `false`     | Marca el valor como incorrecto: la caja pasa a `--destructive`.                                     |
+| `name`              | `string`                                            | —           | Nombre del input, para formularios.                                                                 |
+| `positioning`       | `PositioningOptions`                                | —           | Dónde va el calendario: `placement`, `gutter`, `flip`, …                                            |
+| `inline`            | `boolean`                                           | `false`     | Muestra el calendario en la página, siempre abierto. Renderiza el Content sin Positioner ni Portal. |
+
+### Portal
+
+Renderiza sus hijos al final de `document.body`, así ningún `overflow` ni contexto de apilamiento de un padre recorta el calendario.
+
+### Partes
+
+Cada parte acepta los atributos de su elemento.
+
+| Parte                         | Elemento   | Descripción                                                              |
+| ----------------------------- | ---------- | ------------------------------------------------------------------------ |
+| `DatePicker.Root`             | `<div>`    | Contiene el campo y su calendario. Lleva `data-size`.                    |
+| `DatePicker.Label`            | `<label>`  | Nombra el campo. Al hacer clic, enfoca el input.                         |
+| `DatePicker.Control`          | `<div>`    | La caja con borde alrededor del input y los botones.                     |
+| `DatePicker.Input`            | `<input>`  | Recibe una fecha escrita. Dos en modo rango: `index={0}` e `index={1}`.  |
+| `DatePicker.Trigger`          | `<button>` | Abre y cierra el calendario.                                             |
+| `DatePicker.ClearTrigger`     | `<button>` | Opcional. Borra el valor. Oculto mientras no hay nada elegido.           |
+| `DatePicker.ValueText`        | `<span>`   | Opcional. La fecha elegida como texto, para un trigger sin input.        |
+| `DatePicker.Positioner`       | `<div>`    | Ark lo coloca bajo la caja. Contiene el contenido.                       |
+| `DatePicker.Content`          | `<div>`    | La superficie del calendario. Lleva `data-size`.                         |
+| `DatePicker.View`             | `<div>`    | Una vista: `view="day"`, `"month"` o `"year"`. Ark muestra una cada vez. |
+| `DatePicker.Context`          | —          | Te da el estado del picker: `weekDays`, `weeks`, `getMonthsGrid()`, …    |
+| `DatePicker.ViewControl`      | `<div>`    | La fila sobre la cuadrícula.                                             |
+| `DatePicker.PrevTrigger`      | `<button>` | Muestra el mes, el año o la década anterior.                             |
+| `DatePicker.ViewTrigger`      | `<button>` | El título. Cambia a la vista más amplia.                                 |
+| `DatePicker.RangeText`        | `<div>`    | El mes o el año visible, como texto.                                     |
+| `DatePicker.NextTrigger`      | `<button>` | Muestra el mes, el año o la década siguiente.                            |
+| `DatePicker.Table`            | `<table>`  | La cuadrícula, con `role="grid"`.                                        |
+| `DatePicker.TableHead`        | `<thead>`  | Contiene los nombres de los días.                                        |
+| `DatePicker.TableHeader`      | `<th>`     | El nombre de un día de la semana.                                        |
+| `DatePicker.TableBody`        | `<tbody>`  | Contiene las semanas.                                                    |
+| `DatePicker.TableRow`         | `<tr>`     | Una semana, o una fila de meses o años.                                  |
+| `DatePicker.TableCell`        | `<td>`     | Una celda. Recibe el día, el mes o el año como `value`.                  |
+| `DatePicker.TableCellTrigger` | `<div>`    | El botón dentro de una celda. Un `<button>` en Svelte.                   |
+| `DatePicker.MonthSelect`      | `<select>` | Opcional. Una lista nativa de meses.                                     |
+| `DatePicker.YearSelect`       | `<select>` | Opcional. Una lista nativa de años.                                      |
+| `DatePicker.PresetTrigger`    | `<button>` | Opcional. Elige un rango predefinido, como `value="last7Days"`.          |
+
+### Atributos data
+
+| Atributo             | Valores                                                                                                                            |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `data-size`          | En el root y el contenido: `"sm"`, `"md"` o `"lg"`                                                                                 |
+| `data-state`         | `"open"` o `"closed"`, en el root, el trigger y el contenido                                                                       |
+| `data-selected`      | En un día elegido (o en cada extremo de un rango)                                                                                  |
+| `data-today`         | En el día de hoy                                                                                                                   |
+| `data-in-range`      | En los días de un rango, extremos incluidos                                                                                        |
+| `data-range-start`   | En el primer día de un rango                                                                                                       |
+| `data-range-end`     | En el último día de un rango                                                                                                       |
+| `data-outside-range` | En un día del mes anterior o siguiente                                                                                             |
+| `data-unavailable`   | En un día fuera de `min` / `max` (también lleva `aria-invalid`), o uno que `isDateUnavailable` desactivó. Solo el segundo se tacha |
+| `data-disabled`      | En un día que no se puede elegir, y en cada parte de un root desactivado                                                           |
+
+### Teclado
+
+| Tecla                   | Acción                                                           |
+| ----------------------- | ---------------------------------------------------------------- |
+| `Enter`                 | En el input, toma la fecha escrita.                              |
+| `Flechas`               | En la cuadrícula, mueven un día o una semana.                    |
+| `Page Up` / `Page Down` | En la cuadrícula, mueven un mes.                                 |
+| `Home` / `End`          | En la cuadrícula, van al primer o al último día del mes visible. |
+| `Enter` / `Space`       | En la cuadrícula, eligen el día enfocado.                        |
+| `Esc`                   | Cierra el calendario y lleva el foco al trigger.                 |
+
+## Ejemplos
+
+### Rango
+
+Pon `selectionMode="range"` y renderiza dos inputs. El primer clic elige el inicio; el segundo, el fin.
+
+<Preview
+  examples={{
+    react: rangeReact,
+    vue: rangeVue,
+    solid: rangeSolid,
+    svelte: rangeSvelte,
+  }}
+>
+  <DatePickerRangeDemo client:visible />
+</Preview>
+
+### Idioma
+
+Pon `locale` para escribir el input, el mes y los días en el idioma del usuario. `startOfWeek={1}` empieza la semana en lunes.
+
+<Preview
+  examples={{
+    react: localeReact,
+    vue: localeVue,
+    solid: localeSolid,
+    svelte: localeSvelte,
+  }}
+>
+  <DatePickerLocaleDemo client:visible />
+</Preview>
+
+### Vistas de mes y año
+
+Envuelve el título en `DatePicker.ViewTrigger` y añade una vista para los meses y otra para los años. Al hacer clic en el título se aleja la vista, y el usuario puede saltar a otro año.
+
+<Preview
+  examples={{
+    react: viewsReact,
+    vue: viewsVue,
+    solid: viewsSolid,
+    svelte: viewsSvelte,
+  }}
+>
+  <DatePickerViewsDemo client:visible />
+</Preview>
+
+### Tamaños
+
+Pon `size` en el Root. Da tamaño a la caja y al calendario.
+
+<Preview
+  examples={{
+    react: sizesReact,
+    vue: sizesVue,
+    solid: sizesSolid,
+    svelte: sizesSvelte,
+  }}
+>
+  <DatePickerSizesDemo client:visible />
+</Preview>
+
+## Notas
+
+- `DatePicker.Root` y `DatePicker.Content` están envueltos para añadir `size`; las demás partes son las de Ark sin cambios.
+- El análisis, el formato, los movimientos con teclado y `min` / `max` vienen de Ark; no los reimplementes.
+- `onValueChange` da `details.valueAsString` con el formato del idioma. Usa `details.value.map(String)` para fechas ISO.

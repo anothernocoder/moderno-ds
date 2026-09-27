@@ -1,0 +1,26 @@
+{
+  "name": "Carousel",
+  "scope": "carousel",
+  "import": "import { Carousel } from \"@moderno-ui/react\"",
+  "propsHash": "sha256:fixture-carousel",
+  "props": [{ "name": "size", "type": "\"sm\" | \"md\" | \"lg\"", "required": false }],
+  "propsComplete": false,
+  "parts": [
+    { "name": "root" },
+    { "name": "item-group" },
+    { "name": "item" },
+    { "name": "control" },
+    { "name": "prev-trigger" },
+    { "name": "next-trigger" },
+    { "name": "indicator-group" },
+    { "name": "indicator" },
+    { "name": "autoplay-trigger" },
+    { "name": "autoplay-indicator" },
+    { "name": "progress-text" }
+  ],
+  "variants": { "size": ["sm", "md", "lg"] },
+  "guidance": {
+    "intent": "Show a set of slides one page at a time.",
+    "whenToUse": "A product gallery, featured posts, testimonials: a few slides that share one spot."
+  }
+}

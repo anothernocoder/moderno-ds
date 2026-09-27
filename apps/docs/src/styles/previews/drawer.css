@@ -1,0 +1,6 @@
+/* A row of actions inside a drawer is its footer: it sits at the end, and at
+   the foot of a side drawer. */
+[data-scope="drawer"] .demo-row {
+  justify-content: flex-end;
+  margin-top: auto;
+}

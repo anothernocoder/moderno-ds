@@ -1,0 +1,11 @@
+value Splitter
+type ModernoSplitterRootProps
+type SplitterExpandCollapseDetails
+type SplitterPanelData
+type SplitterPanelProps
+type SplitterResizeDetails
+type SplitterResizeEndDetails
+type SplitterResizeTriggerIndicatorProps
+type SplitterResizeTriggerProps
+type SplitterRootProps
+type SplitterVariant

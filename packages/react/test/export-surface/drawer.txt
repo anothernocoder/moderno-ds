@@ -1,0 +1,12 @@
+value Drawer
+type DrawerBackdropProps
+type DrawerCloseTriggerProps
+type DrawerContentProps
+type DrawerDescriptionProps
+type DrawerOpenChangeDetails
+type DrawerPlacement
+type DrawerPositionerProps
+type DrawerRootProps
+type DrawerRootProviderProps
+type DrawerTitleProps
+type DrawerTriggerProps

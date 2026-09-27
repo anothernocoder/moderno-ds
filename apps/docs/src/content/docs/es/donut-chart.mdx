@@ -1,0 +1,182 @@
+---
+title: Gráfico de anillo
+description: Un anillo SVG dividido en porciones, que muestra cómo las partes forman un todo.
+group: Componentes
+order: 90
+component: DonutChart
+pkg: "@moderno-ui/react"
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import DonutChartDemo from "../../../examples/donut-chart/donut-chart.svelte";
+import baseReact from "../../../examples/donut-chart/react.tsx?raw";
+import baseVue from "../../../examples/donut-chart/vue.vue?raw";
+import baseSolid from "../../../examples/donut-chart/solid.tsx?raw";
+import baseSvelte from "../../../examples/donut-chart/donut-chart.svelte?raw";
+import DonutChartPieDemo from "../../../examples/donut-chart/pie/donut-chart-pie.svelte";
+import pieReact from "../../../examples/donut-chart/pie/react.tsx?raw";
+import pieVue from "../../../examples/donut-chart/pie/vue.vue?raw";
+import pieSolid from "../../../examples/donut-chart/pie/solid.tsx?raw";
+import pieSvelte from "../../../examples/donut-chart/pie/donut-chart-pie.svelte?raw";
+import DonutChartSliceGapsDemo from "../../../examples/donut-chart/slice-gaps/donut-chart-slice-gaps.svelte";
+import sliceGapsReact from "../../../examples/donut-chart/slice-gaps/react.tsx?raw";
+import sliceGapsVue from "../../../examples/donut-chart/slice-gaps/vue.vue?raw";
+import sliceGapsSolid from "../../../examples/donut-chart/slice-gaps/solid.tsx?raw";
+import sliceGapsSvelte from "../../../examples/donut-chart/slice-gaps/donut-chart-slice-gaps.svelte?raw";
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
+  <DonutChartDemo client:visible />
+</Preview>
+
+## Instalación
+
+<Install pkg="@moderno-ui/react" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { DonutChart } from "@moderno-ui/react";
+
+const data = [
+  { name: "Direct", value: 456 },
+  { name: "Search", value: 351 },
+  { name: "Referral", value: 271 },
+];
+```
+
+```tsx
+<DonutChart width={240} height={240} data={data} aria-label="Tráfico por origen" />
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import { DonutChart } from "@moderno-ui/vue";
+
+const data = [
+  { name: "Direct", value: 456 },
+  { name: "Search", value: 351 },
+  { name: "Referral", value: 271 },
+];
+</script>
+```
+
+```vue
+<template>
+  <DonutChart :width="240" :height="240" :data="data" aria-label="Tráfico por origen" />
+</template>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import { DonutChart } from "@moderno-ui/svelte";
+
+  const data = [
+    { name: "Direct", value: 456 },
+    { name: "Search", value: 351 },
+    { name: "Referral", value: 271 },
+  ];
+</script>
+```
+
+```svelte
+<DonutChart width={240} height={240} {data} aria-label="Tráfico por origen" />
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { DonutChart } from "@moderno-ui/solid";
+
+const data = [
+  { name: "Direct", value: 456 },
+  { name: "Search", value: 351 },
+  { name: "Referral", value: 271 },
+];
+```
+
+```tsx
+<DonutChart width={240} height={240} data={data} aria-label="Tráfico por origen" />
+```
+
+</ForFramework>
+
+## Referencia de la API
+
+### DonutChart
+
+<PropsTable component="DonutChart" />
+
+### Data
+
+Cada entrada de `data` es una porción.
+
+| Campo   | Tipo     | Descripción                                                  |
+| ------- | -------- | ------------------------------------------------------------ |
+| `name`  | `string` | Etiqueta opcional de la porción.                             |
+| `value` | `number` | Su parte del total. Un valor de 0 o menos, o que no es un número finito, no dibuja porción. |
+
+### Valores por defecto
+
+| Prop          | Por defecto                           |
+| ------------- | ------------------------------------- |
+| `innerRadius` | `0.6` (el hueco es el 60% del anillo) |
+| `padAngle`    | `0` (las porciones se tocan)          |
+
+### Atributos de datos
+
+| Atributo      | En              | Valores                                                                  |
+| ------------- | --------------- | ------------------------------------------------------------------------ |
+| `data-chart`  | `svg` raíz      | `donut`                                                                  |
+| `data-part`   | Cada elemento   | `root`, `series`, `slice`                                                |
+| `data-series` | `g` de la serie | El índice de la porción en `data`, asignado de `--chart-1` a `--chart-5` |
+
+## Ejemplos
+
+### Pastel
+
+Pon `innerRadius` en `0` para llenar el hueco.
+
+<Preview examples={{ react: pieReact, vue: pieVue, solid: pieSolid, svelte: pieSvelte }}>
+  <DonutChartPieDemo client:visible />
+</Preview>
+
+### Separación entre porciones
+
+`padAngle` abre un espacio entre porciones, en radianes.
+
+<Preview
+  examples={{
+    react: sliceGapsReact,
+    vue: sliceGapsVue,
+    solid: sliceGapsSolid,
+    svelte: sliceGapsSvelte,
+  }}
+>
+  <DonutChartSliceGapsDemo client:visible />
+</Preview>
+
+## Notas
+
+- Las porciones empiezan a las 12 en punto y siguen el sentido del reloj, en el orden de `data`.
+- No hay prop de color: las porciones se pintan de `--chart-1` a `--chart-5` por índice. La sexta porción y las siguientes vuelven a `--chart-1`.
+- El gráfico ocupa el ancho de su contenedor. Dale tamaño con CSS en un contenedor o con una `class`.
+- Dale un `aria-label`: para un lector de pantalla el gráfico es una sola imagen.
+- La geometría viene de `@moderno-ui/charts-core`, matemática pura sin DOM, así se renderiza en el servidor.

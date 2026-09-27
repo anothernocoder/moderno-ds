@@ -12,6 +12,9 @@ export type { Cva, CvaConfig, VariantProps, VariantsDef } from "./cva.js";
 export { cx, partAttrs } from "./utils.js";
 export type { ClassValue } from "./utils.js";
 
+export { serverDocument } from "./server-document.js";
+export type { ServerDocument } from "./server-document.js";
+
 // Every recipe and its variant types. `recipes.ts` is written by `pnpm gen`
 // from `recipes/*.ts`, so a new component adds its recipe file, not a name here.
 export * from "./recipes.js";

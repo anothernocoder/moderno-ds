@@ -56,6 +56,16 @@ export type { AreaChartModel, AreaChartOptions, AreaSeriesModel } from "./area.j
 export { buildBarChart } from "./bar.js";
 export type { BarChartModel, BarChartOptions, BarRect, BarSeries, BarSeriesModel } from "./bar.js";
 
+export { buildBarList } from "./bar-list.js";
+export type {
+  BarListItem,
+  BarListModel,
+  BarListOptions,
+  BarListRect,
+  BarListRow,
+  BarListSort,
+} from "./bar-list.js";
+
 export { buildScatterChart } from "./scatter.js";
 export type {
   ScatterChartModel,
@@ -64,12 +74,21 @@ export type {
   ScatterSeriesModel,
 } from "./scatter.js";
 
+export { buildDonutChart } from "./donut.js";
+export type { DonutChartModel, DonutChartOptions, DonutDatum, DonutSlice } from "./donut.js";
+
+export { buildSparkChart } from "./spark.js";
+export type { SparkChartModel, SparkChartOptions, SparkMarker } from "./spark.js";
+
 // ── Render tree: the complete render description, one walker per framework ──
 export {
   areaChartNodes,
   barChartNodes,
+  barListNodes,
   chartNodeToSvg,
+  donutChartNodes,
   lineChartNodes,
   scatterChartNodes,
+  sparkChartNodes,
 } from "./render.js";
 export type { ChartNode } from "./render.js";

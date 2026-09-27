@@ -14,15 +14,17 @@ import postcss, { type AtRule, type Rule } from "postcss";
  * mounted in a sidebar, a modal and a full page.
  *
  * So `@media` here is opt-in per primitive scope, not a free-for-all. The
- * allow-list below starts **empty**: nothing in `components.css` has earned a
- * viewport query yet, and the first primitive that does adds its `data-scope`
- * here in the same PR that adds the rule — which makes the exception reviewable
- * instead of invisible. Blocks are never on this list; they respond with
- * `@container` and are gated separately over the registry sources.
+ * allow-list below started empty, and a primitive that earns a viewport query
+ * adds its `data-scope` here in the same PR that adds the rule — which makes
+ * the exception reviewable instead of invisible. Blocks are never on this
+ * list; they respond with `@container` and are gated separately over the
+ * registry sources.
  */
 const MEDIA_ALLOW_LIST = new Set<string>([
-  // e.g. "dialog" — a Dialog that becomes a bottom Drawer under a small
-  // viewport. Empty until a primitive actually ships that shape change.
+  // A Dialog presents as a bottom Drawer under 40rem (dialog.css).
+  "dialog",
+  // A Menu presents as a bottom sheet under 40rem (menu.css).
+  "menu",
 ]);
 
 /** Media features that describe the user, not the viewport, and are always allowed. */
@@ -129,16 +131,27 @@ describe("@moderno-ui/core components.css — viewport queries are opt-in per pr
     ).toEqual([]);
   });
 
-  it("starts with an empty allow-list — no primitive has claimed a viewport query yet", () => {
-    expect([...MEDIA_ALLOW_LIST]).toEqual([]);
+  it("allow-lists only the scopes that ship a viewport query — no stale entry", () => {
+    expect(viewportQueryScopes(css)).toEqual([...MEDIA_ALLOW_LIST].sort());
   });
 });
 
+/** Every `data-scope` a viewport (not user-preference) `@media` rule targets, sorted. */
+function viewportQueryScopes(stylesheet: string): string[] {
+  const scopes = new Set<string>();
+  postcss.parse(stylesheet).walkAtRules("media", (at: AtRule) => {
+    if (isUserPreferenceQuery(at.params)) return;
+    at.walkRules((rule: Rule) => {
+      for (const scope of scopesOf(rule.selector)) scopes.add(scope);
+    });
+  });
+  return [...scopes].sort();
+}
+
 /**
- * `components.css` carries no `@media` at all today, so the gate above is an
- * assertion about an empty set: nothing real exercises the exemption or the
- * allow-list. These synthetic stylesheets do, and in particular they pin the
- * shape the exemption used to let through.
+ * The real stylesheet exercises only the allow-listed scopes. These
+ * synthetic stylesheets exercise the rest of the gate, and in particular they
+ * pin the shape the exemption used to let through.
  */
 describe("the gate itself, over synthetic stylesheets", () => {
   it("leaves a pure user-preference query alone", () => {
@@ -152,9 +165,17 @@ describe("the gate itself, over synthetic stylesheets", () => {
   it("catches a viewport query on a scope that is not allow-listed", () => {
     expect(
       offendingMediaRules(`@media (width >= 48rem) {
-        [data-scope="dialog"][data-part="content"] { inset: auto; }
+        [data-scope="drawer"][data-part="content"] { inset: auto; }
       }`),
     ).toHaveLength(1);
+  });
+
+  it("lets a viewport query through on an allow-listed scope", () => {
+    expect(
+      offendingMediaRules(`@media (width < 40rem) {
+        [data-scope="dialog"][data-part="content"] { max-width: none; }
+      }`),
+    ).toEqual([]);
   });
 
   it("catches a viewport query that also names a user preference", () => {

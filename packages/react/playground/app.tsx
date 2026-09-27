@@ -18,29 +18,42 @@ import AccordionSection from "./sections/accordion.js";
 import AlertSection from "./sections/alert.js";
 import AvatarSection from "./sections/avatar.js";
 import BadgeSection from "./sections/badge.js";
+import BarListSection from "./sections/bar-list.js";
 import ButtonSection from "./sections/button.js";
 import CalloutSection from "./sections/callout.js";
 import CardSection from "./sections/card.js";
+import CarouselSection from "./sections/carousel.js";
 import ChartsSection from "./sections/charts.js";
 import CheckboxSection from "./sections/checkbox.js";
 import ChipSection from "./sections/chip.js";
+import ComboboxSection from "./sections/combobox.js";
+import DatePickerSection from "./sections/date-picker.js";
 import DialogSection from "./sections/dialog.js";
 import DividerSection from "./sections/divider.js";
+import DonutChartSection from "./sections/donut-chart.js";
+import DrawerSection from "./sections/drawer.js";
 import FieldSection from "./sections/field.js";
 import IndicatorSection from "./sections/indicator.js";
+import MenuSection from "./sections/menu.js";
 import NumberInputSection from "./sections/number-input.js";
 import PaginationSection from "./sections/pagination.js";
 import PinInputSection from "./sections/pin-input.js";
+import PopoverSection from "./sections/popover.js";
 import ProgressSection from "./sections/progress.js";
 import RadioGroupSection from "./sections/radio-group.js";
 import SelectSection from "./sections/select.js";
 import SkeletonSection from "./sections/skeleton.js";
 import SliderSection from "./sections/slider.js";
+import SparkChartSection from "./sections/spark-chart.js";
 import SpinnerSection from "./sections/spinner.js";
+import SplitterSection from "./sections/splitter.js";
 import SwitchSection from "./sections/switch.js";
 import TabsSection from "./sections/tabs.js";
+import TagsInputSection from "./sections/tags-input.js";
+import ToastSection from "./sections/toast.js";
 import ToggleSection from "./sections/toggle.js";
 import ToggleGroupSection from "./sections/toggle-group.js";
+import TooltipSection from "./sections/tooltip.js";
 
 export interface AppProps {
   /** Mount the Dialog + Select popovers open (exercises the portal/id path). */
@@ -54,29 +67,42 @@ export function App({ open = false }: AppProps) {
       <AlertSection open={open} />
       <AvatarSection open={open} />
       <BadgeSection open={open} />
+      <BarListSection open={open} />
       <ButtonSection open={open} />
       <CalloutSection open={open} />
       <CardSection open={open} />
+      <CarouselSection open={open} />
       <ChartsSection open={open} />
       <CheckboxSection open={open} />
       <ChipSection open={open} />
+      <ComboboxSection open={open} />
+      <DatePickerSection open={open} />
       <DialogSection open={open} />
       <DividerSection open={open} />
+      <DonutChartSection open={open} />
+      <DrawerSection open={open} />
       <FieldSection open={open} />
       <IndicatorSection open={open} />
+      <MenuSection open={open} />
       <NumberInputSection open={open} />
       <PaginationSection open={open} />
       <PinInputSection open={open} />
+      <PopoverSection open={open} />
       <ProgressSection open={open} />
       <RadioGroupSection open={open} />
       <SelectSection open={open} />
       <SkeletonSection open={open} />
       <SliderSection open={open} />
+      <SparkChartSection open={open} />
       <SpinnerSection open={open} />
+      <SplitterSection open={open} />
       <SwitchSection open={open} />
       <TabsSection open={open} />
+      <TagsInputSection open={open} />
+      <ToastSection open={open} />
       <ToggleSection open={open} />
       <ToggleGroupSection open={open} />
+      <TooltipSection open={open} />
     </main>
   );
 }

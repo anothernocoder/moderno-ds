@@ -233,3 +233,4 @@ Controla `open` cuando algo distinto de `Dialog.Trigger` abre o cierra el diálo
 - El atrapado de foco, el bloqueo de scroll y la restauración del foco vienen de Ark; no los reimplementes.
 - Un render SSR emite solo el trigger; tras la hidratación el contenido sigue en el DOM, oculto con el atributo `hidden`.
 - Dialog no tiene variantes; el tono destructivo es de los `Button` que contiene.
+- En una pantalla de menos de 40rem, el diálogo se presenta como un drawer inferior: a todo el ancho, pegado al borde de abajo y entrando hacia arriba. No escribes código para ello.

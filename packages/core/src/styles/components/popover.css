@@ -1,0 +1,126 @@
+/* ─────────────────────────── Popover ─────────────────────────── *
+ * Ark owns placement, focus, dismissal and ids; floating-ui lays the
+ * positioner out inline, so this partial never styles it. Anatomy:
+ * trigger (+ indicator), positioner > content > arrow > arrow-tip, title,
+ * description, close-trigger. Ark's root renders no element, so
+ * `popoverRecipe` puts size on the content part. Scope "popover".         */
+/* @runtime-vars --available-width — the room beside the anchor, set by Ark's positioner. */
+
+/* A floating surface: the popover fill with the 1px --border edge, lifted by
+   the --shadow-md drop alone (never a ring stacked in box-shadow, which would
+   double the border). It is as wide as its text up to its measure, and never
+   wider than the room the positioner reports. Above an app's sticky chrome,
+   the same layer as Dialog. */
+[data-scope="popover"][data-part="content"] {
+  /* Ark sizes and fills the arrow from these two. */
+  --arrow-size: var(--spacing-3);
+  --arrow-background: var(--popover);
+  position: relative;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  max-width: min(var(--container-sm), var(--available-width));
+  padding: var(--spacing-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background-color: var(--popover);
+  color: var(--popover-foreground);
+  font-size: var(--text-ui-md);
+  line-height: var(--leading-ui-md);
+  box-shadow: var(--shadow-md);
+}
+
+/* With nothing focusable inside, Ark focuses the surface itself on open so
+   Tab and Escape work from there. The popover appearing is the cue; a ring
+   around the whole surface would only repeat it. */
+[data-scope="popover"][data-part="content"]:focus-visible {
+  outline: none;
+}
+
+/* Density, from the recipe's data-size on the content. `md` is the base. */
+[data-scope="popover"][data-part="content"][data-size="sm"] {
+  gap: var(--spacing-1);
+  padding: var(--spacing-3);
+  font-size: var(--text-ui-sm);
+  line-height: var(--leading-ui-sm);
+}
+[data-scope="popover"][data-part="content"][data-size="lg"] {
+  gap: var(--spacing-3);
+  max-width: min(var(--container-md), var(--available-width));
+  padding: var(--spacing-6);
+  font-size: var(--text-ui-lg);
+  line-height: var(--leading-ui-lg);
+}
+
+/* Title and description take the content's type size; the title is set
+   apart by weight, the description by the muted colour. Some bindings render
+   them as an <h2> and a <p>: without a reset, the browser's own heading size
+   and margins apply wherever the page has no preflight (a portal renders
+   outside any scoped one). */
+[data-scope="popover"][data-part="title"],
+[data-scope="popover"][data-part="description"] {
+  margin: 0;
+  font-size: inherit;
+  line-height: inherit;
+}
+[data-scope="popover"][data-part="title"] {
+  font-weight: var(--font-weight-semibold);
+}
+[data-scope="popover"][data-part="description"] {
+  color: var(--muted-foreground);
+}
+/* The close button sits in the corner: keep the title clear of it. */
+[data-scope="popover"][data-part="content"]:has(> [data-part="close-trigger"])
+  > [data-part="title"] {
+  padding-inline-end: var(--spacing-6);
+}
+
+/* The close trigger is a small icon button in the top corner. */
+[data-scope="popover"][data-part="close-trigger"] {
+  position: absolute;
+  inset-block-start: var(--spacing-2);
+  inset-inline-end: var(--spacing-2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-6);
+  height: var(--spacing-6);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius);
+  background-color: transparent;
+  color: var(--muted-foreground);
+  font: inherit;
+  cursor: pointer;
+}
+[data-scope="popover"][data-part="close-trigger"]:hover {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+[data-scope="popover"][data-part="close-trigger"]:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+
+/* Ark places, sizes and rotates the arrow; the tip draws the two outer
+   edges in --border so the surface's edge runs on around the point. The
+   sides are physical because Ark's rotation is. */
+[data-scope="popover"][data-part="arrow-tip"] {
+  border-top: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+}
+
+/* The trigger's optional chevron turns over while the popover is open. */
+[data-scope="popover"][data-part="indicator"] {
+  display: inline-flex;
+  transition: transform var(--motion-fast);
+}
+[data-scope="popover"][data-part="indicator"][data-state="open"] {
+  transform: rotate(180deg);
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-scope="popover"][data-part="indicator"] {
+    transition: none;
+  }
+}

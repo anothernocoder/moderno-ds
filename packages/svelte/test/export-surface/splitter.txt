@@ -1,0 +1,6 @@
+value Splitter
+type SplitterExpandCollapseDetails
+type SplitterPanelData
+type SplitterResizeDetails
+type SplitterResizeEndDetails
+type SplitterVariant

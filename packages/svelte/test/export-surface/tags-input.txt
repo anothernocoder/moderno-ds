@@ -1,0 +1,6 @@
+value TagsInput
+type TagsInputHighlightChangeDetails
+type TagsInputInputValueChangeDetails
+type TagsInputSize
+type TagsInputValidityChangeDetails
+type TagsInputValueChangeDetails

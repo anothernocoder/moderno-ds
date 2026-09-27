@@ -39,13 +39,13 @@ test.describe("sidebar filter", () => {
     expect(fullTitles.length).toBeGreaterThan(10);
     expect(fullGroups.length).toBeGreaterThan(1);
 
-    // "chart" matches exactly the four chart pages, all filed under
+    // "chart" matches exactly the chart pages, all filed under
     // "Components" — every other group has zero matches and collapses.
     await page.fill("[data-sidebar-filter]", "chart");
 
     await expect
       .poll(() => visibleTitles(page))
-      .toEqual(["Line Chart", "Area Chart", "Bar Chart", "Scatter Chart"]);
+      .toEqual(["Line Chart", "Area Chart", "Bar Chart", "Scatter Chart", "Donut Chart", "Spark Chart"]);
     await expect.poll(() => visibleGroups(page)).toEqual(["Components"]);
 
     const noMatches = page.locator('[data-sidebar-empty]');
@@ -76,7 +76,14 @@ test.describe("sidebar filter", () => {
     await page.fill("[data-sidebar-filter]", "grafico");
     await expect
       .poll(() => visibleTitles(page))
-      .toEqual(["Gráfico de líneas", "Gráfico de área", "Gráfico de barras", "Gráfico de dispersión"]);
+      .toEqual([
+        "Gráfico de líneas",
+        "Gráfico de área",
+        "Gráfico de barras",
+        "Gráfico de dispersión",
+        "Gráfico de anillo",
+        "Minigráfico",
+      ]);
   });
 
   test("shows a 'no matches' row when nothing matches", async ({ page }) => {
@@ -105,7 +112,7 @@ test.describe("sidebar filter", () => {
     );
 
     await filter.fill("chart");
-    await expect.poll(() => visibleTitles(page)).toEqual(["Line Chart", "Area Chart", "Bar Chart", "Scatter Chart"]);
+    await expect.poll(() => visibleTitles(page)).toEqual(["Line Chart", "Area Chart", "Bar Chart", "Scatter Chart", "Donut Chart", "Spark Chart"]);
 
     await page.keyboard.press("Escape");
 

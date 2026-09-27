@@ -17,6 +17,7 @@ agent:
   gotchas:
     - Focus trap + scroll lock are handled by Ark; do not reimplement.
     - Always render a title part for the accessible name.
+    - Under a 40rem viewport the dialog presents as a bottom drawer on its own; do not swap in a Drawer by screen width.
   theming:
     - content uses --popover surface; backdrop opacity is part-styled, not inline.
 ---
@@ -247,3 +248,4 @@ Control `open` when something other than `Dialog.Trigger` opens or closes the di
 - Focus trap, scroll lock and focus restore come from Ark; don't reimplement them.
 - An SSR render emits only the trigger; after hydration the content stays in the DOM, hidden with the `hidden` attribute.
 - Dialog has no variants; the destructive tone belongs to the `Button`s inside it.
+- On a screen narrower than 40rem, the dialog presents as a bottom drawer: full width, at the bottom edge, sliding up. You write no code for it.

@@ -1,0 +1,192 @@
+---
+title: Spark Chart
+description: A small SVG line with no axes, to show the trend behind a number in a KPI card.
+group: Components
+order: 90
+component: SparkChart
+pkg: "@moderno-ui/react"
+agentPropsHash: "sha256:284ba5e030b24ddc570e918693c709d363dd48af7e6dd784662257ebe79428d0"
+agent:
+  intent: The trend behind one number, drawn small enough to sit beside it.
+  whenToUse: A KPI card, a table cell or a stat row where the shape of change matters more than exact values.
+  whenNotToUse:
+    - case: The reader needs to read values off axes
+      use: LineChart
+    - case: Several series compared on one frame
+      use: LineChart
+  gotchas:
+    - "There are no axes, grid or labels: pass an aria-label that says what the line shows."
+    - "The y domain fits the values, not 0, so a small change fills the height; pass the same yDomain to sparks that must be compared."
+    - "Zero colour is baked in on purpose — the line paints from --chart-1; don't pass a stroke/fill prop."
+  theming:
+    - "Line, fill and last-point colour: --chart-1."
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import SparkChartDemo from "../../../examples/spark-chart/spark-chart.svelte";
+import baseReact from "../../../examples/spark-chart/react.tsx?raw";
+import baseVue from "../../../examples/spark-chart/vue.vue?raw";
+import baseSolid from "../../../examples/spark-chart/solid.tsx?raw";
+import baseSvelte from "../../../examples/spark-chart/spark-chart.svelte?raw";
+import SparkChartAreaDemo from "../../../examples/spark-chart/area/spark-chart-area.svelte";
+import areaReact from "../../../examples/spark-chart/area/react.tsx?raw";
+import areaVue from "../../../examples/spark-chart/area/vue.vue?raw";
+import areaSolid from "../../../examples/spark-chart/area/solid.tsx?raw";
+import areaSvelte from "../../../examples/spark-chart/area/spark-chart-area.svelte?raw";
+import SparkChartLastPointDemo from "../../../examples/spark-chart/last-point/spark-chart-last-point.svelte";
+import lastPointReact from "../../../examples/spark-chart/last-point/react.tsx?raw";
+import lastPointVue from "../../../examples/spark-chart/last-point/vue.vue?raw";
+import lastPointSolid from "../../../examples/spark-chart/last-point/solid.tsx?raw";
+import lastPointSvelte from "../../../examples/spark-chart/last-point/spark-chart-last-point.svelte?raw";
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
+  <SparkChartDemo client:visible />
+</Preview>
+
+## Installation
+
+<Install pkg="@moderno-ui/react" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { SparkChart } from "@moderno-ui/react";
+
+const points = [
+  { x: 0, y: 12 },
+  { x: 1, y: 18 },
+  { x: 2, y: 15 },
+];
+```
+
+```tsx
+<SparkChart points={points} aria-label="Revenue, last 3 weeks" />
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import { SparkChart } from "@moderno-ui/vue";
+
+const points = [
+  { x: 0, y: 12 },
+  { x: 1, y: 18 },
+  { x: 2, y: 15 },
+];
+</script>
+```
+
+```vue
+<template>
+  <SparkChart :points="points" aria-label="Revenue, last 3 weeks" />
+</template>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import { SparkChart } from "@moderno-ui/svelte";
+
+  const points = [
+    { x: 0, y: 12 },
+    { x: 1, y: 18 },
+    { x: 2, y: 15 },
+  ];
+</script>
+```
+
+```svelte
+<SparkChart {points} aria-label="Revenue, last 3 weeks" />
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { SparkChart } from "@moderno-ui/solid";
+
+const points = [
+  { x: 0, y: 12 },
+  { x: 1, y: 18 },
+  { x: 2, y: 15 },
+];
+```
+
+```tsx
+<SparkChart points={points} aria-label="Revenue, last 3 weeks" />
+```
+
+</ForFramework>
+
+The chart fills the width of its container. `width` and `height` only set its shape.
+
+## API Reference
+
+### SparkChart
+
+<PropsTable component="SparkChart" />
+
+### Defaults
+
+| Prop            | Default                                           |
+| --------------- | ------------------------------------------------- |
+| `width`         | `120`                                             |
+| `height`        | `32`                                              |
+| `yDomain`       | The lowest to the highest y value (0 not forced). |
+| `curve`         | Straight segments                                 |
+| `area`          | `false`                                           |
+| `showLastPoint` | `false`                                           |
+
+### Data attributes
+
+| Attribute     | On            | Values                                        |
+| ------------- | ------------- | --------------------------------------------- |
+| `data-chart`  | Root `svg`    | `spark`                                       |
+| `data-part`   | Every element | `root`, `series`, `area`, `line`, `point`     |
+| `data-series` | Series `g`    | Always `0`, so every shape paints `--chart-1` |
+
+## Examples
+
+### Area
+
+`area` fills the space under the line.
+
+<Preview examples={{ react: areaReact, vue: areaVue, solid: areaSolid, svelte: areaSvelte }}>
+  <SparkChartAreaDemo client:visible />
+</Preview>
+
+### Last point
+
+`showLastPoint` marks the latest value, the one the KPI card shows.
+
+<Preview
+  examples={{
+    react: lastPointReact,
+    vue: lastPointVue,
+    solid: lastPointSolid,
+    svelte: lastPointSvelte,
+  }}
+>
+  <SparkChartLastPointDemo client:visible />
+</Preview>
+
+## Notes
+
+- There are no axes, grid or labels. Give each chart an `aria-label`.
+- There is no colour prop: the line, fill and marker paint from `--chart-1`.
+- To compare several sparks, pass them the same `yDomain`.

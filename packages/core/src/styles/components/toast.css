@@ -1,0 +1,185 @@
+/* ─────────────────────────── Toast ──────────────────────────── *
+ * Ark owns the toaster: `createToaster` holds the queue, the group part is
+ * the live region Ark pins to a corner of the viewport (its inline style),
+ * and each root is laid out absolutely inside it. Ark stacks, lifts and
+ * fades every toast through variables it sets on the root. Anatomy:
+ * group > root > title, description, action-trigger, close-trigger.
+ * `toastRecipe` puts size on the root; the status is Ark's data-type.   */
+/* @runtime-vars --viewport-offset-left --viewport-offset-right --x --y --scale --opacity --height --z-index — set inline by Ark on the group and on each toast. */
+
+/* Ark insets the group only from the edge it is pinned to, so a group in
+   a corner is zero wide. Insetting the other inline edge by the toaster's
+   own offset gives each toast the room it may fill, capped below: on a
+   phone a toast spans the screen, on a desktop it keeps its measure. */
+[data-scope="toast"][data-part="group"] {
+  inset-inline-start: var(--viewport-offset-left);
+  inset-inline-end: var(--viewport-offset-right);
+}
+
+/* A floating surface: the popover fill with the 1px --border edge, lifted
+   by the --shadow-lg drop alone (never a ring stacked in box-shadow, which
+   would double the border). Ark's variables move it: --x/--y slide it in
+   and stack it, --scale and --height fold the ones behind the front one,
+   --opacity fades it, --z-index keeps the newest on top. */
+[data-scope="toast"][data-part="root"] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  width: 100%;
+  max-width: var(--container-sm);
+  padding: var(--spacing-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background-color: var(--popover);
+  color: var(--popover-foreground);
+  box-shadow: var(--shadow-lg);
+  font-family: var(--font-sans);
+  font-size: var(--text-ui-md);
+  line-height: var(--leading-ui-md);
+  overflow-wrap: break-word;
+  translate: var(--x) var(--y);
+  scale: var(--scale);
+  z-index: var(--z-index);
+  height: var(--height);
+  opacity: var(--opacity);
+  will-change: translate, opacity, scale;
+  transition:
+    translate var(--motion-normal) ease-out,
+    scale var(--motion-normal) ease-out,
+    opacity var(--motion-normal) ease-out,
+    height var(--motion-normal) ease-out;
+}
+/* A dismissed toast fades faster than it slides away. */
+[data-scope="toast"][data-part="root"][data-state="closed"] {
+  transition:
+    translate var(--motion-normal) ease-in,
+    scale var(--motion-normal) ease-in,
+    opacity var(--motion-fast) ease-in;
+}
+
+/* Density, from the recipe's data-size on the root. `md` is the base. */
+[data-scope="toast"][data-part="root"][data-size="sm"] {
+  gap: 0;
+  padding: var(--spacing-3);
+  font-size: var(--text-ui-sm);
+  line-height: var(--leading-ui-sm);
+}
+[data-scope="toast"][data-part="root"][data-size="lg"] {
+  gap: var(--spacing-2);
+  padding: var(--spacing-5);
+  font-size: var(--text-ui-lg);
+  line-height: var(--leading-ui-lg);
+}
+
+/* Title and description take the root's type size; the title is set apart
+   by weight, the description by a muted colour. The muted colour mixes a
+   sixth of --popover-foreground back in, as Alert's does: a status toast
+   sits on a tint of its hue, and plain --muted-foreground loses its AA
+   margin there. */
+[data-scope="toast"][data-part="title"],
+[data-scope="toast"][data-part="description"] {
+  margin: 0;
+  font-size: inherit;
+  line-height: inherit;
+}
+[data-scope="toast"][data-part="title"] {
+  font-weight: var(--font-weight-semibold);
+}
+[data-scope="toast"][data-part="description"] {
+  color: color-mix(in oklab, var(--muted-foreground) 85%, var(--popover-foreground));
+}
+/* The close button sits in the corner: keep the title clear of it. */
+[data-scope="toast"][data-part="root"]:has(> [data-part="close-trigger"]) > [data-part="title"] {
+  padding-inline-end: var(--spacing-6);
+}
+
+/* The action is a small outline button under the text, at the start. */
+[data-scope="toast"][data-part="action-trigger"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  height: var(--spacing-7);
+  margin-block-start: var(--spacing-2);
+  padding-inline: var(--spacing-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background-color: transparent;
+  color: inherit;
+  font-family: var(--font-sans);
+  font-size: var(--text-ui-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--leading-ui-sm);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--motion-fast);
+}
+[data-scope="toast"][data-part="action-trigger"]:hover {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+
+/* The close trigger is a small icon button in the top corner. */
+[data-scope="toast"][data-part="close-trigger"] {
+  position: absolute;
+  inset-block-start: var(--spacing-2);
+  inset-inline-end: var(--spacing-2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-6);
+  height: var(--spacing-6);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius);
+  background-color: transparent;
+  color: var(--muted-foreground);
+  font: inherit;
+  cursor: pointer;
+}
+[data-scope="toast"][data-part="close-trigger"]:hover {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+
+/* Both buttons ring inside their own box, and a native `disabled` looks the
+   same as Ark's data-disabled (3be5002). */
+[data-scope="toast"]:is([data-part="action-trigger"], [data-part="close-trigger"]):focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+[data-scope="toast"]:is([data-part="action-trigger"], [data-part="close-trigger"]):disabled,
+[data-scope="toast"]:is([data-part="action-trigger"], [data-part="close-trigger"])[data-disabled] {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* Status tints, from Ark's data-type. Written per type rather than through
+   one shared custom property so every colour traces to a contract slot by
+   name. `error` reads --destructive, as Alert, Badge and Callout do. Ark
+   gives a plain `toaster.create()` the `info` type, so `info` keeps the
+   neutral surface, as `loading` does: only a status worth noticing is
+   tinted. */
+[data-scope="toast"][data-part="root"][data-type="success"] {
+  border-color: color-mix(in oklab, var(--success) 28%, var(--border));
+  background-color: color-mix(in oklab, var(--success) 8%, var(--popover));
+}
+[data-scope="toast"][data-part="root"][data-type="warning"] {
+  border-color: color-mix(in oklab, var(--warning) 28%, var(--border));
+  background-color: color-mix(in oklab, var(--warning) 8%, var(--popover));
+}
+[data-scope="toast"][data-part="root"][data-type="error"] {
+  border-color: color-mix(in oklab, var(--destructive) 28%, var(--border));
+  background-color: color-mix(in oklab, var(--destructive) 8%, var(--popover));
+}
+
+/* Less motion: a toast appears, moves and leaves at once. The selector
+   matches the closed rule's weight, and follows it. */
+@media (prefers-reduced-motion: reduce) {
+  [data-scope="toast"][data-part="root"][data-state] {
+    transition: none;
+  }
+  [data-scope="toast"][data-part="action-trigger"] {
+    transition: none;
+  }
+}

@@ -1,0 +1,17 @@
+value Carousel
+type CarouselAutoplayIndicatorProps
+type CarouselAutoplayStatusDetails
+type CarouselAutoplayTriggerProps
+type CarouselControlProps
+type CarouselDragStatusDetails
+type CarouselIndicatorGroupProps
+type CarouselIndicatorProps
+type CarouselItemGroupProps
+type CarouselItemProps
+type CarouselNextTriggerProps
+type CarouselPageChangeDetails
+type CarouselPrevTriggerProps
+type CarouselProgressTextProps
+type CarouselRootProps
+type CarouselSize
+type ModernoCarouselRootProps

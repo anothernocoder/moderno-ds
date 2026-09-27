@@ -24,7 +24,7 @@ import {
 
 // `width`/`height` are numeric chart dimensions and `format` is the chart's
 // tick formatter — both collide with native SVG attributes, so drop them here.
-type SvgProps = Omit<JSX.SvgSVGAttributes<SVGSVGElement>, "width" | "height" | "format">;
+export type SvgProps = Omit<JSX.SvgSVGAttributes<SVGSVGElement>, "width" | "height" | "format">;
 
 function Nodes(props: { nodes: ChartNode[] }): JSX.Element {
   return (
@@ -38,7 +38,8 @@ function Nodes(props: { nodes: ChartNode[] }): JSX.Element {
   );
 }
 
-function Chart(props: { node: ChartNode } & SvgProps) {
+/** The walker every chart shares; a chart in a file of its own imports it from here. */
+export function Chart(props: { node: ChartNode } & SvgProps) {
   const [local, rest] = splitProps(props, ["node"]);
   // Consumer props spread first; the contract attrs land last and can't be
   // clobbered.

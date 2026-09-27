@@ -14,29 +14,42 @@
   import Alert from "./sections/Alert.svelte";
   import Avatar from "./sections/Avatar.svelte";
   import Badge from "./sections/Badge.svelte";
+  import BarList from "./sections/BarList.svelte";
   import Button from "./sections/Button.svelte";
   import Callout from "./sections/Callout.svelte";
   import Card from "./sections/Card.svelte";
+  import Carousel from "./sections/Carousel.svelte";
   import Charts from "./sections/Charts.svelte";
   import Checkbox from "./sections/Checkbox.svelte";
   import Chip from "./sections/Chip.svelte";
+  import Combobox from "./sections/Combobox.svelte";
+  import DatePicker from "./sections/DatePicker.svelte";
   import Dialog from "./sections/Dialog.svelte";
   import Divider from "./sections/Divider.svelte";
+  import DonutChart from "./sections/DonutChart.svelte";
+  import Drawer from "./sections/Drawer.svelte";
   import Field from "./sections/Field.svelte";
   import Indicator from "./sections/Indicator.svelte";
+  import Menu from "./sections/Menu.svelte";
   import NumberInput from "./sections/NumberInput.svelte";
   import Pagination from "./sections/Pagination.svelte";
   import PinInput from "./sections/PinInput.svelte";
+  import Popover from "./sections/Popover.svelte";
   import Progress from "./sections/Progress.svelte";
   import RadioGroup from "./sections/RadioGroup.svelte";
   import Select from "./sections/Select.svelte";
   import Skeleton from "./sections/Skeleton.svelte";
   import Slider from "./sections/Slider.svelte";
+  import SparkChart from "./sections/SparkChart.svelte";
   import Spinner from "./sections/Spinner.svelte";
+  import Splitter from "./sections/Splitter.svelte";
   import Switch from "./sections/Switch.svelte";
   import Tabs from "./sections/Tabs.svelte";
+  import TagsInput from "./sections/TagsInput.svelte";
+  import Toast from "./sections/Toast.svelte";
   import Toggle from "./sections/Toggle.svelte";
   import ToggleGroup from "./sections/ToggleGroup.svelte";
+  import Tooltip from "./sections/Tooltip.svelte";
 
   let { open = false }: { open?: boolean } = $props();
 </script>
@@ -46,27 +59,40 @@
   <Alert {open} />
   <Avatar {open} />
   <Badge {open} />
+  <BarList {open} />
   <Button {open} />
   <Callout {open} />
   <Card {open} />
+  <Carousel {open} />
   <Charts {open} />
   <Checkbox {open} />
   <Chip {open} />
+  <Combobox {open} />
+  <DatePicker {open} />
   <Dialog {open} />
   <Divider {open} />
+  <DonutChart {open} />
+  <Drawer {open} />
   <Field {open} />
   <Indicator {open} />
+  <Menu {open} />
   <NumberInput {open} />
   <Pagination {open} />
   <PinInput {open} />
+  <Popover {open} />
   <Progress {open} />
   <RadioGroup {open} />
   <Select {open} />
   <Skeleton {open} />
   <Slider {open} />
+  <SparkChart {open} />
   <Spinner {open} />
+  <Splitter {open} />
   <Switch {open} />
   <Tabs {open} />
+  <TagsInput {open} />
+  <Toast {open} />
   <Toggle {open} />
   <ToggleGroup {open} />
+  <Tooltip {open} />
 </main>

@@ -1,0 +1,3 @@
+value Tooltip
+type TooltipOpenChangeDetails
+type TooltipSize

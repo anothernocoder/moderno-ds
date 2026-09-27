@@ -1,0 +1,241 @@
+---
+title: Popover
+description: Un panel pequeño que se abre junto a su trigger, con flecha, título, descripción y botón de cierre opcionales.
+group: Componentes
+order: 38
+component: Popover
+pkg: "@moderno-ui/react"
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import PopoverDemo from "../../../examples/popover/popover.svelte";
+import baseReact from "../../../examples/popover/react.tsx?raw";
+import baseVue from "../../../examples/popover/vue.vue?raw";
+import baseSolid from "../../../examples/popover/solid.tsx?raw";
+import baseSvelte from "../../../examples/popover/popover.svelte?raw";
+import PopoverSizesDemo from "../../../examples/popover/sizes/popover-sizes.svelte";
+import sizesReact from "../../../examples/popover/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/popover/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/popover/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/popover/sizes/popover-sizes.svelte?raw";
+import PopoverPlacementDemo from "../../../examples/popover/placement/popover-placement.svelte";
+import placementReact from "../../../examples/popover/placement/react.tsx?raw";
+import placementVue from "../../../examples/popover/placement/vue.vue?raw";
+import placementSolid from "../../../examples/popover/placement/solid.tsx?raw";
+import placementSvelte from "../../../examples/popover/placement/popover-placement.svelte?raw";
+import PopoverControlledDemo from "../../../examples/popover/controlled/popover-controlled.svelte";
+import controlledReact from "../../../examples/popover/controlled/react.tsx?raw";
+import controlledVue from "../../../examples/popover/controlled/vue.vue?raw";
+import controlledSolid from "../../../examples/popover/controlled/solid.tsx?raw";
+import controlledSvelte from "../../../examples/popover/controlled/popover-controlled.svelte?raw";
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
+  <PopoverDemo client:visible />
+</Preview>
+
+Usa un popover para mostrar un poco más junto a un botón: una explicación corta, opciones para compartir o un formulario pequeño. La página sigue usable mientras está abierto, y un clic fuera o Escape lo cierra.
+
+## Instalación
+
+<Install pkg="@moderno-ui/react" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { Popover, Portal } from "@moderno-ui/react";
+```
+
+```tsx
+<Popover.Root>
+  <Popover.Trigger>Compartir</Popover.Trigger>
+  <Portal>
+    <Popover.Positioner>
+      <Popover.Content>
+        <Popover.Title>Compartir esta página</Popover.Title>
+        <Popover.Description>Cualquiera con el enlace puede verla.</Popover.Description>
+      </Popover.Content>
+    </Popover.Positioner>
+  </Portal>
+</Popover.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Popover, Portal } from "@moderno-ui/vue";
+```
+
+```vue
+<Popover.Root>
+  <Popover.Trigger>Compartir</Popover.Trigger>
+  <Portal>
+    <Popover.Positioner>
+      <Popover.Content>
+        <Popover.Title>Compartir esta página</Popover.Title>
+        <Popover.Description>Cualquiera con el enlace puede verla.</Popover.Description>
+      </Popover.Content>
+    </Popover.Positioner>
+  </Portal>
+</Popover.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Popover, Portal } from "@moderno-ui/svelte";
+```
+
+```svelte
+<Popover.Root>
+  <Popover.Trigger>Compartir</Popover.Trigger>
+  <Portal>
+    <Popover.Positioner>
+      <Popover.Content>
+        <Popover.Title>Compartir esta página</Popover.Title>
+        <Popover.Description>Cualquiera con el enlace puede verla.</Popover.Description>
+      </Popover.Content>
+    </Popover.Positioner>
+  </Portal>
+</Popover.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Popover, Portal } from "@moderno-ui/solid";
+```
+
+```tsx
+<Popover.Root>
+  <Popover.Trigger>Compartir</Popover.Trigger>
+  <Portal>
+    <Popover.Positioner>
+      <Popover.Content>
+        <Popover.Title>Compartir esta página</Popover.Title>
+        <Popover.Description>Cualquiera con el enlace puede verla.</Popover.Description>
+      </Popover.Content>
+    </Popover.Positioner>
+  </Portal>
+</Popover.Root>
+```
+
+</ForFramework>
+
+## Referencia de la API
+
+### Popover.Root
+
+`size` es lo que añade Moderno. Las demás props vienen del Popover de Ark. El Root no renderiza ningún elemento propio.
+
+<PropsTable component="Popover" />
+
+| Prop                     | Tipo                                   | Por defecto               | Descripción                                                                                         |
+| ------------------------ | -------------------------------------- | ------------------------- | --------------------------------------------------------------------------------------------------- |
+| `open`                   | `boolean`                              | —                         | Estado abierto controlado. Úsalo con `onOpenChange` (`bind:open` en Svelte, `v-model:open` en Vue). |
+| `defaultOpen`            | `boolean`                              | `false`                   | Estado abierto inicial cuando no está controlado.                                                   |
+| `onOpenChange`           | `(details: { open: boolean }) => void` | —                         | Se llama en cada apertura o cierre, también con Escape y con clics fuera.                           |
+| `positioning`            | `PositioningOptions`                   | `{ placement: "bottom" }` | Dónde va el contenido: `placement`, `gutter`, `offset`, `flip`, `sameWidth`, …                      |
+| `modal`                  | `boolean`                              | `false`                   | Atrapa el foco y bloquea la página, como un diálogo.                                                |
+| `autoFocus`              | `boolean`                              | `true`                    | Mueve el foco al contenido al abrir.                                                                |
+| `initialFocusEl`         | `() => HTMLElement \| null`            | —                         | Elemento que recibe el foco al abrir. Por defecto, el primer elemento enfocable del contenido.      |
+| `closeOnEscape`          | `boolean`                              | `true`                    | Cierra con Escape.                                                                                  |
+| `closeOnInteractOutside` | `boolean`                              | `true`                    | Cierra con un clic fuera.                                                                           |
+| `lazyMount`              | `boolean`                              | `false`                   | Monta el contenido solo en la primera apertura.                                                     |
+| `unmountOnExit`          | `boolean`                              | `false`                   | Quita el contenido del DOM al cerrar.                                                               |
+
+### Portal
+
+Renderiza sus hijos al final de `document.body`, así ningún `overflow` ni contexto de apilamiento de un padre recorta el popover.
+
+### Partes
+
+Cada parte acepta los atributos de su elemento; `Popover.Trigger` y `Popover.CloseTrigger` aceptan además `asChild` para renderizar tu propio `Button`.
+
+| Parte                  | Elemento   | Descripción                                                                       |
+| ---------------------- | ---------- | --------------------------------------------------------------------------------- |
+| `Popover.Trigger`      | `<button>` | Abre y cierra el popover. El contenido se coloca junto a él.                      |
+| `Popover.Indicator`    | `<div>`    | Opcional, dentro del trigger. Se da la vuelta mientras el popover está abierto.   |
+| `Popover.Anchor`       | `<div>`    | Opcional. Coloca el contenido junto a este elemento en lugar del trigger.         |
+| `Popover.Positioner`   | `<div>`    | Ark lo coloca junto al trigger. Contiene el contenido.                            |
+| `Popover.Content`      | `<div>`    | La superficie, con `role="dialog"`. Lleva `data-size`. Una columna.               |
+| `Popover.Arrow`        | `<div>`    | Opcional, primero dentro del contenido. Ark lo apunta al trigger.                 |
+| `Popover.ArrowTip`     | `<div>`    | Dentro de la flecha: la punta, rellena como la superficie y con borde `--border`. |
+| `Popover.Title`        | `<div>`    | El nombre accesible, conectado vía `aria-labelledby`. Un `<h2>` en Svelte.        |
+| `Popover.Description`  | `<div>`    | Conectada vía `aria-describedby`, en `--muted-foreground`. Un `<p>` en Svelte.    |
+| `Popover.CloseTrigger` | `<button>` | Un botón de icono pequeño en la esquina superior. Ark lo etiqueta `close`.        |
+
+### Atributos data
+
+| Atributo         | Valores                                                           |
+| ---------------- | ----------------------------------------------------------------- |
+| `data-size`      | En el contenido: `"sm"`, `"md"` o `"lg"`                          |
+| `data-state`     | `"open"` o `"closed"`, en el trigger, el indicador y el contenido |
+| `data-placement` | En el trigger y el contenido: dónde colocó Ark el contenido       |
+
+### Teclado
+
+| Tecla               | Acción                                                                |
+| ------------------- | --------------------------------------------------------------------- |
+| `Enter` / `Space`   | En el trigger, abre o cierra el popover.                              |
+| `Esc`               | Cierra el popover y devuelve el foco al trigger.                      |
+| `Tab` / `Shift+Tab` | Mueve el foco por el contenido; al salir de él, el popover se cierra. |
+
+## Ejemplos
+
+### Tamaños
+
+Pon `size` en el Root. Escala el padding, el espacio y el tipo del contenido.
+
+<Preview examples={{ react: sizesReact, vue: sizesVue, solid: sizesSolid, svelte: sizesSvelte }}>
+  <PopoverSizesDemo client:visible />
+</Preview>
+
+### Posición
+
+Pasa `positioning={{ placement: "right" }}` para abrir el popover en otro lado. Ark le da la vuelta cuando no cabe.
+
+<Preview
+  examples={{
+    react: placementReact,
+    vue: placementVue,
+    solid: placementSolid,
+    svelte: placementSvelte,
+  }}
+>
+  <PopoverPlacementDemo client:visible />
+</Preview>
+
+### Controlado
+
+Controla `open` cuando algo dentro del popover lo cierra, como un botón.
+
+<Preview
+  examples={{
+    react: controlledReact,
+    vue: controlledVue,
+    solid: controlledSolid,
+    svelte: controlledSvelte,
+  }}
+>
+  <PopoverControlledDemo client:visible />
+</Preview>
+
+## Notas
+
+- `Popover.Root` y `Popover.Content` están envueltos para añadir `size`; las demás partes son las de Ark sin cambios.
+- El foco, la posición y el cierre vienen de Ark; no los reimplementes.
+- El popover no es modal por defecto: la página sigue usable. Usa un `Dialog` para una decisión que debe bloquear la página.

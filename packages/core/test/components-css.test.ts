@@ -1,6 +1,13 @@
 import { describe, expect, it } from "vitest";
 import postcss, { type AtRule, type Declaration, type Rule } from "postcss";
-import { partialNames, prop, readComponentsCss, readPartial, ruleDecls } from "./stylesheet.ts";
+import {
+  normalizeSelector,
+  partialNames,
+  prop,
+  readComponentsCss,
+  readPartial,
+  ruleDecls,
+} from "./stylesheet.ts";
 
 /*
  * Guards over the whole published stylesheet. A scope's own contract lives in
@@ -112,9 +119,25 @@ describe("@moderno-ui/core components.css — bordered controls ring inset", () 
     `[data-scope="select"][data-part="trigger"]:focus-visible`,
     `[data-scope="pin-input"][data-part="input"]:focus-visible`,
     `[data-scope="number-input"][data-part="control"]:focus-within`,
+    `[data-scope="tags-input"][data-part="control"]:focus-within`,
+    `[data-scope="combobox"][data-part="control"]:focus-within`,
+    `[data-scope="date-picker"][data-part="control"]:focus-within`,
+    `[data-scope="toggle"][data-part="root"][data-variant="outline"]:focus-visible`,
+    `[data-scope="button"][data-part="root"][data-variant="outline"]:focus-visible`,
   ])("%s", (selector) => {
     const decls = ruleDecls(root, selector);
     expect(prop(decls, "outline")).toBe("2px solid var(--ring)");
     expect(prop(decls, "outline-offset")).toBe("-2px");
+  });
+
+  // The borderless Button variants keep the base layer's outset ring.
+  it("gives no other Button variant a focus ring of its own", () => {
+    const buttonFocusSelectors = selectors
+      .flatMap((list) => postcss.list.comma(list))
+      .map(normalizeSelector)
+      .filter((s) => s.startsWith(`[data-scope="button"]`) && s.includes(":focus"));
+    expect(buttonFocusSelectors).toEqual([
+      `[data-scope="button"][data-part="root"][data-variant="outline"]:focus-visible`,
+    ]);
   });
 });

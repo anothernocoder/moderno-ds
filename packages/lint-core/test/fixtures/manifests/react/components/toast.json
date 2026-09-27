@@ -1,0 +1,21 @@
+{
+  "name": "Toast",
+  "scope": "toast",
+  "import": "import { Toast } from \"@moderno-ui/react\"",
+  "propsHash": "sha256:fixture-toast",
+  "props": [{ "name": "size", "type": "\"sm\" | \"md\" | \"lg\"", "required": false }],
+  "propsComplete": false,
+  "parts": [
+    { "name": "group" },
+    { "name": "root" },
+    { "name": "title" },
+    { "name": "description" },
+    { "name": "action-trigger" },
+    { "name": "close-trigger" }
+  ],
+  "variants": { "size": ["sm", "md", "lg"] },
+  "guidance": {
+    "intent": "Tell the user, briefly and without interrupting, that something happened.",
+    "whenToUse": "Confirming an action that finished (saved, sent, copied) or reporting a background error, with an optional undo."
+  }
+}

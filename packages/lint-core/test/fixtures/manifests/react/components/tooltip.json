@@ -1,0 +1,20 @@
+{
+  "name": "Tooltip",
+  "scope": "tooltip",
+  "import": "import { Tooltip } from \"@moderno-ui/react\"",
+  "propsHash": "sha256:fixture-tooltip",
+  "props": [{ "name": "size", "type": "\"sm\" | \"md\" | \"lg\"", "required": false }],
+  "propsComplete": false,
+  "parts": [
+    { "name": "trigger" },
+    { "name": "positioner" },
+    { "name": "content" },
+    { "name": "arrow" },
+    { "name": "arrow-tip" }
+  ],
+  "variants": { "size": ["sm", "md", "lg"] },
+  "guidance": {
+    "intent": "Name or explain a control in a short label shown on hover or focus.",
+    "whenToUse": "An icon button, a shortcut or a truncated label that needs a few words."
+  }
+}

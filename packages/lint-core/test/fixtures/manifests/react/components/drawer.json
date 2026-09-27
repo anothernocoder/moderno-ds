@@ -1,0 +1,28 @@
+{
+  "name": "Drawer",
+  "scope": "drawer",
+  "import": "import { Drawer } from \"@moderno-ui/react\"",
+  "propsHash": "sha256:fixture-drawer",
+  "props": [
+    {
+      "name": "placement",
+      "type": "\"left\" | \"right\" | \"top\" | \"bottom\"",
+      "required": false
+    }
+  ],
+  "propsComplete": false,
+  "parts": [
+    { "name": "trigger" },
+    { "name": "backdrop" },
+    { "name": "positioner" },
+    { "name": "content" },
+    { "name": "title" },
+    { "name": "description" },
+    { "name": "close-trigger" }
+  ],
+  "variants": { "placement": ["left", "right", "top", "bottom"] },
+  "guidance": {
+    "intent": "Slide a modal panel in from one edge of the screen.",
+    "whenToUse": "Secondary content that needs room but keeps the page in view: filters, settings, a navigation menu, a sheet of actions."
+  }
+}

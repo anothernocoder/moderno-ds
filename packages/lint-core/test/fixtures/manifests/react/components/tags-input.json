@@ -1,0 +1,25 @@
+{
+  "name": "TagsInput",
+  "scope": "tags-input",
+  "import": "import { TagsInput } from \"@moderno-ui/react\"",
+  "propsHash": "sha256:fixture-tags-input",
+  "props": [{ "name": "size", "type": "\"sm\" | \"md\" | \"lg\"", "required": false }],
+  "propsComplete": false,
+  "parts": [
+    { "name": "root" },
+    { "name": "label" },
+    { "name": "control" },
+    { "name": "item" },
+    { "name": "item-preview" },
+    { "name": "item-text" },
+    { "name": "item-delete-trigger" },
+    { "name": "item-input" },
+    { "name": "input" },
+    { "name": "clear-trigger" }
+  ],
+  "variants": { "size": ["sm", "md", "lg"] },
+  "guidance": {
+    "intent": "Let the user enter a short list of words or labels, each one a tag they can edit or remove.",
+    "whenToUse": "Keywords, topics, email recipients: a free list of short values the user types themselves."
+  }
+}

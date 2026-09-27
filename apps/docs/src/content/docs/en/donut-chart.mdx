@@ -1,0 +1,198 @@
+---
+title: Donut Chart
+description: An SVG ring split into slices, to show how parts make up a whole.
+group: Components
+order: 90
+component: DonutChart
+pkg: "@moderno-ui/react"
+agentPropsHash: "sha256:c2276cb317319663eb3cde624e66552a4b064be2eaf827c3ffb7df5418b54fdc"
+agent:
+  intent: Share of each part in one whole.
+  whenToUse: A handful of parts that add up to a total, like traffic by source or budget by team.
+  whenNotToUse:
+    - case: Comparing many categories or reading exact differences
+      use: BarChart
+    - case: A value changing over time
+      use: LineChart
+  gotchas:
+    - "Zero colour is baked in on purpose — slices paint from --chart-1…5 by their index in data; don't pass a fill prop."
+    - "Slices keep data order and are never sorted. A value of 0 or less, or one that is not a finite number, draws no slice and leaves no gap, but still uses its index, so later slices keep their colour."
+    - "innerRadius is a fraction of the outer radius (0–1), not pixels; 0 draws a pie."
+    - "padAngle is in radians; small values like 0.02 are enough."
+  theming:
+    - "Slice colour: --chart-1 through --chart-5, cycled by data index."
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import DonutChartDemo from "../../../examples/donut-chart/donut-chart.svelte";
+import baseReact from "../../../examples/donut-chart/react.tsx?raw";
+import baseVue from "../../../examples/donut-chart/vue.vue?raw";
+import baseSolid from "../../../examples/donut-chart/solid.tsx?raw";
+import baseSvelte from "../../../examples/donut-chart/donut-chart.svelte?raw";
+import DonutChartPieDemo from "../../../examples/donut-chart/pie/donut-chart-pie.svelte";
+import pieReact from "../../../examples/donut-chart/pie/react.tsx?raw";
+import pieVue from "../../../examples/donut-chart/pie/vue.vue?raw";
+import pieSolid from "../../../examples/donut-chart/pie/solid.tsx?raw";
+import pieSvelte from "../../../examples/donut-chart/pie/donut-chart-pie.svelte?raw";
+import DonutChartSliceGapsDemo from "../../../examples/donut-chart/slice-gaps/donut-chart-slice-gaps.svelte";
+import sliceGapsReact from "../../../examples/donut-chart/slice-gaps/react.tsx?raw";
+import sliceGapsVue from "../../../examples/donut-chart/slice-gaps/vue.vue?raw";
+import sliceGapsSolid from "../../../examples/donut-chart/slice-gaps/solid.tsx?raw";
+import sliceGapsSvelte from "../../../examples/donut-chart/slice-gaps/donut-chart-slice-gaps.svelte?raw";
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
+  <DonutChartDemo client:visible />
+</Preview>
+
+## Installation
+
+<Install pkg="@moderno-ui/react" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { DonutChart } from "@moderno-ui/react";
+
+const data = [
+  { name: "Direct", value: 456 },
+  { name: "Search", value: 351 },
+  { name: "Referral", value: 271 },
+];
+```
+
+```tsx
+<DonutChart width={240} height={240} data={data} aria-label="Traffic by source" />
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import { DonutChart } from "@moderno-ui/vue";
+
+const data = [
+  { name: "Direct", value: 456 },
+  { name: "Search", value: 351 },
+  { name: "Referral", value: 271 },
+];
+</script>
+```
+
+```vue
+<template>
+  <DonutChart :width="240" :height="240" :data="data" aria-label="Traffic by source" />
+</template>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import { DonutChart } from "@moderno-ui/svelte";
+
+  const data = [
+    { name: "Direct", value: 456 },
+    { name: "Search", value: 351 },
+    { name: "Referral", value: 271 },
+  ];
+</script>
+```
+
+```svelte
+<DonutChart width={240} height={240} {data} aria-label="Traffic by source" />
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { DonutChart } from "@moderno-ui/solid";
+
+const data = [
+  { name: "Direct", value: 456 },
+  { name: "Search", value: 351 },
+  { name: "Referral", value: 271 },
+];
+```
+
+```tsx
+<DonutChart width={240} height={240} data={data} aria-label="Traffic by source" />
+```
+
+</ForFramework>
+
+## API Reference
+
+### DonutChart
+
+<PropsTable component="DonutChart" />
+
+### Data
+
+Each entry in `data` is one slice.
+
+| Field   | Type     | Description                                                  |
+| ------- | -------- | ------------------------------------------------------------ |
+| `name`  | `string` | Optional label for the slice.                                |
+| `value` | `number` | Its share of the total. A value of 0 or less, or one that is not a finite number, draws no slice. |
+
+### Defaults
+
+| Prop          | Default                             |
+| ------------- | ----------------------------------- |
+| `innerRadius` | `0.6` (the hole is 60% of the ring) |
+| `padAngle`    | `0` (slices touch)                  |
+
+### Data attributes
+
+| Attribute     | On            | Values                                                                 |
+| ------------- | ------------- | ---------------------------------------------------------------------- |
+| `data-chart`  | Root `svg`    | `donut`                                                                |
+| `data-part`   | Every element | `root`, `series`, `slice`                                              |
+| `data-series` | Series `g`    | The slice's index in `data`, mapped to `--chart-1` through `--chart-5` |
+
+## Examples
+
+### Pie
+
+Set `innerRadius` to `0` to fill the hole.
+
+<Preview examples={{ react: pieReact, vue: pieVue, solid: pieSolid, svelte: pieSvelte }}>
+  <DonutChartPieDemo client:visible />
+</Preview>
+
+### Slice gaps
+
+`padAngle` opens a gap between slices, in radians.
+
+<Preview
+  examples={{
+    react: sliceGapsReact,
+    vue: sliceGapsVue,
+    solid: sliceGapsSolid,
+    svelte: sliceGapsSvelte,
+  }}
+>
+  <DonutChartSliceGapsDemo client:visible />
+</Preview>
+
+## Notes
+
+- Slices start at 12 o'clock and go clockwise, in the order of `data`.
+- There is no colour prop: slices paint from `--chart-1` to `--chart-5` by index. A sixth slice and beyond fall back to `--chart-1`.
+- The chart fills the width of its container. Size it with CSS on a wrapper or a `class`.
+- Give it an `aria-label`: the chart is one image to a screen reader.
+- The geometry comes from `@moderno-ui/charts-core`, pure math with no DOM, so it renders on the server.

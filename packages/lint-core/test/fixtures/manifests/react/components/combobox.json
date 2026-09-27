@@ -1,0 +1,30 @@
+{
+  "name": "Combobox",
+  "scope": "combobox",
+  "import": "import { Combobox } from \"@moderno-ui/react\"",
+  "propsHash": "sha256:fixture-combobox",
+  "props": [{ "name": "size", "type": "\"sm\" | \"md\" | \"lg\"", "required": false }],
+  "propsComplete": false,
+  "parts": [
+    { "name": "root" },
+    { "name": "label" },
+    { "name": "control" },
+    { "name": "input" },
+    { "name": "trigger" },
+    { "name": "clear-trigger" },
+    { "name": "positioner" },
+    { "name": "content" },
+    { "name": "list" },
+    { "name": "item-group" },
+    { "name": "item-group-label" },
+    { "name": "item" },
+    { "name": "item-text" },
+    { "name": "item-indicator" },
+    { "name": "empty" }
+  ],
+  "variants": { "size": ["sm", "md", "lg"] },
+  "guidance": {
+    "intent": "Let the user pick from a long list by typing to narrow it down.",
+    "whenToUse": "Countries, people, tags, any list too long to scan: the user types a few letters and picks a match."
+  }
+}

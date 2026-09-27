@@ -11,8 +11,11 @@
  */
 import { buildAreaChart, type AreaChartOptions } from "./area.js";
 import { buildBarChart, type BarChartOptions } from "./bar.js";
+import { buildBarList, type BarListOptions } from "./bar-list.js";
+import { buildDonutChart, type DonutChartOptions } from "./donut.js";
 import { buildLineChart, type LineChartOptions } from "./line.js";
 import { buildScatterChart, type ScatterChartOptions } from "./scatter.js";
+import { buildSparkChart, type SparkChartOptions } from "./spark.js";
 import type { AxisTick, PlotArea } from "./types.js";
 
 /** One SVG element in the render description. Pure data — no DOM, no framework. */
@@ -93,18 +96,28 @@ function frameNodes(model: FrameModel): ChartNode[] {
   ];
 }
 
-function chartRoot(type: string, model: FrameModel, series: ChartNode[]): ChartNode {
+/** The root `<svg>`: viewport, image role and the chart's scope attributes. */
+function svgRoot(
+  type: string,
+  size: { width: number; height: number },
+  children: ChartNode[],
+): ChartNode {
   return {
     tag: "svg",
     attrs: {
-      viewBox: `0 0 ${model.width} ${model.height}`,
+      viewBox: `0 0 ${size.width} ${size.height}`,
       role: "img",
       preserveAspectRatio: "xMidYMid meet",
       ...part("root"),
       "data-chart": type,
     },
-    children: [...frameNodes(model), ...series],
+    children,
   };
+}
+
+/** A Cartesian chart: the shared frame under its series. */
+function chartRoot(type: string, model: FrameModel, series: ChartNode[]): ChartNode {
+  return svgRoot(type, model, [...frameNodes(model), ...series]);
 }
 
 function seriesGroup(index: number, children: ChartNode[]): ChartNode {
@@ -172,6 +185,75 @@ export function scatterChartNodes(options: ScatterChartOptions): ChartNode {
       ),
     ),
   );
+}
+
+/**
+ * The full donut chart: one slice per positive value and no frame, since a
+ * ring has no axes. Each slice sits in its own series group, so it takes the
+ * `--chart-*` slot of its index in `data`.
+ */
+export function donutChartNodes(options: DonutChartOptions): ChartNode {
+  const model = buildDonutChart(options);
+  return svgRoot(
+    "donut",
+    model,
+    model.slices.map((s) =>
+      seriesGroup(s.index, [{ tag: "path", attrs: { ...part("slice"), d: s.path } }]),
+    ),
+  );
+}
+
+/**
+ * The full sparkline: no frame (no grid, axes or labels), just one series with
+ * an optional fill, the line, and an optional last-point marker.
+ */
+export function sparkChartNodes(options: SparkChartOptions): ChartNode {
+  const model = buildSparkChart(options);
+  const shapes: ChartNode[] = [
+    ...(model.area === undefined
+      ? []
+      : [{ tag: "path", attrs: { ...part("area"), d: model.area } }]),
+    { tag: "path", attrs: { ...part("line"), d: model.line } },
+    ...(model.marker === undefined
+      ? []
+      : [{ tag: "circle", attrs: { ...part("point"), ...model.marker } }]),
+  ];
+  return {
+    tag: "svg",
+    attrs: {
+      viewBox: `0 0 ${model.width} ${model.height}`,
+      role: "img",
+      preserveAspectRatio: "xMidYMid meet",
+      ...part("root"),
+      "data-chart": "spark",
+    },
+    children: [seriesGroup(0, shapes)],
+  };
+}
+
+/**
+ * The full bar list: no frame, one series of rows. Each row is its name, its
+ * track, the bar filling it and its value, all centred on the row's midline.
+ */
+export function barListNodes(options: BarListOptions): ChartNode {
+  const model = buildBarList(options);
+  const rows = model.rows.map(
+    (row): ChartNode => ({
+      tag: "g",
+      attrs: part("row"),
+      children: [
+        { tag: "text", attrs: { ...part("label"), x: 0, y: row.center }, text: row.name },
+        { tag: "rect", attrs: { ...part("track"), ...row.track, rx: model.radius } },
+        { tag: "rect", attrs: { ...part("bar"), ...row.bar, rx: model.radius } },
+        {
+          tag: "text",
+          attrs: { ...part("value"), x: model.width, y: row.center },
+          text: row.valueLabel,
+        },
+      ],
+    }),
+  );
+  return svgRoot("bar-list", model, [seriesGroup(0, rows)]);
 }
 
 function escape(value: string): string {

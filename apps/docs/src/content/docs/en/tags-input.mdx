@@ -1,0 +1,329 @@
+---
+title: Tags Input
+description: A text box that turns what the user types into tags they can edit and remove.
+group: Components
+order: 37
+component: TagsInput
+pkg: "@moderno-ui/react"
+agentPropsHash: "sha256:5d3ca4233cc93854236f192425231a54138bb6e1aeafd1a8027134c1da662175"
+agent:
+  intent: Let the user enter a short list of words or labels, each one a tag they can edit or remove.
+  whenToUse: Keywords, topics, skills or email recipients — a free list of short values the user types themselves.
+  whenNotToUse:
+    - case: A choice from a fixed list the app already knows
+      use: Select
+    - case: One line of free text
+      use: Field
+    - case: Showing tags the user cannot change
+      use: Chip
+  gotchas:
+    - 'The value is a string array: pass defaultValue={["react"]}. onValueChange gives details.value.'
+    - "Ark renders no tags for you: map the value from TagsInput.Context to a TagsInput.Item with index and value, and put ItemPreview (ItemText + ItemDeleteTrigger) and ItemInput inside it."
+    - "Put the items, TagsInput.Input and an optional ClearTrigger inside TagsInput.Control. The control draws the border and the focus ring."
+    - "Enter or the delimiter (a comma by default) adds a tag. A duplicate is dropped, and past max a tag is refused."
+    - "Add TagsInput.HiddenInput and a name to send the tags with a form."
+    - "In Vue, bind the value with v-model or :model-value; value is not a Vue prop."
+  theming:
+    - "The box is --background with an --input border and a --ring focus ring drawn inside it. Do not pass a hex."
+    - "A tag is a --muted chip; a highlighted tag gets a --ring outline. Invalid turns the border and the ring --destructive."
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import TagsInputDemo from "../../../examples/tags-input/tags-input.svelte";
+import baseReact from "../../../examples/tags-input/react.tsx?raw";
+import baseVue from "../../../examples/tags-input/vue.vue?raw";
+import baseSolid from "../../../examples/tags-input/solid.tsx?raw";
+import baseSvelte from "../../../examples/tags-input/tags-input.svelte?raw";
+import TagsInputMaxDemo from "../../../examples/tags-input/max/tags-input-max.svelte";
+import maxReact from "../../../examples/tags-input/max/react.tsx?raw";
+import maxVue from "../../../examples/tags-input/max/vue.vue?raw";
+import maxSolid from "../../../examples/tags-input/max/solid.tsx?raw";
+import maxSvelte from "../../../examples/tags-input/max/tags-input-max.svelte?raw";
+import TagsInputClearDemo from "../../../examples/tags-input/clear/tags-input-clear.svelte";
+import clearReact from "../../../examples/tags-input/clear/react.tsx?raw";
+import clearVue from "../../../examples/tags-input/clear/vue.vue?raw";
+import clearSolid from "../../../examples/tags-input/clear/solid.tsx?raw";
+import clearSvelte from "../../../examples/tags-input/clear/tags-input-clear.svelte?raw";
+import TagsInputPasteDemo from "../../../examples/tags-input/paste/tags-input-paste.svelte";
+import pasteReact from "../../../examples/tags-input/paste/react.tsx?raw";
+import pasteVue from "../../../examples/tags-input/paste/vue.vue?raw";
+import pasteSolid from "../../../examples/tags-input/paste/solid.tsx?raw";
+import pasteSvelte from "../../../examples/tags-input/paste/tags-input-paste.svelte?raw";
+import TagsInputSizesDemo from "../../../examples/tags-input/sizes/tags-input-sizes.svelte";
+import sizesReact from "../../../examples/tags-input/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/tags-input/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/tags-input/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/tags-input/sizes/tags-input-sizes.svelte?raw";
+
+<FrameworkSelect locale="en" />
+
+<Preview
+  examples={{
+    react: baseReact,
+    vue: baseVue,
+    solid: baseSolid,
+    svelte: baseSvelte,
+  }}
+>
+  <TagsInputDemo client:visible />
+</Preview>
+
+## Installation
+
+<Install pkg="@moderno-ui/react" />
+
+## Usage
+
+Tags Input is a text box that turns what the user types into tags. Use it for a short list of free values, like keywords or topics. Enter or a comma adds a tag; the × on a tag removes it.
+
+<ForFramework fw="react">
+
+```tsx
+import { TagsInput } from "@moderno-ui/react";
+```
+
+```tsx
+<TagsInput.Root value={tags} onValueChange={(details) => setTags(details.value)}>
+  <TagsInput.Label>Frameworks</TagsInput.Label>
+  <TagsInput.Control>
+    <TagsInput.Context>
+      {(tagsInput) =>
+        tagsInput.value.map((value, index) => (
+          <TagsInput.Item key={index} index={index} value={value}>
+            <TagsInput.ItemPreview>
+              <TagsInput.ItemText>{value}</TagsInput.ItemText>
+              <TagsInput.ItemDeleteTrigger>×</TagsInput.ItemDeleteTrigger>
+            </TagsInput.ItemPreview>
+            <TagsInput.ItemInput />
+          </TagsInput.Item>
+        ))
+      }
+    </TagsInput.Context>
+    <TagsInput.Input placeholder="Add a framework" />
+  </TagsInput.Control>
+</TagsInput.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { TagsInput } from "@moderno-ui/vue";
+```
+
+```vue
+<TagsInput.Root v-model="tags">
+  <TagsInput.Label>Frameworks</TagsInput.Label>
+  <TagsInput.Control>
+    <TagsInput.Context v-slot="{ value }">
+      <TagsInput.Item v-for="(tag, index) in value" :key="index" :index="index" :value="tag">
+        <TagsInput.ItemPreview>
+          <TagsInput.ItemText>{{ tag }}</TagsInput.ItemText>
+          <TagsInput.ItemDeleteTrigger>×</TagsInput.ItemDeleteTrigger>
+        </TagsInput.ItemPreview>
+        <TagsInput.ItemInput />
+      </TagsInput.Item>
+    </TagsInput.Context>
+    <TagsInput.Input placeholder="Add a framework" />
+  </TagsInput.Control>
+</TagsInput.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { TagsInput } from "@moderno-ui/svelte";
+```
+
+```svelte
+<TagsInput.Root value={tags} onValueChange={(details) => (tags = details.value)}>
+  <TagsInput.Label>Frameworks</TagsInput.Label>
+  <TagsInput.Control>
+    <TagsInput.Context>
+      {#snippet render(tagsInput)}
+        {#each tagsInput().value as value, index (index)}
+          <TagsInput.Item {index} {value}>
+            <TagsInput.ItemPreview>
+              <TagsInput.ItemText>{value}</TagsInput.ItemText>
+              <TagsInput.ItemDeleteTrigger>×</TagsInput.ItemDeleteTrigger>
+            </TagsInput.ItemPreview>
+            <TagsInput.ItemInput />
+          </TagsInput.Item>
+        {/each}
+      {/snippet}
+    </TagsInput.Context>
+    <TagsInput.Input placeholder="Add a framework" />
+  </TagsInput.Control>
+</TagsInput.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Index } from "solid-js";
+import { TagsInput } from "@moderno-ui/solid";
+```
+
+```tsx
+<TagsInput.Root value={tags()} onValueChange={(details) => setTags(details.value)}>
+  <TagsInput.Label>Frameworks</TagsInput.Label>
+  <TagsInput.Control>
+    <TagsInput.Context>
+      {(tagsInput) => (
+        <Index each={tagsInput().value}>
+          {(value, index) => (
+            <TagsInput.Item index={index} value={value()}>
+              <TagsInput.ItemPreview>
+                <TagsInput.ItemText>{value()}</TagsInput.ItemText>
+                <TagsInput.ItemDeleteTrigger>×</TagsInput.ItemDeleteTrigger>
+              </TagsInput.ItemPreview>
+              <TagsInput.ItemInput />
+            </TagsInput.Item>
+          )}
+        </Index>
+      )}
+    </TagsInput.Context>
+    <TagsInput.Input placeholder="Add a framework" />
+  </TagsInput.Control>
+</TagsInput.Root>
+```
+
+</ForFramework>
+
+The value is an array of strings, like `["React", "Vue"]`. `TagsInput.Context` hands it to you so you can draw one item per tag.
+
+## API Reference
+
+### TagsInput.Root
+
+`size` is the Moderno addition; every part follows it. The other props come from Ark's TagsInput.
+
+<PropsTable component="TagsInput" />
+
+| Prop              | Type                                                             | Default    | Description                                                   |
+| ----------------- | ---------------------------------------------------------------- | ---------- | ------------------------------------------------------------- |
+| `value`           | `string[]`                                                       | —          | Controlled tags.                                              |
+| `defaultValue`    | `string[]`                                                       | `[]`       | Tags at the start, uncontrolled.                              |
+| `onValueChange`   | `(details: { value: string[] }) => void`                         | —          | Called when a tag is added, edited or removed.                |
+| `inputValue`      | `string`                                                         | —          | Controlled text in the input.                                 |
+| `max`             | `number`                                                         | `Infinity` | The most tags allowed. Past it, a new tag is refused.         |
+| `allowOverflow`   | `boolean`                                                        | `false`    | Takes tags past `max` and marks the field invalid.            |
+| `delimiter`       | `string \| RegExp`                                               | `","`      | The key that adds a tag, and what splits pasted text.         |
+| `addOnPaste`      | `boolean`                                                        | `false`    | Turns pasted text into tags, split by the delimiter.          |
+| `blurBehavior`    | `"add" \| "clear"`                                               | —          | What happens to typed text when the input loses focus.        |
+| `editable`        | `boolean`                                                        | `true`     | Lets the user edit a tag with a double click or Enter.        |
+| `allowDuplicates` | `boolean`                                                        | `false`    | Keeps a tag that is already in the list.                      |
+| `validate`        | `(details: { inputValue: string; value: string[] }) => boolean`  | —          | Returns `false` to refuse a tag.                              |
+| `onValueInvalid`  | `(details: { reason: "rangeOverflow" \| "invalidTag" }) => void` | —          | Called when `validate` refuses a tag, or tags overflow `max`. |
+| `maxLength`       | `number`                                                         | —          | The most characters in one tag.                               |
+| `disabled`        | `boolean`                                                        | `false`    | Dims the field and ignores input.                             |
+| `readOnly`        | `boolean`                                                        | `false`    | Shows the tags but ignores input.                             |
+| `invalid`         | `boolean`                                                        | —          | Marks the tags as wrong.                                      |
+| `required`        | `boolean`                                                        | `false`    | Marks the field as required in a form.                        |
+| `name`            | `string`                                                         | —          | The form field name of the hidden input.                      |
+
+In Vue, bind the value with `:model-value` or `v-model`, and listen with `@value-change`.
+
+### Parts
+
+| Part                          | Element    | Description                                                     |
+| ----------------------------- | ---------- | --------------------------------------------------------------- |
+| `TagsInput.Root`              | `<div>`    | Carries `data-size`.                                            |
+| `TagsInput.Label`             | `<label>`  | Optional. Names the field. Clicking it focuses the input.       |
+| `TagsInput.Control`           | `<div>`    | The bordered box. Holds the tags and the input.                 |
+| `TagsInput.Item`              | `<div>`    | One tag. Takes `index` and `value`.                             |
+| `TagsInput.ItemPreview`       | `<div>`    | The tag's chip. Double click it to edit the tag.                |
+| `TagsInput.ItemText`          | `<span>`   | The tag's text.                                                 |
+| `TagsInput.ItemDeleteTrigger` | `<button>` | Removes the tag. Ark names it for screen readers.               |
+| `TagsInput.ItemInput`         | `<input>`  | Replaces the chip while the tag is edited.                      |
+| `TagsInput.Input`             | `<input>`  | The text box. Enter or the delimiter turns its text into a tag. |
+| `TagsInput.ClearTrigger`      | `<button>` | Optional. Removes every tag. Hidden while there are none.       |
+| `TagsInput.HiddenInput`       | `<input>`  | Optional. Sends the tags with a form.                           |
+| `TagsInput.Context`           | —          | Hands you the tags as `value`, to draw one item each.           |
+
+### Data attributes
+
+| Attribute          | Values                                                        |
+| ------------------ | ------------------------------------------------------------- |
+| `data-focus`       | While the field has focus, on the root and control            |
+| `data-invalid`     | When the tags are invalid, on the root, label, control, input |
+| `data-disabled`    | When `disabled`, on every part                                |
+| `data-readonly`    | When `readOnly`, on the root, label, control and input        |
+| `data-empty`       | While there are no tags, on the root and input                |
+| `data-highlighted` | On the tag chosen with the arrow keys                         |
+| `data-size`        | On the root: `"sm"`, `"md"` or `"lg"`                         |
+
+## Examples
+
+### Max
+
+`max` sets how many tags fit. Past it, a new tag is refused.
+
+<Preview
+  examples={{
+    react: maxReact,
+    vue: maxVue,
+    solid: maxSolid,
+    svelte: maxSvelte,
+  }}
+>
+  <TagsInputMaxDemo client:visible />
+</Preview>
+
+### Clear all
+
+Put `TagsInput.ClearTrigger` last in the control. It removes every tag and hides while there are none.
+
+<Preview
+  examples={{
+    react: clearReact,
+    vue: clearVue,
+    solid: clearSolid,
+    svelte: clearSvelte,
+  }}
+>
+  <TagsInputClearDemo client:visible />
+</Preview>
+
+### Paste a list
+
+With `addOnPaste`, pasted text becomes one tag per comma.
+
+<Preview
+  examples={{
+    react: pasteReact,
+    vue: pasteVue,
+    solid: pasteSolid,
+    svelte: pasteSvelte,
+  }}
+>
+  <TagsInputPasteDemo client:visible />
+</Preview>
+
+### Sizes
+
+<Preview
+  examples={{
+    react: sizesReact,
+    vue: sizesVue,
+    solid: sizesSolid,
+    svelte: sizesSvelte,
+  }}
+>
+  <TagsInputSizesDemo client:visible />
+</Preview>
+
+## Notes
+
+- `TagsInput.Root` is wrapped to add `size`; every other part is Ark's unchanged.
+- The keyboard: Arrow Left and Right move between tags, Backspace or Delete removes the highlighted one, Enter edits it and Escape cancels the edit.
+- The delete triggers are out of the tab order; Backspace does the same job from the input.
