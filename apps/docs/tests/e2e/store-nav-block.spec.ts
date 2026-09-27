@@ -9,10 +9,12 @@
  *    the brand and a "Menu" button, and the search and the cart share a row
  *    under it; from `--container-sm` the bar gains room at its ends; from
  *    `--container-md` the categories sit in the bar and "Menu" goes away; from
- *    `--container-lg` the search and the cart join the first row. Each copy on
- *    the page is measured against its own container width, so the narrow
- *    frame keeps the Drawer at 1280 while the wide frame has crossed every
- *    step.
+ *    `--container-lg` the search and the cart join the first row. The two
+ *    wrap as one group whose narrowest is the search's floor plus the cart,
+ *    so the input's own text width, which moves with the font, cannot push
+ *    them off that row. Each copy on the page is measured against its own
+ *    container width, so the narrow frame keeps the Drawer at 1280 while the
+ *    wide frame has crossed every step.
  * 2. **Every state renders what it claims**, at every width: the brand, the
  *    categories with the current one marked, the search and the cart with its
  *    count by default; no categories and no "Menu" when they are empty; three
@@ -48,6 +50,9 @@ const PADDING_LG = 32;
 
 /** The narrowest the search box may get: its placeholder and the input's padding. */
 const SEARCH_MIN = 128;
+
+/** The gap between the search and the cart (`gap-2`). */
+const GROUP_GAP = 8;
 
 /** The responsive policy's three widths (ADR-0005). */
 const WIDTHS = [375, 768, 1280];
@@ -87,6 +92,13 @@ interface BlockMetrics {
   /** Whether the "Menu" button sits on the brand's row. */
   menuButtonInBar: boolean;
   searchWidth: number;
+  /**
+   * The narrowest the search-and-cart group lays out, and the cart's width.
+   * The bar wraps the group by this width, so it must be the search's floor
+   * plus the cart, not whatever the input's own text measures in this font.
+   */
+  groupMinWidth: number;
+  cartWidth: number;
   /** Whether the search and the cart sit on the brand's row. */
   searchInBar: boolean;
   cartInBar: boolean;
@@ -168,6 +180,16 @@ async function blockMetrics(page: Page, state: State): Promise<BlockMetrics[]> {
         const cart = buttons.find((b) => b.getAttribute("aria-label")?.startsWith("Cart"));
         const search = bar.querySelector('form[role="search"]');
         const busy = bar.querySelector('[role="status"][aria-busy="true"]');
+        const group = search?.parentElement as HTMLElement | undefined;
+        const minContentWidth = (el: HTMLElement) => {
+          const { flex, width } = el.style;
+          el.style.flex = "none";
+          el.style.width = "min-content";
+          const measured = el.getBoundingClientRect().width;
+          el.style.flex = flex;
+          el.style.width = width;
+          return measured;
+        };
         const panel = root.closest(".preview-panel--demo")!.getBoundingClientRect();
         const box = root.getBoundingClientRect();
 
@@ -197,6 +219,8 @@ async function blockMetrics(page: Page, state: State): Promise<BlockMetrics[]> {
           menuButtonShown: shown(menuButton),
           menuButtonInBar: onBrandRow(menuButton),
           searchWidth: search ? search.getBoundingClientRect().width : 0,
+          groupMinWidth: group ? minContentWidth(group) : 0,
+          cartWidth: cart ? cart.getBoundingClientRect().width : 0,
           searchInBar: onBrandRow(search),
           cartInBar: onBrandRow(cart),
           cartName: cart?.getAttribute("aria-label") ?? null,
@@ -356,6 +380,10 @@ for (const scheme of ["light", "dark"] as const) {
           expect(block.searchInBar, `${where}: search in the bar`).toBe(w >= CONTAINER_LG);
           expect(block.cartInBar, `${where}: cart in the bar`).toBe(w >= CONTAINER_LG);
           expect(block.searchWidth, `${where}: search width`).toBeGreaterThanOrEqual(SEARCH_MIN);
+          expect(
+            Math.abs(block.groupMinWidth - (SEARCH_MIN + GROUP_GAP + block.cartWidth)),
+            `${where}: the search and the cart wrap at the search's floor`,
+          ).toBeLessThan(1);
           expect(block.cartName, `${where}: cart`).toBe(state === "empty" ? EMPTY_CART : CART);
 
           expect(block.placeholders, `${where}: placeholders`).toBe(state === "loading" ? 3 : 0);

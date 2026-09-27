@@ -251,7 +251,7 @@ export function StoreNav({
         ) : null}
 
         <div className="flex w-full items-center gap-2 @lg:ms-auto @lg:w-auto @lg:max-w-sm @lg:flex-1">
-          <form role="search" className="relative min-w-0 flex-1" onSubmit={submitSearch}>
+          <form role="search" className="relative w-32 min-w-0 flex-1" onSubmit={submitSearch}>
             <Combobox.Root
               name="q"
               collection={collection}

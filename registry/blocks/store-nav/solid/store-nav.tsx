@@ -280,7 +280,7 @@ export function StoreNav(props: StoreNavProps) {
         </Show>
 
         <div class="flex w-full items-center gap-2 @lg:ms-auto @lg:w-auto @lg:max-w-sm @lg:flex-1">
-          <form role="search" class="relative min-w-0 flex-1" onSubmit={submitSearch}>
+          <form role="search" class="relative w-32 min-w-0 flex-1" onSubmit={submitSearch}>
             <Combobox.Root
               name="q"
               collection={collection()}

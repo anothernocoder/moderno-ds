@@ -10,13 +10,14 @@
   same categories and suggestions with fragment links.
 
   `widths` frames the same file four times, one in each band of the block's
-  steps (ADR-0005): 18rem is below `--container-sm` (the brand, the cart and
-  the "Menu" button, the search on its own row), 30rem sits between
+  steps (ADR-0005): 18rem is below `--container-sm` (the brand and the "Menu"
+  button, the search and the cart on a row under them), 30rem sits between
   `--container-sm` and `--container-md` (more room at the ends), 40rem between
   `--container-md` and `--container-lg` (the categories in the bar in place of
-  the "Menu" button) and 50rem crosses `--container-lg` (the search joins the
-  bar). The docs column never reaches the 48rem `@lg` step, so the wide frame
-  holds a 50rem stage and scrolls sideways inside itself; the page never does.
+  the "Menu" button) and 50rem crosses `--container-lg` (the search and the
+  cart join the bar). The docs column never reaches the 48rem `@lg` step, so
+  the wide frame holds a 50rem stage and scrolls sideways inside itself; the
+  page never does.
 
   A search goes where a store's would, to a results page: the default copy
   turns `onsearch` into a `#store-nav-search-<query>` fragment, so Enter stays

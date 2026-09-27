@@ -275,7 +275,7 @@ function submitSearch(event: SubmitEvent) {
       </Drawer.Root>
 
       <div class="flex w-full items-center gap-2 @lg:ms-auto @lg:w-auto @lg:max-w-sm @lg:flex-1">
-        <form role="search" class="relative min-w-0 flex-1" @submit.prevent="submitSearch">
+        <form role="search" class="relative w-32 min-w-0 flex-1" @submit.prevent="submitSearch">
           <Combobox.Root
             name="q"
             :collection="collection"
