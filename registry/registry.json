@@ -2514,6 +2514,78 @@
       ]
     },
     {
+      "name": "portfolio-header-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Portfolio header (React)",
+      "description": "The intro at the top of a personal portfolio, composing the @moderno-ui/react Alert, Avatar, Button, Indicator and Skeleton primitives: an Avatar, an availability Indicator, the person's name as a serif h1, their role, a short bio and a row of links, with its own loading, empty and error renders; responds to its container (@container) — the role and bio step up at @sm, the name steps up and the avatar moves beside the text at @md, and the header gets more room at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/portfolio-header/react/portfolio-header.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/portfolio-header.tsx"
+        }
+      ]
+    },
+    {
+      "name": "portfolio-header-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Portfolio header (Vue)",
+      "description": "The intro at the top of a personal portfolio, composing the @moderno-ui/vue Alert, Avatar, Button, Indicator and Skeleton primitives: an Avatar, an availability Indicator, the person's name as a serif h1, their role, a short bio and a row of links, with its own loading, empty and error renders; responds to its container (@container) — the role and bio step up at @sm, the name steps up and the avatar moves beside the text at @md, and the header gets more room at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/portfolio-header/vue/PortfolioHeader.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/PortfolioHeader.vue"
+        }
+      ]
+    },
+    {
+      "name": "portfolio-header-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Portfolio header (Svelte)",
+      "description": "The intro at the top of a personal portfolio, composing the @moderno-ui/svelte Alert, Avatar, Button, Indicator and Skeleton primitives: an Avatar, an availability Indicator, the person's name as a serif h1, their role, a short bio and a row of links, with its own loading, empty and error renders; responds to its container (@container) — the role and bio step up at @sm, the name steps up and the avatar moves beside the text at @md, and the header gets more room at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/portfolio-header/svelte/PortfolioHeader.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/PortfolioHeader.svelte"
+        }
+      ]
+    },
+    {
+      "name": "portfolio-header-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Portfolio header (Solid)",
+      "description": "The intro at the top of a personal portfolio, composing the @moderno-ui/solid Alert, Avatar, Button, Indicator and Skeleton primitives: an Avatar, an availability Indicator, the person's name as a serif h1, their role, a short bio and a row of links, with its own loading, empty and error renders; responds to its container (@container) — the role and bio step up at @sm, the name steps up and the avatar moves beside the text at @md, and the header gets more room at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/portfolio-header/solid/portfolio-header.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/portfolio-header.tsx"
+        }
+      ]
+    },
+    {
       "name": "post-grid-react",
       "type": "registry:block",
       "version": "0.1.0",
