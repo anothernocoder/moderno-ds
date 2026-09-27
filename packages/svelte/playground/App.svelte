@@ -26,6 +26,7 @@
   import Dialog from "./sections/Dialog.svelte";
   import Divider from "./sections/Divider.svelte";
   import DonutChart from "./sections/DonutChart.svelte";
+  import Drawer from "./sections/Drawer.svelte";
   import Field from "./sections/Field.svelte";
   import Indicator from "./sections/Indicator.svelte";
   import Menu from "./sections/Menu.svelte";
@@ -68,6 +69,7 @@
   <Dialog {open} />
   <Divider {open} />
   <DonutChart {open} />
+  <Drawer {open} />
   <Field {open} />
   <Indicator {open} />
   <Menu {open} />

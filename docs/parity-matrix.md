@@ -177,12 +177,13 @@ Legend: ✅ verified by an automated test · ❌ not supported (see its footnote
 
 ### Dialog (a verbatim Ark re-export: portal + focus trap + ids)
 
-| State                    | React | Vue | Svelte | Solid |
-| ------------------------ | :---: | :-: | :----: | :---: |
-| closed by default        |  ✅   | ✅  |   ✅   |  ✅   |
-| opens, labelled modal    |  ✅   | ✅  |   ✅   |  ✅   |
-| focus trapped when open  |  ✅   | ✅  |   ✅   |  ✅   |
-| closes via close trigger |  ✅   | ✅  |   ✅   |  ✅   |
+| State                                       | React | Vue | Svelte | Solid |
+| ------------------------------------------- | :---: | :-: | :----: | :---: |
+| closed by default                           |  ✅   | ✅  |   ✅   |  ✅   |
+| opens, labelled modal                       |  ✅   | ✅  |   ✅   |  ✅   |
+| focus trapped when open                     |  ✅   | ✅  |   ✅   |  ✅   |
+| closes via close trigger                    |  ✅   | ✅  |   ✅   |  ✅   |
+| bottom Drawer under 40rem (stylesheet only) |  ✅   | ✅  |   ✅   |  ✅   |
 
 ### Divider (`dividerRecipe`: `data-orientation` × `data-align`; no Ark machine)
 
@@ -196,6 +197,20 @@ Legend: ✅ verified by an automated test · ❌ not supported (see its footnote
 | `role=separator` only when bare  |  ✅   | ✅  |   ✅   |  ✅   |
 | no baked class/style             |  ✅   | ✅  |   ✅   |  ✅   |
 | native props forwarded           |  ✅   | ✅  |   ✅   |  ✅   |
+
+### Drawer (`drawerRecipe`: `data-placement` on the positioner and content; Ark dialog machine)
+
+| State                                                                     | React | Vue | Svelte | Solid |
+| ------------------------------------------------------------------------- | :---: | :-: | :----: | :---: |
+| every part of Ark's Dialog exposed, each under `data-scope="drawer"`      |  ✅   | ✅  |   ✅   |  ✅   |
+| placement on the Root → positioner + content `data-placement` (+ `right`) |  ✅   | ✅  |   ✅   |  ✅   |
+| placement on a RootProvider driven by `useDialog()`                       |  ✅   | ✅  |   ✅   |  ✅   |
+| closed by default: content hidden, trigger `aria-expanded="false"`        |  ✅   | ✅  |   ✅   |  ✅   |
+| opens as a modal `dialog` labelled by its title and description           |  ✅   | ✅  |   ✅   |  ✅   |
+| focus moves in on open and back to the trigger on close                   |  ✅   | ✅  |   ✅   |  ✅   |
+| closes on Escape and via the close trigger                                |  ✅   | ✅  |   ✅   |  ✅   |
+| controlled `open` followed (`v-model:open` in Vue, `bind:open` in Svelte) |  ✅   | ✅  |   ✅   |  ✅   |
+| native props forwarded to the content                                     |  ✅   | ✅  |   ✅   |  ✅   |
 
 ### Field (`fieldRecipe`: `data-size`; state is Ark's `data-invalid` / `data-disabled`)
 
@@ -525,6 +540,7 @@ row names.
 | Combobox listbox ids, selected items, multiple + empty state              |  ✅   | ✅  |   ✅   |  ✅   |
 | Dialog trigger; `defaultOpen` survives                                    |  ✅   | ✅  |   ✅   |  ✅   |
 | Divider separator role, label + vertical label                            |  ✅   | ✅  |   ✅   |  ✅   |
+| Drawer trigger/content ids + `data-placement`, drawer scope               |  ✅   | ✅  |   ✅   |  ✅   |
 | Field sizes + textarea                                                    |  ✅   | ✅  |   ✅   |  ✅   |
 | Indicator bare `data-pulse`, dot + label parts                            |  ✅   | ✅  |   ✅   |  ✅   |
 | Menu trigger + hidden content wired by id; items, separator, submenu size |  ✅   | ✅  |   ✅   |  ✅   |

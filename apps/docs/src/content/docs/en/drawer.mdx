@@ -1,0 +1,250 @@
+---
+title: Drawer
+description: A panel that slides in from one edge of the screen, over a dimmed page.
+group: Components
+order: 30
+component: Drawer
+pkg: "@moderno-ui/react"
+agentPropsHash: "sha256:35df9e4d0501e9ee3c83f4ad95cbe68fcfee71b3e8271edecb6653b4fb2a8dfc"
+agent:
+  intent: Slide a modal panel in from one edge of the screen.
+  whenToUse: Secondary content that needs room but keeps the page in view — filters, settings, a navigation menu, a sheet of actions.
+  whenNotToUse:
+    - case: A short decision the user must confirm before going on
+      use: Dialog
+    - case: A little extra detail next to one control, with the page still usable
+      use: Popover
+  gotchas:
+    - "Put the Content inside Drawer.Positioner and render Drawer.Backdrop beside it; wrap both in Portal so no parent's overflow clips them."
+    - "Drawer.Root renders no element: its placement reaches the Positioner and Content, which carry data-placement."
+    - "Always render Drawer.Title (or give the Content an aria-label); it is the drawer's accessible name."
+    - 'Ark labels a bare Drawer.CloseTrigger "close"; pass aria-label to change or translate it.'
+    - 'Every part renders under data-scope="drawer", not Ark''s "dialog"; target [data-scope="drawer"] in overrides.'
+    - "A Dialog already turns into a bottom drawer on small screens; don't swap components by viewport width."
+  theming:
+    - "The panel is --popover with --popover-foreground, a 1px --border on the side facing the page and the --shadow-lg drop. Do not pass a hex."
+    - "The backdrop is the --overlay scrim, as in Dialog."
+    - 'placement="left" | "right" | "top" | "bottom" picks the edge; side drawers are --container-sm wide.'
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import DrawerDemo from "../../../examples/drawer/drawer.svelte";
+import baseReact from "../../../examples/drawer/react.tsx?raw";
+import baseVue from "../../../examples/drawer/vue.vue?raw";
+import baseSolid from "../../../examples/drawer/solid.tsx?raw";
+import baseSvelte from "../../../examples/drawer/drawer.svelte?raw";
+import DrawerPlacementDemo from "../../../examples/drawer/placement/drawer-placement.svelte";
+import placementReact from "../../../examples/drawer/placement/react.tsx?raw";
+import placementVue from "../../../examples/drawer/placement/vue.vue?raw";
+import placementSolid from "../../../examples/drawer/placement/solid.tsx?raw";
+import placementSvelte from "../../../examples/drawer/placement/drawer-placement.svelte?raw";
+import DrawerControlledDemo from "../../../examples/drawer/controlled/drawer-controlled.svelte";
+import controlledReact from "../../../examples/drawer/controlled/react.tsx?raw";
+import controlledVue from "../../../examples/drawer/controlled/vue.vue?raw";
+import controlledSolid from "../../../examples/drawer/controlled/solid.tsx?raw";
+import controlledSvelte from "../../../examples/drawer/controlled/drawer-controlled.svelte?raw";
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
+  <DrawerDemo client:visible />
+</Preview>
+
+Use a drawer for content that needs more room than a dialog but keeps the page in view: filters, settings, a menu. It slides in from an edge, dims the page and keeps focus inside until it closes.
+
+## Installation
+
+<Install pkg="@moderno-ui/react" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { Drawer, Portal } from "@moderno-ui/react";
+```
+
+```tsx
+<Drawer.Root>
+  <Drawer.Trigger>Filters</Drawer.Trigger>
+  <Portal>
+    <Drawer.Backdrop />
+    <Drawer.Positioner>
+      <Drawer.Content>
+        <Drawer.Title>Filters</Drawer.Title>
+        <Drawer.Description>Narrow the list of orders.</Drawer.Description>
+      </Drawer.Content>
+    </Drawer.Positioner>
+  </Portal>
+</Drawer.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Drawer, Portal } from "@moderno-ui/vue";
+```
+
+```vue
+<Drawer.Root>
+  <Drawer.Trigger>Filters</Drawer.Trigger>
+  <Portal>
+    <Drawer.Backdrop />
+    <Drawer.Positioner>
+      <Drawer.Content>
+        <Drawer.Title>Filters</Drawer.Title>
+        <Drawer.Description>Narrow the list of orders.</Drawer.Description>
+      </Drawer.Content>
+    </Drawer.Positioner>
+  </Portal>
+</Drawer.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Drawer, Portal } from "@moderno-ui/svelte";
+```
+
+```svelte
+<Drawer.Root>
+  <Drawer.Trigger>Filters</Drawer.Trigger>
+  <Portal>
+    <Drawer.Backdrop />
+    <Drawer.Positioner>
+      <Drawer.Content>
+        <Drawer.Title>Filters</Drawer.Title>
+        <Drawer.Description>Narrow the list of orders.</Drawer.Description>
+      </Drawer.Content>
+    </Drawer.Positioner>
+  </Portal>
+</Drawer.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Drawer, Portal } from "@moderno-ui/solid";
+```
+
+```tsx
+<Drawer.Root>
+  <Drawer.Trigger>Filters</Drawer.Trigger>
+  <Portal>
+    <Drawer.Backdrop />
+    <Drawer.Positioner>
+      <Drawer.Content>
+        <Drawer.Title>Filters</Drawer.Title>
+        <Drawer.Description>Narrow the list of orders.</Drawer.Description>
+      </Drawer.Content>
+    </Drawer.Positioner>
+  </Portal>
+</Drawer.Root>
+```
+
+</ForFramework>
+
+## API Reference
+
+### Drawer.Root
+
+`placement` is the Moderno addition. The other props come from Ark's Dialog. The Root renders no element of its own.
+
+<PropsTable component="Drawer" />
+
+| Prop                     | Type                                   | Default | Description                                                                                     |
+| ------------------------ | -------------------------------------- | ------- | ----------------------------------------------------------------------------------------------- |
+| `open`                   | `boolean`                              | —       | Controlled open state. Pair with `onOpenChange` (`bind:open` in Svelte, `v-model:open` in Vue). |
+| `defaultOpen`            | `boolean`                              | `false` | Open state at first when uncontrolled.                                                          |
+| `onOpenChange`           | `(details: { open: boolean }) => void` | —       | Called on every open or close, including Escape and clicks outside.                             |
+| `modal`                  | `boolean`                              | `true`  | Traps focus, locks page scroll and hides the page from screen readers.                          |
+| `initialFocusEl`         | `() => HTMLElement \| null`            | —       | Element to focus on open. Defaults to the first focusable element in the content.               |
+| `finalFocusEl`           | `() => HTMLElement \| null`            | —       | Element to focus on close. Defaults to the trigger.                                             |
+| `closeOnEscape`          | `boolean`                              | `true`  | Closes on Escape.                                                                               |
+| `closeOnInteractOutside` | `boolean`                              | `true`  | Closes on a click on the backdrop.                                                              |
+| `lazyMount`              | `boolean`                              | `false` | Mount the content only on first open.                                                           |
+| `unmountOnExit`          | `boolean`                              | `false` | Remove the content from the DOM when closed.                                                    |
+
+`Drawer.RootProvider` takes `placement` too, with the `value` from Ark's `useDialog()`.
+
+### Portal
+
+Renders its children at the end of `document.body`, so no parent's `overflow` or stacking clips the drawer.
+
+### Parts
+
+Every part accepts its element's attributes; `Drawer.Trigger` and `Drawer.CloseTrigger` also take `asChild` to render your own `Button`.
+
+| Part                  | Element    | Description                                                                                  |
+| --------------------- | ---------- | -------------------------------------------------------------------------------------------- |
+| `Drawer.Trigger`      | `<button>` | Opens the drawer. Focus returns to it on close.                                              |
+| `Drawer.Backdrop`     | `<div>`    | The dimmed scrim behind the drawer. A click on it closes the drawer.                         |
+| `Drawer.Positioner`   | `<div>`    | Covers the screen and holds the content against its edge. Carries `data-placement`.          |
+| `Drawer.Content`      | `<div>`    | The panel, with `role="dialog"`. Carries `data-placement`. A column that scrolls.            |
+| `Drawer.Title`        | `<h2>`     | The accessible name, wired through `aria-labelledby`.                                        |
+| `Drawer.Description`  | `<div>`    | Wired through `aria-describedby`, in `--muted-foreground`. A `<p>` in Svelte.                |
+| `Drawer.CloseTrigger` | `<button>` | Closes the drawer. Bare, it is a small icon button in the top corner; Ark labels it `close`. |
+
+### Data attributes
+
+| Attribute        | Values                                                                    |
+| ---------------- | ------------------------------------------------------------------------- |
+| `data-scope`     | `"drawer"` on every part (the parts are Ark's Dialog parts, re-scoped)    |
+| `data-placement` | On the positioner and content: `"left"`, `"right"`, `"top"` or `"bottom"` |
+| `data-state`     | `"open"` or `"closed"`, on the trigger, backdrop and content              |
+
+### Keyboard
+
+| Key                 | Action                                              |
+| ------------------- | --------------------------------------------------- |
+| `Enter` / `Space`   | On the trigger, opens the drawer.                   |
+| `Esc`               | Closes the drawer and returns focus to the trigger. |
+| `Tab` / `Shift+Tab` | Moves focus through the drawer; it stays inside.    |
+
+## Examples
+
+### Placement
+
+Set `placement` on the Root to pick the edge. It is `right` by default.
+
+<Preview
+  examples={{
+    react: placementReact,
+    vue: placementVue,
+    solid: placementSolid,
+    svelte: placementSvelte,
+  }}
+>
+  <DrawerPlacementDemo client:visible />
+</Preview>
+
+### Controlled
+
+Control `open` when something inside the drawer closes it, like a Save button.
+
+<Preview
+  examples={{
+    react: controlledReact,
+    vue: controlledVue,
+    solid: controlledSolid,
+    svelte: controlledSvelte,
+  }}
+>
+  <DrawerControlledDemo client:visible />
+</Preview>
+
+## Notes
+
+- Drawer is Ark's Dialog: every part is wrapped only to render under `data-scope="drawer"`, and the Root, Positioner and Content to add `placement`.
+- Focus, scroll lock and dismissal come from Ark; don't reimplement them.
+- A `Dialog` already presents as a bottom drawer on small screens. Use a Drawer when you want a drawer at every width.

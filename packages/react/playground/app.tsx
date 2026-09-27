@@ -30,6 +30,7 @@ import ComboboxSection from "./sections/combobox.js";
 import DialogSection from "./sections/dialog.js";
 import DividerSection from "./sections/divider.js";
 import DonutChartSection from "./sections/donut-chart.js";
+import DrawerSection from "./sections/drawer.js";
 import FieldSection from "./sections/field.js";
 import IndicatorSection from "./sections/indicator.js";
 import MenuSection from "./sections/menu.js";
@@ -76,6 +77,7 @@ export function App({ open = false }: AppProps) {
       <DialogSection open={open} />
       <DividerSection open={open} />
       <DonutChartSection open={open} />
+      <DrawerSection open={open} />
       <FieldSection open={open} />
       <IndicatorSection open={open} />
       <MenuSection open={open} />

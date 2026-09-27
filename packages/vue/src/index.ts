@@ -26,6 +26,7 @@ export * from "./exports/combobox.js";
 export * from "./exports/dialog.js";
 export * from "./exports/divider.js";
 export * from "./exports/donut-chart.js";
+export * from "./exports/drawer.js";
 export * from "./exports/field.js";
 export * from "./exports/indicator.js";
 export * from "./exports/line-chart.js";

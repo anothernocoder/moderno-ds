@@ -1614,6 +1614,39 @@
     color: var(--muted-foreground);
   }
 
+  /* Small viewports: the dialog presents as a bottom Drawer, with no code in
+     the app. The positioner drops its inset and pins the content to the
+     bottom edge; the content takes the full width, rounds only its top
+     corners, draws its --border edge only along the top (the other sides
+     meet the viewport), scrolls when it is long, and slides up like a
+     bottom Drawer. 40rem is the small-viewport line the shape-changing
+     primitives share; it is literal because a media condition cannot read a
+     custom property. */
+  @media (width < 40rem) {
+    [data-scope="dialog"][data-part="positioner"] {
+      align-items: flex-end;
+      padding: 0;
+    }
+    [data-scope="dialog"][data-part="content"] {
+      max-width: none;
+      max-height: calc(100% - var(--spacing-8));
+      overflow-y: auto;
+      border-width: 1px 0 0;
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+    [data-scope="dialog"][data-part="content"][data-state="open"] {
+      animation: moderno-drawer-in-bottom var(--motion-normal) ease-out;
+    }
+    [data-scope="dialog"][data-part="content"][data-state="closed"] {
+      animation: moderno-drawer-out-bottom var(--motion-fast) ease-in;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-scope="dialog"][data-part="content"][data-state] {
+      animation: none;
+    }
+  }
+
   /* ────────────────────────── Divider ─────────────────────────── *
    * data-orientation × data-align from `dividerRecipe`. No Ark machine —
    * a rule is pure CSS. The two halves of the line are the root's ::before
@@ -1682,6 +1715,241 @@
   [data-scope="divider"][data-orientation="vertical"] [data-part="label"] {
     writing-mode: vertical-rl;
     margin-inline: var(--spacing-2);
+  }
+
+  /* ─────────────────────────── Drawer ─────────────────────────── *
+   * A panel that slides in from one edge of the viewport. It is Ark's Dialog
+   * — Ark owns the portal, focus trap, scroll lock and ids — with every part
+   * re-scoped to "drawer". Anatomy: trigger, backdrop, positioner > content >
+   * title, description, close-trigger. Ark's root renders no element, so
+   * `drawerRecipe` puts data-placement on the positioner and the content.
+   * Scope "drawer".                                                        */
+
+  /* The scrim is Dialog's: the --overlay slot and a blur, above an app's
+     sticky chrome. The positioner shares the layer and, portalled after the
+     backdrop, paints on top of it. */
+  [data-scope="drawer"][data-part="backdrop"] {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    background-color: var(--overlay);
+    -webkit-backdrop-filter: blur(var(--spacing-2));
+    backdrop-filter: blur(var(--spacing-2));
+  }
+  [data-scope="drawer"][data-part="backdrop"][data-state="open"] {
+    animation: moderno-drawer-fade-in var(--motion-normal) ease-out;
+  }
+  [data-scope="drawer"][data-part="backdrop"][data-state="closed"] {
+    animation: moderno-drawer-fade-out var(--motion-fast) ease-in;
+  }
+
+  /* The positioner covers the viewport and pins the content to one edge. A
+     side drawer runs the full height, a top or bottom one the full width. */
+  [data-scope="drawer"][data-part="positioner"] {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+  }
+  [data-scope="drawer"][data-part="positioner"][data-placement="left"] {
+    justify-content: flex-start;
+  }
+  [data-scope="drawer"][data-part="positioner"][data-placement="right"] {
+    justify-content: flex-end;
+  }
+  [data-scope="drawer"][data-part="positioner"][data-placement="top"] {
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+  [data-scope="drawer"][data-part="positioner"][data-placement="bottom"] {
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  /* The panel: the popover fill, lifted by the --shadow-lg drop alone (never a
+     ring stacked in box-shadow, which would double the border). Its edge is
+     its own 1px --border on the one side that faces the page, and that side's
+     corners are rounded; the others meet the viewport. Long content scrolls
+     inside it. */
+  [data-scope="drawer"][data-part="content"] {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+    overflow-y: auto;
+    padding: var(--spacing-6);
+    background-color: var(--popover);
+    color: var(--popover-foreground);
+    font-size: var(--text-ui-md);
+    line-height: var(--leading-ui-md);
+    box-shadow: var(--shadow-lg);
+  }
+  /* A side drawer is a column as tall as the viewport, up to the small
+     container width; a top or bottom one is as tall as its content, and
+     leaves a strip of the page showing to tap. */
+  [data-scope="drawer"][data-part="content"][data-placement="left"],
+  [data-scope="drawer"][data-part="content"][data-placement="right"] {
+    width: 100%;
+    max-width: var(--container-sm);
+  }
+  [data-scope="drawer"][data-part="content"][data-placement="top"],
+  [data-scope="drawer"][data-part="content"][data-placement="bottom"] {
+    max-height: calc(100% - var(--spacing-8));
+  }
+  [data-scope="drawer"][data-part="content"][data-placement="left"] {
+    border-right: 1px solid var(--border);
+    border-radius: 0 var(--radius) var(--radius) 0;
+  }
+  [data-scope="drawer"][data-part="content"][data-placement="right"] {
+    border-left: 1px solid var(--border);
+    border-radius: var(--radius) 0 0 var(--radius);
+  }
+  [data-scope="drawer"][data-part="content"][data-placement="top"] {
+    border-bottom: 1px solid var(--border);
+    border-radius: 0 0 var(--radius) var(--radius);
+  }
+  [data-scope="drawer"][data-part="content"][data-placement="bottom"] {
+    border-top: 1px solid var(--border);
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+
+  /* It slides in from its edge and back out to it. Ark keeps a closing
+     content shown until its animation ends. */
+  [data-scope="drawer"][data-part="content"][data-placement="left"][data-state="open"] {
+    animation: moderno-drawer-in-left var(--motion-normal) ease-out;
+  }
+  [data-scope="drawer"][data-part="content"][data-placement="left"][data-state="closed"] {
+    animation: moderno-drawer-out-left var(--motion-fast) ease-in;
+  }
+  [data-scope="drawer"][data-part="content"][data-placement="right"][data-state="open"] {
+    animation: moderno-drawer-in-right var(--motion-normal) ease-out;
+  }
+  [data-scope="drawer"][data-part="content"][data-placement="right"][data-state="closed"] {
+    animation: moderno-drawer-out-right var(--motion-fast) ease-in;
+  }
+  [data-scope="drawer"][data-part="content"][data-placement="top"][data-state="open"] {
+    animation: moderno-drawer-in-top var(--motion-normal) ease-out;
+  }
+  [data-scope="drawer"][data-part="content"][data-placement="top"][data-state="closed"] {
+    animation: moderno-drawer-out-top var(--motion-fast) ease-in;
+  }
+  [data-scope="drawer"][data-part="content"][data-placement="bottom"][data-state="open"] {
+    animation: moderno-drawer-in-bottom var(--motion-normal) ease-out;
+  }
+  [data-scope="drawer"][data-part="content"][data-placement="bottom"][data-state="closed"] {
+    animation: moderno-drawer-out-bottom var(--motion-fast) ease-in;
+  }
+
+  /* Title and description are an <h2> and a <p> in some bindings: without a
+     reset, the browser's own heading size and margins apply wherever the page
+     has no preflight (a portal renders outside any scoped one). */
+  [data-scope="drawer"][data-part="title"],
+  [data-scope="drawer"][data-part="description"] {
+    margin: 0;
+  }
+  [data-scope="drawer"][data-part="title"] {
+    color: var(--foreground);
+    font-size: var(--text-ui-lg);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--leading-ui-lg);
+  }
+  [data-scope="drawer"][data-part="description"] {
+    color: var(--muted-foreground);
+    font-size: var(--text-ui-md);
+    line-height: var(--leading-ui-md);
+  }
+  /* The close button sits in the corner: keep the title clear of it. */
+  [data-scope="drawer"][data-part="content"]:has(> [data-part="close-trigger"])
+    > [data-part="title"] {
+    padding-inline-end: var(--spacing-6);
+  }
+
+  /* A bare close trigger is a small icon button in the top corner. One
+     rendered through asChild keeps its own element's look. */
+  [data-scope="drawer"][data-part="close-trigger"] {
+    position: absolute;
+    inset-block-start: var(--spacing-4);
+    inset-inline-end: var(--spacing-4);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--spacing-6);
+    height: var(--spacing-6);
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius);
+    background-color: transparent;
+    color: var(--muted-foreground);
+    font: inherit;
+    cursor: pointer;
+  }
+  [data-scope="drawer"][data-part="close-trigger"]:hover {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+  [data-scope="drawer"][data-part="close-trigger"]:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+  }
+
+  /* Less motion: the drawer and its scrim show and hide at once. The
+     selectors match the open and closed rules' weight, and follow them. */
+  @media (prefers-reduced-motion: reduce) {
+    [data-scope="drawer"][data-part="backdrop"][data-state],
+    [data-scope="drawer"][data-part="content"][data-placement][data-state] {
+      animation: none;
+    }
+  }
+
+  @keyframes moderno-drawer-fade-in {
+    from {
+      opacity: 0;
+    }
+  }
+  @keyframes moderno-drawer-fade-out {
+    to {
+      opacity: 0;
+    }
+  }
+  @keyframes moderno-drawer-in-left {
+    from {
+      translate: -100% 0;
+    }
+  }
+  @keyframes moderno-drawer-out-left {
+    to {
+      translate: -100% 0;
+    }
+  }
+  @keyframes moderno-drawer-in-right {
+    from {
+      translate: 100% 0;
+    }
+  }
+  @keyframes moderno-drawer-out-right {
+    to {
+      translate: 100% 0;
+    }
+  }
+  @keyframes moderno-drawer-in-top {
+    from {
+      translate: 0 -100%;
+    }
+  }
+  @keyframes moderno-drawer-out-top {
+    to {
+      translate: 0 -100%;
+    }
+  }
+  @keyframes moderno-drawer-in-bottom {
+    from {
+      translate: 0 100%;
+    }
+  }
+  @keyframes moderno-drawer-out-bottom {
+    to {
+      translate: 0 100%;
+    }
   }
 
   /* ─────────────────────────── Field ──────────────────────────── *

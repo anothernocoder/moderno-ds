@@ -26,6 +26,7 @@ import comboboxComponent from "./components/combobox.ts";
 import dialogComponent from "./components/dialog.ts";
 import dividerComponent from "./components/divider.ts";
 import donutChartComponent from "./components/donut-chart.ts";
+import drawerComponent from "./components/drawer.ts";
 import fieldComponent from "./components/field.ts";
 import indicatorComponent from "./components/indicator.ts";
 import lineChartComponent from "./components/line-chart.ts";
@@ -68,6 +69,7 @@ export const { ENTRIES, AGENT_COMPONENTS, AGENT_EXAMPLES } = assembleComponents(
   dialogComponent,
   dividerComponent,
   donutChartComponent,
+  drawerComponent,
   fieldComponent,
   indicatorComponent,
   lineChartComponent,

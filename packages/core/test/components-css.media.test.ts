@@ -21,6 +21,8 @@ import postcss, { type AtRule, type Rule } from "postcss";
  * registry sources.
  */
 const MEDIA_ALLOW_LIST = new Set<string>([
+  // A Dialog presents as a bottom Drawer under 40rem (dialog.css).
+  "dialog",
   // A Menu presents as a bottom sheet under 40rem (menu.css).
   "menu",
 ]);
@@ -147,7 +149,7 @@ function viewportQueryScopes(stylesheet: string): string[] {
 }
 
 /**
- * The real stylesheet exercises the allow-list with one scope only. These
+ * The real stylesheet exercises only the allow-listed scopes. These
  * synthetic stylesheets exercise the rest of the gate, and in particular they
  * pin the shape the exemption used to let through.
  */
@@ -163,9 +165,17 @@ describe("the gate itself, over synthetic stylesheets", () => {
   it("catches a viewport query on a scope that is not allow-listed", () => {
     expect(
       offendingMediaRules(`@media (width >= 48rem) {
-        [data-scope="dialog"][data-part="content"] { inset: auto; }
+        [data-scope="drawer"][data-part="content"] { inset: auto; }
       }`),
     ).toHaveLength(1);
+  });
+
+  it("lets a viewport query through on an allow-listed scope", () => {
+    expect(
+      offendingMediaRules(`@media (width < 40rem) {
+        [data-scope="dialog"][data-part="content"] { max-width: none; }
+      }`),
+    ).toEqual([]);
   });
 
   it("catches a viewport query that also names a user preference", () => {
