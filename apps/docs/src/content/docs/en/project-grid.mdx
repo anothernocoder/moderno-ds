@@ -1,0 +1,210 @@
+---
+title: Project Grid
+description: A portfolio of your work as a grid of cards — each with a cover, the client and year, a title, a short summary and its tags, under a serif heading.
+group: Blocks
+order: 119
+agent:
+  intent: A portfolio section of a studio or agency site that lists projects as cards — a serif heading, a sentence of introduction and a link to every project, then one card per project with its cover, client, year, title, summary and tags.
+  whenToUse: "A studio, agency or freelancer site that shows off selected work, or a case-studies page that points readers at each project."
+  whenNotToUse:
+    - case: Blog posts, each with a date and an author
+      use: PostGrid — its cards carry a category, a date and an author
+    - case: Projects or records in an app, each with a status and an Open action
+      use: GridList — its cards carry a status and an action each
+    - case: Products with a price
+      use: ProductList — its tiles carry a price and pagination
+  gotchas:
+    - "`projects` is an array of `{ id, title, client, year, summary, tags, href?, image?: { src, alt } }`."
+    - '`year` is a string, like `"2026"`. It goes in `<time datetime>` as it is.'
+    - "With `image`, the cover shows it, cropped to 16:9. Without it, the cover shows the client's name in the serif face."
+    - "With `href`, the project's title is a link to it. Without it, the title is plain text."
+    - "Each title is an `h3` under the block's `h2`, so the projects show in the page outline."
+    - "`tags` shows each tag as a Badge. An empty array hides the tag row."
+    - '`description` hides when you pass `""`, and so does the "View all projects" link when `allProjectsHref` is `""`.'
+    - '`projects={[]}` shows "No projects to show yet." in place of the grid.'
+    - '`disabled` keeps every project and makes each title link and the "View all projects" link inert: they drop their `href` and carry `aria-disabled`. The retry button is disabled too.'
+    - 'Presentational: `onRetry` reports that "Try again" was pressed. Loading the projects again stays yours.'
+    - "`loading` keeps the heading and replaces the grid with three placeholder cards in one busy `status` region."
+    - '`error` keeps the heading and puts an error Alert with your message and a "Try again" button where the grid was. An empty string counts as no error.'
+    - 'The layout follows the block''s own width, not the viewport: the "View all projects" link sits under the introduction below `--container-sm` and beside the heading from there; one column below `--container-md`, two from there and three from `--container-lg`.'
+  theming:
+    - "The block paints its cover (--muted) and its dashed empty box (--border). Each project is Card's outline variant, each tag is Badge's neutral variant, the error is Alert's error variant, the retry is Button's outline variant and the loading cards are Skeleton."
+    - "The heading and the client's name on a cover read --font-serif; the heading reads --foreground; the introduction, the client and year, each summary and the name on a cover read --muted-foreground; the title links and the View all projects link read --foreground, and their focus ring --ring."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg. The heading block is capped at --container-md."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ProjectGridBlockDemo from "../../../islands/ProjectGridBlockDemo.svelte";
+import projectGridReact from "../../../../../../registry/blocks/project-grid/react/project-grid.tsx?raw";
+import projectGridVue from "../../../../../../registry/blocks/project-grid/vue/ProjectGrid.vue?raw";
+import projectGridSolid from "../../../../../../registry/blocks/project-grid/solid/project-grid.tsx?raw";
+import projectGridSvelte from "../../../../../../registry/blocks/project-grid/svelte/ProjectGrid.svelte?raw";
+
+export const examples = {
+  react: projectGridReact,
+  vue: projectGridVue,
+  solid: projectGridSolid,
+  svelte: projectGridSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <ProjectGridBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="project-grid" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { ProjectGrid } from "@/components/blocks/project-grid";
+```
+
+```tsx
+<ProjectGrid heading="Our work" projects={projects} allProjectsHref="/work" />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import ProjectGrid from "@/components/blocks/ProjectGrid.vue";
+</script>
+```
+
+```vue
+<ProjectGrid heading="Our work" :projects="projects" all-projects-href="/work" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import ProjectGrid from "@/components/blocks/ProjectGrid.svelte";
+</script>
+```
+
+```svelte
+<ProjectGrid heading="Our work" {projects} allProjectsHref="/work" />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { ProjectGrid } from "@/components/blocks/project-grid";
+```
+
+```tsx
+<ProjectGrid heading="Our work" projects={projects} allProjectsHref="/work" />
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+| Prop              | Type               | Default             | Description                                                                 |
+| ----------------- | ------------------ | ------------------- | --------------------------------------------------------------------------- |
+| `heading`         | `string`           | `"Selected work"`   | The section's heading. Set in the serif face.                               |
+| `description`     | `string`           | a sentence          | One sentence under the heading; `""` hides it.                              |
+| `allProjectsHref` | `string`           | `"#"`               | Where "View all projects" goes, like your work index; `""` hides the link.  |
+| `projects`        | `ProjectSummary[]` | six sample projects | The projects, in the order you pass them. `[]` shows the empty message.     |
+| `error`           | `string`           | —                   | Loading the projects failed; an error Alert with a retry replaces the grid. |
+| `loading`         | `boolean`          | `false`             | Placeholder cards in a busy region replace the grid.                        |
+| `disabled`        | `boolean`          | `false`             | The projects stay; every link is inert and the retry button disabled.       |
+| `onRetry`         | `() => void`       | —                   | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.                |
+
+### ProjectSummary
+
+| Field     | Type           | Description                                                |
+| --------- | -------------- | ---------------------------------------------------------- |
+| `id`      | `string`       | A stable key for the project.                              |
+| `title`   | `string`       | The project's title.                                       |
+| `client`  | `string`       | Who it was for, like `"Harbor Coffee"`.                    |
+| `year`    | `string`       | The year it shipped, like `"2026"`, for `<time datetime>`. |
+| `summary` | `string`       | One sentence about the work.                               |
+| `tags`    | `string[]`     | Short labels, like `"Brand"`. Each one shows in a Badge.   |
+| `href`    | `string`       | Optional. Turns the title into a link to the project.      |
+| `image`   | `ProjectImage` | Optional. The cover: `{ src, alt }`, cropped to 16:9.      |
+
+### ProjectImage
+
+| Field | Type     | Description                                    |
+| ----- | -------- | ---------------------------------------------- |
+| `src` | `string` | The image's URL.                               |
+| `alt` | `string` | What the image shows; `""` if it adds nothing. |
+
+### States
+
+| State    | Prop            | What renders                                                 |
+| -------- | --------------- | ------------------------------------------------------------ |
+| Default  | —               | Heading, introduction and one card per project.              |
+| Empty    | `projects={[]}` | Heading, introduction and "No projects to show yet."         |
+| Loading  | `loading`       | Heading, introduction and three placeholder cards.           |
+| Error    | `error`         | Heading, introduction, then an error Alert with "Try again". |
+| Disabled | `disabled`      | The same projects with every link inert.                     |
+
+### Sizing
+
+| Container step           | What changes                                            |
+| ------------------------ | ------------------------------------------------------- |
+| below `@sm`              | One column; "View all projects" under the introduction. |
+| `@sm` (`--container-sm`) | "View all projects" moves beside the heading.           |
+| `@md` (`--container-md`) | Two columns, and the heading steps up.                  |
+| `@lg` (`--container-lg`) | Three columns, with more room between and around.       |
+
+## Examples
+
+### Container widths
+
+The same block at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <ProjectGridBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Empty
+
+Pass an empty `projects` array.
+
+<Preview examples={examples} layout="fill">
+  <ProjectGridBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <ProjectGridBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+Press "Try again" to clear the message and bring the projects back.
+
+<Preview examples={examples} layout="fill">
+  <ProjectGridBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <ProjectGridBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Keep each summary to one sentence, so the cards in a row stay close in height.
+- Use covers of the same shape. The block crops each one to 16:9.
+- Six projects fill two or three columns evenly.

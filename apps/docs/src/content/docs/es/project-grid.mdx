@@ -1,0 +1,182 @@
+---
+title: Project Grid
+description: Un portafolio de tu trabajo como una cuadrícula de tarjetas — cada una con su portada, el cliente y el año, un título, un resumen corto y sus etiquetas, bajo un encabezado con serifa.
+group: Bloques
+order: 119
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ProjectGridBlockDemo from "../../../islands/ProjectGridBlockDemo.svelte";
+import projectGridReact from "../../../../../../registry/blocks/project-grid/react/project-grid.tsx?raw";
+import projectGridVue from "../../../../../../registry/blocks/project-grid/vue/ProjectGrid.vue?raw";
+import projectGridSolid from "../../../../../../registry/blocks/project-grid/solid/project-grid.tsx?raw";
+import projectGridSvelte from "../../../../../../registry/blocks/project-grid/svelte/ProjectGrid.svelte?raw";
+
+export const examples = {
+  react: projectGridReact,
+  vue: projectGridVue,
+  solid: projectGridSolid,
+  svelte: projectGridSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <ProjectGridBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="project-grid" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { ProjectGrid } from "@/components/blocks/project-grid";
+```
+
+```tsx
+<ProjectGrid heading="Nuestro trabajo" projects={projects} allProjectsHref="/trabajo" />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import ProjectGrid from "@/components/blocks/ProjectGrid.vue";
+</script>
+```
+
+```vue
+<ProjectGrid heading="Nuestro trabajo" :projects="projects" all-projects-href="/trabajo" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import ProjectGrid from "@/components/blocks/ProjectGrid.svelte";
+</script>
+```
+
+```svelte
+<ProjectGrid heading="Nuestro trabajo" {projects} allProjectsHref="/trabajo" />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { ProjectGrid } from "@/components/blocks/project-grid";
+```
+
+```tsx
+<ProjectGrid heading="Nuestro trabajo" projects={projects} allProjectsHref="/trabajo" />
+```
+
+</ForFramework>
+
+## Referencia de la API
+
+### Props
+
+| Prop              | Tipo               | Por defecto       | Descripción                                                                               |
+| ----------------- | ------------------ | ----------------- | ----------------------------------------------------------------------------------------- |
+| `heading`         | `string`           | `"Selected work"` | El encabezado de la sección. Va en la fuente con serifa.                                  |
+| `description`     | `string`           | una frase         | Una frase bajo el encabezado; `""` la oculta.                                             |
+| `allProjectsHref` | `string`           | `"#"`             | A dónde lleva "View all projects", como tu índice de trabajos; `""` oculta el enlace.     |
+| `projects`        | `ProjectSummary[]` | seis proyectos    | Los proyectos, en el orden en que los pasas. `[]` muestra el mensaje de vacío.            |
+| `error`           | `string`           | —                 | Falló la carga de los proyectos; un Alert de error con reintento reemplaza la cuadrícula. |
+| `loading`         | `boolean`          | `false`           | Tarjetas de marcador en una región ocupada reemplazan la cuadrícula.                      |
+| `disabled`        | `boolean`          | `false`           | Los proyectos se quedan; cada enlace queda inerte y el reintento deshabilitado.           |
+| `onRetry`         | `() => void`       | —                 | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.                               |
+
+### ProjectSummary
+
+| Campo     | Tipo           | Descripción                                                 |
+| --------- | -------------- | ----------------------------------------------------------- |
+| `id`      | `string`       | Una clave estable para el proyecto.                         |
+| `title`   | `string`       | El título del proyecto.                                     |
+| `client`  | `string`       | Para quién fue, como `"Harbor Coffee"`.                     |
+| `year`    | `string`       | El año en que salió, como `"2026"`, para `<time datetime>`. |
+| `summary` | `string`       | Una frase sobre el trabajo.                                 |
+| `tags`    | `string[]`     | Etiquetas cortas, como `"Brand"`. Cada una va en un Badge.  |
+| `href`    | `string`       | Opcional. Convierte el título en un enlace al proyecto.     |
+| `image`   | `ProjectImage` | Opcional. La portada: `{ src, alt }`, recortada a 16:9.     |
+
+### ProjectImage
+
+| Campo | Tipo     | Descripción                                    |
+| ----- | -------- | ---------------------------------------------- |
+| `src` | `string` | La URL de la imagen.                           |
+| `alt` | `string` | Qué muestra la imagen; `""` si no aporta nada. |
+
+### Estados
+
+| Estado        | Prop            | Qué se muestra                                                        |
+| ------------- | --------------- | --------------------------------------------------------------------- |
+| Por defecto   | —               | Encabezado, introducción y una tarjeta por proyecto.                  |
+| Vacío         | `projects={[]}` | Encabezado, introducción y "No projects to show yet."                 |
+| Cargando      | `loading`       | Encabezado, introducción y tres tarjetas de marcador.                 |
+| Error         | `error`         | Encabezado, introducción y después un Alert de error con "Try again". |
+| Deshabilitado | `disabled`      | Los mismos proyectos con cada enlace inerte.                          |
+
+### Tamaño
+
+| Paso del contenedor      | Qué cambia                                              |
+| ------------------------ | ------------------------------------------------------- |
+| bajo `@sm`               | Una columna; "View all projects" bajo la introducción.  |
+| `@sm` (`--container-sm`) | "View all projects" pasa al lado del encabezado.        |
+| `@md` (`--container-md`) | Dos columnas, y el encabezado sube un tamaño.           |
+| `@lg` (`--container-lg`) | Tres columnas, con más espacio entre ellas y alrededor. |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+El mismo bloque a 18rem, 30rem, 40rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <ProjectGridBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Vacío
+
+Pasa un array `projects` vacío.
+
+<Preview examples={examples} layout="fill">
+  <ProjectGridBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <ProjectGridBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+Pulsa "Try again" para quitar el mensaje y recuperar los proyectos.
+
+<Preview examples={examples} layout="fill">
+  <ProjectGridBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+<Preview examples={examples} layout="fill">
+  <ProjectGridBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
+
+## Notas
+
+- Deja cada resumen en una frase, para que las tarjetas de una fila tengan una altura parecida.
+- Usa portadas de la misma forma. El bloque recorta cada una a 16:9.
+- Seis proyectos llenan dos o tres columnas por igual.

@@ -2874,6 +2874,78 @@
       ]
     },
     {
+      "name": "project-grid-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Project Grid (React)",
+      "description": "A portfolio section of project cards, composing the @moderno-ui/react Alert, Badge, Button, Card and Skeleton primitives: a serif heading, a sentence of introduction and a link to every project, then one Card per project with its cover (the consumer's image, or the client's name set in the display face), the client and year, its linked title, a one-line summary and its tags as Badges, with its own loading, empty and error renders; responds to its container (@container) — the link to every project moves beside the heading at @sm, the projects sit in two columns and the heading steps up at @md, and three columns with more room at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/project-grid/react/project-grid.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/project-grid.tsx"
+        }
+      ]
+    },
+    {
+      "name": "project-grid-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Project Grid (Vue)",
+      "description": "A portfolio section of project cards, composing the @moderno-ui/vue Alert, Badge, Button, Card and Skeleton primitives: a serif heading, a sentence of introduction and a link to every project, then one Card per project with its cover (the consumer's image, or the client's name set in the display face), the client and year, its linked title, a one-line summary and its tags as Badges, with its own loading, empty and error renders; responds to its container (@container) — the link to every project moves beside the heading at @sm, the projects sit in two columns and the heading steps up at @md, and three columns with more room at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/project-grid/vue/ProjectGrid.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/ProjectGrid.vue"
+        }
+      ]
+    },
+    {
+      "name": "project-grid-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Project Grid (Svelte)",
+      "description": "A portfolio section of project cards, composing the @moderno-ui/svelte Alert, Badge, Button, Card and Skeleton primitives: a serif heading, a sentence of introduction and a link to every project, then one Card per project with its cover (the consumer's image, or the client's name set in the display face), the client and year, its linked title, a one-line summary and its tags as Badges, with its own loading, empty and error renders; responds to its container (@container) — the link to every project moves beside the heading at @sm, the projects sit in two columns and the heading steps up at @md, and three columns with more room at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/project-grid/svelte/ProjectGrid.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/ProjectGrid.svelte"
+        }
+      ]
+    },
+    {
+      "name": "project-grid-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Project Grid (Solid)",
+      "description": "A portfolio section of project cards, composing the @moderno-ui/solid Alert, Badge, Button, Card and Skeleton primitives: a serif heading, a sentence of introduction and a link to every project, then one Card per project with its cover (the consumer's image, or the client's name set in the display face), the client and year, its linked title, a one-line summary and its tags as Badges, with its own loading, empty and error renders; responds to its container (@container) — the link to every project moves beside the heading at @sm, the projects sit in two columns and the heading steps up at @md, and three columns with more room at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/project-grid/solid/project-grid.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/project-grid.tsx"
+        }
+      ]
+    },
+    {
       "name": "promo-react",
       "type": "registry:block",
       "version": "0.1.0",

@@ -1,0 +1,37 @@
+{
+  "title": "Project Grid",
+  "description": "A portfolio section of project cards, composing the @moderno-ui/{framework} Alert, Badge, Button, Card and Skeleton primitives: a serif heading, a sentence of introduction and a link to every project, then one Card per project with its cover (the consumer's image, or the client's name set in the display face), the client and year, its linked title, a one-line summary and its tags as Badges, with its own loading, empty and error renders; responds to its container (@container) — the link to every project moves beside the heading at @sm, the projects sit in two columns and the heading steps up at @md, and three columns with more room at @lg.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": [],
+  "files": {
+    "react": [
+      {
+        "path": "blocks/project-grid/react/project-grid.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/project-grid.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "blocks/project-grid/vue/ProjectGrid.vue",
+        "type": "registry:block",
+        "target": "src/components/blocks/ProjectGrid.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "blocks/project-grid/svelte/ProjectGrid.svelte",
+        "type": "registry:block",
+        "target": "src/components/blocks/ProjectGrid.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "blocks/project-grid/solid/project-grid.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/project-grid.tsx"
+      }
+    ]
+  }
+}
