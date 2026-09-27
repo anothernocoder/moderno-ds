@@ -45,7 +45,7 @@ test.describe("sidebar filter", () => {
 
     await expect
       .poll(() => visibleTitles(page))
-      .toEqual(["Line Chart", "Area Chart", "Bar Chart", "Scatter Chart", "Donut Chart"]);
+      .toEqual(["Line Chart", "Area Chart", "Bar Chart", "Scatter Chart", "Donut Chart", "Spark Chart"]);
     await expect.poll(() => visibleGroups(page)).toEqual(["Components"]);
 
     const noMatches = page.locator('[data-sidebar-empty]');
@@ -82,6 +82,7 @@ test.describe("sidebar filter", () => {
         "Gráfico de barras",
         "Gráfico de dispersión",
         "Gráfico de anillo",
+        "Minigráfico",
       ]);
   });
 
@@ -111,7 +112,7 @@ test.describe("sidebar filter", () => {
     );
 
     await filter.fill("chart");
-    await expect.poll(() => visibleTitles(page)).toEqual(["Line Chart", "Area Chart", "Bar Chart", "Scatter Chart", "Donut Chart"]);
+    await expect.poll(() => visibleTitles(page)).toEqual(["Line Chart", "Area Chart", "Bar Chart", "Scatter Chart", "Donut Chart", "Spark Chart"]);
 
     await page.keyboard.press("Escape");
 

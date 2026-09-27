@@ -67,6 +67,9 @@ export type {
 export { buildDonutChart } from "./donut.js";
 export type { DonutChartModel, DonutChartOptions, DonutDatum, DonutSlice } from "./donut.js";
 
+export { buildSparkChart } from "./spark.js";
+export type { SparkChartModel, SparkChartOptions, SparkMarker } from "./spark.js";
+
 // ── Render tree: the complete render description, one walker per framework ──
 export {
   areaChartNodes,
@@ -75,5 +78,6 @@ export {
   donutChartNodes,
   lineChartNodes,
   scatterChartNodes,
+  sparkChartNodes,
 } from "./render.js";
 export type { ChartNode } from "./render.js";

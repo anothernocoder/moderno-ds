@@ -14,6 +14,7 @@ import { buildBarChart, type BarChartOptions } from "./bar.js";
 import { buildDonutChart, type DonutChartOptions } from "./donut.js";
 import { buildLineChart, type LineChartOptions } from "./line.js";
 import { buildScatterChart, type ScatterChartOptions } from "./scatter.js";
+import { buildSparkChart, type SparkChartOptions } from "./spark.js";
 import type { AxisTick, PlotArea } from "./types.js";
 
 /** One SVG element in the render description. Pure data — no DOM, no framework. */
@@ -199,6 +200,34 @@ export function donutChartNodes(options: DonutChartOptions): ChartNode {
       seriesGroup(s.index, [{ tag: "path", attrs: { ...part("slice"), d: s.path } }]),
     ),
   );
+}
+
+/**
+ * The full sparkline: no frame (no grid, axes or labels), just one series with
+ * an optional fill, the line, and an optional last-point marker.
+ */
+export function sparkChartNodes(options: SparkChartOptions): ChartNode {
+  const model = buildSparkChart(options);
+  const shapes: ChartNode[] = [
+    ...(model.area === undefined
+      ? []
+      : [{ tag: "path", attrs: { ...part("area"), d: model.area } }]),
+    { tag: "path", attrs: { ...part("line"), d: model.line } },
+    ...(model.marker === undefined
+      ? []
+      : [{ tag: "circle", attrs: { ...part("point"), ...model.marker } }]),
+  ];
+  return {
+    tag: "svg",
+    attrs: {
+      viewBox: `0 0 ${model.width} ${model.height}`,
+      role: "img",
+      preserveAspectRatio: "xMidYMid meet",
+      ...part("root"),
+      "data-chart": "spark",
+    },
+    children: [seriesGroup(0, shapes)],
+  };
 }
 
 function escape(value: string): string {

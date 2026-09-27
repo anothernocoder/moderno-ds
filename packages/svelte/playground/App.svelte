@@ -34,6 +34,7 @@
   import Select from "./sections/Select.svelte";
   import Skeleton from "./sections/Skeleton.svelte";
   import Slider from "./sections/Slider.svelte";
+  import SparkChart from "./sections/SparkChart.svelte";
   import Spinner from "./sections/Spinner.svelte";
   import Splitter from "./sections/Splitter.svelte";
   import Switch from "./sections/Switch.svelte";
@@ -70,6 +71,7 @@
   <Select {open} />
   <Skeleton {open} />
   <Slider {open} />
+  <SparkChart {open} />
   <Spinner {open} />
   <Splitter {open} />
   <Switch {open} />

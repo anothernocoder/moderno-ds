@@ -38,6 +38,7 @@ import RadioGroupSection from "./sections/radio-group.js";
 import SelectSection from "./sections/select.js";
 import SkeletonSection from "./sections/skeleton.js";
 import SliderSection from "./sections/slider.js";
+import SparkChartSection from "./sections/spark-chart.js";
 import SpinnerSection from "./sections/spinner.js";
 import SplitterSection from "./sections/splitter.js";
 import SwitchSection from "./sections/switch.js";
@@ -78,6 +79,7 @@ export function App({ open = false }: AppProps) {
       <SelectSection open={open} />
       <SkeletonSection open={open} />
       <SliderSection open={open} />
+      <SparkChartSection open={open} />
       <SpinnerSection open={open} />
       <SplitterSection open={open} />
       <SwitchSection open={open} />
