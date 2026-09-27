@@ -1,7 +1,7 @@
 {
   "title": "Form Layout",
-  "description": "Grouped settings form composing the @moderno-ui/{framework} Field, Checkbox, Divider, Button and Alert primitives; responds to its container (@container) across all three contract steps — actions row at @sm, two-up field grid at @md, group headings beside their fields at @lg — and renders its default, disabled, loading and error states from props.",
-  "version": "0.1.0",
+  "description": "Grouped settings form composing the @moderno-ui/{framework} Field, Checkbox, Divider, Button and Alert primitives; responds to its container (@container) across all three contract steps — actions row at @sm, two-up field grid at @md, group headings beside their fields at @lg — renders its default, disabled, loading and error states from props, and takes its title, description, action labels and its groups of fields as props (children, or the default slot in Vue), so a screen can reuse the layout for its own fields.",
+  "version": "0.2.0",
   "dependencies": ["@moderno-ui/{framework}"],
   "registryDependencies": [],
   "files": {

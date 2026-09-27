@@ -1,7 +1,7 @@
 {
   "title": "Pricing",
   "description": "Plan comparison composing the @moderno-ui/{framework} Card, Badge, Button, Alert and Skeleton primitives: a serif title and one card per plan with its price, features and a call to action, the recommended plan outlined in --primary with a badge and the primary button, with its own empty, loading and error renders; responds to its container (@container) — stacked plans list their features in two columns at @sm, the plans sit side by side and the title steps up at @md, and the block takes more room at @lg.",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "dependencies": ["@moderno-ui/{framework}"],
   "registryDependencies": [],
   "files": {

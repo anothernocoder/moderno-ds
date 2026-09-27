@@ -1,0 +1,37 @@
+{
+  "title": "Invite team",
+  "description": "Full-viewport invite team screen composing the list block: an email field to invite teammates, then the invites nobody has accepted yet, with the send's error, invalid-address and busy states and the list's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead, the send button and the continue row line up at @sm, the title grows and the footer lines up at @md.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": ["list-{framework}"],
+  "files": {
+    "react": [
+      {
+        "path": "screens/invite-team/react/invite-team.tsx",
+        "type": "registry:screen",
+        "target": "src/components/screens/invite-team.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "screens/invite-team/vue/InviteTeam.vue",
+        "type": "registry:screen",
+        "target": "src/components/screens/InviteTeam.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "screens/invite-team/svelte/InviteTeam.svelte",
+        "type": "registry:screen",
+        "target": "src/components/screens/InviteTeam.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "screens/invite-team/solid/invite-team.tsx",
+        "type": "registry:screen",
+        "target": "src/components/screens/invite-team.tsx"
+      }
+    ]
+  }
+}

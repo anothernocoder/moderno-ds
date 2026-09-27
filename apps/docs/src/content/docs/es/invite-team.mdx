@@ -1,0 +1,261 @@
+---
+title: Invitar al equipo
+description: Una pantalla a viewport completo donde quien abre un espacio de trabajo invita a su equipo por correo y ve quién no se ha unido todavía.
+group: Pantallas
+order: 118
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import InviteTeamScreenDemo from "../../../islands/InviteTeamScreenDemo.svelte";
+import inviteTeamReact from "../../../../../../registry/screens/invite-team/react/invite-team.tsx?raw";
+import inviteTeamVue from "../../../../../../registry/screens/invite-team/vue/InviteTeam.vue?raw";
+import inviteTeamSolid from "../../../../../../registry/screens/invite-team/solid/invite-team.tsx?raw";
+import inviteTeamSvelte from "../../../../../../registry/screens/invite-team/svelte/InviteTeam.svelte?raw";
+
+<FrameworkSelect locale="es" />
+
+<Preview
+  examples={{
+    react: inviteTeamReact,
+    vue: inviteTeamVue,
+    solid: inviteTeamSolid,
+    svelte: inviteTeamSvelte,
+  }}
+  layout="fill"
+>
+  <InviteTeamScreenDemo client:visible locale="es" />
+</Preview>
+
+Úsala en el paso de bienvenida donde alguien invita a su equipo. Muestra un campo de correo y las invitaciones que nadie ha aceptado todavía; tu página envía las invitaciones y carga la lista.
+
+## Instalación
+
+<Install item="invite-team" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { InviteTeam } from "@/components/screens/invite-team";
+```
+
+```tsx
+<InviteTeam
+  invites={pending}
+  sending={sending}
+  onSubmit={handleSubmit}
+  onRemoveInvite={(id) => revoke(id)}
+  onContinue={next}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```ts
+import InviteTeam from "@/components/screens/InviteTeam.vue";
+```
+
+```vue
+<InviteTeam
+  :invites="pending"
+  :sending="sending"
+  @submit="handleSubmit"
+  @remove-invite="(id) => revoke(id)"
+  @continue="next"
+/>
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```ts
+import InviteTeam from "@/components/screens/InviteTeam.svelte";
+```
+
+```svelte
+<InviteTeam
+  invites={pending}
+  {sending}
+  onsubmit={handleSubmit}
+  onremoveinvite={(id) => revoke(id)}
+  oncontinue={next}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { InviteTeam } from "@/components/screens/invite-team";
+```
+
+```tsx
+<InviteTeam
+  invites={pending()}
+  sending={sending()}
+  onSubmit={handleSubmit}
+  onRemoveInvite={(id) => revoke(id)}
+  onContinue={next}
+/>
+```
+
+</ForFramework>
+
+## Referencia de API
+
+### Props
+
+Los callbacks son props `on…` en React y Solid, en minúsculas (`onremoveinvite`) en Svelte y eventos (`submit`, `removeInvite`, `navigate`) en Vue.
+
+| Prop             | Tipo                  | Por defecto | Descripción                                                             |
+| ---------------- | --------------------- | ----------- | ----------------------------------------------------------------------- |
+| `invites`        | `ListItem[]`          | ejemplos    | Las invitaciones que nadie ha aceptado. `[]` es el estado vacío.        |
+| `invitesLoading` | `boolean`             | `false`     | Las invitaciones se están cargando: filas de relleno.                   |
+| `invitesError`   | `string`              | —           | Falló la carga de las invitaciones: una alerta con «Try again».         |
+| `sendError`      | `string`              | —           | Falló el envío: una alerta sobre el campo de correo.                    |
+| `emailsError`    | `string`              | —           | Qué falla en las direcciones. Marca el campo como inválido.             |
+| `sending`        | `boolean`             | `false`     | Invitaciones en camino: el campo inerte, el botón de enviar ocupado.    |
+| `disabled`       | `boolean`             | `false`     | Nada de la pantalla se puede usar ahora.                                |
+| `onSubmit`       | `(event) => void`     | —           | Envío nativo del formulario.                                            |
+| `onEditInvite`   | `(id) => void`        | —           | Se pulsó «Edit» en una invitación.                                      |
+| `onRemoveInvite` | `(id) => void`        | —           | Se pulsó «Remove» en una invitación.                                    |
+| `onRetry`        | `() => void`          | —           | «Try again» tras `invitesError`.                                        |
+| `onContinue`     | `() => void`          | —           | Se pulsó el botón «Continue».                                           |
+| `onNavigate`     | `(to, event) => void` | —           | Se pulsó un enlace de la pantalla: `home`, `skip`, `privacy` o `terms`. |
+| `homeHref`       | `string`              | `"#"`       | Destino del logotipo.                                                   |
+| `skipHref`       | `string`              | `"#"`       | Destino de «Skip for now».                                              |
+| `privacyHref`    | `string`              | `"#"`       | Destino del enlace de privacidad.                                       |
+| `termsHref`      | `string`              | `"#"`       | Destino del enlace de términos.                                         |
+
+`ListItem` es la fila del bloque [List](/es/list/): `id`, `title`, `subtitle`, `initials`, `avatarUrl`, `status`, `statusVariant` y `meta`.
+
+### Estados
+
+| Estado            | Props            | Qué se renderiza                                        |
+| ----------------- | ---------------- | ------------------------------------------------------- |
+| Por defecto       | `invites`        | El campo de correo y una fila por invitación pendiente. |
+| Correos inválidos | `emailsError`    | El campo marcado como inválido, con el mensaje debajo.  |
+| Error al enviar   | `sendError`      | Una alerta sobre el campo de correo.                    |
+| Enviando          | `sending`        | El campo inerte, el botón de enviar `aria-busy`.        |
+| Cargando          | `invitesLoading` | Filas de relleno en una región ocupada.                 |
+| Error de la lista | `invitesError`   | Una alerta con «Try again» en lugar de las filas.       |
+| Vacío             | `invites={[]}`   | «No members yet» en lugar de las filas.                 |
+| Deshabilitado     | `disabled`       | La pantalla se ve pero no se puede usar.                |
+
+### Campos del formulario
+
+| Nombre   | Control                    | Se envía                       |
+| -------- | -------------------------- | ------------------------------ |
+| `emails` | Correo, varias direcciones | Siempre, tal como se escribió. |
+
+### Tamaño
+
+| Paso del contenedor      | Cambio                                                                    |
+| ------------------------ | ------------------------------------------------------------------------- |
+| `@sm` (`--container-sm`) | La cabecera, el botón de enviar y la fila de «Continue» pasan a una fila. |
+| `@md` (`--container-md`) | El título crece y el pie pasa a una sola fila.                            |
+
+### Composición
+
+| Parte               | Papel                                                                  |
+| ------------------- | ---------------------------------------------------------------------- |
+| [Field](/es/field/) | El campo de correo.                                                    |
+| [List](/es/list/)   | Las invitaciones pendientes. Su botón «Invite member» enfoca el campo. |
+
+## Ejemplos
+
+### Correos inválidos
+
+<Preview
+  examples={{
+    react: inviteTeamReact,
+    vue: inviteTeamVue,
+    solid: inviteTeamSolid,
+    svelte: inviteTeamSvelte,
+  }}
+  layout="fill"
+>
+  <InviteTeamScreenDemo client:visible locale="es" state="invalid" />
+</Preview>
+
+### Error al enviar
+
+<Preview
+  examples={{
+    react: inviteTeamReact,
+    vue: inviteTeamVue,
+    solid: inviteTeamSolid,
+    svelte: inviteTeamSvelte,
+  }}
+  layout="fill"
+>
+  <InviteTeamScreenDemo client:visible locale="es" state="send-error" />
+</Preview>
+
+### Enviando
+
+<Preview
+  examples={{
+    react: inviteTeamReact,
+    vue: inviteTeamVue,
+    solid: inviteTeamSolid,
+    svelte: inviteTeamSvelte,
+  }}
+  layout="fill"
+>
+  <InviteTeamScreenDemo client:visible locale="es" state="sending" />
+</Preview>
+
+### Cargando las invitaciones
+
+<Preview
+  examples={{
+    react: inviteTeamReact,
+    vue: inviteTeamVue,
+    solid: inviteTeamSolid,
+    svelte: inviteTeamSvelte,
+  }}
+  layout="fill"
+>
+  <InviteTeamScreenDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Las invitaciones no cargaron
+
+<Preview
+  examples={{
+    react: inviteTeamReact,
+    vue: inviteTeamVue,
+    solid: inviteTeamSolid,
+    svelte: inviteTeamSvelte,
+  }}
+  layout="fill"
+>
+  <InviteTeamScreenDemo client:visible locale="es" state="list-error" />
+</Preview>
+
+### Vacío
+
+<Preview
+  examples={{
+    react: inviteTeamReact,
+    vue: inviteTeamVue,
+    solid: inviteTeamSolid,
+    svelte: inviteTeamSvelte,
+  }}
+  layout="fill"
+>
+  <InviteTeamScreenDemo client:visible locale="es" state="empty" />
+</Preview>
+
+## Notas
+
+- Presentacional: sin petición, sin router. La página que la monta envía las invitaciones y carga la lista.
+- El campo no revisa las direcciones. Separa `emails` por comas, revisa cada una y pasa `emailsError` si alguna está mal.
+- `onNavigate` entrega el evento del clic: ignora los clics con `metaKey`/`ctrlKey` y luego `preventDefault()` para enrutar.
+- La pantalla importa el bloque List desde `@/components/blocks/…`; cambia esa línea si tu alias es otro.

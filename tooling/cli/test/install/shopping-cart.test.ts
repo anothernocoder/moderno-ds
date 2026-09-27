@@ -59,6 +59,9 @@ describe("moderno add shopping-cart-<framework>", () => {
       expect(written).toContain("aria-busy");
       expect(written).toContain("Your cart is empty.");
       expect(written).toContain("Try again");
+      // A screen that mounts it as the whole route can make its heading the h1.
+      expect(written).toContain("headingLevel");
+      expect(written).toContain("aria-level");
 
       const recorded = await readManifest(project());
       expect(recorded.items[item]!.version).toBe(registry.getItem(item)!.version);
@@ -72,7 +75,7 @@ describe("moderno add shopping-cart-<framework>", () => {
     for (const { item } of variants) {
       const entry = registry.getItem(item)!;
       expect(entry.type).toBe("registry:block");
-      expect(entry.version).toBe("0.1.0");
+      expect(entry.version).toBe("0.2.0");
       // It draws no icons and every primitive arrives with the framework
       // package, so `add` copies exactly one file and installs nothing else.
       expect(entry.dependencies).toEqual([`@moderno-ui/${item.split("-").pop()}`]);

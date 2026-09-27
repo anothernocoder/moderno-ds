@@ -1,0 +1,175 @@
+---
+title: Bienvenida
+description: Una pantalla de bienvenida de onboarding a viewport completo con un hero y un botón Continuar.
+group: Pantallas
+order: 116
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import WelcomeScreenDemo from "../../../islands/WelcomeScreenDemo.svelte";
+import welcomeReact from "../../../../../../registry/screens/welcome/react/welcome.tsx?raw";
+import welcomeVue from "../../../../../../registry/screens/welcome/vue/Welcome.vue?raw";
+import welcomeSolid from "../../../../../../registry/screens/welcome/solid/welcome.tsx?raw";
+import welcomeSvelte from "../../../../../../registry/screens/welcome/svelte/Welcome.svelte?raw";
+
+<FrameworkSelect locale="es" />
+
+<Preview
+  examples={{
+    react: welcomeReact,
+    vue: welcomeVue,
+    solid: welcomeSolid,
+    svelte: welcomeSvelte,
+  }}
+  layout="fill"
+>
+  <WelcomeScreenDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="welcome" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { Welcome } from "@/components/screens/welcome";
+```
+
+```tsx
+<Welcome name={user.firstName} onContinue={goToProfile} onSkip={goToDashboard} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```ts
+import Welcome from "@/components/screens/Welcome.vue";
+```
+
+```vue
+<Welcome :name="user.firstName" @continue="goToProfile" @skip="goToDashboard" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```ts
+import Welcome from "@/components/screens/Welcome.svelte";
+```
+
+```svelte
+<Welcome name={user.firstName} oncontinue={goToProfile} onskip={goToDashboard} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { Welcome } from "@/components/screens/welcome";
+```
+
+```tsx
+<Welcome name={user().firstName} onContinue={goToProfile} onSkip={goToDashboard} />
+```
+
+</ForFramework>
+
+## Referencia de API
+
+### Props
+
+Los callbacks son props `on…` en React y Solid, en minúsculas (`oncontinue`) en Svelte y eventos (`continue`, `skip`, `retry`, `navigate`) en Vue.
+
+| Prop          | Tipo                  | Por defecto | Descripción                                                                |
+| ------------- | --------------------- | ----------- | -------------------------------------------------------------------------- |
+| `name`        | `string`              | —           | El nombre de pila del lector. El título le saluda: «Welcome, Ana».         |
+| `error`       | `string`              | —           | No se pudo preparar el espacio de trabajo: una alerta con reintento.       |
+| `loading`     | `boolean`             | `false`     | Se está preparando el espacio: marcadores en una región ocupada.           |
+| `disabled`    | `boolean`             | `false`     | Continue y Skip se ven pero están inertes.                                 |
+| `onContinue`  | `() => void`          | —           | Se pulsó «Continue».                                                       |
+| `onSkip`      | `() => void`          | —           | Se pulsó «Skip for now».                                                   |
+| `onRetry`     | `() => void`          | —           | Se pulsó «Try again», dentro del error.                                    |
+| `onNavigate`  | `(to, event) => void` | —           | Se pulsó un enlace de la pantalla: `home`, `support`, `privacy` o `terms`. |
+| `homeHref`    | `string`              | `"#"`       | Destino del logotipo.                                                      |
+| `supportHref` | `string`              | `"#"`       | Destino de «Contact support».                                              |
+| `privacyHref` | `string`              | `"#"`       | Destino del enlace de privacidad.                                          |
+| `termsHref`   | `string`              | `"#"`       | Destino del enlace de términos.                                            |
+
+### Estados
+
+| Estado        | Props      | Qué se renderiza                                                      |
+| ------------- | ---------- | --------------------------------------------------------------------- |
+| Por defecto   | —          | El hero, centrado entre la cabecera y el pie.                         |
+| Cargando      | `loading`  | Marcadores en una región ocupada; sin botones.                        |
+| Error         | `error`    | El título se queda; una alerta con «Try again» sustituye los botones. |
+| Deshabilitado | `disabled` | Continue y Skip se ven pero no se pueden usar.                        |
+
+### Tamaño
+
+| Paso del contenedor      | Cambio                            |
+| ------------------------ | --------------------------------- |
+| `@sm` (`--container-sm`) | La cabecera pasa a una sola fila. |
+| `@md` (`--container-md`) | El pie pasa a una sola fila.      |
+
+### Composición
+
+| Parte             | Papel                                                           |
+| ----------------- | --------------------------------------------------------------- |
+| [Hero](/es/hero/) | El saludo, el subtítulo y los botones, con sus propios estados. |
+
+## Ejemplos
+
+### Saludo por nombre
+
+<Preview
+  examples={{
+    react: welcomeReact,
+    vue: welcomeVue,
+    solid: welcomeSolid,
+    svelte: welcomeSvelte,
+  }}
+  layout="fill"
+>
+  <WelcomeScreenDemo client:visible locale="es" state="named" />
+</Preview>
+
+### Cargando
+
+<Preview
+  examples={{
+    react: welcomeReact,
+    vue: welcomeVue,
+    solid: welcomeSolid,
+    svelte: welcomeSvelte,
+  }}
+  layout="fill"
+>
+  <WelcomeScreenDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+<Preview
+  examples={{
+    react: welcomeReact,
+    vue: welcomeVue,
+    solid: welcomeSolid,
+    svelte: welcomeSvelte,
+  }}
+  layout="fill"
+>
+  <WelcomeScreenDemo client:visible locale="es" state="error" />
+</Preview>
+
+## Notas
+
+- Presentacional: sin petición, sin router. La página que la monta decide adónde llevan Continue y Skip.
+- `onNavigate` entrega el evento del clic: ignora los clics con `metaKey`/`ctrlKey` y luego `preventDefault()` para enrutar.
+- La raíz es un `<div>`, no un `<main>`. Conviértela en tu `<main>` si la ruta no tiene uno.
+- La pantalla importa el bloque Hero desde `@/components/blocks/…`; cambia esa línea si tu alias es otro.

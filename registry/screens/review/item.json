@@ -1,0 +1,37 @@
+{
+  "title": "Review",
+  "description": "Full-viewport order review screen composing the description-list and order-summary blocks: the last step of checkout before the order is placed — the contact, address, delivery and payment the shopper chose, each with Change, beside a read-only recap of the lines and the totals — with Back to payment and Place order, and the place-order-failed, placing-order, loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container): the masthead and the buttons line up at @sm, the footer at @md, and the order summary moves beside the details at @lg; each block keeps reading its own container.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": ["description-list-{framework}", "order-summary-{framework}"],
+  "files": {
+    "react": [
+      {
+        "path": "screens/review/react/review.tsx",
+        "type": "registry:screen",
+        "target": "src/components/screens/review.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "screens/review/vue/Review.vue",
+        "type": "registry:screen",
+        "target": "src/components/screens/Review.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "screens/review/svelte/Review.svelte",
+        "type": "registry:screen",
+        "target": "src/components/screens/Review.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "screens/review/solid/review.tsx",
+        "type": "registry:screen",
+        "target": "src/components/screens/review.tsx"
+      }
+    ]
+  }
+}

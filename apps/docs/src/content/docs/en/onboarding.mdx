@@ -1,0 +1,194 @@
+---
+title: Onboarding flow
+description: The four first-run screens in sequence, plus an example assembly that owns the navigation between them.
+group: Flows
+order: 122
+agent:
+  intent: The four onboarding screens — welcome, profile-setup, plan-select, invite-team — sequenced by an example assembly that owns the step, the name carried back to the greeting, the picked photo, the chosen plan and the invites sent.
+  whenToUse: "Standing up a whole first-run journey at once: /onboarding/*, right after sign-up, where a new reader sets up a profile, picks a plan and invites their team."
+  whenNotToUse:
+    - case: One step of the journey, mounted under your own router
+      use: the screen itself — welcome, profile-setup, plan-select or invite-team; installing a screen never pulls in the flow
+    - case: Signing in, signing up or recovering a password
+      use: the auth flow
+  gotchas:
+    - "The assembly is example code. It is the one file in the flow you are expected to rewrite: the screens under it stay as they shipped."
+    - "Every forward move — Continue, a saved profile, a chosen plan, each Skip for now — goes one step on. Skip for now on welcome leaves the flow at once."
+    - "Skip links are real `href`s from `hrefFor`, so they work without JavaScript. The assembly routes a plain left click and leaves modified clicks to the browser."
+    - "`onStepChange` is where you mirror the step into the URL. Without it a reload drops the reader back at welcome."
+    - "The photo is a local object URL standing in for an upload. Replace it with your request and pass back the URL your server returns."
+    - "Editing a pending invite is left to you: the list draws an Edit button the assembly does not wire."
+    - "`onComplete` is the exit, with the name, the plan and the invites. The flow returns to welcome afterwards and paints no success page."
+    - "Installing the flow installs its four screens and the block each one composes, each under its own version in `.moderno/manifest.json`."
+  theming:
+    - "Nothing is painted here. The assembly renders one screen at a time inside a single wrapper element with no styling of its own."
+    - "Everything visible comes from the screens, their blocks and the primitives underneath, so a theme swap changes the whole journey at once."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import OnboardingFlowDemo from "../../../islands/OnboardingFlowDemo.svelte";
+import onboardingReact from "../../../../../../registry/flows/onboarding/react/onboarding-flow.tsx?raw";
+import onboardingVue from "../../../../../../registry/flows/onboarding/vue/OnboardingFlow.vue?raw";
+import onboardingSolid from "../../../../../../registry/flows/onboarding/solid/onboarding-flow.tsx?raw";
+import onboardingSvelte from "../../../../../../registry/flows/onboarding/svelte/OnboardingFlow.svelte?raw";
+
+export const examples = {
+  react: onboardingReact,
+  vue: onboardingVue,
+  solid: onboardingSolid,
+  svelte: onboardingSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <OnboardingFlowDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="onboarding" />
+
+The flow lands in `src/components/flows/`, its four screens in `screens/` and their blocks in `blocks/`, each versioned on its own.
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { OnboardingFlow } from "@/components/flows/onboarding-flow";
+```
+
+```tsx
+<OnboardingFlow
+  hrefFor={(step) => `/onboarding/${step}`}
+  initialStep={stepFromUrl}
+  onStepChange={(step) => router.push(`/onboarding/${step}`)}
+  onComplete={(result) => router.push("/")}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```ts
+import OnboardingFlow from "@/components/flows/OnboardingFlow.vue";
+```
+
+```vue
+<OnboardingFlow
+  :href-for="(step) => `/onboarding/${step}`"
+  :initial-step="stepFromUrl"
+  @step-change="(step) => router.push(`/onboarding/${step}`)"
+  @complete="(result) => router.push('/')"
+/>
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```ts
+import OnboardingFlow from "@/components/flows/OnboardingFlow.svelte";
+```
+
+```svelte
+<OnboardingFlow
+  hrefFor={(step) => `/onboarding/${step}`}
+  initialStep={stepFromUrl}
+  onstepchange={(step) => goto(`/onboarding/${step}`)}
+  oncomplete={(result) => goto("/")}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { OnboardingFlow } from "@/components/flows/onboarding-flow";
+```
+
+```tsx
+<OnboardingFlow
+  hrefFor={(step) => `/onboarding/${step}`}
+  initialStep={stepFromUrl()}
+  onStepChange={(step) => navigate(`/onboarding/${step}`)}
+  onComplete={(result) => navigate("/")}
+/>
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+Callbacks are `on…` props in React and Solid, lowercase (`onstepchange`) in Svelte, and emits (`stepChange`, `complete`) in Vue.
+
+| Prop           | Type               | Default          | Description                                                       |
+| -------------- | ------------------ | ---------------- | ----------------------------------------------------------------- |
+| `initialStep`  | `OnboardingStep`   | `"welcome"`      | The screen the flow opens on; in an app, whatever the route says. |
+| `initialName`  | `string`           | `""`             | The reader's full name, if sign-up already asked for it.          |
+| `hrefFor`      | `(step) => string` | `` `#${step}` `` | The URL of each step; drives the skip links.                      |
+| `finishHref`   | `string`           | `"#"`            | Where the app begins: the target of Skip on the last step.        |
+| `onStepChange` | `(step) => void`   | —                | The flow moved; mirror it in the URL.                             |
+| `onComplete`   | `(result) => void` | —                | The reader is through, finished or skipped.                       |
+| `homeHref`     | `string`           | `"#"`            | Target of the wordmark on every screen.                           |
+| `supportHref`  | `string`           | `"#"`            | Target of "Contact support" on welcome.                           |
+| `salesHref`    | `string`           | `"#"`            | Target of "Talk to sales" on plan-select.                         |
+| `privacyHref`  | `string`           | `"#"`            | Target of the privacy links on every screen.                      |
+| `termsHref`    | `string`           | `"#"`            | Target of the terms links on every screen.                        |
+
+`result` is `{ name: string; plan?: string; invites: string[] }`: the saved name, the chosen plan's `id` and every address invited.
+
+### Steps
+
+`OnboardingStep` is one of the four screens, in the order the flow moves through them.
+
+| Step                                  | Leaves for                                                          |
+| ------------------------------------- | ------------------------------------------------------------------- |
+| [`welcome`](/en/welcome/)             | `profile-setup` on Continue; `onComplete` on Skip for now           |
+| [`profile-setup`](/en/profile-setup/) | `plan-select` on a saved profile or Skip; `welcome` on Cancel       |
+| [`plan-select`](/en/plan-select/)     | `invite-team` once a plan is chosen                                 |
+| [`invite-team`](/en/invite-team/)     | `onComplete` on Continue or Skip; sending invites stays on the step |
+
+### State
+
+What the assembly holds so the screens don't have to.
+
+| State                    | Holds                                                                        |
+| ------------------------ | ---------------------------------------------------------------------------- |
+| `step`                   | The screen currently on the route.                                           |
+| `name`                   | The full name; welcome greets its first word, the avatar shows its initials. |
+| `avatarSrc`              | The picked photo, as a local object URL.                                     |
+| `plan`                   | The `id` of the chosen plan.                                                 |
+| `invites`                | The addresses sent so far, shown as the pending list.                        |
+| `errors` / `emailsError` | Whatever the last submit rejected. Cleared on every move.                    |
+
+## Examples
+
+### Open part-way through
+
+Pass the step from the URL as `initialStep`. A reload lands the reader where they were.
+
+<Preview examples={examples} layout="fill">
+  <OnboardingFlowDemo client:visible locale="en" initialStep="plan-select" />
+</Preview>
+
+### Greet a known reader
+
+Pass the name sign-up already asked for as `initialName`. Welcome greets them by it.
+
+<Preview examples={examples} layout="fill">
+  <OnboardingFlowDemo client:visible locale="en" initialName="Ada Lovelace" />
+</Preview>
+
+## Notes
+
+- The assembly is example code, the one file you are expected to rewrite. The screens stay as shipped.
+- Skip links route plain left clicks only; modified and middle clicks go to the browser.
+- The profile and invite forms are checked in the assembly, the way a form can on its own. Replace the checks with your requests.
+- The photo stays in the browser as an object URL. Upload it instead, and pass back your URL.
+- `onComplete` returns the flow to welcome and draws no success page; leaving is your router's job.

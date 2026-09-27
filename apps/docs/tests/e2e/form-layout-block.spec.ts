@@ -51,6 +51,12 @@ interface BlockMetrics {
   fieldsPaired: boolean;
   /** Whether the Profile group's heading sits beside its fields rather than above. */
   headingBeside: boolean;
+  /**
+   * The widest gap, in layout px, between a group's heading text and the line
+   * under it. Beside taller fields the group header must hug its own content,
+   * not stretch to the fields' height and push the line down the column.
+   */
+  headingGap: number;
 }
 
 /**
@@ -93,11 +99,23 @@ async function blockMetrics(page: Page, state: State): Promise<BlockMetrics[]> {
       );
       if (rows.length < 2) throw new Error("the Profile group rendered fewer than two fields");
 
+      // The docs scale a framed demo to fit; gaps are compared in layout px.
+      const scale = section.getBoundingClientRect().width / (section as HTMLElement).offsetWidth;
+      const headingGap = Math.max(
+        ...groups.map((g) => {
+          const [title, line] = g.querySelector(":scope > header")!.children;
+          const text = document.createRange();
+          text.selectNodeContents(title!);
+          return (line!.getBoundingClientRect().top - text.getBoundingClientRect().bottom) / scale;
+        }),
+      );
+
       return {
         containerWidth: section.getBoundingClientRect().width,
         actionsDisplay: getComputedStyle(actions).display,
         fieldsPaired: Math.abs(rows[0]!.top - rows[1]!.top) < 1,
         headingBeside: heading.right <= fields.left + 1,
+        headingGap,
       };
     });
   }, state);
@@ -241,6 +259,7 @@ for (const scheme of ["light", "dark"] as const) {
           expect(block.headingBeside, `${where}: group heading`).toBe(
             block.containerWidth >= CONTAINER_LG,
           );
+          expect(block.headingGap, `${where}: group heading hugs its line`).toBeLessThan(12);
 
           // The `@lg` frame is a stage wider than the docs column, and it scrolls
           // inside its own frame: the panel holding the demo never does, so the

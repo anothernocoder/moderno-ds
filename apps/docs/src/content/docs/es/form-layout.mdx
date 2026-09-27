@@ -87,16 +87,24 @@ import { FormLayout } from "@/components/blocks/form-layout";
 
 ### Propiedades
 
-| Prop       | Tipo                     | Por defecto | Descripción                                                          |
-| ---------- | ------------------------ | ----------- | -------------------------------------------------------------------- |
-| `error`    | `string`                 | —           | Alerta de formulario sobre el primer grupo.                          |
-| `errors`   | `Record<string, string>` | —           | Mensajes por campo según su `name`; cada uno lo marca como inválido. |
-| `loading`  | `boolean`                | `false`     | Deshabilita todos los controles y marca el envío con `aria-busy`.    |
-| `disabled` | `boolean`                | `false`     | El formulario es de solo lectura.                                    |
-| `onSubmit` | `(event) => void`        | —           | El evento submit nativo. Svelte: `onsubmit`. Vue: `@submit`.         |
-| `onCancel` | `() => void`             | —           | El botón "Cancel". Svelte: `oncancel`. Vue: `@cancel`.               |
+| Prop           | Tipo                     | Por defecto            | Descripción                                                                |
+| -------------- | ------------------------ | ---------------------- | -------------------------------------------------------------------------- |
+| `title`        | `string`                 | `"Account settings"`   | El título del formulario.                                                  |
+| `description`  | `string`                 | una frase              | Una línea bajo el título; `""` la oculta.                                  |
+| `submitLabel`  | `string`                 | `"Save changes"`       | El texto del botón de envío.                                               |
+| `pendingLabel` | `string`                 | `"Saving"`             | El texto del botón de envío mientras `loading`.                            |
+| `cancelLabel`  | `string`                 | `"Cancel"`             | El texto del botón de cancelar.                                            |
+| `children`     | grupos de campos         | Profile, Notifications | Tus propios grupos en lugar de los dos que trae. Vue: el slot por defecto. |
+| `error`        | `string`                 | —                      | Alerta de formulario sobre el primer grupo.                                |
+| `errors`       | `Record<string, string>` | —                      | Mensajes por campo según su `name`; cada uno lo marca como inválido.       |
+| `loading`      | `boolean`                | `false`                | Deshabilita todos los controles y marca el envío con `aria-busy`.          |
+| `disabled`     | `boolean`                | `false`                | El formulario es de solo lectura.                                          |
+| `onSubmit`     | `(event) => void`        | —                      | El evento submit nativo. Svelte: `onsubmit`. Vue: `@submit`.               |
+| `onCancel`     | `() => void`             | —                      | El botón de cancelar. Svelte: `oncancel`. Vue: `@cancel`.                  |
 
 ### Campos
+
+Los grupos que trae, usados cuando no pasas `children`:
 
 | Grupo         | Campo           | `name`           |
 | ------------- | --------------- | ---------------- |
@@ -156,4 +164,5 @@ El mismo formulario a 18rem, 30rem y 50rem. El marco de 50rem se desplaza por de
 
 - Es presentacional: los controles no están controlados y no envía peticiones. Lee el formulario en tu handler de submit.
 - `error` y `errors` son independientes. Pasar solo `errors` marca los campos sin alerta.
+- Pasa tus propios grupos como `children` (Vue: el slot por defecto) para reutilizar la maquetación con otros campos. Deshabilítalos tú mientras `loading`.
 - Para credenciales, usa el [formulario de acceso](/es/login-form/).

@@ -1,0 +1,174 @@
+---
+title: Flujo de bienvenida
+description: Las cuatro pantallas del primer uso en secuencia, más un ensamblaje de ejemplo que lleva la navegación.
+group: Flujos
+order: 122
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import OnboardingFlowDemo from "../../../islands/OnboardingFlowDemo.svelte";
+import onboardingReact from "../../../../../../registry/flows/onboarding/react/onboarding-flow.tsx?raw";
+import onboardingVue from "../../../../../../registry/flows/onboarding/vue/OnboardingFlow.vue?raw";
+import onboardingSolid from "../../../../../../registry/flows/onboarding/solid/onboarding-flow.tsx?raw";
+import onboardingSvelte from "../../../../../../registry/flows/onboarding/svelte/OnboardingFlow.svelte?raw";
+
+export const examples = {
+  react: onboardingReact,
+  vue: onboardingVue,
+  solid: onboardingSolid,
+  svelte: onboardingSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <OnboardingFlowDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="onboarding" />
+
+El flujo se instala en `src/components/flows/`, sus cuatro pantallas en `screens/` y sus bloques en `blocks/`, cada uno con su propia versión.
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { OnboardingFlow } from "@/components/flows/onboarding-flow";
+```
+
+```tsx
+<OnboardingFlow
+  hrefFor={(step) => `/onboarding/${step}`}
+  initialStep={stepFromUrl}
+  onStepChange={(step) => router.push(`/onboarding/${step}`)}
+  onComplete={(result) => router.push("/")}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```ts
+import OnboardingFlow from "@/components/flows/OnboardingFlow.vue";
+```
+
+```vue
+<OnboardingFlow
+  :href-for="(step) => `/onboarding/${step}`"
+  :initial-step="stepFromUrl"
+  @step-change="(step) => router.push(`/onboarding/${step}`)"
+  @complete="(result) => router.push('/')"
+/>
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```ts
+import OnboardingFlow from "@/components/flows/OnboardingFlow.svelte";
+```
+
+```svelte
+<OnboardingFlow
+  hrefFor={(step) => `/onboarding/${step}`}
+  initialStep={stepFromUrl}
+  onstepchange={(step) => goto(`/onboarding/${step}`)}
+  oncomplete={(result) => goto("/")}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { OnboardingFlow } from "@/components/flows/onboarding-flow";
+```
+
+```tsx
+<OnboardingFlow
+  hrefFor={(step) => `/onboarding/${step}`}
+  initialStep={stepFromUrl()}
+  onStepChange={(step) => navigate(`/onboarding/${step}`)}
+  onComplete={(result) => navigate("/")}
+/>
+```
+
+</ForFramework>
+
+## Referencia de API
+
+### Props
+
+Los callbacks son props `on…` en React y Solid, en minúsculas (`onstepchange`) en Svelte, y emits (`stepChange`, `complete`) en Vue.
+
+| Prop           | Tipo               | Por defecto      | Descripción                                                            |
+| -------------- | ------------------ | ---------------- | ---------------------------------------------------------------------- |
+| `initialStep`  | `OnboardingStep`   | `"welcome"`      | La pantalla con la que abre el flujo; en una app, la que diga la ruta. |
+| `initialName`  | `string`           | `""`             | El nombre completo, si el registro ya lo pidió.                        |
+| `hrefFor`      | `(step) => string` | `` `#${step}` `` | La URL de cada paso; la usan los enlaces para saltar.                  |
+| `finishHref`   | `string`           | `"#"`            | Donde empieza la app: el destino de Saltar en el último paso.          |
+| `onStepChange` | `(step) => void`   | —                | El flujo se movió; refléjalo en la URL.                                |
+| `onComplete`   | `(result) => void` | —                | La persona terminó, o se lo saltó.                                     |
+| `homeHref`     | `string`           | `"#"`            | Destino del logotipo en cada pantalla.                                 |
+| `supportHref`  | `string`           | `"#"`            | Destino de "Contact support" en welcome.                               |
+| `salesHref`    | `string`           | `"#"`            | Destino de "Talk to sales" en plan-select.                             |
+| `privacyHref`  | `string`           | `"#"`            | Destino de los enlaces de privacidad en cada pantalla.                 |
+| `termsHref`    | `string`           | `"#"`            | Destino de los enlaces de términos en cada pantalla.                   |
+
+`result` es `{ name: string; plan?: string; invites: string[] }`: el nombre guardado, el `id` del plan elegido y cada dirección invitada.
+
+### Pasos
+
+`OnboardingStep` es una de las cuatro pantallas, en el orden en que el flujo las recorre.
+
+| Paso                                  | Sale hacia                                                              |
+| ------------------------------------- | ----------------------------------------------------------------------- |
+| [`welcome`](/es/welcome/)             | `profile-setup` con Continue; `onComplete` con Skip for now             |
+| [`profile-setup`](/es/profile-setup/) | `plan-select` al guardar el perfil o con Skip; `welcome` con Cancel     |
+| [`plan-select`](/es/plan-select/)     | `invite-team` al elegir un plan                                         |
+| [`invite-team`](/es/invite-team/)     | `onComplete` con Continue o Skip; enviar invitaciones no cambia de paso |
+
+### Estado
+
+Lo que guarda el ensamblaje para que las pantallas no tengan que hacerlo.
+
+| Estado                   | Guarda                                                                                       |
+| ------------------------ | -------------------------------------------------------------------------------------------- |
+| `step`                   | La pantalla que está en la ruta.                                                             |
+| `name`                   | El nombre completo; welcome saluda con la primera palabra y el avatar muestra sus iniciales. |
+| `avatarSrc`              | La foto elegida, como URL de objeto local.                                                   |
+| `plan`                   | El `id` del plan elegido.                                                                    |
+| `invites`                | Las direcciones enviadas hasta ahora, en la lista de pendientes.                             |
+| `errors` / `emailsError` | Lo que rechazó el último envío. Se borra en cada movimiento.                                 |
+
+## Ejemplos
+
+### Abrir a mitad de camino
+
+Pasa el paso de la URL como `initialStep`. Al recargar, la persona vuelve a donde estaba.
+
+<Preview examples={examples} layout="fill">
+  <OnboardingFlowDemo client:visible locale="es" initialStep="plan-select" />
+</Preview>
+
+### Saludar a quien ya conoces
+
+Pasa el nombre que pidió el registro como `initialName`. Welcome saluda con él.
+
+<Preview examples={examples} layout="fill">
+  <OnboardingFlowDemo client:visible locale="es" initialName="Ada Lovelace" />
+</Preview>
+
+## Notas
+
+- El ensamblaje es código de ejemplo, el único archivo que se espera que reescribas. Las pantallas quedan como vienen.
+- Los enlaces para saltar solo toman el clic izquierdo simple; los clics con modificador o con el botón central van al navegador.
+- El ensamblaje revisa los formularios de perfil e invitaciones como puede hacerlo un formulario por sí solo. Cambia esas revisiones por tus peticiones.
+- La foto se queda en el navegador como URL de objeto. Súbela y devuelve tu URL.
+- `onComplete` devuelve el flujo a welcome y no dibuja página de éxito; salir es trabajo de tu router.

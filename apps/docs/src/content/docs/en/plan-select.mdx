@@ -1,0 +1,176 @@
+---
+title: Plan select
+description: A full-viewport screen where a new customer picks a plan, with the pricing block between a masthead and a footer.
+group: Screens
+order: 116
+agent:
+  intent: The full-viewport plan choice — one state of the onboarding flow, presentational.
+  whenToUse: "The route where someone picks a plan: the plan step of onboarding, an upgrade page, the screen a trial's end redirects to."
+  whenNotToUse:
+    - case: A pricing section inside a page you already own (a landing page, a settings panel)
+      use: the Pricing block — a block never owns the viewport
+    - case: The whole onboarding journey, with the navigation between its steps
+      use: the onboarding flow, which sequences this screen with welcome, profile-setup and invite-team
+  gotchas:
+    - "Presentational: no plans are fetched, nothing is bought, no router. `onSelect(id)` names the plan whose button was pressed, `onRetry` follows the error's retry, and `onNavigate` names the destination of every link the screen draws itself and hands back the click event with it, so a router can `preventDefault()`."
+    - "`plans` goes straight to the Pricing block. Leave it out for the block's three sample plans; pass `[]` for the empty message."
+    - "The pricing title is the page's `h1` (`titleLevel={1}`); the plan names are rank 2 under it. The screen prints no heading of its own."
+    - "Full-viewport is a height (`min-h-dvh`). Every width decision is read off the screen's own container, so it is still correct mounted in a pane that is not the window."
+    - "The screen imports the Pricing block from `@/components/blocks/…`, where `moderno add` puts it. If your project uses a different path alias, that one import line is the only thing to change."
+    - "The root is a `<div>`, not a `<main>` — most app shells already provide the `main` landmark, and two visible ones in a document is invalid. If your route has none, change that one element."
+  theming:
+    - "Nothing is painted here. The plans are the Pricing block, and the screen's own chrome is `text-foreground` / `text-muted-foreground` on `bg-background`."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the screen's two steps are --container-sm and --container-md, and the block inside reads its own."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import PlanSelectScreenDemo from "../../../islands/PlanSelectScreenDemo.svelte";
+import planSelectReact from "../../../../../../registry/screens/plan-select/react/plan-select.tsx?raw";
+import planSelectVue from "../../../../../../registry/screens/plan-select/vue/PlanSelect.vue?raw";
+import planSelectSolid from "../../../../../../registry/screens/plan-select/solid/plan-select.tsx?raw";
+import planSelectSvelte from "../../../../../../registry/screens/plan-select/svelte/PlanSelect.svelte?raw";
+
+export const examples = {
+  react: planSelectReact,
+  vue: planSelectVue,
+  solid: planSelectSolid,
+  svelte: planSelectSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <PlanSelectScreenDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="plan-select" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { PlanSelect } from "@/components/screens/plan-select";
+```
+
+```tsx
+<PlanSelect plans={plans} onSelect={(id) => startTrial(id)} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```ts
+import PlanSelect from "@/components/screens/PlanSelect.vue";
+```
+
+```vue
+<PlanSelect :plans="plans" @select="startTrial" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```ts
+import PlanSelect from "@/components/screens/PlanSelect.svelte";
+```
+
+```svelte
+<PlanSelect {plans} onselect={startTrial} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { PlanSelect } from "@/components/screens/plan-select";
+```
+
+```tsx
+<PlanSelect plans={plans()} onSelect={(id) => startTrial(id)} />
+```
+
+</ForFramework>
+
+Each plan has the shape the [Pricing](/en/pricing/) block takes.
+
+## API Reference
+
+### Props
+
+Callbacks are `on…` props in React and Solid, lowercase (`onselect`) in Svelte, and emits (`select`, `retry`, `navigate`) in Vue.
+
+| Prop          | Type                   | Default              | Description                                                          |
+| ------------- | ---------------------- | -------------------- | -------------------------------------------------------------------- |
+| `title`       | `string`               | `"Choose your plan"` | The page's `h1`, the pricing block's title.                          |
+| `description` | `string`               | a sentence           | One or two sentences under the title; `""` hides them.               |
+| `plans`       | `PricingPlan[]`        | the block's samples  | The plans, in order. `[]` shows the empty message.                   |
+| `error`       | `string`               | —                    | Loading the plans failed; an error alert with a retry replaces them. |
+| `loading`     | `boolean`              | `false`              | Placeholder cards in a busy region replace the plans.                |
+| `disabled`    | `boolean`              | `false`              | The plans stay and every button is disabled.                         |
+| `onSelect`    | `(id: string) => void` | —                    | A plan's button was pressed, with that plan's `id`.                  |
+| `onRetry`     | `() => void`           | —                    | "Try again" after `error`.                                           |
+| `onNavigate`  | `(to, event) => void`  | —                    | A screen link was clicked: `home`, `sales`, `privacy` or `terms`.    |
+| `homeHref`    | `string`               | `"#"`                | Target of the wordmark.                                              |
+| `salesHref`   | `string`               | `"#"`                | Target of "Talk to sales".                                           |
+| `privacyHref` | `string`               | `"#"`                | Target of the privacy link.                                          |
+| `termsHref`   | `string`               | `"#"`                | Target of the terms link.                                            |
+
+### States
+
+| State    | Props      | Renders                                         |
+| -------- | ---------- | ----------------------------------------------- |
+| Default  | —          | The plans, the recommended one outlined.        |
+| Empty    | `plans=[]` | The title and a "No plans to show yet" message. |
+| Loading  | `loading`  | The title and three placeholder cards.          |
+| Error    | `error`    | The title and an error alert with "Try again".  |
+| Disabled | `disabled` | The same plans with every button disabled.      |
+
+### Sizing
+
+| Container step           | Change                           |
+| ------------------------ | -------------------------------- |
+| `@sm` (`--container-sm`) | The masthead moves onto one row. |
+| `@md` (`--container-md`) | The footer moves onto one row.   |
+
+The plans stack or sit side by side by the Pricing block's own container steps.
+
+### Composition
+
+| Part                    | Role                              |
+| ----------------------- | --------------------------------- |
+| [Pricing](/en/pricing/) | The plans, with `titleLevel={1}`. |
+
+## Examples
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <PlanSelectScreenDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+Press "Try again" to clear the message and bring the plans back.
+
+<Preview examples={examples} layout="fill">
+  <PlanSelectScreenDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Empty
+
+<Preview examples={examples} layout="fill">
+  <PlanSelectScreenDemo client:visible locale="en" state="empty" />
+</Preview>
+
+## Notes
+
+- Presentational: no request, no checkout, no router. The page that mounts it owns them.
+- `onNavigate` passes the click event: skip `metaKey`/`ctrlKey` clicks, then `preventDefault()` to route.
+- The root is a `<div>`, not a `<main>`. Make it your `<main>` if the route has none.
+- The screen imports the Pricing block from `@/components/blocks/…`; edit that line if your alias differs.

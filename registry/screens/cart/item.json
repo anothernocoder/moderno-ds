@@ -1,0 +1,37 @@
+{
+  "title": "Cart",
+  "description": "Full-viewport cart screen composing the shopping-cart block: the lines a shopper picked — image, linked name, options, price, a quantity box and Remove — and the order summary with the subtotal, a note and Checkout, with the block's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container): the masthead lines up at @sm and the footer at @md; inside, the block stacks the summary under the lines on narrow containers and sets it beside them from its own @lg.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": ["shopping-cart-{framework}"],
+  "files": {
+    "react": [
+      {
+        "path": "screens/cart/react/cart.tsx",
+        "type": "registry:screen",
+        "target": "src/components/screens/cart.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "screens/cart/vue/Cart.vue",
+        "type": "registry:screen",
+        "target": "src/components/screens/Cart.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "screens/cart/svelte/Cart.svelte",
+        "type": "registry:screen",
+        "target": "src/components/screens/Cart.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "screens/cart/solid/cart.tsx",
+        "type": "registry:screen",
+        "target": "src/components/screens/cart.tsx"
+      }
+    ]
+  }
+}

@@ -1,7 +1,7 @@
 {
   "title": "Shopping Cart",
   "description": "A shopping cart, composing the @moderno-ui/{framework} Alert, Button, Card, NumberInput and Skeleton primitives: a serif heading, one line per item (its image, linked name, options and price, a NumberInput for the quantity and a Remove button) and an order summary Card with the subtotal and a Checkout button, with its own loading, empty and error renders; responds to its container (@container) — the image grows and each line's quantity moves beside it at @sm, the image grows again and the heading steps up at @md, and the summary moves beside the lines at @lg.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "dependencies": ["@moderno-ui/{framework}"],
   "registryDependencies": [],
   "files": {

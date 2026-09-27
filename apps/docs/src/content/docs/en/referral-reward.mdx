@@ -1,0 +1,217 @@
+---
+title: Referral reward
+description: A full-viewport screen that shows a member what their referrals have earned them.
+group: Screens
+order: 121
+agent:
+  intent: The full-viewport referral reward screen — friends invited, friends joined and rewards earned, one KPI card each with its change and its trend. Presentational.
+  whenToUse: "The step of a referral program where a member checks what their referrals earned: /referrals/rewards, /rewards."
+  whenNotToUse:
+    - case: One number on a dashboard you already own (a tile in a grid, a settings tab)
+      use: the KpiCard block — a block never owns the viewport
+    - case: Sending the referral link to friends
+      use: the ReferralShare screen
+  gotchas:
+    - "Presentational: no request, no router. `stats` is `{ id, label, period?, metric }[]`, where `metric` is the KpiCard's `{ value, delta?, tone?, caption?, trend? }`; count and format the numbers yourself."
+    - "`stats` defaults to a sample (friends invited, friends joined, months earned), so the screen renders standalone. Pass your own."
+    - 'A stat with `metric: null` shows the card''s empty state (no activity yet). `error`, `loading` and `disabled` go to every card; `onRetry` fires from any card''s "Try again".'
+    - "Full-viewport is a height (`min-h-dvh`). Every width decision is read off the screen's own container, so it is still correct mounted in a pane that is not the window."
+    - "The screen imports the KpiCard block from `@/components/blocks/…`, where `moderno add` puts it. If your project uses a different path alias, that one import line is the only thing to change."
+    - "The root is a `<div>`, not a `<main>` — most app shells already provide the `main` landmark. If your route has none, change that one element."
+  theming:
+    - "The screen's own chrome is `text-foreground` / `text-muted-foreground` on `bg-background`; the cards are the KpiCard block."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ReferralRewardScreenDemo from "../../../islands/ReferralRewardScreenDemo.svelte";
+import referralRewardReact from "../../../../../../registry/screens/referral-reward/react/referral-reward.tsx?raw";
+import referralRewardVue from "../../../../../../registry/screens/referral-reward/vue/ReferralReward.vue?raw";
+import referralRewardSolid from "../../../../../../registry/screens/referral-reward/solid/referral-reward.tsx?raw";
+import referralRewardSvelte from "../../../../../../registry/screens/referral-reward/svelte/ReferralReward.svelte?raw";
+
+<FrameworkSelect locale="en" />
+
+<Preview
+  examples={{
+    react: referralRewardReact,
+    vue: referralRewardVue,
+    solid: referralRewardSolid,
+    svelte: referralRewardSvelte,
+  }}
+  layout="fill"
+>
+  <ReferralRewardScreenDemo client:visible locale="en" />
+</Preview>
+
+Use it for the step of a referral program where a member sees what they have earned. It shows one KPI card per number; your page counts the rewards.
+
+## Installation
+
+<Install item="referral-reward" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { ReferralReward } from "@/components/screens/referral-reward";
+```
+
+```tsx
+<ReferralReward reward="a free month" stats={stats} onRetry={reload} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```ts
+import ReferralReward from "@/components/screens/ReferralReward.vue";
+```
+
+```vue
+<ReferralReward reward="a free month" :stats="stats" @retry="reload" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```ts
+import ReferralReward from "@/components/screens/ReferralReward.svelte";
+```
+
+```svelte
+<ReferralReward reward="a free month" {stats} onretry={reload} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { ReferralReward } from "@/components/screens/referral-reward";
+```
+
+```tsx
+<ReferralReward reward="a free month" stats={stats()} onRetry={reload} />
+```
+
+</ForFramework>
+
+Each stat is one card:
+
+```ts
+const stats = [
+  {
+    id: "joined",
+    label: "Friends joined",
+    period: "All time",
+    metric: {
+      value: "5",
+      delta: "+2",
+      tone: "positive",
+      caption: "this month",
+      trend: [1, 2, 3, 5],
+    },
+  },
+];
+```
+
+## API Reference
+
+### Props
+
+Callbacks are `on…` props in React and Solid, lowercase (`onretry`) in Svelte, and emits (`retry`, `navigate`) in Vue.
+
+| Prop          | Type                   | Default                          | Description                                                       |
+| ------------- | ---------------------- | -------------------------------- | ----------------------------------------------------------------- |
+| `reward`      | `string`               | `"a free month"`                 | What the reader gets for each friend who joins.                   |
+| `stats`       | `ReferralRewardStat[]` | Invited, joined, earned (sample) | One card each: `id`, `label`, `period?`, `metric`.                |
+| `error`       | `string`               | —                                | The rewards could not load: every card shows the alert and retry. |
+| `loading`     | `boolean`              | `false`                          | The rewards are loading: placeholders in every card.              |
+| `disabled`    | `boolean`              | `false`                          | Every control is shown but inert.                                 |
+| `onRetry`     | `() => void`           | —                                | "Try again" was pressed.                                          |
+| `onNavigate`  | `(to, event) => void`  | —                                | A screen link was clicked: `home`, `share`, `privacy` or `terms`. |
+| `homeHref`    | `string`               | `"#"`                            | Target of the wordmark.                                           |
+| `shareHref`   | `string`               | `"#"`                            | Target of "Invite more friends".                                  |
+| `privacyHref` | `string`               | `"#"`                            | Target of the privacy link.                                       |
+| `termsHref`   | `string`               | `"#"`                            | Target of the terms link.                                         |
+
+`metric` is the [KpiCard](/en/kpi-card/)'s: `{ value, delta?, tone?, caption?, trend? }`, or `null`.
+
+### States
+
+| State    | Props                  | Renders                                          |
+| -------- | ---------------------- | ------------------------------------------------ |
+| Default  | `stats`                | Each number with its change and its sparkline.   |
+| Empty    | `metric: null` in stat | "No data yet" in that card.                      |
+| Loading  | `loading`              | Placeholders in every card, `aria-busy` on each. |
+| Error    | `error`                | An alert with "Try again" in every card.         |
+| Disabled | `disabled`             | The screen is shown but can't be used.           |
+
+### Sizing
+
+| Container step           | Change                                |
+| ------------------------ | ------------------------------------- |
+| `@sm` (`--container-sm`) | The masthead moves onto one row.      |
+| `@md` (`--container-md`) | The title grows, the footer lines up. |
+| `@lg` (`--container-lg`) | The cards sit side by side.           |
+
+### Composition
+
+| Part                     | Role                                            |
+| ------------------------ | ----------------------------------------------- |
+| [KpiCard](/en/kpi-card/) | One number, its change and its trend, per stat. |
+
+## Examples
+
+### Loading
+
+<Preview
+  examples={{
+    react: referralRewardReact,
+    vue: referralRewardVue,
+    solid: referralRewardSolid,
+    svelte: referralRewardSvelte,
+  }}
+  layout="fill"
+>
+  <ReferralRewardScreenDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+<Preview
+  examples={{
+    react: referralRewardReact,
+    vue: referralRewardVue,
+    solid: referralRewardSolid,
+    svelte: referralRewardSvelte,
+  }}
+  layout="fill"
+>
+  <ReferralRewardScreenDemo client:visible locale="en" state="error" />
+</Preview>
+
+### No activity yet
+
+<Preview
+  examples={{
+    react: referralRewardReact,
+    vue: referralRewardVue,
+    solid: referralRewardSolid,
+    svelte: referralRewardSvelte,
+  }}
+  layout="fill"
+>
+  <ReferralRewardScreenDemo client:visible locale="en" state="empty" />
+</Preview>
+
+## Notes
+
+- Presentational: no request, no router. The page that mounts it counts the rewards.
+- `tone` is what the change means: more friends joined is `positive`.
+- `onNavigate` passes the click event: skip `metaKey`/`ctrlKey` clicks, then `preventDefault()` to route.
+- The screen imports the KpiCard block from `@/components/blocks/…`; edit that line if your alias differs.

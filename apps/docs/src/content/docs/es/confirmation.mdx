@@ -1,0 +1,170 @@
+---
+title: Confirmación
+description: Una pantalla a viewport completo que da las gracias al cliente cuando el pedido está hecho — el número de pedido, la entrega y un resumen del pedido — con el bloque de resumen del pedido entre una cabecera y un pie.
+group: Pantallas
+order: 126
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ConfirmationScreenDemo from "../../../islands/ConfirmationScreenDemo.svelte";
+import confirmationReact from "../../../../../../registry/screens/confirmation/react/confirmation.tsx?raw";
+import confirmationVue from "../../../../../../registry/screens/confirmation/vue/Confirmation.vue?raw";
+import confirmationSolid from "../../../../../../registry/screens/confirmation/solid/confirmation.tsx?raw";
+import confirmationSvelte from "../../../../../../registry/screens/confirmation/svelte/Confirmation.svelte?raw";
+
+export const examples = {
+  react: confirmationReact,
+  vue: confirmationVue,
+  solid: confirmationSolid,
+  svelte: confirmationSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <ConfirmationScreenDemo client:visible locale="es" />
+</Preview>
+
+Úsala en el último paso del checkout. Le dice al cliente que el pedido está hecho y le muestra lo que compró.
+
+## Instalación
+
+<Install item="confirmation" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { Confirmation } from "@/components/screens/confirmation";
+```
+
+```tsx
+<Confirmation orderNumber={order.number} items={items} total={total} onContinue={goShopping} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```ts
+import Confirmation from "@/components/screens/Confirmation.vue";
+```
+
+```vue
+<Confirmation :order-number="order.number" :items="items" :total="total" @continue="goShopping" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```ts
+import Confirmation from "@/components/screens/Confirmation.svelte";
+```
+
+```svelte
+<Confirmation orderNumber={order.number} {items} {total} oncontinue={goShopping} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { Confirmation } from "@/components/screens/confirmation";
+```
+
+```tsx
+<Confirmation
+  orderNumber={order().number}
+  items={items()}
+  total={total()}
+  onContinue={goShopping}
+/>
+```
+
+</ForFramework>
+
+## Referencia de API
+
+### Props
+
+Los callbacks son props `on…` en React y Solid, en minúsculas (`oncontinue`) en Svelte y eventos (`continue`, `retry`, `navigate`) en Vue.
+
+| Prop          | Tipo                  | Por defecto                  | Descripción                                                               |
+| ------------- | --------------------- | ---------------------------- | ------------------------------------------------------------------------- |
+| `heading`     | `string`              | `"Thank you for your order"` | El `h1` de la página.                                                     |
+| `description` | `string`              | una línea sobre el correo    | La línea bajo el título; `""` la oculta.                                  |
+| `orderNumber` | `string`              | `"#MD-10482"`                | La referencia del pedido; `""` oculta la fila.                            |
+| `delivery`    | `string`              | —                            | Cuándo debería llegar el pedido, como `"Tue, 6 October"`.                 |
+| `email`       | `string`              | —                            | A dónde se envió el recibo.                                               |
+| `items`       | `OrderItem[]`         | los ejemplos del bloque      | Los artículos pedidos. `[]` muestra el mensaje de vacío.                  |
+| `totals`      | `OrderTotal[]`        | los ejemplos del bloque      | Las filas sobre el total: `{ label, amount }`.                            |
+| `total`       | `string`              | el ejemplo del bloque        | El importe pagado tal como se lee, como `"€168"`.                         |
+| `loading`     | `boolean`             | `false`                      | El pedido está cargando: líneas de marcador reemplazan el resumen.        |
+| `error`       | `string`              | —                            | Falló la carga del pedido: una alerta con reintento reemplaza el resumen. |
+| `disabled`    | `boolean`             | `false`                      | Todo se queda en pantalla; todos los controles quedan inertes.            |
+| `onContinue`  | `() => void`          | —                            | Se pulsó Continue shopping.                                               |
+| `onRetry`     | `() => void`          | —                            | «Try again» tras `error`.                                                 |
+| `onNavigate`  | `(to, event) => void` | —                            | Se pulsó un enlace de la pantalla: `home`, `orders`, `privacy` o `terms`. |
+| `homeHref`    | `string`              | `"#"`                        | Destino del logotipo.                                                     |
+| `ordersHref`  | `string`              | `"#"`                        | Destino de «Your orders».                                                 |
+| `privacyHref` | `string`              | `"#"`                        | Destino del enlace de privacidad.                                         |
+| `termsHref`   | `string`              | `"#"`                        | Destino del enlace de términos.                                           |
+
+### Estados
+
+| Estado           | Props      | Qué se renderiza                                                      |
+| ---------------- | ---------- | --------------------------------------------------------------------- |
+| Por defecto      | —          | El agradecimiento y el resumen del pedido con su total.               |
+| Cargando         | `loading`  | El agradecimiento, y líneas de marcador en lugar del resumen.         |
+| Error del pedido | `error`    | El agradecimiento, y una alerta con «Try again» en lugar del resumen. |
+| Vacío            | `items=[]` | El agradecimiento, y «Your order is empty.» en lugar del resumen.     |
+| Deshabilitado    | `disabled` | Todo se muestra; Continue shopping y los enlaces del resumen inertes. |
+
+### Tamaño
+
+| Paso del contenedor      | Cambio                                              |
+| ------------------------ | --------------------------------------------------- |
+| `@sm` (`--container-sm`) | La cabecera pasa a una sola fila.                   |
+| `@md` (`--container-md`) | El título crece; el pie pasa a una sola fila.       |
+| `@lg` (`--container-lg`) | El resumen del pedido pasa junto al agradecimiento. |
+
+### Composición
+
+| Parte                               | Papel                                                     |
+| ----------------------------------- | --------------------------------------------------------- |
+| [Order Summary](/es/order-summary/) | Los artículos y los totales que se pagaron, solo lectura. |
+| [Card](/es/card/)                   | El panel de agradecimiento.                               |
+| [Badge](/es/badge/)                 | «Order placed», con la variante `success`.                |
+| [Button](/es/button/)               | Continue shopping.                                        |
+
+## Ejemplos
+
+### Cargando el pedido
+
+<Preview examples={examples} layout="fill">
+  <ConfirmationScreenDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error del pedido
+
+Pulsa «Try again» para borrar el mensaje y recuperar el pedido.
+
+<Preview examples={examples} layout="fill">
+  <ConfirmationScreenDemo client:visible locale="es" state="order-error" />
+</Preview>
+
+### Pedido vacío
+
+<Preview examples={examples} layout="fill">
+  <ConfirmationScreenDemo client:visible locale="es" state="empty" />
+</Preview>
+
+## Notas
+
+- Presentacional: no se pide nada al servidor y no hay router. La página que la monta hace las dos cosas.
+- `onNavigate` pasa el evento del clic: ignora los clics con `metaKey`/`ctrlKey` y luego llama a `preventDefault()` para enrutar.
+- La raíz es un `<div>`, no un `<main>`. Conviértela en tu `<main>` si la ruta no tiene uno.
+- La pantalla importa su bloque desde `@/components/blocks/…`; cambia esa línea si tu alias es otro.

@@ -1,0 +1,192 @@
+---
+title: Flujo de compra
+description: Las cinco pantallas de compra en secuencia, más un ensamblaje de ejemplo que lleva el carrito, el pedido y la navegación entre ellas.
+group: Flujos
+order: 124
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import CheckoutFlowDemo from "../../../islands/CheckoutFlowDemo.svelte";
+import checkoutReact from "../../../../../../registry/flows/checkout/react/checkout-flow.tsx?raw";
+import checkoutVue from "../../../../../../registry/flows/checkout/vue/CheckoutFlow.vue?raw";
+import checkoutSolid from "../../../../../../registry/flows/checkout/solid/checkout-flow.tsx?raw";
+import checkoutSvelte from "../../../../../../registry/flows/checkout/svelte/CheckoutFlow.svelte?raw";
+
+export const examples = {
+  react: checkoutReact,
+  vue: checkoutVue,
+  solid: checkoutSolid,
+  svelte: checkoutSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <CheckoutFlowDemo client:visible locale="es" />
+</Preview>
+
+Úsalo para montar una compra completa de una vez: carrito, envío, pago, revisión y confirmación. Recórrelo arriba: pulsa Checkout, rellena cada formulario y haz el pedido.
+
+## Instalación
+
+<Install item="checkout" />
+
+El flujo se instala en `src/components/flows/`, sus cinco pantallas en `screens/` y sus bloques en `blocks/`, cada uno con su propia versión.
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { CheckoutFlow } from "@/components/flows/checkout-flow";
+```
+
+```tsx
+<CheckoutFlow
+  initialLines={cartLines}
+  hrefFor={(step) => `/checkout/${step}`}
+  onStepChange={(step) => router.push(`/checkout/${step}`)}
+  onOrderPlaced={(order) => api.placeOrder(order)}
+  onContinueShopping={() => router.push("/shop")}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```ts
+import CheckoutFlow from "@/components/flows/CheckoutFlow.vue";
+```
+
+```vue
+<CheckoutFlow
+  :initial-lines="cartLines"
+  :href-for="(step) => `/checkout/${step}`"
+  @step-change="(step) => router.push(`/checkout/${step}`)"
+  @order-placed="(order) => api.placeOrder(order)"
+  @continue-shopping="() => router.push('/shop')"
+/>
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```ts
+import CheckoutFlow from "@/components/flows/CheckoutFlow.svelte";
+```
+
+```svelte
+<CheckoutFlow
+  initialLines={cartLines}
+  hrefFor={(step) => `/checkout/${step}`}
+  onstepchange={(step) => goto(`/checkout/${step}`)}
+  onorderplaced={(order) => api.placeOrder(order)}
+  oncontinueshopping={() => goto("/shop")}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { CheckoutFlow } from "@/components/flows/checkout-flow";
+```
+
+```tsx
+<CheckoutFlow
+  initialLines={cartLines()}
+  hrefFor={(step) => `/checkout/${step}`}
+  onStepChange={(step) => navigate(`/checkout/${step}`)}
+  onOrderPlaced={(order) => api.placeOrder(order)}
+  onContinueShopping={() => navigate("/shop")}
+/>
+```
+
+</ForFramework>
+
+## Referencia de API
+
+### Props
+
+Los callbacks son props `on…` en React y Solid, en minúsculas (`onorderplaced`) en Svelte y eventos (`stepChange`, `orderPlaced`, `continueShopping`) en Vue.
+
+| Prop                 | Tipo                       | Por defecto           | Descripción                                                            |
+| -------------------- | -------------------------- | --------------------- | ---------------------------------------------------------------------- |
+| `initialStep`        | `CheckoutStep`             | `"cart"`              | La pantalla con la que abre el flujo; en una app, lo que diga la ruta. |
+| `initialLines`       | `CheckoutLine[]`           | un carrito de ejemplo | Las líneas del carrito al abrir el flujo.                              |
+| `deliveryOptions`    | `CheckoutDeliveryOption[]` | estándar, exprés      | Las formas de enviar el pedido, con precios numéricos.                 |
+| `formatPrice`        | `(amount) => string`       | `` `€${amount}` ``    | Cómo se lee un importe en pantalla.                                    |
+| `hrefFor`            | `(step) => string`         | `` `#${step}` ``      | La URL de cada paso; la usan los enlaces «Edit cart».                  |
+| `onStepChange`       | `(step) => void`           | —                     | El flujo se movió; refléjalo en la URL.                                |
+| `onOrderPlaced`      | `(order) => void`          | —                     | «Place order» se completó en la revisión.                              |
+| `onContinueShopping` | `() => void`               | —                     | Se pulsó «Continue shopping» en la confirmación.                       |
+| `homeHref`           | `string`                   | `"#"`                 | Destino del logotipo en todas las pantallas.                           |
+| `shopHref`           | `string`                   | `"#"`                 | Destino de «Continue shopping» en la cabecera del carrito.             |
+| `helpHref`           | `string`                   | `"#"`                 | Destino de «Need help?» en el envío.                                   |
+| `ordersHref`         | `string`                   | `"#"`                 | Destino de «Your orders» en la confirmación.                           |
+| `privacyHref`        | `string`                   | `"#"`                 | Destino del enlace de privacidad en todas las pantallas.               |
+| `termsHref`          | `string`                   | `"#"`                 | Destino del enlace de términos en todas las pantallas.                 |
+
+### Tipos
+
+| Tipo                     | Campos                                                                           |
+| ------------------------ | -------------------------------------------------------------------------------- |
+| `CheckoutLine`           | `id`, `name`, `unitPrice`, `quantity` y, opcionales, `options`, `href`, `image`. |
+| `CheckoutDeliveryOption` | `id`, `label`, `description`, `price`.                                           |
+| `CheckoutOrder`          | `number`, `email`, `lines`, `delivery`, `total`: lo que recibe `onOrderPlaced`.  |
+
+### Pasos
+
+`CheckoutStep` es una de las cinco pantallas, en el orden en que el flujo las recorre.
+
+| Paso                                | Se llega por                                          | Sale hacia                                                 |
+| ----------------------------------- | ----------------------------------------------------- | ---------------------------------------------------------- |
+| [`cart`](/es/cart/)                 | El primer paso, Back, «Edit cart» o Continue shopping | `shipping`, con Checkout                                   |
+| [`shipping`](/es/shipping/)         | Checkout, «Back to shipping» o un Change              | `payment`, con el formulario completo; `cart`, con Back    |
+| [`payment`](/es/payment/)           | Una dirección guardada, «Back to payment» o un Change | `review`, con el formulario completo; `shipping`, con Back |
+| [`review`](/es/review/)             | Una tarjeta guardada                                  | `confirmation`, con Place order; `payment`, con Back       |
+| [`confirmation`](/es/confirmation/) | Un pedido hecho                                       | `cart`, con Continue shopping                              |
+
+### Estado
+
+Lo que guarda el ensamblaje para que las pantallas no tengan que hacerlo.
+
+| Estado            | Guarda                                                             |
+| ----------------- | ------------------------------------------------------------------ |
+| `step`            | La pantalla que está ahora en la ruta.                             |
+| `lines`           | El carrito: aquí llega cada cambio de cantidad y cada eliminación. |
+| `shippingDetails` | El contacto y la dirección del formulario de envío.                |
+| `deliveryId`      | El método de envío elegido.                                        |
+| `cardEnding`      | Los cuatro últimos dígitos de la tarjeta, para la revisión.        |
+| `order`           | El pedido hecho que muestra la confirmación.                       |
+| `errors`          | Los campos que el último envío dejó vacíos.                        |
+
+## Ejemplos
+
+### Carrito vacío
+
+Un `initialLines` vacío abre en el estado vacío del carrito.
+
+<Preview examples={examples} layout="fill">
+  <CheckoutFlowDemo client:visible locale="es" example="empty-cart" />
+</Preview>
+
+### Abrir en un paso posterior
+
+`initialStep="shipping"` abre en el formulario de dirección, como lo haría una ruta como `/checkout/shipping`.
+
+<Preview examples={examples} layout="fill">
+  <CheckoutFlowDemo client:visible locale="es" example="opens-at-shipping" />
+</Preview>
+
+## Notas
+
+- El ensamblaje es código de ejemplo, el único archivo que se espera que reescribas. Las pantallas quedan como se publicaron.
+- Los precios son números en el ensamblaje y texto en pantalla; `formatPrice` los une.
+- Los formularios de envío y pago solo comprueban que no haya campos vacíos. Pon tus peticiones en `saveAddress` y `saveCard`.
+- El bloque checkout-form no recibe valores, así que un formulario al que vuelves empieza vacío.
+- «Edit cart» es un `href` real: los clics izquierdos simples mueven el flujo, los modificados van al navegador.
+- Hacer el pedido vacía el carrito. `#MD-10482` sustituye al número de pedido de tu servidor.

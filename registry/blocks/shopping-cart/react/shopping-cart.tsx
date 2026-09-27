@@ -51,6 +51,7 @@ function isValidQuantity(quantity: number, maxQuantity = defaultMaxQuantity) {
 
 export interface ShoppingCartProps {
   heading?: string;
+  headingLevel?: 1 | 2;
   items?: CartItem[];
   subtotal?: string;
   note?: string;
@@ -65,6 +66,7 @@ export interface ShoppingCartProps {
 
 export function ShoppingCart({
   heading = "Shopping cart",
+  headingLevel = 2,
   items,
   subtotal,
   note = "Shipping and taxes are added at checkout.",
@@ -78,11 +80,18 @@ export function ShoppingCart({
 }: ShoppingCartProps) {
   const shownItems = items ?? sampleItems;
   const shownSubtotal = subtotal ?? (items === undefined ? sampleSubtotal : undefined);
+  const headingRank = headingLevel === 1 ? 1 : undefined;
+  const sectionRank = headingLevel === 1 ? 2 : undefined;
 
   return (
     <section className="@container moderno-block-shopping-cart text-foreground">
       <div className="grid gap-8 px-4 py-12 @lg:py-16">
-        <h2 className="font-serif text-heading-sm text-balance @md:text-heading">{heading}</h2>
+        <h2
+          className="font-serif text-heading-sm text-balance @md:text-heading"
+          aria-level={headingRank}
+        >
+          {heading}
+        </h2>
 
         {error ? (
           <Alert.Root variant="error">
@@ -145,7 +154,7 @@ export function ShoppingCart({
                     ) : null}
                   </div>
                   <div className="grid min-w-0 content-start gap-1">
-                    <h3 className="text-body font-medium text-balance">
+                    <h3 className="text-body font-medium text-balance" aria-level={sectionRank}>
                       {item.href ? (
                         <a
                           className="rounded-sm text-foreground underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring aria-disabled:cursor-not-allowed aria-disabled:text-muted-foreground aria-disabled:no-underline"
@@ -205,7 +214,7 @@ export function ShoppingCart({
 
             <Card.Root variant="muted">
               <Card.Header>
-                <Card.Title>Order summary</Card.Title>
+                <Card.Title aria-level={sectionRank}>Order summary</Card.Title>
               </Card.Header>
               <Card.Content className="grid gap-3">
                 {shownSubtotal ? (

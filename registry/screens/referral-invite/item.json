@@ -1,0 +1,37 @@
+{
+  "title": "Referral invite",
+  "description": "Full-viewport referral screen composing the form-layout block: what the referral gives in three steps, then a form for friends' email addresses and an optional note, with a success alert naming the addresses the last send reached and the form's error, loading and disabled states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm, the title grows, the steps sit side by side and the footer lines up at @md.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": ["form-layout-{framework}"],
+  "files": {
+    "react": [
+      {
+        "path": "screens/referral-invite/react/referral-invite.tsx",
+        "type": "registry:screen",
+        "target": "src/components/screens/referral-invite.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "screens/referral-invite/vue/ReferralInvite.vue",
+        "type": "registry:screen",
+        "target": "src/components/screens/ReferralInvite.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "screens/referral-invite/svelte/ReferralInvite.svelte",
+        "type": "registry:screen",
+        "target": "src/components/screens/ReferralInvite.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "screens/referral-invite/solid/referral-invite.tsx",
+        "type": "registry:screen",
+        "target": "src/components/screens/referral-invite.tsx"
+      }
+    ]
+  }
+}
