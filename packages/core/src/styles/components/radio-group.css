@@ -1,12 +1,15 @@
 /* ───────────────────────── RadioGroup ───────────────────────── *
- * `radioGroupRecipe` size on the root part; layout follows Ark's
- * data-orientation, and every state is Ark's own attribute —
+ * `radioGroupAttrs` on the root part: data-variant (list | tile),
+ * data-size, and for tiles data-columns and data-aspect-ratio. List layout
+ * follows Ark's data-orientation, and every state is Ark's own attribute —
  * data-state="checked|unchecked" plus data-disabled / data-invalid /
  * data-readonly / data-focus-visible on each item and its parts. Parts
- * root > label + item (> item-control + item-text + item-hidden-input);
- * item-description is Moderno's, nested in item-text. Ark's indicator (a
+ * root > label + item (> item-media + item-control + item-text +
+ * item-hidden-input); item-description is Moderno's, nested in item-text,
+ * and item-media is Moderno's slot for a tile's image. Ark's indicator (a
  * sliding highlight for segmented looks) is left unstyled. The hidden
- * native input carries focus, so the ring is drawn on the radio circle.  */
+ * native input carries focus, so the ring is drawn on the radio circle —
+ * or, for a tile, on the whole card.  */
 [data-scope="radio-group"][data-part="root"] {
   display: flex;
   flex-direction: column;
@@ -127,8 +130,163 @@
   font-size: var(--text-ui-md);
   line-height: var(--leading-ui-md);
 }
-@media (prefers-reduced-motion: reduce) {
+/* ─────────────────────────── Tile ──────────────────────────── *
+ * data-variant="tile" turns the group into a grid of selectable cards.
+ * Unfixed, each row holds as many cards as fit, none narrower than a third
+ * of --container-sm, and they share the row's width; data-columns fixes the
+ * count. auto-fill, not auto-fit: the label spans every track, so auto-fit
+ * could never collapse the empty ones and would gain nothing. Either way
+ * the grid reads the group's own width, never the viewport. The item is
+ * the card, so clicking anywhere on it picks it. Its item-control becomes
+ * a check badge in the corner, shown only when checked, so the choice
+ * reads without colour: a doubled --primary edge plus the check. */
+[data-scope="radio-group"][data-part="root"][data-variant="tile"] {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, calc(var(--container-sm) / 3)), 1fr));
+  gap: var(--spacing-3);
+}
+[data-scope="radio-group"][data-part="root"][data-variant="tile"][data-columns="1"] {
+  grid-template-columns: minmax(0, 1fr);
+}
+[data-scope="radio-group"][data-part="root"][data-variant="tile"][data-columns="2"] {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+[data-scope="radio-group"][data-part="root"][data-variant="tile"][data-columns="3"] {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+[data-scope="radio-group"][data-part="root"][data-variant="tile"][data-columns="4"] {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+[data-scope="radio-group"][data-part="root"][data-variant="tile"][data-columns="5"] {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+[data-scope="radio-group"][data-part="root"][data-variant="tile"][data-columns="6"] {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+[data-scope="radio-group"][data-part="root"][data-variant="tile"] > [data-part="label"] {
+  grid-column: 1 / -1;
+}
+[data-scope="radio-group"][data-variant="tile"] [data-scope="radio-group"][data-part="item"] {
+  position: relative;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background-color: var(--card);
+  color: var(--card-foreground);
+  transition:
+    border-color var(--motion-instant),
+    box-shadow var(--motion-instant);
+}
+/* Hover darkens the edge of a card that is not the choice. The fill stays
+   --card, so the media's --muted frame still reads against it. */
+[data-scope="radio-group"][data-variant="tile"]
+  [data-scope="radio-group"][data-part="item"]:hover:not([data-state="checked"], [data-readonly]) {
+  border-color: var(--muted-foreground);
+}
+/* Checked: the 1px edge doubles in --primary, drawn inside so nothing moves. */
+[data-scope="radio-group"][data-variant="tile"]
+  [data-scope="radio-group"][data-part="item"][data-state="checked"] {
+  border-color: var(--primary);
+  box-shadow: inset 0 0 0 1px var(--primary);
+}
+[data-scope="radio-group"][data-variant="tile"]
+  [data-scope="radio-group"][data-part="item"][data-invalid] {
+  border-color: var(--destructive);
+}
+[data-scope="radio-group"][data-variant="tile"]
+  [data-scope="radio-group"][data-part="item"][data-focus-visible] {
+  outline-color: var(--ring);
+  outline-style: solid;
+  outline-width: 2px;
+  outline-offset: 2px;
+}
+[data-scope="radio-group"][data-variant="tile"] [data-scope="radio-group"][data-part="item-text"] {
+  padding-inline: var(--spacing-1);
+  padding-block-end: var(--spacing-1);
+}
+/* The check badge: a --primary disc in the card's corner, haloed in --card
+   so it stands off any image, with a --primary-foreground check drawn from
+   two borders. It replaces the radio circle, so its size is its own. */
+[data-scope="radio-group"][data-variant="tile"]
   [data-scope="radio-group"][data-part="item-control"] {
+  position: absolute;
+  inset-block-start: var(--spacing-3);
+  inset-inline-end: var(--spacing-3);
+  display: grid;
+  place-items: center;
+  width: var(--spacing-5);
+  height: var(--spacing-5);
+  margin: 0;
+  border: none;
+  background-color: var(--primary);
+  box-shadow: 0 0 0 calc(var(--spacing-1) / 2) var(--card);
+  visibility: hidden;
+}
+[data-scope="radio-group"][data-variant="tile"]
+  [data-scope="radio-group"][data-part="item-control"][data-state="checked"] {
+  border: none;
+  background-color: var(--primary);
+  visibility: visible;
+}
+[data-scope="radio-group"][data-variant="tile"]
+  [data-scope="radio-group"][data-part="item-control"]::after {
+  content: "";
+  width: calc(var(--spacing-5) / 4);
+  height: calc(var(--spacing-5) / 2);
+  margin-block-end: calc(var(--spacing-5) / 10);
+  border-style: solid;
+  border-color: var(--primary-foreground);
+  border-width: 0 calc(var(--spacing-5) / 10) calc(var(--spacing-5) / 10) 0;
+  rotate: 45deg;
+}
+/* The card carries the focus ring, so the badge draws none. */
+[data-scope="radio-group"][data-variant="tile"]
+  [data-scope="radio-group"][data-part="item-control"][data-focus-visible] {
+  outline-style: none;
+}
+/* item-media: Moderno's slot for an image or any content, at the root's
+   data-aspect-ratio (16:9 unless set). An image or video fills it and is
+   cropped, never stretched. */
+[data-scope="radio-group"][data-part="item-media"] {
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  border-radius: calc(var(--radius) - var(--spacing-2));
+  background-color: var(--muted);
+  color: var(--muted-foreground);
+}
+[data-scope="radio-group"][data-part="item-media"] > :where(img, picture, video, svg) {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+[data-scope="radio-group"][data-aspect-ratio="4:3"]
+  [data-scope="radio-group"][data-part="item-media"] {
+  aspect-ratio: 4 / 3;
+}
+[data-scope="radio-group"][data-aspect-ratio="3:2"]
+  [data-scope="radio-group"][data-part="item-media"] {
+  aspect-ratio: 3 / 2;
+}
+[data-scope="radio-group"][data-aspect-ratio="1:1"]
+  [data-scope="radio-group"][data-part="item-media"] {
+  aspect-ratio: 1 / 1;
+}
+[data-scope="radio-group"][data-aspect-ratio="3:4"]
+  [data-scope="radio-group"][data-part="item-media"] {
+  aspect-ratio: 3 / 4;
+}
+[data-scope="radio-group"][data-aspect-ratio="9:16"]
+  [data-scope="radio-group"][data-part="item-media"] {
+  aspect-ratio: 9 / 16;
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-scope="radio-group"][data-part="item-control"],
+  [data-scope="radio-group"][data-variant="tile"] [data-scope="radio-group"][data-part="item"] {
     transition: none;
   }
 }

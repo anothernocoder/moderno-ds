@@ -1,0 +1,6 @@
+/* A tile grid takes its container's width, and the stage centres a demo at
+   its content width, which a grid does not have. 30rem holds exactly three
+   tiles in a row, so the demo's three layouts fill it with no empty slot. */
+.preview-panel--demo > astro-island > [data-scope="radio-group"][data-variant="tile"] {
+  width: min(100%, 30rem);
+}

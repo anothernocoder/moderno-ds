@@ -1,4 +1,8 @@
 value RadioGroup
+type RadioGroupAspectRatio
+type RadioGroupColumns
 type RadioGroupItemDescriptionProps
+type RadioGroupItemMediaProps
 type RadioGroupSize
 type RadioGroupValueChangeDetails
+type RadioGroupVariant

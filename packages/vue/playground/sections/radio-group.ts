@@ -1,11 +1,15 @@
 /**
  * RadioGroup — Ark's radio machine: the checked item reaches its parts on the
- * server, and every native radio is already there with its checked / disabled
- * state before hydration.
+ * server, every native radio is already there with its checked / disabled
+ * state before hydration, and the tile grid carries its media.
  */
 import { h } from "vue";
 import { RadioGroup } from "../../src/radio-group.js";
 import type { Section } from "../section.js";
+
+/** A tile's stand-in thumbnail: one shape in a 4:3 frame. */
+const thumbnail = (x: number, y: number, width: number, height: number) =>
+  h("svg", { viewBox: "0 0 4 3", "aria-hidden": "true" }, [h("rect", { x, y, width, height })]);
 
 const RadioGroupSection: Section = () =>
   h("section", { "aria-label": "radio groups" }, [
@@ -41,6 +45,28 @@ const RadioGroupSection: Section = () =>
         h(RadioGroup.ItemHiddenInput),
       ]),
     ]),
+    h(
+      RadioGroup.Root,
+      { variant: "tile", columns: 2, aspectRatio: "4:3", defaultValue: "title" },
+      () => [
+        h(RadioGroup.Label, {}, () => "Layout"),
+        h(RadioGroup.Item, { value: "title" }, () => [
+          h(RadioGroup.ItemMedia, {}, () => thumbnail(1, 1, 2, 1)),
+          h(RadioGroup.ItemControl),
+          h(RadioGroup.ItemText, {}, () => [
+            "Title",
+            h(RadioGroup.ItemDescription, {}, () => "A heading alone"),
+          ]),
+          h(RadioGroup.ItemHiddenInput),
+        ]),
+        h(RadioGroup.Item, { value: "split", disabled: true }, () => [
+          h(RadioGroup.ItemMedia, {}, () => thumbnail(0, 0, 2, 3)),
+          h(RadioGroup.ItemControl),
+          h(RadioGroup.ItemText, {}, () => "Split"),
+          h(RadioGroup.ItemHiddenInput),
+        ]),
+      ],
+    ),
   ]);
 
 export default RadioGroupSection;

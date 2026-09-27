@@ -3,6 +3,8 @@ import { cleanup, render, screen } from "@solidjs/testing-library";
 import userEvent from "@testing-library/user-event";
 import {
   RadioGroup,
+  type RadioGroupAspectRatio,
+  type RadioGroupColumns,
   type RadioGroupSize,
   type RadioGroupValueChangeDetails,
 } from "../src/index.jsx";
@@ -20,6 +22,7 @@ describe("RadioGroup surface (Solid)", () => {
       ).toBeDefined();
     }
     expect(RadioGroup.ItemDescription).toBeDefined();
+    expect(RadioGroup.ItemMedia).toBeDefined();
   });
 });
 
@@ -175,5 +178,104 @@ describe("RadioGroup (Solid)", () => {
       expect(control.hasAttribute("data-invalid")).toBe(true);
     }
     expect(radio(/^Standard/).getAttribute("aria-invalid")).toBe("true");
+  });
+});
+
+/** A 1×1 transparent GIF: jsdom never loads it, but the `<img>` is real. */
+const PIXEL = "data:image/gif;base64,R0lGODlhAQABAAAAACw=";
+
+const LAYOUTS = [
+  { value: "title", label: "Title", description: "A heading alone" },
+  { value: "split", label: "Split", description: "Text beside a picture" },
+  { value: "grid", label: "Grid", description: "Four pictures", disabled: true },
+];
+
+function TileDemo(props: {
+  columns?: RadioGroupColumns;
+  aspectRatio?: RadioGroupAspectRatio;
+  onValueChange?: (details: RadioGroupValueChangeDetails) => void;
+}) {
+  return (
+    <RadioGroup.Root
+      variant="tile"
+      columns={props.columns}
+      aspectRatio={props.aspectRatio}
+      defaultValue="title"
+      onValueChange={props.onValueChange}
+    >
+      <RadioGroup.Label>Layout</RadioGroup.Label>
+      {LAYOUTS.map((layout) => (
+        <RadioGroup.Item value={layout.value} disabled={layout.disabled}>
+          <RadioGroup.ItemMedia>
+            <img src={PIXEL} alt="" />
+          </RadioGroup.ItemMedia>
+          <RadioGroup.ItemControl />
+          <RadioGroup.ItemText>
+            {layout.label}
+            <RadioGroup.ItemDescription>{layout.description}</RadioGroup.ItemDescription>
+          </RadioGroup.ItemText>
+          <RadioGroup.ItemHiddenInput />
+        </RadioGroup.Item>
+      ))}
+      <RadioGroup.Item value="blank">
+        <RadioGroup.ItemMedia>
+          <img src={PIXEL} alt="Blank slide" />
+        </RadioGroup.ItemMedia>
+        <RadioGroup.ItemControl />
+        <RadioGroup.ItemHiddenInput />
+      </RadioGroup.Item>
+    </RadioGroup.Root>
+  );
+}
+
+describe("RadioGroup tile variant (Solid)", () => {
+  it("defaults to the list variant with no grid attributes", () => {
+    render(() => <Demo />);
+    expect(part("root").getAttribute("data-variant")).toBe("list");
+    expect(part("root").hasAttribute("data-columns")).toBe(false);
+    expect(part("root").hasAttribute("data-aspect-ratio")).toBe(false);
+  });
+
+  it("puts the tile layout, the column count and the media shape on the root", () => {
+    render(() => <TileDemo columns={3} aspectRatio="1:1" />);
+    expect(part("root").getAttribute("data-variant")).toBe("tile");
+    expect(part("root").getAttribute("data-columns")).toBe("3");
+    expect(part("root").getAttribute("data-aspect-ratio")).toBe("1:1");
+    expect(parts("item-media")).toHaveLength(4);
+    expect(part("item-media").tagName).toBe("SPAN");
+
+    cleanup();
+    render(() => <TileDemo />);
+    // Unfixed, the cards fill the row; unset, the media is 16:9 (the stylesheet's).
+    expect(part("root").hasAttribute("data-columns")).toBe(false);
+    expect(part("root").hasAttribute("data-aspect-ratio")).toBe(false);
+  });
+
+  it("names each tile by its label, and by the image only when the label is missing", () => {
+    render(() => <TileDemo />);
+    expect(radio(/^Title\s*A heading alone$/)).toBeTruthy();
+    expect(radio(/^Blank slide$/)).toBeTruthy();
+  });
+
+  it("selects a tile when its image is clicked", async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    render(() => <TileDemo onValueChange={onValueChange} />);
+    await user.click(parts("item-media")[1]!.querySelector("img")!);
+    expect(onValueChange).toHaveBeenCalledWith(expect.objectContaining({ value: "split" }));
+    expect(parts("item")[1]!.getAttribute("data-state")).toBe("checked");
+    expect(parts("item-control")[1]!.getAttribute("data-state")).toBe("checked");
+  });
+
+  it("keeps radio keys: Tab enters on the checked tile, arrows skip a disabled one", async () => {
+    const user = userEvent.setup();
+    render(() => <TileDemo />);
+    await user.tab();
+    expect(document.activeElement).toBe(radio(/^Title/));
+    await user.keyboard("{ArrowDown}");
+    expect(radio(/^Split/).checked).toBe(true);
+    await user.keyboard("{ArrowDown}");
+    expect(radio(/^Blank slide$/).checked).toBe(true);
+    expect(radio(/^Grid/).disabled).toBe(true);
   });
 });

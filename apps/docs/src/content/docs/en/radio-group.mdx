@@ -5,7 +5,7 @@ group: Components
 order: 27
 component: RadioGroup
 pkg: "@moderno-ui/react"
-agentPropsHash: "sha256:90889c24cb4d928c30a598d24f6746bcaaaafbce3a64442dfb78eab8d7a1e9f6"
+agentPropsHash: "sha256:ab6426f2c3fee8a4719beb53703169e047cf2fdddcdc9c46c305dfd4a366965f"
 agent:
   intent: Pick exactly one option from a short, visible list.
   whenToUse: Two to five mutually exclusive options the user should compare at a glance — shipping speed, a plan, a payment method.
@@ -19,10 +19,13 @@ agent:
   gotchas:
     - "Give every RadioGroup.Item its own value and render RadioGroup.ItemHiddenInput inside it — it is the real radio that carries focus, arrow keys and the form value."
     - "Put RadioGroup.ItemDescription inside RadioGroup.ItemText, so screen readers read it with the option's label."
-    - "orientation is Ark's prop (vertical by default) and size is the only visual knob; checked, disabled, invalid and read-only are Ark's data-state and data-* attributes."
+    - "orientation is Ark's prop (vertical by default); variant, size, columns and aspectRatio are the visual knobs; checked, disabled, invalid and read-only are Ark's data-state and data-* attributes."
+    - 'For an image picker use variant="tile" and put the picture in RadioGroup.ItemMedia with alt="": ItemText names the radio. Give the image real alt text only when the item has no ItemText.'
+    - "columns (1 to 6) fixes a tile grid's column count; leave it unset and the cards fill the row. Both follow the group's width, not the viewport."
   theming:
     - "The radio circle is a --muted-foreground ring on --background; checked, it becomes a --primary ring around a --primary-foreground dot."
     - "Invalid turns the circle's ring --destructive; the description text is --muted-foreground. Do not pass a hex."
+    - "A tile is a --card surface with a --border edge; checked, the edge doubles in --primary and a --primary check badge appears in its corner. Hover darkens the edge to --muted-foreground."
 ---
 
 import Preview from "../../../components/Preview.astro";
@@ -60,6 +63,11 @@ import invalidReact from "../../../examples/radio-group/invalid/react.tsx?raw";
 import invalidVue from "../../../examples/radio-group/invalid/vue.vue?raw";
 import invalidSolid from "../../../examples/radio-group/invalid/solid.tsx?raw";
 import invalidSvelte from "../../../examples/radio-group/invalid/radio-group-invalid.svelte?raw";
+import RadioGroupTilesDemo from "../../../examples/radio-group/tiles/radio-group-tiles.svelte";
+import tilesReact from "../../../examples/radio-group/tiles/react.tsx?raw";
+import tilesVue from "../../../examples/radio-group/tiles/vue.vue?raw";
+import tilesSolid from "../../../examples/radio-group/tiles/solid.tsx?raw";
+import tilesSvelte from "../../../examples/radio-group/tiles/radio-group-tiles.svelte?raw";
 
 <FrameworkSelect locale="en" />
 
@@ -175,7 +183,7 @@ import { RadioGroup } from "@moderno-ui/solid";
 
 ### RadioGroup.Root
 
-`size` is the Moderno addition and defaults to `md`; the other props come from Ark's RadioGroup.
+The first table lists Moderno's props: `variant` (default `"list"`), `size` (default `"md"`), and two for tiles, `columns` (unset: the cards fill the row) and `aspectRatio` (default `"16:9"`). The second lists the props that come from Ark's RadioGroup.
 
 <PropsTable component="RadioGroup" />
 
@@ -203,10 +211,11 @@ import { RadioGroup } from "@moderno-ui/solid";
 
 | Part                         | Element                | Description                                                                                       |
 | ---------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------- |
-| `RadioGroup.Root`            | `<div>`                | `role="radiogroup"`; carries `data-size` and `data-orientation`.                                  |
+| `RadioGroup.Root`            | `<div>`                | `role="radiogroup"`; carries `data-variant`, `data-size` and `data-orientation`.                  |
 | `RadioGroup.Label`           | `<span>`               | The group's label; it names the radiogroup.                                                       |
-| `RadioGroup.Item`            | `<label>`              | One option; clicking anywhere on it picks the option.                                             |
-| `RadioGroup.ItemControl`     | `<div>`                | The radio circle.                                                                                 |
+| `RadioGroup.Item`            | `<label>`              | One option; clicking anywhere on it picks the option. In a tile, the whole card.                  |
+| `RadioGroup.ItemMedia`       | `<span>`               | Moderno's slot for a tile's image or other content. Give an image `alt=""`.                       |
+| `RadioGroup.ItemControl`     | `<div>`                | The radio circle. In a tile, the check badge in the card's corner.                                |
 | `RadioGroup.ItemText`        | `<span>`               | The option's label; it names the radio.                                                           |
 | `RadioGroup.ItemDescription` | `<span>`               | Moderno's hint under the label. Put it inside `ItemText`.                                         |
 | `RadioGroup.ItemHiddenInput` | `<input type="radio">` | Visually hidden native radio; it carries focus, arrow keys, `name` and `value`. Always render it. |
@@ -222,7 +231,10 @@ import { RadioGroup } from "@moderno-ui/solid";
 | `data-invalid`       | Present while `invalid`                                    |
 | `data-readonly`      | Present on the items while `readOnly`                      |
 | `data-focus-visible` | On the item control whose radio has keyboard focus         |
+| `data-variant`       | On the root: `"list"` or `"tile"`                          |
 | `data-size`          | On the root: `"sm"`, `"md"` or `"lg"`                      |
+| `data-columns`       | On a tile root with `columns`: `"1"` to `"6"`              |
+| `data-aspect-ratio`  | On a tile root with `aspectRatio`, like `"4:3"`            |
 
 ## Examples
 
@@ -295,9 +307,24 @@ RadioGroup has no error-text part, so put the message below it in your form.
   <RadioGroupInvalidDemo client:visible />
 </Preview>
 
+### Tiles
+
+Use `variant="tile"` to pick by picture, like a slide layout. Each option becomes a card; put the picture in `RadioGroup.ItemMedia`. It can be an `<img alt="">` or any content, like the SVG here. Set `columns` to fix the number of cards per row, and `aspectRatio` to change the picture's shape.
+
+<Preview
+  examples={{
+    react: tilesReact,
+    vue: tilesVue,
+    solid: tilesSolid,
+    svelte: tilesSvelte,
+  }}
+>
+  <RadioGroupTilesDemo client:visible />
+</Preview>
+
 ## Notes
 
-- `RadioGroup.Root` is wrapped to add `size`, and `RadioGroup.ItemDescription` is Moderno's; every other part is Ark's unchanged.
-- Style state from `data-state` and the `data-*` flags; `size` is the only visual prop.
+- `RadioGroup.Root` is wrapped to add `variant`, `size`, `columns` and `aspectRatio`; `RadioGroup.ItemMedia` and `RadioGroup.ItemDescription` are Moderno's. Every other part is Ark's unchanged.
+- Style state from `data-state` and the `data-*` flags.
 - The arrow keys move the choice between options, as in a native radio group.
 - RadioGroup replaces the predecessor's Radio.
