@@ -45,6 +45,7 @@ import PinInputSection from "./sections/pin-input.js";
 import PopoverSection from "./sections/popover.js";
 import ProgressSection from "./sections/progress.js";
 import RadioGroupSection from "./sections/radio-group.js";
+import SegmentedControlSection from "./sections/segmented-control.js";
 import SelectSection from "./sections/select.js";
 import SkeletonSection from "./sections/skeleton.js";
 import SliderSection from "./sections/slider.js";
@@ -101,6 +102,7 @@ export function App({ open = false }: AppProps) {
       <PopoverSection open={open} />
       <ProgressSection open={open} />
       <RadioGroupSection open={open} />
+      <SegmentedControlSection open={open} />
       <SelectSection open={open} />
       <SkeletonSection open={open} />
       <SliderSection open={open} />

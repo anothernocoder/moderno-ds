@@ -41,6 +41,7 @@ import PinInputSection from "./sections/pin-input.js";
 import PopoverSection from "./sections/popover.js";
 import ProgressSection from "./sections/progress.js";
 import RadioGroupSection from "./sections/radio-group.js";
+import SegmentedControlSection from "./sections/segmented-control.js";
 import SelectSection from "./sections/select.js";
 import SkeletonSection from "./sections/skeleton.js";
 import SliderSection from "./sections/slider.js";
@@ -98,6 +99,7 @@ export const App = defineComponent({
         h(PopoverSection, { open: props.open }),
         h(ProgressSection, { open: props.open }),
         h(RadioGroupSection, { open: props.open }),
+        h(SegmentedControlSection, { open: props.open }),
         h(SelectSection, { open: props.open }),
         h(SkeletonSection, { open: props.open }),
         h(SliderSection, { open: props.open }),

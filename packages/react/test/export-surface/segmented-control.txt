@@ -1,0 +1,8 @@
+value SegmentedControl
+type ModernoSegmentedControlRootProps
+type SegmentedControlIndicatorProps
+type SegmentedControlItemHiddenInputProps
+type SegmentedControlItemProps
+type SegmentedControlItemTextProps
+type SegmentedControlSize
+type SegmentedControlValueChangeDetails

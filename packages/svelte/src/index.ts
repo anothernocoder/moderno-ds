@@ -45,6 +45,7 @@ export * from "./exports/portal.js";
 export * from "./exports/progress.js";
 export * from "./exports/radio-group.js";
 export * from "./exports/scatter-chart.js";
+export * from "./exports/segmented-control.js";
 export * from "./exports/select.js";
 export * from "./exports/skeleton.js";
 export * from "./exports/slider.js";

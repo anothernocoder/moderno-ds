@@ -41,6 +41,7 @@
   import Popover from "./sections/Popover.svelte";
   import Progress from "./sections/Progress.svelte";
   import RadioGroup from "./sections/RadioGroup.svelte";
+  import SegmentedControl from "./sections/SegmentedControl.svelte";
   import Select from "./sections/Select.svelte";
   import Skeleton from "./sections/Skeleton.svelte";
   import Slider from "./sections/Slider.svelte";
@@ -93,6 +94,7 @@
   <Popover {open} />
   <Progress {open} />
   <RadioGroup {open} />
+  <SegmentedControl {open} />
   <Select {open} />
   <Skeleton {open} />
   <Slider {open} />

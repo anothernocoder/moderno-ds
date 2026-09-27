@@ -43,6 +43,7 @@ import popoverComponent from "./components/popover.ts";
 import progressComponent from "./components/progress.ts";
 import radioGroupComponent from "./components/radio-group.ts";
 import scatterChartComponent from "./components/scatter-chart.ts";
+import segmentedControlComponent from "./components/segmented-control.ts";
 import selectComponent from "./components/select.ts";
 import skeletonComponent from "./components/skeleton.ts";
 import sliderComponent from "./components/slider.ts";
@@ -95,6 +96,7 @@ export const { ENTRIES, AGENT_COMPONENTS, AGENT_EXAMPLES } = assembleComponents(
   progressComponent,
   radioGroupComponent,
   scatterChartComponent,
+  segmentedControlComponent,
   selectComponent,
   skeletonComponent,
   sliderComponent,

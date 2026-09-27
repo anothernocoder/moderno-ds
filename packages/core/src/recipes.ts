@@ -46,6 +46,7 @@ export * from "./recipes/pin-input.js";
 export * from "./recipes/popover.js";
 export * from "./recipes/progress.js";
 export * from "./recipes/radio-group.js";
+export * from "./recipes/segmented-control.js";
 export * from "./recipes/select.js";
 export * from "./recipes/skeleton.js";
 export * from "./recipes/slider.js";

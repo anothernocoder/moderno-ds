@@ -5034,6 +5034,176 @@
     }
   }
 
+  /* ─────────────────────── SegmentedControl ─────────────────────── *
+   * Ark's segment group (scope "segment-group", a radio machine): root
+   * (role="radiogroup") > indicator + item (a <label>) > item-text +
+   * item-hidden-input (the real radio, visually hidden, which carries focus
+   * and the arrow keys). The root is the track; the indicator is Ark's
+   * absolutely positioned pill: Ark measures the checked item and hands its
+   * box over as --left/--top/--width/--height, and hides the indicator until
+   * it has one. Ark stamps data-state="checked|unchecked", data-disabled,
+   * data-invalid, data-readonly and data-focus-visible on every item part.
+   * `segmentedControlAttrs` puts data-size (Field's sizes) and a bare
+   * data-full-width on the root; items follow through child combinators, so
+   * a control nested in another keeps its own size.                      */
+  /* @runtime-vars --top --width --height — the checked item's box, set by Ark. */
+  [data-scope="segment-group"][data-part="root"] {
+    display: inline-flex;
+    align-items: stretch;
+    /* Its own width even where a flex column would stretch it (a Field). */
+    width: fit-content;
+    /* Never wider than its container, even as a grid or flex item: its
+       segments shrink and their labels end in an ellipsis instead. */
+    min-width: 0;
+    max-width: 100%;
+    height: var(--spacing-8);
+    padding: calc(var(--spacing-1) / 2);
+    /* The --border edge keeps the track a track in a theme whose --muted
+       matches its --background (theme-contrast). */
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--muted);
+    /* The indicator's stacking context, so it sits behind the items without
+       escaping below the page. Ark sets position: relative inline. */
+    isolation: isolate;
+    vertical-align: middle;
+  }
+  [data-scope="segment-group"][data-part="root"][data-full-width] {
+    display: flex;
+    width: 100%;
+  }
+  [data-scope="segment-group"][data-part="root"][data-invalid] {
+    border-color: var(--destructive);
+  }
+  /*
+   * Ark stamps data-disabled on the root, the indicator and every item part of
+   * a disabled group, and on every part of a disabled item; the base layer dims
+   * anything carrying it, and nesting would multiply the opacity. Dim the
+   * outermost disabled part once and leave what is inside it opaque.
+   */
+  [data-scope="segment-group"][data-part="root"][data-disabled] :where([data-part]),
+  [data-scope="segment-group"][data-part="item"][data-disabled] :where([data-part]) {
+    opacity: 1;
+  }
+  /* One segment: its text (and icon) centred. It shrinks below its content in
+     a narrow container, and its text ends in an ellipsis instead of breaking
+     the track. The border stays transparent unless no indicator is showing. */
+  [data-scope="segment-group"][data-part="root"] > [data-part="item"] {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    flex: 0 1 auto;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-2);
+    min-width: 0;
+    padding-inline: var(--spacing-3);
+    border: 1px solid transparent;
+    border-radius: calc(var(--radius) - var(--spacing-1) / 2);
+    color: var(--muted-foreground);
+    font-family: var(--font-sans);
+    font-size: var(--text-ui-md);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--leading-ui-md);
+    cursor: pointer;
+    user-select: none;
+    transition: color var(--motion-fast);
+  }
+  [data-scope="segment-group"][data-part="root"][data-full-width] > [data-part="item"] {
+    flex: 1 1 0;
+  }
+  [data-scope="segment-group"][data-part="root"] > [data-part="item"][data-hover],
+  [data-scope="segment-group"][data-part="root"] > [data-part="item"][data-state="checked"] {
+    color: var(--foreground);
+  }
+  [data-scope="segment-group"][data-part="root"] > [data-part="item"][data-readonly] {
+    cursor: default;
+  }
+  /* Focus lives on the visually hidden radio, so the ring is drawn on its
+     segment, inside its edge, where a neighbour cannot cover it. */
+  [data-scope="segment-group"][data-part="root"] > [data-part="item"][data-focus-visible] {
+    outline-color: var(--ring);
+    outline-style: solid;
+    outline-width: 2px;
+    outline-offset: -2px;
+  }
+  /* An icon keeps its size while the text beside it shrinks. */
+  [data-scope="segment-group"][data-part="root"] > [data-part="item"] > svg {
+    flex: none;
+    width: var(--spacing-4);
+    height: var(--spacing-4);
+  }
+  /* The base layer paints every part --foreground; the text follows its
+     segment's colour instead. */
+  [data-scope="segment-group"][data-part="item-text"] {
+    min-width: 0;
+    color: inherit;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  /*
+   * The selected segment is a raised --background pill with a --border edge
+   * and --shadow-sm: a shape, not only a colour. Ark sets the indicator's
+   * position, its left edge and its transition inline; the stylesheet gives it
+   * the rest of its box, its look and the timing.
+   */
+  [data-scope="segment-group"][data-part="root"] > [data-part="indicator"] {
+    z-index: 0;
+    top: var(--top);
+    width: var(--width);
+    height: var(--height);
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) - var(--spacing-1) / 2);
+    background-color: var(--background);
+    box-shadow: var(--shadow-sm);
+    --transition-duration: var(--motion-fast);
+    --transition-timing-function: ease-out;
+  }
+  /* No indicator showing — before hydration, or without one — the checked
+     segment wears the same pill itself, so the choice is never invisible. */
+  [data-scope="segment-group"][data-part="root"]:not(:has(> [data-part="indicator"]:not([hidden])))
+    > [data-part="item"][data-state="checked"] {
+    border-color: var(--border);
+    background-color: var(--background);
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* Sizes — the track is as tall as a Field input of the same size. */
+  [data-scope="segment-group"][data-part="root"][data-size="sm"] {
+    height: var(--spacing-7);
+  }
+  [data-scope="segment-group"][data-part="root"][data-size="sm"] > [data-part="item"] {
+    gap: var(--spacing-1);
+    padding-inline: var(--spacing-2);
+    font-size: var(--text-ui-sm);
+    line-height: var(--leading-ui-sm);
+  }
+  [data-scope="segment-group"][data-part="root"][data-size="sm"] > [data-part="item"] > svg {
+    width: var(--spacing-3);
+    height: var(--spacing-3);
+  }
+  [data-scope="segment-group"][data-part="root"][data-size="lg"] {
+    height: calc(var(--spacing-8) + var(--spacing-2));
+  }
+  [data-scope="segment-group"][data-part="root"][data-size="lg"] > [data-part="item"] {
+    padding-inline: var(--spacing-4);
+    font-size: var(--text-ui-lg);
+    line-height: var(--leading-ui-lg);
+  }
+  [data-scope="segment-group"][data-part="root"][data-size="lg"] > [data-part="item"] > svg {
+    width: var(--spacing-5);
+    height: var(--spacing-5);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-scope="segment-group"][data-part="root"] > [data-part="item"] {
+      transition: none;
+    }
+    [data-scope="segment-group"][data-part="root"] > [data-part="indicator"] {
+      --transition-duration: 0ms;
+    }
+  }
+
   /* ─────────────────────────── Select ─────────────────────────── *
    * `selectRecipe` size on root; Ark drives popover + keyboard + state. */
   /* @runtime-vars --reference-width — the trigger's width, set by Ark's positioner. */
