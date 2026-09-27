@@ -19,7 +19,7 @@ agent:
     - "`hrefFor` is the seam for your router: return `/referrals/referral-share` instead of `#referral-share` and every link and every interception follows, with no other edit."
     - "`onStepChange` is where you mirror the step into the URL. Without it a reload drops the reader back at referral-invite."
     - '`friends` is the one list: the invite form and the share screen''s invite field both add to it, the share screen lists it and the reward screen counts it. Seed it with `initialFriends` from your API; a friend with `status: "Joined"` counts as joined.'
-    - "`onInvite` hands up only addresses nobody has invited yet. Send the invitations there."
+    - "`onInvite` hands up only addresses nobody has invited yet, each once whatever its case. Send the invitations there."
     - "The flow has no end step: the reward screen is where a member comes back to. Leaving is the wordmark, a plain link to `homeHref`."
     - "Installing the flow installs its three screens and the block each one composes, each under its own version in `.moderno/manifest.json`."
   theming:

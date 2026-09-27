@@ -11,7 +11,8 @@
  *    fire, so the walk also witnesses `onstepchange` and `oninvite`.
  * 2. **One list of friends.** Addresses sent from the invite form and from the
  *    share screen's own invite field land on the share screen's list, and the
- *    reward screen counts that same list.
+ *    reward screen counts that same list. An address is on it, and sent, once,
+ *    however often and in whatever case it was typed.
  * 3. **Navigation is interception, not a button.** "Skip for now" and "Invite
  *    more friends" are real `href`s (`#referral-reward`, `#referral-share`), and
  *    taking one changes the screen without changing the document's URL.
@@ -269,6 +270,32 @@ test.describe("referral flow", () => {
     await walked.getByRole("link", { name: "Skip for now" }).click();
     expect(await currentScreen(page)).toBe("referral-reward");
     await expect(walked.getByText("No data yet")).toHaveCount(3);
+  });
+
+  test("invites an address once, however often and in whatever case it is typed", async ({
+    page,
+  }) => {
+    await openWalk(page);
+    const walked = flow(page);
+
+    // Repeated in one send, and again in another case: one invitation, one row.
+    await walked
+      .locator('textarea[name="emails"]')
+      .fill("ada@example.com, ada@example.com\nAda@example.com, grace@example.com");
+    await walked.getByRole("button", { name: "Send invites" }).click();
+    expect(await currentScreen(page)).toBe("referral-share");
+    expect(await reported(page)).toContain('oninvite(["ada@example.com","grace@example.com"])');
+    await expect(walked.getByText("ada@example.com", { exact: true })).toHaveCount(1);
+
+    // Already on the list, in yet another case: nothing is added or sent.
+    await walked.locator('input[name="email"]').fill("ADA@example.com");
+    await walked.getByRole("button", { name: "Invite", exact: true }).click();
+    expect(await reported(page)).not.toContainEqual(expect.stringContaining("ADA@example.com"));
+    await expect(walked.getByText("ada@example.com", { exact: true })).toHaveCount(1);
+
+    await walked.getByRole("link", { name: "Skip for now" }).click();
+    expect(await currentScreen(page)).toBe("referral-reward");
+    await expect(rewardValue(page, "Friends invited")).toHaveText("2");
   });
 
   test("opens a returning member on the rewards their friends earned", async ({ page }) => {

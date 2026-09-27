@@ -140,10 +140,19 @@
     onstepchange?.(next);
   }
 
-  /** Adds the addresses nobody has invited yet, and reports them up. */
+  /**
+   * Adds the addresses nobody has invited yet, and reports them up. An address
+   * counts once whatever its case: one already on the list, or repeated in the
+   * same send, is dropped.
+   */
   function invite(emails: string[]) {
     const known = new Set(friends.map((friend) => friend.email.toLowerCase()));
-    const fresh = emails.filter((email) => !known.has(email.toLowerCase()));
+    const fresh = emails.filter((email) => {
+      const key = email.toLowerCase();
+      if (known.has(key)) return false;
+      known.add(key);
+      return true;
+    });
     if (fresh.length === 0) return;
     friends = [
       ...friends,
