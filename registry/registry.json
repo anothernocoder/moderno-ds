@@ -3884,7 +3884,7 @@
     {
       "name": "shopping-cart-react",
       "type": "registry:block",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "Shopping Cart (React)",
       "description": "A shopping cart, composing the @moderno-ui/react Alert, Button, Card, NumberInput and Skeleton primitives: a serif heading, one line per item (its image, linked name, options and price, a NumberInput for the quantity and a Remove button) and an order summary Card with the subtotal and a Checkout button, with its own loading, empty and error renders; responds to its container (@container) — the image grows and each line's quantity moves beside it at @sm, the image grows again and the heading steps up at @md, and the summary moves beside the lines at @lg.",
       "dependencies": [
@@ -3902,7 +3902,7 @@
     {
       "name": "shopping-cart-vue",
       "type": "registry:block",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "Shopping Cart (Vue)",
       "description": "A shopping cart, composing the @moderno-ui/vue Alert, Button, Card, NumberInput and Skeleton primitives: a serif heading, one line per item (its image, linked name, options and price, a NumberInput for the quantity and a Remove button) and an order summary Card with the subtotal and a Checkout button, with its own loading, empty and error renders; responds to its container (@container) — the image grows and each line's quantity moves beside it at @sm, the image grows again and the heading steps up at @md, and the summary moves beside the lines at @lg.",
       "dependencies": [
@@ -3920,7 +3920,7 @@
     {
       "name": "shopping-cart-svelte",
       "type": "registry:block",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "Shopping Cart (Svelte)",
       "description": "A shopping cart, composing the @moderno-ui/svelte Alert, Button, Card, NumberInput and Skeleton primitives: a serif heading, one line per item (its image, linked name, options and price, a NumberInput for the quantity and a Remove button) and an order summary Card with the subtotal and a Checkout button, with its own loading, empty and error renders; responds to its container (@container) — the image grows and each line's quantity moves beside it at @sm, the image grows again and the heading steps up at @md, and the summary moves beside the lines at @lg.",
       "dependencies": [
@@ -3938,7 +3938,7 @@
     {
       "name": "shopping-cart-solid",
       "type": "registry:block",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "Shopping Cart (Solid)",
       "description": "A shopping cart, composing the @moderno-ui/solid Alert, Button, Card, NumberInput and Skeleton primitives: a serif heading, one line per item (its image, linked name, options and price, a NumberInput for the quantity and a Remove button) and an order summary Card with the subtotal and a Checkout button, with its own loading, empty and error renders; responds to its container (@container) — the image grows and each line's quantity moves beside it at @sm, the image grows again and the heading steps up at @md, and the summary moves beside the lines at @lg.",
       "dependencies": [
@@ -4670,6 +4670,86 @@
           "path": "blocks/testimonials/solid/testimonials.tsx",
           "type": "registry:block",
           "target": "src/components/blocks/testimonials.tsx"
+        }
+      ]
+    },
+    {
+      "name": "cart-react",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Cart (React)",
+      "description": "Full-viewport cart screen composing the shopping-cart block: the lines a shopper picked — image, linked name, options, price, a quantity box and Remove — and the order summary with the subtotal, a note and Checkout, with the block's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container): the masthead lines up at @sm and the footer at @md; inside, the block stacks the summary under the lines on narrow containers and sets it beside them from its own @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [
+        "shopping-cart-react"
+      ],
+      "files": [
+        {
+          "path": "screens/cart/react/cart.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/cart.tsx"
+        }
+      ]
+    },
+    {
+      "name": "cart-vue",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Cart (Vue)",
+      "description": "Full-viewport cart screen composing the shopping-cart block: the lines a shopper picked — image, linked name, options, price, a quantity box and Remove — and the order summary with the subtotal, a note and Checkout, with the block's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container): the masthead lines up at @sm and the footer at @md; inside, the block stacks the summary under the lines on narrow containers and sets it beside them from its own @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [
+        "shopping-cart-vue"
+      ],
+      "files": [
+        {
+          "path": "screens/cart/vue/Cart.vue",
+          "type": "registry:screen",
+          "target": "src/components/screens/Cart.vue"
+        }
+      ]
+    },
+    {
+      "name": "cart-svelte",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Cart (Svelte)",
+      "description": "Full-viewport cart screen composing the shopping-cart block: the lines a shopper picked — image, linked name, options, price, a quantity box and Remove — and the order summary with the subtotal, a note and Checkout, with the block's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container): the masthead lines up at @sm and the footer at @md; inside, the block stacks the summary under the lines on narrow containers and sets it beside them from its own @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [
+        "shopping-cart-svelte"
+      ],
+      "files": [
+        {
+          "path": "screens/cart/svelte/Cart.svelte",
+          "type": "registry:screen",
+          "target": "src/components/screens/Cart.svelte"
+        }
+      ]
+    },
+    {
+      "name": "cart-solid",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Cart (Solid)",
+      "description": "Full-viewport cart screen composing the shopping-cart block: the lines a shopper picked — image, linked name, options, price, a quantity box and Remove — and the order summary with the subtotal, a note and Checkout, with the block's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container): the masthead lines up at @sm and the footer at @md; inside, the block stacks the summary under the lines on narrow containers and sets it beside them from its own @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [
+        "shopping-cart-solid"
+      ],
+      "files": [
+        {
+          "path": "screens/cart/solid/cart.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/cart.tsx"
         }
       ]
     },

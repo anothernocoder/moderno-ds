@@ -1,0 +1,161 @@
+---
+title: Carrito
+description: Una pantalla a viewport completo donde un cliente revisa su carrito — los artículos que eligió y el resumen del pedido — con el bloque de carrito entre una cabecera y un pie.
+group: Pantallas
+order: 122
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import CartScreenDemo from "../../../islands/CartScreenDemo.svelte";
+import cartReact from "../../../../../../registry/screens/cart/react/cart.tsx?raw";
+import cartVue from "../../../../../../registry/screens/cart/vue/Cart.vue?raw";
+import cartSolid from "../../../../../../registry/screens/cart/solid/cart.tsx?raw";
+import cartSvelte from "../../../../../../registry/screens/cart/svelte/Cart.svelte?raw";
+
+export const examples = {
+  react: cartReact,
+  vue: cartVue,
+  solid: cartSolid,
+  svelte: cartSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <CartScreenDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="cart" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { Cart } from "@/components/screens/cart";
+```
+
+```tsx
+<Cart items={items} subtotal={subtotal} onCheckout={() => goToShipping()} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```ts
+import Cart from "@/components/screens/Cart.vue";
+```
+
+```vue
+<Cart :items="items" :subtotal="subtotal" @checkout="goToShipping" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```ts
+import Cart from "@/components/screens/Cart.svelte";
+```
+
+```svelte
+<Cart {items} {subtotal} oncheckout={goToShipping} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { Cart } from "@/components/screens/cart";
+```
+
+```tsx
+<Cart items={items()} subtotal={subtotal()} onCheckout={() => goToShipping()} />
+```
+
+</ForFramework>
+
+Cada artículo tiene la forma que recibe el bloque [Shopping Cart](/es/shopping-cart/).
+
+## Referencia de API
+
+### Props
+
+Los callbacks son props `on…` en React y Solid, en minúsculas (`oncheckout`) en Svelte y eventos (`quantity-change`, `remove`, `checkout`, `retry`, `navigate`) en Vue.
+
+| Prop               | Tipo                                     | Por defecto             | Descripción                                                                          |
+| ------------------ | ---------------------------------------- | ----------------------- | ------------------------------------------------------------------------------------ |
+| `heading`          | `string`                                 | `"Your cart"`           | El `h1` de la página, el título del bloque de carrito.                               |
+| `items`            | `CartItem[]`                             | los ejemplos del bloque | Los artículos, en orden. `[]` muestra el mensaje de vacío.                           |
+| `subtotal`         | `string`                                 | —                       | El subtotal tal como se lee, como `"€134"`. Sin él, no hay fila de subtotal.         |
+| `note`             | `string`                                 | la nota del bloque      | Una línea corta bajo el subtotal; `""` la oculta.                                    |
+| `error`            | `string`                                 | —                       | Falló la carga del carrito; una alerta con reintento lo reemplaza.                   |
+| `loading`          | `boolean`                                | `false`                 | Líneas de marcador en una región ocupada reemplazan el carrito.                      |
+| `disabled`         | `boolean`                                | `false`                 | Las líneas se quedan; todos los enlaces, cajas de cantidad y botones quedan inertes. |
+| `onQuantityChange` | `(id: string, quantity: number) => void` | —                       | Cambió la cantidad de un artículo, siempre un entero de 1 a su máximo.               |
+| `onRemove`         | `(id: string) => void`                   | —                       | Se pulsó el botón Remove de un artículo.                                             |
+| `onCheckout`       | `() => void`                             | —                       | Se pulsó Checkout.                                                                   |
+| `onRetry`          | `() => void`                             | —                       | «Try again» tras `error`.                                                            |
+| `onNavigate`       | `(to, event) => void`                    | —                       | Se pulsó un enlace de la pantalla: `home`, `shop`, `privacy` o `terms`.              |
+| `homeHref`         | `string`                                 | `"#"`                   | Destino del logotipo.                                                                |
+| `shopHref`         | `string`                                 | `"#"`                   | Destino de «Continue shopping».                                                      |
+| `privacyHref`      | `string`                                 | `"#"`                   | Destino del enlace de privacidad.                                                    |
+| `termsHref`        | `string`                                 | `"#"`                   | Destino del enlace de términos.                                                      |
+
+### Estados
+
+| Estado        | Props      | Qué se renderiza                                                     |
+| ------------- | ---------- | -------------------------------------------------------------------- |
+| Por defecto   | —          | Los artículos y el resumen del pedido con Checkout.                  |
+| Vacío         | `items=[]` | El título y «Your cart is empty.».                                   |
+| Cargando      | `loading`  | El título y tres líneas de marcador.                                 |
+| Error         | `error`    | El título y una alerta de error con «Try again».                     |
+| Deshabilitado | `disabled` | Los mismos artículos con todos los enlaces, cajas y botones inertes. |
+
+### Tamaño
+
+| Paso del contenedor      | Cambio                            |
+| ------------------------ | --------------------------------- |
+| `@sm` (`--container-sm`) | La cabecera pasa a una sola fila. |
+| `@md` (`--container-md`) | El pie pasa a una sola fila.      |
+
+El resumen va bajo los artículos y pasa a su lado cuando el propio contenedor del bloque Shopping Cart llega a `--container-lg`.
+
+### Composición
+
+| Parte                               | Papel                                               |
+| ----------------------------------- | --------------------------------------------------- |
+| [Shopping Cart](/es/shopping-cart/) | Los artículos y el resumen, con `headingLevel={1}`. |
+
+## Ejemplos
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <CartScreenDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+Pulsa «Try again» para borrar el mensaje y recuperar el carrito.
+
+<Preview examples={examples} layout="fill">
+  <CartScreenDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Vacío
+
+<Preview examples={examples} layout="fill">
+  <CartScreenDemo client:visible locale="es" state="empty" />
+</Preview>
+
+## Notas
+
+- Presentacional: sin petición, sin cálculo de precios, sin router. La página que la monta se ocupa de ellos.
+- `onNavigate` pasa el evento del clic: ignora los clics con `metaKey`/`ctrlKey` y luego llama a `preventDefault()` para enrutar.
+- La raíz es un `<div>`, no un `<main>`. Conviértela en tu `<main>` si la ruta no tiene uno.
+- La pantalla importa el bloque Shopping Cart desde `@/components/blocks/…`; cambia esa línea si tu alias es otro.

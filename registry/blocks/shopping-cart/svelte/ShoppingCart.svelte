@@ -19,6 +19,7 @@
 
   interface Props {
     heading?: string;
+    headingLevel?: 1 | 2;
     items?: CartItem[];
     subtotal?: string;
     note?: string;
@@ -66,6 +67,7 @@
 
   let {
     heading = "Shopping cart",
+    headingLevel = 2,
     items,
     subtotal,
     note = "Shipping and taxes are added at checkout.",
@@ -80,11 +82,15 @@
 
   const shownItems = $derived(items ?? sampleItems);
   const shownSubtotal = $derived(subtotal ?? (items === undefined ? sampleSubtotal : undefined));
+  const headingRank = $derived(headingLevel === 1 ? 1 : undefined);
+  const sectionRank = $derived(headingLevel === 1 ? 2 : undefined);
 </script>
 
 <section class="@container moderno-block-shopping-cart text-foreground">
   <div class="grid gap-8 px-4 py-12 @lg:py-16">
-    <h2 class="font-serif text-heading-sm text-balance @md:text-heading">{heading}</h2>
+    <h2 class="font-serif text-heading-sm text-balance @md:text-heading" aria-level={headingRank}>
+      {heading}
+    </h2>
 
     {#if error}
       <Alert.Root variant="error">
@@ -137,7 +143,7 @@
                 {/if}
               </div>
               <div class="grid min-w-0 content-start gap-1">
-                <h3 class="text-body font-medium text-balance">
+                <h3 class="text-body font-medium text-balance" aria-level={sectionRank}>
                   {#if item.href}
                     <a
                       class="rounded-sm text-foreground underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring aria-disabled:cursor-not-allowed aria-disabled:text-muted-foreground aria-disabled:no-underline"
@@ -195,7 +201,7 @@
 
         <Card.Root variant="muted">
           <Card.Header>
-            <Card.Title>Order summary</Card.Title>
+            <Card.Title aria-level={sectionRank}>Order summary</Card.Title>
           </Card.Header>
           <Card.Content class="grid gap-3">
             {#if shownSubtotal}
