@@ -1,0 +1,14 @@
+/* Ark sizes a splitter inline to fill its container (width and height
+   100%). The stage has no height of its own to fill, so a lone splitter
+   gets a card's width and a workspace's height here: limits, which the
+   inline size cannot override. */
+.preview-panel--demo > astro-island > [data-scope="splitter"][data-part="root"] {
+  max-width: 32rem;
+  min-height: 14rem;
+}
+/* A panel has no padding of its own (it would skew the sizes); the demo's
+   one-word panels show their word in the middle instead. */
+.preview-panel--demo > astro-island > [data-scope="splitter"] > [data-part="panel"] {
+  display: grid;
+  place-items: center;
+}

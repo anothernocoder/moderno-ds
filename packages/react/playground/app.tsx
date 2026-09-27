@@ -37,6 +37,7 @@ import SelectSection from "./sections/select.js";
 import SkeletonSection from "./sections/skeleton.js";
 import SliderSection from "./sections/slider.js";
 import SpinnerSection from "./sections/spinner.js";
+import SplitterSection from "./sections/splitter.js";
 import SwitchSection from "./sections/switch.js";
 import TabsSection from "./sections/tabs.js";
 import TagsInputSection from "./sections/tags-input.js";
@@ -74,6 +75,7 @@ export function App({ open = false }: AppProps) {
       <SkeletonSection open={open} />
       <SliderSection open={open} />
       <SpinnerSection open={open} />
+      <SplitterSection open={open} />
       <SwitchSection open={open} />
       <TabsSection open={open} />
       <TagsInputSection open={open} />

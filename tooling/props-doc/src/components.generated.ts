@@ -35,6 +35,7 @@ import selectComponent from "./components/select.ts";
 import skeletonComponent from "./components/skeleton.ts";
 import sliderComponent from "./components/slider.ts";
 import spinnerComponent from "./components/spinner.ts";
+import splitterComponent from "./components/splitter.ts";
 import switchComponent from "./components/switch.ts";
 import tabsComponent from "./components/tabs.ts";
 import tagsInputComponent from "./components/tags-input.ts";
@@ -68,6 +69,7 @@ export const { ENTRIES, AGENT_COMPONENTS, AGENT_EXAMPLES } = assembleComponents(
   skeletonComponent,
   sliderComponent,
   spinnerComponent,
+  splitterComponent,
   switchComponent,
   tabsComponent,
   tagsInputComponent,

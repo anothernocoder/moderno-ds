@@ -2539,6 +2539,120 @@
     }
   }
 
+  /* ────────────────────────── Splitter ────────────────────────── *
+   * Ark's splitter machine: root > panel, resize-trigger (a native <button
+   * role="separator">) > resize-trigger-indicator, panel, … One trigger sits
+   * between each two panels. Ark lays everything out inline: the root is a
+   * flex row (a column when vertical) filling its container, each panel's
+   * flex-grow is its size, and each trigger is `flex: 0 0 auto` with its own
+   * resize cursor. So the rules below only paint: the panels' type, and
+   * each trigger as a hairline rule with a grip at its middle. Ark stamps
+   * data-orientation on every part, and data-dragging, data-focus and
+   * data-disabled on a trigger and its indicator. `splitterRecipe` puts the
+   * variant on the root.                                                   */
+  /* A panel carries no padding: its size is a flex-grow share of the space
+     left after every padding, so any padding would skew the percentages Ark
+     reports. The consumer's content brings its own. */
+  [data-scope="splitter"][data-part="panel"] {
+    font-size: var(--text-ui-md);
+    line-height: var(--leading-ui-md);
+  }
+  /* Enclosed — the panels share one bordered box; Ark's inline
+     `overflow: hidden` on the root clips them to its rounded corners. */
+  [data-scope="splitter"][data-part="root"][data-variant="enclosed"] {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--background);
+  }
+
+  /* The trigger is a native button: the UA `buttonface` fill, border and
+     padding are cleared, so all that shows is the rule drawn through its
+     middle and the grip on it. It is wider than the rule so a pointer can
+     find it. */
+  [data-scope="splitter"][data-part="resize-trigger"] {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-full);
+    background-color: transparent;
+    color: inherit;
+  }
+  [data-scope="splitter"][data-part="resize-trigger"][data-orientation="horizontal"] {
+    width: var(--spacing-3);
+  }
+  [data-scope="splitter"][data-part="resize-trigger"][data-orientation="vertical"] {
+    height: var(--spacing-3);
+  }
+  /* The rule: a hairline along the trigger's length, under the grip. */
+  [data-scope="splitter"][data-part="resize-trigger"]::before {
+    content: "";
+    position: absolute;
+    border: 0 solid var(--border);
+    transition: border-color var(--motion-fast);
+  }
+  [data-scope="splitter"][data-part="resize-trigger"][data-orientation="horizontal"]::before {
+    inset-block: 0;
+    left: 50%;
+    border-inline-start-width: 1px;
+    translate: -50% 0;
+  }
+  [data-scope="splitter"][data-part="resize-trigger"][data-orientation="vertical"]::before {
+    inset-inline: 0;
+    top: 50%;
+    border-block-start-width: 1px;
+    translate: 0 -50%;
+  }
+  /* The ring is drawn inside the trigger, where the root's clipping and the
+     panels beside it cannot cover it. */
+  [data-scope="splitter"][data-part="resize-trigger"]:focus-visible {
+    outline-color: var(--ring);
+    outline-style: solid;
+    outline-width: 2px;
+    outline-offset: -2px;
+  }
+
+  /* The grip: a short pill on the rule that says "drag me". */
+  [data-scope="splitter"][data-part="resize-trigger-indicator"] {
+    position: relative;
+    flex: none;
+    border-radius: var(--radius-full);
+    background-color: var(--border);
+    transition: background-color var(--motion-fast);
+  }
+  [data-scope="splitter"][data-part="resize-trigger-indicator"][data-orientation="horizontal"] {
+    width: var(--spacing-1);
+    height: var(--spacing-6);
+  }
+  [data-scope="splitter"][data-part="resize-trigger-indicator"][data-orientation="vertical"] {
+    width: var(--spacing-6);
+    height: var(--spacing-1);
+  }
+  /* Hovered, focused or dragged, the rule and the grip take the primary
+     colour, so the user sees which boundary will move. */
+  [data-scope="splitter"][data-part="resize-trigger"]:hover::before,
+  [data-scope="splitter"][data-part="resize-trigger"][data-focus]::before,
+  [data-scope="splitter"][data-part="resize-trigger"][data-dragging]::before {
+    border-color: var(--primary);
+  }
+  [data-scope="splitter"][data-part="resize-trigger"]:hover > [data-part="resize-trigger-indicator"],
+  [data-scope="splitter"][data-part="resize-trigger-indicator"][data-focus],
+  [data-scope="splitter"][data-part="resize-trigger-indicator"][data-dragging] {
+    background-color: var(--primary);
+  }
+  /*
+   * Ark stamps data-disabled on a disabled trigger AND its indicator, and the
+   * base layer dims anything carrying it — nesting would multiply the
+   * opacity. Dim the trigger once and leave its grip opaque.
+   */
+  [data-scope="splitter"][data-part="resize-trigger"][data-disabled]
+    > [data-part="resize-trigger-indicator"] {
+    opacity: 1;
+  }
+
   /* ─────────────────────────── Switch ─────────────────────────── *
    * `switchRecipe` size on the root part; every visual state is Ark's own
    * attribute — data-state="checked|unchecked" plus data-disabled /

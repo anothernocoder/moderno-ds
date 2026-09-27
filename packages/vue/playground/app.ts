@@ -33,6 +33,7 @@ import SelectSection from "./sections/select.js";
 import SkeletonSection from "./sections/skeleton.js";
 import SliderSection from "./sections/slider.js";
 import SpinnerSection from "./sections/spinner.js";
+import SplitterSection from "./sections/splitter.js";
 import SwitchSection from "./sections/switch.js";
 import TabsSection from "./sections/tabs.js";
 import TagsInputSection from "./sections/tags-input.js";
@@ -71,6 +72,7 @@ export const App = defineComponent({
         h(SkeletonSection, { open: props.open }),
         h(SliderSection, { open: props.open }),
         h(SpinnerSection, { open: props.open }),
+        h(SplitterSection, { open: props.open }),
         h(SwitchSection, { open: props.open }),
         h(TabsSection, { open: props.open }),
         h(TagsInputSection, { open: props.open }),

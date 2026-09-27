@@ -33,6 +33,7 @@ import SelectSection from "./sections/select.jsx";
 import SkeletonSection from "./sections/skeleton.jsx";
 import SliderSection from "./sections/slider.jsx";
 import SpinnerSection from "./sections/spinner.jsx";
+import SplitterSection from "./sections/splitter.jsx";
 import SwitchSection from "./sections/switch.jsx";
 import TabsSection from "./sections/tabs.jsx";
 import TagsInputSection from "./sections/tags-input.jsx";
@@ -70,6 +71,7 @@ export function App(props: AppProps) {
       <SkeletonSection open={props.open ?? false} />
       <SliderSection open={props.open ?? false} />
       <SpinnerSection open={props.open ?? false} />
+      <SplitterSection open={props.open ?? false} />
       <SwitchSection open={props.open ?? false} />
       <TabsSection open={props.open ?? false} />
       <TagsInputSection open={props.open ?? false} />

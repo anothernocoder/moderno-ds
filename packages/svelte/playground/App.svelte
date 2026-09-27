@@ -33,6 +33,7 @@
   import Skeleton from "./sections/Skeleton.svelte";
   import Slider from "./sections/Slider.svelte";
   import Spinner from "./sections/Spinner.svelte";
+  import Splitter from "./sections/Splitter.svelte";
   import Switch from "./sections/Switch.svelte";
   import Tabs from "./sections/Tabs.svelte";
   import TagsInput from "./sections/TagsInput.svelte";
@@ -66,6 +67,7 @@
   <Skeleton {open} />
   <Slider {open} />
   <Spinner {open} />
+  <Splitter {open} />
   <Switch {open} />
   <Tabs {open} />
   <TagsInput {open} />

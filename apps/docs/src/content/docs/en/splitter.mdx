@@ -1,0 +1,310 @@
+---
+title: Splitter
+description: Panels side by side, or stacked, that the user resizes by dragging the handle between them.
+group: Components
+order: 37
+component: Splitter
+pkg: "@moderno-ui/react"
+agentPropsHash: "sha256:66533282cfba2a515845a86581fdff99b42debb2123fedb5d28ee09f502d89b4"
+agent:
+  intent: Let the user resize panels that sit side by side, or stacked, by dragging the handle between them or with the keyboard.
+  whenToUse: A workspace where the user decides how much room each part gets — a file tree beside an editor, a code pane over its console, a mail list beside the message.
+  whenNotToUse:
+    - case: Showing one of several views in the same place
+      use: Tabs
+    - case: Sections the user opens and closes one under another
+      use: Accordion
+    - case: A plain line between two blocks of content
+      use: Divider
+  gotchas:
+    - "List every panel in the Root's panels prop, in order, each with an id; give each Splitter.Panel the same id."
+    - 'Put one Splitter.ResizeTrigger between each two panels. Its id is the two panel ids joined by a colon: "files:editor".'
+    - "Sizes are percentages. defaultSize (or size, controlled) holds one number per panel, and they add up to 100."
+    - "Give each Splitter.ResizeTrigger an aria-label that names the two panels it resizes; Ark does not name it."
+    - "The Root fills its container, so give the container a height. Root's size prop is Ark's panel sizes, not a density."
+  theming:
+    - "The rule between panels and the grip are --border; hovered, focused or dragged they turn --primary. The focus ring is --ring. Do not pass a hex."
+    - 'variant="enclosed" draws a --border frame with --radius corners around the panels.'
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import SplitterDemo from "../../../examples/splitter/splitter.svelte";
+import baseReact from "../../../examples/splitter/react.tsx?raw";
+import baseVue from "../../../examples/splitter/vue.vue?raw";
+import baseSolid from "../../../examples/splitter/solid.tsx?raw";
+import baseSvelte from "../../../examples/splitter/splitter.svelte?raw";
+import SplitterEnclosedDemo from "../../../examples/splitter/enclosed/splitter-enclosed.svelte";
+import enclosedReact from "../../../examples/splitter/enclosed/react.tsx?raw";
+import enclosedVue from "../../../examples/splitter/enclosed/vue.vue?raw";
+import enclosedSolid from "../../../examples/splitter/enclosed/solid.tsx?raw";
+import enclosedSvelte from "../../../examples/splitter/enclosed/splitter-enclosed.svelte?raw";
+import SplitterVerticalDemo from "../../../examples/splitter/vertical/splitter-vertical.svelte";
+import verticalReact from "../../../examples/splitter/vertical/react.tsx?raw";
+import verticalVue from "../../../examples/splitter/vertical/vue.vue?raw";
+import verticalSolid from "../../../examples/splitter/vertical/solid.tsx?raw";
+import verticalSvelte from "../../../examples/splitter/vertical/splitter-vertical.svelte?raw";
+import SplitterCollapsibleDemo from "../../../examples/splitter/collapsible/splitter-collapsible.svelte";
+import collapsibleReact from "../../../examples/splitter/collapsible/react.tsx?raw";
+import collapsibleVue from "../../../examples/splitter/collapsible/vue.vue?raw";
+import collapsibleSolid from "../../../examples/splitter/collapsible/solid.tsx?raw";
+import collapsibleSvelte from "../../../examples/splitter/collapsible/splitter-collapsible.svelte?raw";
+import SplitterThreePanelsDemo from "../../../examples/splitter/three-panels/splitter-three-panels.svelte";
+import threePanelsReact from "../../../examples/splitter/three-panels/react.tsx?raw";
+import threePanelsVue from "../../../examples/splitter/three-panels/vue.vue?raw";
+import threePanelsSolid from "../../../examples/splitter/three-panels/solid.tsx?raw";
+import threePanelsSvelte from "../../../examples/splitter/three-panels/splitter-three-panels.svelte?raw";
+
+<FrameworkSelect locale="en" />
+
+<Preview
+  examples={{
+    react: baseReact,
+    vue: baseVue,
+    solid: baseSolid,
+    svelte: baseSvelte,
+  }}
+>
+  <SplitterDemo client:visible />
+</Preview>
+
+## Installation
+
+<Install pkg="@moderno-ui/react" />
+
+## Usage
+
+Splitter puts panels side by side and lets the user drag the handle between them to resize them. Use it when the user should decide how much room each part gets, like a file tree beside an editor.
+
+<ForFramework fw="react">
+
+```tsx
+import { Splitter } from "@moderno-ui/react";
+```
+
+```tsx
+<Splitter.Root
+  panels={[
+    { id: "files", minSize: 20 },
+    { id: "editor", minSize: 30 },
+  ]}
+  defaultSize={[30, 70]}
+>
+  <Splitter.Panel id="files">Files</Splitter.Panel>
+  <Splitter.ResizeTrigger id="files:editor" aria-label="Resize files and editor">
+    <Splitter.ResizeTriggerIndicator />
+  </Splitter.ResizeTrigger>
+  <Splitter.Panel id="editor">Editor</Splitter.Panel>
+</Splitter.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Splitter } from "@moderno-ui/vue";
+```
+
+```vue
+<Splitter.Root
+  :panels="[
+    { id: 'files', minSize: 20 },
+    { id: 'editor', minSize: 30 },
+  ]"
+  :default-size="[30, 70]"
+>
+  <Splitter.Panel id="files">Files</Splitter.Panel>
+  <Splitter.ResizeTrigger id="files:editor" aria-label="Resize files and editor">
+    <Splitter.ResizeTriggerIndicator />
+  </Splitter.ResizeTrigger>
+  <Splitter.Panel id="editor">Editor</Splitter.Panel>
+</Splitter.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Splitter } from "@moderno-ui/svelte";
+```
+
+```svelte
+<Splitter.Root
+  panels={[
+    { id: "files", minSize: 20 },
+    { id: "editor", minSize: 30 },
+  ]}
+  defaultSize={[30, 70]}
+>
+  <Splitter.Panel id="files">Files</Splitter.Panel>
+  <Splitter.ResizeTrigger id="files:editor" aria-label="Resize files and editor">
+    <Splitter.ResizeTriggerIndicator />
+  </Splitter.ResizeTrigger>
+  <Splitter.Panel id="editor">Editor</Splitter.Panel>
+</Splitter.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Splitter } from "@moderno-ui/solid";
+```
+
+```tsx
+<Splitter.Root
+  panels={[
+    { id: "files", minSize: 20 },
+    { id: "editor", minSize: 30 },
+  ]}
+  defaultSize={[30, 70]}
+>
+  <Splitter.Panel id="files">Files</Splitter.Panel>
+  <Splitter.ResizeTrigger id="files:editor" aria-label="Resize files and editor">
+    <Splitter.ResizeTriggerIndicator />
+  </Splitter.ResizeTrigger>
+  <Splitter.Panel id="editor">Editor</Splitter.Panel>
+</Splitter.Root>
+```
+
+</ForFramework>
+
+Each panel has an id, listed in `panels` in order. Sizes are percentages. The handle's id joins the ids of the two panels it sits between. The splitter fills its container, so give the container a height.
+
+With the handle focused, the arrow keys move it, Home and End push it as far as it goes, and Enter folds away a collapsible panel.
+
+## API Reference
+
+### Splitter.Root
+
+`variant` is the Moderno addition. The other props come from Ark's Splitter.
+
+<PropsTable component="Splitter" />
+
+| Prop               | Type                                                   | Default        | Description                                                  |
+| ------------------ | ------------------------------------------------------ | -------------- | ------------------------------------------------------------ |
+| `panels`           | `PanelData[]`                                          | —              | Required. Every panel, in order: its `id` and limits.        |
+| `defaultSize`      | `number[]`                                             | —              | Sizes at first when uncontrolled, in percent, one per panel. |
+| `size`             | `number[]`                                             | —              | Controlled sizes, in percent. Not a density.                 |
+| `onResize`         | `(details: { size: number[] }) => void`                | —              | Called while the sizes change.                               |
+| `onResizeEnd`      | `(details: { size: number[] }) => void`                | —              | Called once, when the user lets go.                          |
+| `onCollapse`       | `(details: { panelId: string; size: number }) => void` | —              | Called when a panel folds away.                              |
+| `onExpand`         | `(details: { panelId: string; size: number }) => void` | —              | Called when a folded panel opens again.                      |
+| `orientation`      | `"horizontal" \| "vertical"`                           | `"horizontal"` | Sets the panels side by side or stacks them.                 |
+| `keyboardResizeBy` | `number`                                               | `1`            | How far, in percent, one arrow key moves the handle.         |
+
+In Vue, bind controlled sizes with `v-model:size`, and listen with `@resize`.
+
+### PanelData
+
+One entry of `panels`.
+
+| Field           | Type               | Default | Description                                    |
+| --------------- | ------------------ | ------- | ---------------------------------------------- |
+| `id`            | `string`           | —       | Required. The id its `Splitter.Panel` carries. |
+| `minSize`       | `number \| string` | —       | The smallest it gets, in percent or pixels.    |
+| `maxSize`       | `number \| string` | —       | The largest it gets, in percent or pixels.     |
+| `collapsible`   | `boolean`          | `false` | Lets it fold away below its `minSize`.         |
+| `collapsedSize` | `number \| string` | `0`     | Its size when folded away.                     |
+
+### Splitter.ResizeTrigger
+
+| Prop       | Type      | Default | Description                                           |
+| ---------- | --------- | ------- | ----------------------------------------------------- |
+| `id`       | `string`  | —       | Required. The two panel ids around it: `"a:b"`.       |
+| `disabled` | `boolean` | `false` | Locks this handle: no dragging, out of the tab order. |
+
+### Parts
+
+| Part                              | Element    | Description                                                     |
+| --------------------------------- | ---------- | --------------------------------------------------------------- |
+| `Splitter.Root`                   | `<div>`    | Carries `data-variant`. Lays the panels out in a row or column. |
+| `Splitter.Panel`                  | `<div>`    | One panel. Ark sets its size inline.                            |
+| `Splitter.ResizeTrigger`          | `<button>` | The handle, with `role="separator"` and `aria-valuenow`.        |
+| `Splitter.ResizeTriggerIndicator` | `<div>`    | Optional, inside a handle. The grip drawn on the rule.          |
+
+### Data attributes
+
+| Attribute          | Values                                                         |
+| ------------------ | -------------------------------------------------------------- |
+| `data-orientation` | `"horizontal"` or `"vertical"`, on every part                  |
+| `data-dragging`    | While a handle is dragged, on the root, panels and that handle |
+| `data-focus`       | While a handle has focus, on it and its grip                   |
+| `data-disabled`    | On a disabled handle and its grip                              |
+| `data-id`          | On each panel and handle: its id                               |
+| `data-variant`     | On the root: `"line"` or `"enclosed"`                          |
+
+## Examples
+
+### Enclosed
+
+Set `variant="enclosed"` to hold the panels in one bordered box.
+
+<Preview
+  examples={{
+    react: enclosedReact,
+    vue: enclosedVue,
+    solid: enclosedSolid,
+    svelte: enclosedSvelte,
+  }}
+>
+  <SplitterEnclosedDemo client:visible />
+</Preview>
+
+### Vertical
+
+With `orientation="vertical"`, the panels stack and the handle moves up and down.
+
+<Preview
+  examples={{
+    react: verticalReact,
+    vue: verticalVue,
+    solid: verticalSolid,
+    svelte: verticalSvelte,
+  }}
+>
+  <SplitterVerticalDemo client:visible />
+</Preview>
+
+### Collapsible panel
+
+Mark a panel `collapsible`. Dragging it past its `minSize`, or pressing Enter on the handle after it, folds it away; Enter again opens it.
+
+<Preview
+  examples={{
+    react: collapsibleReact,
+    vue: collapsibleVue,
+    solid: collapsibleSolid,
+    svelte: collapsibleSvelte,
+  }}
+>
+  <SplitterCollapsibleDemo client:visible />
+</Preview>
+
+### Three panels
+
+Put a handle between each two panels. Each handle moves only its own two.
+
+<Preview
+  examples={{
+    react: threePanelsReact,
+    vue: threePanelsVue,
+    solid: threePanelsSolid,
+    svelte: threePanelsSvelte,
+  }}
+>
+  <SplitterThreePanelsDemo client:visible />
+</Preview>
+
+## Notes
+
+- `Splitter.Root` is wrapped to add `variant`; every other part is Ark's unchanged.
+- There is no `size` variant: on the Root, `size` is Ark's controlled panel sizes.
+- A panel has the UI type but no padding, since padding would skew its size. Put your own padded layout inside it.
+- In Solid and Svelte, the Root gives Ark a stand-in document on the server, so a server render does not throw.

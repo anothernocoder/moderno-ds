@@ -1,0 +1,19 @@
+{
+  "name": "Splitter",
+  "scope": "splitter",
+  "import": "import { Splitter } from \"@moderno-ui/react\"",
+  "propsHash": "sha256:fixture-splitter",
+  "props": [{ "name": "variant", "type": "\"line\" | \"enclosed\"", "required": false }],
+  "propsComplete": false,
+  "parts": [
+    { "name": "root" },
+    { "name": "panel" },
+    { "name": "resize-trigger" },
+    { "name": "resize-trigger-indicator" }
+  ],
+  "variants": { "variant": ["line", "enclosed"] },
+  "guidance": {
+    "intent": "Let the user resize panels that sit side by side, or stacked, by dragging the boundary between them.",
+    "whenToUse": "A workspace where the user decides how much room each part gets: a file tree beside an editor, a code pane over its console."
+  }
+}
