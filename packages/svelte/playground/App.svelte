@@ -12,6 +12,7 @@
 <script lang="ts">
   import Accordion from "./sections/Accordion.svelte";
   import Alert from "./sections/Alert.svelte";
+  import AngleSlider from "./sections/AngleSlider.svelte";
   import Avatar from "./sections/Avatar.svelte";
   import Badge from "./sections/Badge.svelte";
   import BarList from "./sections/BarList.svelte";
@@ -58,6 +59,7 @@
 <main>
   <Accordion {open} />
   <Alert {open} />
+  <AngleSlider {open} />
   <Avatar {open} />
   <Badge {open} />
   <BarList {open} />

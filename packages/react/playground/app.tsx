@@ -16,6 +16,7 @@
  */
 import AccordionSection from "./sections/accordion.js";
 import AlertSection from "./sections/alert.js";
+import AngleSliderSection from "./sections/angle-slider.js";
 import AvatarSection from "./sections/avatar.js";
 import BadgeSection from "./sections/badge.js";
 import BarListSection from "./sections/bar-list.js";
@@ -66,6 +67,7 @@ export function App({ open = false }: AppProps) {
     <main>
       <AccordionSection open={open} />
       <AlertSection open={open} />
+      <AngleSliderSection open={open} />
       <AvatarSection open={open} />
       <BadgeSection open={open} />
       <BarListSection open={open} />

@@ -1,0 +1,36 @@
+{
+  "name": "AngleSlider",
+  "scope": "angle-slider",
+  "import": "import { AngleSlider } from \"@moderno-ui/react\"",
+  "propsHash": "sha256:fixture-angle-slider",
+  "props": [
+    { "name": "size", "type": "\"sm\" | \"md\" | \"lg\"", "required": false },
+    { "name": "marks", "type": "number[]", "required": false },
+    { "name": "getAriaValueText", "type": "(value: number) => string", "required": false },
+    {
+      "name": "onValueChange",
+      "type": "(details: AngleSliderValueChangeDetails) => void",
+      "required": false
+    },
+    {
+      "name": "onValueChangeEnd",
+      "type": "(details: AngleSliderValueChangeDetails) => void",
+      "required": false
+    }
+  ],
+  "propsComplete": false,
+  "parts": [
+    { "name": "root" },
+    { "name": "label" },
+    { "name": "control" },
+    { "name": "thumb" },
+    { "name": "marker-group" },
+    { "name": "marker" },
+    { "name": "value-text" }
+  ],
+  "variants": { "size": ["sm", "md", "lg"] },
+  "guidance": {
+    "intent": "Let the user pick an angle from 0° to 359° by turning a round dial, or by typing it in the number field beside it.",
+    "whenToUse": "A gradient's direction, an image's rotation: a direction the user benefits from seeing as well as its number."
+  }
+}

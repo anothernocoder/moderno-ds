@@ -1,0 +1,177 @@
+/* ───────────────────────── Angle Slider ───────────────────────── *
+ * Ark's angle-slider machine: root > label, then control > thumb +
+ * marker-group > marker, then the angle field (Moderno's `Input`, an Ark
+ * number-input with its own scope) and the hidden input, with an optional
+ * value-text. Ark rotates the thumb and each marker inline (`rotate`), so
+ * both cover the whole dial and turn around its centre: the thumb draws the
+ * needle and its knob at the rim, each marker a tick. 0° is up and the
+ * angle grows clockwise. Ark stamps data-disabled, data-invalid and
+ * data-readonly on the parts, and data-state (under-value | at-value |
+ * over-value) on each marker. `angleSliderRecipe` puts size on the root;
+ * the parts follow it through child combinators (root > part). The dial is
+ * two Field heights across at every size.                               */
+[data-scope="angle-slider"][data-part="root"] {
+  display: inline-grid;
+  grid-template-columns: auto auto;
+  align-items: center;
+  gap: var(--spacing-2) var(--spacing-4);
+}
+/*
+ * Ark stamps data-disabled on EVERY part, and the base layer dims anything
+ * carrying it (the angle field's parts too) — nesting would multiply the
+ * opacity. Dim the root once and leave everything inside it opaque.
+ */
+[data-scope="angle-slider"][data-part="root"][data-disabled] :where([data-part]) {
+  opacity: 1;
+}
+/* The label names the dial and the field, so it spans both. */
+[data-scope="angle-slider"][data-part="label"] {
+  grid-column: 1 / -1;
+  color: var(--foreground);
+  font-size: var(--text-ui-md);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--leading-ui-md);
+}
+/* The dial: a round face with a hub at its centre. Ark reads a click or a
+   drag anywhere on it as the angle from that centre. */
+[data-scope="angle-slider"][data-part="control"] {
+  position: relative;
+  flex: none;
+  width: calc(var(--spacing-8) * 2);
+  height: calc(var(--spacing-8) * 2);
+  border: 1px solid var(--input);
+  border-radius: var(--radius-full);
+  background-color: var(--background);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: border-color var(--motion-fast);
+}
+[data-scope="angle-slider"][data-part="control"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: var(--spacing-2);
+  height: var(--spacing-2);
+  margin: auto;
+  border-radius: var(--radius-full);
+  background-color: var(--primary);
+}
+/* Hover raises the edge to the focus colour, as on Field's input. */
+[data-scope="angle-slider"][data-part="control"]:hover:not([data-disabled]):not(
+    [data-readonly]
+  ):not([data-invalid]) {
+  border-color: var(--ring);
+}
+[data-scope="angle-slider"][data-part="control"][data-readonly] {
+  cursor: default;
+}
+[data-scope="angle-slider"][data-part="control"][data-invalid] {
+  border-color: var(--destructive);
+}
+/* The thumb is the whole face, turned to the angle; it lets the pointer
+   through, so a press on the needle sets the angle like one on the face. It
+   is the part that takes focus, and its ring circles the dial. */
+[data-scope="angle-slider"][data-part="thumb"] {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-full);
+  pointer-events: none;
+}
+[data-scope="angle-slider"][data-part="thumb"]:focus-visible {
+  outline-color: var(--ring);
+  outline-style: solid;
+  outline-width: 2px;
+  outline-offset: 2px;
+}
+/* The needle, from the hub up to the knob. */
+[data-scope="angle-slider"][data-part="thumb"]::before {
+  content: "";
+  position: absolute;
+  top: var(--spacing-2);
+  bottom: 50%;
+  left: 50%;
+  width: calc(var(--spacing-1) / 2);
+  translate: -50% 0;
+  border-radius: var(--radius-full);
+  background-color: var(--primary);
+}
+/* The knob at the rim, where the angle points. */
+[data-scope="angle-slider"][data-part="thumb"]::after {
+  content: "";
+  position: absolute;
+  top: var(--spacing-1);
+  left: 50%;
+  width: var(--spacing-3);
+  height: var(--spacing-3);
+  translate: -50% 0;
+  border: calc(var(--spacing-1) / 2) solid var(--primary);
+  border-radius: var(--radius-full);
+  background-color: var(--background);
+}
+[data-scope="angle-slider"][data-part="thumb"][data-invalid]::before {
+  background-color: var(--destructive);
+}
+[data-scope="angle-slider"][data-part="thumb"][data-invalid]::after {
+  border-color: var(--destructive);
+}
+/* The marks: a tick at the rim for each, turned to its angle by Ark. */
+[data-scope="angle-slider"][data-part="marker-group"] {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+[data-scope="angle-slider"][data-part="marker"] {
+  position: absolute;
+  inset: 0;
+}
+[data-scope="angle-slider"][data-part="marker"]::before {
+  content: "";
+  position: absolute;
+  top: calc(var(--spacing-1) / 2);
+  left: 50%;
+  width: calc(var(--spacing-1) / 2);
+  height: var(--spacing-1);
+  translate: -50% 0;
+  border-radius: var(--radius-full);
+  background-color: var(--muted-foreground);
+}
+/* The optional value text reads like the field's figures. */
+[data-scope="angle-slider"][data-part="value-text"] {
+  color: var(--muted-foreground);
+  font-size: var(--text-ui-sm);
+  line-height: var(--leading-ui-sm);
+  font-variant-numeric: tabular-nums;
+}
+/* The angle field: wide enough for "359°", never the row's full width. */
+[data-scope="angle-slider"][data-part="root"] > [data-scope="number-input"][data-part="root"] {
+  width: calc(var(--spacing-8) * 2.5);
+}
+
+/* Density driven by the recipe's data-size on the root: the dial's
+   diameter (two of the field heights NumberInput and Field use at that
+   size), the field's width and the label's type. The field takes the same
+   size from the Root, so its height matches. */
+[data-scope="angle-slider"][data-part="root"][data-size="sm"] > [data-part="label"] {
+  font-size: var(--text-ui-sm);
+  line-height: var(--leading-ui-sm);
+}
+[data-scope="angle-slider"][data-part="root"][data-size="lg"] > [data-part="label"] {
+  font-size: var(--text-ui-lg);
+  line-height: var(--leading-ui-lg);
+}
+[data-scope="angle-slider"][data-part="root"][data-size="sm"] > [data-part="control"] {
+  width: calc(var(--spacing-7) * 2);
+  height: calc(var(--spacing-7) * 2);
+}
+[data-scope="angle-slider"][data-part="root"][data-size="lg"] > [data-part="control"] {
+  width: calc((var(--spacing-8) + var(--spacing-2)) * 2);
+  height: calc((var(--spacing-8) + var(--spacing-2)) * 2);
+}
+[data-scope="angle-slider"][data-part="root"][data-size="sm"]
+  > [data-scope="number-input"][data-part="root"] {
+  width: calc(var(--spacing-8) * 2);
+}
+[data-scope="angle-slider"][data-part="root"][data-size="lg"]
+  > [data-scope="number-input"][data-part="root"] {
+  width: calc(var(--spacing-8) * 3);
+}

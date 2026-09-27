@@ -11,6 +11,7 @@
 import { assembleComponents } from "./component-definition.ts";
 import accordionComponent from "./components/accordion.ts";
 import alertComponent from "./components/alert.ts";
+import angleSliderComponent from "./components/angle-slider.ts";
 import areaChartComponent from "./components/area-chart.ts";
 import avatarComponent from "./components/avatar.ts";
 import badgeComponent from "./components/badge.ts";
@@ -57,6 +58,7 @@ import tooltipComponent from "./components/tooltip.ts";
 export const { ENTRIES, AGENT_COMPONENTS, AGENT_EXAMPLES } = assembleComponents([
   accordionComponent,
   alertComponent,
+  angleSliderComponent,
   areaChartComponent,
   avatarComponent,
   badgeComponent,

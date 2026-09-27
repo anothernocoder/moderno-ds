@@ -12,6 +12,7 @@
 import { defineComponent, h } from "vue";
 import AccordionSection from "./sections/accordion.js";
 import AlertSection from "./sections/alert.js";
+import AngleSliderSection from "./sections/angle-slider.js";
 import AvatarSection from "./sections/avatar.js";
 import BadgeSection from "./sections/badge.js";
 import BarListSection from "./sections/bar-list.js";
@@ -63,6 +64,7 @@ export const App = defineComponent({
       h("main", {}, [
         h(AccordionSection, { open: props.open }),
         h(AlertSection, { open: props.open }),
+        h(AngleSliderSection, { open: props.open }),
         h(AvatarSection, { open: props.open }),
         h(BadgeSection, { open: props.open }),
         h(BarListSection, { open: props.open }),

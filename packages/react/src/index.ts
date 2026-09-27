@@ -11,6 +11,7 @@
 
 export * from "./exports/accordion.js";
 export * from "./exports/alert.js";
+export * from "./exports/angle-slider.js";
 export * from "./exports/area-chart.js";
 export * from "./exports/avatar.js";
 export * from "./exports/badge.js";

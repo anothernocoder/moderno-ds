@@ -1,0 +1,5 @@
+value AngleSlider
+type AngleSliderInputProps
+type AngleSliderSize
+type AngleSliderValueChangeDetails
+type ModernoAngleSliderRootProps

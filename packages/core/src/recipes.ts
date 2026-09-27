@@ -21,6 +21,7 @@
 
 export * from "./recipes/accordion.js";
 export * from "./recipes/alert.js";
+export * from "./recipes/angle-slider.js";
 export * from "./recipes/avatar.js";
 export * from "./recipes/badge.js";
 export * from "./recipes/button.js";

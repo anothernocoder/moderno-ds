@@ -1,0 +1,272 @@
+---
+title: Angle Slider
+description: Permite elegir un ángulo de 0° a 359° en un dial redondo, con un campo numérico al lado.
+group: Componentes
+order: 34
+component: AngleSlider
+pkg: "@moderno-ui/react"
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import AngleSliderDemo from "../../../examples/angle-slider/angle-slider.svelte";
+import baseReact from "../../../examples/angle-slider/react.tsx?raw";
+import baseVue from "../../../examples/angle-slider/vue.vue?raw";
+import baseSolid from "../../../examples/angle-slider/solid.tsx?raw";
+import baseSvelte from "../../../examples/angle-slider/angle-slider.svelte?raw";
+import AngleSliderStepDemo from "../../../examples/angle-slider/step/angle-slider-step.svelte";
+import stepReact from "../../../examples/angle-slider/step/react.tsx?raw";
+import stepVue from "../../../examples/angle-slider/step/vue.vue?raw";
+import stepSolid from "../../../examples/angle-slider/step/solid.tsx?raw";
+import stepSvelte from "../../../examples/angle-slider/step/angle-slider-step.svelte?raw";
+import AngleSliderMarksDemo from "../../../examples/angle-slider/marks/angle-slider-marks.svelte";
+import marksReact from "../../../examples/angle-slider/marks/react.tsx?raw";
+import marksVue from "../../../examples/angle-slider/marks/vue.vue?raw";
+import marksSolid from "../../../examples/angle-slider/marks/solid.tsx?raw";
+import marksSvelte from "../../../examples/angle-slider/marks/angle-slider-marks.svelte?raw";
+import AngleSliderSizesDemo from "../../../examples/angle-slider/sizes/angle-slider-sizes.svelte";
+import sizesReact from "../../../examples/angle-slider/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/angle-slider/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/angle-slider/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/angle-slider/sizes/angle-slider-sizes.svelte?raw";
+import AngleSliderDisabledDemo from "../../../examples/angle-slider/disabled/angle-slider-disabled.svelte";
+import disabledReact from "../../../examples/angle-slider/disabled/react.tsx?raw";
+import disabledVue from "../../../examples/angle-slider/disabled/vue.vue?raw";
+import disabledSolid from "../../../examples/angle-slider/disabled/solid.tsx?raw";
+import disabledSvelte from "../../../examples/angle-slider/disabled/angle-slider-disabled.svelte?raw";
+
+<FrameworkSelect locale="es" />
+
+<Preview
+  examples={{
+    react: baseReact,
+    vue: baseVue,
+    solid: baseSolid,
+    svelte: baseSvelte,
+  }}
+>
+  <AngleSliderDemo client:visible />
+</Preview>
+
+## Instalación
+
+<Install pkg="@moderno-ui/react" />
+
+## Uso
+
+Angle Slider permite elegir un ángulo girando un dial redondo. Úsalo para una dirección o una rotación, como la dirección de un degradado. El campo numérico junto al dial muestra el mismo ángulo, y el usuario también puede escribirlo ahí.
+
+**0° apunta hacia arriba**, y el ángulo crece en el sentido de las agujas del reloj: 90° apunta a la derecha, 180° hacia abajo, 270° a la izquierda.
+
+<ForFramework fw="react">
+
+```tsx
+import { AngleSlider } from "@moderno-ui/react";
+```
+
+```tsx
+<AngleSlider.Root value={angle} onValueChange={(details) => setAngle(details.value)}>
+  <AngleSlider.Label>Rotación</AngleSlider.Label>
+  <AngleSlider.Control>
+    <AngleSlider.Thumb />
+  </AngleSlider.Control>
+  <AngleSlider.Input />
+  <AngleSlider.HiddenInput />
+</AngleSlider.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { AngleSlider } from "@moderno-ui/vue";
+```
+
+```vue
+<AngleSlider.Root v-model="angle">
+  <AngleSlider.Label>Rotación</AngleSlider.Label>
+  <AngleSlider.Control>
+    <AngleSlider.Thumb />
+  </AngleSlider.Control>
+  <AngleSlider.Input />
+  <AngleSlider.HiddenInput />
+</AngleSlider.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { AngleSlider } from "@moderno-ui/svelte";
+```
+
+```svelte
+<AngleSlider.Root bind:value={angle}>
+  <AngleSlider.Label>Rotación</AngleSlider.Label>
+  <AngleSlider.Control>
+    <AngleSlider.Thumb />
+  </AngleSlider.Control>
+  <AngleSlider.Input />
+  <AngleSlider.HiddenInput />
+</AngleSlider.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { AngleSlider } from "@moderno-ui/solid";
+```
+
+```tsx
+<AngleSlider.Root value={angle()} onValueChange={(details) => setAngle(details.value)}>
+  <AngleSlider.Label>Rotación</AngleSlider.Label>
+  <AngleSlider.Control>
+    <AngleSlider.Thumb />
+  </AngleSlider.Control>
+  <AngleSlider.Input />
+  <AngleSlider.HiddenInput />
+</AngleSlider.Root>
+```
+
+</ForFramework>
+
+El valor es un número de grados, de 0 a 359. Al arrastrar más allá de 360° sigue desde 0°, sin saltos.
+
+## Referencia de la API
+
+### AngleSlider.Root
+
+`size`, `marks` y `getAriaValueText` son lo que añade Moderno. Las demás props vienen del Angle Slider de Ark.
+
+<PropsTable component="AngleSlider" />
+
+| Prop               | Tipo                                                          | Por defecto    | Descripción                                                            |
+| ------------------ | ------------------------------------------------------------- | -------------- | ---------------------------------------------------------------------- |
+| `value`            | `number`                                                      | —              | Ángulo controlado, en grados.                                          |
+| `defaultValue`     | `number`                                                      | `0`            | Ángulo inicial cuando no está controlado.                              |
+| `onValueChange`    | `(details: { value: number; valueAsDegree: string }) => void` | —              | Se llama mientras cambia el ángulo.                                    |
+| `onValueChangeEnd` | `(details: { value: number; valueAsDegree: string }) => void` | —              | Se llama una vez, cuando el usuario suelta o una tecla fija el ángulo. |
+| `step`             | `number`                                                      | `1`            | Cuánto gira el dial en cada paso, en grados.                           |
+| `marks`            | `number[]`                                                    | —              | Ángulos a los que se ajusta al arrastrar con Shift.                    |
+| `size`             | `"sm" \| "md" \| "lg"`                                        | `"md"`         | El tamaño del dial, igual a los tamaños de Field.                      |
+| `disabled`         | `boolean`                                                     | `false`        | Atenúa el dial y el campo e ignora la entrada.                         |
+| `readOnly`         | `boolean`                                                     | `false`        | Muestra el ángulo pero ignora la entrada.                              |
+| `invalid`          | `boolean`                                                     | `false`        | Marca el ángulo como incorrecto.                                       |
+| `name`             | `string`                                                      | —              | El nombre del campo oculto en un formulario.                           |
+| `getAriaValueText` | `(value: number) => string`                                   | `"45 degrees"` | Lo que dice un lector de pantalla para un ángulo.                      |
+
+En Vue, enlaza el valor con `:model-value` o `v-model`, y escucha con `@value-change`.
+
+### AngleSlider.Marker
+
+| Prop    | Tipo     | Por defecto | Descripción                               |
+| ------- | -------- | ----------- | ----------------------------------------- |
+| `value` | `number` | —           | Obligatorio. El ángulo donde va la marca. |
+
+### Partes
+
+| Parte                     | Elemento  | Descripción                                              |
+| ------------------------- | --------- | -------------------------------------------------------- |
+| `AngleSlider.Root`        | `<div>`   | Lleva `data-size` y el ángulo como `--angle`.            |
+| `AngleSlider.Label`       | `<label>` | Nombra el dial y el campo. Al hacer clic enfoca el dial. |
+| `AngleSlider.Control`     | `<div>`   | El dial redondo donde se hace clic o se arrastra.        |
+| `AngleSlider.Thumb`       | `<div>`   | La aguja, con `role="slider"`. Recibe el foco.           |
+| `AngleSlider.MarkerGroup` | `<div>`   | Opcional. Contiene las marcas, dentro del control.       |
+| `AngleSlider.Marker`      | `<div>`   | Una marca en un ángulo.                                  |
+| `AngleSlider.Input`       | `<div>`   | El campo numérico con un `°` detrás. Parte de Moderno.   |
+| `AngleSlider.HiddenInput` | `<input>` | Lleva el ángulo a un formulario.                         |
+| `AngleSlider.ValueText`   | `<div>`   | Opcional. El ángulo como texto.                          |
+
+### Teclado
+
+| Tecla                     | Acción                                          |
+| ------------------------- | ----------------------------------------------- |
+| `ArrowRight`, `ArrowDown` | Gira el dial un `step` en el sentido del reloj. |
+| `ArrowLeft`, `ArrowUp`    | Gira el dial un `step` hacia atrás.             |
+| `PageUp`, `PageDown`      | Gira el dial 15° hacia delante o hacia atrás.   |
+| `Home`                    | Va a 0°.                                        |
+| `End`                     | Va a 359°.                                      |
+
+### Atributos data
+
+| Atributo        | Valores                                                        |
+| --------------- | -------------------------------------------------------------- |
+| `data-disabled` | Con `disabled`, en todas las partes                            |
+| `data-invalid`  | Con `invalid`, en la raíz, la etiqueta, el control y la aguja  |
+| `data-readonly` | Con `readOnly`, en la raíz, la etiqueta, el control y la aguja |
+| `data-state`    | En cada marca: `"under-value"`, `"at-value"` o `"over-value"`  |
+| `data-size`     | En la raíz: `"sm"`, `"md"` o `"lg"`                            |
+
+## Ejemplos
+
+### Paso
+
+Define `step` para que el dial gire a saltos, aquí de 15° en 15°.
+
+<Preview
+  examples={{
+    react: stepReact,
+    vue: stepVue,
+    solid: stepSolid,
+    svelte: stepSvelte,
+  }}
+>
+  <AngleSliderStepDemo client:visible />
+</Preview>
+
+### Marcas de ajuste
+
+Pasa `marks` y dibuja una marca por cada una con `AngleSlider.Marker`. Mantén Shift mientras arrastras para ajustarte a la marca más cercana.
+
+<Preview
+  examples={{
+    react: marksReact,
+    vue: marksVue,
+    solid: marksSolid,
+    svelte: marksSvelte,
+  }}
+>
+  <AngleSliderMarksDemo client:visible />
+</Preview>
+
+### Tamaños
+
+El dial y el campo siguen los tamaños de Field.
+
+<Preview
+  examples={{
+    react: sizesReact,
+    vue: sizesVue,
+    solid: sizesSolid,
+    svelte: sizesSvelte,
+  }}
+>
+  <AngleSliderSizesDemo client:visible />
+</Preview>
+
+### Deshabilitado
+
+<Preview
+  examples={{
+    react: disabledReact,
+    vue: disabledVue,
+    solid: disabledSolid,
+    svelte: disabledSvelte,
+  }}
+>
+  <AngleSliderDisabledDemo client:visible />
+</Preview>
+
+## Notas
+
+- `AngleSlider.Root` y `AngleSlider.Thumb` están envueltos, y `AngleSlider.Input` es de Moderno; las demás partes son las de Ark sin cambios.
+- Un lector de pantalla dice el ángulo en grados ("45 degrees"). Pasa `getAriaValueText` para decirlo en otro idioma, por ejemplo `(value) => \`${value} grados\``.
+- Lo que el usuario escribe en el campo gira el dial al momento. El campo vuelve a mostrar el ángulo del dial cuando el usuario sale de él o pulsa Enter: `400` pasa a ser `40°`.
+- Para un número en una escala recta, usa un Slider.

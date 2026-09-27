@@ -1,0 +1,290 @@
+---
+title: Angle Slider
+description: Lets the user pick an angle from 0° to 359° on a round dial, with a number field beside it.
+group: Components
+order: 34
+component: AngleSlider
+pkg: "@moderno-ui/react"
+agentPropsHash: "sha256:43c1b941cf3feb68f4ae25acbb2199cabc94dcd83b7259dd988324712ab83ead"
+agent:
+  intent: Let the user pick an angle from 0° to 359° by turning a round dial, or by typing it in the number field beside it.
+  whenToUse: A direction or a rotation in a creative tool — a gradient's direction, an image's rotation, a shadow's angle — where the user benefits from seeing the angle as well as its number.
+  whenNotToUse:
+    - case: A number on a straight scale, like volume or opacity
+      use: Slider
+    - case: An exact number the user types, with no dial
+      use: NumberInput
+  gotchas:
+    - "0° points up and the angle grows clockwise. The value always runs from 0 up to (not including) 360: a drag past 360° carries on from 0°."
+    - "Put AngleSlider.Thumb inside AngleSlider.Control, and AngleSlider.MarkerGroup with its AngleSlider.Marker ticks inside AngleSlider.Control too. AngleSlider.Input and AngleSlider.HiddenInput go after the control."
+    - "Pass the snap marks twice: as the marks prop on the root (Shift while dragging snaps to them) and as one AngleSlider.Marker each (the ticks you see)."
+    - 'onValueChange reports { value, valueAsDegree }: value is a number of degrees, valueAsDegree a CSS angle like "45deg".'
+    - "In Vue, bind the value with :model-value or v-model. In Svelte, bind:value works."
+  theming:
+    - "The dial is --background with an --input edge and --shadow-sm; the needle, the knob's edge and the hub are --primary; the ticks are --muted-foreground. Do not pass a hex."
+    - "The focus ring around the dial is --ring. Invalid turns the edge and the needle --destructive."
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import AngleSliderDemo from "../../../examples/angle-slider/angle-slider.svelte";
+import baseReact from "../../../examples/angle-slider/react.tsx?raw";
+import baseVue from "../../../examples/angle-slider/vue.vue?raw";
+import baseSolid from "../../../examples/angle-slider/solid.tsx?raw";
+import baseSvelte from "../../../examples/angle-slider/angle-slider.svelte?raw";
+import AngleSliderStepDemo from "../../../examples/angle-slider/step/angle-slider-step.svelte";
+import stepReact from "../../../examples/angle-slider/step/react.tsx?raw";
+import stepVue from "../../../examples/angle-slider/step/vue.vue?raw";
+import stepSolid from "../../../examples/angle-slider/step/solid.tsx?raw";
+import stepSvelte from "../../../examples/angle-slider/step/angle-slider-step.svelte?raw";
+import AngleSliderMarksDemo from "../../../examples/angle-slider/marks/angle-slider-marks.svelte";
+import marksReact from "../../../examples/angle-slider/marks/react.tsx?raw";
+import marksVue from "../../../examples/angle-slider/marks/vue.vue?raw";
+import marksSolid from "../../../examples/angle-slider/marks/solid.tsx?raw";
+import marksSvelte from "../../../examples/angle-slider/marks/angle-slider-marks.svelte?raw";
+import AngleSliderSizesDemo from "../../../examples/angle-slider/sizes/angle-slider-sizes.svelte";
+import sizesReact from "../../../examples/angle-slider/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/angle-slider/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/angle-slider/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/angle-slider/sizes/angle-slider-sizes.svelte?raw";
+import AngleSliderDisabledDemo from "../../../examples/angle-slider/disabled/angle-slider-disabled.svelte";
+import disabledReact from "../../../examples/angle-slider/disabled/react.tsx?raw";
+import disabledVue from "../../../examples/angle-slider/disabled/vue.vue?raw";
+import disabledSolid from "../../../examples/angle-slider/disabled/solid.tsx?raw";
+import disabledSvelte from "../../../examples/angle-slider/disabled/angle-slider-disabled.svelte?raw";
+
+<FrameworkSelect locale="en" />
+
+<Preview
+  examples={{
+    react: baseReact,
+    vue: baseVue,
+    solid: baseSolid,
+    svelte: baseSvelte,
+  }}
+>
+  <AngleSliderDemo client:visible />
+</Preview>
+
+## Installation
+
+<Install pkg="@moderno-ui/react" />
+
+## Usage
+
+Angle Slider lets the user pick an angle by turning a round dial. Use it for a direction or a rotation, like the direction of a gradient. The number field beside the dial shows the same angle, and the user can type it there too.
+
+**0° points up**, and the angle grows clockwise: 90° points right, 180° down, 270° left.
+
+<ForFramework fw="react">
+
+```tsx
+import { AngleSlider } from "@moderno-ui/react";
+```
+
+```tsx
+<AngleSlider.Root value={angle} onValueChange={(details) => setAngle(details.value)}>
+  <AngleSlider.Label>Rotation</AngleSlider.Label>
+  <AngleSlider.Control>
+    <AngleSlider.Thumb />
+  </AngleSlider.Control>
+  <AngleSlider.Input />
+  <AngleSlider.HiddenInput />
+</AngleSlider.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { AngleSlider } from "@moderno-ui/vue";
+```
+
+```vue
+<AngleSlider.Root v-model="angle">
+  <AngleSlider.Label>Rotation</AngleSlider.Label>
+  <AngleSlider.Control>
+    <AngleSlider.Thumb />
+  </AngleSlider.Control>
+  <AngleSlider.Input />
+  <AngleSlider.HiddenInput />
+</AngleSlider.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { AngleSlider } from "@moderno-ui/svelte";
+```
+
+```svelte
+<AngleSlider.Root bind:value={angle}>
+  <AngleSlider.Label>Rotation</AngleSlider.Label>
+  <AngleSlider.Control>
+    <AngleSlider.Thumb />
+  </AngleSlider.Control>
+  <AngleSlider.Input />
+  <AngleSlider.HiddenInput />
+</AngleSlider.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { AngleSlider } from "@moderno-ui/solid";
+```
+
+```tsx
+<AngleSlider.Root value={angle()} onValueChange={(details) => setAngle(details.value)}>
+  <AngleSlider.Label>Rotation</AngleSlider.Label>
+  <AngleSlider.Control>
+    <AngleSlider.Thumb />
+  </AngleSlider.Control>
+  <AngleSlider.Input />
+  <AngleSlider.HiddenInput />
+</AngleSlider.Root>
+```
+
+</ForFramework>
+
+The value is a number of degrees, from 0 up to 359. A drag past 360° carries on from 0°, without a jump.
+
+## API Reference
+
+### AngleSlider.Root
+
+`size`, `marks` and `getAriaValueText` are the Moderno additions. The other props come from Ark's Angle Slider.
+
+<PropsTable component="AngleSlider" />
+
+| Prop               | Type                                                          | Default        | Description                                                 |
+| ------------------ | ------------------------------------------------------------- | -------------- | ----------------------------------------------------------- |
+| `value`            | `number`                                                      | —              | Controlled angle, in degrees.                               |
+| `defaultValue`     | `number`                                                      | `0`            | Angle at first when uncontrolled.                           |
+| `onValueChange`    | `(details: { value: number; valueAsDegree: string }) => void` | —              | Called while the angle changes.                             |
+| `onValueChangeEnd` | `(details: { value: number; valueAsDegree: string }) => void` | —              | Called once, when the user lets go or a key sets the angle. |
+| `step`             | `number`                                                      | `1`            | How far one move turns the dial, in degrees.                |
+| `marks`            | `number[]`                                                    | —              | Angles that Shift while dragging snaps to.                  |
+| `size`             | `"sm" \| "md" \| "lg"`                                        | `"md"`         | The dial's size, matched to the Field sizes.                |
+| `disabled`         | `boolean`                                                     | `false`        | Dims the dial and the field and ignores input.              |
+| `readOnly`         | `boolean`                                                     | `false`        | Shows the angle but ignores input.                          |
+| `invalid`          | `boolean`                                                     | `false`        | Marks the angle as wrong.                                   |
+| `name`             | `string`                                                      | —              | The form field name of the hidden input.                    |
+| `getAriaValueText` | `(value: number) => string`                                   | `"45 degrees"` | What a screen reader says for an angle.                     |
+
+In Vue, bind the value with `:model-value` or `v-model`, and listen with `@value-change`.
+
+### AngleSlider.Marker
+
+| Prop    | Type     | Default | Description                           |
+| ------- | -------- | ------- | ------------------------------------- |
+| `value` | `number` | —       | Required. The angle the tick sits at. |
+
+### Parts
+
+| Part                      | Element   | Description                                                 |
+| ------------------------- | --------- | ----------------------------------------------------------- |
+| `AngleSlider.Root`        | `<div>`   | Carries `data-size` and the angle as `--angle`.             |
+| `AngleSlider.Label`       | `<label>` | Names the dial and the field. Clicking it focuses the dial. |
+| `AngleSlider.Control`     | `<div>`   | The round dial you click or drag on.                        |
+| `AngleSlider.Thumb`       | `<div>`   | The needle, with `role="slider"`. It takes focus.           |
+| `AngleSlider.MarkerGroup` | `<div>`   | Optional. Holds the ticks, inside the control.              |
+| `AngleSlider.Marker`      | `<div>`   | A tick at one angle.                                        |
+| `AngleSlider.Input`       | `<div>`   | The number field with a `°` after it. Moderno's part.       |
+| `AngleSlider.HiddenInput` | `<input>` | Carries the angle into a form.                              |
+| `AngleSlider.ValueText`   | `<div>`   | Optional. The angle as text.                                |
+
+### Keyboard
+
+| Key                       | Action                               |
+| ------------------------- | ------------------------------------ |
+| `ArrowRight`, `ArrowDown` | Turns the dial one `step` clockwise. |
+| `ArrowLeft`, `ArrowUp`    | Turns the dial one `step` back.      |
+| `PageUp`, `PageDown`      | Turns the dial 15° forward or back.  |
+| `Home`                    | Goes to 0°.                          |
+| `End`                     | Goes to 359°.                        |
+
+### Data attributes
+
+| Attribute       | Values                                                          |
+| --------------- | --------------------------------------------------------------- |
+| `data-disabled` | When `disabled`, on every part                                  |
+| `data-invalid`  | When `invalid`, on the root, label, control and thumb           |
+| `data-readonly` | When `readOnly`, on the root, label, control and thumb          |
+| `data-state`    | On each marker: `"under-value"`, `"at-value"` or `"over-value"` |
+| `data-size`     | On the root: `"sm"`, `"md"` or `"lg"`                           |
+
+## Examples
+
+### Step
+
+Set `step` so the dial turns in notches, here 15° at a time.
+
+<Preview
+  examples={{
+    react: stepReact,
+    vue: stepVue,
+    solid: stepSolid,
+    svelte: stepSvelte,
+  }}
+>
+  <AngleSliderStepDemo client:visible />
+</Preview>
+
+### Snap marks
+
+Pass `marks` and draw a tick for each with `AngleSlider.Marker`. Hold Shift while you drag to snap to the nearest mark.
+
+<Preview
+  examples={{
+    react: marksReact,
+    vue: marksVue,
+    solid: marksSolid,
+    svelte: marksSvelte,
+  }}
+>
+  <AngleSliderMarksDemo client:visible />
+</Preview>
+
+### Sizes
+
+The dial and the field follow the Field sizes.
+
+<Preview
+  examples={{
+    react: sizesReact,
+    vue: sizesVue,
+    solid: sizesSolid,
+    svelte: sizesSvelte,
+  }}
+>
+  <AngleSliderSizesDemo client:visible />
+</Preview>
+
+### Disabled
+
+<Preview
+  examples={{
+    react: disabledReact,
+    vue: disabledVue,
+    solid: disabledSolid,
+    svelte: disabledSvelte,
+  }}
+>
+  <AngleSliderDisabledDemo client:visible />
+</Preview>
+
+## Notes
+
+- `AngleSlider.Root` and `AngleSlider.Thumb` are wrapped, and `AngleSlider.Input` is Moderno's; every other part is Ark's unchanged.
+- A screen reader says the angle in degrees ("45 degrees"). Pass `getAriaValueText` to say it in another language.
+- What the user types in the field turns the dial at once. The field shows the dial's angle again when the user leaves it or presses Enter: `400` becomes `40°`.
+- For a number on a straight scale, use a Slider.
