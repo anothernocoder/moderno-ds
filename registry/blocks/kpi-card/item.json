@@ -1,0 +1,37 @@
+{
+  "title": "KPI Card",
+  "description": "One headline number with its change and its trend, composing the @moderno-ui/{framework} Alert, Badge, Button, Card, Skeleton and SparkChart primitives: the metric's label and period, its value in the display face, its change tinted by whether that change is good news and a sparkline of the period, with its own empty, loading and error renders; responds to its container (@container) across all three contract steps — the value and the sparkline side by side at @sm, a larger value and a wider sparkline at @md, the widest sparkline at @lg.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": [],
+  "files": {
+    "react": [
+      {
+        "path": "blocks/kpi-card/react/kpi-card.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/kpi-card.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "blocks/kpi-card/vue/KpiCard.vue",
+        "type": "registry:block",
+        "target": "src/components/blocks/KpiCard.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "blocks/kpi-card/svelte/KpiCard.svelte",
+        "type": "registry:block",
+        "target": "src/components/blocks/KpiCard.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "blocks/kpi-card/solid/kpi-card.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/kpi-card.tsx"
+      }
+    ]
+  }
+}

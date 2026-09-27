@@ -1866,6 +1866,78 @@
       ]
     },
     {
+      "name": "kpi-card-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "KPI Card (React)",
+      "description": "One headline number with its change and its trend, composing the @moderno-ui/react Alert, Badge, Button, Card, Skeleton and SparkChart primitives: the metric's label and period, its value in the display face, its change tinted by whether that change is good news and a sparkline of the period, with its own empty, loading and error renders; responds to its container (@container) across all three contract steps — the value and the sparkline side by side at @sm, a larger value and a wider sparkline at @md, the widest sparkline at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/kpi-card/react/kpi-card.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/kpi-card.tsx"
+        }
+      ]
+    },
+    {
+      "name": "kpi-card-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "KPI Card (Vue)",
+      "description": "One headline number with its change and its trend, composing the @moderno-ui/vue Alert, Badge, Button, Card, Skeleton and SparkChart primitives: the metric's label and period, its value in the display face, its change tinted by whether that change is good news and a sparkline of the period, with its own empty, loading and error renders; responds to its container (@container) across all three contract steps — the value and the sparkline side by side at @sm, a larger value and a wider sparkline at @md, the widest sparkline at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/kpi-card/vue/KpiCard.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/KpiCard.vue"
+        }
+      ]
+    },
+    {
+      "name": "kpi-card-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "KPI Card (Svelte)",
+      "description": "One headline number with its change and its trend, composing the @moderno-ui/svelte Alert, Badge, Button, Card, Skeleton and SparkChart primitives: the metric's label and period, its value in the display face, its change tinted by whether that change is good news and a sparkline of the period, with its own empty, loading and error renders; responds to its container (@container) across all three contract steps — the value and the sparkline side by side at @sm, a larger value and a wider sparkline at @md, the widest sparkline at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/kpi-card/svelte/KpiCard.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/KpiCard.svelte"
+        }
+      ]
+    },
+    {
+      "name": "kpi-card-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "KPI Card (Solid)",
+      "description": "One headline number with its change and its trend, composing the @moderno-ui/solid Alert, Badge, Button, Card, Skeleton and SparkChart primitives: the metric's label and period, its value in the display face, its change tinted by whether that change is good news and a sparkline of the period, with its own empty, loading and error renders; responds to its container (@container) across all three contract steps — the value and the sparkline side by side at @sm, a larger value and a wider sparkline at @md, the widest sparkline at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/kpi-card/solid/kpi-card.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/kpi-card.tsx"
+        }
+      ]
+    },
+    {
       "name": "list-react",
       "type": "registry:block",
       "version": "0.1.0",

@@ -1,0 +1,179 @@
+---
+title: Tarjeta KPI
+description: Una métrica clave en una tarjeta, con su variación y un minigráfico de su tendencia.
+group: Bloques
+order: 105
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import KpiCardBlockDemo from "../../../islands/KpiCardBlockDemo.svelte";
+import kpiCardReact from "../../../../../../registry/blocks/kpi-card/react/kpi-card.tsx?raw";
+import kpiCardVue from "../../../../../../registry/blocks/kpi-card/vue/KpiCard.vue?raw";
+import kpiCardSolid from "../../../../../../registry/blocks/kpi-card/solid/kpi-card.tsx?raw";
+import kpiCardSvelte from "../../../../../../registry/blocks/kpi-card/svelte/KpiCard.svelte?raw";
+
+export const examples = {
+  react: kpiCardReact,
+  vue: kpiCardVue,
+  solid: kpiCardSolid,
+  svelte: kpiCardSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <KpiCardBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="kpi-card" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { KpiCard } from "@/components/blocks/kpi-card";
+```
+
+```tsx
+<KpiCard label="Revenue" metric={revenue} onAction={openReport} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import KpiCard from "@/components/blocks/KpiCard.vue";
+</script>
+```
+
+```vue
+<KpiCard label="Revenue" :metric="revenue" @action="openReport" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import KpiCard from "@/components/blocks/KpiCard.svelte";
+</script>
+```
+
+```svelte
+<KpiCard label="Revenue" metric={revenue} onaction={openReport} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { KpiCard } from "@/components/blocks/kpi-card";
+```
+
+```tsx
+<KpiCard label="Revenue" metric={revenue()} onAction={openReport} />
+```
+
+</ForFramework>
+
+`metric` es `{ value, delta, tone, caption, trend }`. Pon en `tone` lo que significa el cambio: una subida de la tasa de abandono es `negative`.
+
+## Referencia de API
+
+### Propiedades
+
+| Propiedad     | Tipo                    | Por defecto      | Descripción                                                       |
+| ------------- | ----------------------- | ---------------- | ----------------------------------------------------------------- |
+| `label`       | `string`                | `"Revenue"`      | Lo que se mide; el título de la tarjeta.                          |
+| `period`      | `string`                | `"Last 30 days"` | La línea bajo el título; `""` la oculta.                          |
+| `metric`      | `KpiCardMetric \| null` | un ejemplo       | La métrica. `null` muestra el estado vacío.                       |
+| `actionLabel` | `string`                | `"View report"`  | El texto del botón de la cabecera; `""` oculta el botón.          |
+| `error`       | `string`                | —                | La métrica no cargó; una alerta con reintento la reemplaza.       |
+| `loading`     | `boolean`               | `false`          | Marcadores en una región ocupada reemplazan la métrica.           |
+| `disabled`    | `boolean`               | `false`          | La métrica sigue legible y todos los botones quedan desactivados. |
+| `onAction`    | `() => void`            | —                | El botón de la cabecera. Svelte: `onaction`. Vue: `@action`.      |
+| `onRetry`     | `() => void`            | —                | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.       |
+
+### KpiCardMetric
+
+| Campo     | Tipo                                    | Descripción                                                     |
+| --------- | --------------------------------------- | --------------------------------------------------------------- |
+| `value`   | `string`                                | El número, ya formateado.                                       |
+| `delta`   | `string`                                | Cambio opcional, con su signo: `+12.5%`, `−0.4 pts`.            |
+| `tone`    | `"positive" \| "negative" \| "neutral"` | Lo que significa el cambio. Por defecto `"neutral"`.            |
+| `caption` | `string`                                | Contexto opcional tras el cambio: `vs last month`.              |
+| `trend`   | `number[]`                              | Valores opcionales del minigráfico, del más antiguo; dos o más. |
+
+### Estados
+
+| Estado        | Propiedad       | Qué se muestra                                                       |
+| ------------- | --------------- | -------------------------------------------------------------------- |
+| Por defecto   | —               | El valor, su cambio y el minigráfico.                                |
+| Vacío         | `metric={null}` | "No data yet" bajo el título.                                        |
+| Cargando      | `loading`       | Marcadores para el valor, el cambio y la línea.                      |
+| Error         | `error`         | Una alerta de error con el botón "Try again" en lugar de la métrica. |
+| Deshabilitado | `disabled`      | La métrica con todos los botones desactivados.                       |
+
+El hover y el foco visible vienen de Button: los muestran el botón de la cabecera y "Try again".
+
+### Dimensionado
+
+| Paso del contenedor      | Qué cambia                                          |
+| ------------------------ | --------------------------------------------------- |
+| bajo `@sm`               | El minigráfico ocupa la tarjeta bajo el valor.      |
+| `@sm` (`--container-sm`) | El valor y el minigráfico quedan uno junto al otro. |
+| `@md` (`--container-md`) | Un valor más grande y un minigráfico más ancho.     |
+| `@lg` (`--container-lg`) | El minigráfico más ancho.                           |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+La misma tarjeta a 18rem, 30rem, 40rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <KpiCardBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Una subida que es mala noticia
+
+La tasa de abandono subió, así que `tone` es `negative`.
+
+<Preview examples={examples} layout="fill">
+  <KpiCardBlockDemo client:visible locale="es" state="negative" />
+</Preview>
+
+### Vacío
+
+Pasa `metric={null}`.
+
+<Preview examples={examples} layout="fill">
+  <KpiCardBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <KpiCardBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+Pulsa "Try again" para borrar el mensaje y volver a mostrar la métrica.
+
+<Preview examples={examples} layout="fill">
+  <KpiCardBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+<Preview examples={examples} layout="fill">
+  <KpiCardBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
