@@ -6134,6 +6134,94 @@
       ]
     },
     {
+      "name": "checkout-react",
+      "type": "registry:flow",
+      "version": "0.1.0",
+      "title": "Checkout flow (React)",
+      "description": "Example assembly for the checkout flow: cart → shipping → payment → review → confirmation. It owns the navigation state the five screens refuse to hold — which step is on the route, the lines in the cart and their quantities, the address and delivery method from shipping, the card from payment, the order once it is placed and whatever the last submit rejected — and it prices the order from them: every summary the screens show is computed here, not passed in. Each forward move is a form submission or a button the screen reports; each step back is the screen's Back button, a Change on the review, or an Edit cart link intercepted the way a client router does. Rewrite it against your own router and your own requests; the screens under it stay presentational.",
+      "dependencies": [],
+      "registryDependencies": [
+        "cart-react",
+        "shipping-react",
+        "payment-react",
+        "review-react",
+        "confirmation-react"
+      ],
+      "files": [
+        {
+          "path": "flows/checkout/react/checkout-flow.tsx",
+          "type": "registry:flow",
+          "target": "src/components/flows/checkout-flow.tsx"
+        }
+      ]
+    },
+    {
+      "name": "checkout-vue",
+      "type": "registry:flow",
+      "version": "0.1.0",
+      "title": "Checkout flow (Vue)",
+      "description": "Example assembly for the checkout flow: cart → shipping → payment → review → confirmation. It owns the navigation state the five screens refuse to hold — which step is on the route, the lines in the cart and their quantities, the address and delivery method from shipping, the card from payment, the order once it is placed and whatever the last submit rejected — and it prices the order from them: every summary the screens show is computed here, not passed in. Each forward move is a form submission or a button the screen reports; each step back is the screen's Back button, a Change on the review, or an Edit cart link intercepted the way a client router does. Rewrite it against your own router and your own requests; the screens under it stay presentational.",
+      "dependencies": [],
+      "registryDependencies": [
+        "cart-vue",
+        "shipping-vue",
+        "payment-vue",
+        "review-vue",
+        "confirmation-vue"
+      ],
+      "files": [
+        {
+          "path": "flows/checkout/vue/CheckoutFlow.vue",
+          "type": "registry:flow",
+          "target": "src/components/flows/CheckoutFlow.vue"
+        }
+      ]
+    },
+    {
+      "name": "checkout-svelte",
+      "type": "registry:flow",
+      "version": "0.1.0",
+      "title": "Checkout flow (Svelte)",
+      "description": "Example assembly for the checkout flow: cart → shipping → payment → review → confirmation. It owns the navigation state the five screens refuse to hold — which step is on the route, the lines in the cart and their quantities, the address and delivery method from shipping, the card from payment, the order once it is placed and whatever the last submit rejected — and it prices the order from them: every summary the screens show is computed here, not passed in. Each forward move is a form submission or a button the screen reports; each step back is the screen's Back button, a Change on the review, or an Edit cart link intercepted the way a client router does. Rewrite it against your own router and your own requests; the screens under it stay presentational.",
+      "dependencies": [],
+      "registryDependencies": [
+        "cart-svelte",
+        "shipping-svelte",
+        "payment-svelte",
+        "review-svelte",
+        "confirmation-svelte"
+      ],
+      "files": [
+        {
+          "path": "flows/checkout/svelte/CheckoutFlow.svelte",
+          "type": "registry:flow",
+          "target": "src/components/flows/CheckoutFlow.svelte"
+        }
+      ]
+    },
+    {
+      "name": "checkout-solid",
+      "type": "registry:flow",
+      "version": "0.1.0",
+      "title": "Checkout flow (Solid)",
+      "description": "Example assembly for the checkout flow: cart → shipping → payment → review → confirmation. It owns the navigation state the five screens refuse to hold — which step is on the route, the lines in the cart and their quantities, the address and delivery method from shipping, the card from payment, the order once it is placed and whatever the last submit rejected — and it prices the order from them: every summary the screens show is computed here, not passed in. Each forward move is a form submission or a button the screen reports; each step back is the screen's Back button, a Change on the review, or an Edit cart link intercepted the way a client router does. Rewrite it against your own router and your own requests; the screens under it stay presentational.",
+      "dependencies": [],
+      "registryDependencies": [
+        "cart-solid",
+        "shipping-solid",
+        "payment-solid",
+        "review-solid",
+        "confirmation-solid"
+      ],
+      "files": [
+        {
+          "path": "flows/checkout/solid/checkout-flow.tsx",
+          "type": "registry:flow",
+          "target": "src/components/flows/checkout-flow.tsx"
+        }
+      ]
+    },
+    {
       "name": "onboarding-react",
       "type": "registry:flow",
       "version": "0.1.0",
