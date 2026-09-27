@@ -1,0 +1,184 @@
+---
+title: Compartir invitación
+description: Una pantalla a viewport completo donde una persona comparte su enlace de invitación con sus amigos.
+group: Pantallas
+order: 120
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ReferralShareScreenDemo from "../../../islands/ReferralShareScreenDemo.svelte";
+import referralShareReact from "../../../../../../registry/screens/referral-share/react/referral-share.tsx?raw";
+import referralShareVue from "../../../../../../registry/screens/referral-share/vue/ReferralShare.vue?raw";
+import referralShareSolid from "../../../../../../registry/screens/referral-share/solid/referral-share.tsx?raw";
+import referralShareSvelte from "../../../../../../registry/screens/referral-share/svelte/ReferralShare.svelte?raw";
+
+<FrameworkSelect locale="es" />
+
+<Preview
+  examples={{
+    react: referralShareReact,
+    vue: referralShareVue,
+    solid: referralShareSolid,
+    svelte: referralShareSvelte,
+  }}
+  layout="fill"
+>
+  <ReferralShareScreenDemo client:visible locale="es" />
+</Preview>
+
+Úsala en el paso de un programa de referidos donde una persona comparte su enlace. Muestra el enlace, los amigos invitados y cómo funciona la recompensa; tu página envía las invitaciones.
+
+## Instalación
+
+<Install item="referral-share" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { ReferralShare } from "@/components/screens/referral-share";
+```
+
+```tsx
+<ReferralShare link={referralUrl} friends={friends} onInvite={sendInvite} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```ts
+import ReferralShare from "@/components/screens/ReferralShare.vue";
+```
+
+```vue
+<ReferralShare :link="referralUrl" :friends="friends" @invite="sendInvite" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```ts
+import ReferralShare from "@/components/screens/ReferralShare.svelte";
+```
+
+```svelte
+<ReferralShare link={referralUrl} {friends} oninvite={sendInvite} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { ReferralShare } from "@/components/screens/referral-share";
+```
+
+```tsx
+<ReferralShare link={referralUrl()} friends={friends()} onInvite={sendInvite} />
+```
+
+</ForFramework>
+
+`sendInvite(email)` puede devolver una promesa. El botón muestra "Sending" hasta que se resuelve y luego un aviso dice si la invitación salió.
+
+## Referencia de API
+
+### Props
+
+Los callbacks son props `on…` en React y Solid, en minúsculas (`oninvite`) en Svelte. En Vue, `invite` y `share` se escuchan como props de función (`@invite`, `@share`) y `copy`, `retry` y `navigate` son emits.
+
+| Prop          | Tipo                         | Por defecto                        | Descripción                                                             |
+| ------------- | ---------------------------- | ---------------------------------- | ----------------------------------------------------------------------- |
+| `link`        | `string`                     | `"https://example.com/r/ana-ruiz"` | El enlace de invitación de quien lee.                                   |
+| `reward`      | `string`                     | `"a free month"`                   | Lo que recibe cada lado cuando un amigo se une.                         |
+| `friends`     | `ReferralFriend[]`           | `[]`                               | Amigos invitados: `id`, `name`, `email`, `status`.                      |
+| `channels`    | `{ value, label }[]`         | Email, Slack, LinkedIn, X          | Dónde se puede enviar el enlace.                                        |
+| `error`       | `string`                     | —                                  | No se pudieron cargar los datos: muestra la alerta y el reintento.      |
+| `loading`     | `boolean`                    | `false`                            | Los datos se están cargando: marcadores de posición.                    |
+| `disabled`    | `boolean`                    | `false`                            | Todos los controles se ven pero no responden.                           |
+| `onInvite`    | `(email) => void \| Promise` | —                                  | Se invitó un correo.                                                    |
+| `onShare`     | `(channel, link) => …`       | —                                  | El enlace se envió a un canal.                                          |
+| `onCopy`      | `(link) => void`             | —                                  | Se copió el enlace.                                                     |
+| `onRetry`     | `() => void`                 | —                                  | Se pulsó "Try again".                                                   |
+| `onNavigate`  | `(to, event) => void`        | —                                  | Se pulsó un enlace de la pantalla: `home`, `skip`, `privacy` o `terms`. |
+| `homeHref`    | `string`                     | `"#"`                              | Destino del logotipo.                                                   |
+| `skipHref`    | `string`                     | `"#"`                              | Destino de "Skip for now".                                              |
+| `privacyHref` | `string`                     | `"#"`                              | Destino del enlace de privacidad.                                       |
+| `termsHref`   | `string`                     | `"#"`                              | Destino del enlace de términos.                                         |
+
+### Estados
+
+| Estado        | Props      | Muestra                                            |
+| ------------- | ---------- | -------------------------------------------------- |
+| Por defecto   | `friends`  | El enlace, los canales y los amigos invitados.     |
+| Vacío         | —          | "Only you have access" en lugar de los amigos.     |
+| Cargando      | `loading`  | Marcadores en la tarjeta, con `aria-busy`.         |
+| Error         | `error`    | Una alerta con "Try again" en lugar de la tarjeta. |
+| Deshabilitado | `disabled` | La pantalla se ve pero no se puede usar.           |
+
+### Tamaño
+
+| Paso del contenedor      | Cambio                                                                   |
+| ------------------------ | ------------------------------------------------------------------------ |
+| `@sm` (`--container-sm`) | La cabecera pasa a una sola fila.                                        |
+| `@md` (`--container-md`) | El título crece, los tres pasos se ponen lado a lado y el pie se alinea. |
+
+### Composición
+
+| Parte                            | Papel                                                        |
+| -------------------------------- | ------------------------------------------------------------ |
+| [ShareInvite](/es/share-invite/) | El formulario de invitación, el enlace, los canales, amigos. |
+
+## Ejemplos
+
+### Cargando
+
+<Preview
+  examples={{
+    react: referralShareReact,
+    vue: referralShareVue,
+    solid: referralShareSolid,
+    svelte: referralShareSvelte,
+  }}
+  layout="fill"
+>
+  <ReferralShareScreenDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+<Preview
+  examples={{
+    react: referralShareReact,
+    vue: referralShareVue,
+    solid: referralShareSolid,
+    svelte: referralShareSvelte,
+  }}
+  layout="fill"
+>
+  <ReferralShareScreenDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Sin amigos todavía
+
+<Preview
+  examples={{
+    react: referralShareReact,
+    vue: referralShareVue,
+    solid: referralShareSolid,
+    svelte: referralShareSvelte,
+  }}
+  layout="fill"
+>
+  <ReferralShareScreenDemo client:visible locale="es" state="empty" />
+</Preview>
+
+## Notas
+
+- Presentacional: sin peticiones ni router. La página que la monta envía las invitaciones.
+- El bloque revisa el correo antes de llamar a `onInvite`: una dirección mal escrita o un amigo que ya está en la lista muestra un error en el campo.
+- `onNavigate` pasa el evento del clic: ignora los clics con `metaKey`/`ctrlKey` y luego llama a `preventDefault()` para enrutar.
+- La pantalla importa el bloque ShareInvite desde `@/components/blocks/…`; cambia esa línea si tu alias es otro.

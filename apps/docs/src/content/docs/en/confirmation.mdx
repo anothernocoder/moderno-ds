@@ -1,0 +1,192 @@
+---
+title: Confirmation
+description: A full-viewport screen that thanks a shopper once the order is placed — the order number, the delivery and a recap of the order — with the order-summary block between a masthead and a footer.
+group: Screens
+order: 126
+agent:
+  intent: The full-viewport last step of checkout — a thank-you with the order's reference beside a read-only recap of what was bought, presentational.
+  whenToUse: "The route a shopper lands on after the order is placed: the confirmation step of checkout, after payment."
+  whenNotToUse:
+    - case: A short "saved" or "sent" message inside a page you already own
+      use: a Toast or an Alert — a screen owns the viewport
+    - case: A recap of the order inside a page you already own (an account page, a slide-over)
+      use: the OrderSummary block — a block never owns the viewport
+    - case: The whole checkout journey, with the navigation between its steps
+      use: the checkout flow, which sequences this screen after cart, shipping, payment and review
+  gotchas:
+    - "Presentational: nothing is fetched, no router. `onContinue` follows Continue shopping, `onRetry` the order error's retry, and `onNavigate` names the destination of every link the screen draws itself (`home`, `orders`, `privacy`, `terms`) and hands back the click event with it."
+    - "The thank-you always shows: the order is placed. `loading`, `error` and `items: []` only change the summary beside it — placeholder lines, an alert with Try again, or the empty message."
+    - '`orderNumber`, `delivery` and `email` are one row each under the heading. Leave `delivery` or `email` out to hide its row; pass `orderNumber: ""` to hide the order number.'
+    - "`items`, `totals` and `total` go straight to the OrderSummary block. Leave `items` out for the block's three sample lines; pass `[]` for the empty message."
+    - 'The screen''s heading is the page''s `h1`: "Order summary" is rank 2 under it, the order''s lines rank 3.'
+    - "Full-viewport is a height (`min-h-dvh`). Every width decision is read off the screen's own container: the summary sits under the thank-you until the screen crosses `--container-lg`, then beside it. The block keeps reading its own container."
+    - "The screen imports the OrderSummary block from `@/components/blocks/…`, where `moderno add` puts it. If your project uses a different path alias, that import line is the only thing to change."
+    - "The root is a `<div>`, not a `<main>` — most app shells already provide the `main` landmark. If your route has none, change that one element."
+  theming:
+    - "Nothing is painted here. The thank-you is a Card with a success Badge and a Button; the recap is the OrderSummary block; the screen's own chrome is `text-foreground` / `text-muted-foreground` on `bg-background`."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the screen's three steps are --container-sm, --container-md and --container-lg, and the block inside reads its own."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ConfirmationScreenDemo from "../../../islands/ConfirmationScreenDemo.svelte";
+import confirmationReact from "../../../../../../registry/screens/confirmation/react/confirmation.tsx?raw";
+import confirmationVue from "../../../../../../registry/screens/confirmation/vue/Confirmation.vue?raw";
+import confirmationSolid from "../../../../../../registry/screens/confirmation/solid/confirmation.tsx?raw";
+import confirmationSvelte from "../../../../../../registry/screens/confirmation/svelte/Confirmation.svelte?raw";
+
+export const examples = {
+  react: confirmationReact,
+  vue: confirmationVue,
+  solid: confirmationSolid,
+  svelte: confirmationSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <ConfirmationScreenDemo client:visible locale="en" />
+</Preview>
+
+Use it for the last step of checkout. It tells the shopper the order is placed and shows what they bought.
+
+## Installation
+
+<Install item="confirmation" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { Confirmation } from "@/components/screens/confirmation";
+```
+
+```tsx
+<Confirmation orderNumber={order.number} items={items} total={total} onContinue={goShopping} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```ts
+import Confirmation from "@/components/screens/Confirmation.vue";
+```
+
+```vue
+<Confirmation :order-number="order.number" :items="items" :total="total" @continue="goShopping" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```ts
+import Confirmation from "@/components/screens/Confirmation.svelte";
+```
+
+```svelte
+<Confirmation orderNumber={order.number} {items} {total} oncontinue={goShopping} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { Confirmation } from "@/components/screens/confirmation";
+```
+
+```tsx
+<Confirmation
+  orderNumber={order().number}
+  items={items()}
+  total={total()}
+  onContinue={goShopping}
+/>
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+Callbacks are `on…` props in React and Solid, lowercase (`oncontinue`) in Svelte, and emits (`continue`, `retry`, `navigate`) in Vue.
+
+| Prop          | Type                  | Default                      | Description                                                           |
+| ------------- | --------------------- | ---------------------------- | --------------------------------------------------------------------- |
+| `heading`     | `string`              | `"Thank you for your order"` | The page's `h1`.                                                      |
+| `description` | `string`              | a line about the email       | The line under the heading; `""` hides it.                            |
+| `orderNumber` | `string`              | `"#MD-10482"`                | The order's reference; `""` hides the row.                            |
+| `delivery`    | `string`              | —                            | When the order should arrive, like `"Tue, 6 October"`.                |
+| `email`       | `string`              | —                            | Where the receipt was sent.                                           |
+| `items`       | `OrderItem[]`         | the block's samples          | The lines that were ordered. `[]` shows the empty message.            |
+| `totals`      | `OrderTotal[]`        | the block's samples          | The rows above the total: `{ label, amount }`.                        |
+| `total`       | `string`              | the block's sample           | The amount paid as people read it, like `"€168"`.                     |
+| `loading`     | `boolean`             | `false`                      | The order is loading: placeholder lines replace the summary.          |
+| `error`       | `string`              | —                            | The order failed to load: an alert with a retry replaces the summary. |
+| `disabled`    | `boolean`             | `false`                      | Everything stays on screen; every control is inert.                   |
+| `onContinue`  | `() => void`          | —                            | Continue shopping was pressed.                                        |
+| `onRetry`     | `() => void`          | —                            | "Try again" after `error`.                                            |
+| `onNavigate`  | `(to, event) => void` | —                            | A screen link was clicked: `home`, `orders`, `privacy` or `terms`.    |
+| `homeHref`    | `string`              | `"#"`                        | Target of the wordmark.                                               |
+| `ordersHref`  | `string`              | `"#"`                        | Target of "Your orders".                                              |
+| `privacyHref` | `string`              | `"#"`                        | Target of the privacy link.                                           |
+| `termsHref`   | `string`              | `"#"`                        | Target of the terms link.                                             |
+
+### States
+
+| State       | Props      | Renders                                                                |
+| ----------- | ---------- | ---------------------------------------------------------------------- |
+| Default     | —          | The thank-you and the order summary with its total.                    |
+| Loading     | `loading`  | The thank-you, and placeholder lines in place of the summary.          |
+| Order error | `error`    | The thank-you, and an alert with "Try again" for the summary.          |
+| Empty       | `items=[]` | The thank-you, and "Your order is empty." for the summary.             |
+| Disabled    | `disabled` | Everything shown; Continue shopping and every link in the recap inert. |
+
+### Sizing
+
+| Container step           | Change                                            |
+| ------------------------ | ------------------------------------------------- |
+| `@sm` (`--container-sm`) | The masthead moves onto one row.                  |
+| `@md` (`--container-md`) | The heading grows; the footer moves onto one row. |
+| `@lg` (`--container-lg`) | The order summary moves beside the thank-you.     |
+
+### Composition
+
+| Part                                | Role                                           |
+| ----------------------------------- | ---------------------------------------------- |
+| [Order Summary](/en/order-summary/) | The read-only lines and totals that were paid. |
+| [Card](/en/card/)                   | The thank-you panel.                           |
+| [Badge](/en/badge/)                 | "Order placed", with the `success` variant.    |
+| [Button](/en/button/)               | Continue shopping.                             |
+
+## Examples
+
+### Loading the order
+
+<Preview examples={examples} layout="fill">
+  <ConfirmationScreenDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Order error
+
+Press "Try again" to clear the message and bring the order back.
+
+<Preview examples={examples} layout="fill">
+  <ConfirmationScreenDemo client:visible locale="en" state="order-error" />
+</Preview>
+
+### Empty order
+
+<Preview examples={examples} layout="fill">
+  <ConfirmationScreenDemo client:visible locale="en" state="empty" />
+</Preview>
+
+## Notes
+
+- Presentational: nothing is fetched and no router is used. The page that mounts it does both.
+- `onNavigate` passes the click event: skip `metaKey`/`ctrlKey` clicks, then `preventDefault()` to route.
+- The root is a `<div>`, not a `<main>`. Make it your `<main>` if the route has none.
+- The screen imports its block from `@/components/blocks/…`; edit that line if your alias differs.

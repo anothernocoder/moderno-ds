@@ -1,0 +1,225 @@
+---
+title: Revisión
+description: Una pantalla a viewport completo donde un cliente revisa el pedido antes de hacerlo — los datos que eligió y un resumen del pedido — con los bloques de lista de descripción y de resumen del pedido entre una cabecera y un pie.
+group: Pantallas
+order: 125
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ReviewScreenDemo from "../../../islands/ReviewScreenDemo.svelte";
+import reviewReact from "../../../../../../registry/screens/review/react/review.tsx?raw";
+import reviewVue from "../../../../../../registry/screens/review/vue/Review.vue?raw";
+import reviewSolid from "../../../../../../registry/screens/review/solid/review.tsx?raw";
+import reviewSvelte from "../../../../../../registry/screens/review/svelte/Review.svelte?raw";
+
+export const examples = {
+  react: reviewReact,
+  vue: reviewVue,
+  solid: reviewSolid,
+  svelte: reviewSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <ReviewScreenDemo client:visible locale="es" />
+</Preview>
+
+Úsala en el último paso del checkout. El cliente revisa los datos y el total, y hace el pedido; tu página lo registra.
+
+## Instalación
+
+<Install item="review" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { Review } from "@/components/screens/review";
+```
+
+```tsx
+<Review
+  details={details}
+  items={items}
+  totals={totals}
+  total={total}
+  onConfirm={placeOrder}
+  onBack={goToPayment}
+  onEdit={goToStep}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```ts
+import Review from "@/components/screens/Review.vue";
+```
+
+```vue
+<Review
+  :details="details"
+  :items="items"
+  :totals="totals"
+  :total="total"
+  @confirm="placeOrder"
+  @back="goToPayment"
+  @edit="goToStep"
+/>
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```ts
+import Review from "@/components/screens/Review.svelte";
+```
+
+```svelte
+<Review
+  {details}
+  {items}
+  {totals}
+  {total}
+  onconfirm={placeOrder}
+  onback={goToPayment}
+  onedit={goToStep}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { Review } from "@/components/screens/review";
+```
+
+```tsx
+<Review
+  details={details()}
+  items={items()}
+  totals={totals()}
+  total={total()}
+  onConfirm={placeOrder}
+  onBack={goToPayment}
+  onEdit={goToStep}
+/>
+```
+
+</ForFramework>
+
+Cada dato es una fila. Su `id` vuelve a `onEdit`, así sabes qué paso abrir:
+
+```ts
+const details = [
+  {
+    id: "address",
+    term: "Ship to",
+    value: "Margot Foster, 18 Rue des Lilas, Paris",
+    action: "Change",
+  },
+  { id: "payment", term: "Payment", value: "Visa ending in 4242", action: "Change" },
+];
+```
+
+## Referencia de API
+
+### Props
+
+Los callbacks son props `on…` en React y Solid, en minúsculas (`onconfirm`) en Svelte y eventos (`confirm`, `back`, `edit`, `retry`, `navigate`) en Vue.
+
+| Prop          | Tipo                    | Por defecto                      | Descripción                                                                        |
+| ------------- | ----------------------- | -------------------------------- | ---------------------------------------------------------------------------------- |
+| `heading`     | `string`                | `"Review your order"`            | El `h1` de la página.                                                              |
+| `description` | `string`                | una línea corta                  | La línea bajo el título; `""` la oculta.                                           |
+| `details`     | `DescriptionListItem[]` | contacto, dirección, envío, pago | Las filas que eligió el cliente: `{ id, term, value, action? }`.                   |
+| `items`       | `OrderItem[]`           | los ejemplos del bloque          | Los artículos del pedido. `[]` muestra el mensaje de vacío.                        |
+| `totals`      | `OrderTotal[]`          | los ejemplos del bloque          | Las filas sobre el total: `{ label, amount }`.                                     |
+| `total`       | `string`                | el ejemplo del bloque            | El importe a pagar tal como se lee, como `"€168"`.                                 |
+| `error`       | `string`                | —                                | Falló el pedido: una alerta bajo el título.                                        |
+| `submitting`  | `boolean`               | `false`                          | Se está haciendo el pedido: Place order gira y todos los controles quedan inertes. |
+| `loading`     | `boolean`               | `false`                          | El pedido está cargando: líneas de marcador reemplazan los datos y el resumen.     |
+| `orderError`  | `string`                | —                                | Falló la carga del pedido: una alerta con reintento reemplaza el resumen.          |
+| `disabled`    | `boolean`               | `false`                          | Todo se queda en pantalla; todos los controles quedan inertes.                     |
+| `onConfirm`   | `() => void`            | —                                | Se pulsó Place order.                                                              |
+| `onBack`      | `() => void`            | —                                | Se pulsó Back to payment.                                                          |
+| `onEdit`      | `(id) => void`          | —                                | Se pulsó el botón de un dato, con el `id` de ese dato.                             |
+| `onRetry`     | `() => void`            | —                                | «Try again» tras `orderError`.                                                     |
+| `onNavigate`  | `(to, event) => void`   | —                                | Se pulsó un enlace de la pantalla: `home`, `cart`, `privacy` o `terms`.            |
+| `homeHref`    | `string`                | `"#"`                            | Destino del logotipo.                                                              |
+| `cartHref`    | `string`                | `"#"`                            | Destino de «Edit cart».                                                            |
+| `privacyHref` | `string`                | `"#"`                            | Destino del enlace de privacidad.                                                  |
+| `termsHref`   | `string`                | `"#"`                            | Destino del enlace de términos.                                                    |
+
+### Estados
+
+| Estado             | Props        | Qué se renderiza                                                  |
+| ------------------ | ------------ | ----------------------------------------------------------------- |
+| Por defecto        | —            | Los datos, el resumen del pedido con su total y Place order.      |
+| Pedido fallido     | `error`      | Una alerta bajo el título; todo sigue usable.                     |
+| Haciendo el pedido | `submitting` | «Placing order» con un indicador; todos los controles inertes.    |
+| Cargando           | `loading`    | Líneas de marcador para los datos y el resumen; sin Place order.  |
+| Error del pedido   | `orderError` | Una alerta con «Try again» en lugar del resumen; sin Place order. |
+| Vacío              | `items=[]`   | «Your order is empty.» en lugar del resumen; sin Place order.     |
+| Deshabilitado      | `disabled`   | Todo se muestra, todos los controles inertes.                     |
+
+### Tamaño
+
+| Paso del contenedor      | Cambio                                                  |
+| ------------------------ | ------------------------------------------------------- |
+| `@sm` (`--container-sm`) | La cabecera y los dos botones pasan a una sola fila.    |
+| `@md` (`--container-md`) | El título crece y el pie pasa a una sola fila.          |
+| `@lg` (`--container-lg`) | El resumen del pedido pasa junto a los datos y botones. |
+
+### Composición
+
+| Parte                                     | Papel                                                               |
+| ----------------------------------------- | ------------------------------------------------------------------- |
+| [Description List](/es/description-list/) | El contacto, la dirección, el envío y el pago, cada uno con Change. |
+| [Order Summary](/es/order-summary/)       | Los artículos y los totales del pedido, solo lectura.               |
+
+## Ejemplos
+
+### Pedido fallido
+
+<Preview examples={examples} layout="fill">
+  <ReviewScreenDemo client:visible locale="es" state="failed" />
+</Preview>
+
+### Haciendo el pedido
+
+<Preview examples={examples} layout="fill">
+  <ReviewScreenDemo client:visible locale="es" state="placing" />
+</Preview>
+
+### Cargando el pedido
+
+<Preview examples={examples} layout="fill">
+  <ReviewScreenDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error del pedido
+
+Pulsa «Try again» para borrar el mensaje y recuperar el pedido.
+
+<Preview examples={examples} layout="fill">
+  <ReviewScreenDemo client:visible locale="es" state="order-error" />
+</Preview>
+
+### Pedido vacío
+
+<Preview examples={examples} layout="fill">
+  <ReviewScreenDemo client:visible locale="es" state="empty" />
+</Preview>
+
+## Notas
+
+- Presentacional: no se hace ningún pedido y no hay router. La página que la monta hace las dos cosas.
+- `onNavigate` pasa el evento del clic: ignora los clics con `metaKey`/`ctrlKey` y luego llama a `preventDefault()` para enrutar.
+- La raíz es un `<div>`, no un `<main>`. Conviértela en tu `<main>` si la ruta no tiene uno.
+- La pantalla importa sus dos bloques desde `@/components/blocks/…`; cambia esas líneas si tu alias es otro.

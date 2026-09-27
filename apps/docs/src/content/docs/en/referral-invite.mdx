@@ -1,0 +1,219 @@
+---
+title: Referral invite
+description: A full-viewport screen where a member invites friends by email to earn a referral reward.
+group: Screens
+order: 119
+agent:
+  intent: The full-viewport referral invite screen — what the referral gives, then a form for friends' email addresses and a note. Presentational.
+  whenToUse: "The step of a referral program where a member types or pastes the addresses of friends to invite: /referrals/invite, /invite-friends, the first step of a referral flow."
+  whenNotToUse:
+    - case: Inviting teammates into a workspace, with roles and a pending list
+      use: the invite team screen
+    - case: Sharing a link or a project with people inside a page you already own
+      use: the ShareInvite block — a block never owns the viewport
+  gotchas:
+    - "Presentational: no request, no parsing, no router. The addresses arrive as one `emails` field; split it on commas and new lines, check each one, and send the invites yourself."
+    - "`sent` is the list of addresses the last send reached. Pass it back after a successful send to show the success alert; clear it when the reader starts a new batch."
+    - "Full-viewport is a height (`min-h-dvh`). Every width decision is read off the screen's own container, so it is still correct mounted in a pane that is not the window."
+    - "The screen imports the FormLayout block from `@/components/blocks/…`, where `moderno add` puts it. If your project uses a different path alias, that one import line is the only thing to change."
+    - "The root is a `<div>`, not a `<main>` — most app shells already provide the `main` landmark. If your route has none, change that one element."
+  theming:
+    - "The screen's own chrome is `text-foreground` / `text-muted-foreground` on `bg-background`, and the step numbers sit in a `border-border` ring; the success message is the Alert primitive and the form is the FormLayout block."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the two steps are --container-sm and --container-md."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ReferralInviteScreenDemo from "../../../islands/ReferralInviteScreenDemo.svelte";
+import referralInviteReact from "../../../../../../registry/screens/referral-invite/react/referral-invite.tsx?raw";
+import referralInviteVue from "../../../../../../registry/screens/referral-invite/vue/ReferralInvite.vue?raw";
+import referralInviteSolid from "../../../../../../registry/screens/referral-invite/solid/referral-invite.tsx?raw";
+import referralInviteSvelte from "../../../../../../registry/screens/referral-invite/svelte/ReferralInvite.svelte?raw";
+
+<FrameworkSelect locale="en" />
+
+<Preview
+  examples={{
+    react: referralInviteReact,
+    vue: referralInviteVue,
+    solid: referralInviteSolid,
+    svelte: referralInviteSvelte,
+  }}
+  layout="fill"
+>
+  <ReferralInviteScreenDemo client:visible locale="en" />
+</Preview>
+
+Use it for the step of a referral program where a member invites friends by email. It explains the reward and collects the addresses; your page sends the invites.
+
+## Installation
+
+<Install item="referral-invite" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { ReferralInvite } from "@/components/screens/referral-invite";
+```
+
+```tsx
+<ReferralInvite sent={sent} loading={sending} onSubmit={handleSubmit} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```ts
+import ReferralInvite from "@/components/screens/ReferralInvite.vue";
+```
+
+```vue
+<ReferralInvite :sent="sent" :loading="sending" @submit="handleSubmit" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```ts
+import ReferralInvite from "@/components/screens/ReferralInvite.svelte";
+```
+
+```svelte
+<ReferralInvite {sent} loading={sending} onsubmit={handleSubmit} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { ReferralInvite } from "@/components/screens/referral-invite";
+```
+
+```tsx
+<ReferralInvite sent={sent()} loading={sending()} onSubmit={handleSubmit} />
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+Callbacks are `on…` props in React and Solid, lowercase (`onsubmit`) in Svelte, and emits (`submit`, `cancel`, `navigate`) in Vue.
+
+| Prop          | Type                     | Default | Description                                                       |
+| ------------- | ------------------------ | ------- | ----------------------------------------------------------------- |
+| `sent`        | `string[]`               | —       | Addresses the last send reached. Shows the success alert.         |
+| `error`       | `string`                 | —       | Sending failed: shows the form alert.                             |
+| `errors`      | `Record<string, string>` | —       | Field errors by name: `emails`, `message`.                        |
+| `loading`     | `boolean`                | `false` | Send in flight: every control inert, the send button busy.        |
+| `disabled`    | `boolean`                | `false` | No invites can be sent right now.                                 |
+| `onSubmit`    | `(event) => void`        | —       | Native form submit.                                               |
+| `onCancel`    | `() => void`             | —       | The form's "Not now" button was pressed.                          |
+| `onNavigate`  | `(to, event) => void`    | —       | A screen link was clicked: `home`, `rules`, `privacy` or `terms`. |
+| `homeHref`    | `string`                 | `"#"`   | Target of the wordmark.                                           |
+| `rulesHref`   | `string`                 | `"#"`   | Target of "How referrals work".                                   |
+| `privacyHref` | `string`                 | `"#"`   | Target of the privacy link.                                       |
+| `termsHref`   | `string`                 | `"#"`   | Target of the terms link.                                         |
+
+### States
+
+| State      | Props             | Renders                                           |
+| ---------- | ----------------- | ------------------------------------------------- |
+| Empty      | —                 | The steps and the empty form. Nothing sent yet.   |
+| Sent       | `sent`            | A success alert naming the addresses.             |
+| Send error | `error`, `errors` | The form alert and the invalid fields.            |
+| Sending    | `loading`         | Every control inert, the send button `aria-busy`. |
+| Disabled   | `disabled`        | The screen is shown but can't be used.            |
+
+### Form fields
+
+| Name      | Control  | Posted                                      |
+| --------- | -------- | ------------------------------------------- |
+| `emails`  | Textarea | Always. Addresses split by commas or lines. |
+| `message` | Textarea | Always. Empty when the note is left blank.  |
+
+### Sizing
+
+| Container step           | Change                                                            |
+| ------------------------ | ----------------------------------------------------------------- |
+| `@sm` (`--container-sm`) | The masthead moves onto one row.                                  |
+| `@md` (`--container-md`) | The title grows, the steps sit side by side, the footer lines up. |
+
+### Composition
+
+| Part                           | Role                                                 |
+| ------------------------------ | ---------------------------------------------------- |
+| [FormLayout](/en/form-layout/) | The form: its title, the fields and the send button. |
+| [Alert](/en/alert/)            | The success message after a send.                    |
+| [Field](/en/field/)            | The addresses and the note, inside the form.         |
+
+## Examples
+
+### Sent
+
+<Preview
+  examples={{
+    react: referralInviteReact,
+    vue: referralInviteVue,
+    solid: referralInviteSolid,
+    svelte: referralInviteSvelte,
+  }}
+  layout="fill"
+>
+  <ReferralInviteScreenDemo client:visible locale="en" state="sent" />
+</Preview>
+
+### Send error
+
+<Preview
+  examples={{
+    react: referralInviteReact,
+    vue: referralInviteVue,
+    solid: referralInviteSolid,
+    svelte: referralInviteSvelte,
+  }}
+  layout="fill"
+>
+  <ReferralInviteScreenDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Sending
+
+<Preview
+  examples={{
+    react: referralInviteReact,
+    vue: referralInviteVue,
+    solid: referralInviteSolid,
+    svelte: referralInviteSvelte,
+  }}
+  layout="fill"
+>
+  <ReferralInviteScreenDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Disabled
+
+<Preview
+  examples={{
+    react: referralInviteReact,
+    vue: referralInviteVue,
+    solid: referralInviteSolid,
+    svelte: referralInviteSvelte,
+  }}
+  layout="fill"
+>
+  <ReferralInviteScreenDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Presentational: no request, no parsing, no router. The page that mounts it owns them.
+- Split `emails` on commas and new lines, trim each part and drop the empty ones before you check them.
+- Pair `disabled` with an `error` that says why, like a weekly limit, so the reader knows when to come back.
+- `onNavigate` passes the click event: skip `metaKey`/`ctrlKey` clicks, then `preventDefault()` to route.
+- The screen imports the FormLayout block from `@/components/blocks/…`; edit that line if your alias differs.

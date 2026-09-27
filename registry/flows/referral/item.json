@@ -1,0 +1,41 @@
+{
+  "title": "Referral flow",
+  "description": "Example assembly for the referral flow: referral-invite → referral-share → referral-reward. It owns the navigation state the three screens refuse to hold — which step is on the route, the friends invited so far (from the invite form or the share screen) and the errors the last invite form rejected — and counts the reward numbers from that one list. It moves between the screens the way a client router does: the screens draw plain hrefs (hrefFor), the assembly intercepts the clicks it owns and leaves modified clicks and every other link to the browser, and the invite form is a submission read off its emails field. Rewrite it against your own router and API; the screens under it stay presentational.",
+  "version": "0.1.0",
+  "dependencies": [],
+  "registryDependencies": [
+    "referral-invite-{framework}",
+    "referral-share-{framework}",
+    "referral-reward-{framework}"
+  ],
+  "files": {
+    "react": [
+      {
+        "path": "flows/referral/react/referral-flow.tsx",
+        "type": "registry:flow",
+        "target": "src/components/flows/referral-flow.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "flows/referral/vue/ReferralFlow.vue",
+        "type": "registry:flow",
+        "target": "src/components/flows/ReferralFlow.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "flows/referral/svelte/ReferralFlow.svelte",
+        "type": "registry:flow",
+        "target": "src/components/flows/ReferralFlow.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "flows/referral/solid/referral-flow.tsx",
+        "type": "registry:flow",
+        "target": "src/components/flows/referral-flow.tsx"
+      }
+    ]
+  }
+}

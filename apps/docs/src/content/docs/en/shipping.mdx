@@ -1,0 +1,261 @@
+---
+title: Shipping
+description: A full-viewport checkout screen where a shopper says where the order goes.
+group: Screens
+order: 123
+agent:
+  intent: The full-viewport shipping step of a checkout — an email for the receipt, the shipping address and a delivery method, beside the order being paid for. Presentational.
+  whenToUse: "The step of a checkout where the shopper gives the shipping address: /checkout/shipping, /checkout/address."
+  whenNotToUse:
+    - case: A shipping form inside a page you already own (a settings tab, a drawer)
+      use: the CheckoutForm block — a block never owns the viewport
+    - case: Taking the card details
+      use: the Payment screen
+  gotchas:
+    - "Presentational: no request, no router, no cart. `onSubmit` hands you the native form event; call `preventDefault()`, read the fields by name (`email`, `fullName`, `address`, `city`, `region`, `postalCode`, `country`, `delivery`) and save them yourself."
+    - "Field errors go in `fieldErrors`, keyed by field name; a failed save goes in `saveError`. `saving` makes the form inert and its button busy."
+    - "`items`, `totals` and `total` go to the OrderSummary block. Leave `items` out for a sample order; `[]` shows its empty state. Format the money yourself."
+    - "`deliveryOptions` defaults to a sample (standard and express) priced in euros, like the sample order. Pass your own."
+    - "Full-viewport is a height (`min-h-dvh`). Every width decision is read off the screen's own container, so it is still correct mounted in a pane that is not the window."
+    - "The screen imports the CheckoutForm and OrderSummary blocks from `@/components/blocks/…`, where `moderno add` puts them. If your project uses a different path alias, those two import lines are the only thing to change."
+    - "The root is a `<div>`, not a `<main>` — most app shells already provide the `main` landmark. If your route has none, change that one element."
+  theming:
+    - "The screen's own chrome is `text-foreground` / `text-muted-foreground` on `bg-background`; the form and the summary are the CheckoutForm and OrderSummary blocks."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ShippingScreenDemo from "../../../islands/ShippingScreenDemo.svelte";
+import shippingReact from "../../../../../../registry/screens/shipping/react/shipping.tsx?raw";
+import shippingVue from "../../../../../../registry/screens/shipping/vue/Shipping.vue?raw";
+import shippingSolid from "../../../../../../registry/screens/shipping/solid/shipping.tsx?raw";
+import shippingSvelte from "../../../../../../registry/screens/shipping/svelte/Shipping.svelte?raw";
+
+<FrameworkSelect locale="en" />
+
+<Preview
+  examples={{
+    react: shippingReact,
+    vue: shippingVue,
+    solid: shippingSolid,
+    svelte: shippingSvelte,
+  }}
+  layout="fill"
+>
+  <ShippingScreenDemo client:visible locale="en" />
+</Preview>
+
+Use it for the checkout step where a shopper gives the shipping address. It shows the form beside the order; your page saves the address.
+
+## Installation
+
+<Install item="shipping" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { Shipping } from "@/components/screens/shipping";
+```
+
+```tsx
+<Shipping items={items} totals={totals} total="€168" onSubmit={saveAddress} onBack={toCart} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```ts
+import Shipping from "@/components/screens/Shipping.vue";
+```
+
+```vue
+<Shipping :items="items" :totals="totals" total="€168" @submit="saveAddress" @back="toCart" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```ts
+import Shipping from "@/components/screens/Shipping.svelte";
+```
+
+```svelte
+<Shipping {items} {totals} total="€168" onsubmit={saveAddress} onback={toCart} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { Shipping } from "@/components/screens/shipping";
+```
+
+```tsx
+<Shipping items={items()} totals={totals()} total="€168" onSubmit={saveAddress} onBack={toCart} />
+```
+
+</ForFramework>
+
+Read the address from the form when it is sent:
+
+```ts
+function saveAddress(event) {
+  event.preventDefault();
+  const address = Object.fromEntries(new FormData(event.currentTarget));
+  // address.email, address.postalCode, address.delivery…
+}
+```
+
+## API Reference
+
+### Props
+
+Callbacks are `on…` props in React and Solid, lowercase (`onsubmit`) in Svelte, and emits (`submit`, `back`, `retry`, `navigate`) in Vue.
+
+| Prop              | Type                     | Default               | Description                                                           |
+| ----------------- | ------------------------ | --------------------- | --------------------------------------------------------------------- |
+| `deliveryOptions` | `DeliveryOption[]`       | Standard, express (€) | The ways the order can travel: `id`, `label`, `description`, `price`. |
+| `items`           | `OrderItem[]`            | A sample order        | The lines of the order. `[]` shows the empty state.                   |
+| `totals`          | `OrderTotal[]`           | —                     | The rows above the total: `label`, `amount`.                          |
+| `total`           | `string`                 | —                     | What the shopper pays.                                                |
+| `saveError`       | `string`                 | —                     | Saving failed: an alert at the top of the form.                       |
+| `fieldErrors`     | `Record<string, string>` | —                     | A message per field, keyed by its `name`.                             |
+| `saving`          | `boolean`                | `false`               | The form is inert and its button reads "Saving".                      |
+| `orderLoading`    | `boolean`                | `false`               | Placeholder lines in the summary.                                     |
+| `orderError`      | `string`                 | —                     | The order could not load: an alert with "Try again".                  |
+| `disabled`        | `boolean`                | `false`               | Every control is shown but inert.                                     |
+| `onSubmit`        | `(event) => void`        | —                     | The form was sent. The native submit event.                           |
+| `onBack`          | `() => void`             | —                     | "Back to cart" was pressed.                                           |
+| `onRetry`         | `() => void`             | —                     | "Try again" was pressed.                                              |
+| `onNavigate`      | `(to, event) => void`    | —                     | A screen link was clicked: `home`, `help`, `privacy` or `terms`.      |
+| `homeHref`        | `string`                 | `"#"`                 | Target of the wordmark.                                               |
+| `helpHref`        | `string`                 | `"#"`                 | Target of "Need help?".                                               |
+| `privacyHref`     | `string`                 | `"#"`                 | Target of the privacy link.                                           |
+| `termsHref`       | `string`                 | `"#"`                 | Target of the terms link.                                             |
+
+`OrderItem` is the [OrderSummary](/en/order-summary/)'s: `{ id, name, price, quantity, options?, href?, image? }`.
+
+### States
+
+| State        | Props          | Renders                                          |
+| ------------ | -------------- | ------------------------------------------------ |
+| Default      | —              | The form beside the order.                       |
+| Field errors | `fieldErrors`  | Each field with its message, marked invalid.     |
+| Save error   | `saveError`    | An alert at the top of the form.                 |
+| Saving       | `saving`       | The form inert, "Saving" on its button.          |
+| Loading      | `orderLoading` | Placeholder lines in the summary, `aria-busy`.   |
+| Order error  | `orderError`   | An alert with "Try again" in place of the order. |
+| Empty        | `items: []`    | "Your order is empty." in the summary.           |
+| Disabled     | `disabled`     | The screen is shown but can't be used.           |
+
+### Sizing
+
+| Container step           | Change                                   |
+| ------------------------ | ---------------------------------------- |
+| `@sm` (`--container-sm`) | The masthead moves onto one row.         |
+| `@md` (`--container-md`) | The footer lines up.                     |
+| `@lg` (`--container-lg`) | The order summary moves beside the form. |
+
+### Composition
+
+| Part                               | Role                                                  |
+| ---------------------------------- | ----------------------------------------------------- |
+| [CheckoutForm](/en/checkout-form/) | The shipping step: contact, address, delivery method. |
+| [OrderSummary](/en/order-summary/) | The lines of the order and its totals.                |
+
+## Examples
+
+### Field errors
+
+<Preview
+  examples={{
+    react: shippingReact,
+    vue: shippingVue,
+    solid: shippingSolid,
+    svelte: shippingSvelte,
+  }}
+  layout="fill"
+>
+  <ShippingScreenDemo client:visible locale="en" state="invalid" />
+</Preview>
+
+### Save error
+
+<Preview
+  examples={{
+    react: shippingReact,
+    vue: shippingVue,
+    solid: shippingSolid,
+    svelte: shippingSvelte,
+  }}
+  layout="fill"
+>
+  <ShippingScreenDemo client:visible locale="en" state="save-error" />
+</Preview>
+
+### Saving
+
+<Preview
+  examples={{
+    react: shippingReact,
+    vue: shippingVue,
+    solid: shippingSolid,
+    svelte: shippingSvelte,
+  }}
+  layout="fill"
+>
+  <ShippingScreenDemo client:visible locale="en" state="saving" />
+</Preview>
+
+### Loading the order
+
+<Preview
+  examples={{
+    react: shippingReact,
+    vue: shippingVue,
+    solid: shippingSolid,
+    svelte: shippingSvelte,
+  }}
+  layout="fill"
+>
+  <ShippingScreenDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### The order failed to load
+
+<Preview
+  examples={{
+    react: shippingReact,
+    vue: shippingVue,
+    solid: shippingSolid,
+    svelte: shippingSvelte,
+  }}
+  layout="fill"
+>
+  <ShippingScreenDemo client:visible locale="en" state="order-error" />
+</Preview>
+
+### Empty order
+
+<Preview
+  examples={{
+    react: shippingReact,
+    vue: shippingVue,
+    solid: shippingSolid,
+    svelte: shippingSvelte,
+  }}
+  layout="fill"
+>
+  <ShippingScreenDemo client:visible locale="en" state="empty" />
+</Preview>
+
+## Notes
+
+- Presentational: no request, no router. The page that mounts it saves the address and prices the order.
+- `onNavigate` passes the click event: skip `metaKey`/`ctrlKey` clicks, then `preventDefault()` to route.
+- The screen imports the CheckoutForm and OrderSummary blocks from `@/components/blocks/…`; edit those lines if your alias differs.

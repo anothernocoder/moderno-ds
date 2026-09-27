@@ -1,0 +1,37 @@
+{
+  "title": "Welcome",
+  "description": "Full-viewport onboarding welcome screen composing the hero block: a greeting, what comes next, and Continue and Skip actions, with its loading and error states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container): the masthead lines up at @sm and the footer at @md.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": ["hero-{framework}"],
+  "files": {
+    "react": [
+      {
+        "path": "screens/welcome/react/welcome.tsx",
+        "type": "registry:screen",
+        "target": "src/components/screens/welcome.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "screens/welcome/vue/Welcome.vue",
+        "type": "registry:screen",
+        "target": "src/components/screens/Welcome.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "screens/welcome/svelte/Welcome.svelte",
+        "type": "registry:screen",
+        "target": "src/components/screens/Welcome.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "screens/welcome/solid/welcome.tsx",
+        "type": "registry:screen",
+        "target": "src/components/screens/welcome.tsx"
+      }
+    ]
+  }
+}

@@ -52,6 +52,7 @@ function isValidQuantity(quantity: number, maxQuantity = defaultMaxQuantity) {
 
 export interface ShoppingCartProps {
   heading?: string;
+  headingLevel?: 1 | 2;
   items?: CartItem[];
   subtotal?: string;
   note?: string;
@@ -70,11 +71,18 @@ export function ShoppingCart(props: ShoppingCartProps) {
   const shownItems = () => props.items ?? sampleItems;
   const shownSubtotal = () =>
     props.subtotal ?? (props.items === undefined ? sampleSubtotal : undefined);
+  const headingRank = () => (props.headingLevel === 1 ? 1 : undefined);
+  const sectionRank = () => (props.headingLevel === 1 ? 2 : undefined);
 
   return (
     <section class="@container moderno-block-shopping-cart text-foreground">
       <div class="grid gap-8 px-4 py-12 @lg:py-16">
-        <h2 class="font-serif text-heading-sm text-balance @md:text-heading">{heading()}</h2>
+        <h2
+          class="font-serif text-heading-sm text-balance @md:text-heading"
+          aria-level={headingRank()}
+        >
+          {heading()}
+        </h2>
 
         <Show
           when={!props.error}
@@ -150,7 +158,7 @@ export function ShoppingCart(props: ShoppingCartProps) {
                           </Show>
                         </div>
                         <div class="grid min-w-0 content-start gap-1">
-                          <h3 class="text-body font-medium text-balance">
+                          <h3 class="text-body font-medium text-balance" aria-level={sectionRank()}>
                             <Show when={item.href} fallback={item.name}>
                               <a
                                 class="rounded-sm text-foreground underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring aria-disabled:cursor-not-allowed aria-disabled:text-muted-foreground aria-disabled:no-underline"
@@ -209,7 +217,7 @@ export function ShoppingCart(props: ShoppingCartProps) {
 
                 <Card.Root variant="muted">
                   <Card.Header>
-                    <Card.Title>Order summary</Card.Title>
+                    <Card.Title aria-level={sectionRank()}>Order summary</Card.Title>
                   </Card.Header>
                   <Card.Content class="grid gap-3">
                     <Show when={shownSubtotal()}>

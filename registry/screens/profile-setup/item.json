@@ -1,0 +1,37 @@
+{
+  "title": "Profile setup",
+  "description": "Full-viewport profile setup screen composing the form-layout block and the Avatar primitive: a photo to upload or remove, then the profile fields, with the photo's uploading, error and empty states and the form's error, loading and disabled states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead and photo row line up at @sm, the title grows and the footer lines up at @md.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": ["form-layout-{framework}"],
+  "files": {
+    "react": [
+      {
+        "path": "screens/profile-setup/react/profile-setup.tsx",
+        "type": "registry:screen",
+        "target": "src/components/screens/profile-setup.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "screens/profile-setup/vue/ProfileSetup.vue",
+        "type": "registry:screen",
+        "target": "src/components/screens/ProfileSetup.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "screens/profile-setup/svelte/ProfileSetup.svelte",
+        "type": "registry:screen",
+        "target": "src/components/screens/ProfileSetup.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "screens/profile-setup/solid/profile-setup.tsx",
+        "type": "registry:screen",
+        "target": "src/components/screens/profile-setup.tsx"
+      }
+    ]
+  }
+}

@@ -1,0 +1,248 @@
+---
+title: Review
+description: A full-viewport screen where a shopper checks the order before placing it — the details they chose and a recap of the order — with the description-list and order-summary blocks between a masthead and a footer.
+group: Screens
+order: 125
+agent:
+  intent: The full-viewport review step of checkout — the contact, address, delivery and payment the shopper chose beside a read-only recap of the order, with Place order; presentational.
+  whenToUse: "The route where a shopper checks everything one last time and places the order: the review step of checkout, after payment and before confirmation."
+  whenNotToUse:
+    - case: Entering the card or the address
+      use: the Payment or Shipping screen — this one only shows what was entered
+    - case: Changing quantities or removing lines
+      use: the Cart screen — the order summary here is read-only
+    - case: The whole checkout journey, with the navigation between its steps
+      use: the checkout flow, which sequences this screen with cart, shipping, payment and confirmation
+  gotchas:
+    - "Presentational: no order is placed, nothing is fetched, no router. `onConfirm` follows Place order, `onBack` follows Back to payment, `onEdit(id)` follows a detail's Change with that detail's `id`, `onRetry` the order error's retry, and `onNavigate` names the destination of every link the screen draws itself and hands back the click event with it."
+    - '`details` are the rows of the DescriptionList block: `{ id, term, value, action? }`. Give a row an `action` label (like `"Change"`) to show its button; leave it out for a row that cannot change.'
+    - "Two kinds of trouble, two props. `error` is placing the order failing: an alert under the heading, and everything stays usable. `orderError` is the order failing to load: an alert with a retry in place of the summary."
+    - "`submitting` is placing the order: Place order spins and every control is inert. `loading` is the order still loading: placeholder lines in place of the details and the summary. Place order stays disabled while the order is loading, failed to load or empty."
+    - "`items`, `totals` and `total` go straight to the OrderSummary block. Leave `items` out for the block's three sample lines; pass `[]` for the empty message."
+    - 'The screen prints the page''s one `h1`. "Delivery and payment" and "Order summary" are rank 2 under it, the order''s lines rank 3.'
+    - "Full-viewport is a height (`min-h-dvh`). Every width decision is read off the screen's own container: the summary sits under the details until the screen crosses `--container-lg`, then beside them. Each block keeps reading its own container."
+    - "The screen imports the DescriptionList and OrderSummary blocks from `@/components/blocks/…`, where `moderno add` puts them. If your project uses a different path alias, those two import lines are the only thing to change."
+    - "The root is a `<div>`, not a `<main>` — most app shells already provide the `main` landmark. If your route has none, change that one element."
+  theming:
+    - "Nothing is painted here beyond the Alert and Button primitives. The details and the summary are the DescriptionList and OrderSummary blocks, and the screen's own chrome is `text-foreground` / `text-muted-foreground` on `bg-background`."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the screen's three steps are --container-sm, --container-md and --container-lg, and each block inside reads its own."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ReviewScreenDemo from "../../../islands/ReviewScreenDemo.svelte";
+import reviewReact from "../../../../../../registry/screens/review/react/review.tsx?raw";
+import reviewVue from "../../../../../../registry/screens/review/vue/Review.vue?raw";
+import reviewSolid from "../../../../../../registry/screens/review/solid/review.tsx?raw";
+import reviewSvelte from "../../../../../../registry/screens/review/svelte/Review.svelte?raw";
+
+export const examples = {
+  react: reviewReact,
+  vue: reviewVue,
+  solid: reviewSolid,
+  svelte: reviewSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <ReviewScreenDemo client:visible locale="en" />
+</Preview>
+
+Use it for the last step of checkout. The shopper checks the details and the total, then places the order; your page places it.
+
+## Installation
+
+<Install item="review" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { Review } from "@/components/screens/review";
+```
+
+```tsx
+<Review
+  details={details}
+  items={items}
+  totals={totals}
+  total={total}
+  onConfirm={placeOrder}
+  onBack={goToPayment}
+  onEdit={goToStep}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```ts
+import Review from "@/components/screens/Review.vue";
+```
+
+```vue
+<Review
+  :details="details"
+  :items="items"
+  :totals="totals"
+  :total="total"
+  @confirm="placeOrder"
+  @back="goToPayment"
+  @edit="goToStep"
+/>
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```ts
+import Review from "@/components/screens/Review.svelte";
+```
+
+```svelte
+<Review
+  {details}
+  {items}
+  {totals}
+  {total}
+  onconfirm={placeOrder}
+  onback={goToPayment}
+  onedit={goToStep}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { Review } from "@/components/screens/review";
+```
+
+```tsx
+<Review
+  details={details()}
+  items={items()}
+  totals={totals()}
+  total={total()}
+  onConfirm={placeOrder}
+  onBack={goToPayment}
+  onEdit={goToStep}
+/>
+```
+
+</ForFramework>
+
+Each detail is one row. Its `id` comes back to `onEdit`, so you know which step to open:
+
+```ts
+const details = [
+  {
+    id: "address",
+    term: "Ship to",
+    value: "Margot Foster, 18 Rue des Lilas, Paris",
+    action: "Change",
+  },
+  { id: "payment", term: "Payment", value: "Visa ending in 4242", action: "Change" },
+];
+```
+
+## API Reference
+
+### Props
+
+Callbacks are `on…` props in React and Solid, lowercase (`onconfirm`) in Svelte, and emits (`confirm`, `back`, `edit`, `retry`, `navigate`) in Vue.
+
+| Prop          | Type                    | Default                             | Description                                                           |
+| ------------- | ----------------------- | ----------------------------------- | --------------------------------------------------------------------- |
+| `heading`     | `string`                | `"Review your order"`               | The page's `h1`.                                                      |
+| `description` | `string`                | a short line                        | The line under the heading; `""` hides it.                            |
+| `details`     | `DescriptionListItem[]` | contact, address, delivery, payment | The rows the shopper chose: `{ id, term, value, action? }`.           |
+| `items`       | `OrderItem[]`           | the block's samples                 | The lines being ordered. `[]` shows the empty message.                |
+| `totals`      | `OrderTotal[]`          | the block's samples                 | The rows above the total: `{ label, amount }`.                        |
+| `total`       | `string`                | the block's sample                  | The amount to pay as people read it, like `"€168"`.                   |
+| `error`       | `string`                | —                                   | Placing the order failed: an alert under the heading.                 |
+| `submitting`  | `boolean`               | `false`                             | The order is being placed: Place order spins, every control is inert. |
+| `loading`     | `boolean`               | `false`                             | The order is loading: placeholder lines replace details and summary.  |
+| `orderError`  | `string`                | —                                   | The order failed to load: an alert with a retry replaces the summary. |
+| `disabled`    | `boolean`               | `false`                             | Everything stays on screen; every control is inert.                   |
+| `onConfirm`   | `() => void`            | —                                   | Place order was pressed.                                              |
+| `onBack`      | `() => void`            | —                                   | Back to payment was pressed.                                          |
+| `onEdit`      | `(id) => void`          | —                                   | A detail's button was pressed, with that detail's `id`.               |
+| `onRetry`     | `() => void`            | —                                   | "Try again" after `orderError`.                                       |
+| `onNavigate`  | `(to, event) => void`   | —                                   | A screen link was clicked: `home`, `cart`, `privacy` or `terms`.      |
+| `homeHref`    | `string`                | `"#"`                               | Target of the wordmark.                                               |
+| `cartHref`    | `string`                | `"#"`                               | Target of "Edit cart".                                                |
+| `privacyHref` | `string`                | `"#"`                               | Target of the privacy link.                                           |
+| `termsHref`   | `string`                | `"#"`                               | Target of the terms link.                                             |
+
+### States
+
+| State         | Props        | Renders                                                            |
+| ------------- | ------------ | ------------------------------------------------------------------ |
+| Default       | —            | The details, the order summary with its total, and Place order.    |
+| Order failed  | `error`      | An alert under the heading; everything stays usable.               |
+| Placing order | `submitting` | "Placing order" with a spinner; every control inert.               |
+| Loading       | `loading`    | Placeholder lines for the details and the summary; no Place order. |
+| Order error   | `orderError` | An alert with "Try again" for the summary; no Place order.         |
+| Empty         | `items=[]`   | "Your order is empty." for the summary; no Place order.            |
+| Disabled      | `disabled`   | Everything shown, every control inert.                             |
+
+### Sizing
+
+| Container step           | Change                                                  |
+| ------------------------ | ------------------------------------------------------- |
+| `@sm` (`--container-sm`) | The masthead and the two buttons move onto one row.     |
+| `@md` (`--container-md`) | The heading grows and the footer moves onto one row.    |
+| `@lg` (`--container-lg`) | The order summary moves beside the details and buttons. |
+
+### Composition
+
+| Part                                      | Role                                                          |
+| ----------------------------------------- | ------------------------------------------------------------- |
+| [Description List](/en/description-list/) | The contact, address, delivery and payment, each with Change. |
+| [Order Summary](/en/order-summary/)       | The read-only lines and totals being ordered.                 |
+
+## Examples
+
+### Order failed
+
+<Preview examples={examples} layout="fill">
+  <ReviewScreenDemo client:visible locale="en" state="failed" />
+</Preview>
+
+### Placing the order
+
+<Preview examples={examples} layout="fill">
+  <ReviewScreenDemo client:visible locale="en" state="placing" />
+</Preview>
+
+### Loading the order
+
+<Preview examples={examples} layout="fill">
+  <ReviewScreenDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Order error
+
+Press "Try again" to clear the message and bring the order back.
+
+<Preview examples={examples} layout="fill">
+  <ReviewScreenDemo client:visible locale="en" state="order-error" />
+</Preview>
+
+### Empty order
+
+<Preview examples={examples} layout="fill">
+  <ReviewScreenDemo client:visible locale="en" state="empty" />
+</Preview>
+
+## Notes
+
+- Presentational: no order is placed and no router is used. The page that mounts it does both.
+- `onNavigate` passes the click event: skip `metaKey`/`ctrlKey` clicks, then `preventDefault()` to route.
+- The root is a `<div>`, not a `<main>`. Make it your `<main>` if the route has none.
+- The screen imports its two blocks from `@/components/blocks/…`; edit those lines if your alias differs.

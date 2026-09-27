@@ -105,16 +105,17 @@ const plans = [
 
 ### Props
 
-| Prop          | Tipo                   | Por defecto                     | Descripción                                                                                |
-| ------------- | ---------------------- | ------------------------------- | ------------------------------------------------------------------------------------------ |
-| `title`       | `string`               | `"Pricing that grows with you"` | El título de la sección, con la tipografía con serifa.                                     |
-| `description` | `string`               | una frase                       | Una o dos frases bajo el título; `""` la oculta.                                           |
-| `plans`       | `PricingPlan[]`        | tres planes de ejemplo          | Los planes que se comparan, en orden. `[]` muestra el mensaje de vacío.                    |
-| `error`       | `string`               | —                               | Falló la carga de los planes; un Alert de error con reintento los sustituye.               |
-| `loading`     | `boolean`              | `false`                         | Tarjetas de esqueleto en una región ocupada sustituyen a los planes.                       |
-| `disabled`    | `boolean`              | `false`                         | Los planes se quedan y todos los botones se deshabilitan.                                  |
-| `onSelect`    | `(id: string) => void` | —                               | Se pulsó el botón de un plan, con el `id` de ese plan. Svelte: `onselect`. Vue: `@select`. |
-| `onRetry`     | `() => void`           | —                               | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.                                |
+| Prop          | Tipo                   | Por defecto                     | Descripción                                                                                                                       |
+| ------------- | ---------------------- | ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `title`       | `string`               | `"Pricing that grows with you"` | El título de la sección, con la tipografía con serifa.                                                                            |
+| `titleLevel`  | `1 \| 2`               | `2`                             | Rango del título en el esquema de encabezados; los nombres de los planes van un rango por debajo. Una pantalla completa pasa `1`. |
+| `description` | `string`               | una frase                       | Una o dos frases bajo el título; `""` la oculta.                                                                                  |
+| `plans`       | `PricingPlan[]`        | tres planes de ejemplo          | Los planes que se comparan, en orden. `[]` muestra el mensaje de vacío.                                                           |
+| `error`       | `string`               | —                               | Falló la carga de los planes; un Alert de error con reintento los sustituye.                                                      |
+| `loading`     | `boolean`              | `false`                         | Tarjetas de esqueleto en una región ocupada sustituyen a los planes.                                                              |
+| `disabled`    | `boolean`              | `false`                         | Los planes se quedan y todos los botones se deshabilitan.                                                                         |
+| `onSelect`    | `(id: string) => void` | —                               | Se pulsó el botón de un plan, con el `id` de ese plan. Svelte: `onselect`. Vue: `@select`.                                        |
+| `onRetry`     | `() => void`           | —                               | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.                                                                       |
 
 ### PricingPlan
 

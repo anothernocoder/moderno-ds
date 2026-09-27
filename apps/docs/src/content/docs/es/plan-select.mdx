@@ -1,0 +1,158 @@
+---
+title: Elegir plan
+description: Una pantalla a viewport completo donde un cliente nuevo elige su plan, con el bloque de precios entre una cabecera y un pie.
+group: Pantallas
+order: 116
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import PlanSelectScreenDemo from "../../../islands/PlanSelectScreenDemo.svelte";
+import planSelectReact from "../../../../../../registry/screens/plan-select/react/plan-select.tsx?raw";
+import planSelectVue from "../../../../../../registry/screens/plan-select/vue/PlanSelect.vue?raw";
+import planSelectSolid from "../../../../../../registry/screens/plan-select/solid/plan-select.tsx?raw";
+import planSelectSvelte from "../../../../../../registry/screens/plan-select/svelte/PlanSelect.svelte?raw";
+
+export const examples = {
+  react: planSelectReact,
+  vue: planSelectVue,
+  solid: planSelectSolid,
+  svelte: planSelectSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <PlanSelectScreenDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="plan-select" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { PlanSelect } from "@/components/screens/plan-select";
+```
+
+```tsx
+<PlanSelect plans={plans} onSelect={(id) => startTrial(id)} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```ts
+import PlanSelect from "@/components/screens/PlanSelect.vue";
+```
+
+```vue
+<PlanSelect :plans="plans" @select="startTrial" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```ts
+import PlanSelect from "@/components/screens/PlanSelect.svelte";
+```
+
+```svelte
+<PlanSelect {plans} onselect={startTrial} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { PlanSelect } from "@/components/screens/plan-select";
+```
+
+```tsx
+<PlanSelect plans={plans()} onSelect={(id) => startTrial(id)} />
+```
+
+</ForFramework>
+
+Cada plan tiene la forma que recibe el bloque [Precios](/es/pricing/).
+
+## Referencia de API
+
+### Props
+
+Los callbacks son props `on…` en React y Solid, en minúsculas (`onselect`) en Svelte y eventos (`select`, `retry`, `navigate`) en Vue.
+
+| Prop          | Tipo                   | Por defecto             | Descripción                                                              |
+| ------------- | ---------------------- | ----------------------- | ------------------------------------------------------------------------ |
+| `title`       | `string`               | `"Choose your plan"`    | El `h1` de la página, el título del bloque de precios.                   |
+| `description` | `string`               | una frase               | Una o dos frases bajo el título; `""` las oculta.                        |
+| `plans`       | `PricingPlan[]`        | los ejemplos del bloque | Los planes, en orden. `[]` muestra el mensaje de vacío.                  |
+| `error`       | `string`               | —                       | Falló la carga de los planes; una alerta con reintento los reemplaza.    |
+| `loading`     | `boolean`              | `false`                 | Tarjetas de marcador en una región ocupada reemplazan los planes.        |
+| `disabled`    | `boolean`              | `false`                 | Los planes se quedan y todos los botones se deshabilitan.                |
+| `onSelect`    | `(id: string) => void` | —                       | Se pulsó el botón de un plan, con su `id`.                               |
+| `onRetry`     | `() => void`           | —                       | «Try again» tras `error`.                                                |
+| `onNavigate`  | `(to, event) => void`  | —                       | Se pulsó un enlace de la pantalla: `home`, `sales`, `privacy` o `terms`. |
+| `homeHref`    | `string`               | `"#"`                   | Destino del logotipo.                                                    |
+| `salesHref`   | `string`               | `"#"`                   | Destino de «Talk to sales».                                              |
+| `privacyHref` | `string`               | `"#"`                   | Destino del enlace de privacidad.                                        |
+| `termsHref`   | `string`               | `"#"`                   | Destino del enlace de términos.                                          |
+
+### Estados
+
+| Estado        | Props      | Qué se renderiza                                        |
+| ------------- | ---------- | ------------------------------------------------------- |
+| Por defecto   | —          | Los planes, el recomendado resaltado.                   |
+| Vacío         | `plans=[]` | El título y un mensaje «No plans to show yet».          |
+| Cargando      | `loading`  | El título y tres tarjetas de marcador.                  |
+| Error         | `error`    | El título y una alerta de error con «Try again».        |
+| Deshabilitado | `disabled` | Los mismos planes con todos los botones deshabilitados. |
+
+### Tamaño
+
+| Paso del contenedor      | Cambio                            |
+| ------------------------ | --------------------------------- |
+| `@sm` (`--container-sm`) | La cabecera pasa a una sola fila. |
+| `@md` (`--container-md`) | El pie pasa a una sola fila.      |
+
+Los planes se apilan o van lado a lado según los pasos del propio contenedor del bloque Precios.
+
+### Composición
+
+| Parte                   | Papel                             |
+| ----------------------- | --------------------------------- |
+| [Precios](/es/pricing/) | Los planes, con `titleLevel={1}`. |
+
+## Ejemplos
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <PlanSelectScreenDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+Pulsa «Try again» para borrar el mensaje y recuperar los planes.
+
+<Preview examples={examples} layout="fill">
+  <PlanSelectScreenDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Vacío
+
+<Preview examples={examples} layout="fill">
+  <PlanSelectScreenDemo client:visible locale="es" state="empty" />
+</Preview>
+
+## Notas
+
+- Presentacional: sin petición, sin pago, sin router. La página que la monta se ocupa de ellos.
+- `onNavigate` pasa el evento del clic: ignora los clics con `metaKey`/`ctrlKey` y luego llama a `preventDefault()` para enrutar.
+- La raíz es un `<div>`, no un `<main>`. Conviértela en tu `<main>` si la ruta no tiene uno.
+- La pantalla importa el bloque Precios desde `@/components/blocks/…`; cambia esa línea si tu alias es otro.

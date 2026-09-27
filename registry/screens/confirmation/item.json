@@ -1,0 +1,37 @@
+{
+  "title": "Confirmation",
+  "description": "Full-viewport order confirmation screen composing the order-summary block: the thank-you a shopper sees once the order is placed — an \"Order placed\" badge, the heading, the order number, the estimated delivery, where the receipt went and a Continue shopping button — beside a read-only recap of the lines and the totals that were paid, with the loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container): the masthead lines up at @sm, the heading grows and the footer lines up at @md, and the order summary moves beside the thank-you at @lg; the block keeps reading its own container.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": ["order-summary-{framework}"],
+  "files": {
+    "react": [
+      {
+        "path": "screens/confirmation/react/confirmation.tsx",
+        "type": "registry:screen",
+        "target": "src/components/screens/confirmation.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "screens/confirmation/vue/Confirmation.vue",
+        "type": "registry:screen",
+        "target": "src/components/screens/Confirmation.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "screens/confirmation/svelte/Confirmation.svelte",
+        "type": "registry:screen",
+        "target": "src/components/screens/Confirmation.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "screens/confirmation/solid/confirmation.tsx",
+        "type": "registry:screen",
+        "target": "src/components/screens/confirmation.tsx"
+      }
+    ]
+  }
+}

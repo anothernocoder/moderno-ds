@@ -1,0 +1,37 @@
+{
+  "title": "Payment",
+  "description": "Full-viewport payment screen composing the checkout-form and order-summary blocks: the card details a shopper pays with — name on card, number, expiry, CVC and a switch to save the card — with Back to shipping and Place order, beside a read-only recap of the lines and the totals being paid for, with the payment-declined, placing-order, loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container): the masthead lines up at @sm, the footer at @md, and the order summary moves beside the payment form at @lg; each block keeps reading its own container.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": ["checkout-form-{framework}", "order-summary-{framework}"],
+  "files": {
+    "react": [
+      {
+        "path": "screens/payment/react/payment.tsx",
+        "type": "registry:screen",
+        "target": "src/components/screens/payment.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "screens/payment/vue/Payment.vue",
+        "type": "registry:screen",
+        "target": "src/components/screens/Payment.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "screens/payment/svelte/Payment.svelte",
+        "type": "registry:screen",
+        "target": "src/components/screens/Payment.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "screens/payment/solid/payment.tsx",
+        "type": "registry:screen",
+        "target": "src/components/screens/payment.tsx"
+      }
+    ]
+  }
+}

@@ -47,6 +47,12 @@ describe("SSR (Svelte, server-only island)", () => {
     expect(slugsIn("./ssr/", ".ssr.test.ts")).toEqual(sections);
   });
 
+  it("server-renders every section of the playground once", () => {
+    const { html } = render(App);
+    const sections = html.match(/<section\b/g) ?? [];
+    expect(sections).toHaveLength(slugsIn("../playground/sections/", ".svelte").length);
+  });
+
   it("uses every export fragment of the package in some playground section", () => {
     const fragments = slugsIn("../src/exports/", ".ts").filter((slug) => !slug.startsWith("_"));
     expect(fragmentsImportedBySections()).toEqual(fragments);

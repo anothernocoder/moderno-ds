@@ -1652,9 +1652,9 @@
     {
       "name": "form-layout-react",
       "type": "registry:block",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "Form Layout (React)",
-      "description": "Grouped settings form composing the @moderno-ui/react Field, Checkbox, Divider, Button and Alert primitives; responds to its container (@container) across all three contract steps — actions row at @sm, two-up field grid at @md, group headings beside their fields at @lg — and renders its default, disabled, loading and error states from props.",
+      "description": "Grouped settings form composing the @moderno-ui/react Field, Checkbox, Divider, Button and Alert primitives; responds to its container (@container) across all three contract steps — actions row at @sm, two-up field grid at @md, group headings beside their fields at @lg — renders its default, disabled, loading and error states from props, and takes its title, description, action labels and its groups of fields as props (children, or the default slot in Vue), so a screen can reuse the layout for its own fields.",
       "dependencies": [
         "@moderno-ui/react"
       ],
@@ -1670,9 +1670,9 @@
     {
       "name": "form-layout-vue",
       "type": "registry:block",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "Form Layout (Vue)",
-      "description": "Grouped settings form composing the @moderno-ui/vue Field, Checkbox, Divider, Button and Alert primitives; responds to its container (@container) across all three contract steps — actions row at @sm, two-up field grid at @md, group headings beside their fields at @lg — and renders its default, disabled, loading and error states from props.",
+      "description": "Grouped settings form composing the @moderno-ui/vue Field, Checkbox, Divider, Button and Alert primitives; responds to its container (@container) across all three contract steps — actions row at @sm, two-up field grid at @md, group headings beside their fields at @lg — renders its default, disabled, loading and error states from props, and takes its title, description, action labels and its groups of fields as props (children, or the default slot in Vue), so a screen can reuse the layout for its own fields.",
       "dependencies": [
         "@moderno-ui/vue"
       ],
@@ -1688,9 +1688,9 @@
     {
       "name": "form-layout-svelte",
       "type": "registry:block",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "Form Layout (Svelte)",
-      "description": "Grouped settings form composing the @moderno-ui/svelte Field, Checkbox, Divider, Button and Alert primitives; responds to its container (@container) across all three contract steps — actions row at @sm, two-up field grid at @md, group headings beside their fields at @lg — and renders its default, disabled, loading and error states from props.",
+      "description": "Grouped settings form composing the @moderno-ui/svelte Field, Checkbox, Divider, Button and Alert primitives; responds to its container (@container) across all three contract steps — actions row at @sm, two-up field grid at @md, group headings beside their fields at @lg — renders its default, disabled, loading and error states from props, and takes its title, description, action labels and its groups of fields as props (children, or the default slot in Vue), so a screen can reuse the layout for its own fields.",
       "dependencies": [
         "@moderno-ui/svelte"
       ],
@@ -1706,9 +1706,9 @@
     {
       "name": "form-layout-solid",
       "type": "registry:block",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "Form Layout (Solid)",
-      "description": "Grouped settings form composing the @moderno-ui/solid Field, Checkbox, Divider, Button and Alert primitives; responds to its container (@container) across all three contract steps — actions row at @sm, two-up field grid at @md, group headings beside their fields at @lg — and renders its default, disabled, loading and error states from props.",
+      "description": "Grouped settings form composing the @moderno-ui/solid Field, Checkbox, Divider, Button and Alert primitives; responds to its container (@container) across all three contract steps — actions row at @sm, two-up field grid at @md, group headings beside their fields at @lg — renders its default, disabled, loading and error states from props, and takes its title, description, action labels and its groups of fields as props (children, or the default slot in Vue), so a screen can reuse the layout for its own fields.",
       "dependencies": [
         "@moderno-ui/solid"
       ],
@@ -3164,7 +3164,7 @@
     {
       "name": "pricing-react",
       "type": "registry:block",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "title": "Pricing (React)",
       "description": "Plan comparison composing the @moderno-ui/react Card, Badge, Button, Alert and Skeleton primitives: a serif title and one card per plan with its price, features and a call to action, the recommended plan outlined in --primary with a badge and the primary button, with its own empty, loading and error renders; responds to its container (@container) — stacked plans list their features in two columns at @sm, the plans sit side by side and the title steps up at @md, and the block takes more room at @lg.",
       "dependencies": [
@@ -3182,7 +3182,7 @@
     {
       "name": "pricing-vue",
       "type": "registry:block",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "title": "Pricing (Vue)",
       "description": "Plan comparison composing the @moderno-ui/vue Card, Badge, Button, Alert and Skeleton primitives: a serif title and one card per plan with its price, features and a call to action, the recommended plan outlined in --primary with a badge and the primary button, with its own empty, loading and error renders; responds to its container (@container) — stacked plans list their features in two columns at @sm, the plans sit side by side and the title steps up at @md, and the block takes more room at @lg.",
       "dependencies": [
@@ -3200,7 +3200,7 @@
     {
       "name": "pricing-svelte",
       "type": "registry:block",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "title": "Pricing (Svelte)",
       "description": "Plan comparison composing the @moderno-ui/svelte Card, Badge, Button, Alert and Skeleton primitives: a serif title and one card per plan with its price, features and a call to action, the recommended plan outlined in --primary with a badge and the primary button, with its own empty, loading and error renders; responds to its container (@container) — stacked plans list their features in two columns at @sm, the plans sit side by side and the title steps up at @md, and the block takes more room at @lg.",
       "dependencies": [
@@ -3218,7 +3218,7 @@
     {
       "name": "pricing-solid",
       "type": "registry:block",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "title": "Pricing (Solid)",
       "description": "Plan comparison composing the @moderno-ui/solid Card, Badge, Button, Alert and Skeleton primitives: a serif title and one card per plan with its price, features and a call to action, the recommended plan outlined in --primary with a badge and the primary button, with its own empty, loading and error renders; responds to its container (@container) — stacked plans list their features in two columns at @sm, the plans sit side by side and the title steps up at @md, and the block takes more room at @lg.",
       "dependencies": [
@@ -3884,7 +3884,7 @@
     {
       "name": "shopping-cart-react",
       "type": "registry:block",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "Shopping Cart (React)",
       "description": "A shopping cart, composing the @moderno-ui/react Alert, Button, Card, NumberInput and Skeleton primitives: a serif heading, one line per item (its image, linked name, options and price, a NumberInput for the quantity and a Remove button) and an order summary Card with the subtotal and a Checkout button, with its own loading, empty and error renders; responds to its container (@container) — the image grows and each line's quantity moves beside it at @sm, the image grows again and the heading steps up at @md, and the summary moves beside the lines at @lg.",
       "dependencies": [
@@ -3902,7 +3902,7 @@
     {
       "name": "shopping-cart-vue",
       "type": "registry:block",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "Shopping Cart (Vue)",
       "description": "A shopping cart, composing the @moderno-ui/vue Alert, Button, Card, NumberInput and Skeleton primitives: a serif heading, one line per item (its image, linked name, options and price, a NumberInput for the quantity and a Remove button) and an order summary Card with the subtotal and a Checkout button, with its own loading, empty and error renders; responds to its container (@container) — the image grows and each line's quantity moves beside it at @sm, the image grows again and the heading steps up at @md, and the summary moves beside the lines at @lg.",
       "dependencies": [
@@ -3920,7 +3920,7 @@
     {
       "name": "shopping-cart-svelte",
       "type": "registry:block",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "Shopping Cart (Svelte)",
       "description": "A shopping cart, composing the @moderno-ui/svelte Alert, Button, Card, NumberInput and Skeleton primitives: a serif heading, one line per item (its image, linked name, options and price, a NumberInput for the quantity and a Remove button) and an order summary Card with the subtotal and a Checkout button, with its own loading, empty and error renders; responds to its container (@container) — the image grows and each line's quantity moves beside it at @sm, the image grows again and the heading steps up at @md, and the summary moves beside the lines at @lg.",
       "dependencies": [
@@ -3938,7 +3938,7 @@
     {
       "name": "shopping-cart-solid",
       "type": "registry:block",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "Shopping Cart (Solid)",
       "description": "A shopping cart, composing the @moderno-ui/solid Alert, Button, Card, NumberInput and Skeleton primitives: a serif heading, one line per item (its image, linked name, options and price, a NumberInput for the quantity and a Remove button) and an order summary Card with the subtotal and a Checkout button, with its own loading, empty and error renders; responds to its container (@container) — the image grows and each line's quantity moves beside it at @sm, the image grows again and the heading steps up at @md, and the summary moves beside the lines at @lg.",
       "dependencies": [
@@ -4674,6 +4674,166 @@
       ]
     },
     {
+      "name": "cart-react",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Cart (React)",
+      "description": "Full-viewport cart screen composing the shopping-cart block: the lines a shopper picked — image, linked name, options, price, a quantity box and Remove — and the order summary with the subtotal, a note and Checkout, with the block's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container): the masthead lines up at @sm and the footer at @md; inside, the block stacks the summary under the lines on narrow containers and sets it beside them from its own @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [
+        "shopping-cart-react"
+      ],
+      "files": [
+        {
+          "path": "screens/cart/react/cart.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/cart.tsx"
+        }
+      ]
+    },
+    {
+      "name": "cart-vue",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Cart (Vue)",
+      "description": "Full-viewport cart screen composing the shopping-cart block: the lines a shopper picked — image, linked name, options, price, a quantity box and Remove — and the order summary with the subtotal, a note and Checkout, with the block's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container): the masthead lines up at @sm and the footer at @md; inside, the block stacks the summary under the lines on narrow containers and sets it beside them from its own @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [
+        "shopping-cart-vue"
+      ],
+      "files": [
+        {
+          "path": "screens/cart/vue/Cart.vue",
+          "type": "registry:screen",
+          "target": "src/components/screens/Cart.vue"
+        }
+      ]
+    },
+    {
+      "name": "cart-svelte",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Cart (Svelte)",
+      "description": "Full-viewport cart screen composing the shopping-cart block: the lines a shopper picked — image, linked name, options, price, a quantity box and Remove — and the order summary with the subtotal, a note and Checkout, with the block's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container): the masthead lines up at @sm and the footer at @md; inside, the block stacks the summary under the lines on narrow containers and sets it beside them from its own @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [
+        "shopping-cart-svelte"
+      ],
+      "files": [
+        {
+          "path": "screens/cart/svelte/Cart.svelte",
+          "type": "registry:screen",
+          "target": "src/components/screens/Cart.svelte"
+        }
+      ]
+    },
+    {
+      "name": "cart-solid",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Cart (Solid)",
+      "description": "Full-viewport cart screen composing the shopping-cart block: the lines a shopper picked — image, linked name, options, price, a quantity box and Remove — and the order summary with the subtotal, a note and Checkout, with the block's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container): the masthead lines up at @sm and the footer at @md; inside, the block stacks the summary under the lines on narrow containers and sets it beside them from its own @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [
+        "shopping-cart-solid"
+      ],
+      "files": [
+        {
+          "path": "screens/cart/solid/cart.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/cart.tsx"
+        }
+      ]
+    },
+    {
+      "name": "confirmation-react",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Confirmation (React)",
+      "description": "Full-viewport order confirmation screen composing the order-summary block: the thank-you a shopper sees once the order is placed — an \"Order placed\" badge, the heading, the order number, the estimated delivery, where the receipt went and a Continue shopping button — beside a read-only recap of the lines and the totals that were paid, with the loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container): the masthead lines up at @sm, the heading grows and the footer lines up at @md, and the order summary moves beside the thank-you at @lg; the block keeps reading its own container.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [
+        "order-summary-react"
+      ],
+      "files": [
+        {
+          "path": "screens/confirmation/react/confirmation.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/confirmation.tsx"
+        }
+      ]
+    },
+    {
+      "name": "confirmation-vue",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Confirmation (Vue)",
+      "description": "Full-viewport order confirmation screen composing the order-summary block: the thank-you a shopper sees once the order is placed — an \"Order placed\" badge, the heading, the order number, the estimated delivery, where the receipt went and a Continue shopping button — beside a read-only recap of the lines and the totals that were paid, with the loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container): the masthead lines up at @sm, the heading grows and the footer lines up at @md, and the order summary moves beside the thank-you at @lg; the block keeps reading its own container.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [
+        "order-summary-vue"
+      ],
+      "files": [
+        {
+          "path": "screens/confirmation/vue/Confirmation.vue",
+          "type": "registry:screen",
+          "target": "src/components/screens/Confirmation.vue"
+        }
+      ]
+    },
+    {
+      "name": "confirmation-svelte",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Confirmation (Svelte)",
+      "description": "Full-viewport order confirmation screen composing the order-summary block: the thank-you a shopper sees once the order is placed — an \"Order placed\" badge, the heading, the order number, the estimated delivery, where the receipt went and a Continue shopping button — beside a read-only recap of the lines and the totals that were paid, with the loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container): the masthead lines up at @sm, the heading grows and the footer lines up at @md, and the order summary moves beside the thank-you at @lg; the block keeps reading its own container.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [
+        "order-summary-svelte"
+      ],
+      "files": [
+        {
+          "path": "screens/confirmation/svelte/Confirmation.svelte",
+          "type": "registry:screen",
+          "target": "src/components/screens/Confirmation.svelte"
+        }
+      ]
+    },
+    {
+      "name": "confirmation-solid",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Confirmation (Solid)",
+      "description": "Full-viewport order confirmation screen composing the order-summary block: the thank-you a shopper sees once the order is placed — an \"Order placed\" badge, the heading, the order number, the estimated delivery, where the receipt went and a Continue shopping button — beside a read-only recap of the lines and the totals that were paid, with the loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container): the masthead lines up at @sm, the heading grows and the footer lines up at @md, and the order summary moves beside the thank-you at @lg; the block keeps reading its own container.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [
+        "order-summary-solid"
+      ],
+      "files": [
+        {
+          "path": "screens/confirmation/solid/confirmation.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/confirmation.tsx"
+        }
+      ]
+    },
+    {
       "name": "forgot-password-react",
       "type": "registry:screen",
       "version": "0.1.1",
@@ -4754,6 +4914,570 @@
       ]
     },
     {
+      "name": "invite-team-react",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Invite team (React)",
+      "description": "Full-viewport invite team screen composing the list block: an email field to invite teammates, then the invites nobody has accepted yet, with the send's error, invalid-address and busy states and the list's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead, the send button and the continue row line up at @sm, the title grows and the footer lines up at @md.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [
+        "list-react"
+      ],
+      "files": [
+        {
+          "path": "screens/invite-team/react/invite-team.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/invite-team.tsx"
+        }
+      ]
+    },
+    {
+      "name": "invite-team-vue",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Invite team (Vue)",
+      "description": "Full-viewport invite team screen composing the list block: an email field to invite teammates, then the invites nobody has accepted yet, with the send's error, invalid-address and busy states and the list's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead, the send button and the continue row line up at @sm, the title grows and the footer lines up at @md.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [
+        "list-vue"
+      ],
+      "files": [
+        {
+          "path": "screens/invite-team/vue/InviteTeam.vue",
+          "type": "registry:screen",
+          "target": "src/components/screens/InviteTeam.vue"
+        }
+      ]
+    },
+    {
+      "name": "invite-team-svelte",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Invite team (Svelte)",
+      "description": "Full-viewport invite team screen composing the list block: an email field to invite teammates, then the invites nobody has accepted yet, with the send's error, invalid-address and busy states and the list's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead, the send button and the continue row line up at @sm, the title grows and the footer lines up at @md.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [
+        "list-svelte"
+      ],
+      "files": [
+        {
+          "path": "screens/invite-team/svelte/InviteTeam.svelte",
+          "type": "registry:screen",
+          "target": "src/components/screens/InviteTeam.svelte"
+        }
+      ]
+    },
+    {
+      "name": "invite-team-solid",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Invite team (Solid)",
+      "description": "Full-viewport invite team screen composing the list block: an email field to invite teammates, then the invites nobody has accepted yet, with the send's error, invalid-address and busy states and the list's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead, the send button and the continue row line up at @sm, the title grows and the footer lines up at @md.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [
+        "list-solid"
+      ],
+      "files": [
+        {
+          "path": "screens/invite-team/solid/invite-team.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/invite-team.tsx"
+        }
+      ]
+    },
+    {
+      "name": "payment-react",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Payment (React)",
+      "description": "Full-viewport payment screen composing the checkout-form and order-summary blocks: the card details a shopper pays with — name on card, number, expiry, CVC and a switch to save the card — with Back to shipping and Place order, beside a read-only recap of the lines and the totals being paid for, with the payment-declined, placing-order, loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container): the masthead lines up at @sm, the footer at @md, and the order summary moves beside the payment form at @lg; each block keeps reading its own container.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [
+        "checkout-form-react",
+        "order-summary-react"
+      ],
+      "files": [
+        {
+          "path": "screens/payment/react/payment.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/payment.tsx"
+        }
+      ]
+    },
+    {
+      "name": "payment-vue",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Payment (Vue)",
+      "description": "Full-viewport payment screen composing the checkout-form and order-summary blocks: the card details a shopper pays with — name on card, number, expiry, CVC and a switch to save the card — with Back to shipping and Place order, beside a read-only recap of the lines and the totals being paid for, with the payment-declined, placing-order, loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container): the masthead lines up at @sm, the footer at @md, and the order summary moves beside the payment form at @lg; each block keeps reading its own container.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [
+        "checkout-form-vue",
+        "order-summary-vue"
+      ],
+      "files": [
+        {
+          "path": "screens/payment/vue/Payment.vue",
+          "type": "registry:screen",
+          "target": "src/components/screens/Payment.vue"
+        }
+      ]
+    },
+    {
+      "name": "payment-svelte",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Payment (Svelte)",
+      "description": "Full-viewport payment screen composing the checkout-form and order-summary blocks: the card details a shopper pays with — name on card, number, expiry, CVC and a switch to save the card — with Back to shipping and Place order, beside a read-only recap of the lines and the totals being paid for, with the payment-declined, placing-order, loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container): the masthead lines up at @sm, the footer at @md, and the order summary moves beside the payment form at @lg; each block keeps reading its own container.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [
+        "checkout-form-svelte",
+        "order-summary-svelte"
+      ],
+      "files": [
+        {
+          "path": "screens/payment/svelte/Payment.svelte",
+          "type": "registry:screen",
+          "target": "src/components/screens/Payment.svelte"
+        }
+      ]
+    },
+    {
+      "name": "payment-solid",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Payment (Solid)",
+      "description": "Full-viewport payment screen composing the checkout-form and order-summary blocks: the card details a shopper pays with — name on card, number, expiry, CVC and a switch to save the card — with Back to shipping and Place order, beside a read-only recap of the lines and the totals being paid for, with the payment-declined, placing-order, loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container): the masthead lines up at @sm, the footer at @md, and the order summary moves beside the payment form at @lg; each block keeps reading its own container.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [
+        "checkout-form-solid",
+        "order-summary-solid"
+      ],
+      "files": [
+        {
+          "path": "screens/payment/solid/payment.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/payment.tsx"
+        }
+      ]
+    },
+    {
+      "name": "plan-select-react",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Plan select (React)",
+      "description": "Full-viewport plan choice composing the pricing block: one card per plan, the recommended one highlighted, with the block's loading, error and empty renders. Presentational — plans and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm and the footer at @md, while the plans inside go side by side at the block's own @md.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [
+        "pricing-react"
+      ],
+      "files": [
+        {
+          "path": "screens/plan-select/react/plan-select.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/plan-select.tsx"
+        }
+      ]
+    },
+    {
+      "name": "plan-select-vue",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Plan select (Vue)",
+      "description": "Full-viewport plan choice composing the pricing block: one card per plan, the recommended one highlighted, with the block's loading, error and empty renders. Presentational — plans and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm and the footer at @md, while the plans inside go side by side at the block's own @md.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [
+        "pricing-vue"
+      ],
+      "files": [
+        {
+          "path": "screens/plan-select/vue/PlanSelect.vue",
+          "type": "registry:screen",
+          "target": "src/components/screens/PlanSelect.vue"
+        }
+      ]
+    },
+    {
+      "name": "plan-select-svelte",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Plan select (Svelte)",
+      "description": "Full-viewport plan choice composing the pricing block: one card per plan, the recommended one highlighted, with the block's loading, error and empty renders. Presentational — plans and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm and the footer at @md, while the plans inside go side by side at the block's own @md.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [
+        "pricing-svelte"
+      ],
+      "files": [
+        {
+          "path": "screens/plan-select/svelte/PlanSelect.svelte",
+          "type": "registry:screen",
+          "target": "src/components/screens/PlanSelect.svelte"
+        }
+      ]
+    },
+    {
+      "name": "plan-select-solid",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Plan select (Solid)",
+      "description": "Full-viewport plan choice composing the pricing block: one card per plan, the recommended one highlighted, with the block's loading, error and empty renders. Presentational — plans and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm and the footer at @md, while the plans inside go side by side at the block's own @md.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [
+        "pricing-solid"
+      ],
+      "files": [
+        {
+          "path": "screens/plan-select/solid/plan-select.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/plan-select.tsx"
+        }
+      ]
+    },
+    {
+      "name": "profile-setup-react",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Profile setup (React)",
+      "description": "Full-viewport profile setup screen composing the form-layout block and the Avatar primitive: a photo to upload or remove, then the profile fields, with the photo's uploading, error and empty states and the form's error, loading and disabled states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead and photo row line up at @sm, the title grows and the footer lines up at @md.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [
+        "form-layout-react"
+      ],
+      "files": [
+        {
+          "path": "screens/profile-setup/react/profile-setup.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/profile-setup.tsx"
+        }
+      ]
+    },
+    {
+      "name": "profile-setup-vue",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Profile setup (Vue)",
+      "description": "Full-viewport profile setup screen composing the form-layout block and the Avatar primitive: a photo to upload or remove, then the profile fields, with the photo's uploading, error and empty states and the form's error, loading and disabled states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead and photo row line up at @sm, the title grows and the footer lines up at @md.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [
+        "form-layout-vue"
+      ],
+      "files": [
+        {
+          "path": "screens/profile-setup/vue/ProfileSetup.vue",
+          "type": "registry:screen",
+          "target": "src/components/screens/ProfileSetup.vue"
+        }
+      ]
+    },
+    {
+      "name": "profile-setup-svelte",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Profile setup (Svelte)",
+      "description": "Full-viewport profile setup screen composing the form-layout block and the Avatar primitive: a photo to upload or remove, then the profile fields, with the photo's uploading, error and empty states and the form's error, loading and disabled states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead and photo row line up at @sm, the title grows and the footer lines up at @md.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [
+        "form-layout-svelte"
+      ],
+      "files": [
+        {
+          "path": "screens/profile-setup/svelte/ProfileSetup.svelte",
+          "type": "registry:screen",
+          "target": "src/components/screens/ProfileSetup.svelte"
+        }
+      ]
+    },
+    {
+      "name": "profile-setup-solid",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Profile setup (Solid)",
+      "description": "Full-viewport profile setup screen composing the form-layout block and the Avatar primitive: a photo to upload or remove, then the profile fields, with the photo's uploading, error and empty states and the form's error, loading and disabled states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead and photo row line up at @sm, the title grows and the footer lines up at @md.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [
+        "form-layout-solid"
+      ],
+      "files": [
+        {
+          "path": "screens/profile-setup/solid/profile-setup.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/profile-setup.tsx"
+        }
+      ]
+    },
+    {
+      "name": "referral-invite-react",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Referral invite (React)",
+      "description": "Full-viewport referral screen composing the form-layout block: what the referral gives in three steps, then a form for friends' email addresses and an optional note, with a success alert naming the addresses the last send reached and the form's error, loading and disabled states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm, the title grows, the steps sit side by side and the footer lines up at @md.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [
+        "form-layout-react"
+      ],
+      "files": [
+        {
+          "path": "screens/referral-invite/react/referral-invite.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/referral-invite.tsx"
+        }
+      ]
+    },
+    {
+      "name": "referral-invite-vue",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Referral invite (Vue)",
+      "description": "Full-viewport referral screen composing the form-layout block: what the referral gives in three steps, then a form for friends' email addresses and an optional note, with a success alert naming the addresses the last send reached and the form's error, loading and disabled states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm, the title grows, the steps sit side by side and the footer lines up at @md.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [
+        "form-layout-vue"
+      ],
+      "files": [
+        {
+          "path": "screens/referral-invite/vue/ReferralInvite.vue",
+          "type": "registry:screen",
+          "target": "src/components/screens/ReferralInvite.vue"
+        }
+      ]
+    },
+    {
+      "name": "referral-invite-svelte",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Referral invite (Svelte)",
+      "description": "Full-viewport referral screen composing the form-layout block: what the referral gives in three steps, then a form for friends' email addresses and an optional note, with a success alert naming the addresses the last send reached and the form's error, loading and disabled states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm, the title grows, the steps sit side by side and the footer lines up at @md.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [
+        "form-layout-svelte"
+      ],
+      "files": [
+        {
+          "path": "screens/referral-invite/svelte/ReferralInvite.svelte",
+          "type": "registry:screen",
+          "target": "src/components/screens/ReferralInvite.svelte"
+        }
+      ]
+    },
+    {
+      "name": "referral-invite-solid",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Referral invite (Solid)",
+      "description": "Full-viewport referral screen composing the form-layout block: what the referral gives in three steps, then a form for friends' email addresses and an optional note, with a success alert naming the addresses the last send reached and the form's error, loading and disabled states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm, the title grows, the steps sit side by side and the footer lines up at @md.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [
+        "form-layout-solid"
+      ],
+      "files": [
+        {
+          "path": "screens/referral-invite/solid/referral-invite.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/referral-invite.tsx"
+        }
+      ]
+    },
+    {
+      "name": "referral-reward-react",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Referral reward (React)",
+      "description": "Full-viewport referral screen composing the kpi-card block: what a member's referrals have earned them — friends invited, friends joined, rewards earned — one KPI card each with its change and its trend, with the block's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm, @md and @lg contract steps: the masthead lines up at @sm; the title grows and the footer lines up at @md; the cards sit side by side at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [
+        "kpi-card-react"
+      ],
+      "files": [
+        {
+          "path": "screens/referral-reward/react/referral-reward.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/referral-reward.tsx"
+        }
+      ]
+    },
+    {
+      "name": "referral-reward-vue",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Referral reward (Vue)",
+      "description": "Full-viewport referral screen composing the kpi-card block: what a member's referrals have earned them — friends invited, friends joined, rewards earned — one KPI card each with its change and its trend, with the block's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm, @md and @lg contract steps: the masthead lines up at @sm; the title grows and the footer lines up at @md; the cards sit side by side at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [
+        "kpi-card-vue"
+      ],
+      "files": [
+        {
+          "path": "screens/referral-reward/vue/ReferralReward.vue",
+          "type": "registry:screen",
+          "target": "src/components/screens/ReferralReward.vue"
+        }
+      ]
+    },
+    {
+      "name": "referral-reward-svelte",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Referral reward (Svelte)",
+      "description": "Full-viewport referral screen composing the kpi-card block: what a member's referrals have earned them — friends invited, friends joined, rewards earned — one KPI card each with its change and its trend, with the block's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm, @md and @lg contract steps: the masthead lines up at @sm; the title grows and the footer lines up at @md; the cards sit side by side at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [
+        "kpi-card-svelte"
+      ],
+      "files": [
+        {
+          "path": "screens/referral-reward/svelte/ReferralReward.svelte",
+          "type": "registry:screen",
+          "target": "src/components/screens/ReferralReward.svelte"
+        }
+      ]
+    },
+    {
+      "name": "referral-reward-solid",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Referral reward (Solid)",
+      "description": "Full-viewport referral screen composing the kpi-card block: what a member's referrals have earned them — friends invited, friends joined, rewards earned — one KPI card each with its change and its trend, with the block's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm, @md and @lg contract steps: the masthead lines up at @sm; the title grows and the footer lines up at @md; the cards sit side by side at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [
+        "kpi-card-solid"
+      ],
+      "files": [
+        {
+          "path": "screens/referral-reward/solid/referral-reward.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/referral-reward.tsx"
+        }
+      ]
+    },
+    {
+      "name": "referral-share-react",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Referral share (React)",
+      "description": "Full-viewport referral screen composing the share-invite block: invite friends by email, copy the referral link or send it to a channel, see who has joined, and how the reward works, with the block's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm; the title grows, the steps sit side by side and the footer lines up at @md.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [
+        "share-invite-react"
+      ],
+      "files": [
+        {
+          "path": "screens/referral-share/react/referral-share.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/referral-share.tsx"
+        }
+      ]
+    },
+    {
+      "name": "referral-share-vue",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Referral share (Vue)",
+      "description": "Full-viewport referral screen composing the share-invite block: invite friends by email, copy the referral link or send it to a channel, see who has joined, and how the reward works, with the block's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm; the title grows, the steps sit side by side and the footer lines up at @md.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [
+        "share-invite-vue"
+      ],
+      "files": [
+        {
+          "path": "screens/referral-share/vue/ReferralShare.vue",
+          "type": "registry:screen",
+          "target": "src/components/screens/ReferralShare.vue"
+        }
+      ]
+    },
+    {
+      "name": "referral-share-svelte",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Referral share (Svelte)",
+      "description": "Full-viewport referral screen composing the share-invite block: invite friends by email, copy the referral link or send it to a channel, see who has joined, and how the reward works, with the block's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm; the title grows, the steps sit side by side and the footer lines up at @md.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [
+        "share-invite-svelte"
+      ],
+      "files": [
+        {
+          "path": "screens/referral-share/svelte/ReferralShare.svelte",
+          "type": "registry:screen",
+          "target": "src/components/screens/ReferralShare.svelte"
+        }
+      ]
+    },
+    {
+      "name": "referral-share-solid",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Referral share (Solid)",
+      "description": "Full-viewport referral screen composing the share-invite block: invite friends by email, copy the referral link or send it to a channel, see who has joined, and how the reward works, with the block's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm; the title grows, the steps sit side by side and the footer lines up at @md.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [
+        "share-invite-solid"
+      ],
+      "files": [
+        {
+          "path": "screens/referral-share/solid/referral-share.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/referral-share.tsx"
+        }
+      ]
+    },
+    {
       "name": "reset-password-react",
       "type": "registry:screen",
       "version": "0.1.0",
@@ -4830,6 +5554,174 @@
           "path": "screens/reset-password/solid/reset-password.tsx",
           "type": "registry:screen",
           "target": "src/components/screens/reset-password.tsx"
+        }
+      ]
+    },
+    {
+      "name": "review-react",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Review (React)",
+      "description": "Full-viewport order review screen composing the description-list and order-summary blocks: the last step of checkout before the order is placed — the contact, address, delivery and payment the shopper chose, each with Change, beside a read-only recap of the lines and the totals — with Back to payment and Place order, and the place-order-failed, placing-order, loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container): the masthead and the buttons line up at @sm, the footer at @md, and the order summary moves beside the details at @lg; each block keeps reading its own container.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [
+        "description-list-react",
+        "order-summary-react"
+      ],
+      "files": [
+        {
+          "path": "screens/review/react/review.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/review.tsx"
+        }
+      ]
+    },
+    {
+      "name": "review-vue",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Review (Vue)",
+      "description": "Full-viewport order review screen composing the description-list and order-summary blocks: the last step of checkout before the order is placed — the contact, address, delivery and payment the shopper chose, each with Change, beside a read-only recap of the lines and the totals — with Back to payment and Place order, and the place-order-failed, placing-order, loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container): the masthead and the buttons line up at @sm, the footer at @md, and the order summary moves beside the details at @lg; each block keeps reading its own container.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [
+        "description-list-vue",
+        "order-summary-vue"
+      ],
+      "files": [
+        {
+          "path": "screens/review/vue/Review.vue",
+          "type": "registry:screen",
+          "target": "src/components/screens/Review.vue"
+        }
+      ]
+    },
+    {
+      "name": "review-svelte",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Review (Svelte)",
+      "description": "Full-viewport order review screen composing the description-list and order-summary blocks: the last step of checkout before the order is placed — the contact, address, delivery and payment the shopper chose, each with Change, beside a read-only recap of the lines and the totals — with Back to payment and Place order, and the place-order-failed, placing-order, loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container): the masthead and the buttons line up at @sm, the footer at @md, and the order summary moves beside the details at @lg; each block keeps reading its own container.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [
+        "description-list-svelte",
+        "order-summary-svelte"
+      ],
+      "files": [
+        {
+          "path": "screens/review/svelte/Review.svelte",
+          "type": "registry:screen",
+          "target": "src/components/screens/Review.svelte"
+        }
+      ]
+    },
+    {
+      "name": "review-solid",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Review (Solid)",
+      "description": "Full-viewport order review screen composing the description-list and order-summary blocks: the last step of checkout before the order is placed — the contact, address, delivery and payment the shopper chose, each with Change, beside a read-only recap of the lines and the totals — with Back to payment and Place order, and the place-order-failed, placing-order, loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container): the masthead and the buttons line up at @sm, the footer at @md, and the order summary moves beside the details at @lg; each block keeps reading its own container.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [
+        "description-list-solid",
+        "order-summary-solid"
+      ],
+      "files": [
+        {
+          "path": "screens/review/solid/review.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/review.tsx"
+        }
+      ]
+    },
+    {
+      "name": "shipping-react",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Shipping (React)",
+      "description": "Full-viewport checkout screen composing the checkout-form and order-summary blocks: the shipping step, where a shopper gives an email for the receipt, the shipping address and a delivery method beside the order they are paying for, with the form's saving and error states and the summary's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm, @md and @lg contract steps: the masthead lines up at @sm; the footer lines up at @md; the order summary moves beside the form at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [
+        "checkout-form-react",
+        "order-summary-react"
+      ],
+      "files": [
+        {
+          "path": "screens/shipping/react/shipping.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/shipping.tsx"
+        }
+      ]
+    },
+    {
+      "name": "shipping-vue",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Shipping (Vue)",
+      "description": "Full-viewport checkout screen composing the checkout-form and order-summary blocks: the shipping step, where a shopper gives an email for the receipt, the shipping address and a delivery method beside the order they are paying for, with the form's saving and error states and the summary's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm, @md and @lg contract steps: the masthead lines up at @sm; the footer lines up at @md; the order summary moves beside the form at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [
+        "checkout-form-vue",
+        "order-summary-vue"
+      ],
+      "files": [
+        {
+          "path": "screens/shipping/vue/Shipping.vue",
+          "type": "registry:screen",
+          "target": "src/components/screens/Shipping.vue"
+        }
+      ]
+    },
+    {
+      "name": "shipping-svelte",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Shipping (Svelte)",
+      "description": "Full-viewport checkout screen composing the checkout-form and order-summary blocks: the shipping step, where a shopper gives an email for the receipt, the shipping address and a delivery method beside the order they are paying for, with the form's saving and error states and the summary's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm, @md and @lg contract steps: the masthead lines up at @sm; the footer lines up at @md; the order summary moves beside the form at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [
+        "checkout-form-svelte",
+        "order-summary-svelte"
+      ],
+      "files": [
+        {
+          "path": "screens/shipping/svelte/Shipping.svelte",
+          "type": "registry:screen",
+          "target": "src/components/screens/Shipping.svelte"
+        }
+      ]
+    },
+    {
+      "name": "shipping-solid",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Shipping (Solid)",
+      "description": "Full-viewport checkout screen composing the checkout-form and order-summary blocks: the shipping step, where a shopper gives an email for the receipt, the shipping address and a delivery method beside the order they are paying for, with the form's saving and error states and the summary's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm, @md and @lg contract steps: the masthead lines up at @sm; the footer lines up at @md; the order summary moves beside the form at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [
+        "checkout-form-solid",
+        "order-summary-solid"
+      ],
+      "files": [
+        {
+          "path": "screens/shipping/solid/shipping.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/shipping.tsx"
         }
       ]
     },
@@ -5074,6 +5966,86 @@
       ]
     },
     {
+      "name": "welcome-react",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Welcome (React)",
+      "description": "Full-viewport onboarding welcome screen composing the hero block: a greeting, what comes next, and Continue and Skip actions, with its loading and error states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container): the masthead lines up at @sm and the footer at @md.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [
+        "hero-react"
+      ],
+      "files": [
+        {
+          "path": "screens/welcome/react/welcome.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/welcome.tsx"
+        }
+      ]
+    },
+    {
+      "name": "welcome-vue",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Welcome (Vue)",
+      "description": "Full-viewport onboarding welcome screen composing the hero block: a greeting, what comes next, and Continue and Skip actions, with its loading and error states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container): the masthead lines up at @sm and the footer at @md.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [
+        "hero-vue"
+      ],
+      "files": [
+        {
+          "path": "screens/welcome/vue/Welcome.vue",
+          "type": "registry:screen",
+          "target": "src/components/screens/Welcome.vue"
+        }
+      ]
+    },
+    {
+      "name": "welcome-svelte",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Welcome (Svelte)",
+      "description": "Full-viewport onboarding welcome screen composing the hero block: a greeting, what comes next, and Continue and Skip actions, with its loading and error states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container): the masthead lines up at @sm and the footer at @md.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [
+        "hero-svelte"
+      ],
+      "files": [
+        {
+          "path": "screens/welcome/svelte/Welcome.svelte",
+          "type": "registry:screen",
+          "target": "src/components/screens/Welcome.svelte"
+        }
+      ]
+    },
+    {
+      "name": "welcome-solid",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Welcome (Solid)",
+      "description": "Full-viewport onboarding welcome screen composing the hero block: a greeting, what comes next, and Continue and Skip actions, with its loading and error states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container): the masthead lines up at @sm and the footer at @md.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [
+        "hero-solid"
+      ],
+      "files": [
+        {
+          "path": "screens/welcome/solid/welcome.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/welcome.tsx"
+        }
+      ]
+    },
+    {
       "name": "auth-react",
       "type": "registry:flow",
       "version": "0.1.0",
@@ -5158,6 +6130,258 @@
           "path": "flows/auth/solid/auth-flow.tsx",
           "type": "registry:flow",
           "target": "src/components/flows/auth-flow.tsx"
+        }
+      ]
+    },
+    {
+      "name": "checkout-react",
+      "type": "registry:flow",
+      "version": "0.1.0",
+      "title": "Checkout flow (React)",
+      "description": "Example assembly for the checkout flow: cart → shipping → payment → review → confirmation. It owns the navigation state the five screens refuse to hold — which step is on the route, the lines in the cart and their quantities, the address and delivery method from shipping, the card from payment, the order once it is placed and whatever the last submit rejected — and it prices the order from them: every summary the screens show is computed here, not passed in. Each forward move is a form submission or a button the screen reports; each step back is the screen's Back button, a Change on the review, or an Edit cart link intercepted the way a client router does. Rewrite it against your own router and your own requests; the screens under it stay presentational.",
+      "dependencies": [],
+      "registryDependencies": [
+        "cart-react",
+        "shipping-react",
+        "payment-react",
+        "review-react",
+        "confirmation-react"
+      ],
+      "files": [
+        {
+          "path": "flows/checkout/react/checkout-flow.tsx",
+          "type": "registry:flow",
+          "target": "src/components/flows/checkout-flow.tsx"
+        }
+      ]
+    },
+    {
+      "name": "checkout-vue",
+      "type": "registry:flow",
+      "version": "0.1.0",
+      "title": "Checkout flow (Vue)",
+      "description": "Example assembly for the checkout flow: cart → shipping → payment → review → confirmation. It owns the navigation state the five screens refuse to hold — which step is on the route, the lines in the cart and their quantities, the address and delivery method from shipping, the card from payment, the order once it is placed and whatever the last submit rejected — and it prices the order from them: every summary the screens show is computed here, not passed in. Each forward move is a form submission or a button the screen reports; each step back is the screen's Back button, a Change on the review, or an Edit cart link intercepted the way a client router does. Rewrite it against your own router and your own requests; the screens under it stay presentational.",
+      "dependencies": [],
+      "registryDependencies": [
+        "cart-vue",
+        "shipping-vue",
+        "payment-vue",
+        "review-vue",
+        "confirmation-vue"
+      ],
+      "files": [
+        {
+          "path": "flows/checkout/vue/CheckoutFlow.vue",
+          "type": "registry:flow",
+          "target": "src/components/flows/CheckoutFlow.vue"
+        }
+      ]
+    },
+    {
+      "name": "checkout-svelte",
+      "type": "registry:flow",
+      "version": "0.1.0",
+      "title": "Checkout flow (Svelte)",
+      "description": "Example assembly for the checkout flow: cart → shipping → payment → review → confirmation. It owns the navigation state the five screens refuse to hold — which step is on the route, the lines in the cart and their quantities, the address and delivery method from shipping, the card from payment, the order once it is placed and whatever the last submit rejected — and it prices the order from them: every summary the screens show is computed here, not passed in. Each forward move is a form submission or a button the screen reports; each step back is the screen's Back button, a Change on the review, or an Edit cart link intercepted the way a client router does. Rewrite it against your own router and your own requests; the screens under it stay presentational.",
+      "dependencies": [],
+      "registryDependencies": [
+        "cart-svelte",
+        "shipping-svelte",
+        "payment-svelte",
+        "review-svelte",
+        "confirmation-svelte"
+      ],
+      "files": [
+        {
+          "path": "flows/checkout/svelte/CheckoutFlow.svelte",
+          "type": "registry:flow",
+          "target": "src/components/flows/CheckoutFlow.svelte"
+        }
+      ]
+    },
+    {
+      "name": "checkout-solid",
+      "type": "registry:flow",
+      "version": "0.1.0",
+      "title": "Checkout flow (Solid)",
+      "description": "Example assembly for the checkout flow: cart → shipping → payment → review → confirmation. It owns the navigation state the five screens refuse to hold — which step is on the route, the lines in the cart and their quantities, the address and delivery method from shipping, the card from payment, the order once it is placed and whatever the last submit rejected — and it prices the order from them: every summary the screens show is computed here, not passed in. Each forward move is a form submission or a button the screen reports; each step back is the screen's Back button, a Change on the review, or an Edit cart link intercepted the way a client router does. Rewrite it against your own router and your own requests; the screens under it stay presentational.",
+      "dependencies": [],
+      "registryDependencies": [
+        "cart-solid",
+        "shipping-solid",
+        "payment-solid",
+        "review-solid",
+        "confirmation-solid"
+      ],
+      "files": [
+        {
+          "path": "flows/checkout/solid/checkout-flow.tsx",
+          "type": "registry:flow",
+          "target": "src/components/flows/checkout-flow.tsx"
+        }
+      ]
+    },
+    {
+      "name": "onboarding-react",
+      "type": "registry:flow",
+      "version": "0.1.0",
+      "title": "Onboarding flow (React)",
+      "description": "Example assembly for the onboarding flow: welcome → profile-setup → plan-select → invite-team. It owns the navigation state the four screens refuse to hold — which step is on the route, the name carried from the profile back to the greeting, the photo picked for the avatar, the plan chosen and the invites sent — and it moves between them through the screens' own callbacks: Continue, a saved profile, a chosen plan and each Skip for now move one step forward, and a plain left click on a skip link is routed while a modified click is left to the browser. Rewrite it against your own router and API; the screens under it stay presentational.",
+      "dependencies": [],
+      "registryDependencies": [
+        "welcome-react",
+        "profile-setup-react",
+        "plan-select-react",
+        "invite-team-react"
+      ],
+      "files": [
+        {
+          "path": "flows/onboarding/react/onboarding-flow.tsx",
+          "type": "registry:flow",
+          "target": "src/components/flows/onboarding-flow.tsx"
+        }
+      ]
+    },
+    {
+      "name": "onboarding-vue",
+      "type": "registry:flow",
+      "version": "0.1.0",
+      "title": "Onboarding flow (Vue)",
+      "description": "Example assembly for the onboarding flow: welcome → profile-setup → plan-select → invite-team. It owns the navigation state the four screens refuse to hold — which step is on the route, the name carried from the profile back to the greeting, the photo picked for the avatar, the plan chosen and the invites sent — and it moves between them through the screens' own callbacks: Continue, a saved profile, a chosen plan and each Skip for now move one step forward, and a plain left click on a skip link is routed while a modified click is left to the browser. Rewrite it against your own router and API; the screens under it stay presentational.",
+      "dependencies": [],
+      "registryDependencies": [
+        "welcome-vue",
+        "profile-setup-vue",
+        "plan-select-vue",
+        "invite-team-vue"
+      ],
+      "files": [
+        {
+          "path": "flows/onboarding/vue/OnboardingFlow.vue",
+          "type": "registry:flow",
+          "target": "src/components/flows/OnboardingFlow.vue"
+        }
+      ]
+    },
+    {
+      "name": "onboarding-svelte",
+      "type": "registry:flow",
+      "version": "0.1.0",
+      "title": "Onboarding flow (Svelte)",
+      "description": "Example assembly for the onboarding flow: welcome → profile-setup → plan-select → invite-team. It owns the navigation state the four screens refuse to hold — which step is on the route, the name carried from the profile back to the greeting, the photo picked for the avatar, the plan chosen and the invites sent — and it moves between them through the screens' own callbacks: Continue, a saved profile, a chosen plan and each Skip for now move one step forward, and a plain left click on a skip link is routed while a modified click is left to the browser. Rewrite it against your own router and API; the screens under it stay presentational.",
+      "dependencies": [],
+      "registryDependencies": [
+        "welcome-svelte",
+        "profile-setup-svelte",
+        "plan-select-svelte",
+        "invite-team-svelte"
+      ],
+      "files": [
+        {
+          "path": "flows/onboarding/svelte/OnboardingFlow.svelte",
+          "type": "registry:flow",
+          "target": "src/components/flows/OnboardingFlow.svelte"
+        }
+      ]
+    },
+    {
+      "name": "onboarding-solid",
+      "type": "registry:flow",
+      "version": "0.1.0",
+      "title": "Onboarding flow (Solid)",
+      "description": "Example assembly for the onboarding flow: welcome → profile-setup → plan-select → invite-team. It owns the navigation state the four screens refuse to hold — which step is on the route, the name carried from the profile back to the greeting, the photo picked for the avatar, the plan chosen and the invites sent — and it moves between them through the screens' own callbacks: Continue, a saved profile, a chosen plan and each Skip for now move one step forward, and a plain left click on a skip link is routed while a modified click is left to the browser. Rewrite it against your own router and API; the screens under it stay presentational.",
+      "dependencies": [],
+      "registryDependencies": [
+        "welcome-solid",
+        "profile-setup-solid",
+        "plan-select-solid",
+        "invite-team-solid"
+      ],
+      "files": [
+        {
+          "path": "flows/onboarding/solid/onboarding-flow.tsx",
+          "type": "registry:flow",
+          "target": "src/components/flows/onboarding-flow.tsx"
+        }
+      ]
+    },
+    {
+      "name": "referral-react",
+      "type": "registry:flow",
+      "version": "0.1.0",
+      "title": "Referral flow (React)",
+      "description": "Example assembly for the referral flow: referral-invite → referral-share → referral-reward. It owns the navigation state the three screens refuse to hold — which step is on the route, the friends invited so far (from the invite form or the share screen) and the errors the last invite form rejected — and counts the reward numbers from that one list. It moves between the screens the way a client router does: the screens draw plain hrefs (hrefFor), the assembly intercepts the clicks it owns and leaves modified clicks and every other link to the browser, and the invite form is a submission read off its emails field. Rewrite it against your own router and API; the screens under it stay presentational.",
+      "dependencies": [],
+      "registryDependencies": [
+        "referral-invite-react",
+        "referral-share-react",
+        "referral-reward-react"
+      ],
+      "files": [
+        {
+          "path": "flows/referral/react/referral-flow.tsx",
+          "type": "registry:flow",
+          "target": "src/components/flows/referral-flow.tsx"
+        }
+      ]
+    },
+    {
+      "name": "referral-vue",
+      "type": "registry:flow",
+      "version": "0.1.0",
+      "title": "Referral flow (Vue)",
+      "description": "Example assembly for the referral flow: referral-invite → referral-share → referral-reward. It owns the navigation state the three screens refuse to hold — which step is on the route, the friends invited so far (from the invite form or the share screen) and the errors the last invite form rejected — and counts the reward numbers from that one list. It moves between the screens the way a client router does: the screens draw plain hrefs (hrefFor), the assembly intercepts the clicks it owns and leaves modified clicks and every other link to the browser, and the invite form is a submission read off its emails field. Rewrite it against your own router and API; the screens under it stay presentational.",
+      "dependencies": [],
+      "registryDependencies": [
+        "referral-invite-vue",
+        "referral-share-vue",
+        "referral-reward-vue"
+      ],
+      "files": [
+        {
+          "path": "flows/referral/vue/ReferralFlow.vue",
+          "type": "registry:flow",
+          "target": "src/components/flows/ReferralFlow.vue"
+        }
+      ]
+    },
+    {
+      "name": "referral-svelte",
+      "type": "registry:flow",
+      "version": "0.1.0",
+      "title": "Referral flow (Svelte)",
+      "description": "Example assembly for the referral flow: referral-invite → referral-share → referral-reward. It owns the navigation state the three screens refuse to hold — which step is on the route, the friends invited so far (from the invite form or the share screen) and the errors the last invite form rejected — and counts the reward numbers from that one list. It moves between the screens the way a client router does: the screens draw plain hrefs (hrefFor), the assembly intercepts the clicks it owns and leaves modified clicks and every other link to the browser, and the invite form is a submission read off its emails field. Rewrite it against your own router and API; the screens under it stay presentational.",
+      "dependencies": [],
+      "registryDependencies": [
+        "referral-invite-svelte",
+        "referral-share-svelte",
+        "referral-reward-svelte"
+      ],
+      "files": [
+        {
+          "path": "flows/referral/svelte/ReferralFlow.svelte",
+          "type": "registry:flow",
+          "target": "src/components/flows/ReferralFlow.svelte"
+        }
+      ]
+    },
+    {
+      "name": "referral-solid",
+      "type": "registry:flow",
+      "version": "0.1.0",
+      "title": "Referral flow (Solid)",
+      "description": "Example assembly for the referral flow: referral-invite → referral-share → referral-reward. It owns the navigation state the three screens refuse to hold — which step is on the route, the friends invited so far (from the invite form or the share screen) and the errors the last invite form rejected — and counts the reward numbers from that one list. It moves between the screens the way a client router does: the screens draw plain hrefs (hrefFor), the assembly intercepts the clicks it owns and leaves modified clicks and every other link to the browser, and the invite form is a submission read off its emails field. Rewrite it against your own router and API; the screens under it stay presentational.",
+      "dependencies": [],
+      "registryDependencies": [
+        "referral-invite-solid",
+        "referral-share-solid",
+        "referral-reward-solid"
+      ],
+      "files": [
+        {
+          "path": "flows/referral/solid/referral-flow.tsx",
+          "type": "registry:flow",
+          "target": "src/components/flows/referral-flow.tsx"
         }
       ]
     }

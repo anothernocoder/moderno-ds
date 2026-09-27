@@ -1,0 +1,214 @@
+---
+title: Checkout flow
+description: The five checkout screens in sequence, plus an example assembly that owns the cart, the order and the navigation between them.
+group: Flows
+order: 124
+agent:
+  intent: The five checkout screens sequenced by an example assembly that owns the step, the cart's lines, the address and delivery method, the card's last four digits, the placed order and the prices every screen shows.
+  whenToUse: "Standing up a whole checkout at once: a cart that leads to shipping, payment, a review and a confirmation."
+  whenNotToUse:
+    - case: One step of checkout, mounted under your own router
+      use: the screen itself — cart, shipping, payment, review or confirmation; installing a screen never pulls in the flow
+    - case: A cart or an order recap inside a page you already own
+      use: the ShoppingCart or OrderSummary block, which owns no viewport and no navigation
+    - case: A journey that is not a purchase
+      use: the auth flow for signing in, or a flow of your own built the same way
+  gotchas:
+    - "The assembly is example code. It is the one file in the flow you are expected to rewrite: the screens under it stay as they shipped."
+    - "Prices are numbers in the assembly (`unitPrice`, a delivery option's `price`) and text on screen. `formatPrice` is the one place they meet; the default prints whole euros."
+    - "Every summary is computed from the lines: change a quantity or remove a line in the cart and shipping, payment and review follow."
+    - "Forward moves are the screens' submits and buttons. The shipping and payment forms are checked for empty fields only; replace `saveAddress` and `saveCard` with your requests."
+    - "The checkout-form block takes no values, so a form you step back to starts empty. The review still shows what was saved until the form is sent again."
+    - '"Edit cart" on payment and review is a real `href` (`hrefFor("cart")`). The assembly takes a plain left click and leaves modified clicks to the browser.'
+    - "`onOrderPlaced` is where the order goes to your server. The assembly then empties the cart and shows the confirmation; `#MD-10482` stands in for your server's reference."
+    - "Installing the flow installs its five screens and the four blocks they compose, each under its own version in `.moderno/manifest.json`; one copy of the order summary, not four."
+  theming:
+    - "Nothing is painted here at all. The assembly renders one screen at a time inside a single wrapper element with no styling of its own."
+    - "Everything visible comes from the screens, their blocks and the primitives underneath — which is why a theme swap changes the whole checkout at once."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import CheckoutFlowDemo from "../../../islands/CheckoutFlowDemo.svelte";
+import checkoutReact from "../../../../../../registry/flows/checkout/react/checkout-flow.tsx?raw";
+import checkoutVue from "../../../../../../registry/flows/checkout/vue/CheckoutFlow.vue?raw";
+import checkoutSolid from "../../../../../../registry/flows/checkout/solid/checkout-flow.tsx?raw";
+import checkoutSvelte from "../../../../../../registry/flows/checkout/svelte/CheckoutFlow.svelte?raw";
+
+export const examples = {
+  react: checkoutReact,
+  vue: checkoutVue,
+  solid: checkoutSolid,
+  svelte: checkoutSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <CheckoutFlowDemo client:visible locale="en" />
+</Preview>
+
+Use it to start a whole checkout at once: cart, shipping, payment, review and confirmation. Walk it above: press Checkout, fill each form and place the order.
+
+## Installation
+
+<Install item="checkout" />
+
+The flow lands in `src/components/flows/`, its five screens in `screens/` and their blocks in `blocks/`, each versioned on its own.
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { CheckoutFlow } from "@/components/flows/checkout-flow";
+```
+
+```tsx
+<CheckoutFlow
+  initialLines={cartLines}
+  hrefFor={(step) => `/checkout/${step}`}
+  onStepChange={(step) => router.push(`/checkout/${step}`)}
+  onOrderPlaced={(order) => api.placeOrder(order)}
+  onContinueShopping={() => router.push("/shop")}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```ts
+import CheckoutFlow from "@/components/flows/CheckoutFlow.vue";
+```
+
+```vue
+<CheckoutFlow
+  :initial-lines="cartLines"
+  :href-for="(step) => `/checkout/${step}`"
+  @step-change="(step) => router.push(`/checkout/${step}`)"
+  @order-placed="(order) => api.placeOrder(order)"
+  @continue-shopping="() => router.push('/shop')"
+/>
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```ts
+import CheckoutFlow from "@/components/flows/CheckoutFlow.svelte";
+```
+
+```svelte
+<CheckoutFlow
+  initialLines={cartLines}
+  hrefFor={(step) => `/checkout/${step}`}
+  onstepchange={(step) => goto(`/checkout/${step}`)}
+  onorderplaced={(order) => api.placeOrder(order)}
+  oncontinueshopping={() => goto("/shop")}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { CheckoutFlow } from "@/components/flows/checkout-flow";
+```
+
+```tsx
+<CheckoutFlow
+  initialLines={cartLines()}
+  hrefFor={(step) => `/checkout/${step}`}
+  onStepChange={(step) => navigate(`/checkout/${step}`)}
+  onOrderPlaced={(order) => api.placeOrder(order)}
+  onContinueShopping={() => navigate("/shop")}
+/>
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+Callbacks are `on…` props in React and Solid, lowercase (`onorderplaced`) in Svelte, and emits (`stepChange`, `orderPlaced`, `continueShopping`) in Vue.
+
+| Prop                 | Type                       | Default            | Description                                                       |
+| -------------------- | -------------------------- | ------------------ | ----------------------------------------------------------------- |
+| `initialStep`        | `CheckoutStep`             | `"cart"`           | The screen the flow opens on; in an app, whatever the route says. |
+| `initialLines`       | `CheckoutLine[]`           | a sample cart      | The lines in the cart when the flow opens.                        |
+| `deliveryOptions`    | `CheckoutDeliveryOption[]` | standard, express  | The ways the order can travel, priced as numbers.                 |
+| `formatPrice`        | `(amount) => string`       | `` `€${amount}` `` | How an amount reads on screen.                                    |
+| `hrefFor`            | `(step) => string`         | `` `#${step}` ``   | The URL of each step; used for the "Edit cart" links.             |
+| `onStepChange`       | `(step) => void`           | —                  | The flow moved; mirror it in the URL.                             |
+| `onOrderPlaced`      | `(order) => void`          | —                  | "Place order" went through on the review.                         |
+| `onContinueShopping` | `() => void`               | —                  | "Continue shopping" was pressed on the confirmation.              |
+| `homeHref`           | `string`                   | `"#"`              | Target of the wordmark on every screen.                           |
+| `shopHref`           | `string`                   | `"#"`              | Target of "Continue shopping" in the cart's masthead.             |
+| `helpHref`           | `string`                   | `"#"`              | Target of "Need help?" on shipping.                               |
+| `ordersHref`         | `string`                   | `"#"`              | Target of "Your orders" on the confirmation.                      |
+| `privacyHref`        | `string`                   | `"#"`              | Target of the privacy link on every screen.                       |
+| `termsHref`          | `string`                   | `"#"`              | Target of the terms link on every screen.                         |
+
+### Types
+
+| Type                     | Fields                                                                          |
+| ------------------------ | ------------------------------------------------------------------------------- |
+| `CheckoutLine`           | `id`, `name`, `unitPrice`, `quantity`, and optional `options`, `href`, `image`. |
+| `CheckoutDeliveryOption` | `id`, `label`, `description`, `price`.                                          |
+| `CheckoutOrder`          | `number`, `email`, `lines`, `delivery`, `total`: what `onOrderPlaced` receives. |
+
+### Steps
+
+`CheckoutStep` is one of the five screens, in the order the flow moves through them.
+
+| Step                                | Reached by                                             | Leaves for                                         |
+| ----------------------------------- | ------------------------------------------------------ | -------------------------------------------------- |
+| [`cart`](/en/cart/)                 | The first step, Back, "Edit cart" or Continue shopping | `shipping`, on Checkout                            |
+| [`shipping`](/en/shipping/)         | Checkout, "Back to shipping", or a Change              | `payment`, on a full form; `cart`, on Back         |
+| [`payment`](/en/payment/)           | A saved address, "Back to payment", or a Change        | `review`, on a full form; `shipping`, on Back      |
+| [`review`](/en/review/)             | A saved card                                           | `confirmation`, on Place order; `payment`, on Back |
+| [`confirmation`](/en/confirmation/) | A placed order                                         | `cart`, on Continue shopping                       |
+
+### State
+
+What the assembly holds so the screens don't have to.
+
+| State             | Holds                                                   |
+| ----------------- | ------------------------------------------------------- |
+| `step`            | The screen currently on the route.                      |
+| `lines`           | The cart: every quantity change and removal lands here. |
+| `shippingDetails` | The contact and address from the shipping form.         |
+| `deliveryId`      | The delivery method chosen on shipping.                 |
+| `cardEnding`      | The last four digits of the card, for the review.       |
+| `order`           | The placed order the confirmation shows.                |
+| `errors`          | The fields the last submit left empty.                  |
+
+## Examples
+
+### Empty cart
+
+An empty `initialLines` opens on the cart's empty state.
+
+<Preview examples={examples} layout="fill">
+  <CheckoutFlowDemo client:visible locale="en" example="empty-cart" />
+</Preview>
+
+### Opening at a later step
+
+`initialStep="shipping"` opens on the address form, as a route like `/checkout/shipping` would.
+
+<Preview examples={examples} layout="fill">
+  <CheckoutFlowDemo client:visible locale="en" example="opens-at-shipping" />
+</Preview>
+
+## Notes
+
+- The assembly is example code, the one file you are expected to rewrite. The screens stay as shipped.
+- Prices are numbers in the assembly and text on screen; `formatPrice` joins them.
+- The shipping and payment forms are only checked for empty fields. Put your requests in `saveAddress` and `saveCard`.
+- The checkout-form block takes no values, so a form you step back to starts empty.
+- "Edit cart" is a real `href`: plain left clicks move the flow, modified clicks go to the browser.
+- Placing the order empties the cart. `#MD-10482` stands in for your server's order number.

@@ -42,6 +42,9 @@ describe("moderno add form-layout-<framework>", () => {
       // …and carrying the states the block advertises.
       expect(written).toContain("aria-busy");
       expect(written).toContain("ErrorText");
+      // A screen can hand it its own groups of fields in place of the
+      // account settings it ships with: children, a snippet or the default slot.
+      expect(written).toMatch(/children|<slot>/);
 
       const recorded = await readManifest(project());
       expect(recorded.items[item]!.version).toBe(registry.getItem(item)!.version);

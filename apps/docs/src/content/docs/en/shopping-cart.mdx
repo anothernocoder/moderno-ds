@@ -23,6 +23,7 @@ agent:
     - "With `href`, the item's name is a link to its product page. Without it, the name is plain text."
     - "Give `image.alt` a short description of the photo. Without `image`, the image area is an empty muted box."
     - 'Each name is an `h3` under the block''s `h2`, and so is "Order summary".'
+    - '`headingLevel` is the rank of the heading in the page''s outline. It defaults to `2`, a section of a page; a screen that mounts the block as the whole route passes `1`, and the item names and "Order summary" move up to rank 2 with it.'
     - '`note` sits under the subtotal ("Shipping and taxes are added at checkout." by default). `""` hides it.'
     - '`items={[]}` shows "Your cart is empty." in place of the lines and the summary.'
     - "`loading` keeps the heading and shows three placeholder lines in one busy `status` region."
@@ -148,6 +149,7 @@ The block does no maths. When a quantity changes, work out the line's price and 
 | Prop               | Type                                     | Default                                       | Description                                                                                                                    |
 | ------------------ | ---------------------------------------- | --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
 | `heading`          | `string`                                 | `"Shopping cart"`                             | The section's heading. It is set in the serif face.                                                                            |
+| `headingLevel`     | `1 \| 2`                                 | `2`                                           | Heading rank of the heading; the item names and "Order summary" sit one rank below. A full-page screen passes `1`.             |
 | `items`            | `CartItem[]`                             | three sample items                            | The lines in the cart. `[]` shows the empty message.                                                                           |
 | `subtotal`         | `string`                                 | `"€134"` with the samples                     | The subtotal as people read it. Left out, the summary has no subtotal row.                                                     |
 | `note`             | `string`                                 | `"Shipping and taxes are added at checkout."` | A line under the subtotal; `""` hides it.                                                                                      |

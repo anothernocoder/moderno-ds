@@ -1,0 +1,264 @@
+---
+title: Configuración del perfil
+description: Una pantalla a viewport completo donde una persona nueva añade su foto y completa su perfil.
+group: Pantallas
+order: 117
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ProfileSetupScreenDemo from "../../../islands/ProfileSetupScreenDemo.svelte";
+import profileSetupReact from "../../../../../../registry/screens/profile-setup/react/profile-setup.tsx?raw";
+import profileSetupVue from "../../../../../../registry/screens/profile-setup/vue/ProfileSetup.vue?raw";
+import profileSetupSolid from "../../../../../../registry/screens/profile-setup/solid/profile-setup.tsx?raw";
+import profileSetupSvelte from "../../../../../../registry/screens/profile-setup/svelte/ProfileSetup.svelte?raw";
+
+<FrameworkSelect locale="es" />
+
+<Preview
+  examples={{
+    react: profileSetupReact,
+    vue: profileSetupVue,
+    solid: profileSetupSolid,
+    svelte: profileSetupSvelte,
+  }}
+  layout="fill"
+>
+  <ProfileSetupScreenDemo client:visible locale="es" />
+</Preview>
+
+Úsala en el paso de bienvenida donde una persona nueva añade su foto y algunos datos. Muestra la foto y el formulario; tu página sube el archivo y guarda el formulario.
+
+## Instalación
+
+<Install item="profile-setup" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { ProfileSetup } from "@/components/screens/profile-setup";
+```
+
+```tsx
+<ProfileSetup
+  initials="AL"
+  avatarSrc={photoUrl}
+  avatarUploading={uploading}
+  onAvatarChange={(file) => upload(file)}
+  onSubmit={handleSubmit}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```ts
+import ProfileSetup from "@/components/screens/ProfileSetup.vue";
+```
+
+```vue
+<ProfileSetup
+  initials="AL"
+  :avatar-src="photoUrl"
+  :avatar-uploading="uploading"
+  @avatar-change="(file) => upload(file)"
+  @submit="handleSubmit"
+/>
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```ts
+import ProfileSetup from "@/components/screens/ProfileSetup.svelte";
+```
+
+```svelte
+<ProfileSetup
+  initials="AL"
+  avatarSrc={photoUrl}
+  avatarUploading={uploading}
+  onavatarchange={(file) => upload(file)}
+  onsubmit={handleSubmit}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { ProfileSetup } from "@/components/screens/profile-setup";
+```
+
+```tsx
+<ProfileSetup
+  initials="AL"
+  avatarSrc={photoUrl()}
+  avatarUploading={uploading()}
+  onAvatarChange={(file) => upload(file)}
+  onSubmit={handleSubmit}
+/>
+```
+
+</ForFramework>
+
+## Referencia de API
+
+### Props
+
+Los callbacks son props `on…` en React y Solid, en minúsculas (`onavatarchange`) en Svelte y eventos (`avatarChange`, `submit`, `navigate`) en Vue.
+
+| Prop              | Tipo                     | Por defecto | Descripción                                                             |
+| ----------------- | ------------------------ | ----------- | ----------------------------------------------------------------------- |
+| `avatarSrc`       | `string`                 | —           | URL de la foto actual. Añade los botones de cambiar y quitar.           |
+| `initials`        | `string`                 | —           | Letras que se ven sin foto. Sin ellas, un icono de persona.             |
+| `avatarUploading` | `boolean`                | `false`     | Se está subiendo una foto: los botones de la foto quedan inertes.       |
+| `avatarError`     | `string`                 | —           | La foto fue rechazada. Se muestra como alerta bajo la foto.             |
+| `error`           | `string`                 | —           | Falló el guardado: muestra la alerta del formulario.                    |
+| `errors`          | `Record<string, string>` | —           | Errores por campo: `fullName`, `email`, `about`.                        |
+| `loading`         | `boolean`                | `false`     | Guardado en curso: todos los controles inertes, el botón ocupado.       |
+| `disabled`        | `boolean`                | `false`     | El perfil no se puede editar ahora.                                     |
+| `onAvatarChange`  | `(file, event) => void`  | —           | La persona eligió una foto.                                             |
+| `onAvatarRemove`  | `(event) => void`        | —           | La persona pulsó «Remove».                                              |
+| `onSubmit`        | `(event) => void`        | —           | Envío nativo del formulario.                                            |
+| `onCancel`        | `() => void`             | —           | Se pulsó el botón «Cancel» del formulario.                              |
+| `onNavigate`      | `(to, event) => void`    | —           | Se pulsó un enlace de la pantalla: `home`, `skip`, `privacy` o `terms`. |
+| `homeHref`        | `string`                 | `"#"`       | Destino del logotipo.                                                   |
+| `skipHref`        | `string`                 | `"#"`       | Destino de «Skip for now».                                              |
+| `privacyHref`     | `string`                 | `"#"`       | Destino del enlace de privacidad.                                       |
+| `termsHref`       | `string`                 | `"#"`       | Destino del enlace de términos.                                         |
+
+### Estados
+
+| Estado           | Props             | Qué se renderiza                                    |
+| ---------------- | ----------------- | --------------------------------------------------- |
+| Por defecto      | `initials`        | Las iniciales en el avatar, «Upload photo».         |
+| Vacío            | —                 | Un icono de persona en el avatar.                   |
+| Con foto         | `avatarSrc`       | La foto, «Change photo» y «Remove».                 |
+| Subiendo         | `avatarUploading` | Botones de la foto inertes, el de subir ocupado.    |
+| Error de foto    | `avatarError`     | Una alerta bajo la foto.                            |
+| Error al guardar | `error`, `errors` | La alerta del formulario y los campos inválidos.    |
+| Guardando        | `loading`         | Controles inertes, el botón de guardar `aria-busy`. |
+| Deshabilitado    | `disabled`        | La pantalla se ve pero no se puede usar.            |
+
+### Campos del formulario
+
+| Nombre           | Control       | Se envía              |
+| ---------------- | ------------- | --------------------- |
+| `fullName`       | Texto         | Siempre.              |
+| `email`          | Correo        | Siempre.              |
+| `about`          | Área de texto | Siempre.              |
+| `productUpdates` | Casilla       | Solo si está marcada. |
+| `securityAlerts` | Casilla       | Solo si está marcada. |
+
+### Tamaño
+
+| Paso del contenedor      | Cambio                                             |
+| ------------------------ | -------------------------------------------------- |
+| `@sm` (`--container-sm`) | La cabecera y la fila de la foto pasan a una fila. |
+| `@md` (`--container-md`) | El título crece y el pie pasa a una sola fila.     |
+
+### Composición
+
+| Parte                          | Papel                                        |
+| ------------------------------ | -------------------------------------------- |
+| [Avatar](/es/avatar/)          | La foto, o las iniciales cuando no hay foto. |
+| [FormLayout](/es/form-layout/) | Los campos del perfil y el botón de guardar. |
+
+## Ejemplos
+
+### Con foto
+
+<Preview
+  examples={{
+    react: profileSetupReact,
+    vue: profileSetupVue,
+    solid: profileSetupSolid,
+    svelte: profileSetupSvelte,
+  }}
+  layout="fill"
+>
+  <ProfileSetupScreenDemo client:visible locale="es" state="photo" />
+</Preview>
+
+### Subiendo
+
+<Preview
+  examples={{
+    react: profileSetupReact,
+    vue: profileSetupVue,
+    solid: profileSetupSolid,
+    svelte: profileSetupSvelte,
+  }}
+  layout="fill"
+>
+  <ProfileSetupScreenDemo client:visible locale="es" state="uploading" />
+</Preview>
+
+### Foto rechazada
+
+<Preview
+  examples={{
+    react: profileSetupReact,
+    vue: profileSetupVue,
+    solid: profileSetupSolid,
+    svelte: profileSetupSvelte,
+  }}
+  layout="fill"
+>
+  <ProfileSetupScreenDemo client:visible locale="es" state="photo-error" />
+</Preview>
+
+### Error al guardar
+
+<Preview
+  examples={{
+    react: profileSetupReact,
+    vue: profileSetupVue,
+    solid: profileSetupSolid,
+    svelte: profileSetupSvelte,
+  }}
+  layout="fill"
+>
+  <ProfileSetupScreenDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Guardando
+
+<Preview
+  examples={{
+    react: profileSetupReact,
+    vue: profileSetupVue,
+    solid: profileSetupSolid,
+    svelte: profileSetupSvelte,
+  }}
+  layout="fill"
+>
+  <ProfileSetupScreenDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Vacío
+
+<Preview
+  examples={{
+    react: profileSetupReact,
+    vue: profileSetupVue,
+    solid: profileSetupSolid,
+    svelte: profileSetupSvelte,
+  }}
+  layout="fill"
+>
+  <ProfileSetupScreenDemo client:visible locale="es" state="empty" />
+</Preview>
+
+## Notas
+
+- Presentacional: sin subida, sin petición, sin router. Los pone la página que la monta.
+- El selector de archivos solo acepta PNG y JPG. Revisa el tamaño tú y pasa `avatarError` si el archivo es demasiado grande.
+- El selector se vacía tras cada elección, así que elegir el mismo archivo otra vez vuelve a llamar a `onAvatarChange`.
+- `onNavigate` entrega el evento del clic: ignora los clics con `metaKey`/`ctrlKey` y luego `preventDefault()` para enrutar.
+- La pantalla importa el bloque FormLayout desde `@/components/blocks/…`; cambia esa línea si tu alias es otro.

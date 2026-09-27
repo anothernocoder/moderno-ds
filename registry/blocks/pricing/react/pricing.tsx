@@ -65,6 +65,7 @@ function CheckGlyph() {
 
 export interface PricingProps {
   title?: string;
+  titleLevel?: 1 | 2;
   description?: string;
   plans?: PricingPlan[];
   error?: string;
@@ -76,6 +77,7 @@ export interface PricingProps {
 
 export function Pricing({
   title = "Pricing that grows with you",
+  titleLevel = 2,
   description = "Start free, then pick the plan that fits how your team works. Change or cancel at any time.",
   plans = samplePlans,
   error,
@@ -84,11 +86,19 @@ export function Pricing({
   onSelect,
   onRetry,
 }: PricingProps) {
+  const titleRank = titleLevel === 1 ? 1 : undefined;
+  const planRank = titleLevel === 1 ? 2 : undefined;
+
   return (
     <section className="@container moderno-block-pricing text-foreground">
       <div className="grid gap-8 py-12 @lg:gap-10 @lg:py-16">
         <div className="mx-auto grid max-w-md gap-3 text-center">
-          <h2 className="font-serif text-heading text-balance @md:text-heading-lg">{title}</h2>
+          <h2
+            className="font-serif text-heading text-balance @md:text-heading-lg"
+            aria-level={titleRank}
+          >
+            {title}
+          </h2>
           {description ? <p className="text-body text-muted-foreground">{description}</p> : null}
         </div>
 
@@ -137,7 +147,7 @@ export function Pricing({
         ) : plans.length === 0 ? (
           <Card.Root variant="muted" className="mx-auto max-w-md">
             <Card.Header className="items-center text-center">
-              <Card.Title>No plans to show yet</Card.Title>
+              <Card.Title aria-level={planRank}>No plans to show yet</Card.Title>
               <Card.Description>Plans appear here as soon as they are published.</Card.Description>
             </Card.Header>
           </Card.Root>
@@ -148,7 +158,7 @@ export function Pricing({
                 <Card.Root size="sm" className={plan.highlighted ? "border-primary" : undefined}>
                   <Card.Header>
                     <div className="flex items-center justify-between gap-2">
-                      <Card.Title>{plan.name}</Card.Title>
+                      <Card.Title aria-level={planRank}>{plan.name}</Card.Title>
                       {plan.badge ? (
                         <Badge variant="solid" size="sm">
                           {plan.badge}

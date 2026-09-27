@@ -20,6 +20,7 @@ agent:
     - "`loading` implies inert: every control and both actions are disabled and the submit carries aria-busy, so a second save cannot be fired mid-request."
     - "The block responds to its container, never the viewport, and uses all three steps. Mount it narrow and the actions row stacks, the fields run one-up and the group headings sit above their fields."
     - "It is a block, so you own the copy: the groups, the fields, the labels and the helper text are yours to edit after `moderno add`."
+    - "`children` (Vue: the default slot) replaces the Profile and Notifications groups with your own, and the title, description and button labels are props, so a screen can reuse the layout for other fields. Your fields are yours to disable while `loading`; the block only disables its own."
   theming:
     - "Nothing is painted here. The controls are Field and Checkbox, the group rules are Divider, the actions are Button's primary and secondary variants, and the failure is Alert's error variant."
     - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg."
@@ -108,16 +109,24 @@ import { FormLayout } from "@/components/blocks/form-layout";
 
 ### Props
 
-| Prop       | Type                     | Default | Description                                                      |
-| ---------- | ------------------------ | ------- | ---------------------------------------------------------------- |
-| `error`    | `string`                 | —       | Form-level alert above the first group.                          |
-| `errors`   | `Record<string, string>` | —       | Per-field messages keyed by field `name`; each marks it invalid. |
-| `loading`  | `boolean`                | `false` | Disables every control and marks the submit `aria-busy`.         |
-| `disabled` | `boolean`                | `false` | The form is read-only.                                           |
-| `onSubmit` | `(event) => void`        | —       | Native submit event. Svelte: `onsubmit`. Vue: `@submit`.         |
-| `onCancel` | `() => void`             | —       | The "Cancel" button. Svelte: `oncancel`. Vue: `@cancel`.         |
+| Prop           | Type                     | Default                | Description                                                               |
+| -------------- | ------------------------ | ---------------------- | ------------------------------------------------------------------------- |
+| `title`        | `string`                 | `"Account settings"`   | The form's heading.                                                       |
+| `description`  | `string`                 | a sentence             | One line under the title; `""` hides it.                                  |
+| `submitLabel`  | `string`                 | `"Save changes"`       | The submit button's label.                                                |
+| `pendingLabel` | `string`                 | `"Saving"`             | The submit button's label while `loading`.                                |
+| `cancelLabel`  | `string`                 | `"Cancel"`             | The cancel button's label.                                                |
+| `children`     | groups of fields         | Profile, Notifications | Your own groups in place of the two it ships with. Vue: the default slot. |
+| `error`        | `string`                 | —                      | Form-level alert above the first group.                                   |
+| `errors`       | `Record<string, string>` | —                      | Per-field messages keyed by field `name`; each marks it invalid.          |
+| `loading`      | `boolean`                | `false`                | Disables every control and marks the submit `aria-busy`.                  |
+| `disabled`     | `boolean`                | `false`                | The form is read-only.                                                    |
+| `onSubmit`     | `(event) => void`        | —                      | Native submit event. Svelte: `onsubmit`. Vue: `@submit`.                  |
+| `onCancel`     | `() => void`             | —                      | The cancel button. Svelte: `oncancel`. Vue: `@cancel`.                    |
 
 ### Fields
+
+The groups it ships with, used when you pass no `children`:
 
 | Group         | Field           | `name`           |
 | ------------- | --------------- | ---------------- |
@@ -177,4 +186,5 @@ The same form at 18rem, 30rem and 50rem. The 50rem frame scrolls inside itself.
 
 - Presentational: the controls are uncontrolled and it sends no request. Read the form in your submit handler.
 - `error` and `errors` are independent. Passing only `errors` marks the fields without an alert.
+- Pass your own groups as `children` (Vue: the default slot) to reuse the layout for other fields. Disable them yourself while `loading`.
 - For credentials, use [Login form](/en/login-form/) instead.

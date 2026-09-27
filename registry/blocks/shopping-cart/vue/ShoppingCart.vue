@@ -54,6 +54,7 @@ function isValidQuantity(quantity: number, maxQuantity = defaultMaxQuantity) {
 const props = withDefaults(
   defineProps<{
     heading?: string;
+    headingLevel?: 1 | 2;
     items?: CartItem[];
     subtotal?: string;
     note?: string;
@@ -63,6 +64,7 @@ const props = withDefaults(
   }>(),
   {
     heading: "Shopping cart",
+    headingLevel: 2,
     items: undefined,
     subtotal: undefined,
     note: "Shipping and taxes are added at checkout.",
@@ -83,6 +85,8 @@ const shownItems = computed(() => props.items ?? sampleItems);
 const shownSubtotal = computed(
   () => props.subtotal ?? (props.items === undefined ? sampleSubtotal : undefined),
 );
+const headingRank = computed(() => (props.headingLevel === 1 ? 1 : undefined));
+const sectionRank = computed(() => (props.headingLevel === 1 ? 2 : undefined));
 
 function changeQuantity(item: CartItem, quantity: number) {
   if (isValidQuantity(quantity, item.maxQuantity)) emit("quantityChange", item.id, quantity);
@@ -92,7 +96,12 @@ function changeQuantity(item: CartItem, quantity: number) {
 <template>
   <section class="@container moderno-block-shopping-cart text-foreground">
     <div class="grid gap-8 px-4 py-12 @lg:py-16">
-      <h2 class="font-serif text-heading-sm text-balance @md:text-heading">{{ heading }}</h2>
+      <h2
+        class="font-serif text-heading-sm text-balance @md:text-heading"
+        :aria-level="headingRank"
+      >
+        {{ heading }}
+      </h2>
 
       <Alert.Root v-if="error" variant="error">
         <Alert.Content>
@@ -151,7 +160,7 @@ function changeQuantity(item: CartItem, quantity: number) {
               />
             </div>
             <div class="grid min-w-0 content-start gap-1">
-              <h3 class="text-body font-medium text-balance">
+              <h3 class="text-body font-medium text-balance" :aria-level="sectionRank">
                 <a
                   v-if="item.href"
                   class="rounded-sm text-foreground underline-offset-4 transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring aria-disabled:cursor-not-allowed aria-disabled:text-muted-foreground aria-disabled:no-underline"
@@ -205,7 +214,7 @@ function changeQuantity(item: CartItem, quantity: number) {
 
         <Card.Root variant="muted">
           <Card.Header>
-            <Card.Title>Order summary</Card.Title>
+            <Card.Title :aria-level="sectionRank">Order summary</Card.Title>
           </Card.Header>
           <Card.Content class="grid gap-3">
             <dl v-if="shownSubtotal" class="flex items-baseline justify-between gap-4">

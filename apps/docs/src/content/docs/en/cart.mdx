@@ -1,0 +1,181 @@
+---
+title: Cart
+description: A full-viewport screen where a shopper reviews their cart — the lines they picked and the order summary — with the shopping-cart block between a masthead and a footer.
+group: Screens
+order: 122
+agent:
+  intent: The full-viewport cart — the first state of the checkout flow, presentational.
+  whenToUse: "The route where a shopper reviews what they picked before paying: the cart page of a shop, or the cart step of checkout."
+  whenNotToUse:
+    - case: A cart section inside a page you already own (a slide-over, a side panel)
+      use: the ShoppingCart block — a block never owns the viewport
+    - case: A read-only recap of the order next to the shipping or payment form
+      use: the OrderSummary block — its lines have no quantity box and no Remove
+    - case: The whole checkout journey, with the navigation between its steps
+      use: the checkout flow, which sequences this screen with shipping, payment, review and confirmation
+  gotchas:
+    - "Presentational: nothing is fetched, no maths is done, no router. `onQuantityChange(id, quantity)` and `onRemove(id)` report what the shopper changed, `onCheckout` follows Checkout, `onRetry` follows the error's retry, and `onNavigate` names the destination of every link the screen draws itself and hands back the click event with it, so a router can `preventDefault()`."
+    - "`items`, `subtotal` and `note` go straight to the ShoppingCart block. Leave `items` out for the block's three sample lines; pass `[]` for the empty message. When a quantity changes, work out the new prices and subtotal and pass them back in."
+    - 'The cart''s heading is the page''s `h1` (`headingLevel={1}`); the item names and "Order summary" are rank 2 under it. The screen prints no heading of its own.'
+    - "Full-viewport is a height (`min-h-dvh`). Every width decision is read off the screen's own container, so it is still correct mounted in a pane that is not the window. The summary sits under the lines until the block's own container crosses `--container-lg`."
+    - "The screen imports the ShoppingCart block from `@/components/blocks/…`, where `moderno add` puts it. If your project uses a different path alias, that one import line is the only thing to change."
+    - "The root is a `<div>`, not a `<main>` — most app shells already provide the `main` landmark, and two visible ones in a document is invalid. If your route has none, change that one element."
+  theming:
+    - "Nothing is painted here. The lines and the summary are the ShoppingCart block, and the screen's own chrome is `text-foreground` / `text-muted-foreground` on `bg-background`."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the screen's two steps are --container-sm and --container-md, and the block inside reads its own."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import CartScreenDemo from "../../../islands/CartScreenDemo.svelte";
+import cartReact from "../../../../../../registry/screens/cart/react/cart.tsx?raw";
+import cartVue from "../../../../../../registry/screens/cart/vue/Cart.vue?raw";
+import cartSolid from "../../../../../../registry/screens/cart/solid/cart.tsx?raw";
+import cartSvelte from "../../../../../../registry/screens/cart/svelte/Cart.svelte?raw";
+
+export const examples = {
+  react: cartReact,
+  vue: cartVue,
+  solid: cartSolid,
+  svelte: cartSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <CartScreenDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="cart" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { Cart } from "@/components/screens/cart";
+```
+
+```tsx
+<Cart items={items} subtotal={subtotal} onCheckout={() => goToShipping()} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```ts
+import Cart from "@/components/screens/Cart.vue";
+```
+
+```vue
+<Cart :items="items" :subtotal="subtotal" @checkout="goToShipping" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```ts
+import Cart from "@/components/screens/Cart.svelte";
+```
+
+```svelte
+<Cart {items} {subtotal} oncheckout={goToShipping} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { Cart } from "@/components/screens/cart";
+```
+
+```tsx
+<Cart items={items()} subtotal={subtotal()} onCheckout={() => goToShipping()} />
+```
+
+</ForFramework>
+
+Each item has the shape the [Shopping Cart](/en/shopping-cart/) block takes.
+
+## API Reference
+
+### Props
+
+Callbacks are `on…` props in React and Solid, lowercase (`oncheckout`) in Svelte, and emits (`quantity-change`, `remove`, `checkout`, `retry`, `navigate`) in Vue.
+
+| Prop               | Type                                     | Default             | Description                                                                 |
+| ------------------ | ---------------------------------------- | ------------------- | --------------------------------------------------------------------------- |
+| `heading`          | `string`                                 | `"Your cart"`       | The page's `h1`, the shopping-cart block's heading.                         |
+| `items`            | `CartItem[]`                             | the block's samples | The lines, in order. `[]` shows the empty message.                          |
+| `subtotal`         | `string`                                 | —                   | The subtotal as people read it, like `"€134"`. Without it, no subtotal row. |
+| `note`             | `string`                                 | the block's note    | A short line under the subtotal; `""` hides it.                             |
+| `error`            | `string`                                 | —                   | Loading the cart failed; an error alert with a retry replaces it.           |
+| `loading`          | `boolean`                                | `false`             | Placeholder lines in a busy region replace the cart.                        |
+| `disabled`         | `boolean`                                | `false`             | The lines stay; every link, quantity box and button is inert.               |
+| `onQuantityChange` | `(id: string, quantity: number) => void` | —                   | A line's quantity changed, always a whole number from 1 to its maximum.     |
+| `onRemove`         | `(id: string) => void`                   | —                   | A line's Remove button was pressed.                                         |
+| `onCheckout`       | `() => void`                             | —                   | Checkout was pressed.                                                       |
+| `onRetry`          | `() => void`                             | —                   | "Try again" after `error`.                                                  |
+| `onNavigate`       | `(to, event) => void`                    | —                   | A screen link was clicked: `home`, `shop`, `privacy` or `terms`.            |
+| `homeHref`         | `string`                                 | `"#"`               | Target of the wordmark.                                                     |
+| `shopHref`         | `string`                                 | `"#"`               | Target of "Continue shopping".                                              |
+| `privacyHref`      | `string`                                 | `"#"`               | Target of the privacy link.                                                 |
+| `termsHref`        | `string`                                 | `"#"`               | Target of the terms link.                                                   |
+
+### States
+
+| State    | Props      | Renders                                               |
+| -------- | ---------- | ----------------------------------------------------- |
+| Default  | —          | The lines and the order summary with Checkout.        |
+| Empty    | `items=[]` | The heading and "Your cart is empty."                 |
+| Loading  | `loading`  | The heading and three placeholder lines.              |
+| Error    | `error`    | The heading and an error alert with "Try again".      |
+| Disabled | `disabled` | The same lines with every link, box and button inert. |
+
+### Sizing
+
+| Container step           | Change                           |
+| ------------------------ | -------------------------------- |
+| `@sm` (`--container-sm`) | The masthead moves onto one row. |
+| `@md` (`--container-md`) | The footer moves onto one row.   |
+
+The summary sits under the lines, and moves beside them once the Shopping Cart block's own container reaches `--container-lg`.
+
+### Composition
+
+| Part                                | Role                                                |
+| ----------------------------------- | --------------------------------------------------- |
+| [Shopping Cart](/en/shopping-cart/) | The lines and the summary, with `headingLevel={1}`. |
+
+## Examples
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <CartScreenDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+Press "Try again" to clear the message and bring the cart back.
+
+<Preview examples={examples} layout="fill">
+  <CartScreenDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Empty
+
+<Preview examples={examples} layout="fill">
+  <CartScreenDemo client:visible locale="en" state="empty" />
+</Preview>
+
+## Notes
+
+- Presentational: no request, no prices worked out, no router. The page that mounts it owns them.
+- `onNavigate` passes the click event: skip `metaKey`/`ctrlKey` clicks, then `preventDefault()` to route.
+- The root is a `<div>`, not a `<main>`. Make it your `<main>` if the route has none.
+- The screen imports the Shopping Cart block from `@/components/blocks/…`; edit that line if your alias differs.

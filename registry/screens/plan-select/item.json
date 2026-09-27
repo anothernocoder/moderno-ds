@@ -1,0 +1,37 @@
+{
+  "title": "Plan select",
+  "description": "Full-viewport plan choice composing the pricing block: one card per plan, the recommended one highlighted, with the block's loading, error and empty renders. Presentational — plans and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm and the footer at @md, while the plans inside go side by side at the block's own @md.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": ["pricing-{framework}"],
+  "files": {
+    "react": [
+      {
+        "path": "screens/plan-select/react/plan-select.tsx",
+        "type": "registry:screen",
+        "target": "src/components/screens/plan-select.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "screens/plan-select/vue/PlanSelect.vue",
+        "type": "registry:screen",
+        "target": "src/components/screens/PlanSelect.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "screens/plan-select/svelte/PlanSelect.svelte",
+        "type": "registry:screen",
+        "target": "src/components/screens/PlanSelect.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "screens/plan-select/solid/plan-select.tsx",
+        "type": "registry:screen",
+        "target": "src/components/screens/plan-select.tsx"
+      }
+    ]
+  }
+}

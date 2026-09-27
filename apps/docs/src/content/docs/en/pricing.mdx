@@ -20,6 +20,7 @@ agent:
     - "`loading` keeps the title and puts three skeleton cards in one busy `status` region where the plans go."
     - '`error` keeps the title and puts an error Alert with your message and a "Try again" button where the plans were. An empty string counts as no error.'
     - "The layout follows the block's own width, not the viewport: the plans stack below `--container-md` and sit side by side from there on."
+    - "`titleLevel` is the rank of the title in the page's outline. It defaults to `2`, a section of a page; a screen that mounts the block as the whole route passes `1`, and the plan names move up to rank 2 with it."
     - "Each button's accessible name is its label and the plan name (`Start free trial: Pro`), so three buttons with the same label stay distinct."
   theming:
     - "The block paints almost nothing of its own. Each plan is Card's outline variant at size sm, the recommended one with a --primary border; the badge is Badge's solid variant; the buttons are Button's primary and outline variants; the error is Alert's error variant; the empty message is Card's muted variant; the placeholders are Skeleton."
@@ -127,16 +128,17 @@ const plans = [
 
 ### Props
 
-| Prop          | Type                   | Default                         | Description                                                                             |
-| ------------- | ---------------------- | ------------------------------- | --------------------------------------------------------------------------------------- |
-| `title`       | `string`               | `"Pricing that grows with you"` | The section heading, set in the serif face.                                             |
-| `description` | `string`               | a sentence                      | One or two sentences under the title; `""` hides it.                                    |
-| `plans`       | `PricingPlan[]`        | three sample plans              | The plans to compare, in order. `[]` shows the empty message.                           |
-| `error`       | `string`               | —                               | Loading the plans failed; an error Alert with a retry replaces them.                    |
-| `loading`     | `boolean`              | `false`                         | Skeleton cards in a busy region replace the plans.                                      |
-| `disabled`    | `boolean`              | `false`                         | The plans stay and every button is disabled.                                            |
-| `onSelect`    | `(id: string) => void` | —                               | A plan's button was pressed, with that plan's `id`. Svelte: `onselect`. Vue: `@select`. |
-| `onRetry`     | `() => void`           | —                               | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.                            |
+| Prop          | Type                   | Default                         | Description                                                                                  |
+| ------------- | ---------------------- | ------------------------------- | -------------------------------------------------------------------------------------------- |
+| `title`       | `string`               | `"Pricing that grows with you"` | The section heading, set in the serif face.                                                  |
+| `titleLevel`  | `1 \| 2`               | `2`                             | Heading rank of the title; the plan names sit one rank below. A full-page screen passes `1`. |
+| `description` | `string`               | a sentence                      | One or two sentences under the title; `""` hides it.                                         |
+| `plans`       | `PricingPlan[]`        | three sample plans              | The plans to compare, in order. `[]` shows the empty message.                                |
+| `error`       | `string`               | —                               | Loading the plans failed; an error Alert with a retry replaces them.                         |
+| `loading`     | `boolean`              | `false`                         | Skeleton cards in a busy region replace the plans.                                           |
+| `disabled`    | `boolean`              | `false`                         | The plans stay and every button is disabled.                                                 |
+| `onSelect`    | `(id: string) => void` | —                               | A plan's button was pressed, with that plan's `id`. Svelte: `onselect`. Vue: `@select`.      |
+| `onRetry`     | `() => void`           | —                               | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.                                 |
 
 ### PricingPlan
 

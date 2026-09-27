@@ -1,0 +1,212 @@
+---
+title: Payment
+description: A full-viewport screen where a shopper pays — the card form and a recap of the order — with the checkout-form and order-summary blocks between a masthead and a footer.
+group: Screens
+order: 124
+agent:
+  intent: The full-viewport payment step of checkout — the card form beside a read-only recap of the order, presentational.
+  whenToUse: "The route where a shopper enters their card and places the order: the payment step of checkout, after shipping."
+  whenNotToUse:
+    - case: A card form inside a page you already own (a settings tab, a slide-over)
+      use: the CheckoutForm block with `step="payment"` — a block never owns the viewport
+    - case: Changing quantities or removing lines before paying
+      use: the Cart screen — the order summary here is read-only
+    - case: The whole checkout journey, with the navigation between its steps
+      use: the checkout flow, which sequences this screen with cart, shipping, review and confirmation
+  gotchas:
+    - "Presentational: no card is charged, nothing is fetched, no router. `onSubmit` follows Place order with the form's submit event — call `preventDefault()` and send the card to your payment provider. `onBack` follows Back to shipping, `onRetry` the order error's retry, and `onNavigate` names the destination of every link the screen draws itself and hands back the click event with it."
+    - "Two kinds of trouble, two props. `error` is the payment failing (declined, expired): an alert above the card fields, with `errors` for a message under each field by its `name` (`cardName`, `cardNumber`, `expiry`, `cvc`). `orderError` is the order failing to load: an alert with a retry in place of the summary."
+    - "`submitting` is placing the order: Place order spins and every control is inert. `loading` is the order still loading: placeholder lines in place of the summary; the card form stays usable. Pass `disabled` as well if the shopper must wait for the order."
+    - "`items`, `totals` and `total` go straight to the OrderSummary block. Leave `items` out for the block's three sample lines; pass `[]` for the empty message."
+    - 'The form''s heading is the page''s `h1` (`headingLevel={1}`): the card group and "Order summary" are rank 2 under it, the order''s lines rank 3. The screen prints no heading of its own.'
+    - "Full-viewport is a height (`min-h-dvh`). Every width decision is read off the screen's own container: the summary sits under the form until the screen crosses `--container-lg`, then beside it. Each block keeps reading its own container."
+    - "The screen imports the CheckoutForm and OrderSummary blocks from `@/components/blocks/…`, where `moderno add` puts them. If your project uses a different path alias, those two import lines are the only thing to change."
+    - "The root is a `<div>`, not a `<main>` — most app shells already provide the `main` landmark. If your route has none, change that one element."
+  theming:
+    - "Nothing is painted here. The form and the summary are the CheckoutForm and OrderSummary blocks, and the screen's own chrome is `text-foreground` / `text-muted-foreground` on `bg-background`."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the screen's three steps are --container-sm, --container-md and --container-lg, and each block inside reads its own."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import PaymentScreenDemo from "../../../islands/PaymentScreenDemo.svelte";
+import paymentReact from "../../../../../../registry/screens/payment/react/payment.tsx?raw";
+import paymentVue from "../../../../../../registry/screens/payment/vue/Payment.vue?raw";
+import paymentSolid from "../../../../../../registry/screens/payment/solid/payment.tsx?raw";
+import paymentSvelte from "../../../../../../registry/screens/payment/svelte/Payment.svelte?raw";
+
+export const examples = {
+  react: paymentReact,
+  vue: paymentVue,
+  solid: paymentSolid,
+  svelte: paymentSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <PaymentScreenDemo client:visible locale="en" />
+</Preview>
+
+Use it for the payment step of checkout. The shopper enters a card and sees what they pay for; your page charges the card.
+
+## Installation
+
+<Install item="payment" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { Payment } from "@/components/screens/payment";
+```
+
+```tsx
+<Payment items={items} totals={totals} total={total} onSubmit={pay} onBack={goToShipping} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```ts
+import Payment from "@/components/screens/Payment.vue";
+```
+
+```vue
+<Payment :items="items" :totals="totals" :total="total" @submit="pay" @back="goToShipping" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```ts
+import Payment from "@/components/screens/Payment.svelte";
+```
+
+```svelte
+<Payment {items} {totals} {total} onsubmit={pay} onback={goToShipping} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { Payment } from "@/components/screens/payment";
+```
+
+```tsx
+<Payment items={items()} totals={totals()} total={total()} onSubmit={pay} onBack={goToShipping} />
+```
+
+</ForFramework>
+
+`pay` gets the form's submit event. Stop the page from reloading, then send the card:
+
+```ts
+function pay(event) {
+  event.preventDefault();
+  const card = new FormData(event.currentTarget);
+  // Send card.get("cardNumber"), card.get("expiry"), … to your payment provider.
+}
+```
+
+## API Reference
+
+### Props
+
+Callbacks are `on…` props in React and Solid, lowercase (`onsubmit`) in Svelte, and emits (`submit`, `back`, `retry`, `navigate`) in Vue.
+
+| Prop          | Type                     | Default             | Description                                                           |
+| ------------- | ------------------------ | ------------------- | --------------------------------------------------------------------- |
+| `heading`     | `string`                 | `"Payment"`         | The page's `h1`, the checkout-form block's heading.                   |
+| `description` | `string`                 | the block's line    | The line under the heading; `""` hides it.                            |
+| `items`       | `OrderItem[]`            | the block's samples | The lines being paid for. `[]` shows the empty message.               |
+| `totals`      | `OrderTotal[]`           | the block's samples | The rows above the total: `{ label, amount }`.                        |
+| `total`       | `string`                 | the block's sample  | The amount to pay as people read it, like `"€168"`.                   |
+| `error`       | `string`                 | —                   | The payment failed: an alert above the card fields.                   |
+| `errors`      | `Record<string, string>` | —                   | A message under each wrong card field, keyed by its `name`.           |
+| `submitting`  | `boolean`                | `false`             | The order is being placed: Place order spins, every control is inert. |
+| `loading`     | `boolean`                | `false`             | The order is loading: placeholder lines replace the summary.          |
+| `orderError`  | `string`                 | —                   | The order failed to load: an alert with a retry replaces the summary. |
+| `disabled`    | `boolean`                | `false`             | Everything stays on screen; every control is inert.                   |
+| `onSubmit`    | `(event) => void`        | —                   | Place order was pressed. Call `preventDefault()` to stay on the page. |
+| `onBack`      | `() => void`             | —                   | Back to shipping was pressed.                                         |
+| `onRetry`     | `() => void`             | —                   | "Try again" after `orderError`.                                       |
+| `onNavigate`  | `(to, event) => void`    | —                   | A screen link was clicked: `home`, `cart`, `privacy` or `terms`.      |
+| `homeHref`    | `string`                 | `"#"`               | Target of the wordmark.                                               |
+| `cartHref`    | `string`                 | `"#"`               | Target of "Edit cart".                                                |
+| `privacyHref` | `string`                 | `"#"`               | Target of the privacy link.                                           |
+| `termsHref`   | `string`                 | `"#"`               | Target of the terms link.                                             |
+
+The card fields are named `cardName`, `cardNumber`, `expiry`, `cvc` and `saveCard`.
+
+### States
+
+| State         | Props        | Renders                                                       |
+| ------------- | ------------ | ------------------------------------------------------------- |
+| Default       | —            | The card form and the order summary with its total.           |
+| Declined      | `error`      | An alert above the card fields; `errors` marks each field.    |
+| Placing order | `submitting` | "Placing order" with a spinner; every control inert.          |
+| Loading       | `loading`    | The card form, and placeholder lines in place of the summary. |
+| Order error   | `orderError` | The card form, and an alert with "Try again" for the summary. |
+| Empty         | `items=[]`   | The card form, and "Your order is empty." for the summary.    |
+| Disabled      | `disabled`   | Everything shown, every control inert.                        |
+
+### Sizing
+
+| Container step           | Change                                   |
+| ------------------------ | ---------------------------------------- |
+| `@sm` (`--container-sm`) | The masthead moves onto one row.         |
+| `@md` (`--container-md`) | The footer moves onto one row.           |
+| `@lg` (`--container-lg`) | The order summary moves beside the form. |
+
+### Composition
+
+| Part                                | Role                                                         |
+| ----------------------------------- | ------------------------------------------------------------ |
+| [Checkout Form](/en/checkout-form/) | The card form, with `step="payment"` and `headingLevel={1}`. |
+| [Order Summary](/en/order-summary/) | The read-only lines and totals being paid for.               |
+
+## Examples
+
+### Card declined
+
+<Preview examples={examples} layout="fill">
+  <PaymentScreenDemo client:visible locale="en" state="declined" />
+</Preview>
+
+### Placing the order
+
+<Preview examples={examples} layout="fill">
+  <PaymentScreenDemo client:visible locale="en" state="placing" />
+</Preview>
+
+### Loading the order
+
+<Preview examples={examples} layout="fill">
+  <PaymentScreenDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Order error
+
+Press "Try again" to clear the message and bring the order back.
+
+<Preview examples={examples} layout="fill">
+  <PaymentScreenDemo client:visible locale="en" state="order-error" />
+</Preview>
+
+### Empty order
+
+<Preview examples={examples} layout="fill">
+  <PaymentScreenDemo client:visible locale="en" state="empty" />
+</Preview>
+
+## Notes
+
+- Presentational: no card is charged and no router is used. The page that mounts it does both.
+- `onNavigate` passes the click event: skip `metaKey`/`ctrlKey` clicks, then `preventDefault()` to route.
+- The root is a `<div>`, not a `<main>`. Make it your `<main>` if the route has none.
+- The screen imports its two blocks from `@/components/blocks/…`; edit those lines if your alias differs.

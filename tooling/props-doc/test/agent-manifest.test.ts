@@ -76,6 +76,19 @@ describe("AGENT_COMPONENTS", () => {
   it("has an expectation file for every component, and none for a component it lacks", () => {
     expect(Object.keys(expectations).sort()).toEqual(AGENT_COMPONENTS.map((c) => c.slug).sort());
   });
+
+  it("lists every component each of the four framework packages exports", () => {
+    // Each package exports one fragment per component, `src/exports/<slug>.ts`,
+    // plus the package header and two helpers that are not components.
+    const notComponents = ["_header", "portal", "list-collection"];
+    const slugs = AGENT_COMPONENTS.map((c) => c.slug);
+    for (const framework of ["react", "vue", "svelte", "solid"]) {
+      const exported = slugsIn(`../../../packages/${framework}/src/exports/`).filter(
+        (slug) => !notComponents.includes(slug),
+      );
+      expect(slugs, framework).toEqual(exported);
+    }
+  });
 });
 
 describe("buildComponentsManifest", () => {
