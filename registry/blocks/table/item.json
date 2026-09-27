@@ -1,0 +1,37 @@
+{
+  "title": "Table",
+  "description": "A data table of invoices, composing the @moderno-ui/{framework} Alert, Badge, Button, Checkbox, Menu, Pagination and Skeleton primitives: a serif heading and a short description, a toolbar with the invoice count that turns into the selection count with a \"Clear selection\" Button and a \"Bulk actions\" Menu once rows are selected, then a table with a Checkbox per row and one for the page, sortable Invoice, Customer and Amount headers, a status Badge and an actions Menu on each row, and a Pagination row under it, with its own loading, empty and error renders; the table scrolls sideways inside its own frame when the container is narrower than its columns, and responds to its container (@container) — the page row moves to the end at @sm, the heading steps up at @md, and the Issued column appears, each customer's email shows under the name and the section gains room above and below at @lg.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": [],
+  "files": {
+    "react": [
+      {
+        "path": "blocks/table/react/table.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/table.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "blocks/table/vue/Table.vue",
+        "type": "registry:block",
+        "target": "src/components/blocks/Table.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "blocks/table/svelte/Table.svelte",
+        "type": "registry:block",
+        "target": "src/components/blocks/Table.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "blocks/table/solid/table.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/table.tsx"
+      }
+    ]
+  }
+}

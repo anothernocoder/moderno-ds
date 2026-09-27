@@ -1,0 +1,242 @@
+---
+title: Table
+description: A data table of invoices — sort by a column, select rows, act on one row or on every selected row, and page through the rest.
+group: Blocks
+order: 124
+agent:
+  intent: A data table of invoices under a serif heading — a checkbox on each row and one for the page, sortable Invoice, Customer and Amount headers, a status badge and an actions menu on each row, a "Bulk actions" menu once rows are selected, and a page row under the table.
+  whenToUse: "On an app page where people scan, sort and act on many records of the same shape, like invoices, orders or payouts."
+  whenNotToUse:
+    - case: A short list of records with an avatar and a status each, and no columns to compare
+      use: ListContainer — a scrolling list of rows, one record per row
+    - case: A shopper's past orders, each with its items
+      use: OrderHistory — one card per order with its lines
+    - case: Label and value pairs about one record
+      use: DescriptionList — a list of fields for a single item
+  gotchas:
+    - "`invoices` is an array of `{ id, number, customer, email, issued, amount, status, statusVariant? }`. `amount` is a number; every other field is a string."
+    - "Pass every invoice, not one page: the block sorts and pages them itself, `pageSize` (default 5) to a page. The page row shows only when there is more than one page."
+    - "`amount` is formatted by `formatAmount`, which defaults to euros in British English (`€2,400.00`). Pass your own to change the currency or the language."
+    - "`issued` is a string as people read it, like `12 Jan 2026`. It is not sortable; Invoice, Customer and Amount are. The first click sorts up, the next one down, and each sort goes back to page 1."
+    - "Each header that is sorted carries `aria-sort`, and its arrow turns from ↕ to ↑ or ↓."
+    - "The header checkbox selects every row on the current page, and shows a dash when only some are. Selection survives paging and sorting."
+    - 'Once a row is selected, the toolbar reads "2 of 12 selected" and shows "Clear selection" and a "Bulk actions" menu. Choosing an item calls `onBatchAction(action, ids)` (Svelte `onbatchaction`, Vue `@batch-action`).'
+    - 'Each row has an actions menu named "Actions for" plus the invoice number. Choosing an item calls `onRowAction(action, id)` (Svelte `onrowaction`, Vue `@row-action`).'
+    - "`rowActions` and `batchActions` are arrays of `{ value, label }`; `value` is what the callbacks receive."
+    - "The block does not remove or change rows. After an action, pass the new `invoices`; selected ids that are gone drop out of the selection."
+    - "The table sits in a frame that scrolls sideways when the container is narrower than the columns. The frame is a focusable region named after the heading, so keyboard users can scroll it."
+    - '`invoices={[]}` shows "You have not sent any invoices yet." in a dashed box.'
+    - "`loading` keeps the heading and shows placeholder rows in one busy `status` region."
+    - '`error` keeps the heading and puts an error Alert with your message and a "Try again" button where the table was. An empty string counts as no error.'
+    - "`disabled` keeps every row and turns off the checkboxes, the sort buttons, the menus and the page row."
+    - "The layout follows the block's own width, not the viewport: the page row centred at first and at the end from `--container-sm`; a larger heading from `--container-md`; the Issued column, each customer's email under the name and more room above and below from `--container-lg`."
+  theming:
+    - "The block paints only its borders (--border): the frame around the table, the line under the header and between rows, and the dashed empty box. Rows fill with --muted on hover and while selected."
+    - "The checkboxes are Checkbox, the sort buttons and Clear selection are Button's ghost variant, the actions are Menu, the statuses are Badge, the page row is Pagination, the error is Alert's error variant and the loading rows are Skeleton."
+    - "The heading reads --font-serif and --foreground; the description, the toolbar, the email and the issued date read --muted-foreground."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import TableBlockDemo from "../../../islands/TableBlockDemo.svelte";
+import tableReact from "../../../../../../registry/blocks/table/react/table.tsx?raw";
+import tableVue from "../../../../../../registry/blocks/table/vue/Table.vue?raw";
+import tableSolid from "../../../../../../registry/blocks/table/solid/table.tsx?raw";
+import tableSvelte from "../../../../../../registry/blocks/table/svelte/Table.svelte?raw";
+
+export const examples = {
+  react: tableReact,
+  vue: tableVue,
+  solid: tableSolid,
+  svelte: tableSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <TableBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="table" />
+
+## Usage
+
+Use Table when people need to compare many records, sort them and act on several at once. Click a header to sort, tick rows to select them, and open a row's menu for its actions.
+
+<ForFramework fw="react">
+
+```tsx
+import { Table } from "@/components/blocks/table";
+```
+
+```tsx
+<Table invoices={invoices} onBatchAction={(action, ids) => run(action, ids)} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import Table from "@/components/blocks/Table.vue";
+</script>
+```
+
+```vue
+<Table :invoices="invoices" @batch-action="run" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import Table from "@/components/blocks/Table.svelte";
+</script>
+```
+
+```svelte
+<Table {invoices} onbatchaction={(action, ids) => run(action, ids)} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { Table } from "@/components/blocks/table";
+```
+
+```tsx
+<Table invoices={invoices()} onBatchAction={(action, ids) => run(action, ids)} />
+```
+
+</ForFramework>
+
+Each invoice looks like `{ id: "inv-1042", number: "INV-1042", customer: "Acme Studio", email: "billing@acme.example", issued: "12 Jan 2026", amount: 2400, status: "Paid", statusVariant: "success" }`. Pass all of them: the block sorts and pages them itself.
+
+## API Reference
+
+### Props
+
+| Prop                | Type                                      | Default                                                   | Description                                                                                                      |
+| ------------------- | ----------------------------------------- | --------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `heading`           | `string`                                  | `"Invoices"`                                              | The section's heading, set in the serif face. It also names the table and its frame.                             |
+| `description`       | `string`                                  | `"Every invoice you have sent, with what is still owed."` | The line under the heading. An empty string hides it.                                                            |
+| `invoices`          | `TableInvoice[]`                          | twelve sample invoices                                    | Every invoice, in the order you pass them. `[]` shows the empty message.                                         |
+| `pageSize`          | `number`                                  | `5`                                                       | Rows on a page. The page row shows only when there is more than one page.                                        |
+| `rowActions`        | `TableAction[]`                           | View, Download PDF, Delete                                | The items in each row's actions menu.                                                                            |
+| `batchActions`      | `TableAction[]`                           | Mark as paid, Download PDFs, Delete                       | The items in the "Bulk actions" menu.                                                                            |
+| `formatAmount`      | `(amount: number) => string`              | euros, `en-GB`                                            | Turns each `amount` into the text in the Amount column.                                                          |
+| `error`             | `string`                                  | —                                                         | Loading the invoices failed; an error Alert with a retry replaces the table.                                     |
+| `loading`           | `boolean`                                 | `false`                                                   | Placeholder rows in a busy region replace the table.                                                             |
+| `disabled`          | `boolean`                                 | `false`                                                   | The rows stay; the checkboxes, sort buttons, menus and page row are off.                                         |
+| `onSelectionChange` | `(ids: string[]) => void`                 | —                                                         | The selection changed, with every selected `id`. Svelte: `onselectionchange`. Vue: `@selection-change`.          |
+| `onRowAction`       | `(action: string, id: string) => void`    | —                                                         | An item in a row's menu, with its `value` and the row's `id`. Svelte: `onrowaction`. Vue: `@row-action`.         |
+| `onBatchAction`     | `(action: string, ids: string[]) => void` | —                                                         | An item in "Bulk actions", with its `value` and the selected ids. Svelte: `onbatchaction`. Vue: `@batch-action`. |
+| `onRetry`           | `() => void`                              | —                                                         | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.                                                     |
+
+### TableInvoice
+
+| Field           | Type           | Description                                                        |
+| --------------- | -------------- | ------------------------------------------------------------------ |
+| `id`            | `string`       | A stable key, passed to the callbacks.                             |
+| `number`        | `string`       | The invoice number people see, like `"INV-1042"`. Sortable.        |
+| `customer`      | `string`       | Who the invoice is for. Sortable.                                  |
+| `email`         | `string`       | The customer's email, shown under the name from `@lg`.             |
+| `issued`        | `string`       | When it was sent, like `"12 Jan 2026"`. Shown from `@lg`.          |
+| `amount`        | `number`       | What it is for, like `2400`. Sortable; shown by `formatAmount`.    |
+| `status`        | `string`       | The badge's text, like `"Paid"`.                                   |
+| `statusVariant` | `BadgeVariant` | Optional. The badge's colour, like `"success"`. Default `neutral`. |
+
+### TableAction
+
+| Field   | Type     | Description                                  |
+| ------- | -------- | -------------------------------------------- |
+| `value` | `string` | What the callback receives, like `"delete"`. |
+| `label` | `string` | The menu item's text, like `"Delete"`.       |
+
+### States
+
+| State    | Prop            | What renders                                                               |
+| -------- | --------------- | -------------------------------------------------------------------------- |
+| Default  | —               | The heading, the toolbar, the first page of rows and the page row.         |
+| Selected | tick a row      | "2 of 12 selected", "Clear selection" and "Bulk actions"; rows filled.     |
+| Empty    | `invoices={[]}` | The heading and "You have not sent any invoices yet."                      |
+| Loading  | `loading`       | The heading and placeholder rows.                                          |
+| Error    | `error`         | The heading and an error Alert with "Try again".                           |
+| Disabled | `disabled`      | The same rows, with every checkbox, sort button, menu and page button off. |
+
+### Sizing
+
+| Container step           | What changes                                                                                                    |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------- |
+| below `@sm`              | The table scrolls sideways inside its frame. The page row is centred.                                           |
+| `@sm` (`--container-sm`) | The page row moves to the end.                                                                                  |
+| `@md` (`--container-md`) | The heading steps up.                                                                                           |
+| `@lg` (`--container-lg`) | The Issued column appears, and each customer's email shows under the name. More room above and below the block. |
+
+## Examples
+
+### Container widths
+
+The same block at 18rem, 30rem, 40rem and 50rem. The narrow tables scroll inside their frames, and the 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <TableBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### One page
+
+With fewer invoices than `pageSize`, there is no page row.
+
+<Preview examples={examples} layout="fill">
+  <TableBlockDemo client:visible locale="en" state="one-page" />
+</Preview>
+
+### Another currency
+
+Pass `formatAmount` to show the amounts in your currency.
+
+<Preview examples={examples} layout="fill">
+  <TableBlockDemo client:visible locale="en" state="dollars" />
+</Preview>
+
+### Empty
+
+Pass an empty `invoices` array.
+
+<Preview examples={examples} layout="fill">
+  <TableBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <TableBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+Press "Try again" to clear the message and bring the table back.
+
+<Preview examples={examples} layout="fill">
+  <TableBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+Use it while a bulk action runs, so people do not start a second one.
+
+<Preview examples={examples} layout="fill">
+  <TableBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Keep status words short, so the Status column stays narrow.
+- The block sorts and pages in the browser. For very large tables, edit your copy to sort and page on the server instead.
