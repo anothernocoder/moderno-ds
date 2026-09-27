@@ -2514,6 +2514,78 @@
       ]
     },
     {
+      "name": "product-feature-list-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Product Feature List (React)",
+      "description": "A product's features and specifications for its product page, composing the @moderno-ui/react Alert, Button and Skeleton primitives: a serif heading and a sentence of introduction, an icon, a title and a sentence per feature, then a list of specifications (label and value) and one call to action, with its own loading, empty and error renders; responds to its container (@container) — two feature columns and each specification's label beside its value at @sm, a larger heading at @md, and four feature columns, two columns of specifications and more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/product-feature-list/react/product-feature-list.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/product-feature-list.tsx"
+        }
+      ]
+    },
+    {
+      "name": "product-feature-list-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Product Feature List (Vue)",
+      "description": "A product's features and specifications for its product page, composing the @moderno-ui/vue Alert, Button and Skeleton primitives: a serif heading and a sentence of introduction, an icon, a title and a sentence per feature, then a list of specifications (label and value) and one call to action, with its own loading, empty and error renders; responds to its container (@container) — two feature columns and each specification's label beside its value at @sm, a larger heading at @md, and four feature columns, two columns of specifications and more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/product-feature-list/vue/ProductFeatureList.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/ProductFeatureList.vue"
+        }
+      ]
+    },
+    {
+      "name": "product-feature-list-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Product Feature List (Svelte)",
+      "description": "A product's features and specifications for its product page, composing the @moderno-ui/svelte Alert, Button and Skeleton primitives: a serif heading and a sentence of introduction, an icon, a title and a sentence per feature, then a list of specifications (label and value) and one call to action, with its own loading, empty and error renders; responds to its container (@container) — two feature columns and each specification's label beside its value at @sm, a larger heading at @md, and four feature columns, two columns of specifications and more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/product-feature-list/svelte/ProductFeatureList.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/ProductFeatureList.svelte"
+        }
+      ]
+    },
+    {
+      "name": "product-feature-list-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Product Feature List (Solid)",
+      "description": "A product's features and specifications for its product page, composing the @moderno-ui/solid Alert, Button and Skeleton primitives: a serif heading and a sentence of introduction, an icon, a title and a sentence per feature, then a list of specifications (label and value) and one call to action, with its own loading, empty and error renders; responds to its container (@container) — two feature columns and each specification's label beside its value at @sm, a larger heading at @md, and four feature columns, two columns of specifications and more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/product-feature-list/solid/product-feature-list.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/product-feature-list.tsx"
+        }
+      ]
+    },
+    {
       "name": "product-list-react",
       "type": "registry:block",
       "version": "0.1.0",
