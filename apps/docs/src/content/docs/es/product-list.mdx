@@ -1,0 +1,207 @@
+---
+title: Product List
+description: Una página de productos en cuadrícula — cada uno con su imagen, su nombre y su precio — bajo un título con serifa, con paginación para pasar de página.
+group: Bloques
+order: 122
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ProductListBlockDemo from "../../../islands/ProductListBlockDemo.svelte";
+import productListReact from "../../../../../../registry/blocks/product-list/react/product-list.tsx?raw";
+import productListVue from "../../../../../../registry/blocks/product-list/vue/ProductList.vue?raw";
+import productListSolid from "../../../../../../registry/blocks/product-list/solid/product-list.tsx?raw";
+import productListSvelte from "../../../../../../registry/blocks/product-list/svelte/ProductList.svelte?raw";
+
+export const examples = {
+  react: productListReact,
+  vue: productListVue,
+  solid: productListSolid,
+  svelte: productListSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <ProductListBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="product-list" />
+
+## Uso
+
+Usa Product List para el catálogo de una tienda o la página de una categoría. Muestra una página de productos y la paginación para llegar a las demás.
+
+<ForFramework fw="react">
+
+```tsx
+import { ProductList } from "@/components/blocks/product-list";
+```
+
+```tsx
+<ProductList
+  heading="Vajilla"
+  products={products}
+  total={total}
+  page={page}
+  onPageChange={setPage}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import ProductList from "@/components/blocks/ProductList.vue";
+</script>
+```
+
+```vue
+<ProductList
+  heading="Vajilla"
+  :products="products"
+  :total="total"
+  :page="page"
+  @page-change="page = $event"
+/>
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import ProductList from "@/components/blocks/ProductList.svelte";
+</script>
+```
+
+```svelte
+<ProductList heading="Vajilla" {products} {total} {page} onpagechange={(next) => (page = next)} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { ProductList } from "@/components/blocks/product-list";
+```
+
+```tsx
+<ProductList
+  heading="Vajilla"
+  products={products()}
+  total={total()}
+  page={page()}
+  onPageChange={setPage}
+/>
+```
+
+</ForFramework>
+
+`products` lleva solo la página actual. `total` cuenta todos los productos, así el bloque sabe cuántas páginas hay.
+
+## Referencia de la API
+
+### Props
+
+| Prop           | Tipo                     | Por defecto        | Descripción                                                                         |
+| -------------- | ------------------------ | ------------------ | ----------------------------------------------------------------------------------- |
+| `heading`      | `string`                 | `"The collection"` | El título de la sección. Va en la fuente con serifa.                                |
+| `description`  | `string`                 | una frase          | Una frase bajo el título; `""` la oculta.                                           |
+| `products`     | `ProductSummary[]`       | doce de muestra    | Los productos de la página actual. `[]` muestra el mensaje de vacío.                |
+| `total`        | `number`                 | `products.length`  | Cuántos productos hay entre todas las páginas. 48 con los de muestra.               |
+| `pageSize`     | `number`                 | `12`               | Cuántos productos caben en una página.                                              |
+| `page`         | `number`                 | —                  | La página actual, desde 1. Sin ella, el bloque lleva su propia página.              |
+| `error`        | `string`                 | —                  | No se pudieron cargar los productos; un Alert de error con reintento los sustituye. |
+| `loading`      | `boolean`                | `false`            | Mosaicos de marcador en una región ocupada sustituyen la cuadrícula.                |
+| `disabled`     | `boolean`                | `false`            | Los productos se quedan; cada enlace queda inerte y cada botón deshabilitado.       |
+| `onPageChange` | `(page: number) => void` | —                  | Se eligió una página. Svelte: `onpagechange`. Vue: `@page-change`.                  |
+| `onRetry`      | `() => void`             | —                  | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.                         |
+
+### ProductSummary
+
+| Campo            | Tipo           | Descripción                                                          |
+| ---------------- | -------------- | -------------------------------------------------------------------- |
+| `id`             | `string`       | Una clave estable para el producto.                                  |
+| `name`           | `string`       | El nombre del producto.                                              |
+| `price`          | `string`       | El precio tal como se lee, como `"€28"`.                             |
+| `compareAtPrice` | `string`       | Opcional. El precio anterior, tachado después de `price`.            |
+| `badge`          | `string`       | Opcional. Una palabra sobre la imagen, como `"New"` o `"Sale"`.      |
+| `href`           | `string`       | Opcional. Convierte el nombre en un enlace a la página del producto. |
+| `image`          | `ProductImage` | Opcional. La foto: `{ src, alt }`. Sin ella, una caja atenuada.      |
+
+### Estados
+
+| Estado        | Prop            | Qué se muestra                                                              |
+| ------------- | --------------- | --------------------------------------------------------------------------- |
+| Por defecto   | —               | Título, número de productos, un mosaico por producto y la paginación.       |
+| Vacío         | `products={[]}` | Título y "No products match yet." en una caja discontinua.                  |
+| Cargando      | `loading`       | Título, mosaicos de marcador y la paginación.                               |
+| Error         | `error`         | Título y un Alert de error con "Try again".                                 |
+| Deshabilitado | `disabled`      | Los mismos productos con cada enlace inerte y cada botón de página apagado. |
+
+### Tamaño
+
+| Paso del contenedor      | Qué cambia                                                 |
+| ------------------------ | ---------------------------------------------------------- |
+| bajo `@sm`               | Dos columnas; el número de productos bajo la introducción. |
+| `@sm` (`--container-sm`) | El número de productos pasa al lado del título.            |
+| `@md` (`--container-md`) | Tres columnas, y el título sube un tamaño.                 |
+| `@lg` (`--container-lg`) | Cuatro columnas, con más aire entre ellas y alrededor.     |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+El mismo bloque a 18rem, 30rem, 40rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <ProductListBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Sin imágenes
+
+Sin `image`, el área de cada imagen es una caja atenuada.
+
+<Preview examples={examples} layout="fill">
+  <ProductListBlockDemo client:visible locale="es" state="no-images" />
+</Preview>
+
+### Vacío
+
+Pasa un array `products` vacío.
+
+<Preview examples={examples} layout="fill">
+  <ProductListBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <ProductListBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+Pulsa "Try again" para borrar el mensaje y volver a mostrar los productos.
+
+<Preview examples={examples} layout="fill">
+  <ProductListBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+<Preview examples={examples} layout="fill">
+  <ProductListBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
+
+## Notas
+
+- Doce productos llenan dos, tres o cuatro columnas por igual. Usa un `pageSize` múltiplo de 12 para lo mismo.
+- Usa fotos que se sigan entendiendo recortadas en cuadrado, y el mismo tipo de foto para cada producto, para que las filas se vean parejas.
+- Tras un cambio de página, vuelve a subir la página hasta el título, para que se empiece a leer desde arriba.

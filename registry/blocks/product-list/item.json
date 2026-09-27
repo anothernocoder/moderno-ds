@@ -1,0 +1,37 @@
+{
+  "title": "Product List",
+  "description": "A page of products as a grid, composing the @moderno-ui/{framework} Alert, Badge, Button, Pagination and Skeleton primitives: a serif heading, a sentence of introduction and the number of products, then one tile per product with its image, an optional Badge, its linked name and its price (the old one struck through on a sale), and Pagination under the grid to move between pages, with its own loading, empty and error renders; responds to its container (@container) — two columns at first, the product count moves beside the heading at @sm, three columns and a larger heading at @md, and four columns with more room at @lg.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": [],
+  "files": {
+    "react": [
+      {
+        "path": "blocks/product-list/react/product-list.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/product-list.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "blocks/product-list/vue/ProductList.vue",
+        "type": "registry:block",
+        "target": "src/components/blocks/ProductList.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "blocks/product-list/svelte/ProductList.svelte",
+        "type": "registry:block",
+        "target": "src/components/blocks/ProductList.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "blocks/product-list/solid/product-list.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/product-list.tsx"
+      }
+    ]
+  }
+}

@@ -2514,6 +2514,78 @@
       ]
     },
     {
+      "name": "product-list-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Product List (React)",
+      "description": "A page of products as a grid, composing the @moderno-ui/react Alert, Badge, Button, Pagination and Skeleton primitives: a serif heading, a sentence of introduction and the number of products, then one tile per product with its image, an optional Badge, its linked name and its price (the old one struck through on a sale), and Pagination under the grid to move between pages, with its own loading, empty and error renders; responds to its container (@container) — two columns at first, the product count moves beside the heading at @sm, three columns and a larger heading at @md, and four columns with more room at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/product-list/react/product-list.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/product-list.tsx"
+        }
+      ]
+    },
+    {
+      "name": "product-list-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Product List (Vue)",
+      "description": "A page of products as a grid, composing the @moderno-ui/vue Alert, Badge, Button, Pagination and Skeleton primitives: a serif heading, a sentence of introduction and the number of products, then one tile per product with its image, an optional Badge, its linked name and its price (the old one struck through on a sale), and Pagination under the grid to move between pages, with its own loading, empty and error renders; responds to its container (@container) — two columns at first, the product count moves beside the heading at @sm, three columns and a larger heading at @md, and four columns with more room at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/product-list/vue/ProductList.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/ProductList.vue"
+        }
+      ]
+    },
+    {
+      "name": "product-list-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Product List (Svelte)",
+      "description": "A page of products as a grid, composing the @moderno-ui/svelte Alert, Badge, Button, Pagination and Skeleton primitives: a serif heading, a sentence of introduction and the number of products, then one tile per product with its image, an optional Badge, its linked name and its price (the old one struck through on a sale), and Pagination under the grid to move between pages, with its own loading, empty and error renders; responds to its container (@container) — two columns at first, the product count moves beside the heading at @sm, three columns and a larger heading at @md, and four columns with more room at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/product-list/svelte/ProductList.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/ProductList.svelte"
+        }
+      ]
+    },
+    {
+      "name": "product-list-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Product List (Solid)",
+      "description": "A page of products as a grid, composing the @moderno-ui/solid Alert, Badge, Button, Pagination and Skeleton primitives: a serif heading, a sentence of introduction and the number of products, then one tile per product with its image, an optional Badge, its linked name and its price (the old one struck through on a sale), and Pagination under the grid to move between pages, with its own loading, empty and error renders; responds to its container (@container) — two columns at first, the product count moves beside the heading at @sm, three columns and a larger heading at @md, and four columns with more room at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/product-list/solid/product-list.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/product-list.tsx"
+        }
+      ]
+    },
+    {
       "name": "promo-react",
       "type": "registry:block",
       "version": "0.1.0",
