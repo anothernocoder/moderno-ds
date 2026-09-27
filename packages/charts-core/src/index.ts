@@ -56,6 +56,16 @@ export type { AreaChartModel, AreaChartOptions, AreaSeriesModel } from "./area.j
 export { buildBarChart } from "./bar.js";
 export type { BarChartModel, BarChartOptions, BarRect, BarSeries, BarSeriesModel } from "./bar.js";
 
+export { buildBarList } from "./bar-list.js";
+export type {
+  BarListItem,
+  BarListModel,
+  BarListOptions,
+  BarListRect,
+  BarListRow,
+  BarListSort,
+} from "./bar-list.js";
+
 export { buildScatterChart } from "./scatter.js";
 export type {
   ScatterChartModel,
@@ -74,6 +84,7 @@ export type { SparkChartModel, SparkChartOptions, SparkMarker } from "./spark.js
 export {
   areaChartNodes,
   barChartNodes,
+  barListNodes,
   chartNodeToSvg,
   donutChartNodes,
   lineChartNodes,

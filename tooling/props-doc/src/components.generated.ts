@@ -15,6 +15,7 @@ import areaChartComponent from "./components/area-chart.ts";
 import avatarComponent from "./components/avatar.ts";
 import badgeComponent from "./components/badge.ts";
 import barChartComponent from "./components/bar-chart.ts";
+import barListComponent from "./components/bar-list.ts";
 import buttonComponent from "./components/button.ts";
 import calloutComponent from "./components/callout.ts";
 import cardComponent from "./components/card.ts";
@@ -52,6 +53,7 @@ export const { ENTRIES, AGENT_COMPONENTS, AGENT_EXAMPLES } = assembleComponents(
   avatarComponent,
   badgeComponent,
   barChartComponent,
+  barListComponent,
   buttonComponent,
   calloutComponent,
   cardComponent,

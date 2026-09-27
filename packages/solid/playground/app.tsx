@@ -14,6 +14,7 @@ import AccordionSection from "./sections/accordion.jsx";
 import AlertSection from "./sections/alert.jsx";
 import AvatarSection from "./sections/avatar.jsx";
 import BadgeSection from "./sections/badge.jsx";
+import BarListSection from "./sections/bar-list.jsx";
 import ButtonSection from "./sections/button.jsx";
 import CalloutSection from "./sections/callout.jsx";
 import CardSection from "./sections/card.jsx";
@@ -55,6 +56,7 @@ export function App(props: AppProps) {
       <AlertSection open={props.open ?? false} />
       <AvatarSection open={props.open ?? false} />
       <BadgeSection open={props.open ?? false} />
+      <BarListSection open={props.open ?? false} />
       <ButtonSection open={props.open ?? false} />
       <CalloutSection open={props.open ?? false} />
       <CardSection open={props.open ?? false} />

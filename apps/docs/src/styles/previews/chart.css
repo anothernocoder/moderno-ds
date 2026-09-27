@@ -1,5 +1,9 @@
-/* A chart's SVG fills its container. A donut is square, so a full-width one
-   would tower over the stage: give it the size of a dashboard card's ring. */
+/* A chart's SVG fills its container and scales its text with it. The frame
+   charts take the full stage (layout="fill"); the others sit centred on it at
+   a size of their own. */
+
+/* A donut is square, so a full-width one would tower over the stage: give it
+   the size of a dashboard card's ring. */
 .preview-panel--demo [data-scope="chart"][data-chart="donut"] {
   width: min(100%, 15rem);
 }
@@ -8,4 +12,10 @@
    instead; the other charts use `layout="fill"` and take the whole stage. */
 .preview-panel--demo > astro-island > [data-scope="chart"][data-chart="spark"] {
   width: min(100%, 16rem);
+}
+
+/* A bar list keeps the 420px its demos are drawn for, so its names and values
+   keep their size and it only shrinks on a narrow screen. */
+.preview-panel--demo > astro-island > [data-scope="chart"][data-chart="bar-list"] {
+  width: min(100%, 26.25rem);
 }

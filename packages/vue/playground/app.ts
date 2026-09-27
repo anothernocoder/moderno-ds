@@ -14,6 +14,7 @@ import AccordionSection from "./sections/accordion.js";
 import AlertSection from "./sections/alert.js";
 import AvatarSection from "./sections/avatar.js";
 import BadgeSection from "./sections/badge.js";
+import BarListSection from "./sections/bar-list.js";
 import ButtonSection from "./sections/button.js";
 import CalloutSection from "./sections/callout.js";
 import CardSection from "./sections/card.js";
@@ -56,6 +57,7 @@ export const App = defineComponent({
         h(AlertSection, { open: props.open }),
         h(AvatarSection, { open: props.open }),
         h(BadgeSection, { open: props.open }),
+        h(BarListSection, { open: props.open }),
         h(ButtonSection, { open: props.open }),
         h(CalloutSection, { open: props.open }),
         h(CardSection, { open: props.open }),

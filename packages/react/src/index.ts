@@ -15,6 +15,7 @@ export * from "./exports/area-chart.js";
 export * from "./exports/avatar.js";
 export * from "./exports/badge.js";
 export * from "./exports/bar-chart.js";
+export * from "./exports/bar-list.js";
 export * from "./exports/button.js";
 export * from "./exports/callout.js";
 export * from "./exports/card.js";

@@ -11,6 +11,7 @@
  */
 import { buildAreaChart, type AreaChartOptions } from "./area.js";
 import { buildBarChart, type BarChartOptions } from "./bar.js";
+import { buildBarList, type BarListOptions } from "./bar-list.js";
 import { buildDonutChart, type DonutChartOptions } from "./donut.js";
 import { buildLineChart, type LineChartOptions } from "./line.js";
 import { buildScatterChart, type ScatterChartOptions } from "./scatter.js";
@@ -228,6 +229,31 @@ export function sparkChartNodes(options: SparkChartOptions): ChartNode {
     },
     children: [seriesGroup(0, shapes)],
   };
+}
+
+/**
+ * The full bar list: no frame, one series of rows. Each row is its name, its
+ * track, the bar filling it and its value, all centred on the row's midline.
+ */
+export function barListNodes(options: BarListOptions): ChartNode {
+  const model = buildBarList(options);
+  const rows = model.rows.map(
+    (row): ChartNode => ({
+      tag: "g",
+      attrs: part("row"),
+      children: [
+        { tag: "text", attrs: { ...part("label"), x: 0, y: row.center }, text: row.name },
+        { tag: "rect", attrs: { ...part("track"), ...row.track, rx: model.radius } },
+        { tag: "rect", attrs: { ...part("bar"), ...row.bar, rx: model.radius } },
+        {
+          tag: "text",
+          attrs: { ...part("value"), x: model.width, y: row.center },
+          text: row.valueLabel,
+        },
+      ],
+    }),
+  );
+  return svgRoot("bar-list", model, [seriesGroup(0, rows)]);
 }
 
 function escape(value: string): string {

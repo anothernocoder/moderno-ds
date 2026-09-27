@@ -1,0 +1,197 @@
+---
+title: Lista de barras
+description: Un ranking en SVG con una fila por elemento, cada una con un nombre, una barra en su pista y un valor.
+group: Componentes
+order: 75
+component: BarList
+pkg: "@moderno-ui/react"
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import BarListDemo from "../../../examples/bar-list/bar-list.svelte";
+import baseReact from "../../../examples/bar-list/react.tsx?raw";
+import baseVue from "../../../examples/bar-list/vue.vue?raw";
+import baseSolid from "../../../examples/bar-list/solid.tsx?raw";
+import baseSvelte from "../../../examples/bar-list/bar-list.svelte?raw";
+import BarListSortDemo from "../../../examples/bar-list/sort/bar-list-sort.svelte";
+import sortReact from "../../../examples/bar-list/sort/react.tsx?raw";
+import sortVue from "../../../examples/bar-list/sort/vue.vue?raw";
+import sortSolid from "../../../examples/bar-list/sort/solid.tsx?raw";
+import sortSvelte from "../../../examples/bar-list/sort/bar-list-sort.svelte?raw";
+import BarListMaxDemo from "../../../examples/bar-list/max/bar-list-max.svelte";
+import maxReact from "../../../examples/bar-list/max/react.tsx?raw";
+import maxVue from "../../../examples/bar-list/max/vue.vue?raw";
+import maxSolid from "../../../examples/bar-list/max/solid.tsx?raw";
+import maxSvelte from "../../../examples/bar-list/max/bar-list-max.svelte?raw";
+import BarListRowSizeDemo from "../../../examples/bar-list/row-size/bar-list-row-size.svelte";
+import rowSizeReact from "../../../examples/bar-list/row-size/react.tsx?raw";
+import rowSizeVue from "../../../examples/bar-list/row-size/vue.vue?raw";
+import rowSizeSolid from "../../../examples/bar-list/row-size/solid.tsx?raw";
+import rowSizeSvelte from "../../../examples/bar-list/row-size/bar-list-row-size.svelte?raw";
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
+  <BarListDemo client:visible />
+</Preview>
+
+## Instalación
+
+<Install pkg="@moderno-ui/react" />
+
+## Uso
+
+Una lista de barras ordena unos pocos elementos con nombre según un valor. Úsala para las páginas más visitadas, las fuentes de tráfico o las ventas por región. Cada fila muestra el nombre, una barra tan larga como su valor y el valor, de mayor a menor.
+
+<ForFramework fw="react">
+
+```tsx
+import { BarList } from "@moderno-ui/react";
+
+const pages = [
+  { name: "/", value: 1240 },
+  { name: "/pricing", value: 860 },
+  { name: "/docs", value: 540 },
+];
+```
+
+```tsx
+<BarList width={420} data={pages} aria-label="Visits by page" />
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import { BarList } from "@moderno-ui/vue";
+
+const pages = [
+  { name: "/", value: 1240 },
+  { name: "/pricing", value: 860 },
+  { name: "/docs", value: 540 },
+];
+</script>
+```
+
+```vue
+<template>
+  <BarList :width="420" :data="pages" aria-label="Visits by page" />
+</template>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import { BarList } from "@moderno-ui/svelte";
+
+  const pages = [
+    { name: "/", value: 1240 },
+    { name: "/pricing", value: 860 },
+    { name: "/docs", value: 540 },
+  ];
+</script>
+```
+
+```svelte
+<BarList width={420} data={pages} aria-label="Visits by page" />
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { BarList } from "@moderno-ui/solid";
+
+const pages = [
+  { name: "/", value: 1240 },
+  { name: "/pricing", value: 860 },
+  { name: "/docs", value: 540 },
+];
+```
+
+```tsx
+<BarList width={420} data={pages} aria-label="Visits by page" />
+```
+
+</ForFramework>
+
+## Referencia de API
+
+### BarList
+
+<PropsTable component="BarList" />
+
+### Datos
+
+Cada entrada de `data` es una fila.
+
+| Campo   | Tipo     | Descripción                                      |
+| ------- | -------- | ------------------------------------------------ |
+| `name`  | `string` | El texto al inicio de la fila.                   |
+| `value` | `number` | Fija el largo de la barra y se muestra al final. |
+
+### Valores por defecto
+
+| Prop         | Por defecto                         |
+| ------------ | ----------------------------------- |
+| `max`        | El mayor valor de `data`            |
+| `sort`       | `"descending"`, de mayor a menor    |
+| `labelWidth` | `120`                               |
+| `valueWidth` | `64`                                |
+| `rowHeight`  | `32`                                |
+| `barHeight`  | `8`                                 |
+| `format`     | El número, redondeado a 4 decimales |
+
+### Atributos de datos
+
+| Atributo      | En              | Valores                                                   |
+| ------------- | --------------- | --------------------------------------------------------- |
+| `data-chart`  | `svg` raíz      | `bar-list`                                                |
+| `data-part`   | Cada elemento   | `root`, `series`, `row`, `label`, `track`, `bar`, `value` |
+| `data-series` | `g` de la serie | `0`, asignado a `--chart-1`                               |
+
+## Ejemplos
+
+### Orden
+
+Pasa `sort="none"` para mantener el orden de `data`, en filas con un orden propio como los días. `"ascending"` pone primero el menor.
+
+<Preview examples={{ react: sortReact, vue: sortVue, solid: sortSolid, svelte: sortSvelte }}>
+  <BarListSortDemo client:visible />
+</Preview>
+
+### Máximo
+
+Fija `max` para medir cada barra contra un total fijo, como una meta del 100 %. Un valor mayor que `max` llena su pista.
+
+<Preview examples={{ react: maxReact, vue: maxVue, solid: maxSolid, svelte: maxSvelte }}>
+  <BarListMaxDemo client:visible />
+</Preview>
+
+### Tamaño de fila
+
+`rowHeight` fija el espacio de cada fila y `barHeight` el grosor de su barra. Con filas más pequeñas cabe una lista más larga.
+
+<Preview
+  examples={{ react: rowSizeReact, vue: rowSizeVue, solid: rowSizeSolid, svelte: rowSizeSvelte }}
+>
+  <BarListRowSizeDemo client:visible />
+</Preview>
+
+## Notas
+
+- No hay prop de color: las barras se pintan de `--chart-1`, y cada pista es del mismo color, tenue.
+- Los nombres usan `--foreground` y los valores `--muted-foreground`.
+- Los nombres no se recortan. Mantenlos cortos, o dales más espacio con `labelWidth`.
+- La lista es tan alta como sus filas. Como todo gráfico, llena el ancho de su contenedor y escala su texto con él.
+- La geometría viene de `@moderno-ui/charts-core`, matemática pura sin DOM, así se renderiza en el servidor.

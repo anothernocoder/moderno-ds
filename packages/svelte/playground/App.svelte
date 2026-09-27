@@ -14,6 +14,7 @@
   import Alert from "./sections/Alert.svelte";
   import Avatar from "./sections/Avatar.svelte";
   import Badge from "./sections/Badge.svelte";
+  import BarList from "./sections/BarList.svelte";
   import Button from "./sections/Button.svelte";
   import Callout from "./sections/Callout.svelte";
   import Card from "./sections/Card.svelte";
@@ -51,6 +52,7 @@
   <Alert {open} />
   <Avatar {open} />
   <Badge {open} />
+  <BarList {open} />
   <Button {open} />
   <Callout {open} />
   <Card {open} />

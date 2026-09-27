@@ -459,6 +459,34 @@
     color: color-mix(in oklab, var(--destructive) 55%, var(--foreground));
   }
 
+  /* ─────────────────────────── Bar list ─────────────────────────── *
+   * A ranking drawn by @moderno-ui/charts-core's barListNodes: one row per item,
+   * each a name, a track, the bar filling it and a value. It shares the chart
+   * scope, so the root, the series colour and the bar come from chart.css; this
+   * only paints the parts a bar list adds. The track is the series colour, faint,
+   * so the list re-colours from --chart-* alone; the text reads the neutral
+   * foreground slots, like a chart's tick labels. */
+  [data-scope="chart"][data-part="track"] {
+    fill: currentColor;
+    fill-opacity: 0.15;
+  }
+
+  /* Both texts sit on the row's centre line, which the render tree gives as y. */
+  [data-scope="chart"][data-part="label"],
+  [data-scope="chart"][data-part="value"] {
+    font-size: var(--text-ui-sm);
+    dominant-baseline: central;
+  }
+  [data-scope="chart"][data-part="label"] {
+    fill: var(--foreground);
+    text-anchor: start;
+  }
+  [data-scope="chart"][data-part="value"] {
+    fill: var(--muted-foreground);
+    font-variant-numeric: tabular-nums;
+    text-anchor: end;
+  }
+
   /* ─────────────────────────── Button ─────────────────────────── *
    * data-variant × data-size from `buttonRecipe`. No Ark machine — a
    * plain element on [data-scope="button"][data-part="root"].          */
