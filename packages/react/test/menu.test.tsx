@@ -141,6 +141,31 @@ describe("Menu", () => {
     expect(onSelect).not.toHaveBeenCalled();
   });
 
+  it("marks a disabled checkbox item's text and indicator as disabled too", async () => {
+    // The stylesheet dims the item once and resets its parts, since each part
+    // carries data-disabled and the base layer would dim it again.
+    const user = userEvent.setup();
+    render(
+      <Menu.Root>
+        <Menu.Trigger>Actions</Menu.Trigger>
+        <Menu.Positioner>
+          <Menu.Content>
+            <Menu.CheckboxItem value="wrap" checked={false} disabled>
+              <Menu.ItemText>Word wrap</Menu.ItemText>
+              <Menu.ItemIndicator>✓</Menu.ItemIndicator>
+            </Menu.CheckboxItem>
+          </Menu.Content>
+        </Menu.Positioner>
+      </Menu.Root>,
+    );
+    await user.click(trigger());
+    const wrap = await screen.findByRole("menuitemcheckbox", { name: /Word wrap/ });
+    expect(wrap.hasAttribute("data-disabled")).toBe(true);
+    for (const part of ["item-text", "item-indicator"]) {
+      expect(wrap.querySelector(`[data-part="${part}"]`)?.hasAttribute("data-disabled")).toBe(true);
+    }
+  });
+
   it("toggles a checkbox item and checks one radio item", async () => {
     const user = userEvent.setup();
     render(<Demo />);

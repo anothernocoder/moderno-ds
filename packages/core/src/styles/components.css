@@ -1823,6 +1823,15 @@
     justify-content: center;
     width: var(--spacing-4);
   }
+  /*
+   * Ark stamps data-disabled on a disabled item and on its item-text and
+   * item-indicator, and the base layer dims anything carrying it — nesting
+   * would multiply the opacity. Dim the item once and leave what is inside it
+   * opaque.
+   */
+  [data-scope="menu"][data-part="item"][data-disabled] :where([data-part]) {
+    opacity: 1;
+  }
 
   [data-scope="menu"][data-part="item-group"] {
     display: flex;

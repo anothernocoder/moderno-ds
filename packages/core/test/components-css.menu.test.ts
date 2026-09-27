@@ -90,6 +90,16 @@ describe("@moderno-ui/core components.css — Menu's surface", () => {
     });
   });
 
+  /*
+   * Ark stamps data-disabled on a disabled item and on its item-text and
+   * item-indicator; the base layer dims each, so without a reset the label
+   * and check of a disabled checkbox or radio item multiply to 0.25.
+   */
+  it("dims a disabled item once: its parts are reset to full opacity", () => {
+    const reset = `${SCOPE}[data-part="item"][data-disabled] :where([data-part])`;
+    expect(prop(ruleDecls(root, reset), "opacity")).toBe("1");
+  });
+
   it("highlights an item with --accent", () => {
     const decls = ruleDecls(
       root,
