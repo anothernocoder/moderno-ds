@@ -1,0 +1,175 @@
+---
+title: Story Card
+description: Una historia o anuncio vertical 9:16 — la marca, una imagen, un titular corto y un botón de acción.
+group: Bloques
+order: 126
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import StoryCardBlockDemo from "../../../islands/StoryCardBlockDemo.svelte";
+import storyCardReact from "../../../../../../registry/blocks/story-card/react/story-card.tsx?raw";
+import storyCardVue from "../../../../../../registry/blocks/story-card/vue/StoryCard.vue?raw";
+import storyCardSolid from "../../../../../../registry/blocks/story-card/solid/story-card.tsx?raw";
+import storyCardSvelte from "../../../../../../registry/blocks/story-card/svelte/StoryCard.svelte?raw";
+
+export const examples = {
+  react: storyCardReact,
+  vue: storyCardVue,
+  solid: storyCardSolid,
+  svelte: storyCardSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <StoryCardBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="story-card" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { StoryCard } from "@/components/blocks/story-card";
+```
+
+```tsx
+<StoryCard title="Design that feels modern." image={photo} onAction={() => openShop()} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import StoryCard from "@/components/blocks/StoryCard.vue";
+</script>
+```
+
+```vue
+<StoryCard title="Design that feels modern." :image="photo" @action="openShop()" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import StoryCard from "@/components/blocks/StoryCard.svelte";
+</script>
+```
+
+```svelte
+<StoryCard title="Design that feels modern." image={photo} onaction={() => openShop()} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { StoryCard } from "@/components/blocks/story-card";
+```
+
+```tsx
+<StoryCard title="Design that feels modern." image={photo} onAction={() => openShop()} />
+```
+
+</ForFramework>
+
+## Referencia de la API
+
+### Props
+
+| Prop            | Tipo         | Por defecto                   | Descripción                                                                          |
+| --------------- | ------------ | ----------------------------- | ------------------------------------------------------------------------------------ |
+| `brand`         | `string`     | `"Moderno Studio"`            | El nombre de la marca arriba. `""` oculta la fila de la marca.                       |
+| `brandInitials` | `string`     | `"MS"`                        | Las iniciales en el Avatar cuadrado de la marca.                                     |
+| `brandLogoUrl`  | `string`     | —                             | El logo de la marca, en el Avatar en lugar de las iniciales.                         |
+| `badge`         | `string`     | `"Sponsored"`                 | Una etiqueta corta al final de la fila de la marca. `""` la oculta.                  |
+| `kicker`        | `string`     | `"New collection"`            | Una línea corta sobre el título. `""` la oculta.                                     |
+| `title`         | `string`     | `"Design that feels modern."` | El titular, en la tipografía de display del tema.                                    |
+| `detail`        | `string`     | una frase de muestra          | Una frase bajo el título. `""` la oculta.                                            |
+| `image`         | `StoryImage` | —                             | La foto: `{ src, alt }`. Sin ella, el texto queda sobre una tarjeta lisa.            |
+| `actionLabel`   | `string`     | `"Shop now"`                  | El texto del botón de acción. `""` oculta el botón.                                  |
+| `error`         | `string`     | —                             | No se pudo cargar la historia; un Alert de error con reintento sustituye la tarjeta. |
+| `loading`       | `boolean`    | `false`                       | Una tarjeta de marcador en una región ocupada sustituye la tarjeta.                  |
+| `disabled`      | `boolean`    | `false`                       | La historia se queda; cada botón queda deshabilitado.                                |
+| `onAction`      | `() => void` | —                             | Se pulsó el botón de acción. Svelte: `onaction`. Vue: `@action`.                     |
+| `onRetry`       | `() => void` | —                             | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.                          |
+
+### Estados
+
+| Estado        | Prop                     | Qué se muestra                                                      |
+| ------------- | ------------------------ | ------------------------------------------------------------------- |
+| Por defecto   | —                        | La marca, la imagen, el kicker, el título, el detalle y la acción.  |
+| Vacío         | `title=""` y sin `image` | "This story has nothing to show yet." en una caja discontinua 9:16. |
+| Cargando      | `loading`                | Una tarjeta de marcador.                                            |
+| Error         | `error`                  | Un Alert de error con "Try again" en lugar de la tarjeta.           |
+| Deshabilitado | `disabled`               | La misma historia con los botones apagados.                         |
+
+### Tamaño
+
+| Paso del contenedor      | Qué cambia                                                           |
+| ------------------------ | -------------------------------------------------------------------- |
+| bajo `@sm`               | La tarjeta llena su contenedor; título, detalle y relleno compactos. |
+| `@sm` (`--container-sm`) | El título y el detalle suben un tamaño; más relleno.                 |
+| `@md` (`--container-md`) | La tarjeta deja de crecer; más aire dentro.                          |
+| `@lg` (`--container-lg`) | Aire arriba y abajo de la tarjeta.                                   |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+El mismo bloque a 18rem, 30rem, 40rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <StoryCardBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Sin imagen
+
+Sin `image`, el texto queda abajo en una tarjeta lisa.
+
+<Preview examples={examples} layout="fill">
+  <StoryCardBlockDemo client:visible locale="es" state="no-image" />
+</Preview>
+
+### Vacío
+
+Pasa `title=""` sin `image`.
+
+<Preview examples={examples} layout="fill">
+  <StoryCardBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <StoryCardBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+Pulsa "Try again" para borrar el mensaje y volver a mostrar la historia.
+
+<Preview examples={examples} layout="fill">
+  <StoryCardBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+<Preview examples={examples} layout="fill">
+  <StoryCardBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
+
+## Notas
+
+- Elige una foto que se siga entendiendo recortada: el motivo en el centro, con aire alrededor.
+- En una fila de historias, da a cada tarjeta las mismas partes (todas con imagen, o ninguna), para que la fila se vea pareja.

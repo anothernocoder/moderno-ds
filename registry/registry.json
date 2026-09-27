@@ -3666,6 +3666,78 @@
       ]
     },
     {
+      "name": "story-card-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Story card (React)",
+      "description": "A vertical 9:16 story or ad, composing the @moderno-ui/react Alert, Avatar, Badge, Button, Card and Skeleton primitives: the brand's Avatar and name with a Sponsored Badge, an optional image, a kicker, a serif title, a short detail and one full-width action Button, with its own loading, empty and error renders; responds to its container (@container) — the title and detail step up at @sm, the card reaches its full size with more room inside at @md, and it gets room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/story-card/react/story-card.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/story-card.tsx"
+        }
+      ]
+    },
+    {
+      "name": "story-card-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Story card (Vue)",
+      "description": "A vertical 9:16 story or ad, composing the @moderno-ui/vue Alert, Avatar, Badge, Button, Card and Skeleton primitives: the brand's Avatar and name with a Sponsored Badge, an optional image, a kicker, a serif title, a short detail and one full-width action Button, with its own loading, empty and error renders; responds to its container (@container) — the title and detail step up at @sm, the card reaches its full size with more room inside at @md, and it gets room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/story-card/vue/StoryCard.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/StoryCard.vue"
+        }
+      ]
+    },
+    {
+      "name": "story-card-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Story card (Svelte)",
+      "description": "A vertical 9:16 story or ad, composing the @moderno-ui/svelte Alert, Avatar, Badge, Button, Card and Skeleton primitives: the brand's Avatar and name with a Sponsored Badge, an optional image, a kicker, a serif title, a short detail and one full-width action Button, with its own loading, empty and error renders; responds to its container (@container) — the title and detail step up at @sm, the card reaches its full size with more room inside at @md, and it gets room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/story-card/svelte/StoryCard.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/StoryCard.svelte"
+        }
+      ]
+    },
+    {
+      "name": "story-card-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Story card (Solid)",
+      "description": "A vertical 9:16 story or ad, composing the @moderno-ui/solid Alert, Avatar, Badge, Button, Card and Skeleton primitives: the brand's Avatar and name with a Sponsored Badge, an optional image, a kicker, a serif title, a short detail and one full-width action Button, with its own loading, empty and error renders; responds to its container (@container) — the title and detail step up at @sm, the card reaches its full size with more room inside at @md, and it gets room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/story-card/solid/story-card.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/story-card.tsx"
+        }
+      ]
+    },
+    {
       "name": "team-react",
       "type": "registry:block",
       "version": "0.1.0",

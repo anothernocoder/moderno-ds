@@ -1,0 +1,203 @@
+---
+title: Story Card
+description: A vertical 9:16 story or ad — the brand, an image, a short headline and one action button.
+group: Blocks
+order: 126
+agent:
+  intent: A vertical 9:16 story or ad — the brand's logo and name with a "Sponsored" badge, an optional image, a kicker, a serif headline, one short line of detail and one full-width action button.
+  whenToUse: "A social story or ad shown on a page, a campaign preview, or a row of stories under a section heading."
+  whenNotToUse:
+    - case: A product with a price and an Add to cart button
+      use: ProductCard — it carries the price, the old price and the cart action
+    - case: A short offer in a bar across the top of the page
+      use: Promo — a one-line bar with a code to copy
+    - case: A wide banner that asks visitors to act
+      use: CTA — a full-width section, not a 9:16 frame
+  gotchas:
+    - "The card always keeps its 9:16 shape. It fills its container up to `--container-md` wide, so size it with the box you put it in."
+    - "Keep `title` to a few words and `detail` to one sentence: the card does not grow taller, and long text is cut off at its edge."
+    - "`image` is `{ src, alt }`. It fills the space between the brand and the text, cropped to fit. Without it, the text sits at the bottom of a plain card."
+    - '`brandInitials` shows in a square Avatar before `brand`; `brandLogoUrl` shows the logo there instead. `brand=""` hides the whole brand row.'
+    - '`badge` sits at the end of the brand row, as Badge''s outline variant. `""` hides it.'
+    - "The title is an `h3`, so a row of stories under your own `h2` reads well in the page outline."
+    - 'The action button is named "<actionLabel>: <title>", so a row of stories has distinct buttons. `actionLabel=""` hides it.'
+    - 'With no `title` and no `image`, "This story has nothing to show yet." shows in a dashed 9:16 box.'
+    - "`disabled` keeps the story and disables the action and the retry button."
+    - "Presentational: `onAction` reports that the action was pressed, and `onRetry` that Try again was. Where the action leads stays yours."
+    - "`loading` shows one placeholder card in a busy `status` region."
+    - '`error` shows an error Alert with your message and a "Try again" button in place of the card. An empty string counts as no error.'
+    - "The layout follows the block's own width, not the viewport: the title and detail step up from `--container-sm`; from `--container-md` the card stops growing and gets more room inside; from `--container-lg` it gets room above and below."
+  theming:
+    - "The block paints only the muted box behind the image (--muted) and its dashed empty box (--border). The card is Card's outline variant, the logo is Avatar (square), the badge is Badge's outline variant, the action is Button's primary variant, the error is Alert's error variant, the retry is Button's outline variant and the loading card is Skeleton."
+    - "The brand and title read --foreground, in --font-sans and --font-serif; the kicker and detail read --muted-foreground."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg. The card is capped at --container-md."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import StoryCardBlockDemo from "../../../islands/StoryCardBlockDemo.svelte";
+import storyCardReact from "../../../../../../registry/blocks/story-card/react/story-card.tsx?raw";
+import storyCardVue from "../../../../../../registry/blocks/story-card/vue/StoryCard.vue?raw";
+import storyCardSolid from "../../../../../../registry/blocks/story-card/solid/story-card.tsx?raw";
+import storyCardSvelte from "../../../../../../registry/blocks/story-card/svelte/StoryCard.svelte?raw";
+
+export const examples = {
+  react: storyCardReact,
+  vue: storyCardVue,
+  solid: storyCardSolid,
+  svelte: storyCardSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <StoryCardBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="story-card" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { StoryCard } from "@/components/blocks/story-card";
+```
+
+```tsx
+<StoryCard title="Design that feels modern." image={photo} onAction={() => openShop()} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import StoryCard from "@/components/blocks/StoryCard.vue";
+</script>
+```
+
+```vue
+<StoryCard title="Design that feels modern." :image="photo" @action="openShop()" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import StoryCard from "@/components/blocks/StoryCard.svelte";
+</script>
+```
+
+```svelte
+<StoryCard title="Design that feels modern." image={photo} onaction={() => openShop()} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { StoryCard } from "@/components/blocks/story-card";
+```
+
+```tsx
+<StoryCard title="Design that feels modern." image={photo} onAction={() => openShop()} />
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+| Prop            | Type         | Default                       | Description                                                              |
+| --------------- | ------------ | ----------------------------- | ------------------------------------------------------------------------ |
+| `brand`         | `string`     | `"Moderno Studio"`            | The brand's name at the top. `""` hides the brand row.                   |
+| `brandInitials` | `string`     | `"MS"`                        | The initials in the brand's square Avatar.                               |
+| `brandLogoUrl`  | `string`     | —                             | The brand's logo, shown in the Avatar instead of the initials.           |
+| `badge`         | `string`     | `"Sponsored"`                 | A short label at the end of the brand row. `""` hides it.                |
+| `kicker`        | `string`     | `"New collection"`            | A short line above the title. `""` hides it.                             |
+| `title`         | `string`     | `"Design that feels modern."` | The headline, in the theme's display face.                               |
+| `detail`        | `string`     | a sample sentence             | One sentence under the title. `""` hides it.                             |
+| `image`         | `StoryImage` | —                             | The photo: `{ src, alt }`. Without it, the text sits on a plain card.    |
+| `actionLabel`   | `string`     | `"Shop now"`                  | The action button's label. `""` hides the button.                        |
+| `error`         | `string`     | —                             | Loading the story failed; an error Alert with a retry replaces the card. |
+| `loading`       | `boolean`    | `false`                       | A placeholder card in a busy region replaces the card.                   |
+| `disabled`      | `boolean`    | `false`                       | The story stays; every button is disabled.                               |
+| `onAction`      | `() => void` | —                             | The action button was pressed. Svelte: `onaction`. Vue: `@action`.       |
+| `onRetry`       | `() => void` | —                             | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.             |
+
+### States
+
+| State    | Prop                      | What renders                                                    |
+| -------- | ------------------------- | --------------------------------------------------------------- |
+| Default  | —                         | The brand, the image, the kicker, title, detail and the action. |
+| Empty    | `title=""` and no `image` | "This story has nothing to show yet." in a dashed 9:16 box.     |
+| Loading  | `loading`                 | One placeholder card.                                           |
+| Error    | `error`                   | An error Alert with "Try again" in place of the card.           |
+| Disabled | `disabled`                | The same story with its buttons off.                            |
+
+### Sizing
+
+| Container step           | What changes                                                     |
+| ------------------------ | ---------------------------------------------------------------- |
+| below `@sm`              | The card fills its container; compact title, detail and padding. |
+| `@sm` (`--container-sm`) | The title and the detail step up a size; more padding.           |
+| `@md` (`--container-md`) | The card stops growing; more room inside it.                     |
+| `@lg` (`--container-lg`) | Room above and below the card.                                   |
+
+## Examples
+
+### Container widths
+
+The same block at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <StoryCardBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Without an image
+
+Leave out `image`, and the text sits at the bottom of a plain card.
+
+<Preview examples={examples} layout="fill">
+  <StoryCardBlockDemo client:visible locale="en" state="no-image" />
+</Preview>
+
+### Empty
+
+Pass `title=""` with no `image`.
+
+<Preview examples={examples} layout="fill">
+  <StoryCardBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <StoryCardBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+Press "Try again" to clear the message and bring the story back.
+
+<Preview examples={examples} layout="fill">
+  <StoryCardBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <StoryCardBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Pick a photo that still reads when it is cropped: the subject in the middle, with room around it.
+- In a row of stories, give every card the same parts (all with an image, or none), so the row looks even.

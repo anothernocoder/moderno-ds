@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" width="600" height="800">
+  <defs>
+    <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e9e2d6"/>
+      <stop offset="0.72" stop-color="#e0d7c8"/>
+      <stop offset="0.72" stop-color="#d4c9b7"/>
+      <stop offset="1" stop-color="#c9bca8"/>
+    </linearGradient>
+    <linearGradient id="arch" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#c98f6b"/>
+      <stop offset="1" stop-color="#b8795a"/>
+    </linearGradient>
+    <linearGradient id="glaze" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#2f3d38"/>
+      <stop offset="0.4" stop-color="#46594f"/>
+      <stop offset="1" stop-color="#26322e"/>
+    </linearGradient>
+    <linearGradient id="cream" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#d9cfbe"/>
+      <stop offset="0.4" stop-color="#f1ebe0"/>
+      <stop offset="1" stop-color="#cfc3b0"/>
+    </linearGradient>
+    <linearGradient id="clay" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#9c7f63"/>
+      <stop offset="0.4" stop-color="#b99a7b"/>
+      <stop offset="1" stop-color="#8d7258"/>
+    </linearGradient>
+    <radialGradient id="shadow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#6f604c" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#6f604c" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="600" height="800" fill="url(#wall)"/>
+  <path d="M130 576V300a170 170 0 0 1 340 0v276z" fill="url(#arch)"/>
+  <circle cx="300" cy="250" r="54" fill="#efd9b8" opacity="0.85"/>
+  <ellipse cx="300" cy="618" rx="220" ry="26" fill="url(#shadow)"/>
+  <path d="M168 520h264c0 52-54 92-132 92s-132-40-132-92z" fill="url(#clay)"/>
+  <ellipse cx="300" cy="520" rx="132" ry="16" fill="#7c634c"/>
+  <path d="M188 452h224c0 46-46 80-112 80s-112-34-112-80z" fill="url(#cream)"/>
+  <ellipse cx="300" cy="452" rx="112" ry="14" fill="#bfb29e"/>
+  <path d="M210 390h180c0 40-38 68-90 68s-90-28-90-68z" fill="url(#glaze)"/>
+  <ellipse cx="300" cy="390" rx="90" ry="12" fill="#1f2926"/>
+  <ellipse cx="300" cy="387" rx="90" ry="10" fill="none" stroke="#5b6f67" stroke-width="4"/>
+  <path d="M232 410c14 22 36 32 58 34" fill="none" stroke="#ffffff" stroke-width="8" stroke-linecap="round" opacity="0.14"/>
+</svg>
