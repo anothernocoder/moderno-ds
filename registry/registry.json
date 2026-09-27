@@ -4994,6 +4994,86 @@
       ]
     },
     {
+      "name": "referral-share-react",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Referral share (React)",
+      "description": "Full-viewport referral screen composing the share-invite block: invite friends by email, copy the referral link or send it to a channel, see who has joined, and how the reward works, with the block's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm; the title grows, the steps sit side by side and the footer lines up at @md.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [
+        "share-invite-react"
+      ],
+      "files": [
+        {
+          "path": "screens/referral-share/react/referral-share.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/referral-share.tsx"
+        }
+      ]
+    },
+    {
+      "name": "referral-share-vue",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Referral share (Vue)",
+      "description": "Full-viewport referral screen composing the share-invite block: invite friends by email, copy the referral link or send it to a channel, see who has joined, and how the reward works, with the block's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm; the title grows, the steps sit side by side and the footer lines up at @md.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [
+        "share-invite-vue"
+      ],
+      "files": [
+        {
+          "path": "screens/referral-share/vue/ReferralShare.vue",
+          "type": "registry:screen",
+          "target": "src/components/screens/ReferralShare.vue"
+        }
+      ]
+    },
+    {
+      "name": "referral-share-svelte",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Referral share (Svelte)",
+      "description": "Full-viewport referral screen composing the share-invite block: invite friends by email, copy the referral link or send it to a channel, see who has joined, and how the reward works, with the block's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm; the title grows, the steps sit side by side and the footer lines up at @md.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [
+        "share-invite-svelte"
+      ],
+      "files": [
+        {
+          "path": "screens/referral-share/svelte/ReferralShare.svelte",
+          "type": "registry:screen",
+          "target": "src/components/screens/ReferralShare.svelte"
+        }
+      ]
+    },
+    {
+      "name": "referral-share-solid",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Referral share (Solid)",
+      "description": "Full-viewport referral screen composing the share-invite block: invite friends by email, copy the referral link or send it to a channel, see who has joined, and how the reward works, with the block's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm; the title grows, the steps sit side by side and the footer lines up at @md.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [
+        "share-invite-solid"
+      ],
+      "files": [
+        {
+          "path": "screens/referral-share/solid/referral-share.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/referral-share.tsx"
+        }
+      ]
+    },
+    {
       "name": "reset-password-react",
       "type": "registry:screen",
       "version": "0.1.0",

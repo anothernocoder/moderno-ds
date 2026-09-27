@@ -1,0 +1,37 @@
+{
+  "title": "Referral share",
+  "description": "Full-viewport referral screen composing the share-invite block: invite friends by email, copy the referral link or send it to a channel, see who has joined, and how the reward works, with the block's loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm; the title grows, the steps sit side by side and the footer lines up at @md.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": ["share-invite-{framework}"],
+  "files": {
+    "react": [
+      {
+        "path": "screens/referral-share/react/referral-share.tsx",
+        "type": "registry:screen",
+        "target": "src/components/screens/referral-share.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "screens/referral-share/vue/ReferralShare.vue",
+        "type": "registry:screen",
+        "target": "src/components/screens/ReferralShare.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "screens/referral-share/svelte/ReferralShare.svelte",
+        "type": "registry:screen",
+        "target": "src/components/screens/ReferralShare.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "screens/referral-share/solid/referral-share.tsx",
+        "type": "registry:screen",
+        "target": "src/components/screens/referral-share.tsx"
+      }
+    ]
+  }
+}

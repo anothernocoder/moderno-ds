@@ -1,0 +1,201 @@
+---
+title: Referral share
+description: A full-viewport screen where a member shares their referral link with friends.
+group: Screens
+order: 120
+agent:
+  intent: The full-viewport referral share screen — invite friends by email, copy the referral link or send it to a channel, and see how the reward works. Presentational.
+  whenToUse: "The step of a referral program where a member sends their link: /referrals, /invite, /refer-a-friend."
+  whenNotToUse:
+    - case: Sharing a document or project inside a page you already own (a dialog, a settings tab)
+      use: the ShareInvite block — a block never owns the viewport
+    - case: Showing what a member has earned from referrals
+      use: the KpiCard block
+  gotchas:
+    - "Presentational: no request, no router. `onInvite(email)` and `onShare(channel, link)` report what the reader did; send the invite yourself. Return a promise to keep the button busy until it settles."
+    - '`friends` takes `status` (`"Joined"`, `"Invited"`), shown as a badge. With no friends the block shows its empty state.'
+    - "Full-viewport is a height (`min-h-dvh`). Every width decision is read off the screen's own container, so it is still correct mounted in a pane that is not the window."
+    - "The screen imports the ShareInvite block from `@/components/blocks/…`, where `moderno add` puts it. If your project uses a different path alias, that one import line is the only thing to change."
+    - "The root is a `<div>`, not a `<main>` — most app shells already provide the `main` landmark. If your route has none, change that one element."
+  theming:
+    - "The screen's own chrome is `text-foreground` / `text-muted-foreground` on `bg-background`; the sharing card is the ShareInvite block."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the two steps are --container-sm and --container-md."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ReferralShareScreenDemo from "../../../islands/ReferralShareScreenDemo.svelte";
+import referralShareReact from "../../../../../../registry/screens/referral-share/react/referral-share.tsx?raw";
+import referralShareVue from "../../../../../../registry/screens/referral-share/vue/ReferralShare.vue?raw";
+import referralShareSolid from "../../../../../../registry/screens/referral-share/solid/referral-share.tsx?raw";
+import referralShareSvelte from "../../../../../../registry/screens/referral-share/svelte/ReferralShare.svelte?raw";
+
+<FrameworkSelect locale="en" />
+
+<Preview
+  examples={{
+    react: referralShareReact,
+    vue: referralShareVue,
+    solid: referralShareSolid,
+    svelte: referralShareSvelte,
+  }}
+  layout="fill"
+>
+  <ReferralShareScreenDemo client:visible locale="en" />
+</Preview>
+
+Use it for the step of a referral program where a member shares their link. It shows the link, the friends invited so far and how the reward works; your page sends the invites.
+
+## Installation
+
+<Install item="referral-share" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { ReferralShare } from "@/components/screens/referral-share";
+```
+
+```tsx
+<ReferralShare link={referralUrl} friends={friends} onInvite={sendInvite} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```ts
+import ReferralShare from "@/components/screens/ReferralShare.vue";
+```
+
+```vue
+<ReferralShare :link="referralUrl" :friends="friends" @invite="sendInvite" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```ts
+import ReferralShare from "@/components/screens/ReferralShare.svelte";
+```
+
+```svelte
+<ReferralShare link={referralUrl} {friends} oninvite={sendInvite} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { ReferralShare } from "@/components/screens/referral-share";
+```
+
+```tsx
+<ReferralShare link={referralUrl()} friends={friends()} onInvite={sendInvite} />
+```
+
+</ForFramework>
+
+`sendInvite(email)` can return a promise. The button shows "Sending" until it settles, then a toast says whether the invite went out.
+
+## API Reference
+
+### Props
+
+Callbacks are `on…` props in React and Solid, lowercase (`oninvite`) in Svelte. In Vue, `invite` and `share` are listeners on function props (`@invite`, `@share`) and `copy`, `retry` and `navigate` are emits.
+
+| Prop          | Type                         | Default                            | Description                                                      |
+| ------------- | ---------------------------- | ---------------------------------- | ---------------------------------------------------------------- |
+| `link`        | `string`                     | `"https://example.com/r/ana-ruiz"` | The reader's referral link.                                      |
+| `reward`      | `string`                     | `"a free month"`                   | What each side gets when a friend joins.                         |
+| `friends`     | `ReferralFriend[]`           | `[]`                               | Friends invited so far: `id`, `name`, `email`, `status`.         |
+| `channels`    | `{ value, label }[]`         | Email, Slack, LinkedIn, X          | Where the link can be sent.                                      |
+| `error`       | `string`                     | —                                  | The referral details could not load: shows the alert and retry.  |
+| `loading`     | `boolean`                    | `false`                            | The referral details are loading: placeholders.                  |
+| `disabled`    | `boolean`                    | `false`                            | Every control is shown but inert.                                |
+| `onInvite`    | `(email) => void \| Promise` | —                                  | An email was invited.                                            |
+| `onShare`     | `(channel, link) => …`       | —                                  | The link was sent to a channel.                                  |
+| `onCopy`      | `(link) => void`             | —                                  | The link was copied.                                             |
+| `onRetry`     | `() => void`                 | —                                  | "Try again" was pressed.                                         |
+| `onNavigate`  | `(to, event) => void`        | —                                  | A screen link was clicked: `home`, `skip`, `privacy` or `terms`. |
+| `homeHref`    | `string`                     | `"#"`                              | Target of the wordmark.                                          |
+| `skipHref`    | `string`                     | `"#"`                              | Target of "Skip for now".                                        |
+| `privacyHref` | `string`                     | `"#"`                              | Target of the privacy link.                                      |
+| `termsHref`   | `string`                     | `"#"`                              | Target of the terms link.                                        |
+
+### States
+
+| State    | Props      | Renders                                         |
+| -------- | ---------- | ----------------------------------------------- |
+| Default  | `friends`  | The link, the channels and the invited friends. |
+| Empty    | —          | "Only you have access" in place of the friends. |
+| Loading  | `loading`  | Placeholders in the card, `aria-busy` on it.    |
+| Error    | `error`    | An alert with "Try again" in place of the card. |
+| Disabled | `disabled` | The screen is shown but can't be used.          |
+
+### Sizing
+
+| Container step           | Change                                                                  |
+| ------------------------ | ----------------------------------------------------------------------- |
+| `@sm` (`--container-sm`) | The masthead moves onto one row.                                        |
+| `@md` (`--container-md`) | The title grows, the three steps sit side by side, the footer lines up. |
+
+### Composition
+
+| Part                             | Role                                                  |
+| -------------------------------- | ----------------------------------------------------- |
+| [ShareInvite](/en/share-invite/) | The invite form, the link, the channels, the friends. |
+
+## Examples
+
+### Loading
+
+<Preview
+  examples={{
+    react: referralShareReact,
+    vue: referralShareVue,
+    solid: referralShareSolid,
+    svelte: referralShareSvelte,
+  }}
+  layout="fill"
+>
+  <ReferralShareScreenDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+<Preview
+  examples={{
+    react: referralShareReact,
+    vue: referralShareVue,
+    solid: referralShareSolid,
+    svelte: referralShareSvelte,
+  }}
+  layout="fill"
+>
+  <ReferralShareScreenDemo client:visible locale="en" state="error" />
+</Preview>
+
+### No friends yet
+
+<Preview
+  examples={{
+    react: referralShareReact,
+    vue: referralShareVue,
+    solid: referralShareSolid,
+    svelte: referralShareSvelte,
+  }}
+  layout="fill"
+>
+  <ReferralShareScreenDemo client:visible locale="en" state="empty" />
+</Preview>
+
+## Notes
+
+- Presentational: no request, no router. The page that mounts it sends the invites.
+- The block checks the email before `onInvite` runs: a bad address or a friend already on the list shows a field error.
+- `onNavigate` passes the click event: skip `metaKey`/`ctrlKey` clicks, then `preventDefault()` to route.
+- The screen imports the ShareInvite block from `@/components/blocks/…`; edit that line if your alias differs.
