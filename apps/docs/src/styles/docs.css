@@ -564,7 +564,10 @@ kbd {
   font-weight: var(--font-weight-medium);
 }
 
-main {
+/* The docs column, not a `<main>` a block renders in a preview (the app
+   shell's content region): unlayered, this rule would beat the block's own
+   padding utilities. */
+main:not(.preview-panel--demo *) {
   min-width: 0;
   width: 100%;
   max-width: var(--docs-measure);

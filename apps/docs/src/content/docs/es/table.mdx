@@ -1,0 +1,210 @@
+---
+title: Table
+description: Una tabla de datos de facturas — ordena por una columna, selecciona filas, actúa sobre una fila o sobre todas las seleccionadas y pasa de página.
+group: Bloques
+order: 124
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import TableBlockDemo from "../../../islands/TableBlockDemo.svelte";
+import tableReact from "../../../../../../registry/blocks/table/react/table.tsx?raw";
+import tableVue from "../../../../../../registry/blocks/table/vue/Table.vue?raw";
+import tableSolid from "../../../../../../registry/blocks/table/solid/table.tsx?raw";
+import tableSvelte from "../../../../../../registry/blocks/table/svelte/Table.svelte?raw";
+
+export const examples = {
+  react: tableReact,
+  vue: tableVue,
+  solid: tableSolid,
+  svelte: tableSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <TableBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="table" />
+
+## Uso
+
+Usa Table cuando haya que comparar muchos registros, ordenarlos y actuar sobre varios a la vez. Pulsa un encabezado para ordenar, marca filas para seleccionarlas y abre el menú de una fila para sus acciones.
+
+<ForFramework fw="react">
+
+```tsx
+import { Table } from "@/components/blocks/table";
+```
+
+```tsx
+<Table invoices={invoices} onBatchAction={(action, ids) => run(action, ids)} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import Table from "@/components/blocks/Table.vue";
+</script>
+```
+
+```vue
+<Table :invoices="invoices" @batch-action="run" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import Table from "@/components/blocks/Table.svelte";
+</script>
+```
+
+```svelte
+<Table {invoices} onbatchaction={(action, ids) => run(action, ids)} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { Table } from "@/components/blocks/table";
+```
+
+```tsx
+<Table invoices={invoices()} onBatchAction={(action, ids) => run(action, ids)} />
+```
+
+</ForFramework>
+
+Cada factura es como `{ id: "inv-1042", number: "INV-1042", customer: "Acme Studio", email: "billing@acme.example", issued: "12 Jan 2026", amount: 2400, status: "Paid", statusVariant: "success" }`. Pásalas todas: el bloque las ordena y las pagina por sí mismo.
+
+## Referencia de la API
+
+### Props
+
+| Prop                | Tipo                                      | Por defecto                                               | Descripción                                                                                                           |
+| ------------------- | ----------------------------------------- | --------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `heading`           | `string`                                  | `"Invoices"`                                              | El título de la sección, en la fuente con serifa. También da nombre a la tabla y a su marco.                          |
+| `description`       | `string`                                  | `"Every invoice you have sent, with what is still owed."` | La línea bajo el título. Una cadena vacía la oculta.                                                                  |
+| `invoices`          | `TableInvoice[]`                          | doce de muestra                                           | Todas las facturas, en el orden en que las pasas. `[]` muestra el mensaje de vacío.                                   |
+| `pageSize`          | `number`                                  | `5`                                                       | Filas por página. La fila de páginas solo aparece cuando hay más de una página.                                       |
+| `rowActions`        | `TableAction[]`                           | View, Download PDF, Delete                                | Los elementos del menú de acciones de cada fila.                                                                      |
+| `batchActions`      | `TableAction[]`                           | Mark as paid, Download PDFs, Delete                       | Los elementos del menú "Bulk actions".                                                                                |
+| `formatAmount`      | `(amount: number) => string`              | euros, `en-GB`                                            | Convierte cada `amount` en el texto de la columna Amount.                                                             |
+| `error`             | `string`                                  | —                                                         | No se pudieron cargar las facturas; un Alert de error con reintento sustituye la tabla.                               |
+| `loading`           | `boolean`                                 | `false`                                                   | Filas de marcador en una región ocupada sustituyen la tabla.                                                          |
+| `disabled`          | `boolean`                                 | `false`                                                   | Las filas se quedan; las casillas, los botones de orden, los menús y la fila de páginas quedan apagados.              |
+| `onSelectionChange` | `(ids: string[]) => void`                 | —                                                         | La selección cambió, con cada `id` seleccionado. Svelte: `onselectionchange`. Vue: `@selection-change`.               |
+| `onRowAction`       | `(action: string, id: string) => void`    | —                                                         | Un elemento del menú de una fila, con su `value` y el `id` de la fila. Svelte: `onrowaction`. Vue: `@row-action`.     |
+| `onBatchAction`     | `(action: string, ids: string[]) => void` | —                                                         | Un elemento de "Bulk actions", con su `value` y los ids seleccionados. Svelte: `onbatchaction`. Vue: `@batch-action`. |
+| `onRetry`           | `() => void`                              | —                                                         | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.                                                           |
+
+### TableInvoice
+
+| Campo           | Tipo           | Descripción                                                                 |
+| --------------- | -------------- | --------------------------------------------------------------------------- |
+| `id`            | `string`       | Una clave estable, que reciben los callbacks.                               |
+| `number`        | `string`       | El número de factura que se ve, como `"INV-1042"`. Se puede ordenar.        |
+| `customer`      | `string`       | A quién va la factura. Se puede ordenar.                                    |
+| `email`         | `string`       | El correo del cliente, bajo el nombre desde `@lg`.                          |
+| `issued`        | `string`       | Cuándo se envió, como `"12 Jan 2026"`. Se ve desde `@lg`.                   |
+| `amount`        | `number`       | Su importe, como `2400`. Se puede ordenar; lo muestra `formatAmount`.       |
+| `status`        | `string`       | El texto de la insignia, como `"Paid"`.                                     |
+| `statusVariant` | `BadgeVariant` | Opcional. El color de la insignia, como `"success"`. Por defecto `neutral`. |
+
+### TableAction
+
+| Campo   | Tipo     | Descripción                                      |
+| ------- | -------- | ------------------------------------------------ |
+| `value` | `string` | Lo que recibe el callback, como `"delete"`.      |
+| `label` | `string` | El texto del elemento del menú, como `"Delete"`. |
+
+### Estados
+
+| Estado        | Prop            | Qué se muestra                                                                      |
+| ------------- | --------------- | ----------------------------------------------------------------------------------- |
+| Por defecto   | —               | El título, la barra de herramientas, la primera página de filas y la de páginas.    |
+| Seleccionado  | marca una fila  | "2 of 12 selected", "Clear selection" y "Bulk actions"; filas rellenas.             |
+| Vacío         | `invoices={[]}` | El título y "You have not sent any invoices yet."                                   |
+| Cargando      | `loading`       | El título y filas de marcador.                                                      |
+| Error         | `error`         | El título y un Alert de error con "Try again".                                      |
+| Deshabilitado | `disabled`      | Las mismas filas, con cada casilla, botón de orden, menú y botón de página apagado. |
+
+### Tamaño
+
+| Paso del contenedor      | Qué cambia                                                                                         |
+| ------------------------ | -------------------------------------------------------------------------------------------------- |
+| bajo `@sm`               | La tabla se desplaza de lado dentro de su marco. La fila de páginas va centrada.                   |
+| `@sm` (`--container-sm`) | La fila de páginas pasa al final.                                                                  |
+| `@md` (`--container-md`) | El título sube un tamaño.                                                                          |
+| `@lg` (`--container-lg`) | Aparece la columna Issued, y el correo de cada cliente bajo el nombre. Más espacio arriba y abajo. |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+El mismo bloque a 18rem, 30rem, 40rem y 50rem. Las tablas estrechas se desplazan dentro de su marco, y el marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <TableBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Una sola página
+
+Con menos facturas que `pageSize`, no hay fila de páginas.
+
+<Preview examples={examples} layout="fill">
+  <TableBlockDemo client:visible locale="es" state="one-page" />
+</Preview>
+
+### Otra moneda
+
+Pasa `formatAmount` para mostrar los importes en tu moneda.
+
+<Preview examples={examples} layout="fill">
+  <TableBlockDemo client:visible locale="es" state="dollars" />
+</Preview>
+
+### Vacío
+
+Pasa un array `invoices` vacío.
+
+<Preview examples={examples} layout="fill">
+  <TableBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <TableBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+Pulsa "Try again" para borrar el mensaje y volver a mostrar la tabla.
+
+<Preview examples={examples} layout="fill">
+  <TableBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+Úsalo mientras corre una acción en lote, para que nadie empiece otra.
+
+<Preview examples={examples} layout="fill">
+  <TableBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
+
+## Notas
+
+- Usa palabras de estado cortas, para que la columna Status siga estrecha.
+- El bloque ordena y pagina en el navegador. Para tablas muy grandes, edita tu copia para ordenar y paginar en el servidor.

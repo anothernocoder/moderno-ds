@@ -1,0 +1,203 @@
+---
+title: KPI Card
+description: One headline number in a card, with its change and a sparkline of its trend.
+group: Blocks
+order: 105
+agent:
+  intent: One key number on a dashboard — its label and period, its value, its change and a small line of how it moved over the period.
+  whenToUse: "A dashboard tile for one metric people check often: revenue, sign-ups, churn, open tickets. Put several in a grid for a dashboard's top row."
+  whenNotToUse:
+    - case: Four or so numbers read together under one heading, without their trends
+      use: StatRow — one header and a row of stat cards
+    - case: A trend people need to read values from, with axes and dates
+      use: LineChart or AreaChart
+    - case: A single status the reader must act on
+      use: Alert — a KPI reports, it does not ask
+  gotchas:
+    - "`metric` is `{ value, delta?, tone?, caption?, trend? }`. It defaults to a sample, so the block renders standalone; pass your own or edit the constant — the file is yours after `moderno add`."
+    - "Presentational: it fetches and formats nothing. `value` and `delta` are strings already formatted for the reader's locale and currency."
+    - "`tone` is what the change means, not which way it moved. A rising churn rate is `negative`. It defaults to `neutral`."
+    - "The sign lives in the `delta` text (`+12.5%`, `−2.4%`), so the direction reads without the tint."
+    - "`trend` is the raw values, oldest first. The sparkline needs two or more; with fewer, the card shows no line. Its y range fits the values, so a small change fills its height."
+    - 'The label is the card''s `h3` (Card.Title), so a grid of cards under your own `h2` reads well in the page outline. The sparkline is labelled "<label> trend".'
+    - "`metric={null}` is the empty state: the period loaded and has no number yet. `loading` shows placeholders in a busy `status` region, and `error` shows an Alert with a retry. An empty `error` string counts as no error."
+    - "`disabled` keeps the number readable and disables the header button and the retry button."
+    - "The block responds to its container, never the viewport: the sparkline sits under the value below --container-sm and beside it from there; the value steps up at --container-md; the sparkline widens again at --container-lg."
+  theming:
+    - "Nothing is painted here. The surface is Card's outline variant, the change is a Badge status (success, error or neutral), the sparkline is SparkChart (line, fill and last point from --chart-1), the placeholders are Skeleton and the failed load is Alert's error variant."
+    - "The value is set in --font-serif, the brand's display face, with tabular figures."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import KpiCardBlockDemo from "../../../islands/KpiCardBlockDemo.svelte";
+import kpiCardReact from "../../../../../../registry/blocks/kpi-card/react/kpi-card.tsx?raw";
+import kpiCardVue from "../../../../../../registry/blocks/kpi-card/vue/KpiCard.vue?raw";
+import kpiCardSolid from "../../../../../../registry/blocks/kpi-card/solid/kpi-card.tsx?raw";
+import kpiCardSvelte from "../../../../../../registry/blocks/kpi-card/svelte/KpiCard.svelte?raw";
+
+export const examples = {
+  react: kpiCardReact,
+  vue: kpiCardVue,
+  solid: kpiCardSolid,
+  svelte: kpiCardSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <KpiCardBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="kpi-card" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { KpiCard } from "@/components/blocks/kpi-card";
+```
+
+```tsx
+<KpiCard label="Revenue" metric={revenue} onAction={openReport} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import KpiCard from "@/components/blocks/KpiCard.vue";
+</script>
+```
+
+```vue
+<KpiCard label="Revenue" :metric="revenue" @action="openReport" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import KpiCard from "@/components/blocks/KpiCard.svelte";
+</script>
+```
+
+```svelte
+<KpiCard label="Revenue" metric={revenue} onaction={openReport} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { KpiCard } from "@/components/blocks/kpi-card";
+```
+
+```tsx
+<KpiCard label="Revenue" metric={revenue()} onAction={openReport} />
+```
+
+</ForFramework>
+
+`metric` is `{ value, delta, tone, caption, trend }`. Set `tone` to what the change means: a rise in churn is `negative`.
+
+## API Reference
+
+### Props
+
+| Prop          | Type                    | Default          | Description                                                   |
+| ------------- | ----------------------- | ---------------- | ------------------------------------------------------------- |
+| `label`       | `string`                | `"Revenue"`      | What is measured; the card's title.                           |
+| `period`      | `string`                | `"Last 30 days"` | The line under the label; `""` hides it.                      |
+| `metric`      | `KpiCardMetric \| null` | a sample         | The number. `null` renders the empty state.                   |
+| `actionLabel` | `string`                | `"View report"`  | The header button's label; `""` hides the button.             |
+| `error`       | `string`                | —                | The number failed to load; an alert with a retry replaces it. |
+| `loading`     | `boolean`               | `false`          | Placeholders in a busy region replace the number.             |
+| `disabled`    | `boolean`               | `false`          | The number stays readable and every button is disabled.       |
+| `onAction`    | `() => void`            | —                | The header button. Svelte: `onaction`. Vue: `@action`.        |
+| `onRetry`     | `() => void`            | —                | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.  |
+
+### KpiCardMetric
+
+| Field     | Type                                    | Description                                                   |
+| --------- | --------------------------------------- | ------------------------------------------------------------- |
+| `value`   | `string`                                | The number, already formatted.                                |
+| `delta`   | `string`                                | Optional change, with its sign: `+12.5%`, `−0.4 pts`.         |
+| `tone`    | `"positive" \| "negative" \| "neutral"` | What the change means. Default `"neutral"`.                   |
+| `caption` | `string`                                | Optional context after the change: `vs last month`.           |
+| `trend`   | `number[]`                              | Optional values for the sparkline, oldest first; two or more. |
+
+### States
+
+| State    | Prop            | What renders                                                     |
+| -------- | --------------- | ---------------------------------------------------------------- |
+| Default  | —               | The value, its change and the sparkline.                         |
+| Empty    | `metric={null}` | "No data yet" under the label.                                   |
+| Loading  | `loading`       | Placeholders for the value, the change and the line.             |
+| Error    | `error`         | An error alert with a "Try again" button in place of the number. |
+| Disabled | `disabled`      | The number with every button disabled.                           |
+
+Hover and focus-visible come from Button: the header button and "Try again" show them.
+
+### Sizing
+
+| Container step           | What changes                                  |
+| ------------------------ | --------------------------------------------- |
+| below `@sm`              | The sparkline spans the card under the value. |
+| `@sm` (`--container-sm`) | The value and the sparkline sit side by side. |
+| `@md` (`--container-md`) | A larger value and a wider sparkline.         |
+| `@lg` (`--container-lg`) | The widest sparkline.                         |
+
+## Examples
+
+### Container widths
+
+The same card at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <KpiCardBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### A rise that is bad news
+
+Churn went up, so `tone` is `negative`.
+
+<Preview examples={examples} layout="fill">
+  <KpiCardBlockDemo client:visible locale="en" state="negative" />
+</Preview>
+
+### Empty
+
+Pass `metric={null}`.
+
+<Preview examples={examples} layout="fill">
+  <KpiCardBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <KpiCardBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+Press "Try again" to clear the message and bring the number back.
+
+<Preview examples={examples} layout="fill">
+  <KpiCardBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <KpiCardBlockDemo client:visible locale="en" state="disabled" />
+</Preview>

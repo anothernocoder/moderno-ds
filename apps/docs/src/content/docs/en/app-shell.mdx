@@ -1,0 +1,223 @@
+---
+title: App Shell
+description: The frame of a signed-in app — a sidebar with the main navigation, a top bar with the page heading and an account menu, and the page's content beside them.
+group: Blocks
+order: 105
+agent:
+  intent: The frame around every page of a signed-in app — a sidebar with the product name and the main navigation, a top bar with the page heading and an account Menu (profile, settings, sign out), and the page's own content. On a narrow container the sidebar folds into a Drawer opened from a "Menu" button.
+  whenToUse: "Once per app, around the pages a signed-in user moves between: a dashboard, a list of records, the settings."
+  whenNotToUse:
+    - case: A public marketing page with a logo, links and a call to action
+      use: Hero — the page's opening section, with its own heading and actions
+    - case: A page's own heading with breadcrumbs, tabs or actions, inside the shell
+      use: SectionHeader — it goes in the shell's content, under the top bar
+    - case: A panel that slides in for one task, like filters or a form
+      use: The Drawer primitive on its own
+  gotchas:
+    - '`navigation` is an array of `{ id, label, href, current?, disabled? }`. Mark the page the user is on with `current: true`: its link gets `aria-current="page"` and the accent fill.'
+    - 'A `disabled` link has no `href`, `role="link"` and `aria-disabled="true"`: screen readers announce it as an unavailable link, it is out of the tab order and it does nothing on click.'
+    - "The links are plain `<a href>`. To use your router's link, edit the copied file."
+    - "The same links fill the sidebar and the Drawer. A click on a link in the Drawer closes it."
+    - "`user` is `{ name, email, image? }`. The account trigger shows the initials on a narrow container and the name from `--container-sm`; its accessible name is always the full name."
+    - 'The account Menu has Profile, Settings and Sign out. Choosing one calls `onUserSelect` with `"profile"`, `"settings"` or `"sign-out"` (Svelte `onuserselect`, Vue `@user-select`).'
+    - "`heading` is the page's `h1`, in the top bar. Change it on each page."
+    - 'Pass the page as children (Svelte `children` snippet, Vue default slot). Without children the content shows "Nothing here yet" in a dashed box.'
+    - "`loading` keeps the sidebar and the top bar and shows three placeholders in one busy `status` region in the content."
+    - '`error` keeps the sidebar and the top bar and puts an error Alert with your message and a "Try again" button in the content. An empty string counts as no error.'
+    - "The block fills the height of its parent (`min-h-full`). Give the parent a height, like `h-dvh`, to fill the screen."
+    - 'The layout follows the block''s own width, not the viewport: the Drawer and its "Menu" button and the user''s initials at first; the user''s name and more room around the content from `--container-sm`; the sidebar in place of the Drawer from `--container-md`; a wider sidebar and more room again from `--container-lg`.'
+  theming:
+    - "The block paints the page background (--background), the sidebar's end border and the top bar's bottom border (--border), the links' hover and current fill (--accent, --accent-foreground) and the dashed empty box (--border). The Drawer, the account Menu, the Avatar, the buttons, the error Alert and the placeholders are the primitives' own."
+    - "The heading reads --font-serif and --foreground; the links, the empty message's second line and the user's email read --muted-foreground."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import AppShellBlockDemo from "../../../islands/AppShellBlockDemo.svelte";
+import appShellReact from "../../../../../../registry/blocks/app-shell/react/app-shell.tsx?raw";
+import appShellVue from "../../../../../../registry/blocks/app-shell/vue/AppShell.vue?raw";
+import appShellSolid from "../../../../../../registry/blocks/app-shell/solid/app-shell.tsx?raw";
+import appShellSvelte from "../../../../../../registry/blocks/app-shell/svelte/AppShell.svelte?raw";
+
+export const examples = {
+  react: appShellReact,
+  vue: appShellVue,
+  solid: appShellSolid,
+  svelte: appShellSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <AppShellBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="app-shell" />
+
+## Usage
+
+Use App Shell once, around every page of a signed-in app. It holds the navigation and the account menu, and your page goes inside it.
+
+<ForFramework fw="react">
+
+```tsx
+import { AppShell } from "@/components/blocks/app-shell";
+```
+
+```tsx
+<AppShell heading="Invoices" navigation={navigation} user={user}>
+  <InvoiceList />
+</AppShell>
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import AppShell from "@/components/blocks/AppShell.vue";
+</script>
+```
+
+```vue
+<AppShell heading="Invoices" :navigation="navigation" :user="user">
+  <InvoiceList />
+</AppShell>
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import AppShell from "@/components/blocks/AppShell.svelte";
+</script>
+```
+
+```svelte
+<AppShell heading="Invoices" {navigation} {user}>
+  <InvoiceList />
+</AppShell>
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { AppShell } from "@/components/blocks/app-shell";
+```
+
+```tsx
+<AppShell heading="Invoices" navigation={navigation()} user={user()}>
+  <InvoiceList />
+</AppShell>
+```
+
+</ForFramework>
+
+Each link looks like `{ id: "invoices", label: "Invoices", href: "/invoices", current: true }`. The user looks like `{ name: "Ada Lovelace", email: "ada@acme.com" }`.
+
+## API Reference
+
+### Props
+
+| Prop           | Type                                   | Default           | Description                                                                                  |
+| -------------- | -------------------------------------- | ----------------- | -------------------------------------------------------------------------------------------- |
+| `brand`        | `string`                               | `"Acme"`          | The product's name, at the top of the sidebar and the Drawer.                                |
+| `heading`      | `string`                               | `"Overview"`      | The page's `h1`, in the top bar. It is set in the serif face.                                |
+| `navigation`   | `AppShellNavItem[]`                    | five sample links | The main navigation, in the sidebar and in the Drawer.                                       |
+| `user`         | `AppShellUser`                         | a sample user     | The signed-in user, on the account menu.                                                     |
+| `error`        | `string`                               | —                 | Loading the page failed; an error Alert with a retry replaces the content.                   |
+| `loading`      | `boolean`                              | `false`           | Placeholders in a busy region replace the content.                                           |
+| `children`     | page content                           | —                 | The page. Svelte: a `children` snippet. Vue: the default slot. Without it, an empty message. |
+| `onRetry`      | `() => void`                           | —                 | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.                                 |
+| `onUserSelect` | `(action: AppShellUserAction) => void` | —                 | An item of the account menu. Svelte: `onuserselect`. Vue: `@user-select`.                    |
+
+### AppShellNavItem
+
+| Field      | Type      | Description                                                        |
+| ---------- | --------- | ------------------------------------------------------------------ |
+| `id`       | `string`  | A stable key for the link.                                         |
+| `label`    | `string`  | The link's text.                                                   |
+| `href`     | `string`  | Where the link goes.                                               |
+| `current`  | `boolean` | Optional. The page the user is on: `aria-current="page"`, filled.  |
+| `disabled` | `boolean` | Optional. The link is dimmed, has no `href` and cannot be focused. |
+
+### AppShellUser
+
+| Field   | Type     | Description                                                                  |
+| ------- | -------- | ---------------------------------------------------------------------------- |
+| `name`  | `string` | The user's name. The trigger shows it, or its initials when narrow.          |
+| `email` | `string` | Shown under the name at the top of the account menu.                         |
+| `image` | `string` | Optional. The avatar's image URL. Without it, the avatar shows the initials. |
+
+`AppShellUserAction` is `"profile" | "settings" | "sign-out"`.
+
+### States
+
+| State    | Prop                 | What renders                                    |
+| -------- | -------------------- | ----------------------------------------------- |
+| Default  | children             | The sidebar, the top bar and your page.         |
+| Empty    | no children          | "Nothing here yet" in a dashed box.             |
+| Loading  | `loading`            | Three placeholders in the content.              |
+| Error    | `error`              | An error Alert with "Try again" in the content. |
+| Disabled | `disabled` on a link | That link dimmed, out of the tab order.         |
+
+### Sizing
+
+| Container step           | What changes                                                                 |
+| ------------------------ | ---------------------------------------------------------------------------- |
+| below `@sm`              | The navigation is in a Drawer, opened by "Menu". The trigger shows initials. |
+| `@sm` (`--container-sm`) | The trigger shows the user's name. More room around the content.             |
+| `@md` (`--container-md`) | The sidebar shows the navigation. The "Menu" button goes away.               |
+| `@lg` (`--container-lg`) | A wider sidebar, and more room around the content.                           |
+
+## Examples
+
+### Container widths
+
+The same block at 18rem, 30rem, 40rem and 50rem. Below 36rem, press "Menu" to open the navigation. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <AppShellBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Empty
+
+Pass no children.
+
+<Preview examples={examples} layout="fill">
+  <AppShellBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <AppShellBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+Press "Try again" to clear the message and bring the page back.
+
+<Preview examples={examples} layout="fill">
+  <AppShellBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled link
+
+Set `disabled` on a link the user cannot open yet, like a page on a higher plan.
+
+<Preview examples={examples} layout="fill">
+  <AppShellBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Keep link labels to one or two words, so they fit the sidebar on one line.
+- Put a page's own tabs, filters and actions in the content, not in the top bar.

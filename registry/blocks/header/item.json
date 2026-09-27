@@ -1,0 +1,37 @@
+{
+  "title": "Header",
+  "description": "The top bar of a marketing site, composing the @moderno-ui/{framework} Menu, Drawer, Button, Alert and Skeleton primitives: the brand as a link home, the main navigation (plain links, and a Menu for a group of links) and one call to action, with its own loading, empty and error renders for the navigation; responds to its container (@container) — below @md the navigation collapses into a right Drawer opened from a Menu button, the call to action joins the bar from @sm, and the bar gains room at @lg.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": [],
+  "files": {
+    "react": [
+      {
+        "path": "blocks/header/react/header.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/header.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "blocks/header/vue/Header.vue",
+        "type": "registry:block",
+        "target": "src/components/blocks/Header.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "blocks/header/svelte/Header.svelte",
+        "type": "registry:block",
+        "target": "src/components/blocks/Header.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "blocks/header/solid/header.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/header.tsx"
+      }
+    ]
+  }
+}

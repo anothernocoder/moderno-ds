@@ -4,6 +4,8 @@
  * All stubs are guarded so the file is a no-op in the default `node` environment.
  */
 
+import { afterEach } from "vitest";
+
 class ResizeObserverStub {
   observe(): void {}
   unobserve(): void {}
@@ -111,12 +113,43 @@ if (typeof window !== "undefined") {
    * setup time to go away, past `waitFor`'s 1s on a busy CI runner. Same frames,
    * same handles (so `cancelAnimationFrame` still works); only the timestamp
    * is corrected.
+   *
+   * Frames a test leaves queued are cancelled once it ends. Every test in a
+   * file shares one jsdom window, and zag queues work in a frame without
+   * cancelling it on unmount (a menu that opens focuses its content one frame
+   * later). Each test renders a fresh app, so its ids repeat the previous
+   * test's (`menu:v-0:content`): a frame queued by the previous test finds the
+   * new test's element by that id and acts on it. The Vue Menu's keyboard test
+   * failed that way: the previous test's frame moved focus from the trigger to
+   * the closed menu's content just before Enter was pressed. In a browser the
+   * ids never repeat, so only the tests need this.
    */
   const jsdomRequestAnimationFrame = window.requestAnimationFrame?.bind(window);
-  if (jsdomRequestAnimationFrame) {
-    const requestAnimationFrame = (callback: FrameRequestCallback) =>
-      jsdomRequestAnimationFrame(() => callback(performance.now()));
+  const jsdomCancelAnimationFrame = window.cancelAnimationFrame?.bind(window);
+  if (jsdomRequestAnimationFrame && jsdomCancelAnimationFrame) {
+    const pendingFrames = new Set<number>();
+    const requestAnimationFrame = (callback: FrameRequestCallback) => {
+      const handle = jsdomRequestAnimationFrame(() => {
+        pendingFrames.delete(handle);
+        callback(performance.now());
+      });
+      pendingFrames.add(handle);
+      return handle;
+    };
+    const cancelAnimationFrame = (handle: number) => {
+      pendingFrames.delete(handle);
+      jsdomCancelAnimationFrame(handle);
+    };
     window.requestAnimationFrame = requestAnimationFrame;
+    window.cancelAnimationFrame = cancelAnimationFrame;
     g.requestAnimationFrame = requestAnimationFrame;
+    g.cancelAnimationFrame = cancelAnimationFrame;
+
+    // Setup-file hooks run after the test file's own, so this also catches
+    // frames queued while `cleanup` unmounts the test's components.
+    afterEach(() => {
+      for (const handle of pendingFrames) jsdomCancelAnimationFrame(handle);
+      pendingFrames.clear();
+    });
   }
 }

@@ -1,0 +1,196 @@
+---
+title: App Shell
+description: El marco de una app con sesión iniciada — una barra lateral con la navegación principal, una barra superior con el título de la página y un menú de cuenta, y el contenido de la página a su lado.
+group: Bloques
+order: 105
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import AppShellBlockDemo from "../../../islands/AppShellBlockDemo.svelte";
+import appShellReact from "../../../../../../registry/blocks/app-shell/react/app-shell.tsx?raw";
+import appShellVue from "../../../../../../registry/blocks/app-shell/vue/AppShell.vue?raw";
+import appShellSolid from "../../../../../../registry/blocks/app-shell/solid/app-shell.tsx?raw";
+import appShellSvelte from "../../../../../../registry/blocks/app-shell/svelte/AppShell.svelte?raw";
+
+export const examples = {
+  react: appShellReact,
+  vue: appShellVue,
+  solid: appShellSolid,
+  svelte: appShellSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <AppShellBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="app-shell" />
+
+## Uso
+
+Usa App Shell una vez, alrededor de cada página de una app con sesión iniciada. Contiene la navegación y el menú de cuenta, y tu página va dentro.
+
+<ForFramework fw="react">
+
+```tsx
+import { AppShell } from "@/components/blocks/app-shell";
+```
+
+```tsx
+<AppShell heading="Facturas" navigation={navigation} user={user}>
+  <InvoiceList />
+</AppShell>
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import AppShell from "@/components/blocks/AppShell.vue";
+</script>
+```
+
+```vue
+<AppShell heading="Facturas" :navigation="navigation" :user="user">
+  <InvoiceList />
+</AppShell>
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import AppShell from "@/components/blocks/AppShell.svelte";
+</script>
+```
+
+```svelte
+<AppShell heading="Facturas" {navigation} {user}>
+  <InvoiceList />
+</AppShell>
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { AppShell } from "@/components/blocks/app-shell";
+```
+
+```tsx
+<AppShell heading="Facturas" navigation={navigation()} user={user()}>
+  <InvoiceList />
+</AppShell>
+```
+
+</ForFramework>
+
+Cada enlace es así: `{ id: "invoices", label: "Facturas", href: "/invoices", current: true }`. El usuario es así: `{ name: "Ada Lovelace", email: "ada@acme.com" }`.
+
+## Referencia de la API
+
+### Props
+
+| Prop           | Tipo                                   | Por defecto              | Descripción                                                                                   |
+| -------------- | -------------------------------------- | ------------------------ | --------------------------------------------------------------------------------------------- |
+| `brand`        | `string`                               | `"Acme"`                 | El nombre del producto, arriba en la barra lateral y en el Drawer.                            |
+| `heading`      | `string`                               | `"Overview"`             | El `h1` de la página, en la barra superior. Va en la fuente serif.                            |
+| `navigation`   | `AppShellNavItem[]`                    | cinco enlaces de ejemplo | La navegación principal, en la barra lateral y en el Drawer.                                  |
+| `user`         | `AppShellUser`                         | un usuario de ejemplo    | El usuario con la sesión iniciada, en el menú de cuenta.                                      |
+| `error`        | `string`                               | —                        | La página no cargó; una Alert de error con un reintento reemplaza el contenido.               |
+| `loading`      | `boolean`                              | `false`                  | Marcadores en una región ocupada reemplazan el contenido.                                     |
+| `children`     | contenido de la página                 | —                        | La página. Svelte: un snippet `children`. Vue: el slot por defecto. Sin él, un mensaje vacío. |
+| `onRetry`      | `() => void`                           | —                        | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.                                   |
+| `onUserSelect` | `(action: AppShellUserAction) => void` | —                        | Un elemento del menú de cuenta. Svelte: `onuserselect`. Vue: `@user-select`.                  |
+
+### AppShellNavItem
+
+| Campo      | Tipo      | Descripción                                                           |
+| ---------- | --------- | --------------------------------------------------------------------- |
+| `id`       | `string`  | Una clave estable para el enlace.                                     |
+| `label`    | `string`  | El texto del enlace.                                                  |
+| `href`     | `string`  | A dónde lleva el enlace.                                              |
+| `current`  | `boolean` | Opcional. La página en la que está el usuario: `aria-current="page"`. |
+| `disabled` | `boolean` | Opcional. El enlace se atenúa, no tiene `href` y no recibe el foco.   |
+
+### AppShellUser
+
+| Campo   | Tipo     | Descripción                                                                          |
+| ------- | -------- | ------------------------------------------------------------------------------------ |
+| `name`  | `string` | El nombre del usuario. El disparador lo muestra, o sus iniciales si es estrecho.     |
+| `email` | `string` | Se muestra bajo el nombre, arriba en el menú de cuenta.                              |
+| `image` | `string` | Opcional. La URL de la imagen del avatar. Sin ella, el avatar muestra las iniciales. |
+
+`AppShellUserAction` es `"profile" | "settings" | "sign-out"`.
+
+### Estados
+
+| Estado        | Prop                    | Qué se muestra                                      |
+| ------------- | ----------------------- | --------------------------------------------------- |
+| Por defecto   | children                | La barra lateral, la barra superior y tu página.    |
+| Vacío         | sin children            | "Nothing here yet" en un recuadro discontinuo.      |
+| Cargando      | `loading`               | Tres marcadores en el contenido.                    |
+| Error         | `error`                 | Una Alert de error con "Try again" en el contenido. |
+| Deshabilitado | `disabled` en un enlace | Ese enlace atenuado, fuera del orden de tabulación. |
+
+### Tamaño
+
+| Paso del contenedor      | Qué cambia                                                                         |
+| ------------------------ | ---------------------------------------------------------------------------------- |
+| bajo `@sm`               | La navegación está en un Drawer, que abre "Menu". El disparador muestra iniciales. |
+| `@sm` (`--container-sm`) | El disparador muestra el nombre del usuario. Más espacio alrededor del contenido.  |
+| `@md` (`--container-md`) | La barra lateral muestra la navegación. El botón "Menu" desaparece.                |
+| `@lg` (`--container-lg`) | Una barra lateral más ancha y más espacio alrededor del contenido.                 |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+El mismo bloque a 18rem, 30rem, 40rem y 50rem. Por debajo de 36rem, pulsa "Menu" para abrir la navegación. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <AppShellBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Vacío
+
+No pases children.
+
+<Preview examples={examples} layout="fill">
+  <AppShellBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <AppShellBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+Pulsa "Try again" para quitar el mensaje y volver a mostrar la página.
+
+<Preview examples={examples} layout="fill">
+  <AppShellBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Enlace deshabilitado
+
+Pon `disabled` en un enlace que el usuario aún no puede abrir, como una página de un plan superior.
+
+<Preview examples={examples} layout="fill">
+  <AppShellBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
+
+## Notas
+
+- Deja las etiquetas de los enlaces en una o dos palabras, para que quepan en una línea de la barra lateral.
+- Pon las pestañas, filtros y acciones de una página en el contenido, no en la barra superior.

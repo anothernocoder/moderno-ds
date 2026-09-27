@@ -1,0 +1,198 @@
+---
+title: Slide over
+description: One person's details on the page, and a button that opens a drawer from the right to edit them.
+group: Blocks
+order: 116
+agent:
+  intent: A detail and edit panel for one record — the name as a serif heading, the email, a list of role and notes, and an "Edit details" Button that opens a Drawer from the right with a form to change them.
+  whenToUse: "An app page where people view one record and sometimes change it, like a team member, a customer or a contact, without leaving the page."
+  whenNotToUse:
+    - case: A lead form that visitors fill in from scratch
+      use: ContactModal — an empty form in a centred Dialog
+    - case: A dialog that confirms an action or asks for one value
+      use: ModalActions — one dialog per row of actions
+    - case: Label and value pairs about one record, with no editing
+      use: DescriptionList — a list of fields for a single item
+  gotchas:
+    - "Presentational: `record` is `{ name, email, role, notes }`, all strings. `onSave` receives the edited record, each field trimmed. Saving it, and passing the new `record` back, stays yours."
+    - "The drawer does not close on its own after a save. Bind `open` (React and Solid: `open` with `onOpenChange`; Svelte: `bind:open`; Vue: `v-model:open`) and set it to `false` once your save succeeds."
+    - 'Name and email are required. Saved empty, the form does not call `onSave`: those fields turn invalid, show their error and the first takes focus. Role and notes are optional; an empty one reads "Not added" on the page.'
+    - "The form starts from `record` every time the drawer opens, so Cancel, Escape and the close button drop unsaved changes."
+    - '`loading` disables the fields and turns the save button into a busy "Saving"; `error` puts an error Alert at the top of the form and keeps what was typed. An empty `error` string counts as no error.'
+    - "`disabled` disables the trigger, so the drawer cannot open."
+    - "The drawer is named by its title and described by its description; focus returns to the trigger when it closes."
+    - "The layout follows the block's own width, not the viewport: the trigger fills its row and each term sits above its value below `--container-sm`, and the trigger moves beside the name from `--container-lg`."
+  theming:
+    - "The block paints only its borders (--border). The trigger and form buttons are Button, the inputs are Field, the panel that slides in is Drawer and the error is Alert's error variant."
+    - 'The heading reads --font-serif and --foreground; the email, the terms and "Not added" read --muted-foreground.'
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg, and the panel is capped at --container-lg."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import SlideOverBlockDemo from "../../../islands/SlideOverBlockDemo.svelte";
+import slideOverReact from "../../../../../../registry/blocks/slide-over/react/slide-over.tsx?raw";
+import slideOverVue from "../../../../../../registry/blocks/slide-over/vue/SlideOver.vue?raw";
+import slideOverSolid from "../../../../../../registry/blocks/slide-over/solid/slide-over.tsx?raw";
+import slideOverSvelte from "../../../../../../registry/blocks/slide-over/svelte/SlideOver.svelte?raw";
+
+export const examples = {
+  react: slideOverReact,
+  vue: slideOverVue,
+  solid: slideOverSolid,
+  svelte: slideOverSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <SlideOverBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="slide-over" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { SlideOver } from "@/components/blocks/slide-over";
+```
+
+```tsx
+<SlideOver record={member} open={open} onOpenChange={setOpen} onSave={save} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import SlideOver from "@/components/blocks/SlideOver.vue";
+</script>
+```
+
+```vue
+<SlideOver v-model:open="open" :record="member" @save="save" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import SlideOver from "@/components/blocks/SlideOver.svelte";
+</script>
+```
+
+```svelte
+<SlideOver record={member} bind:open onsave={save} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { SlideOver } from "@/components/blocks/slide-over";
+```
+
+```tsx
+<SlideOver record={member()} open={open()} onOpenChange={setOpen} onSave={save} />
+```
+
+</ForFramework>
+
+`save` stores the record, passes it back as `record` and sets `open` to `false`.
+
+## API Reference
+
+### Props
+
+| Prop           | Type                                | Default         | Description                                                                |
+| -------------- | ----------------------------------- | --------------- | -------------------------------------------------------------------------- |
+| `record`       | `SlideOverRecord`                   | a sample person | The record the panel shows and the form starts from.                       |
+| `open`         | `boolean`                           | `false`         | Whether the drawer is open. Svelte: `bind:open`. Vue: `v-model:open`.      |
+| `onOpenChange` | `(open: boolean) => void`           | —               | The drawer opened or closed. React and Solid only.                         |
+| `error`        | `string`                            | —               | Saving failed; an error Alert sits at the top of the form.                 |
+| `loading`      | `boolean`                           | `false`         | The fields are disabled and the save button is a busy "Saving".            |
+| `disabled`     | `boolean`                           | `false`         | The trigger is disabled, so the drawer cannot open.                        |
+| `onSave`       | `(record: SlideOverRecord) => void` | —               | A form with a name and an email was saved. Svelte: `onsave`. Vue: `@save`. |
+
+### SlideOverRecord
+
+| Field   | Type     | Description                           |
+| ------- | -------- | ------------------------------------- |
+| `name`  | `string` | Required. The heading of the panel.   |
+| `email` | `string` | Required. The line under the heading. |
+| `role`  | `string` | Optional. `""` reads "Not added".     |
+| `notes` | `string` | Optional. `""` reads "Not added".     |
+
+### States
+
+| State    | Prop         | What renders                                                                                                                                     |
+| -------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Default  | —            | The panel and its trigger; the drawer holds the form, filled from `record`.                                                                      |
+| Empty    | empty fields | Role or notes left empty read "Not added". Saved without a name or an email, those fields turn invalid, show an error and the first takes focus. |
+| Loading  | `loading`    | The form with its fields disabled and a busy "Saving" button.                                                                                    |
+| Error    | `error`      | An error Alert at the top of the form; what was typed stays.                                                                                     |
+| Disabled | `disabled`   | The panel with its trigger disabled.                                                                                                             |
+
+### Sizing
+
+| Container step           | What changes                                                                                     |
+| ------------------------ | ------------------------------------------------------------------------------------------------ |
+| below `@sm`              | The trigger fills its row, and each term sits above its value.                                   |
+| `@sm` (`--container-sm`) | The trigger takes its own width, each term sits beside its value, and the panel's padding grows. |
+| `@md` (`--container-md`) | The heading steps up a size.                                                                     |
+| `@lg` (`--container-lg`) | The trigger sits beside the name, with more room above and below.                                |
+
+The drawer is the Drawer primitive: it slides in from the right, as wide as the viewport up to `--container-sm`.
+
+## Examples
+
+Most states live in the drawer. Press "Edit details" in each example to see it.
+
+### Container widths
+
+The same block at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <SlideOverBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Empty
+
+Role and notes are empty. Clear the name and press "Save changes" to see the required fields.
+
+<Preview examples={examples} layout="fill">
+  <SlideOverBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <SlideOverBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+Press "Save changes" to clear the error.
+
+<Preview examples={examples} layout="fill">
+  <SlideOverBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <SlideOverBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Close the drawer only once the save succeeds. If it fails, keep it open and set `error`, so nothing typed is lost.
+- Keep the form short. Put fields that people rarely change on a settings page instead.

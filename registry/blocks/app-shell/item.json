@@ -1,0 +1,37 @@
+{
+  "title": "App Shell",
+  "description": "The frame of a signed-in app, composing the @moderno-ui/{framework} Drawer, Menu, Avatar, Button, Alert and Skeleton primitives: a sidebar with the product name and the main navigation, a top bar with the page heading and an account Menu, and the page's content beside them; the content has its own loading, error and empty renders; responds to its container (@container) — below @md the sidebar collapses into a left Drawer opened from a Menu button in the top bar, the account trigger shows the user's name from @sm, and the sidebar widens and the content gains room at @lg.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": [],
+  "files": {
+    "react": [
+      {
+        "path": "blocks/app-shell/react/app-shell.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/app-shell.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "blocks/app-shell/vue/AppShell.vue",
+        "type": "registry:block",
+        "target": "src/components/blocks/AppShell.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "blocks/app-shell/svelte/AppShell.svelte",
+        "type": "registry:block",
+        "target": "src/components/blocks/AppShell.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "blocks/app-shell/solid/app-shell.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/app-shell.tsx"
+      }
+    ]
+  }
+}

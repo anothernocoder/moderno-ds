@@ -1,0 +1,228 @@
+---
+title: Store Nav
+description: La barra superior de una tienda — la marca, las categorías, una búsqueda de productos y el carrito. En un contenedor estrecho las categorías se pliegan en un Drawer.
+group: Bloques
+order: 164
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import StoreNavBlockDemo from "../../../islands/StoreNavBlockDemo.svelte";
+import storeNavReact from "../../../../../../registry/blocks/store-nav/react/store-nav.tsx?raw";
+import storeNavVue from "../../../../../../registry/blocks/store-nav/vue/StoreNav.vue?raw";
+import storeNavSolid from "../../../../../../registry/blocks/store-nav/solid/store-nav.tsx?raw";
+import storeNavSvelte from "../../../../../../registry/blocks/store-nav/svelte/StoreNav.svelte?raw";
+
+export const examples = {
+  react: storeNavReact,
+  vue: storeNavVue,
+  solid: storeNavSolid,
+  svelte: storeNavSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <StoreNavBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="store-nav" />
+
+## Uso
+
+Usa Store Nav una vez, arriba en cada página de una tienda. Enlaza al inicio y a las categorías, busca en el catálogo y abre el carrito.
+
+<ForFramework fw="react">
+
+```tsx
+import { StoreNav } from "@/components/blocks/store-nav";
+```
+
+```tsx
+<StoreNav
+  brand="Northwind"
+  categories={categories}
+  suggestions={products}
+  cartCount={cart.length}
+  onSearch={(query) => navigate(`/search?q=${encodeURIComponent(query)}`)}
+  onCart={openCart}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import StoreNav from "@/components/blocks/StoreNav.vue";
+</script>
+```
+
+```vue
+<StoreNav
+  brand="Northwind"
+  :categories="categories"
+  :suggestions="products"
+  :cart-count="cart.length"
+  @search="(query) => router.push(`/search?q=${encodeURIComponent(query)}`)"
+  @cart="openCart"
+/>
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import StoreNav from "@/components/blocks/StoreNav.svelte";
+</script>
+```
+
+```svelte
+<StoreNav
+  brand="Northwind"
+  {categories}
+  suggestions={products}
+  cartCount={cart.length}
+  onsearch={(query) => goto(`/search?q=${encodeURIComponent(query)}`)}
+  oncart={openCart}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { StoreNav } from "@/components/blocks/store-nav";
+```
+
+```tsx
+<StoreNav
+  brand="Northwind"
+  categories={categories()}
+  suggestions={products()}
+  cartCount={cart().length}
+  onSearch={(query) => navigate(`/search?q=${encodeURIComponent(query)}`)}
+  onCart={openCart}
+/>
+```
+
+</ForFramework>
+
+Una categoría es así: `{ id: "bags", label: "Bolsos", href: "/bags" }`, o `{ id: "workspace", label: "Escritorio", links: [...] }` cuando tiene subcategorías. Una sugerencia es así: `{ value: "canvas-tote", label: "Bolso de lona", href: "/products/canvas-tote" }`.
+
+## Referencia de la API
+
+### Props
+
+| Prop          | Tipo                      | Por defecto                             | Descripción                                                                            |
+| ------------- | ------------------------- | --------------------------------------- | -------------------------------------------------------------------------------------- |
+| `brand`       | `string`                  | `"Northwind"`                           | El nombre de la tienda, en la fuente serif. Enlaza al inicio y titula el Drawer.       |
+| `homeHref`    | `string`                  | `"/"`                                   | A dónde enlaza la marca.                                                               |
+| `categories`  | `StoreNavCategory[]`      | dos categorías con subcategorías y Bags | Las categorías, en la barra y en el Drawer.                                            |
+| `suggestions` | `StoreNavSuggestion[]`    | seis productos de ejemplo               | Lo que sugiere la búsqueda, filtrado por el texto escrito.                             |
+| `cartCount`   | `number`                  | `2`                                     | Cuántos artículos tiene el carrito, en un Badge.                                       |
+| `error`       | `string`                  | —                                       | Las categorías no cargaron; una Alert de error con un reintento aparece bajo la barra. |
+| `loading`     | `boolean`                 | `false`                                 | Marcadores en una región ocupada reemplazan las categorías.                            |
+| `onSearch`    | `(query: string) => void` | —                                       | Enter en la búsqueda sin una sugerencia resaltada. Svelte: `onsearch`. Vue: `@search`. |
+| `onCart`      | `() => void`              | —                                       | Se pulsó el botón del carrito. Svelte: `oncart`. Vue: `@cart`.                         |
+| `onRetry`     | `() => void`              | —                                       | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.                            |
+
+### StoreNavCategory
+
+`StoreNavCategory` es un `StoreNavLink` o un `StoreNavMenu`.
+
+Un `StoreNavLink`:
+
+| Campo      | Tipo      | Descripción                                                              |
+| ---------- | --------- | ------------------------------------------------------------------------ |
+| `id`       | `string`  | Una clave estable para el enlace.                                        |
+| `label`    | `string`  | El texto del enlace.                                                     |
+| `href`     | `string`  | A dónde lleva el enlace.                                                 |
+| `current`  | `boolean` | Opcional. La categoría en la que está el usuario: `aria-current="page"`. |
+| `disabled` | `boolean` | Opcional. El enlace se atenúa, no tiene `href` y no recibe el foco.      |
+
+Un `StoreNavMenu`:
+
+| Campo   | Tipo             | Descripción                                                                               |
+| ------- | ---------------- | ----------------------------------------------------------------------------------------- |
+| `id`    | `string`         | Una clave estable para la categoría.                                                      |
+| `label` | `string`         | El texto del disparador del Menu en la barra, y la etiqueta de la categoría en el Drawer. |
+| `links` | `StoreNavLink[]` | Las subcategorías: elementos del Menu en la barra, una lista en el Drawer.                |
+
+### StoreNavSuggestion
+
+| Campo   | Tipo     | Descripción                                  |
+| ------- | -------- | -------------------------------------------- |
+| `value` | `string` | Una clave estable para la sugerencia.        |
+| `label` | `string` | El texto que se muestra y el que se compara. |
+| `href`  | `string` | A dónde lleva elegir la sugerencia.          |
+
+### Estados
+
+| Estado         | Prop                    | Qué se muestra                                                    |
+| -------------- | ----------------------- | ----------------------------------------------------------------- |
+| Por defecto    | `categories`            | La marca, las categorías, la búsqueda y el carrito.               |
+| Vacío          | `categories={[]}`       | La marca, la búsqueda y el carrito. Sin botón "Menu".             |
+| Sin resultados | una búsqueda            | La lista dice "No suggestions. Press Enter to search."            |
+| Cargando       | `loading`               | Tres marcadores donde van las categorías.                         |
+| Error          | `error`                 | Una Alert de error con "Try again" bajo la barra. Sin categorías. |
+| Deshabilitado  | `disabled` en un enlace | Ese enlace atenuado, fuera del orden de tabulación.               |
+
+### Tamaño
+
+| Paso del contenedor      | Qué cambia                                                             |
+| ------------------------ | ---------------------------------------------------------------------- |
+| bajo `@sm`               | La marca y "Menu". La búsqueda y el carrito comparten una fila debajo. |
+| `@sm` (`--container-sm`) | Más espacio en los extremos de la barra.                               |
+| `@md` (`--container-md`) | Las categorías van en la barra. El botón "Menu" desaparece.            |
+| `@lg` (`--container-lg`) | La búsqueda y el carrito entran en la barra, tras las categorías.      |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+El mismo bloque a 18rem, 30rem, 40rem y 50rem. Por debajo de 36rem, pulsa "Menu" para abrir las categorías. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <StoreNavBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Vacío
+
+Pasa `categories={[]}` para una tienda con un solo catálogo, sin categorías. Aquí el carrito también está vacío y la búsqueda no tiene nada que sugerir: escribe algo para ver la lista vacía.
+
+<Preview examples={examples} layout="fill">
+  <StoreNavBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <StoreNavBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+Pulsa "Try again" para quitar el mensaje y volver a mostrar las categorías.
+
+<Preview examples={examples} layout="fill">
+  <StoreNavBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Enlace deshabilitado
+
+Pon `disabled` en una categoría que el usuario aún no puede abrir, como unas rebajas que no han empezado. Abre "Workspace" para ver una subcategoría deshabilitada.
+
+<Preview examples={examples} layout="fill">
+  <StoreNavBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
+
+## Notas
+
+- Deja pocas sugerencias: un puñado de productos o categorías. Para un catálogo completo, búscalas mientras el usuario escribe y pasa el resultado.
+- Deja las etiquetas de las categorías en una palabra, para que la barra quepa en una línea.
