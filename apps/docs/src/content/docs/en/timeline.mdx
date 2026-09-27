@@ -14,7 +14,7 @@ agent:
     - case: A list of past events in order
       use: ActivityFeed — a dated list of what happened
   gotchas:
-    - "Controlled only. The block renders `tracks`, `time`, `playing`, `loop`, `selectedKeyframe` and `zoom` exactly as given and reports changes through callbacks. Write each change back, or nothing moves."
+    - "Controlled only. The block renders `tracks`, `time`, `playing`, `loop`, `selectedKeyframe` and `zoom` exactly as given and reports changes through callbacks. Write each change back, or nothing moves. Replacing `tracks` and editing it in place (a Vue `ref`, Svelte `$state`, a Solid store) both work."
     - "Add keyframe reports `onKeyframeAdd({ trackId, time })` for the selected track at the playhead, snapped to the frame; your app creates the keyframe (and its `id`) in `tracks`. It is disabled with no track selected or when a keyframe already sits on that frame."
     - "The selected track is the selected keyframe's track, or else the one whose label was pressed last. Pressing a label selects its track and clears the keyframe selection."
     - "Delete keyframe and the Delete key report `onKeyframeDelete({ trackId, keyframeId })` for the selected keyframe; your app removes it from `tracks`. The selection and the focus move to the nearest keyframe on that track, or to its label."
@@ -27,7 +27,7 @@ agent:
     - "Clicking or focusing a keyframe reports `onKeyframeSelect`. A press on an empty stretch of a track does nothing: only keyframes move."
     - "The track list scrolls under the ruler once it is taller than 16rem; the label column keeps its width and only the time area stretches. Zoomed in, the ruler and every track scroll sideways together under the label column, and the playhead is kept in view."
     - "Ruler marks follow the zoom: whole seconds while three or more fill the view, then frames (`15f`), never more than about ten in the view."
-    - "The layout follows the block's own width, not the viewport: the label column widens from `--container-sm`, and every ruler mark shows from `--container-md` (every other one below)."
+    - "The layout follows the block's own width, not the viewport: the label column widens from `--container-sm`, and every ruler mark shows from `--container-md` (below it, every other one, and always the whole seconds)."
   theming:
     - "The block paints only its borders (--border), its --background (so the sticky ruler and label column cover the tracks they scroll over), the playhead line and the keyframe diamonds (--primary). The play and loop buttons and the track labels are Toggle, the add, delete and zoom buttons ghost Button, their labels Tooltip, the ruler and tracks Slider."
     - "The selected keyframe is a larger, filled diamond with a --foreground outline; the others are small hollow diamonds."
@@ -228,11 +228,11 @@ The block has no clock. While `playing` is true, your app advances `time` (for e
 
 ### Sizing
 
-| Container step           | What changes                                         |
-| ------------------------ | ---------------------------------------------------- |
-| below `@sm`              | A narrow label column; every other ruler mark shows. |
-| `@sm` (`--container-sm`) | The label column widens.                             |
-| `@md` (`--container-md`) | Every ruler mark shows.                              |
+| Container step           | What changes                                                                       |
+| ------------------------ | ---------------------------------------------------------------------------------- |
+| below `@sm`              | A narrow label column; every other ruler mark shows, and always the whole seconds. |
+| `@sm` (`--container-sm`) | The label column widens.                                                           |
+| `@md` (`--container-md`) | Every ruler mark shows.                                                            |
 
 ## Examples
 

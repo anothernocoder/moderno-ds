@@ -21,6 +21,7 @@ interface TimelineProps {
   tracks?: Track[];
   duration?: number;
   time?: number;
+  fps?: number;
   playing?: boolean;
   selectedKeyframe?: Selection | null;
   zoom?: number;
@@ -268,20 +269,38 @@ describe("Timeline block (React) — adding, deleting and zooming", () => {
     await user.click(button("Zoom in"));
     await waitFor(() => expect(announced()).toBe("Zoom 200%"));
     expect(area()).toBe("calc(2 * 100% - 1 * var(--timeline-gutter))");
-    // Denser marks: fifteen frames apart, whole seconds still marked.
-    expect(marks().slice(0, 3)).toEqual(["0s", "15f", "1s"]);
+    // Denser marks: ten frames apart, whole seconds still marked.
+    expect(marks().slice(0, 4)).toEqual(["0s", "10f", "20f", "1s"]);
 
     await user.click(button("Zoom in"));
     await user.click(button("Zoom in"));
     await waitFor(() => expect(announced()).toBe("Zoom 800%"));
     expect(isDisabled("Zoom in"), "about ten frames fill the view").toBe(true);
-    expect(marks().slice(0, 3)).toEqual(["0s", "3f", "6f"]);
+    expect(marks().slice(0, 3)).toEqual(["0s", "2f", "4f"]);
 
     await user.click(button("Zoom out"));
     await waitFor(() => expect(announced()).toBe("Zoom 400%"));
     await user.click(button("Fit"));
     await waitFor(() => expect(announced()).toBe("Zoom 100%"));
     expect(area()).toBe("calc(1 * 100% - 0 * var(--timeline-gutter))");
+  });
+
+  it("switches to frame marks at 25 fps, and a narrow ruler keeps the whole seconds", () => {
+    mount({ fps: 25, zoom: 8 });
+    const marks = [...document.querySelectorAll('[data-part="marker"]')];
+    const texts = (list: Element[]) => list.map((mark) => mark.textContent);
+    // 800%: about 0.6 s fills the view, so the marks are five frames apart.
+    expect(texts(marks).slice(0, 7)).toEqual(["0s", "5f", "10f", "15f", "20f", "1s", "5f"]);
+    const narrow = marks.filter((mark) => !mark.classList.contains("hidden"));
+    expect(texts(narrow).slice(0, 4)).toEqual(["0s", "10f", "1s", "10f"]);
+    expect(texts(narrow).filter((text) => text?.endsWith("s"))).toEqual([
+      "0s",
+      "1s",
+      "2s",
+      "3s",
+      "4s",
+      "5s",
+    ]);
   });
 
   it("reports zoom without changing it: the app owns it", async () => {

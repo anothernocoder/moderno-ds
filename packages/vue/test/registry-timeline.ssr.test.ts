@@ -2,7 +2,7 @@
 import { cleanup, render, screen, waitFor } from "@testing-library/vue";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { defineComponent, h, ref } from "vue";
+import { defineComponent, h, nextTick, ref } from "vue";
 import Timeline from "../../../registry/blocks/timeline/vue/Timeline.vue";
 
 /**
@@ -154,6 +154,36 @@ const App = defineComponent({
   },
 });
 
+/**
+ * The same app, writing back by editing `tracks` in place (`push`, `splice`)
+ * instead of replacing the array: the block must follow either way.
+ */
+const InPlaceApp = defineComponent({
+  setup() {
+    const current = ref(structuredClone(tracks));
+    const selectedKeyframe = ref<Selection | null>(null);
+    const keyframesOf = (trackId: string) =>
+      current.value.find((track) => track.id === trackId)!.keyframes;
+    return () =>
+      h(Timeline, {
+        tracks: current.value,
+        duration: 5,
+        time: 1.4,
+        selectedKeyframe: selectedKeyframe.value,
+        onKeyframeSelect: (selection: Selection | null) => (selectedKeyframe.value = selection),
+        onKeyframeAdd: ({ trackId, time }: { trackId: string; time: number }) =>
+          keyframesOf(trackId).push({ id: `added-${time}`, time }),
+        onKeyframeDelete: ({ trackId, keyframeId }: Selection) => {
+          const keyframes = keyframesOf(trackId);
+          keyframes.splice(
+            keyframes.findIndex(({ id }) => id === keyframeId),
+            1,
+          );
+        },
+      });
+  },
+});
+
 const button = (name: string) => screen.getByRole("button", { name });
 const isDisabled = (name: string) => button(name).getAttribute("aria-disabled") === "true";
 const announced = () => document.querySelector("[data-live-announcer]")?.textContent;
@@ -189,6 +219,42 @@ describe("Timeline block (Vue) — adding, deleting and zooming", () => {
       ),
     );
     expect(keyframeNames()).toHaveLength(2);
+  });
+
+  it("moves the focus the same way when the app edits `tracks` in place", async () => {
+    const user = userEvent.setup();
+    render(InPlaceApp);
+    // Selecting a keyframe selects its track.
+    await user.click(screen.getByRole("slider", { name: /^Opacity keyframe at 0/ }));
+    await waitFor(() => expect(isDisabled("Add keyframe")).toBe(false));
+    await user.click(button("Add keyframe"));
+    await waitFor(() =>
+      expect(document.activeElement?.getAttribute("aria-label")).toBe(
+        "Opacity keyframe at 1.40 s, selected",
+      ),
+    );
+    await user.keyboard("{Delete}");
+    await waitFor(() =>
+      expect(document.activeElement?.getAttribute("aria-label")).toBe(
+        "Opacity keyframe at 2.00 s, selected",
+      ),
+    );
+    expect(keyframeNames()).toHaveLength(2);
+  });
+
+  it("forgets the focus a refused delete was waiting for once the user moves on", async () => {
+    const user = userEvent.setup();
+    const { rerender } = render(Timeline, {
+      props: { tracks, duration: 5, selectedKeyframe: { trackId: "opacity", keyframeId: "late" } },
+    });
+    await user.click(screen.getByRole("slider", { name: /^Opacity keyframe at 2/ }));
+    // No write-back: the app refuses the delete.
+    await user.keyboard("{Delete}");
+    await user.click(button("Loop"));
+    // A later, unrelated write to `tracks` does not pull the focus to the neighbour.
+    await rerender({ tracks: structuredClone(tracks) });
+    await nextTick();
+    expect(document.activeElement).toBe(button("Loop"));
   });
 
   it("focuses the track's label once its last keyframe is deleted", async () => {

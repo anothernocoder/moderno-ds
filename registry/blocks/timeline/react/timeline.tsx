@@ -44,6 +44,8 @@ interface RulerMark {
   /** Seconds from the start. */
   time: number;
   label: string;
+  /** Shown only on a wide ruler (from `--container-md`). */
+  wideOnly: boolean;
 }
 
 interface ToolbarButton {
@@ -89,8 +91,7 @@ const secondSpacings = [1, 2, 5, 10, 15, 30, 60, 120, 300, 600, 1200];
 
 /**
  * Ruler spacings in frames, used once fewer than three seconds fill the view.
- * Only those that fit an even number of times in a second count, so the marks
- * a narrow ruler hides (every other one) are never the whole seconds.
+ * One that divides a second evenly wins, so the marks stay evenly spaced.
  */
 const frameSpacings = [1, 2, 3, 4, 5, 6, 8, 10, 12, 15];
 
@@ -140,27 +141,45 @@ function formatMark(seconds: number) {
 
 /**
  * Every ruler mark: the first spacing that fits ten marks in the view at this
- * zoom. A mark between whole seconds is labelled by its frame, `12f`.
+ * zoom. A narrow ruler hides every other mark.
  */
 function rulerMarks(duration: number, fps: number, zoom: number): RulerMark[] {
   const visible = duration / zoom;
   const fitsTen = (seconds: number) => visible / seconds <= 10;
-  const frameStep =
-    visible < 3
-      ? frameSpacings.find((frames) => fps % (frames * 2) === 0 && fitsTen(frames / fps))
-      : undefined;
-  if (frameStep !== undefined) {
-    return Array.from({ length: Math.floor((duration * fps) / frameStep) + 1 }, (_, index) => {
-      const frame = index * frameStep;
-      const label = frame % fps > 0 ? `${frame % fps}f` : formatMark(frame / fps);
-      return { time: frame / fps, label };
-    });
+  if (visible < 3) {
+    const fits = (frames: number) => frames < fps && fitsTen(frames / fps);
+    const frameStep =
+      frameSpacings.find((frames) => fps % frames === 0 && fits(frames)) ??
+      frameSpacings.find(fits);
+    if (frameStep !== undefined) return frameMarks(duration, fps, frameStep);
   }
   const step = secondSpacings.find(fitsTen) ?? secondSpacings[secondSpacings.length - 1]!;
   return Array.from({ length: Math.floor(duration / step) + 1 }, (_, index) => ({
     time: index * step,
     label: formatMark(index * step),
+    wideOnly: index % 2 === 1,
   }));
+}
+
+/**
+ * A mark on every whole second, then every `step` frames within it, labelled by
+ * its frame (`12f`). No mark sits closer than a step to the next second. A
+ * narrow ruler keeps every whole second and, between them, only the marks two
+ * steps apart that sit at least two steps before the next second.
+ */
+function frameMarks(duration: number, fps: number, step: number): RulerMark[] {
+  const marks: RulerMark[] = [];
+  const lastFrame = Math.floor(duration * fps);
+  for (let second = 0; second * fps <= lastFrame; second += 1) {
+    for (let frame = 0; frame <= fps - step && second * fps + frame <= lastFrame; frame += step) {
+      marks.push({
+        time: (second * fps + frame) / fps,
+        label: frame === 0 ? formatMark(second) : `${frame}f`,
+        wideOnly: frame > 0 && (frame % (step * 2) !== 0 || frame > fps - step * 2),
+      });
+    }
+  }
+  return marks;
 }
 
 /** Zoom doubles at each step, until about ten frames fill the view (or 3200%). */
@@ -474,15 +493,27 @@ export function Timeline({
     }
   }
 
+  // Any key or press in the timeline first forgets the focus an earlier add or delete was
+  // waiting for, so a change the app refused or dropped never pulls the focus later.
+  function handleKeyDownCapture(event: KeyboardEvent<HTMLElement>) {
+    pendingFocus.current = null;
+    moveBySecond(event);
+  }
+
+  function handlePointerDownCapture(event: PointerEvent<HTMLElement>) {
+    pendingFocus.current = null;
+    keepTrackPressOnKeyframes(event);
+  }
+
   return (
     <section
       ref={sectionRef}
       aria-label="Timeline"
       tabIndex={-1}
       className="@container moderno-block-timeline grid gap-2 bg-background text-foreground outline-none"
-      onKeyDownCapture={moveBySecond}
+      onKeyDownCapture={handleKeyDownCapture}
       onKeyDown={handleShortcut}
-      onPointerDownCapture={keepTrackPressOnKeyframes}
+      onPointerDownCapture={handlePointerDownCapture}
     >
       <div className="flex flex-wrap items-center gap-1 px-2">
         <Tooltip.Root>
@@ -591,11 +622,11 @@ export function Timeline({
                 </Slider.Thumb>
               </Slider.Control>
               <Slider.MarkerGroup>
-                {marks.map((mark, index) => (
+                {marks.map((mark) => (
                   <Slider.Marker
                     key={mark.time}
                     value={mark.time}
-                    className={index % 2 === 1 ? "hidden @md:block" : undefined}
+                    className={mark.wideOnly ? "hidden @md:block" : undefined}
                   >
                     {mark.label}
                   </Slider.Marker>

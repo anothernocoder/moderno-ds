@@ -43,6 +43,8 @@
     /** Seconds from the start. */
     time: number;
     label: string;
+    /** Shown only on a wide ruler (from `--container-md`). */
+    wideOnly: boolean;
   }
 
   interface ToolbarButton {
@@ -111,8 +113,7 @@
 
   /**
    * Ruler spacings in frames, used once fewer than three seconds fill the view.
-   * Only those that fit an even number of times in a second count, so the marks
-   * a narrow ruler hides (every other one) are never the whole seconds.
+   * One that divides a second evenly wins, so the marks stay evenly spaced.
    */
   const frameSpacings = [1, 2, 3, 4, 5, 6, 8, 10, 12, 15];
 
@@ -162,27 +163,45 @@
 
   /**
    * Every ruler mark: the first spacing that fits ten marks in the view at this
-   * zoom. A mark between whole seconds is labelled by its frame, `12f`.
+   * zoom. A narrow ruler hides every other mark.
    */
   function rulerMarks(duration: number, fps: number, zoom: number): RulerMark[] {
     const visible = duration / zoom;
     const fitsTen = (seconds: number) => visible / seconds <= 10;
-    const frameStep =
-      visible < 3
-        ? frameSpacings.find((frames) => fps % (frames * 2) === 0 && fitsTen(frames / fps))
-        : undefined;
-    if (frameStep !== undefined) {
-      return Array.from({ length: Math.floor((duration * fps) / frameStep) + 1 }, (_, index) => {
-        const frame = index * frameStep;
-        const label = frame % fps > 0 ? `${frame % fps}f` : formatMark(frame / fps);
-        return { time: frame / fps, label };
-      });
+    if (visible < 3) {
+      const fits = (frames: number) => frames < fps && fitsTen(frames / fps);
+      const frameStep =
+        frameSpacings.find((frames) => fps % frames === 0 && fits(frames)) ??
+        frameSpacings.find(fits);
+      if (frameStep !== undefined) return frameMarks(duration, fps, frameStep);
     }
     const step = secondSpacings.find(fitsTen) ?? secondSpacings[secondSpacings.length - 1]!;
     return Array.from({ length: Math.floor(duration / step) + 1 }, (_, index) => ({
       time: index * step,
       label: formatMark(index * step),
+      wideOnly: index % 2 === 1,
     }));
+  }
+
+  /**
+   * A mark on every whole second, then every `step` frames within it, labelled by
+   * its frame (`12f`). No mark sits closer than a step to the next second. A
+   * narrow ruler keeps every whole second and, between them, only the marks two
+   * steps apart that sit at least two steps before the next second.
+   */
+  function frameMarks(duration: number, fps: number, step: number): RulerMark[] {
+    const marks: RulerMark[] = [];
+    const lastFrame = Math.floor(duration * fps);
+    for (let second = 0; second * fps <= lastFrame; second += 1) {
+      for (let frame = 0; frame <= fps - step && second * fps + frame <= lastFrame; frame += step) {
+        marks.push({
+          time: (second * fps + frame) / fps,
+          label: frame === 0 ? formatMark(second) : `${frame}f`,
+          wideOnly: frame > 0 && (frame % (step * 2) !== 0 || frame > fps - step * 2),
+        });
+      }
+    }
+    return marks;
   }
 
   /** Zoom doubles at each step, until about ten frames fill the view (or 3200%). */
@@ -302,7 +321,8 @@
     if (next !== zoomLevel) onzoomchange?.(next);
   }
 
-  // Runs once the app has written back `tracks` after an add or a delete.
+  // Runs once the app has written back `tracks` after an add or a delete, whether it
+  // replaced the array or edited it in place (`$state`).
   function focusPendingTarget() {
     const target = pendingFocus;
     if (!target || !section) return;
@@ -334,7 +354,7 @@
   }
 
   $effect(() => {
-    void tracks;
+    void sortedTracks;
     focusPendingTarget();
   });
 
@@ -436,6 +456,18 @@
       event.stopPropagation();
     }
   }
+
+  // Any key or press in the timeline first forgets the focus an earlier add or delete was
+  // waiting for, so a change the app refused or dropped never pulls the focus later.
+  function handleKeyDownCapture(event: KeyboardEvent) {
+    pendingFocus = null;
+    moveBySecond(event);
+  }
+
+  function handlePointerDownCapture(event: PointerEvent) {
+    pendingFocus = null;
+    keepTrackPressOnKeyframes(event);
+  }
 </script>
 
 {#snippet toolbar(buttons: ToolbarButton[])}
@@ -491,9 +523,9 @@
   aria-label="Timeline"
   tabindex="-1"
   class="@container moderno-block-timeline grid gap-2 bg-background text-foreground outline-none"
-  onkeydowncapture={moveBySecond}
+  onkeydowncapture={handleKeyDownCapture}
   onkeydown={handleShortcut}
-  onpointerdowncapture={keepTrackPressOnKeyframes}
+  onpointerdowncapture={handlePointerDownCapture}
 >
   <div class="flex flex-wrap items-center gap-1 px-2">
     <Tooltip.Root>
@@ -600,8 +632,8 @@
             </Slider.Thumb>
           </Slider.Control>
           <Slider.MarkerGroup>
-            {#each marks as mark, index (mark.time)}
-              <Slider.Marker value={mark.time} class={index % 2 === 1 ? "hidden @md:block" : undefined}>
+            {#each marks as mark (mark.time)}
+              <Slider.Marker value={mark.time} class={mark.wideOnly ? "hidden @md:block" : undefined}>
                 {mark.label}
               </Slider.Marker>
             {/each}
