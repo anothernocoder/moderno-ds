@@ -47,6 +47,9 @@ describe("moderno add pricing-<framework>", () => {
       expect(written).toContain("aria-busy");
       expect(written).toContain("No plans to show yet");
       expect(written).toContain("Try again");
+      // A screen that mounts it as the whole route can make its title the h1.
+      expect(written).toContain("titleLevel");
+      expect(written).toContain("aria-level");
 
       const recorded = await readManifest(project());
       expect(recorded.items[item]!.version).toBe(registry.getItem(item)!.version);
@@ -60,7 +63,7 @@ describe("moderno add pricing-<framework>", () => {
     for (const { item } of variants) {
       const entry = registry.getItem(item)!;
       expect(entry.type).toBe("registry:block");
-      expect(entry.version).toBe("0.3.0");
+      expect(entry.version).toBe("0.4.0");
       // The check glyph is inline SVG on currentColor, so no icon package:
       // every primitive arrives with the framework package, and `add` copies
       // exactly one file.

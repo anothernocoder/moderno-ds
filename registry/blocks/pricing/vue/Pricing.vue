@@ -51,6 +51,7 @@ const placeholders = ["first", "second", "third"];
 const props = withDefaults(
   defineProps<{
     title?: string;
+    titleLevel?: 1 | 2;
     description?: string;
     plans?: PricingPlan[];
     error?: string;
@@ -59,6 +60,7 @@ const props = withDefaults(
   }>(),
   {
     title: "Pricing that grows with you",
+    titleLevel: 2,
     description:
       "Start free, then pick the plan that fits how your team works. Change or cancel at any time.",
     plans: undefined,
@@ -74,13 +76,20 @@ const emit = defineEmits<{
 }>();
 
 const resolvedPlans = computed(() => props.plans ?? samplePlans);
+const titleRank = computed(() => (props.titleLevel === 1 ? 1 : undefined));
+const planRank = computed(() => (props.titleLevel === 1 ? 2 : undefined));
 </script>
 
 <template>
   <section class="@container moderno-block-pricing text-foreground">
     <div class="grid gap-8 py-12 @lg:gap-10 @lg:py-16">
       <div class="mx-auto grid max-w-md gap-3 text-center">
-        <h2 class="font-serif text-heading text-balance @md:text-heading-lg">{{ title }}</h2>
+        <h2
+          class="font-serif text-heading text-balance @md:text-heading-lg"
+          :aria-level="titleRank"
+        >
+          {{ title }}
+        </h2>
         <p v-if="description" class="text-body text-muted-foreground">{{ description }}</p>
       </div>
 
@@ -127,7 +136,7 @@ const resolvedPlans = computed(() => props.plans ?? samplePlans);
 
       <Card.Root v-else-if="resolvedPlans.length === 0" variant="muted" class="mx-auto max-w-md">
         <Card.Header class="items-center text-center">
-          <Card.Title>No plans to show yet</Card.Title>
+          <Card.Title :aria-level="planRank">No plans to show yet</Card.Title>
           <Card.Description>Plans appear here as soon as they are published.</Card.Description>
         </Card.Header>
       </Card.Root>
@@ -137,7 +146,7 @@ const resolvedPlans = computed(() => props.plans ?? samplePlans);
           <Card.Root size="sm" :class="plan.highlighted ? 'border-primary' : undefined">
             <Card.Header>
               <div class="flex items-center justify-between gap-2">
-                <Card.Title>{{ plan.name }}</Card.Title>
+                <Card.Title :aria-level="planRank">{{ plan.name }}</Card.Title>
                 <Badge v-if="plan.badge" variant="solid" size="sm">{{ plan.badge }}</Badge>
               </div>
               <Card.Description v-if="plan.description">{{ plan.description }}</Card.Description>

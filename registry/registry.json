@@ -3164,7 +3164,7 @@
     {
       "name": "pricing-react",
       "type": "registry:block",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "title": "Pricing (React)",
       "description": "Plan comparison composing the @moderno-ui/react Card, Badge, Button, Alert and Skeleton primitives: a serif title and one card per plan with its price, features and a call to action, the recommended plan outlined in --primary with a badge and the primary button, with its own empty, loading and error renders; responds to its container (@container) — stacked plans list their features in two columns at @sm, the plans sit side by side and the title steps up at @md, and the block takes more room at @lg.",
       "dependencies": [
@@ -3182,7 +3182,7 @@
     {
       "name": "pricing-vue",
       "type": "registry:block",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "title": "Pricing (Vue)",
       "description": "Plan comparison composing the @moderno-ui/vue Card, Badge, Button, Alert and Skeleton primitives: a serif title and one card per plan with its price, features and a call to action, the recommended plan outlined in --primary with a badge and the primary button, with its own empty, loading and error renders; responds to its container (@container) — stacked plans list their features in two columns at @sm, the plans sit side by side and the title steps up at @md, and the block takes more room at @lg.",
       "dependencies": [
@@ -3200,7 +3200,7 @@
     {
       "name": "pricing-svelte",
       "type": "registry:block",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "title": "Pricing (Svelte)",
       "description": "Plan comparison composing the @moderno-ui/svelte Card, Badge, Button, Alert and Skeleton primitives: a serif title and one card per plan with its price, features and a call to action, the recommended plan outlined in --primary with a badge and the primary button, with its own empty, loading and error renders; responds to its container (@container) — stacked plans list their features in two columns at @sm, the plans sit side by side and the title steps up at @md, and the block takes more room at @lg.",
       "dependencies": [
@@ -3218,7 +3218,7 @@
     {
       "name": "pricing-solid",
       "type": "registry:block",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "title": "Pricing (Solid)",
       "description": "Plan comparison composing the @moderno-ui/solid Card, Badge, Button, Alert and Skeleton primitives: a serif title and one card per plan with its price, features and a call to action, the recommended plan outlined in --primary with a badge and the primary button, with its own empty, loading and error renders; responds to its container (@container) — stacked plans list their features in two columns at @sm, the plans sit side by side and the title steps up at @md, and the block takes more room at @lg.",
       "dependencies": [
@@ -4750,6 +4750,86 @@
           "path": "screens/forgot-password/solid/forgot-password.tsx",
           "type": "registry:screen",
           "target": "src/components/screens/forgot-password.tsx"
+        }
+      ]
+    },
+    {
+      "name": "plan-select-react",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Plan select (React)",
+      "description": "Full-viewport plan choice composing the pricing block: one card per plan, the recommended one highlighted, with the block's loading, error and empty renders. Presentational — plans and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm and the footer at @md, while the plans inside go side by side at the block's own @md.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [
+        "pricing-react"
+      ],
+      "files": [
+        {
+          "path": "screens/plan-select/react/plan-select.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/plan-select.tsx"
+        }
+      ]
+    },
+    {
+      "name": "plan-select-vue",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Plan select (Vue)",
+      "description": "Full-viewport plan choice composing the pricing block: one card per plan, the recommended one highlighted, with the block's loading, error and empty renders. Presentational — plans and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm and the footer at @md, while the plans inside go side by side at the block's own @md.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [
+        "pricing-vue"
+      ],
+      "files": [
+        {
+          "path": "screens/plan-select/vue/PlanSelect.vue",
+          "type": "registry:screen",
+          "target": "src/components/screens/PlanSelect.vue"
+        }
+      ]
+    },
+    {
+      "name": "plan-select-svelte",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Plan select (Svelte)",
+      "description": "Full-viewport plan choice composing the pricing block: one card per plan, the recommended one highlighted, with the block's loading, error and empty renders. Presentational — plans and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm and the footer at @md, while the plans inside go side by side at the block's own @md.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [
+        "pricing-svelte"
+      ],
+      "files": [
+        {
+          "path": "screens/plan-select/svelte/PlanSelect.svelte",
+          "type": "registry:screen",
+          "target": "src/components/screens/PlanSelect.svelte"
+        }
+      ]
+    },
+    {
+      "name": "plan-select-solid",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Plan select (Solid)",
+      "description": "Full-viewport plan choice composing the pricing block: one card per plan, the recommended one highlighted, with the block's loading, error and empty renders. Presentational — plans and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead lines up at @sm and the footer at @md, while the plans inside go side by side at the block's own @md.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [
+        "pricing-solid"
+      ],
+      "files": [
+        {
+          "path": "screens/plan-select/solid/plan-select.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/plan-select.tsx"
         }
       ]
     },

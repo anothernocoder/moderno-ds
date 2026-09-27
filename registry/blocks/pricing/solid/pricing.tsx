@@ -66,6 +66,7 @@ function CheckGlyph() {
 
 export interface PricingProps {
   title?: string;
+  titleLevel?: 1 | 2;
   description?: string;
   plans?: PricingPlan[];
   error?: string;
@@ -81,12 +82,19 @@ export function Pricing(props: PricingProps) {
     props.description ??
     "Start free, then pick the plan that fits how your team works. Change or cancel at any time.";
   const plans = () => props.plans ?? samplePlans;
+  const titleRank = () => (props.titleLevel === 1 ? 1 : undefined);
+  const planRank = () => (props.titleLevel === 1 ? 2 : undefined);
 
   return (
     <section class="@container moderno-block-pricing text-foreground">
       <div class="grid gap-8 py-12 @lg:gap-10 @lg:py-16">
         <div class="mx-auto grid max-w-md gap-3 text-center">
-          <h2 class="font-serif text-heading text-balance @md:text-heading-lg">{title()}</h2>
+          <h2
+            class="font-serif text-heading text-balance @md:text-heading-lg"
+            aria-level={titleRank()}
+          >
+            {title()}
+          </h2>
           <Show when={description()}>
             <p class="text-body text-muted-foreground">{description()}</p>
           </Show>
@@ -149,7 +157,7 @@ export function Pricing(props: PricingProps) {
               fallback={
                 <Card.Root variant="muted" class="mx-auto max-w-md">
                   <Card.Header class="items-center text-center">
-                    <Card.Title>No plans to show yet</Card.Title>
+                    <Card.Title aria-level={planRank()}>No plans to show yet</Card.Title>
                     <Card.Description>
                       Plans appear here as soon as they are published.
                     </Card.Description>
@@ -164,7 +172,7 @@ export function Pricing(props: PricingProps) {
                       <Card.Root size="sm" class={plan.highlighted ? "border-primary" : undefined}>
                         <Card.Header>
                           <div class="flex items-center justify-between gap-2">
-                            <Card.Title>{plan.name}</Card.Title>
+                            <Card.Title aria-level={planRank()}>{plan.name}</Card.Title>
                             <Show when={plan.badge}>
                               <Badge variant="solid" size="sm">
                                 {plan.badge}
