@@ -5478,6 +5478,90 @@
       ]
     },
     {
+      "name": "review-react",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Review (React)",
+      "description": "Full-viewport order review screen composing the description-list and order-summary blocks: the last step of checkout before the order is placed — the contact, address, delivery and payment the shopper chose, each with Change, beside a read-only recap of the lines and the totals — with Back to payment and Place order, and the place-order-failed, placing-order, loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container): the masthead and the buttons line up at @sm, the footer at @md, and the order summary moves beside the details at @lg; each block keeps reading its own container.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [
+        "description-list-react",
+        "order-summary-react"
+      ],
+      "files": [
+        {
+          "path": "screens/review/react/review.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/review.tsx"
+        }
+      ]
+    },
+    {
+      "name": "review-vue",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Review (Vue)",
+      "description": "Full-viewport order review screen composing the description-list and order-summary blocks: the last step of checkout before the order is placed — the contact, address, delivery and payment the shopper chose, each with Change, beside a read-only recap of the lines and the totals — with Back to payment and Place order, and the place-order-failed, placing-order, loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container): the masthead and the buttons line up at @sm, the footer at @md, and the order summary moves beside the details at @lg; each block keeps reading its own container.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [
+        "description-list-vue",
+        "order-summary-vue"
+      ],
+      "files": [
+        {
+          "path": "screens/review/vue/Review.vue",
+          "type": "registry:screen",
+          "target": "src/components/screens/Review.vue"
+        }
+      ]
+    },
+    {
+      "name": "review-svelte",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Review (Svelte)",
+      "description": "Full-viewport order review screen composing the description-list and order-summary blocks: the last step of checkout before the order is placed — the contact, address, delivery and payment the shopper chose, each with Change, beside a read-only recap of the lines and the totals — with Back to payment and Place order, and the place-order-failed, placing-order, loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container): the masthead and the buttons line up at @sm, the footer at @md, and the order summary moves beside the details at @lg; each block keeps reading its own container.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [
+        "description-list-svelte",
+        "order-summary-svelte"
+      ],
+      "files": [
+        {
+          "path": "screens/review/svelte/Review.svelte",
+          "type": "registry:screen",
+          "target": "src/components/screens/Review.svelte"
+        }
+      ]
+    },
+    {
+      "name": "review-solid",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Review (Solid)",
+      "description": "Full-viewport order review screen composing the description-list and order-summary blocks: the last step of checkout before the order is placed — the contact, address, delivery and payment the shopper chose, each with Change, beside a read-only recap of the lines and the totals — with Back to payment and Place order, and the place-order-failed, placing-order, loading, error and empty states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container): the masthead and the buttons line up at @sm, the footer at @md, and the order summary moves beside the details at @lg; each block keeps reading its own container.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [
+        "description-list-solid",
+        "order-summary-solid"
+      ],
+      "files": [
+        {
+          "path": "screens/review/solid/review.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/review.tsx"
+        }
+      ]
+    },
+    {
       "name": "shipping-react",
       "type": "registry:screen",
       "version": "0.1.0",
