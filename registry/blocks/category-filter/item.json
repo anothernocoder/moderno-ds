@@ -1,0 +1,37 @@
+{
+  "title": "Category Filter",
+  "description": "A faceted filter sidebar beside a category's products, composing the @moderno-ui/{framework} Accordion, Checkbox, Slider, Drawer, Button, Alert and Skeleton primitives: a serif heading and a sentence of introduction, then one Accordion item per facet with a Checkbox per option and its count, a price range Slider, and \"Clear all\"; the products are the consumer's children, and every change is reported as { options, price }; has its own loading, empty and error renders; responds to its container (@container) — below @md the facets move into a Drawer from the left, opened by a \"Filters\" button that shows how many are active; the button sits beside the heading at @sm, the sidebar sits beside the products and the heading steps up at @md, and the sidebar widens with more room above and below at @lg.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": [],
+  "files": {
+    "react": [
+      {
+        "path": "blocks/category-filter/react/category-filter.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/category-filter.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "blocks/category-filter/vue/CategoryFilter.vue",
+        "type": "registry:block",
+        "target": "src/components/blocks/CategoryFilter.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "blocks/category-filter/svelte/CategoryFilter.svelte",
+        "type": "registry:block",
+        "target": "src/components/blocks/CategoryFilter.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "blocks/category-filter/solid/category-filter.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/category-filter.tsx"
+      }
+    ]
+  }
+}

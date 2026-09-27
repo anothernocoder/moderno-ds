@@ -1,0 +1,214 @@
+---
+title: Category Filter
+description: Filters beside a category's products — a checkbox list per facet, a price range and Clear all. In a narrow space the filters move into a drawer.
+group: Blocks
+order: 167
+agent:
+  intent: A shop's category page section — a serif heading over a filter sidebar and the category's products. The sidebar holds one Accordion item per facet with a Checkbox per option, a price range Slider and Clear all; below --container-md it becomes a "Filters" Button that opens the same filters in a Drawer from the left.
+  whenToUse: "A category or search results page where shoppers narrow a list of products by facets such as category, colour, material and price."
+  whenNotToUse:
+    - case: A grid of products with no filters
+      use: ProductList — it shows a page of products to pick from
+    - case: A few links into a shop's categories
+      use: CategoryPreview — it shows one card per category
+    - case: Records in an app that people sort and act on, rather than products to narrow
+      use: Table — sortable columns, row selection and pages
+  gotchas:
+    - "The products are yours: pass them as children (Svelte `children` snippet, Vue default slot). The block holds only the heading and the filters."
+    - "`facets` is `{ id, label, options: { value, label, count? }[] }[]`. `price` is `{ min, max, step?, currency? }` (`currency` is an ISO code, `EUR` by default), or `null` for no price filter."
+    - "The block keeps the picked options and the price range itself. `onFiltersChange(filters)` (Svelte `onfilterschange`, Vue `@filters-change`) reports `{ options, price }` after every change: `options` maps each facet `id` to its checked values, and `price` is `[min, max]`. The price is reported when a thumb is let go, not while it moves. Filtering the products stays yours."
+    - 'A checkbox fires the report at once. "Clear all" unchecks every option, resets the price to the full range and reports that.'
+    - 'Below `--container-md` the filters move into a Drawer from the left. The "Filters" button that opens it shows how many filters are active, like "Filters (2)". The drawer''s "Show results" closes it.'
+    - '`loading` shows placeholders in place of the filters, in one busy `status` region. `error` shows an error Alert with your message and a "Try again" button in their place. An empty string counts as no error. Your products still show in both.'
+    - 'With no facets and no price, the filters read "No filters for this category." in a dashed box.'
+    - "`disabled` turns off every checkbox, the price range, Clear all, the retry and the Filters button."
+    - "The layout follows the block's own width, not the viewport: the Filters button fills its row at first; it sits beside the heading from `--container-sm`; the sidebar replaces it and the heading steps up from `--container-md`; the sidebar widens from `--container-lg`."
+  theming:
+    - "The block paints only its borders (--border) and the dashed empty box. The facets are Accordion, each option is Checkbox, the price is Slider, the narrow filters are Drawer, the buttons are Button (outline for Filters, ghost for Clear all, primary for Show results), the error is Alert's error variant and the loading placeholders are Skeleton."
+    - "The heading reads --font-serif and --foreground; the description and the option counts read --muted-foreground."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import CategoryFilterBlockDemo from "../../../islands/CategoryFilterBlockDemo.svelte";
+import categoryFilterReact from "../../../../../../registry/blocks/category-filter/react/category-filter.tsx?raw";
+import categoryFilterVue from "../../../../../../registry/blocks/category-filter/vue/CategoryFilter.vue?raw";
+import categoryFilterSolid from "../../../../../../registry/blocks/category-filter/solid/category-filter.tsx?raw";
+import categoryFilterSvelte from "../../../../../../registry/blocks/category-filter/svelte/CategoryFilter.svelte?raw";
+
+export const examples = {
+  react: categoryFilterReact,
+  vue: categoryFilterVue,
+  solid: categoryFilterSolid,
+  svelte: categoryFilterSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <CategoryFilterBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="category-filter" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { CategoryFilter } from "@/components/blocks/category-filter";
+```
+
+```tsx
+<CategoryFilter facets={facets} price={price} onFiltersChange={setFilters}>
+  <ProductGrid products={matching} />
+</CategoryFilter>
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import CategoryFilter from "@/components/blocks/CategoryFilter.vue";
+</script>
+```
+
+```vue
+<CategoryFilter :facets="facets" :price="price" @filters-change="filters = $event">
+  <ProductGrid :products="matching" />
+</CategoryFilter>
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import CategoryFilter from "@/components/blocks/CategoryFilter.svelte";
+</script>
+```
+
+```svelte
+<CategoryFilter {facets} {price} onfilterschange={(next) => (filters = next)}>
+  <ProductGrid products={matching} />
+</CategoryFilter>
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { CategoryFilter } from "@/components/blocks/category-filter";
+```
+
+```tsx
+<CategoryFilter facets={facets} price={price} onFiltersChange={setFilters}>
+  <ProductGrid products={matching()} />
+</CategoryFilter>
+```
+
+</ForFramework>
+
+`matching` is your products, filtered by the last `filters` the block reported.
+
+## API Reference
+
+### Props
+
+| Prop              | Type                                 | Default             | Description                                                                    |
+| ----------------- | ------------------------------------ | ------------------- | ------------------------------------------------------------------------------ |
+| `heading`         | `string`                             | `"New arrivals"`    | The block's `h2`.                                                              |
+| `description`     | `string`                             | a sample sentence   | The line under the heading. `""` hides it.                                     |
+| `facets`          | `FilterFacet[]`                      | three sample facets | One Accordion item each, with a Checkbox per option.                           |
+| `price`           | `PriceFilter \| null`                | `0` to `200` in EUR | The price range Slider. `null` leaves it out.                                  |
+| `error`           | `string`                             | —                   | The filters failed to load; an error Alert takes their place.                  |
+| `loading`         | `boolean`                            | `false`             | Placeholders take the place of the filters.                                    |
+| `disabled`        | `boolean`                            | `false`             | Every control is off.                                                          |
+| `children`        | products                             | —                   | Your products, beside the sidebar or under the heading. Vue: the default slot. |
+| `onFiltersChange` | `(filters: CategoryFilters) => void` | —                   | The filters changed. Svelte: `onfilterschange`. Vue: `@filters-change`.        |
+| `onRetry`         | `() => void`                         | —                   | "Try again" was pressed. Svelte: `onretry`. Vue: `@retry`.                     |
+
+### FilterFacet
+
+| Field     | Type                                                 | Description                                                   |
+| --------- | ---------------------------------------------------- | ------------------------------------------------------------- |
+| `id`      | `string`                                             | The key of this facet in `CategoryFilters.options`.           |
+| `label`   | `string`                                             | The Accordion item's heading.                                 |
+| `options` | `{ value: string; label: string; count?: number }[]` | One Checkbox each. `count` shows muted at the end of the row. |
+
+### PriceFilter
+
+| Field      | Type     | Description                                       |
+| ---------- | -------- | ------------------------------------------------- |
+| `min`      | `number` | The lowest price.                                 |
+| `max`      | `number` | The highest price.                                |
+| `step`     | `number` | How far one arrow key moves a thumb. Default `1`. |
+| `currency` | `string` | An ISO currency code. Default `EUR`.              |
+
+### CategoryFilters
+
+| Field     | Type                       | Description                                        |
+| --------- | -------------------------- | -------------------------------------------------- |
+| `options` | `Record<string, string[]>` | The checked values, by facet `id`.                 |
+| `price`   | `[number, number] \| null` | The chosen price range, or `null` with no `price`. |
+
+### States
+
+| State    | Prop                       | What renders                                                             |
+| -------- | -------------------------- | ------------------------------------------------------------------------ |
+| Default  | —                          | The filters, every facet open, nothing checked and the full price range. |
+| Empty    | no `facets` and no `price` | "No filters for this category." in a dashed box.                         |
+| Loading  | `loading`                  | Placeholders in a busy `status` region.                                  |
+| Error    | `error`                    | An error Alert with "Try again".                                         |
+| Disabled | `disabled`                 | Every checkbox, the price range and every button off.                    |
+
+### Sizing
+
+| Container step           | What changes                                                                       |
+| ------------------------ | ---------------------------------------------------------------------------------- |
+| below `@sm`              | The filters are in a drawer; the Filters button fills its row under the heading.   |
+| `@sm` (`--container-sm`) | The Filters button sits beside the heading.                                        |
+| `@md` (`--container-md`) | The filters sit in a sidebar beside the products, and the heading steps up a size. |
+| `@lg` (`--container-lg`) | The sidebar widens, with more room above and below.                                |
+
+## Examples
+
+### Container widths
+
+The same block at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself. In the two narrow frames, press "Filters" to open the drawer.
+
+<Preview examples={examples} layout="fill">
+  <CategoryFilterBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Empty
+
+<Preview examples={examples} layout="fill">
+  <CategoryFilterBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <CategoryFilterBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+Press "Try again" to clear the error.
+
+<Preview examples={examples} layout="fill">
+  <CategoryFilterBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <CategoryFilterBlockDemo client:visible locale="en" state="disabled" />
+</Preview>

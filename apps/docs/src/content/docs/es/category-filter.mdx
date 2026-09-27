@@ -1,0 +1,190 @@
+---
+title: Category Filter
+description: Filtros junto a los productos de una categoría — una lista de casillas por faceta, un rango de precio y Clear all. En un espacio estrecho, los filtros pasan a un panel lateral.
+group: Bloques
+order: 167
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import CategoryFilterBlockDemo from "../../../islands/CategoryFilterBlockDemo.svelte";
+import categoryFilterReact from "../../../../../../registry/blocks/category-filter/react/category-filter.tsx?raw";
+import categoryFilterVue from "../../../../../../registry/blocks/category-filter/vue/CategoryFilter.vue?raw";
+import categoryFilterSolid from "../../../../../../registry/blocks/category-filter/solid/category-filter.tsx?raw";
+import categoryFilterSvelte from "../../../../../../registry/blocks/category-filter/svelte/CategoryFilter.svelte?raw";
+
+export const examples = {
+  react: categoryFilterReact,
+  vue: categoryFilterVue,
+  solid: categoryFilterSolid,
+  svelte: categoryFilterSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <CategoryFilterBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="category-filter" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { CategoryFilter } from "@/components/blocks/category-filter";
+```
+
+```tsx
+<CategoryFilter facets={facets} price={price} onFiltersChange={setFilters}>
+  <ProductGrid products={matching} />
+</CategoryFilter>
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import CategoryFilter from "@/components/blocks/CategoryFilter.vue";
+</script>
+```
+
+```vue
+<CategoryFilter :facets="facets" :price="price" @filters-change="filters = $event">
+  <ProductGrid :products="matching" />
+</CategoryFilter>
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import CategoryFilter from "@/components/blocks/CategoryFilter.svelte";
+</script>
+```
+
+```svelte
+<CategoryFilter {facets} {price} onfilterschange={(next) => (filters = next)}>
+  <ProductGrid products={matching} />
+</CategoryFilter>
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { CategoryFilter } from "@/components/blocks/category-filter";
+```
+
+```tsx
+<CategoryFilter facets={facets} price={price} onFiltersChange={setFilters}>
+  <ProductGrid products={matching()} />
+</CategoryFilter>
+```
+
+</ForFramework>
+
+`matching` son tus productos, filtrados por los últimos `filters` que informó el bloque.
+
+## Referencia de la API
+
+### Props
+
+| Prop              | Tipo                                 | Por defecto             | Descripción                                                                         |
+| ----------------- | ------------------------------------ | ----------------------- | ----------------------------------------------------------------------------------- |
+| `heading`         | `string`                             | `"New arrivals"`        | El `h2` del bloque.                                                                 |
+| `description`     | `string`                             | una frase de ejemplo    | La línea bajo el título. `""` la oculta.                                            |
+| `facets`          | `FilterFacet[]`                      | tres facetas de ejemplo | Un elemento de Accordion por faceta, con un Checkbox por opción.                    |
+| `price`           | `PriceFilter \| null`                | de `0` a `200` en EUR   | El Slider del rango de precio. `null` lo quita.                                     |
+| `error`           | `string`                             | —                       | Los filtros no cargaron; un Alert de error ocupa su lugar.                          |
+| `loading`         | `boolean`                            | `false`                 | Marcadores de carga en lugar de los filtros.                                        |
+| `disabled`        | `boolean`                            | `false`                 | Todos los controles apagados.                                                       |
+| `children`        | productos                            | —                       | Tus productos, junto a la barra lateral o bajo el título. Vue: el slot por defecto. |
+| `onFiltersChange` | `(filters: CategoryFilters) => void` | —                       | Los filtros cambiaron. Svelte: `onfilterschange`. Vue: `@filters-change`.           |
+| `onRetry`         | `() => void`                         | —                       | Se pulsó "Try again". Svelte: `onretry`. Vue: `@retry`.                             |
+
+### FilterFacet
+
+| Campo     | Tipo                                                 | Descripción                                                |
+| --------- | ---------------------------------------------------- | ---------------------------------------------------------- |
+| `id`      | `string`                                             | La clave de esta faceta en `CategoryFilters.options`.      |
+| `label`   | `string`                                             | El título del elemento de Accordion.                       |
+| `options` | `{ value: string; label: string; count?: number }[]` | Un Checkbox por opción. `count` aparece atenuado al final. |
+
+### PriceFilter
+
+| Campo      | Tipo     | Descripción                                                    |
+| ---------- | -------- | -------------------------------------------------------------- |
+| `min`      | `number` | El precio más bajo.                                            |
+| `max`      | `number` | El precio más alto.                                            |
+| `step`     | `number` | Cuánto mueve un tirador cada tecla de flecha. Por defecto `1`. |
+| `currency` | `string` | Un código de moneda ISO. Por defecto `EUR`.                    |
+
+### CategoryFilters
+
+| Campo     | Tipo                       | Descripción                                             |
+| --------- | -------------------------- | ------------------------------------------------------- |
+| `options` | `Record<string, string[]>` | Los valores marcados, por `id` de faceta.               |
+| `price`   | `[number, number] \| null` | El rango de precio elegido, o `null` si no hay `price`. |
+
+### Estados
+
+| Estado        | Prop                       | Qué se muestra                                                                |
+| ------------- | -------------------------- | ----------------------------------------------------------------------------- |
+| Por defecto   | —                          | Los filtros, cada faceta abierta, nada marcado y el rango de precio completo. |
+| Vacío         | sin `facets` y sin `price` | "No filters for this category." en un recuadro discontinuo.                   |
+| Cargando      | `loading`                  | Marcadores de carga en una región `status` ocupada.                           |
+| Error         | `error`                    | Un Alert de error con "Try again".                                            |
+| Deshabilitado | `disabled`                 | Cada casilla, el rango de precio y cada botón apagados.                       |
+
+### Tamaños
+
+| Paso del contenedor      | Qué cambia                                                                               |
+| ------------------------ | ---------------------------------------------------------------------------------------- |
+| por debajo de `@sm`      | Los filtros están en un panel lateral; el botón Filters ocupa su fila bajo el título.    |
+| `@sm` (`--container-sm`) | El botón Filters se coloca junto al título.                                              |
+| `@md` (`--container-md`) | Los filtros pasan a una barra lateral junto a los productos, y el título sube un tamaño. |
+| `@lg` (`--container-lg`) | La barra lateral se ensancha, con más espacio arriba y abajo.                            |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+El mismo bloque a 18rem, 30rem, 40rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo. En los dos marcos estrechos, pulsa "Filters" para abrir el panel.
+
+<Preview examples={examples} layout="fill">
+  <CategoryFilterBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Vacío
+
+<Preview examples={examples} layout="fill">
+  <CategoryFilterBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <CategoryFilterBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+Pulsa "Try again" para quitar el error.
+
+<Preview examples={examples} layout="fill">
+  <CategoryFilterBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+<Preview examples={examples} layout="fill">
+  <CategoryFilterBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
