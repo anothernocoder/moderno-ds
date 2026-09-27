@@ -354,6 +354,78 @@
       ]
     },
     {
+      "name": "app-shell-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "App Shell (React)",
+      "description": "The frame of a signed-in app, composing the @moderno-ui/react Drawer, Menu, Avatar, Button, Alert and Skeleton primitives: a sidebar with the product name and the main navigation, a top bar with the page heading and an account Menu, and the page's content beside them; the content has its own loading, error and empty renders; responds to its container (@container) — below @md the sidebar collapses into a left Drawer opened from a Menu button in the top bar, the account trigger shows the user's name from @sm, and the sidebar widens and the content gains room at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/app-shell/react/app-shell.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/app-shell.tsx"
+        }
+      ]
+    },
+    {
+      "name": "app-shell-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "App Shell (Vue)",
+      "description": "The frame of a signed-in app, composing the @moderno-ui/vue Drawer, Menu, Avatar, Button, Alert and Skeleton primitives: a sidebar with the product name and the main navigation, a top bar with the page heading and an account Menu, and the page's content beside them; the content has its own loading, error and empty renders; responds to its container (@container) — below @md the sidebar collapses into a left Drawer opened from a Menu button in the top bar, the account trigger shows the user's name from @sm, and the sidebar widens and the content gains room at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/app-shell/vue/AppShell.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/AppShell.vue"
+        }
+      ]
+    },
+    {
+      "name": "app-shell-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "App Shell (Svelte)",
+      "description": "The frame of a signed-in app, composing the @moderno-ui/svelte Drawer, Menu, Avatar, Button, Alert and Skeleton primitives: a sidebar with the product name and the main navigation, a top bar with the page heading and an account Menu, and the page's content beside them; the content has its own loading, error and empty renders; responds to its container (@container) — below @md the sidebar collapses into a left Drawer opened from a Menu button in the top bar, the account trigger shows the user's name from @sm, and the sidebar widens and the content gains room at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/app-shell/svelte/AppShell.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/AppShell.svelte"
+        }
+      ]
+    },
+    {
+      "name": "app-shell-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "App Shell (Solid)",
+      "description": "The frame of a signed-in app, composing the @moderno-ui/solid Drawer, Menu, Avatar, Button, Alert and Skeleton primitives: a sidebar with the product name and the main navigation, a top bar with the page heading and an account Menu, and the page's content beside them; the content has its own loading, error and empty renders; responds to its container (@container) — below @md the sidebar collapses into a left Drawer opened from a Menu button in the top bar, the account trigger shows the user's name from @sm, and the sidebar widens and the content gains room at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/app-shell/solid/app-shell.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/app-shell.tsx"
+        }
+      ]
+    },
+    {
       "name": "banner-react",
       "type": "registry:block",
       "version": "0.1.0",
