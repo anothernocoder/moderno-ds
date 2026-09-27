@@ -1,0 +1,191 @@
+---
+title: Welcome
+description: A full-viewport onboarding welcome screen with a hero and a Continue button.
+group: Screens
+order: 116
+agent:
+  intent: The full-viewport onboarding welcome screen — the first step of onboarding, presentational.
+  whenToUse: "The route a new account lands on right after sign-up, before profile setup: /welcome, /onboarding."
+  whenNotToUse:
+    - case: The opening section of a marketing page
+      use: the Hero block — a block never owns the viewport
+    - case: The whole onboarding journey, with the navigation between its steps
+      use: the onboarding flow, which sequences this screen with the steps after it
+  gotchas:
+    - "Presentational: no request, no router. `onContinue`, `onSkip` and `onRetry` report the three buttons; `onNavigate` names the destination of every link the screen draws itself and hands back the click event, so a router can `preventDefault()`."
+    - "Full-viewport is a height (`min-h-dvh`). Every width decision is read off the screen's own container, so it is still correct mounted in a pane that is not the window."
+    - "The screen imports the Hero block from `@/components/blocks/…`, where `moderno add` puts it. If your project uses a different path alias, that one import line is the only thing to change."
+    - "The root is a `<div>`, not a `<main>` — most app shells already provide the `main` landmark. If your route has none, change that one element."
+  theming:
+    - "The screen paints `text-foreground` / `text-muted-foreground` on `bg-background`; the badge, buttons and alert are the Hero block's primitives."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the two steps are --container-sm and --container-md."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import WelcomeScreenDemo from "../../../islands/WelcomeScreenDemo.svelte";
+import welcomeReact from "../../../../../../registry/screens/welcome/react/welcome.tsx?raw";
+import welcomeVue from "../../../../../../registry/screens/welcome/vue/Welcome.vue?raw";
+import welcomeSolid from "../../../../../../registry/screens/welcome/solid/welcome.tsx?raw";
+import welcomeSvelte from "../../../../../../registry/screens/welcome/svelte/Welcome.svelte?raw";
+
+<FrameworkSelect locale="en" />
+
+<Preview
+  examples={{
+    react: welcomeReact,
+    vue: welcomeVue,
+    solid: welcomeSolid,
+    svelte: welcomeSvelte,
+  }}
+  layout="fill"
+>
+  <WelcomeScreenDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="welcome" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { Welcome } from "@/components/screens/welcome";
+```
+
+```tsx
+<Welcome name={user.firstName} onContinue={goToProfile} onSkip={goToDashboard} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```ts
+import Welcome from "@/components/screens/Welcome.vue";
+```
+
+```vue
+<Welcome :name="user.firstName" @continue="goToProfile" @skip="goToDashboard" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```ts
+import Welcome from "@/components/screens/Welcome.svelte";
+```
+
+```svelte
+<Welcome name={user.firstName} oncontinue={goToProfile} onskip={goToDashboard} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { Welcome } from "@/components/screens/welcome";
+```
+
+```tsx
+<Welcome name={user().firstName} onContinue={goToProfile} onSkip={goToDashboard} />
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+Callbacks are `on…` props in React and Solid, lowercase (`oncontinue`) in Svelte, and emits (`continue`, `skip`, `retry`, `navigate`) in Vue.
+
+| Prop          | Type                  | Default | Description                                                         |
+| ------------- | --------------------- | ------- | ------------------------------------------------------------------- |
+| `name`        | `string`              | —       | The reader's first name. The title greets them: "Welcome, Ana".     |
+| `error`       | `string`              | —       | The workspace could not be prepared: an alert with a retry.         |
+| `loading`     | `boolean`             | `false` | The workspace is being prepared: placeholders in a busy region.     |
+| `disabled`    | `boolean`             | `false` | Continue and Skip are shown but inert.                              |
+| `onContinue`  | `() => void`          | —       | "Continue" was pressed.                                             |
+| `onSkip`      | `() => void`          | —       | "Skip for now" was pressed.                                         |
+| `onRetry`     | `() => void`          | —       | "Try again" was pressed, inside the error.                          |
+| `onNavigate`  | `(to, event) => void` | —       | A screen link was clicked: `home`, `support`, `privacy` or `terms`. |
+| `homeHref`    | `string`              | `"#"`   | Target of the wordmark.                                             |
+| `supportHref` | `string`              | `"#"`   | Target of "Contact support".                                        |
+| `privacyHref` | `string`              | `"#"`   | Target of the privacy link.                                         |
+| `termsHref`   | `string`              | `"#"`   | Target of the terms link.                                           |
+
+### States
+
+| State    | Props      | Renders                                                          |
+| -------- | ---------- | ---------------------------------------------------------------- |
+| Default  | —          | The hero, centred between the masthead and the footer.           |
+| Loading  | `loading`  | Placeholders in a busy region; no buttons.                       |
+| Error    | `error`    | The title stays; an alert with "Try again" replaces the buttons. |
+| Disabled | `disabled` | Continue and Skip are shown but can't be used.                   |
+
+### Sizing
+
+| Container step           | Change                           |
+| ------------------------ | -------------------------------- |
+| `@sm` (`--container-sm`) | The masthead moves onto one row. |
+| `@md` (`--container-md`) | The footer moves onto one row.   |
+
+### Composition
+
+| Part              | Role                                                             |
+| ----------------- | ---------------------------------------------------------------- |
+| [Hero](/en/hero/) | The greeting, the subtitle and the buttons, with its own states. |
+
+## Examples
+
+### Greeting by name
+
+<Preview
+  examples={{
+    react: welcomeReact,
+    vue: welcomeVue,
+    solid: welcomeSolid,
+    svelte: welcomeSvelte,
+  }}
+  layout="fill"
+>
+  <WelcomeScreenDemo client:visible locale="en" state="named" />
+</Preview>
+
+### Loading
+
+<Preview
+  examples={{
+    react: welcomeReact,
+    vue: welcomeVue,
+    solid: welcomeSolid,
+    svelte: welcomeSvelte,
+  }}
+  layout="fill"
+>
+  <WelcomeScreenDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+<Preview
+  examples={{
+    react: welcomeReact,
+    vue: welcomeVue,
+    solid: welcomeSolid,
+    svelte: welcomeSvelte,
+  }}
+  layout="fill"
+>
+  <WelcomeScreenDemo client:visible locale="en" state="error" />
+</Preview>
+
+## Notes
+
+- Presentational: no request, no router. The page that mounts it decides where Continue and Skip go.
+- `onNavigate` passes the click event: skip `metaKey`/`ctrlKey` clicks, then `preventDefault()` to route.
+- The root is a `<div>`, not a `<main>`. Make it your `<main>` if the route has none.
+- The screen imports the Hero block from `@/components/blocks/…`; edit that line if your alias differs.

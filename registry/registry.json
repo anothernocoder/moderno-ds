@@ -5074,6 +5074,86 @@
       ]
     },
     {
+      "name": "welcome-react",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Welcome (React)",
+      "description": "Full-viewport onboarding welcome screen composing the hero block: a greeting, what comes next, and Continue and Skip actions, with its loading and error states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container): the masthead lines up at @sm and the footer at @md.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [
+        "hero-react"
+      ],
+      "files": [
+        {
+          "path": "screens/welcome/react/welcome.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/welcome.tsx"
+        }
+      ]
+    },
+    {
+      "name": "welcome-vue",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Welcome (Vue)",
+      "description": "Full-viewport onboarding welcome screen composing the hero block: a greeting, what comes next, and Continue and Skip actions, with its loading and error states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container): the masthead lines up at @sm and the footer at @md.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [
+        "hero-vue"
+      ],
+      "files": [
+        {
+          "path": "screens/welcome/vue/Welcome.vue",
+          "type": "registry:screen",
+          "target": "src/components/screens/Welcome.vue"
+        }
+      ]
+    },
+    {
+      "name": "welcome-svelte",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Welcome (Svelte)",
+      "description": "Full-viewport onboarding welcome screen composing the hero block: a greeting, what comes next, and Continue and Skip actions, with its loading and error states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container): the masthead lines up at @sm and the footer at @md.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [
+        "hero-svelte"
+      ],
+      "files": [
+        {
+          "path": "screens/welcome/svelte/Welcome.svelte",
+          "type": "registry:screen",
+          "target": "src/components/screens/Welcome.svelte"
+        }
+      ]
+    },
+    {
+      "name": "welcome-solid",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Welcome (Solid)",
+      "description": "Full-viewport onboarding welcome screen composing the hero block: a greeting, what comes next, and Continue and Skip actions, with its loading and error states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container): the masthead lines up at @sm and the footer at @md.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [
+        "hero-solid"
+      ],
+      "files": [
+        {
+          "path": "screens/welcome/solid/welcome.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/welcome.tsx"
+        }
+      ]
+    },
+    {
       "name": "auth-react",
       "type": "registry:flow",
       "version": "0.1.0",
