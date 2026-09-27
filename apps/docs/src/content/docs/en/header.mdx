@@ -1,0 +1,217 @@
+---
+title: Header
+description: The top bar of a site — the brand, the main links and one call to action. On a narrow container the links fold into a Drawer.
+group: Blocks
+order: 120
+agent:
+  intent: The top bar of a marketing site — the brand as a link home, the main navigation (plain links, and a Menu for a group of links) and one call to action. On a narrow container the navigation folds into a Drawer opened from a "Menu" button.
+  whenToUse: "Once at the top of every page of a public site: a landing page, pricing, a blog."
+  whenNotToUse:
+    - case: The frame of a signed-in app, with a sidebar and an account menu
+      use: AppShell — it holds the app's navigation and the page beside it
+    - case: The opening section of a page, with a big heading and actions
+      use: Hero — it goes under the header
+    - case: A page's own heading with breadcrumbs, tabs or actions
+      use: SectionHeader — it heads one section, not the site
+  gotchas:
+    - "`navigation` mixes two kinds of item. A link is `{ id, label, href, current?, disabled? }`. A group is `{ id, label, links }`: it opens a Menu of its links in the bar, and lists them under its label in the Drawer."
+    - 'Mark the page the user is on with `current: true`: its link gets `aria-current="page"` and reads in --foreground.'
+    - 'A `disabled` link has no `href`, `role="link"` and `aria-disabled="true"`: it is dimmed and out of the tab order. In a group it is a disabled Menu item.'
+    - "The links are plain `<a href>`. To use your router's link, edit the copied file."
+    - "The same links fill the bar and the Drawer. A click on a link or on the call to action in the Drawer closes it."
+    - 'Presentational: `onAction` reports a press on the call to action (Svelte `onaction`, Vue `@action`), and `onRetry` a press on "Try again" (Svelte `onretry`, Vue `@retry`). `action=""` hides the call to action.'
+    - "`homeHref` is where the brand links to; it defaults to `/`."
+    - '`navigation={[]}` is the empty state: no links and no "Menu" button, just the brand and the call to action at every width.'
+    - "`loading` shows three placeholders in one busy `status` region where the links go, in the bar and in the Drawer."
+    - '`error` hides the links and the "Menu" button and puts an error Alert with your message and a "Try again" button under the bar. An empty string counts as no error.'
+    - "Keep the top level to three or four short links. From `--container-md` they sit on one line in the bar; more links than fit will crowd it. Put the rest in a group."
+    - 'The layout follows the block''s own width, not the viewport: the brand and "Menu" at first; the call to action joins the bar from `--container-sm`; the links replace "Menu" from `--container-md`; more room around and between from `--container-lg`.'
+  theming:
+    - "The block paints the bar (--background) and its bottom border (--border), and the links' hover fill (--accent, --accent-foreground). The Drawer, the Menu, the buttons, the error Alert and the placeholders are the primitives' own."
+    - "The brand reads --font-serif and --foreground; the links and a group's label in the Drawer read --muted-foreground, and the current link reads --foreground."
+    - "A group's Menu trigger drops its border and fill to sit in line with the links; it fills with --accent on hover and while open."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import HeaderBlockDemo from "../../../islands/HeaderBlockDemo.svelte";
+import headerReact from "../../../../../../registry/blocks/header/react/header.tsx?raw";
+import headerVue from "../../../../../../registry/blocks/header/vue/Header.vue?raw";
+import headerSolid from "../../../../../../registry/blocks/header/solid/header.tsx?raw";
+import headerSvelte from "../../../../../../registry/blocks/header/svelte/Header.svelte?raw";
+
+export const examples = {
+  react: headerReact,
+  vue: headerVue,
+  solid: headerSolid,
+  svelte: headerSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <HeaderBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="header" />
+
+## Usage
+
+Use Header once, at the top of every page of a public site. It links home, to the main pages and to one call to action, like signing up.
+
+<ForFramework fw="react">
+
+```tsx
+import { Header } from "@/components/blocks/header";
+```
+
+```tsx
+<Header brand="Northwind" navigation={navigation} action="Get started" onAction={signUp} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import Header from "@/components/blocks/Header.vue";
+</script>
+```
+
+```vue
+<Header brand="Northwind" :navigation="navigation" action="Get started" @action="signUp" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import Header from "@/components/blocks/Header.svelte";
+</script>
+```
+
+```svelte
+<Header brand="Northwind" {navigation} action="Get started" onaction={signUp} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { Header } from "@/components/blocks/header";
+```
+
+```tsx
+<Header brand="Northwind" navigation={navigation()} action="Get started" onAction={signUp} />
+```
+
+</ForFramework>
+
+A link looks like `{ id: "pricing", label: "Pricing", href: "/pricing" }`. A group looks like `{ id: "product", label: "Product", links: [...] }`.
+
+## API Reference
+
+### Props
+
+| Prop         | Type              | Default                      | Description                                                                     |
+| ------------ | ----------------- | ---------------------------- | ------------------------------------------------------------------------------- |
+| `brand`      | `string`          | `"Northwind"`                | The site's name, in the serif face. It links home, and titles the Drawer.       |
+| `homeHref`   | `string`          | `"/"`                        | Where the brand links to.                                                       |
+| `navigation` | `HeaderNavItem[]` | a group and two sample links | The main navigation, in the bar and in the Drawer.                              |
+| `action`     | `string`          | `"Get started"`              | The call to action's label. `""` hides it.                                      |
+| `error`      | `string`          | —                            | Loading the navigation failed; an error Alert with a retry shows under the bar. |
+| `loading`    | `boolean`         | `false`                      | Placeholders in a busy region replace the links.                                |
+| `onAction`   | `() => void`      | —                            | The call to action was pressed. Svelte: `onaction`. Vue: `@action`.             |
+| `onRetry`    | `() => void`      | —                            | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.                    |
+
+### HeaderNavItem
+
+`HeaderNavItem` is a `HeaderLink` or a `HeaderMenu`.
+
+A `HeaderLink`:
+
+| Field      | Type      | Description                                                              |
+| ---------- | --------- | ------------------------------------------------------------------------ |
+| `id`       | `string`  | A stable key for the link.                                               |
+| `label`    | `string`  | The link's text.                                                         |
+| `href`     | `string`  | Where the link goes.                                                     |
+| `current`  | `boolean` | Optional. The page the user is on: `aria-current="page"`, in foreground. |
+| `disabled` | `boolean` | Optional. The link is dimmed, has no `href` and cannot be focused.       |
+
+A `HeaderMenu`:
+
+| Field   | Type           | Description                                                              |
+| ------- | -------------- | ------------------------------------------------------------------------ |
+| `id`    | `string`       | A stable key for the group.                                              |
+| `label` | `string`       | The Menu trigger's text in the bar, and the group's label in the Drawer. |
+| `links` | `HeaderLink[]` | The group's links: Menu items in the bar, a short list in the Drawer.    |
+
+### States
+
+| State    | Prop                 | What renders                                             |
+| -------- | -------------------- | -------------------------------------------------------- |
+| Default  | `navigation`         | The brand, the links and the call to action.             |
+| Empty    | `navigation={[]}`    | The brand and the call to action. No "Menu" button.      |
+| Loading  | `loading`            | Three placeholders where the links go.                   |
+| Error    | `error`              | An error Alert with "Try again" under the bar. No links. |
+| Disabled | `disabled` on a link | That link dimmed, out of the tab order.                  |
+
+### Sizing
+
+| Container step           | What changes                                                              |
+| ------------------------ | ------------------------------------------------------------------------- |
+| below `@sm`              | The brand and "Menu". The links and the call to action are in the Drawer. |
+| `@sm` (`--container-sm`) | The call to action joins the bar, beside "Menu".                          |
+| `@md` (`--container-md`) | The links sit in the bar. The "Menu" button goes away.                    |
+| `@lg` (`--container-lg`) | More room around the bar and between its parts.                           |
+
+## Examples
+
+### Container widths
+
+The same block at 18rem, 30rem, 40rem and 50rem. Below 36rem, press "Menu" to open the navigation. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <HeaderBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Empty
+
+Pass `navigation={[]}` for a page with no links, like a sign-up funnel.
+
+<Preview examples={examples} layout="fill">
+  <HeaderBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <HeaderBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+Press "Try again" to clear the message and bring the links back.
+
+<Preview examples={examples} layout="fill">
+  <HeaderBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled link
+
+Set `disabled` on a link the user cannot open yet, like a page that is coming soon. Open "Product" to see a disabled item in a group.
+
+<Preview examples={examples} layout="fill">
+  <HeaderBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Keep one call to action. A second one, like "Sign in", goes in the page or in a group.
+- Keep link labels to one or two words, so the bar stays on one line.

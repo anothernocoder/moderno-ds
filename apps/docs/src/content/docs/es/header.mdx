@@ -1,0 +1,189 @@
+---
+title: Header
+description: La barra superior de un sitio — la marca, los enlaces principales y una llamada a la acción. En un contenedor estrecho los enlaces se pliegan en un Drawer.
+group: Bloques
+order: 120
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import HeaderBlockDemo from "../../../islands/HeaderBlockDemo.svelte";
+import headerReact from "../../../../../../registry/blocks/header/react/header.tsx?raw";
+import headerVue from "../../../../../../registry/blocks/header/vue/Header.vue?raw";
+import headerSolid from "../../../../../../registry/blocks/header/solid/header.tsx?raw";
+import headerSvelte from "../../../../../../registry/blocks/header/svelte/Header.svelte?raw";
+
+export const examples = {
+  react: headerReact,
+  vue: headerVue,
+  solid: headerSolid,
+  svelte: headerSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <HeaderBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="header" />
+
+## Uso
+
+Usa Header una vez, arriba en cada página de un sitio público. Enlaza al inicio, a las páginas principales y a una llamada a la acción, como registrarse.
+
+<ForFramework fw="react">
+
+```tsx
+import { Header } from "@/components/blocks/header";
+```
+
+```tsx
+<Header brand="Northwind" navigation={navigation} action="Empezar" onAction={signUp} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import Header from "@/components/blocks/Header.vue";
+</script>
+```
+
+```vue
+<Header brand="Northwind" :navigation="navigation" action="Empezar" @action="signUp" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import Header from "@/components/blocks/Header.svelte";
+</script>
+```
+
+```svelte
+<Header brand="Northwind" {navigation} action="Empezar" onaction={signUp} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { Header } from "@/components/blocks/header";
+```
+
+```tsx
+<Header brand="Northwind" navigation={navigation()} action="Empezar" onAction={signUp} />
+```
+
+</ForFramework>
+
+Un enlace es así: `{ id: "pricing", label: "Precios", href: "/pricing" }`. Un grupo es así: `{ id: "product", label: "Producto", links: [...] }`.
+
+## Referencia de la API
+
+### Props
+
+| Prop         | Tipo              | Por defecto                       | Descripción                                                                        |
+| ------------ | ----------------- | --------------------------------- | ---------------------------------------------------------------------------------- |
+| `brand`      | `string`          | `"Northwind"`                     | El nombre del sitio, en la fuente serif. Enlaza al inicio y titula el Drawer.      |
+| `homeHref`   | `string`          | `"/"`                             | A dónde enlaza la marca.                                                           |
+| `navigation` | `HeaderNavItem[]` | un grupo y dos enlaces de ejemplo | La navegación principal, en la barra y en el Drawer.                               |
+| `action`     | `string`          | `"Get started"`                   | El texto de la llamada a la acción. `""` la oculta.                                |
+| `error`      | `string`          | —                                 | La navegación no cargó; una Alert de error con un reintento aparece bajo la barra. |
+| `loading`    | `boolean`         | `false`                           | Marcadores en una región ocupada reemplazan los enlaces.                           |
+| `onAction`   | `() => void`      | —                                 | Se pulsó la llamada a la acción. Svelte: `onaction`. Vue: `@action`.               |
+| `onRetry`    | `() => void`      | —                                 | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.                        |
+
+### HeaderNavItem
+
+`HeaderNavItem` es un `HeaderLink` o un `HeaderMenu`.
+
+Un `HeaderLink`:
+
+| Campo      | Tipo      | Descripción                                                           |
+| ---------- | --------- | --------------------------------------------------------------------- |
+| `id`       | `string`  | Una clave estable para el enlace.                                     |
+| `label`    | `string`  | El texto del enlace.                                                  |
+| `href`     | `string`  | A dónde lleva el enlace.                                              |
+| `current`  | `boolean` | Opcional. La página en la que está el usuario: `aria-current="page"`. |
+| `disabled` | `boolean` | Opcional. El enlace se atenúa, no tiene `href` y no recibe el foco.   |
+
+Un `HeaderMenu`:
+
+| Campo   | Tipo           | Descripción                                                                         |
+| ------- | -------------- | ----------------------------------------------------------------------------------- |
+| `id`    | `string`       | Una clave estable para el grupo.                                                    |
+| `label` | `string`       | El texto del disparador del Menu en la barra, y la etiqueta del grupo en el Drawer. |
+| `links` | `HeaderLink[]` | Los enlaces del grupo: elementos del Menu en la barra, una lista en el Drawer.      |
+
+### Estados
+
+| Estado        | Prop                    | Qué se muestra                                                 |
+| ------------- | ----------------------- | -------------------------------------------------------------- |
+| Por defecto   | `navigation`            | La marca, los enlaces y la llamada a la acción.                |
+| Vacío         | `navigation={[]}`       | La marca y la llamada a la acción. Sin botón "Menu".           |
+| Cargando      | `loading`               | Tres marcadores donde van los enlaces.                         |
+| Error         | `error`                 | Una Alert de error con "Try again" bajo la barra. Sin enlaces. |
+| Deshabilitado | `disabled` en un enlace | Ese enlace atenuado, fuera del orden de tabulación.            |
+
+### Tamaño
+
+| Paso del contenedor      | Qué cambia                                                                  |
+| ------------------------ | --------------------------------------------------------------------------- |
+| bajo `@sm`               | La marca y "Menu". Los enlaces y la llamada a la acción están en el Drawer. |
+| `@sm` (`--container-sm`) | La llamada a la acción entra en la barra, junto a "Menu".                   |
+| `@md` (`--container-md`) | Los enlaces van en la barra. El botón "Menu" desaparece.                    |
+| `@lg` (`--container-lg`) | Más espacio alrededor de la barra y entre sus partes.                       |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+El mismo bloque a 18rem, 30rem, 40rem y 50rem. Por debajo de 36rem, pulsa "Menu" para abrir la navegación. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <HeaderBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Vacío
+
+Pasa `navigation={[]}` para una página sin enlaces, como un proceso de registro.
+
+<Preview examples={examples} layout="fill">
+  <HeaderBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <HeaderBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+Pulsa "Try again" para quitar el mensaje y volver a mostrar los enlaces.
+
+<Preview examples={examples} layout="fill">
+  <HeaderBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Enlace deshabilitado
+
+Pon `disabled` en un enlace que el usuario aún no puede abrir, como una página que llega pronto. Abre "Product" para ver un elemento deshabilitado en un grupo.
+
+<Preview examples={examples} layout="fill">
+  <HeaderBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
+
+## Notas
+
+- Deja una sola llamada a la acción. Una segunda, como "Iniciar sesión", va en la página o en un grupo.
+- Deja las etiquetas de los enlaces en una o dos palabras, para que la barra quepa en una línea.

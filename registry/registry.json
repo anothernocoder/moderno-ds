@@ -1722,6 +1722,78 @@
       ]
     },
     {
+      "name": "header-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Header (React)",
+      "description": "The top bar of a marketing site, composing the @moderno-ui/react Menu, Drawer, Button, Alert and Skeleton primitives: the brand as a link home, the main navigation (plain links, and a Menu for a group of links) and one call to action, with its own loading, empty and error renders for the navigation; responds to its container (@container) — below @md the navigation collapses into a right Drawer opened from a Menu button, the call to action joins the bar from @sm, and the bar gains room at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/header/react/header.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/header.tsx"
+        }
+      ]
+    },
+    {
+      "name": "header-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Header (Vue)",
+      "description": "The top bar of a marketing site, composing the @moderno-ui/vue Menu, Drawer, Button, Alert and Skeleton primitives: the brand as a link home, the main navigation (plain links, and a Menu for a group of links) and one call to action, with its own loading, empty and error renders for the navigation; responds to its container (@container) — below @md the navigation collapses into a right Drawer opened from a Menu button, the call to action joins the bar from @sm, and the bar gains room at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/header/vue/Header.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/Header.vue"
+        }
+      ]
+    },
+    {
+      "name": "header-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Header (Svelte)",
+      "description": "The top bar of a marketing site, composing the @moderno-ui/svelte Menu, Drawer, Button, Alert and Skeleton primitives: the brand as a link home, the main navigation (plain links, and a Menu for a group of links) and one call to action, with its own loading, empty and error renders for the navigation; responds to its container (@container) — below @md the navigation collapses into a right Drawer opened from a Menu button, the call to action joins the bar from @sm, and the bar gains room at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/header/svelte/Header.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/Header.svelte"
+        }
+      ]
+    },
+    {
+      "name": "header-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Header (Solid)",
+      "description": "The top bar of a marketing site, composing the @moderno-ui/solid Menu, Drawer, Button, Alert and Skeleton primitives: the brand as a link home, the main navigation (plain links, and a Menu for a group of links) and one call to action, with its own loading, empty and error renders for the navigation; responds to its container (@container) — below @md the navigation collapses into a right Drawer opened from a Menu button, the call to action joins the bar from @sm, and the bar gains room at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/header/solid/header.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/header.tsx"
+        }
+      ]
+    },
+    {
       "name": "hero-react",
       "type": "registry:block",
       "version": "0.1.0",
