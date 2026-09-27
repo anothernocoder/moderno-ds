@@ -29,7 +29,8 @@
   "dependencies": {
     "@ark-ui/vue": "^5.37.2",
     "@moderno-ui/charts-core": "workspace:*",
-    "@moderno-ui/core": "workspace:*"
+    "@moderno-ui/core": "workspace:*",
+    "@zag-js/vue": "1.41.2"
   },
   "peerDependencies": {
     "@moderno-ui/css": "workspace:>=0.3.0 <1.0.0",

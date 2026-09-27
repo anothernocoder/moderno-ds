@@ -184,7 +184,26 @@ importers:
         version: 8.5.1(postcss@8.5.15)(typescript@5.9.3)(yaml@2.9.0)
 
   packages/core:
+    dependencies:
+      '@zag-js/anatomy':
+        specifier: 1.41.2
+        version: 1.41.2
+      '@zag-js/core':
+        specifier: 1.41.2
+        version: 1.41.2
+      '@zag-js/dom-query':
+        specifier: 1.41.2
+        version: 1.41.2
+      '@zag-js/live-region':
+        specifier: 1.41.2
+        version: 1.41.2
+      '@zag-js/types':
+        specifier: 1.41.2
+        version: 1.41.2
     devDependencies:
+      '@zag-js/vanilla':
+        specifier: 1.41.2
+        version: 1.41.2
       tsup:
         specifier: ^8.3.5
         version: 8.5.1(postcss@8.5.15)(typescript@5.9.3)(yaml@2.9.0)
@@ -250,6 +269,9 @@ importers:
       '@moderno-ui/css':
         specifier: workspace:>=0.3.0 <1.0.0
         version: link:../css
+      '@zag-js/react':
+        specifier: 1.41.2
+        version: 1.41.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
     devDependencies:
       '@moderno-ui/props-doc':
         specifier: workspace:*
@@ -290,6 +312,9 @@ importers:
       '@moderno-ui/css':
         specifier: workspace:>=0.3.0 <1.0.0
         version: link:../css
+      '@zag-js/solid':
+        specifier: 1.41.2
+        version: 1.41.2(solid-js@1.9.13)
     devDependencies:
       '@moderno-ui/props-doc':
         specifier: workspace:*
@@ -327,6 +352,9 @@ importers:
       '@moderno-ui/css':
         specifier: workspace:>=0.3.0 <1.0.0
         version: link:../css
+      '@zag-js/svelte':
+        specifier: 1.41.2
+        version: 1.41.2(svelte@5.56.3(@typescript-eslint/types@8.61.1))
     devDependencies:
       '@moderno-ui/props-doc':
         specifier: workspace:*
@@ -364,6 +392,9 @@ importers:
       '@moderno-ui/css':
         specifier: workspace:>=0.3.0 <1.0.0
         version: link:../css
+      '@zag-js/vue':
+        specifier: 1.41.2
+        version: 1.41.2(vue@3.5.38(typescript@5.9.3))
     devDependencies:
       '@moderno-ui/props-doc':
         specifier: workspace:*
@@ -2694,6 +2725,9 @@ packages:
 
   '@zag-js/utils@1.41.2':
     resolution: {integrity: sha512-Yj8FSrR7vGA6ahUhjrThfHAF+PM2Y1Yv2lkXkqZZd60mPBhixcot1+SHOfEMV63JimQcWrmQ8QbeYYMmF+ZpLQ==}
+
+  '@zag-js/vanilla@1.41.2':
+    resolution: {integrity: sha512-5eGvJ6VqW3byU2L/u2hwrwYV0kBNtisuGrxF2HXS3o/4CVqbxRVw43HWXRi7st3eB6sPFNSFqpxx5lPfzQUCmg==}
 
   '@zag-js/vue@1.41.2':
     resolution: {integrity: sha512-1Ury8CqxUtB6757+xjedtVgpB3OjKL59ljC5w0c0XcyLl9Zp7wEOJYfdSjg5Z7aAmt25iDYmdJnZ8GaRLmVKmw==}
@@ -8444,6 +8478,13 @@ snapshots:
       csstype: 3.2.3
 
   '@zag-js/utils@1.41.2': {}
+
+  '@zag-js/vanilla@1.41.2':
+    dependencies:
+      '@zag-js/core': 1.41.2
+      '@zag-js/store': 1.41.2
+      '@zag-js/types': 1.41.2
+      '@zag-js/utils': 1.41.2
 
   '@zag-js/vue@1.41.2(vue@3.5.38(typescript@5.9.3))':
     dependencies:

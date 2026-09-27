@@ -31,7 +31,8 @@
   "dependencies": {
     "@ark-ui/svelte": "^5.22.1",
     "@moderno-ui/charts-core": "workspace:*",
-    "@moderno-ui/core": "workspace:*"
+    "@moderno-ui/core": "workspace:*",
+    "@zag-js/svelte": "1.41.2"
   },
   "peerDependencies": {
     "@moderno-ui/css": "workspace:>=0.3.0 <1.0.0",

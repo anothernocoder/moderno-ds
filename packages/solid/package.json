@@ -31,7 +31,8 @@
   "dependencies": {
     "@ark-ui/solid": "^5.37.1",
     "@moderno-ui/charts-core": "workspace:*",
-    "@moderno-ui/core": "workspace:*"
+    "@moderno-ui/core": "workspace:*",
+    "@zag-js/solid": "1.41.2"
   },
   "peerDependencies": {
     "@moderno-ui/css": "workspace:>=0.3.0 <1.0.0",
