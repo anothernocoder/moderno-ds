@@ -53,7 +53,7 @@ export function InputGroup({
               <Field.Input
                 name="website"
                 inputMode="url"
-                autoComplete="url"
+                autoComplete="off"
                 placeholder="your-shop.com"
                 defaultValue={website}
                 className="min-w-0 flex-1 rounded-s-none"

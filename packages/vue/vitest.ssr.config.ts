@@ -10,9 +10,20 @@ import { registryAliases } from "../lint/src/registry.ts";
 // exists for the registry gate alone. Runs *.ssr.test.ts.
 const manifest = fileURLToPath(new URL("../../registry/registry.json", import.meta.url));
 
+// A registry source imports the primitives by name, and `registry/` has no
+// `node_modules` to find them in. Node-mode tests get by (Vitest resolves bare
+// imports from this package), but a jsdom-mode test compiles the SFC for the
+// client and Vite resolves from the importer, so point the name at the source.
+const primitives = fileURLToPath(new URL("./src/index.ts", import.meta.url));
+
 export default defineConfig({
   plugins: [vue()],
-  resolve: { alias: registryAliases(manifest, "vue") },
+  resolve: {
+    alias: [
+      ...registryAliases(manifest, "vue"),
+      { find: /^@moderno-ui\/vue$/, replacement: primitives },
+    ],
+  },
   test: {
     name: "vue-ssr",
     environment: "node",

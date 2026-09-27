@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref, watch } from "vue";
 import { Button, Field, Spinner } from "@moderno-ui/vue";
 
 type InputGroupField = "website" | "price" | "query";
@@ -32,6 +32,24 @@ const emit = defineEmits<{
 
 const inert = computed(() => props.loading || props.disabled);
 
+/**
+ * What an input shows: the prop at first and whenever the prop changes, and
+ * whatever the user typed in between. Binding the prop alone would put it back
+ * on screen every time the field re-renders, such as when an error or loading
+ * arrives.
+ */
+function useTypedText(source: () => string) {
+  const text = ref(source());
+  watch(source, (next) => {
+    text.value = next;
+  });
+  return text;
+}
+
+const websiteText = useTypedText(() => props.website);
+const priceText = useTypedText(() => props.price);
+const queryText = useTypedText(() => props.query);
+
 function handleSearch(event: Event) {
   event.preventDefault();
   const form = event.currentTarget as HTMLFormElement;
@@ -60,9 +78,9 @@ function handleSearch(event: Event) {
             <Field.Input
               name="website"
               inputmode="url"
-              autocomplete="url"
+              autocomplete="off"
               placeholder="your-shop.com"
-              :value="website"
+              v-model="websiteText"
               class="min-w-0 flex-1 rounded-s-none"
             />
           </div>
@@ -81,7 +99,7 @@ function handleSearch(event: Event) {
               name="price"
               inputmode="decimal"
               placeholder="0.00"
-              :value="price"
+              v-model="priceText"
               class="min-w-0 flex-1 rounded-none"
             />
             <span
@@ -124,7 +142,7 @@ function handleSearch(event: Event) {
                 name="query"
                 type="search"
                 placeholder="Name or SKU"
-                :value="query"
+                v-model="queryText"
                 class="min-w-0 flex-1 rounded-e-none"
               />
               <Button

@@ -47,7 +47,7 @@ export function InputGroup(props: InputGroupProps) {
               <Field.Input
                 name="website"
                 inputMode="url"
-                autocomplete="url"
+                autocomplete="off"
                 placeholder="your-shop.com"
                 value={website()}
                 class="min-w-0 flex-1 rounded-s-none"
