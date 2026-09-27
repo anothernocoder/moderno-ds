@@ -130,6 +130,17 @@ describe("@moderno-ui/core components.css — DatePicker", () => {
     ).toBe("var(--radius)");
   });
 
+  it("strikes out an isDateUnavailable day, never a day outside min / max", () => {
+    // Ark marks both data-unavailable; only the one outside min / max also
+    // carries aria-invalid, and it is dimmed, not struck out.
+    const struck = decls.filter(
+      ({ decl }) => decl.prop === "text-decoration" && decl.value === "line-through",
+    );
+    expect(struck.map(({ selector }) => selector)).toEqual([
+      `${DAY}[data-unavailable]:not([aria-invalid="true"])`,
+    ]);
+  });
+
   it("keeps a picked day's fill under the pointer", () => {
     const hover = decls.filter(
       ({ selector, decl }) =>

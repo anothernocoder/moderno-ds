@@ -31,6 +31,8 @@ function Demo(props: {
   locale?: string;
   value?: DateValue[];
   defaultValue?: DateValue[];
+  min?: DateValue;
+  isDateUnavailable?: (date: DateValue) => boolean;
   onValueChange?: (details: DatePickerValueChangeDetails) => void;
 }) {
   return (
@@ -40,6 +42,8 @@ function Demo(props: {
       locale={props.locale}
       value={props.value}
       defaultValue={props.defaultValue}
+      min={props.min}
+      isDateUnavailable={props.isDateUnavailable}
       onValueChange={props.onValueChange}
       defaultFocusedValue={parseDate("2024-05-15")}
       className="due"
@@ -166,6 +170,18 @@ describe("DatePicker", () => {
     expect(day("2024-05-06").hasAttribute("data-range-start")).toBe(true);
     expect(day("2024-05-08").hasAttribute("data-in-range")).toBe(true);
     expect(day("2024-05-10").hasAttribute("data-range-end")).toBe(true);
+  });
+
+  it("tells a day outside min from one isDateUnavailable turned off", () => {
+    // The partial strikes out only the second; both are unavailable to Ark.
+    render(<Demo min={parseDate("2024-05-10")} isDateUnavailable={(date) => date.day === 20} />);
+    const beforeMin = day("2024-05-05");
+    expect(beforeMin.hasAttribute("data-unavailable")).toBe(true);
+    expect(beforeMin.getAttribute("aria-invalid")).toBe("true");
+    expect(beforeMin.hasAttribute("data-outside-range")).toBe(false);
+    const turnedOff = day("2024-05-20");
+    expect(turnedOff.hasAttribute("data-unavailable")).toBe(true);
+    expect(turnedOff.hasAttribute("aria-invalid")).toBe(false);
   });
 
   it("follows a controlled value", async () => {

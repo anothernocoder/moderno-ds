@@ -359,29 +359,29 @@ Cada parte acepta los atributos de su elemento.
 
 ### Atributos data
 
-| Atributo             | Valores                                                                  |
-| -------------------- | ------------------------------------------------------------------------ |
-| `data-size`          | En el root y el contenido: `"sm"`, `"md"` o `"lg"`                       |
-| `data-state`         | `"open"` o `"closed"`, en el root, el trigger y el contenido             |
-| `data-selected`      | En un día elegido (o en cada extremo de un rango)                        |
-| `data-today`         | En el día de hoy                                                         |
-| `data-in-range`      | En los días de un rango, extremos incluidos                              |
-| `data-range-start`   | En el primer día de un rango                                             |
-| `data-range-end`     | En el último día de un rango                                             |
-| `data-outside-range` | En un día del mes anterior o siguiente, o fuera de `min` y `max`         |
-| `data-unavailable`   | En un día que `isDateUnavailable` desactivó                              |
-| `data-disabled`      | En un día que no se puede elegir, y en cada parte de un root desactivado |
+| Atributo             | Valores                                                                                                                            |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `data-size`          | En el root y el contenido: `"sm"`, `"md"` o `"lg"`                                                                                 |
+| `data-state`         | `"open"` o `"closed"`, en el root, el trigger y el contenido                                                                       |
+| `data-selected`      | En un día elegido (o en cada extremo de un rango)                                                                                  |
+| `data-today`         | En el día de hoy                                                                                                                   |
+| `data-in-range`      | En los días de un rango, extremos incluidos                                                                                        |
+| `data-range-start`   | En el primer día de un rango                                                                                                       |
+| `data-range-end`     | En el último día de un rango                                                                                                       |
+| `data-outside-range` | En un día del mes anterior o siguiente                                                                                             |
+| `data-unavailable`   | En un día fuera de `min` / `max` (también lleva `aria-invalid`), o uno que `isDateUnavailable` desactivó. Solo el segundo se tacha |
+| `data-disabled`      | En un día que no se puede elegir, y en cada parte de un root desactivado                                                           |
 
 ### Teclado
 
-| Tecla                   | Acción                                                   |
-| ----------------------- | -------------------------------------------------------- |
-| `Enter`                 | En el input, toma la fecha escrita.                      |
-| `Flechas`               | En la cuadrícula, mueven un día o una semana.            |
-| `Page Up` / `Page Down` | En la cuadrícula, mueven un mes.                         |
-| `Home` / `End`          | En la cuadrícula, van al inicio o al final de la semana. |
-| `Enter` / `Space`       | En la cuadrícula, eligen el día enfocado.                |
-| `Esc`                   | Cierra el calendario y devuelve el foco al input.        |
+| Tecla                   | Acción                                                           |
+| ----------------------- | ---------------------------------------------------------------- |
+| `Enter`                 | En el input, toma la fecha escrita.                              |
+| `Flechas`               | En la cuadrícula, mueven un día o una semana.                    |
+| `Page Up` / `Page Down` | En la cuadrícula, mueven un mes.                                 |
+| `Home` / `End`          | En la cuadrícula, van al primer o al último día del mes visible. |
+| `Enter` / `Space`       | En la cuadrícula, eligen el día enfocado.                        |
+| `Esc`                   | Cierra el calendario y lleva el foco al trigger.                 |
 
 ## Ejemplos
 

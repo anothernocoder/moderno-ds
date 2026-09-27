@@ -1865,9 +1865,14 @@
     font-weight: var(--font-weight-semibold);
     text-decoration: underline;
   }
-  /* A day Ark will not let the user pick (isDateUnavailable) is struck out;
-     the base layer already dims it as disabled. */
-  [data-scope="date-picker"][data-part="table-cell-trigger"][data-unavailable] {
+  /* Ark stamps data-unavailable on a day outside min / max and on a day
+     isDateUnavailable turned off; the base layer dims both as disabled. Only
+     the second is struck out: a booking calendar with min = today dims the
+     past, it does not cross it all out. A day outside min / max is the one
+     that also carries aria-invalid. */
+  [data-scope="date-picker"][data-part="table-cell-trigger"][data-unavailable]:not(
+      [aria-invalid="true"]
+    ) {
     text-decoration: line-through;
   }
   /* A range: the days between the ends are one --accent band, square inside

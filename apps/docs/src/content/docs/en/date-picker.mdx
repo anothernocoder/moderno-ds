@@ -381,29 +381,29 @@ Every part accepts its element's attributes.
 
 ### Data attributes
 
-| Attribute            | Values                                                               |
-| -------------------- | -------------------------------------------------------------------- |
-| `data-size`          | On the root and the content: `"sm"`, `"md"` or `"lg"`                |
-| `data-state`         | `"open"` or `"closed"`, on the root, the trigger and the content     |
-| `data-selected`      | On a picked day (or each end of a range)                             |
-| `data-today`         | On today                                                             |
-| `data-in-range`      | On the days of a range, ends included                                |
-| `data-range-start`   | On the first day of a range                                          |
-| `data-range-end`     | On the last day of a range                                           |
-| `data-outside-range` | On a day of the next or previous month, or outside `min` and `max`   |
-| `data-unavailable`   | On a day `isDateUnavailable` turned off                              |
-| `data-disabled`      | On a day that cannot be picked, and on every part of a disabled root |
+| Attribute            | Values                                                                                                                                 |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `data-size`          | On the root and the content: `"sm"`, `"md"` or `"lg"`                                                                                  |
+| `data-state`         | `"open"` or `"closed"`, on the root, the trigger and the content                                                                       |
+| `data-selected`      | On a picked day (or each end of a range)                                                                                               |
+| `data-today`         | On today                                                                                                                               |
+| `data-in-range`      | On the days of a range, ends included                                                                                                  |
+| `data-range-start`   | On the first day of a range                                                                                                            |
+| `data-range-end`     | On the last day of a range                                                                                                             |
+| `data-outside-range` | On a day of the previous or next month                                                                                                 |
+| `data-unavailable`   | On a day outside `min` / `max` (it also has `aria-invalid`), or one `isDateUnavailable` turned off. Only the second kind is struck out |
+| `data-disabled`      | On a day that cannot be picked, and on every part of a disabled root                                                                   |
 
 ### Keyboard
 
-| Key                     | Action                                              |
-| ----------------------- | --------------------------------------------------- |
-| `Enter`                 | In the input, takes the typed date.                 |
-| `Arrow keys`            | In the grid, move one day or one week.              |
-| `Page Up` / `Page Down` | In the grid, move one month.                        |
-| `Home` / `End`          | In the grid, go to the start or end of the week.    |
-| `Enter` / `Space`       | In the grid, pick the focused day.                  |
-| `Esc`                   | Closes the calendar and returns focus to the input. |
+| Key                     | Action                                                         |
+| ----------------------- | -------------------------------------------------------------- |
+| `Enter`                 | In the input, takes the typed date.                            |
+| `Arrow keys`            | In the grid, move one day or one week.                         |
+| `Page Up` / `Page Down` | In the grid, move one month.                                   |
+| `Home` / `End`          | In the grid, go to the first or last day of the visible month. |
+| `Enter` / `Space`       | In the grid, pick the focused day.                             |
+| `Esc`                   | Closes the calendar and moves focus to the trigger.            |
 
 ## Examples
 
