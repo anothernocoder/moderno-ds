@@ -181,9 +181,14 @@
     box-shadow var(--motion-instant);
 }
 /* Hover darkens the edge of a card that is not the choice. The fill stays
-   --card, so the media's --muted frame still reads against it. */
+   --card, so the media's --muted frame still reads against it. An invalid
+   card keeps its --destructive edge under the pointer. */
 [data-scope="radio-group"][data-variant="tile"]
-  [data-scope="radio-group"][data-part="item"]:hover:not([data-state="checked"], [data-readonly]) {
+  [data-scope="radio-group"][data-part="item"]:hover:not(
+    [data-state="checked"],
+    [data-invalid],
+    [data-readonly]
+  ) {
   border-color: var(--muted-foreground);
 }
 /* Checked: the 1px edge doubles in --primary, drawn inside so nothing moves. */
@@ -192,9 +197,15 @@
   border-color: var(--primary);
   box-shadow: inset 0 0 0 1px var(--primary);
 }
+/* Invalid: the edge turns --destructive; a checked card's doubled edge
+   drops --primary too, as the list's invalid circle does. */
 [data-scope="radio-group"][data-variant="tile"]
   [data-scope="radio-group"][data-part="item"][data-invalid] {
   border-color: var(--destructive);
+}
+[data-scope="radio-group"][data-variant="tile"]
+  [data-scope="radio-group"][data-part="item"][data-invalid][data-state="checked"] {
+  box-shadow: inset 0 0 0 1px var(--destructive);
 }
 [data-scope="radio-group"][data-variant="tile"]
   [data-scope="radio-group"][data-part="item"][data-focus-visible] {

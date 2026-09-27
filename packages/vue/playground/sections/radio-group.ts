@@ -1,7 +1,8 @@
 /**
  * RadioGroup — Ark's radio machine: the checked item reaches its parts on the
  * server, every native radio is already there with its checked / disabled
- * state before hydration, and the tile grid carries its media.
+ * state before hydration, and the tile grid carries its media and its invalid
+ * edges.
  */
 import { h } from "vue";
 import { RadioGroup } from "../../src/radio-group.js";
@@ -63,6 +64,25 @@ const RadioGroupSection: Section = () =>
           h(RadioGroup.ItemMedia, {}, () => thumbnail(0, 0, 2, 3)),
           h(RadioGroup.ItemControl),
           h(RadioGroup.ItemText, {}, () => "Split"),
+          h(RadioGroup.ItemHiddenInput),
+        ]),
+      ],
+    ),
+    h(
+      RadioGroup.Root,
+      { variant: "tile", columns: 2, aspectRatio: "4:3", invalid: true, defaultValue: "light" },
+      () => [
+        h(RadioGroup.Label, {}, () => "Cover"),
+        h(RadioGroup.Item, { value: "light" }, () => [
+          h(RadioGroup.ItemMedia, {}, () => thumbnail(1, 1, 2, 1)),
+          h(RadioGroup.ItemControl),
+          h(RadioGroup.ItemText, {}, () => "Light"),
+          h(RadioGroup.ItemHiddenInput),
+        ]),
+        h(RadioGroup.Item, { value: "dark" }, () => [
+          h(RadioGroup.ItemMedia, {}, () => thumbnail(0, 0, 4, 3)),
+          h(RadioGroup.ItemControl),
+          h(RadioGroup.ItemText, {}, () => "Dark"),
           h(RadioGroup.ItemHiddenInput),
         ]),
       ],

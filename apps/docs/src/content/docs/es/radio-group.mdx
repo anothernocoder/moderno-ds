@@ -166,17 +166,17 @@ La primera tabla recoge las props de Moderno: `variant` (por defecto `"list"`), 
 
 <PropsTable component="RadioGroup" />
 
-| Prop            | Tipo                           | Por defecto  | Descripción                                                         |
-| --------------- | ------------------------------ | ------------ | ------------------------------------------------------------------- |
-| `value`         | `string \| null`               | —            | Valor controlado. Úsalo con `onValueChange`.                        |
-| `defaultValue`  | `string \| null`               | —            | Valor inicial cuando no está controlado.                            |
-| `onValueChange` | `(details: { value }) => void` | —            | Se llama cuando el usuario elige una opción.                        |
-| `orientation`   | `"vertical" \| "horizontal"`   | `"vertical"` | Apila las opciones en columna o las pone en fila.                   |
-| `disabled`      | `boolean`                      | `false`      | Deshabilita todas las opciones y atenúa el grupo.                   |
-| `invalid`       | `boolean`                      | `false`      | Pone `aria-invalid` y rodea cada círculo con `--destructive`.       |
-| `readOnly`      | `boolean`                      | `false`      | Muestra la elección pero ignora los clics.                          |
-| `required`      | `boolean`                      | `false`      | Marca los radios como obligatorios.                                 |
-| `name`          | `string`                       | —            | Nombre del campo en el formulario, compartido por todos los radios. |
+| Prop            | Tipo                           | Por defecto  | Descripción                                                                     |
+| --------------- | ------------------------------ | ------------ | ------------------------------------------------------------------------------- |
+| `value`         | `string \| null`               | —            | Valor controlado. Úsalo con `onValueChange`.                                    |
+| `defaultValue`  | `string \| null`               | —            | Valor inicial cuando no está controlado.                                        |
+| `onValueChange` | `(details: { value }) => void` | —            | Se llama cuando el usuario elige una opción.                                    |
+| `orientation`   | `"vertical" \| "horizontal"`   | `"vertical"` | Apila las opciones en columna o las pone en fila.                               |
+| `disabled`      | `boolean`                      | `false`      | Deshabilita todas las opciones y atenúa el grupo.                               |
+| `invalid`       | `boolean`                      | `false`      | Pone `aria-invalid` y pinta cada círculo, o borde de tile, con `--destructive`. |
+| `readOnly`      | `boolean`                      | `false`      | Muestra la elección pero ignora los clics.                                      |
+| `required`      | `boolean`                      | `false`      | Marca los radios como obligatorios.                                             |
+| `name`          | `string`                       | —            | Nombre del campo en el formulario, compartido por todos los radios.             |
 
 ### RadioGroup.Item
 

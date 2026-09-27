@@ -187,17 +187,17 @@ The first table lists Moderno's props: `variant` (default `"list"`), `size` (def
 
 <PropsTable component="RadioGroup" />
 
-| Prop            | Type                           | Default      | Description                                                    |
-| --------------- | ------------------------------ | ------------ | -------------------------------------------------------------- |
-| `value`         | `string \| null`               | —            | Controlled value. Pair with `onValueChange`.                   |
-| `defaultValue`  | `string \| null`               | —            | Initial value when uncontrolled.                               |
-| `onValueChange` | `(details: { value }) => void` | —            | Called when the user picks an option.                          |
-| `orientation`   | `"vertical" \| "horizontal"`   | `"vertical"` | Stacks the options in a column or lines them up in a row.      |
-| `disabled`      | `boolean`                      | `false`      | Disables every option and dims the group.                      |
-| `invalid`       | `boolean`                      | `false`      | Sets `aria-invalid` and rings every circle in `--destructive`. |
-| `readOnly`      | `boolean`                      | `false`      | Shows the choice but ignores clicks.                           |
-| `required`      | `boolean`                      | `false`      | Marks the radios as required.                                  |
-| `name`          | `string`                       | —            | Form field name shared by every radio.                         |
+| Prop            | Type                           | Default      | Description                                                                |
+| --------------- | ------------------------------ | ------------ | -------------------------------------------------------------------------- |
+| `value`         | `string \| null`               | —            | Controlled value. Pair with `onValueChange`.                               |
+| `defaultValue`  | `string \| null`               | —            | Initial value when uncontrolled.                                           |
+| `onValueChange` | `(details: { value }) => void` | —            | Called when the user picks an option.                                      |
+| `orientation`   | `"vertical" \| "horizontal"`   | `"vertical"` | Stacks the options in a column or lines them up in a row.                  |
+| `disabled`      | `boolean`                      | `false`      | Disables every option and dims the group.                                  |
+| `invalid`       | `boolean`                      | `false`      | Sets `aria-invalid` and turns every circle, or tile edge, `--destructive`. |
+| `readOnly`      | `boolean`                      | `false`      | Shows the choice but ignores clicks.                                       |
+| `required`      | `boolean`                      | `false`      | Marks the radios as required.                                              |
+| `name`          | `string`                       | —            | Form field name shared by every radio.                                     |
 
 ### RadioGroup.Item
 

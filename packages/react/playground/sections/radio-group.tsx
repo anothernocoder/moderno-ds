@@ -1,7 +1,7 @@
 /**
  * RadioGroup — one native radio per item, each bound to its label and text by
  * ids from `useId`; the checked item, the orientation, the disabled group and
- * the tile grid with its media must match both ways.
+ * the tile grid with its media and its invalid edges must match both ways.
  */
 import { RadioGroup } from "../../src/radio-group.js";
 import type { Section } from "../section.js";
@@ -63,6 +63,29 @@ const RadioGroupSection: Section = () => (
         </RadioGroup.ItemMedia>
         <RadioGroup.ItemControl />
         <RadioGroup.ItemText>Split</RadioGroup.ItemText>
+        <RadioGroup.ItemHiddenInput />
+      </RadioGroup.Item>
+    </RadioGroup.Root>
+    <RadioGroup.Root variant="tile" columns={2} aspectRatio="4:3" invalid defaultValue="light">
+      <RadioGroup.Label>Cover</RadioGroup.Label>
+      <RadioGroup.Item value="light">
+        <RadioGroup.ItemMedia>
+          <svg viewBox="0 0 4 3" aria-hidden="true">
+            <rect x="1" y="1" width="2" height="1" />
+          </svg>
+        </RadioGroup.ItemMedia>
+        <RadioGroup.ItemControl />
+        <RadioGroup.ItemText>Light</RadioGroup.ItemText>
+        <RadioGroup.ItemHiddenInput />
+      </RadioGroup.Item>
+      <RadioGroup.Item value="dark">
+        <RadioGroup.ItemMedia>
+          <svg viewBox="0 0 4 3" aria-hidden="true">
+            <rect x="0" y="0" width="4" height="3" />
+          </svg>
+        </RadioGroup.ItemMedia>
+        <RadioGroup.ItemControl />
+        <RadioGroup.ItemText>Dark</RadioGroup.ItemText>
         <RadioGroup.ItemHiddenInput />
       </RadioGroup.Item>
     </RadioGroup.Root>
