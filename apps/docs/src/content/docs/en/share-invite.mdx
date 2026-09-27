@@ -1,0 +1,224 @@
+---
+title: Share Invite
+description: Invite people by email, see who has access, and copy or send the link, with a toast for every outcome.
+group: Blocks
+order: 160
+agent:
+  intent: Share one thing (a project, a file, a board) with other people — invite them by email, show who already has access, and hand out the link.
+  whenToUse: "A share panel or a share dialog's body: the place people go to let someone else in."
+  whenNotToUse:
+    - case: Managing a whole team — roles, removals, seats
+      use: StackedList or Table — share-invite only adds people and shows them
+    - case: Only a link to copy, with nothing to invite
+      use: Field with a Button beside it
+    - case: A referral or marketing share with rewards
+      use: A referral screen — share-invite has no rewards or tracking
+  gotchas:
+    - "Presentational: it sends nothing. `onInvite(email)` and `onShare(channel, link)` are yours; return a promise and the block waits for it, then shows a success toast, or an error toast if it rejects."
+    - "The block renders its own Toaster (bottom-end), outside its `@container` section so the toasts stay pinned to the viewport. If your app already has a toaster, edit the file to call yours instead — the file is yours after `moderno add`."
+    - "Copy link uses `navigator.clipboard`, which needs a secure context (https or localhost). When the browser refuses, the block shows an error toast that asks the user to copy by hand."
+    - "The invite field checks the address before calling `onInvite`: an invalid address, or one already in `members`, shows an inline error and calls nothing."
+    - "`members` and `channels` default to samples so the block renders standalone. `members={[]}` is the empty state; `channels={[]}` hides the share buttons."
+    - "`loading` shows placeholders in a busy `status` region, and `error` shows an Alert with a retry. An empty `error` string counts as no error."
+    - "`disabled` keeps the link and the people readable and disables every button and the invite field."
+    - "In Vue, `onInvite` and `onShare` are function props so the block can await them; bind them as `@invite` and `@share` all the same. `copy` and `retry` are plain events."
+    - "The block responds to its container, never the viewport: each field sits beside its button and the channels line up four in a row from --container-sm, the people split into two columns at --container-md, and the invite and the link become two panes at --container-lg."
+  theming:
+    - "Nothing is painted here but the dashed --border of the empty state. The surface is Card, the fields are Field, the roles are neutral Badges, the avatars are Avatar, the placeholders are Skeleton, the failed load is Alert's error variant and the feedback is Toast (success and error tints)."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ShareInviteBlockDemo from "../../../islands/ShareInviteBlockDemo.svelte";
+import shareInviteReact from "../../../../../../registry/blocks/share-invite/react/share-invite.tsx?raw";
+import shareInviteVue from "../../../../../../registry/blocks/share-invite/vue/ShareInvite.vue?raw";
+import shareInviteSolid from "../../../../../../registry/blocks/share-invite/solid/share-invite.tsx?raw";
+import shareInviteSvelte from "../../../../../../registry/blocks/share-invite/svelte/ShareInvite.svelte?raw";
+
+export const examples = {
+  react: shareInviteReact,
+  vue: shareInviteVue,
+  solid: shareInviteSolid,
+  svelte: shareInviteSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <ShareInviteBlockDemo client:visible locale="en" />
+</Preview>
+
+Use it where people share something: invite a teammate by email, see who already has access, copy the link or send it to a channel. Every action ends in a toast that says how it went.
+
+## Installation
+
+<Install item="share-invite" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { ShareInvite } from "@/components/blocks/share-invite";
+```
+
+```tsx
+<ShareInvite link={projectUrl} members={people} onInvite={sendInvite} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import ShareInvite from "@/components/blocks/ShareInvite.vue";
+</script>
+```
+
+```vue
+<ShareInvite :link="projectUrl" :members="people" @invite="sendInvite" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import ShareInvite from "@/components/blocks/ShareInvite.svelte";
+</script>
+```
+
+```svelte
+<ShareInvite link={projectUrl} members={people} oninvite={sendInvite} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { ShareInvite } from "@/components/blocks/share-invite";
+```
+
+```tsx
+<ShareInvite link={projectUrl()} members={people()} onInvite={sendInvite} />
+```
+
+</ForFramework>
+
+`sendInvite(email)` can return a promise. The button shows "Sending" until it settles, then a toast says whether the invite went out.
+
+## API Reference
+
+### Props
+
+| Prop          | Type                                                       | Default                | Description                                                           |
+| ------------- | ---------------------------------------------------------- | ---------------------- | --------------------------------------------------------------------- |
+| `heading`     | `string`                                                   | `"Share this project"` | The card's title.                                                     |
+| `description` | `string`                                                   | see source             | The line under the title; `""` hides it.                              |
+| `link`        | `string`                                                   | a sample URL           | The link people copy or send.                                         |
+| `members`     | `ShareInviteMember[]`                                      | three samples          | Who has access. `[]` renders the empty state.                         |
+| `channels`    | `ShareInviteChannel[]`                                     | Email, Slack, …        | The share buttons. `[]` hides them.                                   |
+| `error`       | `string`                                                   | —                      | The settings failed to load; an alert with a retry replaces them.     |
+| `loading`     | `boolean`                                                  | `false`                | Placeholders in a busy region replace the settings.                   |
+| `disabled`    | `boolean`                                                  | `false`                | Everything stays readable; every button and the invite field are off. |
+| `onInvite`    | `(email: string) => void \| Promise<void>`                 | —                      | A valid, new address was invited. Svelte: `oninvite`. Vue: `@invite`. |
+| `onShare`     | `(channel: string, link: string) => void \| Promise<void>` | —                      | A channel button was pressed. Svelte: `onshare`. Vue: `@share`.       |
+| `onCopy`      | `(link: string) => void`                                   | —                      | The link reached the clipboard. Svelte: `oncopy`. Vue: `@copy`.       |
+| `onRetry`     | `() => void`                                               | —                      | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.          |
+
+### ShareInviteMember
+
+| Field   | Type     | Description                                  |
+| ------- | -------- | -------------------------------------------- |
+| `id`    | `string` | A stable key.                                |
+| `name`  | `string` | Shown in full; its initials fill the avatar. |
+| `email` | `string` | Shown under the name.                        |
+| `role`  | `string` | Shown in a badge: `Owner`, `Can edit`, …     |
+
+### ShareInviteChannel
+
+| Field   | Type     | Description                                  |
+| ------- | -------- | -------------------------------------------- |
+| `value` | `string` | Passed to `onShare`: `"slack"`, `"email"`, … |
+| `label` | `string` | The button text, and the name in its toast.  |
+
+### Feedback
+
+| Action           | Toast on success  | Toast on failure                               |
+| ---------------- | ----------------- | ---------------------------------------------- |
+| Copy link        | "Link copied"     | "Could not copy the link"                      |
+| A channel button | "Shared to Slack" | "Could not share to Slack" (`onShare` rejects) |
+| Invite           | "Invite sent"     | "Invite not sent" (`onInvite` rejects)         |
+
+An invalid address, or one already in `members`, shows an error under the field instead, and calls nothing.
+
+### States
+
+| State    | Prop           | What renders                                                       |
+| -------- | -------------- | ------------------------------------------------------------------ |
+| Default  | —              | The invite field, the people, the link and the channels.           |
+| Sending  | —              | While `onInvite` runs: the field and button off, "Sending".        |
+| Empty    | `members={[]}` | "Only you have access" in place of the people.                     |
+| Loading  | `loading`      | Placeholders for the field, the people and the link.               |
+| Error    | `error`        | An error alert with a "Try again" button in place of the settings. |
+| Disabled | `disabled`     | Everything readable, every button and the invite field off.        |
+
+Hover and focus-visible come from Button and Field.
+
+### Sizing
+
+| Container step           | What changes                                               |
+| ------------------------ | ---------------------------------------------------------- |
+| below `@sm`              | Everything stacks; the channels sit two in a row.          |
+| `@sm` (`--container-sm`) | Each field sits beside its button; four channels in a row. |
+| `@md` (`--container-md`) | The people split into two columns.                         |
+| `@lg` (`--container-lg`) | The invite and the link become two panes, side by side.    |
+
+## Examples
+
+### Container widths
+
+The same block at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <ShareInviteBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### An invite that fails
+
+This `onInvite` rejects. Invite anyone to see the error toast.
+
+<Preview examples={examples} layout="fill">
+  <ShareInviteBlockDemo client:visible locale="en" state="invite-fails" />
+</Preview>
+
+### Empty
+
+Pass `members={[]}`.
+
+<Preview examples={examples} layout="fill">
+  <ShareInviteBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <ShareInviteBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+Press "Try again" to clear the message and bring the settings back.
+
+<Preview examples={examples} layout="fill">
+  <ShareInviteBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+<Preview examples={examples} layout="fill">
+  <ShareInviteBlockDemo client:visible locale="en" state="disabled" />
+</Preview>

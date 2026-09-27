@@ -1,0 +1,37 @@
+{
+  "title": "Share Invite",
+  "description": "Share one thing with other people, composing the @moderno-ui/{framework} Alert, Avatar, Badge, Button, Card, Field, Skeleton, Spinner and Toast primitives: invite people by email, see who has access, copy the link or send it to a channel, each outcome reported in a toast, with its own empty, loading and error renders; responds to its container (@container) across all three contract steps — each field and its button side by side and four channels in a row at @sm, the people in two columns at @md, and the invite and the link as two panes at @lg.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": [],
+  "files": {
+    "react": [
+      {
+        "path": "blocks/share-invite/react/share-invite.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/share-invite.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "blocks/share-invite/vue/ShareInvite.vue",
+        "type": "registry:block",
+        "target": "src/components/blocks/ShareInvite.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "blocks/share-invite/svelte/ShareInvite.svelte",
+        "type": "registry:block",
+        "target": "src/components/blocks/ShareInvite.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "blocks/share-invite/solid/share-invite.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/share-invite.tsx"
+      }
+    ]
+  }
+}

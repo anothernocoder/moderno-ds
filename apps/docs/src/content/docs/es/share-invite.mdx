@@ -1,0 +1,201 @@
+---
+title: Compartir e invitar
+description: Invita por correo, mira quién tiene acceso y copia o envía el enlace, con un aviso para cada resultado.
+group: Bloques
+order: 160
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ShareInviteBlockDemo from "../../../islands/ShareInviteBlockDemo.svelte";
+import shareInviteReact from "../../../../../../registry/blocks/share-invite/react/share-invite.tsx?raw";
+import shareInviteVue from "../../../../../../registry/blocks/share-invite/vue/ShareInvite.vue?raw";
+import shareInviteSolid from "../../../../../../registry/blocks/share-invite/solid/share-invite.tsx?raw";
+import shareInviteSvelte from "../../../../../../registry/blocks/share-invite/svelte/ShareInvite.svelte?raw";
+
+export const examples = {
+  react: shareInviteReact,
+  vue: shareInviteVue,
+  solid: shareInviteSolid,
+  svelte: shareInviteSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <ShareInviteBlockDemo client:visible locale="es" />
+</Preview>
+
+Úsalo donde la gente comparte algo: invitar a un compañero por correo, ver quién ya tiene acceso, copiar el enlace o enviarlo a un canal. Cada acción termina en un aviso (toast) que dice cómo salió.
+
+## Instalación
+
+<Install item="share-invite" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { ShareInvite } from "@/components/blocks/share-invite";
+```
+
+```tsx
+<ShareInvite link={projectUrl} members={people} onInvite={sendInvite} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import ShareInvite from "@/components/blocks/ShareInvite.vue";
+</script>
+```
+
+```vue
+<ShareInvite :link="projectUrl" :members="people" @invite="sendInvite" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import ShareInvite from "@/components/blocks/ShareInvite.svelte";
+</script>
+```
+
+```svelte
+<ShareInvite link={projectUrl} members={people} oninvite={sendInvite} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { ShareInvite } from "@/components/blocks/share-invite";
+```
+
+```tsx
+<ShareInvite link={projectUrl()} members={people()} onInvite={sendInvite} />
+```
+
+</ForFramework>
+
+`sendInvite(email)` puede devolver una promesa. El botón muestra "Sending" hasta que termina y luego un aviso dice si la invitación salió.
+
+## Referencia de API
+
+### Propiedades
+
+| Propiedad     | Tipo                                                       | Por defecto            | Descripción                                                                   |
+| ------------- | ---------------------------------------------------------- | ---------------------- | ----------------------------------------------------------------------------- |
+| `heading`     | `string`                                                   | `"Share this project"` | El título de la tarjeta.                                                      |
+| `description` | `string`                                                   | ver el código          | La línea bajo el título; `""` la oculta.                                      |
+| `link`        | `string`                                                   | una URL de ejemplo     | El enlace que se copia o se envía.                                            |
+| `members`     | `ShareInviteMember[]`                                      | tres ejemplos          | Quién tiene acceso. `[]` muestra el estado vacío.                             |
+| `channels`    | `ShareInviteChannel[]`                                     | Email, Slack, …        | Los botones para compartir. `[]` los oculta.                                  |
+| `error`       | `string`                                                   | —                      | Los ajustes no cargaron; una alerta con reintento los reemplaza.              |
+| `loading`     | `boolean`                                                  | `false`                | Marcadores en una región ocupada reemplazan los ajustes.                      |
+| `disabled`    | `boolean`                                                  | `false`                | Todo sigue legible; los botones y el campo de invitación quedan desactivados. |
+| `onInvite`    | `(email: string) => void \| Promise<void>`                 | —                      | Se invitó una dirección válida y nueva. Svelte: `oninvite`. Vue: `@invite`.   |
+| `onShare`     | `(channel: string, link: string) => void \| Promise<void>` | —                      | Se pulsó un canal. Svelte: `onshare`. Vue: `@share`.                          |
+| `onCopy`      | `(link: string) => void`                                   | —                      | El enlace llegó al portapapeles. Svelte: `oncopy`. Vue: `@copy`.              |
+| `onRetry`     | `() => void`                                               | —                      | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.                   |
+
+### ShareInviteMember
+
+| Campo   | Tipo     | Descripción                                          |
+| ------- | -------- | ---------------------------------------------------- |
+| `id`    | `string` | Una clave estable.                                   |
+| `name`  | `string` | Se muestra completo; sus iniciales llenan el avatar. |
+| `email` | `string` | Se muestra bajo el nombre.                           |
+| `role`  | `string` | Se muestra en una insignia: `Owner`, `Can edit`, …   |
+
+### ShareInviteChannel
+
+| Campo   | Tipo     | Descripción                                  |
+| ------- | -------- | -------------------------------------------- |
+| `value` | `string` | Se pasa a `onShare`: `"slack"`, `"email"`, … |
+| `label` | `string` | El texto del botón y el nombre en su aviso.  |
+
+### Avisos
+
+| Acción    | Aviso si sale bien | Aviso si falla                                 |
+| --------- | ------------------ | ---------------------------------------------- |
+| Copy link | "Link copied"      | "Could not copy the link"                      |
+| Un canal  | "Shared to Slack"  | "Could not share to Slack" (`onShare` rechaza) |
+| Invite    | "Invite sent"      | "Invite not sent" (`onInvite` rechaza)         |
+
+Una dirección no válida, o una que ya está en `members`, muestra un error bajo el campo y no llama a nada.
+
+### Estados
+
+| Estado        | Propiedad      | Qué se muestra                                                        |
+| ------------- | -------------- | --------------------------------------------------------------------- |
+| Por defecto   | —              | El campo de invitación, las personas, el enlace y los canales.        |
+| Enviando      | —              | Mientras corre `onInvite`: campo y botón desactivados, "Sending".     |
+| Vacío         | `members={[]}` | "Only you have access" en lugar de las personas.                      |
+| Cargando      | `loading`      | Marcadores para el campo, las personas y el enlace.                   |
+| Error         | `error`        | Una alerta de error con el botón "Try again" en lugar de los ajustes. |
+| Deshabilitado | `disabled`     | Todo legible; los botones y el campo de invitación desactivados.      |
+
+Hover y focus-visible vienen de Button y Field.
+
+### Dimensionado
+
+| Paso del contenedor      | Qué cambia                                                  |
+| ------------------------ | ----------------------------------------------------------- |
+| bajo `@sm`               | Todo se apila; los canales van de dos en dos.               |
+| `@sm` (`--container-sm`) | Cada campo junto a su botón; cuatro canales por fila.       |
+| `@md` (`--container-md`) | Las personas se reparten en dos columnas.                   |
+| `@lg` (`--container-lg`) | La invitación y el enlace pasan a dos paneles, lado a lado. |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+El mismo bloque a 18rem, 30rem, 40rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <ShareInviteBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Una invitación que falla
+
+Este `onInvite` rechaza. Invita a cualquiera para ver el aviso de error.
+
+<Preview examples={examples} layout="fill">
+  <ShareInviteBlockDemo client:visible locale="es" state="invite-fails" />
+</Preview>
+
+### Vacío
+
+Pasa `members={[]}`.
+
+<Preview examples={examples} layout="fill">
+  <ShareInviteBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <ShareInviteBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+Pulsa "Try again" para borrar el mensaje y volver a mostrar los ajustes.
+
+<Preview examples={examples} layout="fill">
+  <ShareInviteBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+<Preview examples={examples} layout="fill">
+  <ShareInviteBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
