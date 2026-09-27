@@ -1,0 +1,262 @@
+---
+title: Popover
+description: A small panel that opens next to its trigger, with an optional arrow, title, description and close button.
+group: Components
+order: 38
+component: Popover
+pkg: "@moderno-ui/react"
+agentPropsHash: "sha256:204d0ea3506202d755a69efb6631fa20ac07e6ebb73185af2e4cd11238ff1c8e"
+agent:
+  intent: Show a small, non-modal panel anchored to the element that opened it.
+  whenToUse: Extra detail or a quick action tied to one control — sharing options, a short explanation, a small form.
+  whenNotToUse:
+    - case: A blocking decision the user must resolve before going on
+      use: Dialog
+    - case: Picking one value from a list
+      use: Select
+    - case: A plain label that shows on hover or focus, with nothing to click inside
+      use: Tooltip
+  gotchas:
+    - "Put the Content inside Popover.Positioner; Ark places the Positioner next to the trigger. Wrap both in Portal so no parent's overflow clips them."
+    - "Popover.Root renders no element: its size reaches the Content, which carries data-size."
+    - "Always render Popover.Title (or give the Content an aria-label); it is the popover's accessible name."
+    - 'Ark labels Popover.CloseTrigger "close"; pass aria-label to change or translate it.'
+    - "Put Popover.Arrow first inside the Content, with Popover.ArrowTip inside it."
+  theming:
+    - "The surface is --popover with --popover-foreground, a 1px --border edge and the --shadow-md drop. Do not pass a hex."
+    - "The arrow fills from --popover and its edge is --border, so it follows the surface."
+    - 'size="sm" | "md" | "lg" steps the padding, gap and type; lg also widens the measure to --container-md.'
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import PopoverDemo from "../../../examples/popover/popover.svelte";
+import baseReact from "../../../examples/popover/react.tsx?raw";
+import baseVue from "../../../examples/popover/vue.vue?raw";
+import baseSolid from "../../../examples/popover/solid.tsx?raw";
+import baseSvelte from "../../../examples/popover/popover.svelte?raw";
+import PopoverSizesDemo from "../../../examples/popover/sizes/popover-sizes.svelte";
+import sizesReact from "../../../examples/popover/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/popover/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/popover/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/popover/sizes/popover-sizes.svelte?raw";
+import PopoverPlacementDemo from "../../../examples/popover/placement/popover-placement.svelte";
+import placementReact from "../../../examples/popover/placement/react.tsx?raw";
+import placementVue from "../../../examples/popover/placement/vue.vue?raw";
+import placementSolid from "../../../examples/popover/placement/solid.tsx?raw";
+import placementSvelte from "../../../examples/popover/placement/popover-placement.svelte?raw";
+import PopoverControlledDemo from "../../../examples/popover/controlled/popover-controlled.svelte";
+import controlledReact from "../../../examples/popover/controlled/react.tsx?raw";
+import controlledVue from "../../../examples/popover/controlled/vue.vue?raw";
+import controlledSolid from "../../../examples/popover/controlled/solid.tsx?raw";
+import controlledSvelte from "../../../examples/popover/controlled/popover-controlled.svelte?raw";
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
+  <PopoverDemo client:visible />
+</Preview>
+
+Use a popover to show a little more next to a button: a short explanation, sharing options or a small form. The page stays usable while it is open, and a click outside or Escape closes it.
+
+## Installation
+
+<Install pkg="@moderno-ui/react" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { Popover, Portal } from "@moderno-ui/react";
+```
+
+```tsx
+<Popover.Root>
+  <Popover.Trigger>Share</Popover.Trigger>
+  <Portal>
+    <Popover.Positioner>
+      <Popover.Content>
+        <Popover.Title>Share this page</Popover.Title>
+        <Popover.Description>Anyone with the link can view it.</Popover.Description>
+      </Popover.Content>
+    </Popover.Positioner>
+  </Portal>
+</Popover.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Popover, Portal } from "@moderno-ui/vue";
+```
+
+```vue
+<Popover.Root>
+  <Popover.Trigger>Share</Popover.Trigger>
+  <Portal>
+    <Popover.Positioner>
+      <Popover.Content>
+        <Popover.Title>Share this page</Popover.Title>
+        <Popover.Description>Anyone with the link can view it.</Popover.Description>
+      </Popover.Content>
+    </Popover.Positioner>
+  </Portal>
+</Popover.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Popover, Portal } from "@moderno-ui/svelte";
+```
+
+```svelte
+<Popover.Root>
+  <Popover.Trigger>Share</Popover.Trigger>
+  <Portal>
+    <Popover.Positioner>
+      <Popover.Content>
+        <Popover.Title>Share this page</Popover.Title>
+        <Popover.Description>Anyone with the link can view it.</Popover.Description>
+      </Popover.Content>
+    </Popover.Positioner>
+  </Portal>
+</Popover.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Popover, Portal } from "@moderno-ui/solid";
+```
+
+```tsx
+<Popover.Root>
+  <Popover.Trigger>Share</Popover.Trigger>
+  <Portal>
+    <Popover.Positioner>
+      <Popover.Content>
+        <Popover.Title>Share this page</Popover.Title>
+        <Popover.Description>Anyone with the link can view it.</Popover.Description>
+      </Popover.Content>
+    </Popover.Positioner>
+  </Portal>
+</Popover.Root>
+```
+
+</ForFramework>
+
+## API Reference
+
+### Popover.Root
+
+`size` is the Moderno addition. The other props come from Ark's Popover. The Root renders no element of its own.
+
+<PropsTable component="Popover" />
+
+| Prop                     | Type                                   | Default                   | Description                                                                                     |
+| ------------------------ | -------------------------------------- | ------------------------- | ----------------------------------------------------------------------------------------------- |
+| `open`                   | `boolean`                              | —                         | Controlled open state. Pair with `onOpenChange` (`bind:open` in Svelte, `v-model:open` in Vue). |
+| `defaultOpen`            | `boolean`                              | `false`                   | Open state at first when uncontrolled.                                                          |
+| `onOpenChange`           | `(details: { open: boolean }) => void` | —                         | Called on every open or close, including Escape and clicks outside.                             |
+| `positioning`            | `PositioningOptions`                   | `{ placement: "bottom" }` | Where the content goes: `placement`, `gutter`, `offset`, `flip`, `sameWidth`, …                 |
+| `modal`                  | `boolean`                              | `false`                   | Traps focus and blocks the page, like a dialog.                                                 |
+| `autoFocus`              | `boolean`                              | `true`                    | Moves focus into the content on open.                                                           |
+| `initialFocusEl`         | `() => HTMLElement \| null`            | —                         | Element to focus on open. Defaults to the first focusable element in the content.               |
+| `closeOnEscape`          | `boolean`                              | `true`                    | Closes on Escape.                                                                               |
+| `closeOnInteractOutside` | `boolean`                              | `true`                    | Closes on a click outside.                                                                      |
+| `lazyMount`              | `boolean`                              | `false`                   | Mount the content only on first open.                                                           |
+| `unmountOnExit`          | `boolean`                              | `false`                   | Remove the content from the DOM when closed.                                                    |
+
+### Portal
+
+Renders its children at the end of `document.body`, so no parent's `overflow` or stacking clips the popover.
+
+### Parts
+
+Every part accepts its element's attributes; `Popover.Trigger` and `Popover.CloseTrigger` also take `asChild` to render your own `Button`.
+
+| Part                   | Element    | Description                                                                   |
+| ---------------------- | ---------- | ----------------------------------------------------------------------------- |
+| `Popover.Trigger`      | `<button>` | Opens and closes the popover. The content is placed next to it.               |
+| `Popover.Indicator`    | `<div>`    | Optional, inside the trigger. Turns over while the popover is open.           |
+| `Popover.Anchor`       | `<div>`    | Optional. Places the content next to this element instead of the trigger.     |
+| `Popover.Positioner`   | `<div>`    | Ark places it next to the trigger. Holds the content.                         |
+| `Popover.Content`      | `<div>`    | The surface, with `role="dialog"`. Carries `data-size`. A column.             |
+| `Popover.Arrow`        | `<div>`    | Optional, first inside the content. Ark points it at the trigger.             |
+| `Popover.ArrowTip`     | `<div>`    | Inside the arrow: the point, filled like the surface and edged in `--border`. |
+| `Popover.Title`        | `<div>`    | The accessible name, wired through `aria-labelledby`. An `<h2>` in Svelte.    |
+| `Popover.Description`  | `<div>`    | Wired through `aria-describedby`, in `--muted-foreground`. A `<p>` in Svelte. |
+| `Popover.CloseTrigger` | `<button>` | A small icon button in the top corner. Ark labels it `close`.                 |
+
+### Data attributes
+
+| Attribute        | Values                                                     |
+| ---------------- | ---------------------------------------------------------- |
+| `data-size`      | On the content: `"sm"`, `"md"` or `"lg"`                   |
+| `data-state`     | `"open"` or `"closed"`, on the trigger, indicator, content |
+| `data-placement` | On the trigger and content: where Ark placed the content   |
+
+### Keyboard
+
+| Key                 | Action                                                          |
+| ------------------- | --------------------------------------------------------------- |
+| `Enter` / `Space`   | On the trigger, opens or closes the popover.                    |
+| `Esc`               | Closes the popover and returns focus to the trigger.            |
+| `Tab` / `Shift+Tab` | Moves focus through the content; leaving it closes the popover. |
+
+## Examples
+
+### Sizes
+
+Set `size` on the Root. It steps the padding, gap and type of the content.
+
+<Preview examples={{ react: sizesReact, vue: sizesVue, solid: sizesSolid, svelte: sizesSvelte }}>
+  <PopoverSizesDemo client:visible />
+</Preview>
+
+### Placement
+
+Pass `positioning={{ placement: "right" }}` to open the popover on another side. Ark flips it when there is no room.
+
+<Preview
+  examples={{
+    react: placementReact,
+    vue: placementVue,
+    solid: placementSolid,
+    svelte: placementSvelte,
+  }}
+>
+  <PopoverPlacementDemo client:visible />
+</Preview>
+
+### Controlled
+
+Control `open` when something inside the popover closes it, like a button.
+
+<Preview
+  examples={{
+    react: controlledReact,
+    vue: controlledVue,
+    solid: controlledSolid,
+    svelte: controlledSvelte,
+  }}
+>
+  <PopoverControlledDemo client:visible />
+</Preview>
+
+## Notes
+
+- `Popover.Root` and `Popover.Content` are wrapped to add `size`; every other part is Ark's unchanged.
+- Focus, placement and dismissal come from Ark; don't reimplement them.
+- The popover is not modal by default: the page stays usable. Use a `Dialog` for a decision that must block the page.

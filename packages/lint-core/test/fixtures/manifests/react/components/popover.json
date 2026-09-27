@@ -1,0 +1,25 @@
+{
+  "name": "Popover",
+  "scope": "popover",
+  "import": "import { Popover } from \"@moderno-ui/react\"",
+  "propsHash": "sha256:fixture-popover",
+  "props": [{ "name": "size", "type": "\"sm\" | \"md\" | \"lg\"", "required": false }],
+  "propsComplete": false,
+  "parts": [
+    { "name": "trigger" },
+    { "name": "indicator" },
+    { "name": "anchor" },
+    { "name": "positioner" },
+    { "name": "content" },
+    { "name": "arrow" },
+    { "name": "arrow-tip" },
+    { "name": "title" },
+    { "name": "description" },
+    { "name": "close-trigger" }
+  ],
+  "variants": { "size": ["sm", "md", "lg"] },
+  "guidance": {
+    "intent": "Show a small, non-modal panel anchored to the element that opened it.",
+    "whenToUse": "Extra detail or a quick action tied to one control: sharing options, a short explanation, a small form."
+  }
+}

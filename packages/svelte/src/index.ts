@@ -32,6 +32,7 @@ export * from "./exports/list-collection.js";
 export * from "./exports/number-input.js";
 export * from "./exports/pagination.js";
 export * from "./exports/pin-input.js";
+export * from "./exports/popover.js";
 export * from "./exports/portal.js";
 export * from "./exports/progress.js";
 export * from "./exports/radio-group.js";

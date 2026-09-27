@@ -30,6 +30,7 @@ import IndicatorSection from "./sections/indicator.jsx";
 import NumberInputSection from "./sections/number-input.jsx";
 import PaginationSection from "./sections/pagination.jsx";
 import PinInputSection from "./sections/pin-input.jsx";
+import PopoverSection from "./sections/popover.jsx";
 import ProgressSection from "./sections/progress.jsx";
 import RadioGroupSection from "./sections/radio-group.jsx";
 import SelectSection from "./sections/select.jsx";
@@ -73,6 +74,7 @@ export function App(props: AppProps) {
       <NumberInputSection open={props.open ?? false} />
       <PaginationSection open={props.open ?? false} />
       <PinInputSection open={props.open ?? false} />
+      <PopoverSection open={props.open ?? false} />
       <ProgressSection open={props.open ?? false} />
       <RadioGroupSection open={props.open ?? false} />
       <SelectSection open={props.open ?? false} />

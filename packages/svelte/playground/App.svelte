@@ -30,6 +30,7 @@
   import NumberInput from "./sections/NumberInput.svelte";
   import Pagination from "./sections/Pagination.svelte";
   import PinInput from "./sections/PinInput.svelte";
+  import Popover from "./sections/Popover.svelte";
   import Progress from "./sections/Progress.svelte";
   import RadioGroup from "./sections/RadioGroup.svelte";
   import Select from "./sections/Select.svelte";
@@ -69,6 +70,7 @@
   <NumberInput {open} />
   <Pagination {open} />
   <PinInput {open} />
+  <Popover {open} />
   <Progress {open} />
   <RadioGroup {open} />
   <Select {open} />

@@ -255,6 +255,19 @@ through to the `<nav>` and the machine keeps its default of 1.
 | mask → `type="password"`               |  ✅   | ✅  |   ✅   |  ✅   |
 | invalid → `data-invalid` + aria        |  ✅   | ✅  |   ✅   |  ✅   |
 
+### Popover (`popoverRecipe`: `data-size` on the content; Ark popover machine)
+
+| State                                                                     | React | Vue | Svelte | Solid |
+| ------------------------------------------------------------------------- | :---: | :-: | :----: | :---: |
+| size on the Root → content `data-size` (+ `md`)                           |  ✅   | ✅  |   ✅   |  ✅   |
+| every Ark part exposed                                                    |  ✅   | ✅  |   ✅   |  ✅   |
+| closed by default: content hidden, trigger `aria-expanded="false"`        |  ✅   | ✅  |   ✅   |  ✅   |
+| opens as a `dialog` labelled by its title and description                 |  ✅   | ✅  |   ✅   |  ✅   |
+| focus moves in on open and back to the trigger on close                   |  ✅   | ✅  |   ✅   |  ✅   |
+| closes on Escape and via the close trigger                                |  ✅   | ✅  |   ✅   |  ✅   |
+| controlled `open` followed (`v-model:open` in Vue, `bind:open` in Svelte) |  ✅   | ✅  |   ✅   |  ✅   |
+| native props forwarded to the content                                     |  ✅   | ✅  |   ✅   |  ✅   |
+
 ### Progress (`progressRecipe`: `data-size`; Ark progress machine)
 
 | State                                                               | React | Vue | Svelte | Solid |
@@ -482,6 +495,7 @@ row names.
 | NumberInput value, bounds, format + steppers                        |  ✅   | ✅  |   ✅   |  ✅   |
 | Pagination pages, ellipses, current + ends                          |  ✅   | ✅  |   ✅   |  ✅   |
 | PinInput `count` → correct server aria                              |  ✅   | ✅  |   ✅   |  ✅   |
+| Popover trigger/content ids + content `data-size`                   |  ✅   | ✅  |   ✅   |  ✅   |
 | Progress value, state + circle geometry                             |  ✅   | ✅  |   ✅   |  ✅   |
 | RadioGroup checked item + orientation                               |  ✅   | ✅  |   ✅   |  ✅   |
 | Select trigger; `defaultOpen` survives                              |  ✅   | ✅  |   ✅   |  ✅   |

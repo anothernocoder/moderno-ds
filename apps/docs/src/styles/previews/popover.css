@@ -1,0 +1,4 @@
+/* A row of actions inside a popover is its footer: it sits at the end. */
+[data-scope="popover"] .demo-row {
+  justify-content: flex-end;
+}

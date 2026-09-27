@@ -1,0 +1,15 @@
+value Popover
+type ModernoPopoverRootProps
+type PopoverAnchorProps
+type PopoverArrowProps
+type PopoverArrowTipProps
+type PopoverCloseTriggerProps
+type PopoverContentProps
+type PopoverDescriptionProps
+type PopoverIndicatorProps
+type PopoverOpenChangeDetails
+type PopoverPositionerProps
+type PopoverRootProps
+type PopoverSize
+type PopoverTitleProps
+type PopoverTriggerProps

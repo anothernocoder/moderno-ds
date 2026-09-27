@@ -35,6 +35,7 @@ export * from "./recipes/indicator.js";
 export * from "./recipes/number-input.js";
 export * from "./recipes/pagination.js";
 export * from "./recipes/pin-input.js";
+export * from "./recipes/popover.js";
 export * from "./recipes/progress.js";
 export * from "./recipes/radio-group.js";
 export * from "./recipes/select.js";

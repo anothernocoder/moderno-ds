@@ -31,6 +31,7 @@ import lineChartComponent from "./components/line-chart.ts";
 import numberInputComponent from "./components/number-input.ts";
 import paginationComponent from "./components/pagination.ts";
 import pinInputComponent from "./components/pin-input.ts";
+import popoverComponent from "./components/popover.ts";
 import progressComponent from "./components/progress.ts";
 import radioGroupComponent from "./components/radio-group.ts";
 import scatterChartComponent from "./components/scatter-chart.ts";
@@ -70,6 +71,7 @@ export const { ENTRIES, AGENT_COMPONENTS, AGENT_EXAMPLES } = assembleComponents(
   numberInputComponent,
   paginationComponent,
   pinInputComponent,
+  popoverComponent,
   progressComponent,
   radioGroupComponent,
   scatterChartComponent,
