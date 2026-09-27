@@ -30,6 +30,7 @@
   import Divider from "./sections/Divider.svelte";
   import DonutChart from "./sections/DonutChart.svelte";
   import Drawer from "./sections/Drawer.svelte";
+  import Editable from "./sections/Editable.svelte";
   import Field from "./sections/Field.svelte";
   import Indicator from "./sections/Indicator.svelte";
   import Menu from "./sections/Menu.svelte";
@@ -77,6 +78,7 @@
   <Divider {open} />
   <DonutChart {open} />
   <Drawer {open} />
+  <Editable {open} />
   <Field {open} />
   <Indicator {open} />
   <Menu {open} />

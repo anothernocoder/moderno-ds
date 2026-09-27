@@ -35,6 +35,7 @@ export * from "./recipes/combobox.js";
 export * from "./recipes/date-picker.js";
 export * from "./recipes/divider.js";
 export * from "./recipes/drawer.js";
+export * from "./recipes/editable.js";
 export * from "./recipes/field.js";
 export * from "./recipes/indicator.js";
 export * from "./recipes/menu.js";

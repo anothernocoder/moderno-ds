@@ -30,6 +30,7 @@ import DialogSection from "./sections/dialog.js";
 import DividerSection from "./sections/divider.js";
 import DonutChartSection from "./sections/donut-chart.js";
 import DrawerSection from "./sections/drawer.js";
+import EditableSection from "./sections/editable.js";
 import FieldSection from "./sections/field.js";
 import IndicatorSection from "./sections/indicator.js";
 import MenuSection from "./sections/menu.js";
@@ -82,6 +83,7 @@ export const App = defineComponent({
         h(DividerSection, { open: props.open }),
         h(DonutChartSection, { open: props.open }),
         h(DrawerSection, { open: props.open }),
+        h(EditableSection, { open: props.open }),
         h(FieldSection, { open: props.open }),
         h(IndicatorSection, { open: props.open }),
         h(MenuSection, { open: props.open }),

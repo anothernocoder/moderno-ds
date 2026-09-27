@@ -30,6 +30,7 @@ import DialogSection from "./sections/dialog.jsx";
 import DividerSection from "./sections/divider.jsx";
 import DonutChartSection from "./sections/donut-chart.jsx";
 import DrawerSection from "./sections/drawer.jsx";
+import EditableSection from "./sections/editable.jsx";
 import FieldSection from "./sections/field.jsx";
 import IndicatorSection from "./sections/indicator.jsx";
 import MenuSection from "./sections/menu.jsx";
@@ -81,6 +82,7 @@ export function App(props: AppProps) {
       <DividerSection open={props.open ?? false} />
       <DonutChartSection open={props.open ?? false} />
       <DrawerSection open={props.open ?? false} />
+      <EditableSection open={props.open ?? false} />
       <FieldSection open={props.open ?? false} />
       <IndicatorSection open={props.open ?? false} />
       <MenuSection open={props.open ?? false} />

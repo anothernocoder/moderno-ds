@@ -2923,6 +2923,252 @@
     }
   }
 
+  /* ─────────────────────────── Editable ─────────────────────────── *
+   * Ark's editable machine: root > label, then area > preview + input, then
+   * an optional control > edit-trigger + submit-trigger + cancel-trigger. The
+   * preview is the text; it gives way to the input while the user edits
+   * (Ark swaps the two with `hidden`). Both are one box of the same height,
+   * padding, border width and type, so nothing moves when an edit starts: the
+   * preview's border is there, transparent, and shows as a hint on hover.
+   * Ark stamps data-placeholder-shown, data-invalid and data-disabled on the
+   * area, the preview and the input, and aria-readonly on the preview.
+   * `editableRecipe` puts size on the root; the parts follow it through child
+   * combinators (root > area > part, root > control > part). The base rules
+   * are the `md` step, Field's own.                                        */
+  [data-scope="editable"][data-part="root"] {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--spacing-2) var(--spacing-1);
+    min-width: 0;
+  }
+  /*
+   * Ark stamps data-disabled on the area AND on the preview and input inside
+   * it, and the base layer dims anything carrying it — nesting would multiply
+   * the opacity. Dim the area once and leave its parts opaque.
+   */
+  [data-scope="editable"][data-part="area"][data-disabled] :where([data-part]) {
+    opacity: 1;
+  }
+  /* The label spans the text and its buttons, above them, as in a Field. */
+  [data-scope="editable"][data-part="label"] {
+    grid-column: 1 / -1;
+    color: var(--foreground);
+    font-size: var(--text-ui-md);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--leading-ui-md);
+  }
+  [data-scope="editable"][data-part="area"] {
+    grid-column: 1;
+    min-width: 0;
+  }
+  /* The text and the input: one box, Field's input box. */
+  [data-scope="editable"][data-part="preview"],
+  [data-scope="editable"][data-part="input"] {
+    display: block;
+    width: 100%;
+    height: var(--spacing-8);
+    margin: 0;
+    padding: 0 var(--spacing-3);
+    border: 1px solid transparent;
+    border-radius: var(--radius);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: var(--text-ui-md);
+    transition:
+      border-color var(--motion-fast),
+      background-color var(--motion-fast);
+  }
+  /* One line, cut with an ellipsis when it is longer than the box: the full
+     value is the preview's tooltip. The line fills the box inside its 1px
+     border, so the text sits where the input's does. */
+  [data-scope="editable"][data-part="preview"] {
+    overflow: hidden;
+    line-height: calc(var(--spacing-8) - 2px);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    cursor: text;
+  }
+  /* The empty value shows the placeholder, muted like an input's. */
+  [data-scope="editable"][data-part="preview"][data-placeholder-shown],
+  [data-scope="editable"][data-part="input"]::placeholder {
+    color: var(--muted-foreground);
+  }
+  /* Hover draws the input's edge and a muted fill around the text: the hint
+     that it can be edited. Text that cannot be edited never offers it, and an
+     invalid text keeps its error edge. */
+  [data-scope="editable"][data-part="preview"]:hover:not(
+      [data-disabled],
+      [data-invalid],
+      [aria-readonly="true"]
+    ) {
+    border-color: var(--input);
+    background-color: var(--muted);
+  }
+  [data-scope="editable"][data-part="preview"][aria-readonly="true"] {
+    cursor: default;
+  }
+  /* The ring is drawn INSIDE the box (a -2px offset covers the 1px border and
+     one more px), on the text and on the input, as on Field's input. */
+  [data-scope="editable"][data-part="preview"]:focus-visible,
+  [data-scope="editable"][data-part="input"]:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+  }
+  [data-scope="editable"][data-part="input"] {
+    border-color: var(--input);
+    background-color: var(--background);
+  }
+  [data-scope="editable"][data-part="preview"][data-invalid],
+  [data-scope="editable"][data-part="input"][data-invalid] {
+    border-color: var(--destructive);
+  }
+  [data-scope="editable"][data-part="input"][data-invalid] {
+    background-color: color-mix(in oklab, var(--destructive) 4%, var(--background));
+  }
+  /* An invalid value keeps its error colour while focused; a neutral ring
+     over a red border reads as "fixed" before it is. */
+  [data-scope="editable"][data-part="preview"][data-invalid]:focus-visible,
+  [data-scope="editable"][data-part="input"][data-invalid]:focus-visible {
+    outline-color: var(--destructive);
+  }
+  /* The optional buttons sit after the text, as tall as it: a square for an
+     icon, wider for a word. The edit button and the save and cancel buttons
+     take turns in one place, and a hidden one keeps its room (unseen, out of
+     the tab order and the accessibility tree), so the text keeps its width
+     when an edit starts. */
+  [data-scope="editable"][data-part="control"] {
+    display: inline-grid;
+    grid-column: 2;
+    align-items: center;
+    gap: var(--spacing-1);
+  }
+  [data-scope="editable"][data-part="control"] > [data-part="edit-trigger"] {
+    grid-row: 1;
+    grid-column: 1 / span 2;
+    justify-self: start;
+  }
+  [data-scope="editable"][data-part="control"] > [data-part="submit-trigger"] {
+    grid-row: 1;
+    grid-column: 1;
+  }
+  [data-scope="editable"][data-part="control"] > [data-part="cancel-trigger"] {
+    grid-row: 1;
+    grid-column: 2;
+  }
+  [data-scope="editable"][data-part="control"] > [data-part][hidden] {
+    display: inline-flex;
+    visibility: hidden;
+  }
+  [data-scope="editable"][data-part="edit-trigger"],
+  [data-scope="editable"][data-part="submit-trigger"],
+  [data-scope="editable"][data-part="cancel-trigger"] {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-1);
+    min-width: var(--spacing-8);
+    height: var(--spacing-8);
+    padding: 0 var(--spacing-2);
+    border: 1px solid transparent;
+    border-radius: var(--radius);
+    background-color: transparent;
+    color: var(--muted-foreground);
+    font-family: var(--font-sans);
+    font-size: var(--text-ui-md);
+    font-weight: var(--font-weight-medium);
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      background-color var(--motion-fast),
+      color var(--motion-fast);
+  }
+  [data-scope="editable"][data-part="edit-trigger"]:hover,
+  [data-scope="editable"][data-part="submit-trigger"]:hover,
+  [data-scope="editable"][data-part="cancel-trigger"]:hover {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+  [data-scope="editable"][data-part="edit-trigger"]:focus-visible,
+  [data-scope="editable"][data-part="submit-trigger"]:focus-visible,
+  [data-scope="editable"][data-part="cancel-trigger"]:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+  }
+  /* Ark disables the buttons natively; they get the base layer's dimmed,
+     inert look spelled out on `:disabled`, as Button does. */
+  [data-scope="editable"][data-part="edit-trigger"]:disabled,
+  [data-scope="editable"][data-part="submit-trigger"]:disabled,
+  [data-scope="editable"][data-part="cancel-trigger"]:disabled {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+  [data-scope="editable"][data-part="edit-trigger"] svg,
+  [data-scope="editable"][data-part="submit-trigger"] svg,
+  [data-scope="editable"][data-part="cancel-trigger"] svg {
+    flex: none;
+    width: var(--spacing-4);
+    height: var(--spacing-4);
+  }
+
+  /* Density driven by the recipe's data-size on the root part: Field's sizes.
+     `lg` exceeds the top spacing slot, so it sums two rather than inventing
+     an off-contract value. */
+  [data-scope="editable"][data-part="root"][data-size="sm"] {
+    gap: var(--spacing-1);
+  }
+  [data-scope="editable"][data-part="root"][data-size="sm"] > [data-part="label"] {
+    font-size: var(--text-ui-sm);
+    line-height: var(--leading-ui-sm);
+  }
+  [data-scope="editable"][data-part="root"][data-size="sm"]
+    > [data-part="area"]
+    > [data-part="preview"],
+  [data-scope="editable"][data-part="root"][data-size="sm"]
+    > [data-part="area"]
+    > [data-part="input"] {
+    height: var(--spacing-7);
+    padding-inline: var(--spacing-2);
+    font-size: var(--text-ui-sm);
+  }
+  [data-scope="editable"][data-part="root"][data-size="sm"]
+    > [data-part="area"]
+    > [data-part="preview"] {
+    line-height: calc(var(--spacing-7) - 2px);
+  }
+  [data-scope="editable"][data-part="root"][data-size="sm"] > [data-part="control"] > [data-part] {
+    min-width: var(--spacing-7);
+    height: var(--spacing-7);
+    font-size: var(--text-ui-sm);
+  }
+
+  [data-scope="editable"][data-part="root"][data-size="lg"] > [data-part="label"] {
+    font-size: var(--text-ui-lg);
+    line-height: var(--leading-ui-lg);
+  }
+  [data-scope="editable"][data-part="root"][data-size="lg"]
+    > [data-part="area"]
+    > [data-part="preview"],
+  [data-scope="editable"][data-part="root"][data-size="lg"]
+    > [data-part="area"]
+    > [data-part="input"] {
+    height: calc(var(--spacing-8) + var(--spacing-2));
+    padding-inline: var(--spacing-4);
+    font-size: var(--text-ui-lg);
+  }
+  [data-scope="editable"][data-part="root"][data-size="lg"]
+    > [data-part="area"]
+    > [data-part="preview"] {
+    line-height: calc(var(--spacing-8) + var(--spacing-2) - 2px);
+  }
+  [data-scope="editable"][data-part="root"][data-size="lg"] > [data-part="control"] > [data-part] {
+    min-width: calc(var(--spacing-8) + var(--spacing-2));
+    height: calc(var(--spacing-8) + var(--spacing-2));
+    font-size: var(--text-ui-lg);
+  }
+
   /* ─────────────────────────── Field ──────────────────────────── *
    * Ark wires label↔control + `data-invalid`/`data-disabled`; we style. The
    * only prop-driven knob is `fieldRecipe`'s `data-size` on the root, which
