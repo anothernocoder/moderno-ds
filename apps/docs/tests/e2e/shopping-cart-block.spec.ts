@@ -25,7 +25,7 @@
  * 5. **The quantity and Remove work.** The main preview is wired the way a
  *    consumer wires it: stepping a quantity reports it, and the line's price
  *    and the subtotal follow; Remove drops the line; the quantity never goes
- *    under 1.
+ *    under 1, and a number typed outside 1..99 is never reported.
  *
  * It also checks that an empty `error` string counts as no error: the cart
  * comes back, with no alert.
@@ -722,6 +722,39 @@ for (const scheme of ["light", "dark"] as const) {
       await block.getByRole("button", { name: `Remove ${NAMES[1]}` }).click();
       await expect(lines).toHaveCount(0);
       await expect(block).toContainText(EMPTY);
+    });
+
+    test("reports only quantities from 1 to maxQuantity", async ({ page }) => {
+      await page.goto(PAGE, { waitUntil: "networkidle" });
+      await showState(page, "default");
+      const block = page.locator(`[data-demo-state="default"] ${BLOCK}`);
+      const mugLine = block.locator("ul > li").nth(0);
+      const mugPrice = mugLine.locator(":scope > p");
+      const subtotal = block.locator('[data-scope="card"] dd');
+      const mug = block.getByRole("spinbutton", { name: `Quantity, ${NAMES[0]}` });
+      await expect(mugPrice).toHaveText("€56");
+
+      // Typing 0 reports nothing: the line keeps its two mugs until the box
+      // loses focus, moves back to 1 and reports that.
+      await mug.fill("0");
+      await expect(mug).toHaveValue("0");
+      await expect(mugPrice).toHaveText("€56");
+      await expect(subtotal).toHaveText(SUBTOTAL);
+      await mug.blur();
+      await expect(mug).toHaveValue("1");
+      await expect(mugPrice).toHaveText("€28");
+      await expect(subtotal).toHaveText("€106");
+
+      // Typing past the most there is (99) reports nothing either, until the
+      // box moves back to 99 on blur.
+      await mug.fill("150");
+      await expect(mug).toHaveValue("150");
+      await expect(mugPrice).toHaveText("€28");
+      await expect(subtotal).toHaveText("€106");
+      await mug.blur();
+      await expect(mug).toHaveValue("99");
+      await expect(mugPrice).toHaveText("€2772");
+      await expect(subtotal).toHaveText("€2850");
     });
 
     test("keeps the disabled cart out of reach", async ({ page }) => {

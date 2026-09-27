@@ -38,6 +38,12 @@ const sampleItems: CartItem[] = [
 
 const sampleSubtotal = "€134";
 
+const defaultMaxQuantity = 99;
+
+function isQuantityInRange(quantity: number, maxQuantity = defaultMaxQuantity) {
+  return quantity >= 1 && quantity <= maxQuantity;
+}
+
 export interface ShoppingCartProps {
   heading?: string;
   items?: CartItem[];
@@ -159,10 +165,10 @@ export function ShoppingCart({
                       className="w-28"
                       defaultValue={String(item.quantity)}
                       min={1}
-                      max={item.maxQuantity ?? 99}
+                      max={item.maxQuantity ?? defaultMaxQuantity}
                       disabled={disabled}
                       onValueChange={(details) => {
-                        if (Number.isFinite(details.valueAsNumber)) {
+                        if (isQuantityInRange(details.valueAsNumber, item.maxQuantity)) {
                           onQuantityChange?.(item.id, details.valueAsNumber);
                         }
                       }}

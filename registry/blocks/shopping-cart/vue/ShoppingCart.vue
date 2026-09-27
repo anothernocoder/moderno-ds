@@ -40,6 +40,12 @@ const sampleItems: CartItem[] = [
 
 const sampleSubtotal = "€134";
 
+const defaultMaxQuantity = 99;
+
+function isQuantityInRange(quantity: number, maxQuantity = defaultMaxQuantity) {
+  return quantity >= 1 && quantity <= maxQuantity;
+}
+
 const props = withDefaults(
   defineProps<{
     heading?: string;
@@ -73,8 +79,8 @@ const shownSubtotal = computed(
   () => props.subtotal ?? (props.items === undefined ? sampleSubtotal : undefined),
 );
 
-function changeQuantity(id: string, quantity: number) {
-  if (Number.isFinite(quantity)) emit("quantityChange", id, quantity);
+function changeQuantity(item: CartItem, quantity: number) {
+  if (isQuantityInRange(quantity, item.maxQuantity)) emit("quantityChange", item.id, quantity);
 }
 </script>
 
@@ -166,9 +172,9 @@ function changeQuantity(id: string, quantity: number) {
                 class="w-28"
                 :default-value="String(item.quantity)"
                 :min="1"
-                :max="item.maxQuantity ?? 99"
+                :max="item.maxQuantity ?? defaultMaxQuantity"
                 :disabled="disabled"
-                @value-change="changeQuantity(item.id, $event.valueAsNumber)"
+                @value-change="changeQuantity(item, $event.valueAsNumber)"
               >
                 <NumberInput.Label class="sr-only">Quantity, {{ item.name }}</NumberInput.Label>
                 <NumberInput.Control>

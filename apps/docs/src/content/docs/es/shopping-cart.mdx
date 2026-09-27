@@ -115,19 +115,19 @@ El bloque no hace cuentas. Cuando cambia una cantidad, calcula el precio de la l
 
 ### Props
 
-| Prop               | Tipo                                     | Por defecto                                   | Descripción                                                                                      |
-| ------------------ | ---------------------------------------- | --------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| `heading`          | `string`                                 | `"Shopping cart"`                             | El título de la sección. Va en la fuente con serifa.                                             |
-| `items`            | `CartItem[]`                             | tres de muestra                               | Las líneas del carrito. `[]` muestra el mensaje de vacío.                                        |
-| `subtotal`         | `string`                                 | `"€134"` con los de muestra                   | El subtotal tal como se lee. Sin él, el resumen no tiene fila de subtotal.                       |
-| `note`             | `string`                                 | `"Shipping and taxes are added at checkout."` | Una línea bajo el subtotal; `""` la oculta.                                                      |
-| `error`            | `string`                                 | —                                             | No se pudo cargar el carrito; un Alert de error con reintento sustituye las líneas y el resumen. |
-| `loading`          | `boolean`                                | `false`                                       | Líneas de marcador en una región ocupada sustituyen las líneas y el resumen.                     |
-| `disabled`         | `boolean`                                | `false`                                       | Las líneas se quedan; cada enlace queda inerte y cada caja de cantidad y botón apagado.          |
-| `onQuantityChange` | `(id: string, quantity: number) => void` | —                                             | Cambió la cantidad de una línea. Svelte: `onquantitychange`. Vue: `@quantity-change`.            |
-| `onRemove`         | `(id: string) => void`                   | —                                             | Se pulsó "Remove" en una línea. Svelte: `onremove`. Vue: `@remove`.                              |
-| `onCheckout`       | `() => void`                             | —                                             | Se pulsó "Checkout". Svelte: `oncheckout`. Vue: `@checkout`.                                     |
-| `onRetry`          | `() => void`                             | —                                             | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.                                      |
+| Prop               | Tipo                                     | Por defecto                                   | Descripción                                                                                                         |
+| ------------------ | ---------------------------------------- | --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `heading`          | `string`                                 | `"Shopping cart"`                             | El título de la sección. Va en la fuente con serifa.                                                                |
+| `items`            | `CartItem[]`                             | tres de muestra                               | Las líneas del carrito. `[]` muestra el mensaje de vacío.                                                           |
+| `subtotal`         | `string`                                 | `"€134"` con los de muestra                   | El subtotal tal como se lee. Sin él, el resumen no tiene fila de subtotal.                                          |
+| `note`             | `string`                                 | `"Shipping and taxes are added at checkout."` | Una línea bajo el subtotal; `""` la oculta.                                                                         |
+| `error`            | `string`                                 | —                                             | No se pudo cargar el carrito; un Alert de error con reintento sustituye las líneas y el resumen.                    |
+| `loading`          | `boolean`                                | `false`                                       | Líneas de marcador en una región ocupada sustituyen las líneas y el resumen.                                        |
+| `disabled`         | `boolean`                                | `false`                                       | Las líneas se quedan; cada enlace queda inerte y cada caja de cantidad y botón apagado.                             |
+| `onQuantityChange` | `(id: string, quantity: number) => void` | —                                             | Cambió la cantidad de una línea, siempre de 1 a `maxQuantity`. Svelte: `onquantitychange`. Vue: `@quantity-change`. |
+| `onRemove`         | `(id: string) => void`                   | —                                             | Se pulsó "Remove" en una línea. Svelte: `onremove`. Vue: `@remove`.                                                 |
+| `onCheckout`       | `() => void`                             | —                                             | Se pulsó "Checkout". Svelte: `oncheckout`. Vue: `@checkout`.                                                        |
+| `onRetry`          | `() => void`                             | —                                             | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.                                                         |
 
 ### CartItem
 

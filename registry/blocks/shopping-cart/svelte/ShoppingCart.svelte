@@ -53,6 +53,12 @@
 
   const sampleSubtotal = "€134";
 
+  const defaultMaxQuantity = 99;
+
+  function isQuantityInRange(quantity: number, maxQuantity = defaultMaxQuantity) {
+    return quantity >= 1 && quantity <= maxQuantity;
+  }
+
   let {
     heading = "Shopping cart",
     items,
@@ -151,10 +157,10 @@
                   class="w-28"
                   defaultValue={String(item.quantity)}
                   min={1}
-                  max={item.maxQuantity ?? 99}
+                  max={item.maxQuantity ?? defaultMaxQuantity}
                   {disabled}
                   onValueChange={(details) => {
-                    if (Number.isFinite(details.valueAsNumber)) {
+                    if (isQuantityInRange(details.valueAsNumber, item.maxQuantity)) {
                       onquantitychange?.(item.id, details.valueAsNumber);
                     }
                   }}
