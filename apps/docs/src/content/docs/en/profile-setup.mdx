@@ -1,0 +1,281 @@
+---
+title: Profile setup
+description: A full-viewport screen where a new member adds a photo and fills in their profile.
+group: Screens
+order: 117
+agent:
+  intent: The full-viewport profile setup screen — a photo to upload, then the profile fields. Presentational.
+  whenToUse: "The onboarding step right after sign-up where a person adds a photo and their details: /onboarding/profile, /welcome/profile, a first-run setup route."
+  whenNotToUse:
+    - case: A settings form inside a page you already own (a settings tab, a modal)
+      use: the FormLayout block — a block never owns the viewport
+    - case: Showing someone's photo anywhere else
+      use: the Avatar primitive
+  gotchas:
+    - "Presentational: no upload, no request, no router. `onAvatarChange` hands back the picked `File`; upload it yourself and pass the resulting URL as `avatarSrc`."
+    - "The photo is not part of the form. Picking a file is its own action, so the form posts only `fullName`, `email`, `about` and the two checkboxes."
+    - "Full-viewport is a height (`min-h-dvh`). Every width decision is read off the screen's own container, so it is still correct mounted in a pane that is not the window."
+    - "The screen imports the FormLayout block from `@/components/blocks/…`, where `moderno add` puts it. If your project uses a different path alias, that one import line is the only thing to change."
+    - "The root is a `<div>`, not a `<main>` — most app shells already provide the `main` landmark. If your route has none, change that one element."
+  theming:
+    - "The screen's own chrome is `text-foreground` / `text-muted-foreground` on `bg-background`; the photo is the Avatar primitive and the form is the FormLayout block."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the two steps are --container-sm and --container-md."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ProfileSetupScreenDemo from "../../../islands/ProfileSetupScreenDemo.svelte";
+import profileSetupReact from "../../../../../../registry/screens/profile-setup/react/profile-setup.tsx?raw";
+import profileSetupVue from "../../../../../../registry/screens/profile-setup/vue/ProfileSetup.vue?raw";
+import profileSetupSolid from "../../../../../../registry/screens/profile-setup/solid/profile-setup.tsx?raw";
+import profileSetupSvelte from "../../../../../../registry/screens/profile-setup/svelte/ProfileSetup.svelte?raw";
+
+<FrameworkSelect locale="en" />
+
+<Preview
+  examples={{
+    react: profileSetupReact,
+    vue: profileSetupVue,
+    solid: profileSetupSolid,
+    svelte: profileSetupSvelte,
+  }}
+  layout="fill"
+>
+  <ProfileSetupScreenDemo client:visible locale="en" />
+</Preview>
+
+Use it for the onboarding step where a new member adds a photo and a few details. It shows the photo and the form; your page uploads the file and saves the form.
+
+## Installation
+
+<Install item="profile-setup" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { ProfileSetup } from "@/components/screens/profile-setup";
+```
+
+```tsx
+<ProfileSetup
+  initials="AL"
+  avatarSrc={photoUrl}
+  avatarUploading={uploading}
+  onAvatarChange={(file) => upload(file)}
+  onSubmit={handleSubmit}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```ts
+import ProfileSetup from "@/components/screens/ProfileSetup.vue";
+```
+
+```vue
+<ProfileSetup
+  initials="AL"
+  :avatar-src="photoUrl"
+  :avatar-uploading="uploading"
+  @avatar-change="(file) => upload(file)"
+  @submit="handleSubmit"
+/>
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```ts
+import ProfileSetup from "@/components/screens/ProfileSetup.svelte";
+```
+
+```svelte
+<ProfileSetup
+  initials="AL"
+  avatarSrc={photoUrl}
+  avatarUploading={uploading}
+  onavatarchange={(file) => upload(file)}
+  onsubmit={handleSubmit}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { ProfileSetup } from "@/components/screens/profile-setup";
+```
+
+```tsx
+<ProfileSetup
+  initials="AL"
+  avatarSrc={photoUrl()}
+  avatarUploading={uploading()}
+  onAvatarChange={(file) => upload(file)}
+  onSubmit={handleSubmit}
+/>
+```
+
+</ForFramework>
+
+## API Reference
+
+### Props
+
+Callbacks are `on…` props in React and Solid, lowercase (`onavatarchange`) in Svelte, and emits (`avatarChange`, `submit`, `navigate`) in Vue.
+
+| Prop              | Type                     | Default | Description                                                        |
+| ----------------- | ------------------------ | ------- | ------------------------------------------------------------------ |
+| `avatarSrc`       | `string`                 | —       | URL of the current photo. Adds the Change and Remove buttons.      |
+| `initials`        | `string`                 | —       | Letters shown when there is no photo. Without them, a person icon. |
+| `avatarUploading` | `boolean`                | `false` | A photo is uploading: the photo buttons are inert and busy.        |
+| `avatarError`     | `string`                 | —       | The photo was rejected. Shown as an alert under the photo.         |
+| `error`           | `string`                 | —       | Saving failed: shows the form alert.                               |
+| `errors`          | `Record<string, string>` | —       | Field errors by name: `fullName`, `email`, `about`.                |
+| `loading`         | `boolean`                | `false` | Save in flight: every control inert, the save button busy.         |
+| `disabled`        | `boolean`                | `false` | The profile cannot be edited right now.                            |
+| `onAvatarChange`  | `(file, event) => void`  | —       | The reader picked a photo.                                         |
+| `onAvatarRemove`  | `(event) => void`        | —       | The reader pressed Remove.                                         |
+| `onSubmit`        | `(event) => void`        | —       | Native form submit.                                                |
+| `onCancel`        | `() => void`             | —       | The form's Cancel button was pressed.                              |
+| `onNavigate`      | `(to, event) => void`    | —       | A screen link was clicked: `home`, `skip`, `privacy` or `terms`.   |
+| `homeHref`        | `string`                 | `"#"`   | Target of the wordmark.                                            |
+| `skipHref`        | `string`                 | `"#"`   | Target of "Skip for now".                                          |
+| `privacyHref`     | `string`                 | `"#"`   | Target of the privacy link.                                        |
+| `termsHref`       | `string`                 | `"#"`   | Target of the terms link.                                          |
+
+### States
+
+| State       | Props             | Renders                                           |
+| ----------- | ----------------- | ------------------------------------------------- |
+| Default     | `initials`        | The initials in the avatar, "Upload photo".       |
+| Empty       | —                 | A person icon in the avatar.                      |
+| With photo  | `avatarSrc`       | The photo, "Change photo" and "Remove".           |
+| Uploading   | `avatarUploading` | Photo buttons inert, the upload button busy.      |
+| Photo error | `avatarError`     | An alert under the photo.                         |
+| Save error  | `error`, `errors` | The form alert and the invalid fields.            |
+| Saving      | `loading`         | Every control inert, the save button `aria-busy`. |
+| Disabled    | `disabled`        | The screen is shown but can't be used.            |
+
+### Form fields
+
+| Name             | Control  | Posted                  |
+| ---------------- | -------- | ----------------------- |
+| `fullName`       | Text     | Always.                 |
+| `email`          | Email    | Always.                 |
+| `about`          | Textarea | Always.                 |
+| `productUpdates` | Checkbox | Only when it is ticked. |
+| `securityAlerts` | Checkbox | Only when it is ticked. |
+
+### Sizing
+
+| Container step           | Change                                             |
+| ------------------------ | -------------------------------------------------- |
+| `@sm` (`--container-sm`) | The masthead and the photo row move onto one row.  |
+| `@md` (`--container-md`) | The title grows and the footer moves onto one row. |
+
+### Composition
+
+| Part                           | Role                                           |
+| ------------------------------ | ---------------------------------------------- |
+| [Avatar](/en/avatar/)          | The photo, or the initials when there is none. |
+| [FormLayout](/en/form-layout/) | The profile fields and the save button.        |
+
+## Examples
+
+### With a photo
+
+<Preview
+  examples={{
+    react: profileSetupReact,
+    vue: profileSetupVue,
+    solid: profileSetupSolid,
+    svelte: profileSetupSvelte,
+  }}
+  layout="fill"
+>
+  <ProfileSetupScreenDemo client:visible locale="en" state="photo" />
+</Preview>
+
+### Uploading
+
+<Preview
+  examples={{
+    react: profileSetupReact,
+    vue: profileSetupVue,
+    solid: profileSetupSolid,
+    svelte: profileSetupSvelte,
+  }}
+  layout="fill"
+>
+  <ProfileSetupScreenDemo client:visible locale="en" state="uploading" />
+</Preview>
+
+### Rejected photo
+
+<Preview
+  examples={{
+    react: profileSetupReact,
+    vue: profileSetupVue,
+    solid: profileSetupSolid,
+    svelte: profileSetupSvelte,
+  }}
+  layout="fill"
+>
+  <ProfileSetupScreenDemo client:visible locale="en" state="photo-error" />
+</Preview>
+
+### Save error
+
+<Preview
+  examples={{
+    react: profileSetupReact,
+    vue: profileSetupVue,
+    solid: profileSetupSolid,
+    svelte: profileSetupSvelte,
+  }}
+  layout="fill"
+>
+  <ProfileSetupScreenDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Saving
+
+<Preview
+  examples={{
+    react: profileSetupReact,
+    vue: profileSetupVue,
+    solid: profileSetupSolid,
+    svelte: profileSetupSvelte,
+  }}
+  layout="fill"
+>
+  <ProfileSetupScreenDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Empty
+
+<Preview
+  examples={{
+    react: profileSetupReact,
+    vue: profileSetupVue,
+    solid: profileSetupSolid,
+    svelte: profileSetupSvelte,
+  }}
+  layout="fill"
+>
+  <ProfileSetupScreenDemo client:visible locale="en" state="empty" />
+</Preview>
+
+## Notes
+
+- Presentational: no upload, no request, no router. The page that mounts it owns them.
+- The file input only accepts PNG and JPG. Check the size yourself and pass `avatarError` when a file is too big.
+- The file input is cleared after each pick, so picking the same file again still calls `onAvatarChange`.
+- `onNavigate` passes the click event: skip `metaKey`/`ctrlKey` clicks, then `preventDefault()` to route.
+- The screen imports the FormLayout block from `@/components/blocks/…`; edit that line if your alias differs.

@@ -4834,6 +4834,86 @@
       ]
     },
     {
+      "name": "profile-setup-react",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Profile setup (React)",
+      "description": "Full-viewport profile setup screen composing the form-layout block and the Avatar primitive: a photo to upload or remove, then the profile fields, with the photo's uploading, error and empty states and the form's error, loading and disabled states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead and photo row line up at @sm, the title grows and the footer lines up at @md.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [
+        "form-layout-react"
+      ],
+      "files": [
+        {
+          "path": "screens/profile-setup/react/profile-setup.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/profile-setup.tsx"
+        }
+      ]
+    },
+    {
+      "name": "profile-setup-vue",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Profile setup (Vue)",
+      "description": "Full-viewport profile setup screen composing the form-layout block and the Avatar primitive: a photo to upload or remove, then the profile fields, with the photo's uploading, error and empty states and the form's error, loading and disabled states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead and photo row line up at @sm, the title grows and the footer lines up at @md.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [
+        "form-layout-vue"
+      ],
+      "files": [
+        {
+          "path": "screens/profile-setup/vue/ProfileSetup.vue",
+          "type": "registry:screen",
+          "target": "src/components/screens/ProfileSetup.vue"
+        }
+      ]
+    },
+    {
+      "name": "profile-setup-svelte",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Profile setup (Svelte)",
+      "description": "Full-viewport profile setup screen composing the form-layout block and the Avatar primitive: a photo to upload or remove, then the profile fields, with the photo's uploading, error and empty states and the form's error, loading and disabled states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead and photo row line up at @sm, the title grows and the footer lines up at @md.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [
+        "form-layout-svelte"
+      ],
+      "files": [
+        {
+          "path": "screens/profile-setup/svelte/ProfileSetup.svelte",
+          "type": "registry:screen",
+          "target": "src/components/screens/ProfileSetup.svelte"
+        }
+      ]
+    },
+    {
+      "name": "profile-setup-solid",
+      "type": "registry:screen",
+      "version": "0.1.0",
+      "title": "Profile setup (Solid)",
+      "description": "Full-viewport profile setup screen composing the form-layout block and the Avatar primitive: a photo to upload or remove, then the profile fields, with the photo's uploading, error and empty states and the form's error, loading and disabled states. Presentational — data and callbacks in, no navigation state — and responsive to its container (@container) across the @sm and @md contract steps: the masthead and photo row line up at @sm, the title grows and the footer lines up at @md.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [
+        "form-layout-solid"
+      ],
+      "files": [
+        {
+          "path": "screens/profile-setup/solid/profile-setup.tsx",
+          "type": "registry:screen",
+          "target": "src/components/screens/profile-setup.tsx"
+        }
+      ]
+    },
+    {
       "name": "reset-password-react",
       "type": "registry:screen",
       "version": "0.1.0",
