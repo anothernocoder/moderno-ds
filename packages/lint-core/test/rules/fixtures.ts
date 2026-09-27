@@ -181,5 +181,26 @@ export const manifests: AggregatedManifests = {
         },
       ],
     },
+    {
+      // Svelte's markup spells events two ways a JSX-shaped rule does not
+      // expect: `on:click` directives and Svelte 5's lowercase `onclick`.
+      package: "@moderno-ui/svelte",
+      version: "0.5.0",
+      kind: "components",
+      framework: "svelte",
+      generatedFrom: { propsDoc: true, mdxAgentBlock: true },
+      components: [
+        {
+          name: "Button",
+          scope: "button",
+          import: 'import { Button } from "@moderno-ui/svelte"',
+          propsHash: "sha256:fixture-button",
+          props: [{ name: "variant", type: '"primary" | "outline"', required: false }],
+          propsComplete: true,
+          parts: [{ name: "root" }],
+          variants: { variant: ["primary", "outline"] },
+        },
+      ],
+    },
   ],
 };

@@ -16,7 +16,8 @@
  * - An attribute is not spelled the same in every binding. Vue templates write
  *   `xTicks` as `:x-ticks`, hang props off `v-bind:`, and use `@`/`v-`/`#` for
  *   syntax that binds no prop at all; Svelte namespaces its directives
- *   (`on:click`, `bind:value`). `resolveAttr` folds each framework's spelling
+ *   (`on:click`, `bind:value`) and, from Svelte 5, writes event handlers as
+ *   lowercase attributes (`onclick`). `resolveAttr` folds each framework's spelling
  *   down to the prop it actually sets, or to "not a prop" — comparing raw
  *   markup against a camelCase manifest is how `<LineChart :x-ticks="3" />`,
  *   the DS's own documented Vue usage, ended up reported as an error.
@@ -71,6 +72,9 @@ const SVELTE_DIRECTIVES = new Set([
   "let",
 ]);
 
+/** Svelte 5's event attributes: `onclick`, `oninput`, `onkeydown`. */
+const SVELTE_EVENT_ATTR = /^on[a-z]+$/;
+
 interface ResolvedAttr {
   /** The prop this attribute sets, or null when it binds no prop (a directive). */
   prop: string | null;
@@ -115,6 +119,9 @@ function resolveAttr(framework: Framework, raw: string): ResolvedAttr {
   if (framework === "svelte") {
     const namespace = raw.includes(":") ? raw.slice(0, raw.indexOf(":")) : null;
     if (namespace && SVELTE_DIRECTIVES.has(namespace)) return NOT_A_PROP;
+    // Svelte 5 spells event handlers as lowercase attributes (`onclick`,
+    // `onkeydown`) — the passthrough's `onClick` shape never matches them.
+    if (SVELTE_EVENT_ATTR.test(raw)) return NOT_A_PROP;
   }
 
   // Anything still namespaced (`xlink:href`) is markup, not a component prop.

@@ -10,6 +10,10 @@ function checkVue(code: string) {
   return validProps.check({ code, framework: "vue", manifests });
 }
 
+function checkSvelte(code: string) {
+  return validProps.check({ code, framework: "svelte", manifests });
+}
+
 function messages(findings: ReturnType<typeof check>) {
   return findings.map((f) => f.message);
 }
@@ -165,6 +169,20 @@ describe("moderno/valid-props", () => {
       const findings = checkVue('<Button variant="primaryy">Save</Button>');
       expect(findings).toHaveLength(1);
       expect(findings[0]!.message).toContain('Invalid value "primaryy"');
+    });
+  });
+
+  describe("svelte markup attribute syntax", () => {
+    it("ignores Svelte 5's lowercase event attributes", () => {
+      expect(
+        messages(checkSvelte("<Button onclick={save} onkeydown={onKey}>Save</Button>")),
+      ).toEqual([]);
+    });
+
+    it("still flags a made-up lowercase prop that is not an event", () => {
+      expect(messages(checkSvelte("<Button loud>Save</Button>"))).toEqual([
+        'Unknown prop "loud" on <Button>. Valid props: variant.',
+      ]);
     });
   });
 });
