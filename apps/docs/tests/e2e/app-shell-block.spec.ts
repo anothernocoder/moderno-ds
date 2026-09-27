@@ -17,7 +17,8 @@
  *    links with the current page marked, the heading and the page by default;
  *    the empty message without children; three placeholders in a busy region
  *    while loading; an error Alert with a retry; a dimmed link with no `href`
- *    when one is disabled. Every copy is centred in its box.
+ *    when one is disabled, still exposed as a disabled link. Every copy is
+ *    centred in its box.
  * 3. **The Drawer and the account Menu work**: "Menu" opens a left Drawer with
  *    the same links, a click on a link closes it, and Escape hands focus back;
  *    the account trigger opens a Menu with the user's name and email and the
@@ -533,6 +534,8 @@ for (const scheme of ["light", "dark"] as const) {
       const block = page.locator(`[data-demo-state="disabled"] ${BLOCK}`);
       const link = block.locator("nav a", { hasText: "Reports" });
       await expect(link).toHaveAttribute("aria-disabled", "true");
+      // Screen readers still hear a link, marked unavailable, not plain text.
+      await expect(block.getByRole("link", { name: "Reports", disabled: true })).toHaveCount(1);
       await link.evaluate((el) => (el as HTMLElement).focus());
       await expect(link).not.toBeFocused();
 

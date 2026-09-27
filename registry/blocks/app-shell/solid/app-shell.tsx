@@ -44,6 +44,7 @@ function NavLinks(props: { items: AppShellNavItem[]; onNavigate?: () => void }) 
           <li>
             <a
               href={item.disabled ? undefined : item.href}
+              role={item.disabled ? "link" : undefined}
               aria-current={item.current ? "page" : undefined}
               aria-disabled={item.disabled || undefined}
               class="flex h-9 items-center rounded-md px-3 text-ui-md text-muted-foreground no-underline transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring aria-[current=page]:bg-accent aria-[current=page]:font-medium aria-[current=page]:text-accent-foreground aria-disabled:pointer-events-none aria-disabled:opacity-50"

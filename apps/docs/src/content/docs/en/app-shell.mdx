@@ -15,7 +15,7 @@ agent:
       use: The Drawer primitive on its own
   gotchas:
     - '`navigation` is an array of `{ id, label, href, current?, disabled? }`. Mark the page the user is on with `current: true`: its link gets `aria-current="page"` and the accent fill.'
-    - 'A `disabled` link has no `href` and `aria-disabled="true"`: it is out of the tab order and does nothing on click.'
+    - 'A `disabled` link has no `href`, `role="link"` and `aria-disabled="true"`: screen readers announce it as an unavailable link, it is out of the tab order and it does nothing on click.'
     - "The links are plain `<a href>`. To use your router's link, edit the copied file."
     - "The same links fill the sidebar and the Drawer. A click on a link in the Drawer closes it."
     - "`user` is `{ name, email, image? }`. The account trigger shows the initials on a narrow container and the name from `--container-sm`; its accessible name is always the full name."
