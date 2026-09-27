@@ -16,7 +16,7 @@ agent:
       use: LineChart
   gotchas:
     - "Zero colour is baked in on purpose — slices paint from --chart-1…5 by their index in data; don't pass a fill prop."
-    - "Slices keep data order and are never sorted. A value of 0 or less draws no slice but still uses its index, so later slices keep their colour."
+    - "Slices keep data order and are never sorted. A value of 0 or less, or one that is not a finite number, draws no slice and leaves no gap, but still uses its index, so later slices keep their colour."
     - "innerRadius is a fraction of the outer radius (0–1), not pixels; 0 draws a pie."
     - "padAngle is in radians; small values like 0.02 are enough."
   theming:
@@ -147,7 +147,7 @@ Each entry in `data` is one slice.
 | Field   | Type     | Description                                                  |
 | ------- | -------- | ------------------------------------------------------------ |
 | `name`  | `string` | Optional label for the slice.                                |
-| `value` | `number` | Its share of the total. A value of 0 or less draws no slice. |
+| `value` | `number` | Its share of the total. A value of 0 or less, or one that is not a finite number, draws no slice. |
 
 ### Defaults
 

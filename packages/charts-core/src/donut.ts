@@ -54,6 +54,17 @@ function centredPath(cx: number, cy: number) {
   };
 }
 
+/** A datum paired with its position in `data`, which picks its series colour. */
+interface IndexedDatum {
+  datum: DonutDatum;
+  index: number;
+}
+
+/** Only a finite, positive value takes up part of the ring. */
+function isDrawable(value: number): boolean {
+  return Number.isFinite(value) && value > 0;
+}
+
 function clamp(value: number, lo: number, hi: number): number {
   return Math.min(Math.max(value, lo), hi);
 }
@@ -61,7 +72,8 @@ function clamp(value: number, lo: number, hi: number): number {
 /**
  * Build a donut chart model: one ring segment per datum, sized by its share of
  * the total and laid out clockwise from 12 o'clock in input order (never
- * re-sorted). A datum with no positive value draws no slice; the others keep
+ * re-sorted). A datum whose value is not a finite positive number draws no
+ * slice and takes no room (not even a padAngle gap); the others keep
  * their own index, so a slice's colour never shifts when a neighbour is empty.
  */
 export function buildDonutChart(options: DonutChartOptions): DonutChartModel {
@@ -69,28 +81,34 @@ export function buildDonutChart(options: DonutChartOptions): DonutChartModel {
   const innerRadius = round(outerRadius * clamp(options.innerRadius ?? 0.6, 0, 1));
   const center = { x: round(options.width / 2), y: round(options.height / 2) };
 
-  const arcs = pie<DonutDatum>()
-    .value((d) => Math.max(0, d.value) || 0)
-    .sort(null)
-    .padAngle(options.padAngle ?? 0)([...options.data]);
+  // Only drawable entries go into the pie, so an empty share reserves no
+  // angle and no padAngle gap; each keeps its position in `data`.
+  const drawable = options.data.flatMap((datum, index) =>
+    isDrawable(datum.value) ? [{ datum, index }] : [],
+  );
 
-  const segment = arc<PieArcDatum<DonutDatum>>().innerRadius(innerRadius).outerRadius(outerRadius);
+  const arcs = pie<IndexedDatum>()
+    .value((d) => d.datum.value)
+    .sort(null)
+    .padAngle(options.padAngle ?? 0)(drawable);
+
+  const segment = arc<PieArcDatum<IndexedDatum>>()
+    .innerRadius(innerRadius)
+    .outerRadius(outerRadius);
   type ArcContext = Parameters<typeof segment.context>[0];
 
-  const slices = arcs
-    .filter((a) => a.value > 0)
-    .map((a): DonutSlice => {
-      const path = centredPath(center.x, center.y);
-      segment.context(path as ArcContext)(a);
-      return {
-        name: a.data.name,
-        value: a.data.value,
-        index: a.index,
-        startAngle: round(a.startAngle, 4),
-        endAngle: round(a.endAngle, 4),
-        path: path.toString(),
-      };
-    });
+  const slices = arcs.map((a): DonutSlice => {
+    const path = centredPath(center.x, center.y);
+    segment.context(path as ArcContext)(a);
+    return {
+      name: a.data.datum.name,
+      value: a.data.datum.value,
+      index: a.data.index,
+      startAngle: round(a.startAngle, 4),
+      endAngle: round(a.endAngle, 4),
+      path: path.toString(),
+    };
+  });
 
   return { width: options.width, height: options.height, center, outerRadius, innerRadius, slices };
 }

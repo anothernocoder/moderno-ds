@@ -43,14 +43,42 @@ describe("buildDonutChart", () => {
     expect(direct!.path).toBe("M50,0A40,40,0,0,1,90,40L74,40A24,24,0,0,0,50,16Z");
   });
 
-  it("skips a datum with no positive value but keeps every other slice's index", () => {
+  it("skips a datum with no finite positive value but keeps every other slice's index", () => {
     const model = buildDonutChart({
       width: 100,
       height: 100,
-      data: [{ value: 2 }, { value: 0 }, { value: -4 }, { value: Number.NaN }, { value: 2 }],
+      data: [
+        { value: 2 },
+        { value: 0 },
+        { value: -4 },
+        { value: Number.NaN },
+        { value: Number.POSITIVE_INFINITY },
+        { value: Number.NEGATIVE_INFINITY },
+        { value: 2 },
+      ],
     });
-    expect(model.slices.map((s) => s.index)).toEqual([0, 4]);
+    expect(model.slices.map((s) => s.index)).toEqual([0, 6]);
     expect(model.slices[1]!.startAngle).toBeCloseTo(Math.PI, 3);
+    expect(model.slices[1]!.endAngle).toBeCloseTo(2 * Math.PI, 3);
+    for (const slice of model.slices) expect(slice.path).not.toContain("NaN");
+  });
+
+  it("keeps every padAngle gap the same width when a datum is skipped", () => {
+    const padAngle = 0.1;
+    const slices = buildDonutChart({
+      width: 100,
+      height: 100,
+      data: [{ value: 1 }, { value: 0 }, { value: 1 }],
+      padAngle,
+    }).slices;
+    const [first, last] = slices;
+    // Each slice carves its gap out of its own span, so equal gaps mean the
+    // skipped datum reserves no angle: the spans meet and split the circle evenly.
+    const between = last!.startAngle - first!.endAngle;
+    const acrossTop = 2 * Math.PI - last!.endAngle + first!.startAngle;
+    expect(between).toBeCloseTo(acrossTop, 3);
+    expect(first!.endAngle - first!.startAngle).toBeCloseTo(Math.PI, 3);
+    expect(last!.endAngle - last!.startAngle).toBeCloseTo(Math.PI, 3);
   });
 
   it("draws a pie when innerRadius is 0, and clamps the ratio to 0–1", () => {
