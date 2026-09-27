@@ -98,6 +98,60 @@ describe("buildBarList", () => {
     expect(model.rows.every((row) => row.track.width === 0 && row.bar.width === 0)).toBe(true);
   });
 
+  describe("a value that is not a finite number", () => {
+    const withGaps = [
+      { name: "c", value: 3 },
+      { name: "nan", value: Number.NaN },
+      { name: "a", value: 1 },
+      { name: "inf", value: Number.POSITIVE_INFINITY },
+      { name: "b", value: 5 },
+      { name: "-inf", value: Number.NEGATIVE_INFINITY },
+    ];
+
+    it("draws no bar and prints no value, and never leaks NaN into the SVG", () => {
+      const model = buildBarList({ ...base, data: withGaps, sort: "none" });
+      const empty = model.rows.filter((row) => !Number.isFinite(row.value));
+      expect(empty.map((row) => [row.name, row.bar.width, row.valueLabel])).toEqual([
+        ["nan", 0, ""],
+        ["inf", 0, ""],
+        ["-inf", 0, ""],
+      ]);
+      expect(chartNodeToSvg(barListNodes({ ...base, data: withGaps }))).not.toContain("NaN");
+    });
+
+    it("is left out of the default max, so the finite rows keep their widths", () => {
+      const model = buildBarList({ ...base, data: withGaps, sort: "none" });
+      const widths = Object.fromEntries(model.rows.map((row) => [row.name, row.bar.width]));
+      // max is 5, the largest finite value: 150 × 3/5, 150 × 1/5, 150 × 5/5.
+      expect(widths).toMatchObject({ c: 90, a: 30, b: 150 });
+    });
+
+    it("goes last in either sort, in data order, and the finite rows stay ranked", () => {
+      const names = (sort: "descending" | "ascending" | "none") =>
+        buildBarList({ ...base, data: withGaps, sort }).rows.map((row) => row.name);
+      expect(names("descending")).toEqual(["b", "c", "a", "nan", "inf", "-inf"]);
+      expect(names("ascending")).toEqual(["a", "c", "b", "nan", "inf", "-inf"]);
+      expect(names("none")).toEqual(["c", "nan", "a", "inf", "b", "-inf"]);
+    });
+
+    it("is ignored as max, which falls back to the largest finite value", () => {
+      for (const max of [Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY]) {
+        const model = buildBarList({ ...base, data: pages, max, sort: "none" });
+        expect(model.rows.map((row) => row.bar.width)).toEqual([75, 150, 37.5]);
+      }
+    });
+
+    it("draws an empty list, not NaN, when no value is finite", () => {
+      const data = [
+        { name: "nan", value: Number.NaN },
+        { name: "inf", value: Number.POSITIVE_INFINITY },
+      ];
+      const model = buildBarList({ ...base, data });
+      expect(model.rows.map((row) => row.bar.width)).toEqual([0, 0]);
+      expect(chartNodeToSvg(barListNodes({ ...base, data }))).not.toContain("NaN");
+    });
+  });
+
   it("handles empty data", () => {
     expect(buildBarList({ ...base, data: [] })).toEqual({
       width: 300,

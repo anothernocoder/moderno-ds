@@ -71,7 +71,9 @@ const DEFAULT_BAR_HEIGHT = 8;
  * Build a bar list: one row per item, each a name, a track and a value. The
  * track spans the room left between the name and value columns; the bar fills
  * it in proportion to `value / max`, clamped so a negative value draws nothing
- * and a value over `max` fills the track and no more.
+ * and a value over `max` fills the track and no more. A value that is not a
+ * finite number (NaN, ±Infinity) draws no bar, prints no value, takes no part
+ * in the default `max` and goes after every finite row.
  */
 export function buildBarList(options: BarListOptions): BarListModel {
   const labelWidth = options.labelWidth ?? DEFAULT_LABEL_WIDTH;
@@ -92,13 +94,14 @@ export function buildBarList(options: BarListOptions): BarListModel {
       width: round(trackWidth),
       height: barHeight,
     };
+    const share = isDrawable(item.value) ? clamp(item.value / max, 0, 1) : 0;
     return {
       name: item.name,
       value: item.value,
-      valueLabel: format(item.value),
+      valueLabel: isDrawable(item.value) ? format(item.value) : "",
       center: round(center),
       track,
-      bar: { ...track, width: round(trackWidth * clamp(item.value / max, 0, 1)) },
+      bar: { ...track, width: round(trackWidth * share) },
     };
   });
 
@@ -110,17 +113,32 @@ export function buildBarList(options: BarListOptions): BarListModel {
   };
 }
 
-/** A sorted copy of the items; `Array.prototype.sort` is stable, so ties keep their order. */
-function sortItems(data: readonly BarListItem[], sort: BarListSort): BarListItem[] {
-  const items = [...data];
-  if (sort === "descending") items.sort((a, b) => b.value - a.value);
-  if (sort === "ascending") items.sort((a, b) => a.value - b.value);
-  return items;
+/** Only a finite value has a length on the track; NaN and ±Infinity draw nothing. */
+function isDrawable(value: number): boolean {
+  return Number.isFinite(value);
 }
 
-/** The value a full track stands for. Never 0 or below, so a bar's share is always defined. */
+/**
+ * A sorted copy of the items. Rows that draw nothing go last, in data order, so
+ * they never break the ranking of the others; `Array.prototype.sort` is stable,
+ * so ties keep their order too.
+ */
+function sortItems(data: readonly BarListItem[], sort: BarListSort): BarListItem[] {
+  if (sort === "none") return [...data];
+  const drawable = data.filter((item) => isDrawable(item.value));
+  const empty = data.filter((item) => !isDrawable(item.value));
+  const direction = sort === "descending" ? -1 : 1;
+  drawable.sort((a, b) => direction * (a.value - b.value));
+  return [...drawable, ...empty];
+}
+
+/**
+ * The value a full track stands for: `max` when it is a finite number, else the
+ * largest finite value. Never 0 or below, so a bar's share is always defined.
+ */
 function fullTrackValue(items: readonly BarListItem[], max: number | undefined): number {
-  const value = max ?? maxOf(items, (item) => item.value) ?? 0;
+  const largest = maxOf(items, (item) => (isDrawable(item.value) ? item.value : undefined));
+  const value = max !== undefined && isDrawable(max) ? max : (largest ?? 0);
   return value > 0 ? value : 1;
 }
 

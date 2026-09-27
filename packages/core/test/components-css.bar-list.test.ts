@@ -3,7 +3,7 @@ import { parsePartial, prop, ruleDecls } from "./stylesheet.ts";
 
 const root = parsePartial("bar-list");
 
-const part = (name: string) => `[data-scope="chart"][data-part="${name}"]`;
+const part = (name: string) => `[data-chart="bar-list"] [data-scope="chart"][data-part="${name}"]`;
 
 /*
  * A bar list's only colour is its series colour: the bar paints currentColor
@@ -20,6 +20,15 @@ describe("@moderno-ui/core components.css — Bar list", () => {
 
   it("leaves the bar to chart.css, so it keeps the series colour", () => {
     expect(ruleDecls(root, part("bar"))).toEqual([]);
+    expect(ruleDecls(root, `[data-scope="chart"][data-part="bar"]`)).toEqual([]);
+  });
+
+  it("scopes every rule to the bar list, so other charts' parts stay unpainted", () => {
+    root.walkRules((rule) => {
+      for (const selector of rule.selectors) {
+        expect(selector.startsWith(`[data-chart="bar-list"] `)).toBe(true);
+      }
+    });
   });
 
   it("anchors the name to the left edge and the value to the right edge", () => {

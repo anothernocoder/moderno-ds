@@ -17,6 +17,7 @@ agent:
   gotchas:
     - 'Rows sort largest first by default; pass sort="none" to keep the order of data.'
     - "Names do not wrap or truncate: keep them short, or raise labelWidth."
+    - "A value that is not a finite number (NaN, Infinity) draws no bar, prints nothing and sorts last; a non-finite max is ignored."
     - "The list is as tall as its rows (rows × rowHeight); there is no height prop."
     - "Zero colour is baked in on purpose: bars and tracks paint from --chart-1; don't pass a fill prop."
   theming:
@@ -157,17 +158,19 @@ Each entry in `data` is one row.
 | `name`  | `string` | The text at the start of the row.   |
 | `value` | `number` | Sets the bar length and is printed. |
 
+A value of 0 or less draws an empty track. A value that is not a finite number (`NaN`, `Infinity`) draws no bar and prints nothing. It is left out of the default `max`, and a sorted list puts its row last.
+
 ### Defaults
 
-| Prop         | Default                           |
-| ------------ | --------------------------------- |
-| `max`        | The largest value in `data`       |
-| `sort`       | `"descending"`, largest first     |
-| `labelWidth` | `120`                             |
-| `valueWidth` | `64`                              |
-| `rowHeight`  | `32`                              |
-| `barHeight`  | `8`                               |
-| `format`     | The number, rounded to 4 decimals |
+| Prop         | Default                            |
+| ------------ | ---------------------------------- |
+| `max`        | The largest finite value in `data` |
+| `sort`       | `"descending"`, largest first      |
+| `labelWidth` | `120`                              |
+| `valueWidth` | `64`                               |
+| `rowHeight`  | `32`                               |
+| `barHeight`  | `8`                                |
+| `format`     | The number, rounded to 4 decimals  |
 
 ### Data attributes
 

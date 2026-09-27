@@ -9,7 +9,7 @@
 }
 
 /* A spark fills its container, so on the wide stage it gets a KPI card's width
-   instead; the other charts use `layout="fill"` and take the whole stage. */
+   instead. */
 .preview-panel--demo > astro-island > [data-scope="chart"][data-chart="spark"] {
   width: min(100%, 16rem);
 }

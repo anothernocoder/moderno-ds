@@ -140,11 +140,13 @@ Cada entrada de `data` es una fila.
 | `name`  | `string` | El texto al inicio de la fila.                   |
 | `value` | `number` | Fija el largo de la barra y se muestra al final. |
 
+Un valor de 0 o menos deja la pista vacía. Un valor que no es un número finito (`NaN`, `Infinity`) no dibuja barra ni se muestra. Queda fuera del `max` por defecto, y una lista ordenada pone su fila al final.
+
 ### Valores por defecto
 
 | Prop         | Por defecto                         |
 | ------------ | ----------------------------------- |
-| `max`        | El mayor valor de `data`            |
+| `max`        | El mayor valor finito de `data`     |
 | `sort`       | `"descending"`, de mayor a menor    |
 | `labelWidth` | `120`                               |
 | `valueWidth` | `64`                                |
