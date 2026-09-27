@@ -25,7 +25,8 @@
  * 5. **The quantity and Remove work.** The main preview is wired the way a
  *    consumer wires it: stepping a quantity reports it, and the line's price
  *    and the subtotal follow; Remove drops the line; the quantity never goes
- *    under 1, and a number typed outside 1..99 is never reported.
+ *    under 1, and a number outside 1..99 or with a fraction is never reported;
+ *    the box settles on a whole number when it loses focus.
  *
  * It also checks that an empty `error` string counts as no error: the cart
  * comes back, with no alert.
@@ -755,6 +756,41 @@ for (const scheme of ["light", "dark"] as const) {
       await expect(mug).toHaveValue("99");
       await expect(mugPrice).toHaveText("€2772");
       await expect(subtotal).toHaveText("€2850");
+    });
+
+    test("reports only whole quantities", async ({ page }) => {
+      await page.goto(PAGE, { waitUntil: "networkidle" });
+      await showState(page, "default");
+      const block = page.locator(`[data-demo-state="default"] ${BLOCK}`);
+      const mugPrice = block.locator("ul > li").nth(0).locator(":scope > p");
+      const subtotal = block.locator('[data-scope="card"] dd');
+      const mug = block.getByRole("spinbutton", { name: `Quantity, ${NAMES[0]}` });
+      await expect(mugPrice).toHaveText("€56");
+
+      // The box refuses a decimal point: 1.5 typed key by key lands as 15.
+      await mug.selectText();
+      await mug.pressSequentially("1.5");
+      await expect(mug).toHaveValue("15");
+      await expect(mugPrice).toHaveText("€420");
+      await mug.blur();
+      await expect(mug).toHaveValue("15");
+
+      // A fraction that lands in the box at once, as a paste does, reports
+      // nothing: the line keeps its 15 mugs until the box loses focus, rounds
+      // to 4 and reports that.
+      await mug.focus();
+      await mug.evaluate((input: HTMLInputElement) => {
+        input.value = "3.5";
+        input.dispatchEvent(
+          new InputEvent("input", { bubbles: true, inputType: "insertFromPaste" }),
+        );
+      });
+      await expect(mug).toHaveValue("3.5");
+      await expect(mugPrice).toHaveText("€420");
+      await mug.blur();
+      await expect(mug).toHaveValue("4");
+      await expect(mugPrice).toHaveText("€112");
+      await expect(subtotal).toHaveText("€190");
     });
 
     test("keeps the disabled cart out of reach", async ({ page }) => {

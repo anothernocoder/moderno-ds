@@ -17,7 +17,7 @@ agent:
     - "`items` is an array of `{ id, name, price, quantity, maxQuantity?, options?, href?, image?: { src, alt } }`."
     - "`price` is the line's price as people read it, for its whole quantity, like `€56` for two €28 mugs. Format it in the reader's currency and language before you pass it."
     - "`subtotal` is a string too, like `€134`. The block does no maths: when a quantity changes, work out the new prices and subtotal and pass them back in. Without `subtotal`, the summary shows no subtotal row."
-    - "Each quantity is a NumberInput from 1 to `maxQuantity` (99 by default). The block keeps each box's own value; `onQuantityChange(id, quantity)` (Svelte `onquantitychange`, Vue `@quantity-change`) reports each new quantity, always from 1 to `maxQuantity`. A number typed outside that range is not reported; when the box loses focus it moves back into the range, and that number is reported."
+    - "Each quantity is a NumberInput for whole numbers from 1 to `maxQuantity` (99 by default). The block keeps each box's own value; `onQuantityChange(id, quantity)` (Svelte `onquantitychange`, Vue `@quantity-change`) reports each new quantity, always a whole number from 1 to `maxQuantity`. The box refuses a typed decimal point. A number outside that range, or a pasted fraction, is not reported; when the box loses focus it moves back into the range and rounds to a whole number, and that number is reported."
     - "`onRemove(id)` (Svelte `onremove`, Vue `@remove`) reports that a line's Remove button was pressed. Drop that item from `items` to remove the line."
     - "`onCheckout` (Svelte `oncheckout`, Vue `@checkout`) reports that Checkout was pressed. Moving to checkout stays yours."
     - "With `href`, the item's name is a link to its product page. Without it, the name is plain text."
@@ -145,19 +145,19 @@ The block does no maths. When a quantity changes, work out the line's price and 
 
 ### Props
 
-| Prop               | Type                                     | Default                                       | Description                                                                                                     |
-| ------------------ | ---------------------------------------- | --------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| `heading`          | `string`                                 | `"Shopping cart"`                             | The section's heading. It is set in the serif face.                                                             |
-| `items`            | `CartItem[]`                             | three sample items                            | The lines in the cart. `[]` shows the empty message.                                                            |
-| `subtotal`         | `string`                                 | `"€134"` with the samples                     | The subtotal as people read it. Left out, the summary has no subtotal row.                                      |
-| `note`             | `string`                                 | `"Shipping and taxes are added at checkout."` | A line under the subtotal; `""` hides it.                                                                       |
-| `error`            | `string`                                 | —                                             | Loading the cart failed; an error Alert with a retry replaces the lines and the summary.                        |
-| `loading`          | `boolean`                                | `false`                                       | Placeholder lines in a busy region replace the lines and the summary.                                           |
-| `disabled`         | `boolean`                                | `false`                                       | The lines stay; every link is inert and every quantity box and button is off.                                   |
-| `onQuantityChange` | `(id: string, quantity: number) => void` | —                                             | A line's quantity changed, always from 1 to `maxQuantity`. Svelte: `onquantitychange`. Vue: `@quantity-change`. |
-| `onRemove`         | `(id: string) => void`                   | —                                             | A line's "Remove" was pressed. Svelte: `onremove`. Vue: `@remove`.                                              |
-| `onCheckout`       | `() => void`                             | —                                             | "Checkout" was pressed. Svelte: `oncheckout`. Vue: `@checkout`.                                                 |
-| `onRetry`          | `() => void`                             | —                                             | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.                                                    |
+| Prop               | Type                                     | Default                                       | Description                                                                                                                    |
+| ------------------ | ---------------------------------------- | --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `heading`          | `string`                                 | `"Shopping cart"`                             | The section's heading. It is set in the serif face.                                                                            |
+| `items`            | `CartItem[]`                             | three sample items                            | The lines in the cart. `[]` shows the empty message.                                                                           |
+| `subtotal`         | `string`                                 | `"€134"` with the samples                     | The subtotal as people read it. Left out, the summary has no subtotal row.                                                     |
+| `note`             | `string`                                 | `"Shipping and taxes are added at checkout."` | A line under the subtotal; `""` hides it.                                                                                      |
+| `error`            | `string`                                 | —                                             | Loading the cart failed; an error Alert with a retry replaces the lines and the summary.                                       |
+| `loading`          | `boolean`                                | `false`                                       | Placeholder lines in a busy region replace the lines and the summary.                                                          |
+| `disabled`         | `boolean`                                | `false`                                       | The lines stay; every link is inert and every quantity box and button is off.                                                  |
+| `onQuantityChange` | `(id: string, quantity: number) => void` | —                                             | A line's quantity changed, always a whole number from 1 to `maxQuantity`. Svelte: `onquantitychange`. Vue: `@quantity-change`. |
+| `onRemove`         | `(id: string) => void`                   | —                                             | A line's "Remove" was pressed. Svelte: `onremove`. Vue: `@remove`.                                                             |
+| `onCheckout`       | `() => void`                             | —                                             | "Checkout" was pressed. Svelte: `oncheckout`. Vue: `@checkout`.                                                                |
+| `onRetry`          | `() => void`                             | —                                             | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.                                                                   |
 
 ### CartItem
 

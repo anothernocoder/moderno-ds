@@ -39,6 +39,11 @@ describe("moderno add shopping-cart-<framework>", () => {
       expect(written).toContain("href");
       expect(written).toContain("aria-disabled");
       expect(written).toContain("Quantity, ");
+      // A quantity is a whole number: a fraction is never reported, and the box
+      // rounds it away when it loses focus.
+      expect(written).toContain("Number.isInteger(quantity)");
+      expect(written).toContain("maximumFractionDigits: 0");
+      expect(written).toMatch(/formatOptions|format-options/);
       expect(written).toContain("Remove");
       expect(written).toContain("Checkout");
       expect(written).toContain("Subtotal");

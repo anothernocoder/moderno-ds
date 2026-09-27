@@ -42,8 +42,13 @@ const sampleSubtotal = "€134";
 
 const defaultMaxQuantity = 99;
 
-function isQuantityInRange(quantity: number, maxQuantity = defaultMaxQuantity) {
-  return quantity >= 1 && quantity <= maxQuantity;
+const wholeNumberFormat: Intl.NumberFormatOptions = {
+  maximumFractionDigits: 0,
+  useGrouping: false,
+};
+
+function isValidQuantity(quantity: number, maxQuantity = defaultMaxQuantity) {
+  return Number.isInteger(quantity) && quantity >= 1 && quantity <= maxQuantity;
 }
 
 const props = withDefaults(
@@ -80,7 +85,7 @@ const shownSubtotal = computed(
 );
 
 function changeQuantity(item: CartItem, quantity: number) {
-  if (isQuantityInRange(quantity, item.maxQuantity)) emit("quantityChange", item.id, quantity);
+  if (isValidQuantity(quantity, item.maxQuantity)) emit("quantityChange", item.id, quantity);
 }
 </script>
 
@@ -173,6 +178,7 @@ function changeQuantity(item: CartItem, quantity: number) {
                 :default-value="String(item.quantity)"
                 :min="1"
                 :max="item.maxQuantity ?? defaultMaxQuantity"
+                :format-options="wholeNumberFormat"
                 :disabled="disabled"
                 @value-change="changeQuantity(item, $event.valueAsNumber)"
               >

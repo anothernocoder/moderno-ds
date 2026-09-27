@@ -41,8 +41,13 @@ const sampleSubtotal = "€134";
 
 const defaultMaxQuantity = 99;
 
-function isQuantityInRange(quantity: number, maxQuantity = defaultMaxQuantity) {
-  return quantity >= 1 && quantity <= maxQuantity;
+const wholeNumberFormat: Intl.NumberFormatOptions = {
+  maximumFractionDigits: 0,
+  useGrouping: false,
+};
+
+function isValidQuantity(quantity: number, maxQuantity = defaultMaxQuantity) {
+  return Number.isInteger(quantity) && quantity >= 1 && quantity <= maxQuantity;
 }
 
 export interface ShoppingCartProps {
@@ -169,9 +174,10 @@ export function ShoppingCart(props: ShoppingCartProps) {
                             defaultValue={String(item.quantity)}
                             min={1}
                             max={item.maxQuantity ?? defaultMaxQuantity}
+                            formatOptions={wholeNumberFormat}
                             disabled={props.disabled}
                             onValueChange={(details) => {
-                              if (isQuantityInRange(details.valueAsNumber, item.maxQuantity)) {
+                              if (isValidQuantity(details.valueAsNumber, item.maxQuantity)) {
                                 props.onQuantityChange?.(item.id, details.valueAsNumber);
                               }
                             }}

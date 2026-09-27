@@ -55,8 +55,13 @@
 
   const defaultMaxQuantity = 99;
 
-  function isQuantityInRange(quantity: number, maxQuantity = defaultMaxQuantity) {
-    return quantity >= 1 && quantity <= maxQuantity;
+  const wholeNumberFormat: Intl.NumberFormatOptions = {
+    maximumFractionDigits: 0,
+    useGrouping: false,
+  };
+
+  function isValidQuantity(quantity: number, maxQuantity = defaultMaxQuantity) {
+    return Number.isInteger(quantity) && quantity >= 1 && quantity <= maxQuantity;
   }
 
   let {
@@ -158,9 +163,10 @@
                   defaultValue={String(item.quantity)}
                   min={1}
                   max={item.maxQuantity ?? defaultMaxQuantity}
+                  formatOptions={wholeNumberFormat}
                   {disabled}
                   onValueChange={(details) => {
-                    if (isQuantityInRange(details.valueAsNumber, item.maxQuantity)) {
+                    if (isValidQuantity(details.valueAsNumber, item.maxQuantity)) {
                       onquantitychange?.(item.id, details.valueAsNumber);
                     }
                   }}
