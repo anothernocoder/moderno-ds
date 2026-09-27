@@ -3666,6 +3666,78 @@
       ]
     },
     {
+      "name": "slide-over-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Slide Over (React)",
+      "description": "A detail and edit panel for one record in a Drawer, composing the @moderno-ui/react Drawer, Button, Field and Alert primitives: a bordered panel with the person's name as a serif heading, their email, an \"Edit details\" Button and a list of their role and notes (\"Not added\" when empty); the Button opens a Drawer from the right holding name, email, role and notes fields filled from the record, with Cancel and \"Save changes\"; the form refuses an empty name or email, marks those fields invalid and focuses the first, and has its own loading and error renders; `open` can be bound so the consumer closes the Drawer once a save succeeds; responds to its container (@container) — the trigger stops filling its row and each term sits beside its value at @sm, the heading steps up at @md, and the trigger sits beside the name with more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/slide-over/react/slide-over.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/slide-over.tsx"
+        }
+      ]
+    },
+    {
+      "name": "slide-over-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Slide Over (Vue)",
+      "description": "A detail and edit panel for one record in a Drawer, composing the @moderno-ui/vue Drawer, Button, Field and Alert primitives: a bordered panel with the person's name as a serif heading, their email, an \"Edit details\" Button and a list of their role and notes (\"Not added\" when empty); the Button opens a Drawer from the right holding name, email, role and notes fields filled from the record, with Cancel and \"Save changes\"; the form refuses an empty name or email, marks those fields invalid and focuses the first, and has its own loading and error renders; `open` can be bound so the consumer closes the Drawer once a save succeeds; responds to its container (@container) — the trigger stops filling its row and each term sits beside its value at @sm, the heading steps up at @md, and the trigger sits beside the name with more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/slide-over/vue/SlideOver.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/SlideOver.vue"
+        }
+      ]
+    },
+    {
+      "name": "slide-over-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Slide Over (Svelte)",
+      "description": "A detail and edit panel for one record in a Drawer, composing the @moderno-ui/svelte Drawer, Button, Field and Alert primitives: a bordered panel with the person's name as a serif heading, their email, an \"Edit details\" Button and a list of their role and notes (\"Not added\" when empty); the Button opens a Drawer from the right holding name, email, role and notes fields filled from the record, with Cancel and \"Save changes\"; the form refuses an empty name or email, marks those fields invalid and focuses the first, and has its own loading and error renders; `open` can be bound so the consumer closes the Drawer once a save succeeds; responds to its container (@container) — the trigger stops filling its row and each term sits beside its value at @sm, the heading steps up at @md, and the trigger sits beside the name with more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/slide-over/svelte/SlideOver.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/SlideOver.svelte"
+        }
+      ]
+    },
+    {
+      "name": "slide-over-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Slide Over (Solid)",
+      "description": "A detail and edit panel for one record in a Drawer, composing the @moderno-ui/solid Drawer, Button, Field and Alert primitives: a bordered panel with the person's name as a serif heading, their email, an \"Edit details\" Button and a list of their role and notes (\"Not added\" when empty); the Button opens a Drawer from the right holding name, email, role and notes fields filled from the record, with Cancel and \"Save changes\"; the form refuses an empty name or email, marks those fields invalid and focuses the first, and has its own loading and error renders; `open` can be bound so the consumer closes the Drawer once a save succeeds; responds to its container (@container) — the trigger stops filling its row and each term sits beside its value at @sm, the heading steps up at @md, and the trigger sits beside the name with more room above and below at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/slide-over/solid/slide-over.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/slide-over.tsx"
+        }
+      ]
+    },
+    {
       "name": "stacked-list-react",
       "type": "registry:block",
       "version": "0.1.0",
