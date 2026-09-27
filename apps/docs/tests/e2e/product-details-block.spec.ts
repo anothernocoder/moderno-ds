@@ -29,7 +29,8 @@
  *    "Adding" while the demo's request runs.
  *
  * It also checks that an empty `error` string counts as no error: the product
- * comes back, with no alert.
+ * comes back, with no alert; and that the quantity box never widens a narrow
+ * container, whatever the platform's font metrics.
  */
 import { expect, test, type Page } from "@playwright/test";
 
@@ -112,6 +113,8 @@ interface BlockMetrics {
   buttons: string[];
   /** Horizontal offset between the content's centre and the block's, in px. */
   offCentre: number;
+  /** How far the block's content runs past its own width, in px. */
+  contentOverflow: number;
 }
 
 /**
@@ -323,6 +326,7 @@ async function blockMetrics(page: Page, state: State): Promise<BlockMetrics[]> {
           offCentre: c
             ? Math.abs(c.left + c.width / 2 - (blockBox.left + blockBox.width / 2))
             : Number.POSITIVE_INFINITY,
+          contentOverflow: content ? content.scrollWidth - content.clientWidth : 0,
         };
       });
     },
@@ -450,6 +454,7 @@ for (const scheme of ["light", "dark"] as const) {
           const where = `${scheme} ${width}px, ${state} (${w}px)`;
 
           expect(block.offCentre, `${where}: centred`).toBeLessThan(1);
+          expect(block.contentOverflow, `${where}: content fits the block`).toBe(0);
           expect(block.alert, `${where}: error announced`).toBe(state === "error");
 
           if (state === "loading") {
@@ -889,4 +894,27 @@ test("keeps the Carousel page's tinted demo slides to that page", async ({ page 
     expect(slide.tinted).toBe(true);
     expect(slide.height).toBe(slide.stacked ? 96 : 160);
   }
+});
+
+/**
+ * A text input asks for about 20 characters of width, and that width follows
+ * the platform's font metrics. The quantity box must not pass it on to the
+ * block: below `--container-sm` the box fills the row, whatever the font. The
+ * test widens the input's text on purpose, the way another platform might,
+ * and checks that the 18rem copy still fits its frame.
+ */
+test("keeps the quantity box from widening a narrow container", async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 1200 });
+  await page.goto(PAGE, { waitUntil: "networkidle" });
+  await showState(page, "narrow");
+  const fit = await page.evaluate((selector) => {
+    const section = document.querySelector(`[data-demo-state="narrow"] ${selector}`)!;
+    const content = section.firstElementChild!.firstElementChild as HTMLElement;
+    const input = section.querySelector<HTMLInputElement>(
+      '[data-scope="number-input"][data-part="input"]',
+    )!;
+    input.style.fontSize = "150%";
+    return { scroll: content.scrollWidth, client: content.clientWidth };
+  }, BLOCK);
+  expect(fit.scroll).toBeLessThanOrEqual(fit.client);
 });

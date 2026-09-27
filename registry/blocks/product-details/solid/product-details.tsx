@@ -296,7 +296,7 @@ export function ProductDetails(props: ProductDetailsProps) {
                       >
                         <NumberInput.Label>Quantity</NumberInput.Label>
                         <NumberInput.Control>
-                          <NumberInput.Input />
+                          <NumberInput.Input class="w-full" />
                           <NumberInput.DecrementTrigger>−</NumberInput.DecrementTrigger>
                           <NumberInput.IncrementTrigger>+</NumberInput.IncrementTrigger>
                         </NumberInput.Control>
