@@ -1,0 +1,232 @@
+---
+title: Order History
+description: A shopper's past orders, newest first — each with its number, a status badge, the date it was placed, its total and the items in it.
+group: Blocks
+order: 125
+agent:
+  intent: A list of a shopper's past orders — a serif heading and a short description, then one card per order with its number, a status badge (Shipped, Delivered, Cancelled…), the date placed, the total, a "View order" button, and one line per item (image, name, quantity and price).
+  whenToUse: "On an account's orders page, where a shopper checks what they bought and where each order is."
+  whenNotToUse:
+    - case: One order the shopper is about to pay for, with its totals rows
+      use: OrderSummary — it shows the lines, the subtotal, shipping, taxes and the total
+    - case: A cart where the shopper changes quantities and removes items
+      use: ShoppingCart — each line has a quantity box and a Remove button
+    - case: A list of tasks or records with a status each, not orders
+      use: ListContainer — a scrolling list of rows with an avatar and a status badge
+  gotchas:
+    - "`orders` is an array of `{ id, number, date, total, status, statusVariant?, items }`. Each item is `{ id, name, price, quantity, image?: { src, alt } }`."
+    - "Pass the orders newest first: the block keeps the order you give it."
+    - "`date`, `total` and `price` are strings as people read them, like `6 Jan 2026` and `€134`. Format them in the reader's language before you pass them."
+    - "`status` is the badge's text and `statusVariant` its colour: `info`, `success`, `warning`, `error`, `neutral` (the default), `solid` or `outline`. The badge text says the status, so the colour is never the only cue."
+    - 'Each order has a "View order" button whose accessible name is "View order" plus the order number. Clicking it calls `onView` with the order''s `id` (Svelte `onview`, Vue `@view`).'
+    - "Each order's number is an `h3` under the block's `h2`."
+    - "Give `image.alt` a short description of the photo. Without `image`, the image area is an empty muted box."
+    - '`orders={[]}` shows "You have not placed any orders yet." in a dashed box.'
+    - "`loading` keeps the heading and shows two placeholder orders in one busy `status` region."
+    - '`error` keeps the heading and puts an error Alert with your message and a "Try again" button where the orders were. An empty string counts as no error.'
+    - '`disabled` keeps every order and disables each "View order" button and the retry.'
+    - "The layout follows the block's own width, not the viewport: the date and total stacked with a full-width button at first; the date and total side by side with the button beside them, and larger images, from `--container-sm`; the quantity in its own column and a larger heading from `--container-md`; more room above, below and between the orders from `--container-lg`."
+  theming:
+    - "The block paints only the muted box behind each image (--muted), the order header's bottom border and the lines' dividers (--border), and its dashed empty box (--border). Each order is Card's outline variant, the status is Badge, the button and the retry are Button's outline variant, the error is Alert's error variant and the loading orders are Skeleton."
+    - "The heading reads --font-serif and --foreground; the description, the fact labels and the quantity read --muted-foreground."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import OrderHistoryBlockDemo from "../../../islands/OrderHistoryBlockDemo.svelte";
+import orderHistoryReact from "../../../../../../registry/blocks/order-history/react/order-history.tsx?raw";
+import orderHistoryVue from "../../../../../../registry/blocks/order-history/vue/OrderHistory.vue?raw";
+import orderHistorySolid from "../../../../../../registry/blocks/order-history/solid/order-history.tsx?raw";
+import orderHistorySvelte from "../../../../../../registry/blocks/order-history/svelte/OrderHistory.svelte?raw";
+
+export const examples = {
+  react: orderHistoryReact,
+  vue: orderHistoryVue,
+  solid: orderHistorySolid,
+  svelte: orderHistorySvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <OrderHistoryBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="order-history" />
+
+## Usage
+
+Use Order History on an account page, so a shopper can see what they bought and where each order is. Each order shows its status as a badge.
+
+<ForFramework fw="react">
+
+```tsx
+import { OrderHistory } from "@/components/blocks/order-history";
+```
+
+```tsx
+<OrderHistory orders={orders} onView={(id) => openOrder(id)} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import OrderHistory from "@/components/blocks/OrderHistory.vue";
+</script>
+```
+
+```vue
+<OrderHistory :orders="orders" @view="openOrder" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import OrderHistory from "@/components/blocks/OrderHistory.svelte";
+</script>
+```
+
+```svelte
+<OrderHistory {orders} onview={(id) => openOrder(id)} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { OrderHistory } from "@/components/blocks/order-history";
+```
+
+```tsx
+<OrderHistory orders={orders()} onView={(id) => openOrder(id)} />
+```
+
+</ForFramework>
+
+Each order looks like `{ id: "wu88191111", number: "WU88191111", date: "6 Jan 2026", total: "€134", status: "Shipped", statusVariant: "info", items: [...] }`. The block does no maths and no date formatting: pass every value as people read it.
+
+## API Reference
+
+### Props
+
+| Prop          | Type                   | Default                                     | Description                                                                 |
+| ------------- | ---------------------- | ------------------------------------------- | --------------------------------------------------------------------------- |
+| `heading`     | `string`               | `"Order history"`                           | The section's heading. It is set in the serif face.                         |
+| `description` | `string`               | `"Check the status of your recent orders."` | The line under the heading. An empty string hides it.                       |
+| `orders`      | `OrderHistoryOrder[]`  | three sample orders                         | The orders, in the order you pass them. `[]` shows the empty message.       |
+| `error`       | `string`               | —                                           | Loading the orders failed; an error Alert with a retry replaces the orders. |
+| `loading`     | `boolean`              | `false`                                     | Placeholder orders in a busy region replace the orders.                     |
+| `disabled`    | `boolean`              | `false`                                     | The orders stay; every "View order" button and the retry are off.           |
+| `onView`      | `(id: string) => void` | —                                           | "View order" on an order, with its `id`. Svelte: `onview`. Vue: `@view`.    |
+| `onRetry`     | `() => void`           | —                                           | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.                |
+
+### OrderHistoryOrder
+
+| Field           | Type                 | Description                                                        |
+| --------------- | -------------------- | ------------------------------------------------------------------ |
+| `id`            | `string`             | A stable key, passed to `onView`.                                  |
+| `number`        | `string`             | The order number people see. It reads "Order WU88191111".          |
+| `date`          | `string`             | When the order was placed, like `"6 Jan 2026"`.                    |
+| `total`         | `string`             | What the order cost, like `"€134"`.                                |
+| `status`        | `string`             | The badge's text, like `"Shipped"`.                                |
+| `statusVariant` | `BadgeVariant`       | Optional. The badge's colour, like `"success"`. Default `neutral`. |
+| `items`         | `OrderHistoryItem[]` | The lines in the order.                                            |
+
+### OrderHistoryItem
+
+| Field      | Type                    | Description                                                   |
+| ---------- | ----------------------- | ------------------------------------------------------------- |
+| `id`       | `string`                | A stable key for the line.                                    |
+| `name`     | `string`                | The product's name.                                           |
+| `price`    | `string`                | The line's price for its whole quantity, like `"€56"`.        |
+| `quantity` | `number`                | How many were ordered. It reads "Qty 2".                      |
+| `image`    | `OrderHistoryItemImage` | Optional. The photo: `{ src, alt }`. Without it, a muted box. |
+
+### States
+
+| State    | Prop          | What renders                                                |
+| -------- | ------------- | ----------------------------------------------------------- |
+| Default  | —             | The heading, the description and one card per order.        |
+| Empty    | `orders={[]}` | The heading and "You have not placed any orders yet."       |
+| Loading  | `loading`     | The heading and two placeholder orders.                     |
+| Error    | `error`       | The heading and an error Alert with "Try again".            |
+| Disabled | `disabled`    | The same orders, with every "View order" and the retry off. |
+
+### Sizing
+
+| Container step           | What changes                                                                            |
+| ------------------------ | --------------------------------------------------------------------------------------- |
+| below `@sm`              | The date and total stack, one per row. The button spans the card. Small images.         |
+| `@sm` (`--container-sm`) | The date and total sit side by side, the button moves beside them, and the images grow. |
+| `@md` (`--container-md`) | Each line's quantity moves into its own column, before the price. The heading steps up. |
+| `@lg` (`--container-lg`) | More room above and below the block, and between the orders.                            |
+
+## Examples
+
+### Container widths
+
+The same block at 18rem, 30rem, 40rem and 50rem. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <OrderHistoryBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Other statuses
+
+Pick the badge colour with `statusVariant`. Leave it out for a neutral badge.
+
+<Preview examples={examples} layout="fill">
+  <OrderHistoryBlockDemo client:visible locale="en" state="statuses" />
+</Preview>
+
+### Without images
+
+Leave out `image`, and each image area is a muted box.
+
+<Preview examples={examples} layout="fill">
+  <OrderHistoryBlockDemo client:visible locale="en" state="no-images" />
+</Preview>
+
+### Empty
+
+Pass an empty `orders` array.
+
+<Preview examples={examples} layout="fill">
+  <OrderHistoryBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <OrderHistoryBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+Press "Try again" to clear the message and bring the orders back.
+
+<Preview examples={examples} layout="fill">
+  <OrderHistoryBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled
+
+Use it while an order is opening, so the shopper does not open two at once.
+
+<Preview examples={examples} layout="fill">
+  <OrderHistoryBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Keep status words short: one or two words fit on one line with the order number.
+- Show the most recent orders and page through the rest, rather than passing every order at once.

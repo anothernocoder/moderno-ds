@@ -1,0 +1,205 @@
+---
+title: Order History
+description: Los pedidos anteriores de un cliente, del más reciente al más antiguo — cada uno con su número, una insignia de estado, la fecha en que se hizo, su total y sus artículos.
+group: Bloques
+order: 125
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import OrderHistoryBlockDemo from "../../../islands/OrderHistoryBlockDemo.svelte";
+import orderHistoryReact from "../../../../../../registry/blocks/order-history/react/order-history.tsx?raw";
+import orderHistoryVue from "../../../../../../registry/blocks/order-history/vue/OrderHistory.vue?raw";
+import orderHistorySolid from "../../../../../../registry/blocks/order-history/solid/order-history.tsx?raw";
+import orderHistorySvelte from "../../../../../../registry/blocks/order-history/svelte/OrderHistory.svelte?raw";
+
+export const examples = {
+  react: orderHistoryReact,
+  vue: orderHistoryVue,
+  solid: orderHistorySolid,
+  svelte: orderHistorySvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples} layout="fill">
+  <OrderHistoryBlockDemo client:visible locale="es" />
+</Preview>
+
+## Instalación
+
+<Install item="order-history" />
+
+## Uso
+
+Usa Order History en la página de una cuenta, para que el cliente vea lo que compró y dónde está cada pedido. Cada pedido muestra su estado en una insignia.
+
+<ForFramework fw="react">
+
+```tsx
+import { OrderHistory } from "@/components/blocks/order-history";
+```
+
+```tsx
+<OrderHistory orders={orders} onView={(id) => openOrder(id)} />
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import OrderHistory from "@/components/blocks/OrderHistory.vue";
+</script>
+```
+
+```vue
+<OrderHistory :orders="orders" @view="openOrder" />
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import OrderHistory from "@/components/blocks/OrderHistory.svelte";
+</script>
+```
+
+```svelte
+<OrderHistory {orders} onview={(id) => openOrder(id)} />
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { OrderHistory } from "@/components/blocks/order-history";
+```
+
+```tsx
+<OrderHistory orders={orders()} onView={(id) => openOrder(id)} />
+```
+
+</ForFramework>
+
+Cada pedido es como `{ id: "wu88191111", number: "WU88191111", date: "6 Jan 2026", total: "€134", status: "Shipped", statusVariant: "info", items: [...] }`. El bloque no hace cuentas ni da formato a las fechas: pasa cada valor tal como se lee.
+
+## Referencia de la API
+
+### Props
+
+| Prop          | Tipo                   | Por defecto                                 | Descripción                                                                       |
+| ------------- | ---------------------- | ------------------------------------------- | --------------------------------------------------------------------------------- |
+| `heading`     | `string`               | `"Order history"`                           | El título de la sección. Va en la fuente con serifa.                              |
+| `description` | `string`               | `"Check the status of your recent orders."` | La línea bajo el título. Una cadena vacía la oculta.                              |
+| `orders`      | `OrderHistoryOrder[]`  | tres de muestra                             | Los pedidos, en el orden en que los pasas. `[]` muestra el mensaje de vacío.      |
+| `error`       | `string`               | —                                           | No se pudieron cargar los pedidos; un Alert de error con reintento los sustituye. |
+| `loading`     | `boolean`              | `false`                                     | Pedidos de marcador en una región ocupada sustituyen los pedidos.                 |
+| `disabled`    | `boolean`              | `false`                                     | Los pedidos se quedan; cada botón "View order" y el reintento quedan apagados.    |
+| `onView`      | `(id: string) => void` | —                                           | "View order" en un pedido, con su `id`. Svelte: `onview`. Vue: `@view`.           |
+| `onRetry`     | `() => void`           | —                                           | "Try again" tras `error`. Svelte: `onretry`. Vue: `@retry`.                       |
+
+### OrderHistoryOrder
+
+| Campo           | Tipo                 | Descripción                                                                 |
+| --------------- | -------------------- | --------------------------------------------------------------------------- |
+| `id`            | `string`             | Una clave estable, que recibe `onView`.                                     |
+| `number`        | `string`             | El número de pedido que se ve. Se lee "Order WU88191111".                   |
+| `date`          | `string`             | Cuándo se hizo el pedido, como `"6 Jan 2026"`.                              |
+| `total`         | `string`             | Lo que costó el pedido, como `"€134"`.                                      |
+| `status`        | `string`             | El texto de la insignia, como `"Shipped"`.                                  |
+| `statusVariant` | `BadgeVariant`       | Opcional. El color de la insignia, como `"success"`. Por defecto `neutral`. |
+| `items`         | `OrderHistoryItem[]` | Las líneas del pedido.                                                      |
+
+### OrderHistoryItem
+
+| Campo      | Tipo                    | Descripción                                                     |
+| ---------- | ----------------------- | --------------------------------------------------------------- |
+| `id`       | `string`                | Una clave estable para la línea.                                |
+| `name`     | `string`                | El nombre del producto.                                         |
+| `price`    | `string`                | El precio de la línea por toda su cantidad, como `"€56"`.       |
+| `quantity` | `number`                | Cuántos se pidieron. Se lee "Qty 2".                            |
+| `image`    | `OrderHistoryItemImage` | Opcional. La foto: `{ src, alt }`. Sin ella, una caja atenuada. |
+
+### Estados
+
+| Estado        | Prop          | Qué se muestra                                                     |
+| ------------- | ------------- | ------------------------------------------------------------------ |
+| Por defecto   | —             | El título, la descripción y una tarjeta por pedido.                |
+| Vacío         | `orders={[]}` | El título y "You have not placed any orders yet."                  |
+| Cargando      | `loading`     | El título y dos pedidos de marcador.                               |
+| Error         | `error`       | El título y un Alert de error con "Try again".                     |
+| Deshabilitado | `disabled`    | Los mismos pedidos, con cada "View order" y el reintento apagados. |
+
+### Tamaño
+
+| Paso del contenedor      | Qué cambia                                                                                      |
+| ------------------------ | ----------------------------------------------------------------------------------------------- |
+| bajo `@sm`               | La fecha y el total se apilan, uno por fila. El botón ocupa todo el ancho. Imágenes pequeñas.   |
+| `@sm` (`--container-sm`) | La fecha y el total van uno al lado del otro, el botón pasa a su lado y las imágenes crecen.    |
+| `@md` (`--container-md`) | La cantidad de cada línea pasa a su propia columna, antes del precio. El título sube un tamaño. |
+| `@lg` (`--container-lg`) | Más espacio arriba y abajo del bloque, y entre los pedidos.                                     |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+El mismo bloque a 18rem, 30rem, 40rem y 50rem. El marco de 50rem se desplaza dentro de sí mismo.
+
+<Preview examples={examples} layout="fill">
+  <OrderHistoryBlockDemo client:visible locale="es" state="widths" />
+</Preview>
+
+### Otros estados de pedido
+
+Elige el color de la insignia con `statusVariant`. Sin él, la insignia es neutra.
+
+<Preview examples={examples} layout="fill">
+  <OrderHistoryBlockDemo client:visible locale="es" state="statuses" />
+</Preview>
+
+### Sin imágenes
+
+Sin `image`, el área de cada imagen es una caja atenuada.
+
+<Preview examples={examples} layout="fill">
+  <OrderHistoryBlockDemo client:visible locale="es" state="no-images" />
+</Preview>
+
+### Vacío
+
+Pasa un array `orders` vacío.
+
+<Preview examples={examples} layout="fill">
+  <OrderHistoryBlockDemo client:visible locale="es" state="empty" />
+</Preview>
+
+### Cargando
+
+<Preview examples={examples} layout="fill">
+  <OrderHistoryBlockDemo client:visible locale="es" state="loading" />
+</Preview>
+
+### Error
+
+Pulsa "Try again" para borrar el mensaje y volver a mostrar los pedidos.
+
+<Preview examples={examples} layout="fill">
+  <OrderHistoryBlockDemo client:visible locale="es" state="error" />
+</Preview>
+
+### Deshabilitado
+
+Úsalo mientras se abre un pedido, para que el cliente no abra dos a la vez.
+
+<Preview examples={examples} layout="fill">
+  <OrderHistoryBlockDemo client:visible locale="es" state="disabled" />
+</Preview>
+
+## Notas
+
+- Usa palabras de estado cortas: una o dos caben en una línea con el número de pedido.
+- Muestra los pedidos más recientes y pagina el resto, en lugar de pasar todos los pedidos a la vez.

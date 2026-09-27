@@ -2514,6 +2514,78 @@
       ]
     },
     {
+      "name": "order-history-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Order History (React)",
+      "description": "A shopper's past orders, composing the @moderno-ui/react Alert, Badge, Button, Card and Skeleton primitives: a serif heading and a short description, then one Card per order with its number, a status Badge, the date placed, the total and a \"View order\" Button over one line per item (its image, name, quantity and price), with its own loading, empty and error renders; responds to its container (@container) — the date and total sit side by side with the button beside them and the images grow at @sm, each line's quantity moves into its own column and the heading steps up at @md, and the section gains room above, below and between the orders at @lg.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/order-history/react/order-history.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/order-history.tsx"
+        }
+      ]
+    },
+    {
+      "name": "order-history-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Order History (Vue)",
+      "description": "A shopper's past orders, composing the @moderno-ui/vue Alert, Badge, Button, Card and Skeleton primitives: a serif heading and a short description, then one Card per order with its number, a status Badge, the date placed, the total and a \"View order\" Button over one line per item (its image, name, quantity and price), with its own loading, empty and error renders; responds to its container (@container) — the date and total sit side by side with the button beside them and the images grow at @sm, each line's quantity moves into its own column and the heading steps up at @md, and the section gains room above, below and between the orders at @lg.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/order-history/vue/OrderHistory.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/OrderHistory.vue"
+        }
+      ]
+    },
+    {
+      "name": "order-history-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Order History (Svelte)",
+      "description": "A shopper's past orders, composing the @moderno-ui/svelte Alert, Badge, Button, Card and Skeleton primitives: a serif heading and a short description, then one Card per order with its number, a status Badge, the date placed, the total and a \"View order\" Button over one line per item (its image, name, quantity and price), with its own loading, empty and error renders; responds to its container (@container) — the date and total sit side by side with the button beside them and the images grow at @sm, each line's quantity moves into its own column and the heading steps up at @md, and the section gains room above, below and between the orders at @lg.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/order-history/svelte/OrderHistory.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/OrderHistory.svelte"
+        }
+      ]
+    },
+    {
+      "name": "order-history-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Order History (Solid)",
+      "description": "A shopper's past orders, composing the @moderno-ui/solid Alert, Badge, Button, Card and Skeleton primitives: a serif heading and a short description, then one Card per order with its number, a status Badge, the date placed, the total and a \"View order\" Button over one line per item (its image, name, quantity and price), with its own loading, empty and error renders; responds to its container (@container) — the date and total sit side by side with the button beside them and the images grow at @sm, each line's quantity moves into its own column and the heading steps up at @md, and the section gains room above, below and between the orders at @lg.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/order-history/solid/order-history.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/order-history.tsx"
+        }
+      ]
+    },
+    {
       "name": "order-summary-react",
       "type": "registry:block",
       "version": "0.1.0",

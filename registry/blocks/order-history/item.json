@@ -1,0 +1,37 @@
+{
+  "title": "Order History",
+  "description": "A shopper's past orders, composing the @moderno-ui/{framework} Alert, Badge, Button, Card and Skeleton primitives: a serif heading and a short description, then one Card per order with its number, a status Badge, the date placed, the total and a \"View order\" Button over one line per item (its image, name, quantity and price), with its own loading, empty and error renders; responds to its container (@container) — the date and total sit side by side with the button beside them and the images grow at @sm, each line's quantity moves into its own column and the heading steps up at @md, and the section gains room above, below and between the orders at @lg.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": [],
+  "files": {
+    "react": [
+      {
+        "path": "blocks/order-history/react/order-history.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/order-history.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "blocks/order-history/vue/OrderHistory.vue",
+        "type": "registry:block",
+        "target": "src/components/blocks/OrderHistory.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "blocks/order-history/svelte/OrderHistory.svelte",
+        "type": "registry:block",
+        "target": "src/components/blocks/OrderHistory.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "blocks/order-history/solid/order-history.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/order-history.tsx"
+      }
+    ]
+  }
+}
