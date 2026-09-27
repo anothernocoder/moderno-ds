@@ -22,6 +22,7 @@ import cardComponent from "./components/card.ts";
 import carouselComponent from "./components/carousel.ts";
 import checkboxComponent from "./components/checkbox.ts";
 import chipComponent from "./components/chip.ts";
+import colorPickerComponent from "./components/color-picker.ts";
 import comboboxComponent from "./components/combobox.ts";
 import datePickerComponent from "./components/date-picker.ts";
 import dialogComponent from "./components/dialog.ts";
@@ -67,6 +68,7 @@ export const { ENTRIES, AGENT_COMPONENTS, AGENT_EXAMPLES } = assembleComponents(
   carouselComponent,
   checkboxComponent,
   chipComponent,
+  colorPickerComponent,
   comboboxComponent,
   datePickerComponent,
   dialogComponent,

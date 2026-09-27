@@ -22,6 +22,7 @@ import CarouselSection from "./sections/carousel.jsx";
 import ChartsSection from "./sections/charts.jsx";
 import CheckboxSection from "./sections/checkbox.jsx";
 import ChipSection from "./sections/chip.jsx";
+import ColorPickerSection from "./sections/color-picker.jsx";
 import ComboboxSection from "./sections/combobox.jsx";
 import DatePickerSection from "./sections/date-picker.jsx";
 import DialogSection from "./sections/dialog.jsx";
@@ -71,6 +72,7 @@ export function App(props: AppProps) {
       <ChartsSection open={props.open ?? false} />
       <CheckboxSection open={props.open ?? false} />
       <ChipSection open={props.open ?? false} />
+      <ColorPickerSection open={props.open ?? false} />
       <ComboboxSection open={props.open ?? false} />
       <DatePickerSection open={props.open ?? false} />
       <DialogSection open={props.open ?? false} />

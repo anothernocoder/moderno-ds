@@ -2,6 +2,8 @@
 
 exports[`@moderno-ui/core exports > exports exactly the pinned names 1`] = `
 [
+  "COLOR_PICKER_DEFAULT_VALUE",
+  "COLOR_PICKER_TRANSLATIONS",
   "REDUCED_MOTION_QUERY",
   "accordionRecipe",
   "alertRecipe",
@@ -15,6 +17,8 @@ exports[`@moderno-ui/core exports > exports exactly the pinned names 1`] = `
   "carouselRecipe",
   "checkboxRecipe",
   "chipRecipe",
+  "colorPickerRecipe",
+  "colorPickerSwatches",
   "comboboxRecipe",
   "cva",
   "cx",
@@ -28,6 +32,7 @@ exports[`@moderno-ui/core exports > exports exactly the pinned names 1`] = `
   "menuRecipe",
   "numberInputRecipe",
   "paginationRecipe",
+  "parseHexColor",
   "partAttrs",
   "pinInputRecipe",
   "popoverRecipe",
@@ -41,6 +46,7 @@ exports[`@moderno-ui/core exports > exports exactly the pinned names 1`] = `
   "sliderRecipe",
   "spinnerRecipe",
   "splitterRecipe",
+  "supportsEyeDropper",
   "switchRecipe",
   "tabsRecipe",
   "tagsInputRecipe",

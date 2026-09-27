@@ -1,0 +1,259 @@
+---
+title: Color Picker
+description: A colour field. Pick a colour from an area and sliders, type a hex, or pick a preset.
+group: Components
+order: 43
+component: ColorPicker
+pkg: "@moderno-ui/react"
+agentPropsHash: "sha256:5921f563a5b6746b62b3d92d909bddd2ef804e81b36ed9ad3e429bb01588de1e"
+agent:
+  intent: Let the user pick a colour, see-through or not, and get it back as a hex string.
+  whenToUse: A brand colour, a theme colour, a label's colour — any value that is a colour.
+  whenNotToUse:
+    - case: A choice among a few named colours
+      use: RadioGroup
+    - case: A colour typed as free text, with no picker
+      use: Field
+  gotchas:
+    - 'The value is a hex string, not an object: "#1E90FF", or "#1E90FF80" with alpha while the colour is see-through. onValueChange gives { value }.'
+    - "Without alpha the colour is always opaque: an alpha in value, defaultValue or a swatch is dropped."
+    - 'Label it with a Field (Field.Label); outside one the trigger is named "Color #RRGGBB". Rename the parts with translations.'
+    - "The eyedropper only renders where the browser has the EyeDropper API (Chromium); never promise it."
+    - "The popover renders in a Portal; pass portalled={false} to keep it in place, as inside a Dialog."
+    - "In Vue, bind the value with v-model (modelValue); in Svelte, bind:value."
+  theming:
+    - "The trigger is --background with an --input border and a --ring focus ring drawn inside it. Do not pass a hex."
+    - "The popover is --popover with a 1px --border edge and the --shadow-md drop."
+    - "A see-through colour sits on a checkerboard of --muted and --background."
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ColorPickerDemo from "../../../examples/color-picker/color-picker.svelte";
+import baseReact from "../../../examples/color-picker/react.tsx?raw";
+import baseVue from "../../../examples/color-picker/vue.vue?raw";
+import baseSolid from "../../../examples/color-picker/solid.tsx?raw";
+import baseSvelte from "../../../examples/color-picker/color-picker.svelte?raw";
+import ColorPickerAlphaDemo from "../../../examples/color-picker/alpha/color-picker-alpha.svelte";
+import alphaReact from "../../../examples/color-picker/alpha/react.tsx?raw";
+import alphaVue from "../../../examples/color-picker/alpha/vue.vue?raw";
+import alphaSolid from "../../../examples/color-picker/alpha/solid.tsx?raw";
+import alphaSvelte from "../../../examples/color-picker/alpha/color-picker-alpha.svelte?raw";
+import ColorPickerSwatchesDemo from "../../../examples/color-picker/swatches/color-picker-swatches.svelte";
+import swatchesReact from "../../../examples/color-picker/swatches/react.tsx?raw";
+import swatchesVue from "../../../examples/color-picker/swatches/vue.vue?raw";
+import swatchesSolid from "../../../examples/color-picker/swatches/solid.tsx?raw";
+import swatchesSvelte from "../../../examples/color-picker/swatches/color-picker-swatches.svelte?raw";
+import ColorPickerFieldDemo from "../../../examples/color-picker/field/color-picker-field.svelte";
+import fieldReact from "../../../examples/color-picker/field/react.tsx?raw";
+import fieldVue from "../../../examples/color-picker/field/vue.vue?raw";
+import fieldSolid from "../../../examples/color-picker/field/solid.tsx?raw";
+import fieldSvelte from "../../../examples/color-picker/field/color-picker-field.svelte?raw";
+import ColorPickerControlledDemo from "../../../examples/color-picker/controlled/color-picker-controlled.svelte";
+import controlledReact from "../../../examples/color-picker/controlled/react.tsx?raw";
+import controlledVue from "../../../examples/color-picker/controlled/vue.vue?raw";
+import controlledSolid from "../../../examples/color-picker/controlled/solid.tsx?raw";
+import controlledSvelte from "../../../examples/color-picker/controlled/color-picker-controlled.svelte?raw";
+import ColorPickerSizesDemo from "../../../examples/color-picker/sizes/color-picker-sizes.svelte";
+import sizesReact from "../../../examples/color-picker/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/color-picker/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/color-picker/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/color-picker/sizes/color-picker-sizes.svelte?raw";
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
+  <ColorPickerDemo client:visible />
+</Preview>
+
+## Installation
+
+<Install pkg="@moderno-ui/react" />
+
+## Usage
+
+Use a color picker when the user chooses a colour, like a brand colour. The button shows the colour and its hex. It opens a panel with an area, sliders and a hex box.
+
+<ForFramework fw="react">
+
+```tsx
+import { ColorPicker } from "@moderno-ui/react";
+```
+
+```tsx
+<ColorPicker defaultValue="#1E90FF" onValueChange={(details) => save(details.value)} />
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { ColorPicker } from "@moderno-ui/vue";
+```
+
+```vue
+<ColorPicker v-model="color" />
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { ColorPicker } from "@moderno-ui/svelte";
+```
+
+```svelte
+<ColorPicker bind:value={color} />
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { ColorPicker } from "@moderno-ui/solid";
+```
+
+```tsx
+<ColorPicker defaultValue="#1E90FF" onValueChange={(details) => save(details.value)} />
+```
+
+</ForFramework>
+
+The value is a hex string: `#RRGGBB`, or `#RRGGBBAA` when the colour is see-through.
+
+## API Reference
+
+### ColorPicker
+
+<PropsTable component="ColorPicker" />
+
+It also takes these props of Ark's ColorPicker:
+
+| Prop            | Type                          | Default | Description                                                                 |
+| --------------- | ----------------------------- | ------- | --------------------------------------------------------------------------- |
+| `open`          | `boolean`                     | —       | Controlled open state. Pair with `onOpenChange`.                            |
+| `defaultOpen`   | `boolean`                     | `false` | Open state at first when uncontrolled.                                      |
+| `onOpenChange`  | `(details: { open }) => void` | —       | Called when the popover opens or closes.                                    |
+| `closeOnSelect` | `boolean`                     | `false` | Closes the popover when a swatch is picked.                                 |
+| `disabled`      | `boolean`                     | `false` | Turns the picker off.                                                       |
+| `readOnly`      | `boolean`                     | `false` | Shows the colour but the user cannot change it.                             |
+| `invalid`       | `boolean`                     | `false` | Marks the value as wrong: the trigger's border turns `--destructive`.       |
+| `positioning`   | `PositioningOptions`          | —       | Where the popover goes: `placement` (`"bottom-start"`), `gutter`, `flip`, … |
+
+In Vue, bind the value with `v-model` and listen with `@value-change`. In Svelte, use `bind:value`.
+
+### Parts
+
+| Part                   | Element    | Description                                                 |
+| ---------------------- | ---------- | ----------------------------------------------------------- |
+| `root`                 | `<div>`    | Holds the trigger and the popover. Carries `data-size`.     |
+| `trigger`              | `<button>` | Opens the popover. Shows the swatch and the hex.            |
+| `swatch`               | `<div>`    | A colour chip, over a checkerboard when see-through.        |
+| `value-text`           | `<span>`   | The hex, in the trigger.                                    |
+| `content`              | `<div>`    | The popover, `role="dialog"`.                               |
+| `area`                 | `<div>`    | Saturation (across) and brightness (up).                    |
+| `area-thumb`           | `<div>`    | The area's 2D slider, named "Saturation and brightness".    |
+| `channel-slider`       | `<div>`    | A slider. `data-channel="hue"`, or `"alpha"` with `alpha`.  |
+| `channel-slider-thumb` | `<div>`    | The slider's thumb, named "Hue" or "Alpha".                 |
+| `hex-input`            | `<input>`  | The hex box.                                                |
+| `eye-dropper-trigger`  | `<button>` | Picks a colour from the screen. Only where the browser can. |
+| `swatch-group`         | `<div>`    | The preset swatches.                                        |
+| `swatch-trigger`       | `<button>` | One preset. `data-state="checked"` when it is the value.    |
+
+### Keyboard
+
+| Key                     | Action                                                            |
+| ----------------------- | ----------------------------------------------------------------- |
+| `Enter` / `Space`       | On the trigger, opens the popover.                                |
+| `Arrow keys`            | In the area, change saturation and brightness. On a slider, move. |
+| `Page Up` / `Page Down` | Move by a larger step.                                            |
+| `Home` / `End`          | On a slider, go to the start or the end.                          |
+| `Enter`                 | In the hex box, takes the typed hex.                              |
+| `Esc`                   | Closes the popover and moves focus to the trigger.                |
+
+## Examples
+
+### Alpha
+
+`alpha` adds a slider for transparency. The colour shows over a checkerboard.
+
+<Preview
+  examples={{
+    react: alphaReact,
+    vue: alphaVue,
+    solid: alphaSolid,
+    svelte: alphaSvelte,
+  }}
+>
+  <ColorPickerAlphaDemo client:visible />
+</Preview>
+
+### Swatches
+
+`swatches` adds preset colours. Clicking one selects it.
+
+<Preview
+  examples={{
+    react: swatchesReact,
+    vue: swatchesVue,
+    solid: swatchesSolid,
+    svelte: swatchesSvelte,
+  }}
+>
+  <ColorPickerSwatchesDemo client:visible />
+</Preview>
+
+### In a field
+
+A Field gives the picker a label and helper or error text.
+
+<Preview
+  examples={{
+    react: fieldReact,
+    vue: fieldVue,
+    solid: fieldSolid,
+    svelte: fieldSvelte,
+  }}
+>
+  <ColorPickerFieldDemo client:visible />
+</Preview>
+
+### Controlled
+
+Keep the colour in your own state and use it elsewhere.
+
+<Preview
+  examples={{
+    react: controlledReact,
+    vue: controlledVue,
+    solid: controlledSolid,
+    svelte: controlledSvelte,
+  }}
+>
+  <ColorPickerControlledDemo client:visible />
+</Preview>
+
+### Sizes
+
+<Preview
+  examples={{
+    react: sizesReact,
+    vue: sizesVue,
+    solid: sizesSolid,
+    svelte: sizesSvelte,
+  }}
+>
+  <ColorPickerSizesDemo client:visible />
+</Preview>
+
+## Notes
+
+- The hex box takes `#RGB`, `#RRGGBB` or `#RRGGBBAA`, with or without `#`. A hex that is not valid is dropped when the box loses focus.
+- The eyedropper appears only in browsers with the EyeDropper API.
+- Rename the parts for a screen reader with `translations`, for example `{ hue: "Tono" }`.

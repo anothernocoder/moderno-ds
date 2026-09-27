@@ -22,6 +22,7 @@ import CarouselSection from "./sections/carousel.js";
 import ChartsSection from "./sections/charts.js";
 import CheckboxSection from "./sections/checkbox.js";
 import ChipSection from "./sections/chip.js";
+import ColorPickerSection from "./sections/color-picker.js";
 import ComboboxSection from "./sections/combobox.js";
 import DatePickerSection from "./sections/date-picker.js";
 import DialogSection from "./sections/dialog.js";
@@ -72,6 +73,7 @@ export const App = defineComponent({
         h(ChartsSection, { open: props.open }),
         h(CheckboxSection, { open: props.open }),
         h(ChipSection, { open: props.open }),
+        h(ColorPickerSection, { open: props.open }),
         h(ComboboxSection, { open: props.open }),
         h(DatePickerSection, { open: props.open }),
         h(DialogSection, { open: props.open }),

@@ -22,6 +22,7 @@
   import Charts from "./sections/Charts.svelte";
   import Checkbox from "./sections/Checkbox.svelte";
   import Chip from "./sections/Chip.svelte";
+  import ColorPicker from "./sections/ColorPicker.svelte";
   import Combobox from "./sections/Combobox.svelte";
   import DatePicker from "./sections/DatePicker.svelte";
   import Dialog from "./sections/Dialog.svelte";
@@ -67,6 +68,7 @@
   <Charts {open} />
   <Checkbox {open} />
   <Chip {open} />
+  <ColorPicker {open} />
   <Combobox {open} />
   <DatePicker {open} />
   <Dialog {open} />

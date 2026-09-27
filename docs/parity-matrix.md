@@ -156,6 +156,25 @@ Legend: ✅ verified by an automated test · ❌ not supported (see its footnote
 | no baked class/style                      |  ✅   | ✅  |   ✅   |  ✅   |
 | native props forwarded                    |  ✅   | ✅  |   ✅   |  ✅   |
 
+### ColorPicker (`colorPickerRecipe`: `data-size` on the root; Ark color-picker machine, hex in and out)
+
+| State / prop                                                                       | React | Vue | Svelte | Solid |
+| ---------------------------------------------------------------------------------- | :---: | :-: | :----: | :---: |
+| size → root `data-size` (+ `md`); native props forwarded to the root               |  ✅   | ✅  |   ✅   |  ✅   |
+| trigger shows the swatch and the hex, named "Color #RRGGBB"                        |  ✅   | ✅  |   ✅   |  ✅   |
+| closed by default: no dialog, trigger `aria-expanded="false"`                      |  ✅   | ✅  |   ✅   |  ✅   |
+| opens to the area, the hue slider and the hex box, each named                      |  ✅   | ✅  |   ✅   |  ✅   |
+| `alpha` shows the alpha slider; off, the value is opaque                           |  ✅   | ✅  |   ✅   |  ✅   |
+| `swatches` → one button each; clicking one selects it                              |  ✅   | ✅  |   ✅   |  ✅   |
+| eyedropper only where the browser has one                                          |  ✅   | ✅  |   ✅   |  ✅   |
+| hex box: `#RGB`, `#RRGGBB`, `#RRGGBBAA`, `#` optional, on Enter or blur            |  ✅   | ✅  |   ✅   |  ✅   |
+| invalid hex: value kept, box back to the last valid hex on blur                    |  ✅   | ✅  |   ✅   |  ✅   |
+| arrow keys move the area and the sliders; Escape closes, focus back on the trigger |  ✅   | ✅  |   ✅   |  ✅   |
+| controlled value followed (`v-model` in Vue, `bind:value` in Svelte), hue kept     |  ✅   | ✅  |   ✅   |  ✅   |
+| inside a Field: its label names the trigger, helper/error text describe it         |  ✅   | ✅  |   ✅   |  ✅   |
+| `name` submits the hex with a form                                                 |  ✅   | ✅  |   ✅   |  ✅   |
+| `translations` rename the parts                                                    |  ✅   | ✅  |   ✅   |  ✅   |
+
 ### Combobox (`comboboxRecipe`: `data-size`; Ark combobox machine)
 
 | State                                                                  | React | Vue | Svelte | Solid |
@@ -556,46 +575,47 @@ The first rows hold for the whole playground. Then one row per component: its
 SSR test server-renders the component's playground section and checks what the
 row names.
 
-| Guarantee                                                                    | React | Vue | Svelte | Solid |
-| ---------------------------------------------------------------------------- | :---: | :-: | :----: | :---: |
-| warning-free hydration (id path)                                             |  ✅   | ✅¹ |   —²   |  —²   |
-| static server-only island (zero `<script>`)                                  |   —   |  —  |   ✅   |   —   |
-| Accordion open items, hidden contents + ids                                  |  ✅   | ✅  |   ✅   |  ✅   |
-| Alert anatomy + resolved `role` (status / alert)                             |  ✅   | ✅  |   ✅   |  ✅   |
-| Avatar fallback shown / image hidden                                         |  ✅   | ✅  |   ✅   |  ✅   |
-| Badge variants + dot part                                                    |  ✅   | ✅  |   ✅   |  ✅   |
-| Button scope/part + recipe `data-*`                                          |  ✅   | ✅  |   ✅   |  ✅   |
-| Callout `role="note"`, variants + hidden icon                                |  ✅   | ✅  |   ✅   |  ✅   |
-| Card scope + every part                                                      |  ✅   | ✅  |   ✅   |  ✅   |
-| Carousel region, slides, current dot + ends                                  |  ✅   | ✅  |   ✅   |  ✅   |
-| Checkbox `data-state` (checked / indeterminate)                              |  ✅   | ✅  |   ✅   |  ✅   |
-| Chip sizes + named remove trigger                                            |  ✅   | ✅  |   ✅   |  ✅   |
-| Combobox listbox ids, selected items, multiple + empty state                 |  ✅   | ✅  |   ✅   |  ✅   |
-| DatePicker root/content `data-size`, trigger ids, locale inputs + range days |  ✅   | ✅  |   ✅   |  ✅   |
-| Dialog trigger; `defaultOpen` survives                                       |  ✅   | ✅  |   ✅   |  ✅   |
-| Divider separator role, label + vertical label                               |  ✅   | ✅  |   ✅   |  ✅   |
-| Drawer trigger/content ids + `data-placement`, drawer scope                  |  ✅   | ✅  |   ✅   |  ✅   |
-| Field sizes + textarea                                                       |  ✅   | ✅  |   ✅   |  ✅   |
-| Indicator bare `data-pulse`, dot + label parts                               |  ✅   | ✅  |   ✅   |  ✅   |
-| Menu trigger + hidden content wired by id; items, separator, submenu size    |  ✅   | ✅  |   ✅   |  ✅   |
-| NumberInput value, bounds, format + steppers                                 |  ✅   | ✅  |   ✅   |  ✅   |
-| Pagination pages, ellipses, current + ends                                   |  ✅   | ✅  |   ✅   |  ✅   |
-| PinInput `count` → correct server aria                                       |  ✅   | ✅  |   ✅   |  ✅   |
-| Popover trigger/content ids + content `data-size`                            |  ✅   | ✅  |   ✅   |  ✅   |
-| Progress value, state + circle geometry                                      |  ✅   | ✅  |   ✅   |  ✅   |
-| RadioGroup checked item + orientation + tile grid                            |  ✅   | ✅  |   ✅   |  ✅   |
-| Select trigger; `defaultOpen` survives                                       |  ✅   | ✅  |   ✅   |  ✅   |
-| Skeleton shapes, `aria-hidden`                                               |  ✅   | ✅  |   ✅   |  ✅   |
-| Slider thumbs, bounds, range offsets + marks                                 |  ✅   | ✅  |   ✅   |  ✅   |
-| Spinner `role="status"`, sizes, hidden ring + label                          |  ✅   | ✅  |   ✅   |  ✅   |
-| Splitter panel sizes, separator bounds + controls                            |  ✅   | ✅  |   ✅   |  ✅   |
-| Switch on/off state + switch role                                            |  ✅   | ✅  |   ✅   |  ✅   |
-| Tabs selected tab, hidden panels + tab ids                                   |  ✅   | ✅  |   ✅   |  ✅   |
-| TagsInput tags, delete labels + hidden value                                 |  ✅   | ✅  |   ✅   |  ✅   |
-| Toast group region: id, `role`, `aria-live`, label and placement             |  ✅   | ✅  |   ✅   |  ✅   |
-| Toggle pressed state + indicator content                                     |  ✅   | ✅  |   ✅   |  ✅   |
-| ToggleGroup pressed items, roles + orientation                               |  ✅   | ✅  |   ✅   |  ✅   |
-| Tooltip content hidden + sized; `defaultOpen` describes the trigger          |  ✅   | ✅  |   ✅   |  ✅   |
+| Guarantee                                                                                   | React | Vue | Svelte | Solid |
+| ------------------------------------------------------------------------------------------- | :---: | :-: | :----: | :---: |
+| warning-free hydration (id path)                                                            |  ✅   | ✅¹ |   —²   |  —²   |
+| static server-only island (zero `<script>`)                                                 |   —   |  —  |   ✅   |   —   |
+| Accordion open items, hidden contents + ids                                                 |  ✅   | ✅  |   ✅   |  ✅   |
+| Alert anatomy + resolved `role` (status / alert)                                            |  ✅   | ✅  |   ✅   |  ✅   |
+| Avatar fallback shown / image hidden                                                        |  ✅   | ✅  |   ✅   |  ✅   |
+| Badge variants + dot part                                                                   |  ✅   | ✅  |   ✅   |  ✅   |
+| Button scope/part + recipe `data-*`                                                         |  ✅   | ✅  |   ✅   |  ✅   |
+| Callout `role="note"`, variants + hidden icon                                               |  ✅   | ✅  |   ✅   |  ✅   |
+| Card scope + every part                                                                     |  ✅   | ✅  |   ✅   |  ✅   |
+| Carousel region, slides, current dot + ends                                                 |  ✅   | ✅  |   ✅   |  ✅   |
+| Checkbox `data-state` (checked / indeterminate)                                             |  ✅   | ✅  |   ✅   |  ✅   |
+| Chip sizes + named remove trigger                                                           |  ✅   | ✅  |   ✅   |  ✅   |
+| ColorPicker root `data-size`, trigger hex + dialog ids, named area and sliders, Field label |  ✅   | ✅  |   ✅   |  ✅   |
+| Combobox listbox ids, selected items, multiple + empty state                                |  ✅   | ✅  |   ✅   |  ✅   |
+| DatePicker root/content `data-size`, trigger ids, locale inputs + range days                |  ✅   | ✅  |   ✅   |  ✅   |
+| Dialog trigger; `defaultOpen` survives                                                      |  ✅   | ✅  |   ✅   |  ✅   |
+| Divider separator role, label + vertical label                                              |  ✅   | ✅  |   ✅   |  ✅   |
+| Drawer trigger/content ids + `data-placement`, drawer scope                                 |  ✅   | ✅  |   ✅   |  ✅   |
+| Field sizes + textarea                                                                      |  ✅   | ✅  |   ✅   |  ✅   |
+| Indicator bare `data-pulse`, dot + label parts                                              |  ✅   | ✅  |   ✅   |  ✅   |
+| Menu trigger + hidden content wired by id; items, separator, submenu size                   |  ✅   | ✅  |   ✅   |  ✅   |
+| NumberInput value, bounds, format + steppers                                                |  ✅   | ✅  |   ✅   |  ✅   |
+| Pagination pages, ellipses, current + ends                                                  |  ✅   | ✅  |   ✅   |  ✅   |
+| PinInput `count` → correct server aria                                                      |  ✅   | ✅  |   ✅   |  ✅   |
+| Popover trigger/content ids + content `data-size`                                           |  ✅   | ✅  |   ✅   |  ✅   |
+| Progress value, state + circle geometry                                                     |  ✅   | ✅  |   ✅   |  ✅   |
+| RadioGroup checked item + orientation + tile grid                                           |  ✅   | ✅  |   ✅   |  ✅   |
+| Select trigger; `defaultOpen` survives                                                      |  ✅   | ✅  |   ✅   |  ✅   |
+| Skeleton shapes, `aria-hidden`                                                              |  ✅   | ✅  |   ✅   |  ✅   |
+| Slider thumbs, bounds, range offsets + marks                                                |  ✅   | ✅  |   ✅   |  ✅   |
+| Spinner `role="status"`, sizes, hidden ring + label                                         |  ✅   | ✅  |   ✅   |  ✅   |
+| Splitter panel sizes, separator bounds + controls                                           |  ✅   | ✅  |   ✅   |  ✅   |
+| Switch on/off state + switch role                                                           |  ✅   | ✅  |   ✅   |  ✅   |
+| Tabs selected tab, hidden panels + tab ids                                                  |  ✅   | ✅  |   ✅   |  ✅   |
+| TagsInput tags, delete labels + hidden value                                                |  ✅   | ✅  |   ✅   |  ✅   |
+| Toast group region: id, `role`, `aria-live`, label and placement                            |  ✅   | ✅  |   ✅   |  ✅   |
+| Toggle pressed state + indicator content                                                    |  ✅   | ✅  |   ✅   |  ✅   |
+| ToggleGroup pressed items, roles + orientation                                              |  ✅   | ✅  |   ✅   |  ✅   |
+| Tooltip content hidden + sized; `defaultOpen` describes the trigger                         |  ✅   | ✅  |   ✅   |  ✅   |
 
 ¹ Vue hydration is verified on every portal-free component (all but Dialog and
 Select), where the deterministic `useId` hazard lives; Ark's portaled popovers

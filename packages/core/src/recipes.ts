@@ -29,6 +29,7 @@ export * from "./recipes/card.js";
 export * from "./recipes/carousel.js";
 export * from "./recipes/checkbox.js";
 export * from "./recipes/chip.js";
+export * from "./recipes/color-picker.js";
 export * from "./recipes/combobox.js";
 export * from "./recipes/date-picker.js";
 export * from "./recipes/divider.js";

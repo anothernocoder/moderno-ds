@@ -1,0 +1,239 @@
+---
+title: Color Picker
+description: Un campo de color. Elige un color en un área y deslizadores, escribe un hex o elige uno predefinido.
+group: Componentes
+order: 43
+component: ColorPicker
+pkg: "@moderno-ui/react"
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ColorPickerDemo from "../../../examples/color-picker/color-picker.svelte";
+import baseReact from "../../../examples/color-picker/react.tsx?raw";
+import baseVue from "../../../examples/color-picker/vue.vue?raw";
+import baseSolid from "../../../examples/color-picker/solid.tsx?raw";
+import baseSvelte from "../../../examples/color-picker/color-picker.svelte?raw";
+import ColorPickerAlphaDemo from "../../../examples/color-picker/alpha/color-picker-alpha.svelte";
+import alphaReact from "../../../examples/color-picker/alpha/react.tsx?raw";
+import alphaVue from "../../../examples/color-picker/alpha/vue.vue?raw";
+import alphaSolid from "../../../examples/color-picker/alpha/solid.tsx?raw";
+import alphaSvelte from "../../../examples/color-picker/alpha/color-picker-alpha.svelte?raw";
+import ColorPickerSwatchesDemo from "../../../examples/color-picker/swatches/color-picker-swatches.svelte";
+import swatchesReact from "../../../examples/color-picker/swatches/react.tsx?raw";
+import swatchesVue from "../../../examples/color-picker/swatches/vue.vue?raw";
+import swatchesSolid from "../../../examples/color-picker/swatches/solid.tsx?raw";
+import swatchesSvelte from "../../../examples/color-picker/swatches/color-picker-swatches.svelte?raw";
+import ColorPickerFieldDemo from "../../../examples/color-picker/field/color-picker-field.svelte";
+import fieldReact from "../../../examples/color-picker/field/react.tsx?raw";
+import fieldVue from "../../../examples/color-picker/field/vue.vue?raw";
+import fieldSolid from "../../../examples/color-picker/field/solid.tsx?raw";
+import fieldSvelte from "../../../examples/color-picker/field/color-picker-field.svelte?raw";
+import ColorPickerControlledDemo from "../../../examples/color-picker/controlled/color-picker-controlled.svelte";
+import controlledReact from "../../../examples/color-picker/controlled/react.tsx?raw";
+import controlledVue from "../../../examples/color-picker/controlled/vue.vue?raw";
+import controlledSolid from "../../../examples/color-picker/controlled/solid.tsx?raw";
+import controlledSvelte from "../../../examples/color-picker/controlled/color-picker-controlled.svelte?raw";
+import ColorPickerSizesDemo from "../../../examples/color-picker/sizes/color-picker-sizes.svelte";
+import sizesReact from "../../../examples/color-picker/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/color-picker/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/color-picker/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/color-picker/sizes/color-picker-sizes.svelte?raw";
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
+  <ColorPickerDemo client:visible />
+</Preview>
+
+## Instalación
+
+<Install pkg="@moderno-ui/react" />
+
+## Uso
+
+Usa un color picker cuando el usuario elige un color, como el color de una marca. El botón muestra el color y su hex. Abre un panel con un área, deslizadores y una caja para el hex.
+
+<ForFramework fw="react">
+
+```tsx
+import { ColorPicker } from "@moderno-ui/react";
+```
+
+```tsx
+<ColorPicker defaultValue="#1E90FF" onValueChange={(details) => save(details.value)} />
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { ColorPicker } from "@moderno-ui/vue";
+```
+
+```vue
+<ColorPicker v-model="color" />
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { ColorPicker } from "@moderno-ui/svelte";
+```
+
+```svelte
+<ColorPicker bind:value={color} />
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { ColorPicker } from "@moderno-ui/solid";
+```
+
+```tsx
+<ColorPicker defaultValue="#1E90FF" onValueChange={(details) => save(details.value)} />
+```
+
+</ForFramework>
+
+El valor es un hex: `#RRGGBB`, o `#RRGGBBAA` cuando el color es transparente.
+
+## Referencia de API
+
+### ColorPicker
+
+<PropsTable component="ColorPicker" />
+
+También acepta estas props del ColorPicker de Ark:
+
+| Prop            | Tipo                          | Por defecto | Descripción                                                                |
+| --------------- | ----------------------------- | ----------- | -------------------------------------------------------------------------- |
+| `open`          | `boolean`                     | —           | Estado abierto controlado. Úsalo con `onOpenChange`.                       |
+| `defaultOpen`   | `boolean`                     | `false`     | Estado abierto inicial cuando no está controlado.                          |
+| `onOpenChange`  | `(details: { open }) => void` | —           | Se llama cuando el panel se abre o se cierra.                              |
+| `closeOnSelect` | `boolean`                     | `false`     | Cierra el panel al elegir una muestra.                                     |
+| `disabled`      | `boolean`                     | `false`     | Desactiva el selector.                                                     |
+| `readOnly`      | `boolean`                     | `false`     | Muestra el color, pero el usuario no puede cambiarlo.                      |
+| `invalid`       | `boolean`                     | `false`     | Marca el valor como incorrecto: el borde del botón pasa a `--destructive`. |
+| `positioning`   | `PositioningOptions`          | —           | Dónde va el panel: `placement` (`"bottom-start"`), `gutter`, `flip`, …     |
+
+En Vue, enlaza el valor con `v-model` y escucha con `@value-change`. En Svelte, usa `bind:value`.
+
+### Partes
+
+| Parte                  | Elemento   | Descripción                                                           |
+| ---------------------- | ---------- | --------------------------------------------------------------------- |
+| `root`                 | `<div>`    | Contiene el botón y el panel. Lleva `data-size`.                      |
+| `trigger`              | `<button>` | Abre el panel. Muestra la muestra de color y el hex.                  |
+| `swatch`               | `<div>`    | Una muestra de color, sobre un tablero de ajedrez si es transparente. |
+| `value-text`           | `<span>`   | El hex, dentro del botón.                                             |
+| `content`              | `<div>`    | El panel, `role="dialog"`.                                            |
+| `area`                 | `<div>`    | Saturación (a lo ancho) y brillo (a lo alto).                         |
+| `area-thumb`           | `<div>`    | El control 2D del área, llamado "Saturation and brightness".          |
+| `channel-slider`       | `<div>`    | Un deslizador. `data-channel="hue"`, o `"alpha"` con `alpha`.         |
+| `channel-slider-thumb` | `<div>`    | El control del deslizador, llamado "Hue" o "Alpha".                   |
+| `hex-input`            | `<input>`  | La caja del hex.                                                      |
+| `eye-dropper-trigger`  | `<button>` | Toma un color de la pantalla. Solo donde el navegador puede.          |
+| `swatch-group`         | `<div>`    | Las muestras predefinidas.                                            |
+| `swatch-trigger`       | `<button>` | Una muestra. `data-state="checked"` cuando es el valor.               |
+
+### Teclado
+
+| Tecla                   | Acción                                                                |
+| ----------------------- | --------------------------------------------------------------------- |
+| `Enter` / `Space`       | En el botón, abre el panel.                                           |
+| `Arrow keys`            | En el área, cambian saturación y brillo. En un deslizador, lo mueven. |
+| `Page Up` / `Page Down` | Mueven con un paso más grande.                                        |
+| `Home` / `End`          | En un deslizador, van al inicio o al final.                           |
+| `Enter`                 | En la caja del hex, toma el hex escrito.                              |
+| `Esc`                   | Cierra el panel y lleva el foco al botón.                             |
+
+## Ejemplos
+
+### Alpha
+
+`alpha` añade un deslizador de transparencia. El color se ve sobre un tablero de ajedrez.
+
+<Preview
+  examples={{
+    react: alphaReact,
+    vue: alphaVue,
+    solid: alphaSolid,
+    svelte: alphaSvelte,
+  }}
+>
+  <ColorPickerAlphaDemo client:visible />
+</Preview>
+
+### Muestras
+
+`swatches` añade colores predefinidos. Al hacer clic en uno, se elige.
+
+<Preview
+  examples={{
+    react: swatchesReact,
+    vue: swatchesVue,
+    solid: swatchesSolid,
+    svelte: swatchesSvelte,
+  }}
+>
+  <ColorPickerSwatchesDemo client:visible />
+</Preview>
+
+### En un campo
+
+Un Field le da al selector una etiqueta y un texto de ayuda o de error.
+
+<Preview
+  examples={{
+    react: fieldReact,
+    vue: fieldVue,
+    solid: fieldSolid,
+    svelte: fieldSvelte,
+  }}
+>
+  <ColorPickerFieldDemo client:visible />
+</Preview>
+
+### Controlado
+
+Guarda el color en tu propio estado y úsalo en otro sitio.
+
+<Preview
+  examples={{
+    react: controlledReact,
+    vue: controlledVue,
+    solid: controlledSolid,
+    svelte: controlledSvelte,
+  }}
+>
+  <ColorPickerControlledDemo client:visible />
+</Preview>
+
+### Tamaños
+
+<Preview
+  examples={{
+    react: sizesReact,
+    vue: sizesVue,
+    solid: sizesSolid,
+    svelte: sizesSvelte,
+  }}
+>
+  <ColorPickerSizesDemo client:visible />
+</Preview>
+
+## Notas
+
+- La caja del hex acepta `#RGB`, `#RRGGBB` o `#RRGGBBAA`, con o sin `#`. Un hex no válido se descarta cuando la caja pierde el foco.
+- El cuentagotas solo aparece en navegadores con la API EyeDropper.
+- Traduce los nombres de las partes para un lector de pantalla con `translations`, por ejemplo `{ hue: "Tono" }`.
