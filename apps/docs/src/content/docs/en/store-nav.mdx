@@ -1,0 +1,257 @@
+---
+title: Store Nav
+description: The top bar of a store — the brand, the categories, a product search and the cart. On a narrow container the categories fold into a Drawer.
+group: Blocks
+order: 164
+agent:
+  intent: The top bar of an online store — the brand as a link home, the categories (plain links, and a Menu for a category with sub-categories), a product search that suggests products as the user types (a Combobox) and a cart button with its item count. On a narrow container the categories fold into a Drawer opened from a "Menu" button, and the search and the cart take a row of their own.
+  whenToUse: "Once at the top of every page of a store: the home page, a category, a product, the cart."
+  whenNotToUse:
+    - case: The top bar of a marketing site, with one call to action and no search or cart
+      use: Header — it holds the brand, the main links and the call to action
+    - case: The frame of a signed-in app, with a sidebar and an account menu
+      use: AppShell — it holds the app's navigation and the page beside it
+    - case: The cart's own contents, with lines and a total
+      use: ShoppingCart — open it from `onCart`
+  gotchas:
+    - "`categories` mixes two kinds of item. A link is `{ id, label, href, current?, disabled? }`. A category with sub-categories is `{ id, label, links }`: it opens a Menu of its links in the bar, and lists them under its label in the Drawer."
+    - 'Mark the category the user is in with `current: true`: its link gets `aria-current="page"` and reads in --foreground.'
+    - 'A `disabled` link has no `href`, `role="link"` and `aria-disabled="true"`: it is dimmed and out of the tab order. In a Menu it is a disabled item.'
+    - "`suggestions` is `{ value, label, href }[]`. The block filters them by the typed text (accents and case ignored) and shows each match as a link to its `href`. Arrow keys and Enter, or a click, follow it."
+    - 'The search is a `<form role="search">` with one field named `q`. Enter with no suggestion highlighted calls `onSearch(query)` with the trimmed text and closes the list (Svelte `onsearch`, Vue `@search`). An empty query calls nothing. When nothing matches, the list says "No suggestions. Press Enter to search."'
+    - 'The cart is a button that reads "Cart" and its count in a Badge; its accessible name is "Cart, 2 items". `onCart` reports a press (Svelte `oncart`, Vue `@cart`). Open your cart from there: a page, or a SlideOver.'
+    - "The links and suggestions are plain `<a href>`. To use your router's link, edit the copied file."
+    - '`categories={[]}` is the empty state: no categories and no "Menu" button. The search and the cart stay.'
+    - "`loading` shows three placeholders in one busy `status` region where the categories go, in the bar and in the Drawer."
+    - '`error` hides the categories and the "Menu" button and puts an error Alert with your message and a "Try again" button under the bar (Svelte `onretry`, Vue `@retry`). The search and the cart keep working. An empty string counts as no error.'
+    - "Keep the top level to three or four short categories. From `--container-md` they sit on one line in the bar. Put the rest under a category with sub-categories."
+    - 'The layout follows the block''s own width, not the viewport: the brand and "Menu", with the search and the cart on a row of their own; more room at the ends from `--container-sm`; the categories replace "Menu" from `--container-md`; the search and the cart join the bar from `--container-lg`.'
+  theming:
+    - "The block paints the bar (--background) and its bottom border (--border), and the links' hover fill (--accent, --accent-foreground). The Menu, the Combobox, the Drawer, the buttons, the Badge, the error Alert and the placeholders are the primitives' own."
+    - "The brand reads --font-serif and --foreground; the categories and a category's label in the Drawer read --muted-foreground, and the current one reads --foreground."
+    - "A category's Menu trigger drops its border and fill to sit in line with the links; it fills with --accent on hover and while open."
+    - "The cart's count is a solid Badge (--primary) while the cart holds something, and a neutral one (--muted) at 0."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the three steps are --container-sm, --container-md and --container-lg."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import StoreNavBlockDemo from "../../../islands/StoreNavBlockDemo.svelte";
+import storeNavReact from "../../../../../../registry/blocks/store-nav/react/store-nav.tsx?raw";
+import storeNavVue from "../../../../../../registry/blocks/store-nav/vue/StoreNav.vue?raw";
+import storeNavSolid from "../../../../../../registry/blocks/store-nav/solid/store-nav.tsx?raw";
+import storeNavSvelte from "../../../../../../registry/blocks/store-nav/svelte/StoreNav.svelte?raw";
+
+export const examples = {
+  react: storeNavReact,
+  vue: storeNavVue,
+  solid: storeNavSolid,
+  svelte: storeNavSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples} layout="fill">
+  <StoreNavBlockDemo client:visible locale="en" />
+</Preview>
+
+## Installation
+
+<Install item="store-nav" />
+
+## Usage
+
+Use Store Nav once, at the top of every page of a store. It links home and to the categories, searches the catalogue and opens the cart.
+
+<ForFramework fw="react">
+
+```tsx
+import { StoreNav } from "@/components/blocks/store-nav";
+```
+
+```tsx
+<StoreNav
+  brand="Northwind"
+  categories={categories}
+  suggestions={products}
+  cartCount={cart.length}
+  onSearch={(query) => navigate(`/search?q=${encodeURIComponent(query)}`)}
+  onCart={openCart}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import StoreNav from "@/components/blocks/StoreNav.vue";
+</script>
+```
+
+```vue
+<StoreNav
+  brand="Northwind"
+  :categories="categories"
+  :suggestions="products"
+  :cart-count="cart.length"
+  @search="(query) => router.push(`/search?q=${encodeURIComponent(query)}`)"
+  @cart="openCart"
+/>
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import StoreNav from "@/components/blocks/StoreNav.svelte";
+</script>
+```
+
+```svelte
+<StoreNav
+  brand="Northwind"
+  {categories}
+  suggestions={products}
+  cartCount={cart.length}
+  onsearch={(query) => goto(`/search?q=${encodeURIComponent(query)}`)}
+  oncart={openCart}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { StoreNav } from "@/components/blocks/store-nav";
+```
+
+```tsx
+<StoreNav
+  brand="Northwind"
+  categories={categories()}
+  suggestions={products()}
+  cartCount={cart().length}
+  onSearch={(query) => navigate(`/search?q=${encodeURIComponent(query)}`)}
+  onCart={openCart}
+/>
+```
+
+</ForFramework>
+
+A category looks like `{ id: "bags", label: "Bags", href: "/bags" }`, or `{ id: "workspace", label: "Workspace", links: [...] }` when it has sub-categories. A suggestion looks like `{ value: "canvas-tote", label: "Canvas tote", href: "/products/canvas-tote" }`.
+
+## API Reference
+
+### Props
+
+| Prop          | Type                      | Default                                     | Description                                                                             |
+| ------------- | ------------------------- | ------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `brand`       | `string`                  | `"Northwind"`                               | The store's name, in the serif face. It links home, and titles the Drawer.              |
+| `homeHref`    | `string`                  | `"/"`                                       | Where the brand links to.                                                               |
+| `categories`  | `StoreNavCategory[]`      | two categories with sub-categories and Bags | The categories, in the bar and in the Drawer.                                           |
+| `suggestions` | `StoreNavSuggestion[]`    | six sample products                         | What the search suggests, filtered by the typed text.                                   |
+| `cartCount`   | `number`                  | `2`                                         | How many items the cart holds, shown in a Badge.                                        |
+| `error`       | `string`                  | —                                           | Loading the categories failed; an error Alert with a retry shows under the bar.         |
+| `loading`     | `boolean`                 | `false`                                     | Placeholders in a busy region replace the categories.                                   |
+| `onSearch`    | `(query: string) => void` | —                                           | Enter in the search with no suggestion highlighted. Svelte: `onsearch`. Vue: `@search`. |
+| `onCart`      | `() => void`              | —                                           | The cart button was pressed. Svelte: `oncart`. Vue: `@cart`.                            |
+| `onRetry`     | `() => void`              | —                                           | "Try again" after `error`. Svelte: `onretry`. Vue: `@retry`.                            |
+
+### StoreNavCategory
+
+`StoreNavCategory` is a `StoreNavLink` or a `StoreNavMenu`.
+
+A `StoreNavLink`:
+
+| Field      | Type      | Description                                                                  |
+| ---------- | --------- | ---------------------------------------------------------------------------- |
+| `id`       | `string`  | A stable key for the link.                                                   |
+| `label`    | `string`  | The link's text.                                                             |
+| `href`     | `string`  | Where the link goes.                                                         |
+| `current`  | `boolean` | Optional. The category the user is in: `aria-current="page"`, in foreground. |
+| `disabled` | `boolean` | Optional. The link is dimmed, has no `href` and cannot be focused.           |
+
+A `StoreNavMenu`:
+
+| Field   | Type             | Description                                                                 |
+| ------- | ---------------- | --------------------------------------------------------------------------- |
+| `id`    | `string`         | A stable key for the category.                                              |
+| `label` | `string`         | The Menu trigger's text in the bar, and the category's label in the Drawer. |
+| `links` | `StoreNavLink[]` | The sub-categories: Menu items in the bar, a short list in the Drawer.      |
+
+### StoreNavSuggestion
+
+| Field   | Type     | Description                                   |
+| ------- | -------- | --------------------------------------------- |
+| `value` | `string` | A stable key for the suggestion.              |
+| `label` | `string` | The text shown, and the text that is matched. |
+| `href`  | `string` | Where choosing the suggestion goes.           |
+
+### States
+
+| State    | Prop                 | What renders                                                  |
+| -------- | -------------------- | ------------------------------------------------------------- |
+| Default  | `categories`         | The brand, the categories, the search and the cart.           |
+| Empty    | `categories={[]}`    | The brand, the search and the cart. No "Menu" button.         |
+| No match | a query              | The search list says "No suggestions. Press Enter to search." |
+| Loading  | `loading`            | Three placeholders where the categories go.                   |
+| Error    | `error`              | An error Alert with "Try again" under the bar. No categories. |
+| Disabled | `disabled` on a link | That link dimmed, out of the tab order.                       |
+
+### Sizing
+
+| Container step           | What changes                                                          |
+| ------------------------ | --------------------------------------------------------------------- |
+| below `@sm`              | The brand and "Menu". The search and the cart share a row under them. |
+| `@sm` (`--container-sm`) | More room at the ends of the bar.                                     |
+| `@md` (`--container-md`) | The categories sit in the bar. The "Menu" button goes away.           |
+| `@lg` (`--container-lg`) | The search and the cart join the bar, after the categories.           |
+
+## Examples
+
+### Container widths
+
+The same block at 18rem, 30rem, 40rem and 50rem. Below 36rem, press "Menu" to open the categories. The 50rem frame scrolls inside itself.
+
+<Preview examples={examples} layout="fill">
+  <StoreNavBlockDemo client:visible locale="en" state="widths" />
+</Preview>
+
+### Empty
+
+Pass `categories={[]}` for a store with one catalogue and no categories. Here the cart is empty too, and the search has nothing to suggest: type anything to see the empty list.
+
+<Preview examples={examples} layout="fill">
+  <StoreNavBlockDemo client:visible locale="en" state="empty" />
+</Preview>
+
+### Loading
+
+<Preview examples={examples} layout="fill">
+  <StoreNavBlockDemo client:visible locale="en" state="loading" />
+</Preview>
+
+### Error
+
+Press "Try again" to clear the message and bring the categories back.
+
+<Preview examples={examples} layout="fill">
+  <StoreNavBlockDemo client:visible locale="en" state="error" />
+</Preview>
+
+### Disabled link
+
+Set `disabled` on a category the user cannot open yet, like a sale that has not started. Open "Workspace" to see a disabled sub-category.
+
+<Preview examples={examples} layout="fill">
+  <StoreNavBlockDemo client:visible locale="en" state="disabled" />
+</Preview>
+
+## Notes
+
+- Keep the suggestions short: a handful of products or categories. For a full catalogue, fetch them as the user types and pass the result.
+- Keep category labels to one word, so the bar stays on one line.

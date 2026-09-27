@@ -4242,6 +4242,78 @@
       ]
     },
     {
+      "name": "store-nav-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Store Nav (React)",
+      "description": "The top bar of a store, composing the @moderno-ui/react Menu, Combobox, Drawer, Button, Badge, Alert and Skeleton primitives: the brand as a link home, the categories (plain links, and a Menu for a category with sub-categories), a product search that suggests products as you type and searches on Enter, and a cart button with its item count, with its own loading, empty and error renders for the categories; responds to its container (@container) — below @md the categories collapse into a right Drawer opened from a Menu button, and the search sits on its own row until @lg, where it joins the bar.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/store-nav/react/store-nav.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/store-nav.tsx"
+        }
+      ]
+    },
+    {
+      "name": "store-nav-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Store Nav (Vue)",
+      "description": "The top bar of a store, composing the @moderno-ui/vue Menu, Combobox, Drawer, Button, Badge, Alert and Skeleton primitives: the brand as a link home, the categories (plain links, and a Menu for a category with sub-categories), a product search that suggests products as you type and searches on Enter, and a cart button with its item count, with its own loading, empty and error renders for the categories; responds to its container (@container) — below @md the categories collapse into a right Drawer opened from a Menu button, and the search sits on its own row until @lg, where it joins the bar.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/store-nav/vue/StoreNav.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/StoreNav.vue"
+        }
+      ]
+    },
+    {
+      "name": "store-nav-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Store Nav (Svelte)",
+      "description": "The top bar of a store, composing the @moderno-ui/svelte Menu, Combobox, Drawer, Button, Badge, Alert and Skeleton primitives: the brand as a link home, the categories (plain links, and a Menu for a category with sub-categories), a product search that suggests products as you type and searches on Enter, and a cart button with its item count, with its own loading, empty and error renders for the categories; responds to its container (@container) — below @md the categories collapse into a right Drawer opened from a Menu button, and the search sits on its own row until @lg, where it joins the bar.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/store-nav/svelte/StoreNav.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/StoreNav.svelte"
+        }
+      ]
+    },
+    {
+      "name": "store-nav-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Store Nav (Solid)",
+      "description": "The top bar of a store, composing the @moderno-ui/solid Menu, Combobox, Drawer, Button, Badge, Alert and Skeleton primitives: the brand as a link home, the categories (plain links, and a Menu for a category with sub-categories), a product search that suggests products as you type and searches on Enter, and a cart button with its item count, with its own loading, empty and error renders for the categories; responds to its container (@container) — below @md the categories collapse into a right Drawer opened from a Menu button, and the search sits on its own row until @lg, where it joins the bar.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/store-nav/solid/store-nav.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/store-nav.tsx"
+        }
+      ]
+    },
+    {
       "name": "story-card-react",
       "type": "registry:block",
       "version": "0.1.0",
