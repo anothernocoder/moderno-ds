@@ -35,20 +35,9 @@ describe("@moderno-ui/core components.css — Editable", () => {
   };
 
   it("draws the text and the input as one box: same height, padding, border and type", () => {
-    const sizes: [string, string, string][] = [
-      ["md", PREVIEW, INPUT],
-      [
-        "sm",
-        `${ROOT}[data-size="sm"] > [data-part="area"] > [data-part="preview"]`,
-        `${ROOT}[data-size="sm"] > [data-part="area"] > [data-part="input"]`,
-      ],
-      [
-        "lg",
-        `${ROOT}[data-size="lg"] > [data-part="area"] > [data-part="preview"]`,
-        `${ROOT}[data-size="lg"] > [data-part="area"] > [data-part="input"]`,
-      ],
-    ];
-    for (const [size, preview, input] of sizes) {
+    for (const size of ["sm", "md", "lg"]) {
+      const preview = `${ROOT}[data-size="${size}"] > [data-part="area"] > [data-part="preview"]`;
+      const input = `${ROOT}[data-size="${size}"] > [data-part="area"] > [data-part="input"]`;
       const text = declsOf(preview);
       const field = declsOf(input);
       for (const name of ["height", "font-size"]) {
@@ -63,13 +52,23 @@ describe("@moderno-ui/core components.css — Editable", () => {
   });
 
   it("matches the Field sizes", () => {
-    expect(prop(ruleDecls(root, PREVIEW), "height")).toBe("var(--spacing-8)");
+    expect(
+      declsOf(`${ROOT}[data-size="md"] > [data-part="area"] > [data-part="preview"]`).height,
+    ).toBe("var(--spacing-8)");
     expect(
       declsOf(`${ROOT}[data-size="sm"] > [data-part="area"] > [data-part="preview"]`).height,
     ).toBe("var(--spacing-7)");
     expect(
       declsOf(`${ROOT}[data-size="lg"] > [data-part="area"] > [data-part="preview"]`).height,
     ).toBe("calc(var(--spacing-8) + var(--spacing-2))");
+  });
+
+  it("keys every size on the root, md included, so a Field around it cannot resize one part", () => {
+    for (const selector of [PREVIEW, INPUT, `${SCOPE}[data-part="label"]`]) {
+      for (const name of ["height", "font-size", "padding-inline", "line-height"]) {
+        expect(declsOf(selector)[name], `${selector} ${name}`).toBeUndefined();
+      }
+    }
   });
 
   it("keeps the room of a hidden button, so the text keeps its width when an edit starts", () => {

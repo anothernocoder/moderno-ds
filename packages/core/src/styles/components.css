@@ -2933,8 +2933,11 @@
    * Ark stamps data-placeholder-shown, data-invalid and data-disabled on the
    * area, the preview and the input, and aria-readonly on the preview.
    * `editableRecipe` puts size on the root; the parts follow it through child
-   * combinators (root > area > part, root > control > part). The base rules
-   * are the `md` step, Field's own.                                        */
+   * combinators (root > area > part, root > control > part). Every size,
+   * `md` included, is keyed on the root's data-size: a Field around the
+   * Editable sizes any `[data-part="input"]` or `[data-part="label"]` inside
+   * it, and only a rule keyed on Editable's own root outranks that, so the
+   * text and the input keep one box whatever Field wraps them.            */
   [data-scope="editable"][data-part="root"] {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
@@ -2954,9 +2957,7 @@
   [data-scope="editable"][data-part="label"] {
     grid-column: 1 / -1;
     color: var(--foreground);
-    font-size: var(--text-ui-md);
     font-weight: var(--font-weight-medium);
-    line-height: var(--leading-ui-md);
   }
   [data-scope="editable"][data-part="area"] {
     grid-column: 1;
@@ -2967,24 +2968,21 @@
   [data-scope="editable"][data-part="input"] {
     display: block;
     width: 100%;
-    height: var(--spacing-8);
     margin: 0;
-    padding: 0 var(--spacing-3);
+    padding-block: 0;
     border: 1px solid transparent;
     border-radius: var(--radius);
     color: var(--foreground);
     font-family: var(--font-sans);
-    font-size: var(--text-ui-md);
     transition:
       border-color var(--motion-fast),
       background-color var(--motion-fast);
   }
   /* One line, cut with an ellipsis when it is longer than the box: the full
-     value is the preview's tooltip. The line fills the box inside its 1px
-     border, so the text sits where the input's does. */
+     value is the preview's tooltip. Each size step sets a line that fills the
+     box inside its 1px border, so the text sits where the input's does. */
   [data-scope="editable"][data-part="preview"] {
     overflow: hidden;
-    line-height: calc(var(--spacing-8) - 2px);
     white-space: nowrap;
     text-overflow: ellipsis;
     cursor: text;
@@ -3068,15 +3066,12 @@
     align-items: center;
     justify-content: center;
     gap: var(--spacing-1);
-    min-width: var(--spacing-8);
-    height: var(--spacing-8);
     padding: 0 var(--spacing-2);
     border: 1px solid transparent;
     border-radius: var(--radius);
     background-color: transparent;
     color: var(--muted-foreground);
     font-family: var(--font-sans);
-    font-size: var(--text-ui-md);
     font-weight: var(--font-weight-medium);
     line-height: 1;
     white-space: nowrap;
@@ -3116,6 +3111,31 @@
   /* Density driven by the recipe's data-size on the root part: Field's sizes.
      `lg` exceeds the top spacing slot, so it sums two rather than inventing
      an off-contract value. */
+  [data-scope="editable"][data-part="root"][data-size="md"] > [data-part="label"] {
+    font-size: var(--text-ui-md);
+    line-height: var(--leading-ui-md);
+  }
+  [data-scope="editable"][data-part="root"][data-size="md"]
+    > [data-part="area"]
+    > [data-part="preview"],
+  [data-scope="editable"][data-part="root"][data-size="md"]
+    > [data-part="area"]
+    > [data-part="input"] {
+    height: var(--spacing-8);
+    padding-inline: var(--spacing-3);
+    font-size: var(--text-ui-md);
+  }
+  [data-scope="editable"][data-part="root"][data-size="md"]
+    > [data-part="area"]
+    > [data-part="preview"] {
+    line-height: calc(var(--spacing-8) - 2px);
+  }
+  [data-scope="editable"][data-part="root"][data-size="md"] > [data-part="control"] > [data-part] {
+    min-width: var(--spacing-8);
+    height: var(--spacing-8);
+    font-size: var(--text-ui-md);
+  }
+
   [data-scope="editable"][data-part="root"][data-size="sm"] {
     gap: var(--spacing-1);
   }

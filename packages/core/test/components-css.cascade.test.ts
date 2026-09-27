@@ -398,3 +398,61 @@ describe("components.css cascade — Field's invalid state holds under the point
     });
   }
 });
+
+/**
+ * An Editable at `editableSize`, inside a Field at `fieldSize` (or no Field),
+ * down to one of its parts: the text, the input, or the label.
+ */
+function editablePart(
+  part: "preview" | "input" | "label",
+  editableSize: string,
+  fieldSize?: string,
+): El[] {
+  const div = (attrs: Record<string, string>): El => ({ tag: "div", attrs, pseudos: new Set() });
+  const field = fieldSize
+    ? [div({ "data-scope": "field", "data-part": "root", "data-size": fieldSize })]
+    : [];
+  const editableRoot = div({
+    "data-scope": "editable",
+    "data-part": "root",
+    "data-size": editableSize,
+  });
+  const tag = part === "input" ? "input" : part === "label" ? "label" : "span";
+  const subject: El = {
+    tag,
+    attrs: { "data-scope": "editable", "data-part": part },
+    pseudos: new Set(),
+  };
+  if (part === "label") return [...field, editableRoot, subject];
+  return [...field, editableRoot, div({ "data-scope": "editable", "data-part": "area" }), subject];
+}
+
+describe("components.css cascade — Editable keeps its own size inside a Field", () => {
+  const SIZES = ["sm", "md", "lg"];
+  const BOX = ["height", "font-size", "padding-inline"];
+
+  for (const editableSize of SIZES) {
+    it(`draws a ${editableSize} text and its input as one box inside a Field of any size`, () => {
+      for (const name of BOX) {
+        const alone = resolve(name, editablePart("preview", editableSize))?.value;
+        expect(alone, `${editableSize} ${name}`).toBeDefined();
+        for (const fieldSize of SIZES) {
+          const context = `${editableSize} Editable in a ${fieldSize} Field, ${name}`;
+          const text = resolve(name, editablePart("preview", editableSize, fieldSize));
+          const input = resolve(name, editablePart("input", editableSize, fieldSize));
+          expect(text?.value, `${context}: text won by \`${text?.selector}\``).toBe(alone);
+          expect(input?.value, `${context}: input won by \`${input?.selector}\``).toBe(alone);
+        }
+      }
+    });
+
+    it(`keeps a ${editableSize} label at its own size inside a Field of any size`, () => {
+      const alone = resolve("font-size", editablePart("label", editableSize))?.value;
+      expect(alone).toBeDefined();
+      for (const fieldSize of SIZES) {
+        const label = resolve("font-size", editablePart("label", editableSize, fieldSize));
+        expect(label?.value, `in a ${fieldSize} Field, won by \`${label?.selector}\``).toBe(alone);
+      }
+    });
+  }
+});
