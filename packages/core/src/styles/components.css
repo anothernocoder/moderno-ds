@@ -550,6 +550,13 @@
     border-color: var(--border);
     color: var(--foreground);
   }
+  /* Outline draws a resting --border, so its ring goes inside the box: an
+     outset ring would leave that border visible inside it, a double border.
+     The other variants have no border and keep the base layer's outset ring. */
+  [data-scope="button"][data-part="root"][data-variant="outline"]:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+  }
   /* Ghost has no fill of its own — the root rule above sets it transparent. */
   [data-scope="button"][data-part="root"][data-variant="ghost"] {
     color: var(--foreground);
@@ -3628,6 +3635,12 @@
   }
   [data-scope="toggle"][data-part="root"][data-variant="outline"][data-state="on"] {
     background-color: var(--accent);
+  }
+  /* Its ring goes inside the border, like a group item's: an outset ring
+     would leave the resting border visible inside it, a double border. */
+  [data-scope="toggle"][data-part="root"][data-variant="outline"]:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
   }
   [data-scope="toggle"][data-part="indicator"] {
     display: inline-flex;

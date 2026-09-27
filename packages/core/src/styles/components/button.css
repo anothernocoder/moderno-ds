@@ -61,6 +61,13 @@
   border-color: var(--border);
   color: var(--foreground);
 }
+/* Outline draws a resting --border, so its ring goes inside the box: an
+   outset ring would leave that border visible inside it, a double border.
+   The other variants have no border and keep the base layer's outset ring. */
+[data-scope="button"][data-part="root"][data-variant="outline"]:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
 /* Ghost has no fill of its own — the root rule above sets it transparent. */
 [data-scope="button"][data-part="root"][data-variant="ghost"] {
   color: var(--foreground);
