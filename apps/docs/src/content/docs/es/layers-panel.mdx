@@ -1,0 +1,223 @@
+---
+title: Layers panel
+description: Un panel de capas para un editor, como el de Figma — una fila por capa con su miniatura, su nombre, botones de visibilidad y bloqueo y un menú; arrastra para reordenar, doble clic para renombrar.
+group: Bloques
+order: 300
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import LayersPanelBlockDemo from "../../../islands/LayersPanelBlockDemo.svelte";
+import layersPanelReact from "../../../../../../registry/blocks/layers-panel/react/layers-panel.tsx?raw";
+import layersPanelVue from "../../../../../../registry/blocks/layers-panel/vue/LayersPanel.vue?raw";
+import layersPanelSolid from "../../../../../../registry/blocks/layers-panel/solid/layers-panel.tsx?raw";
+import layersPanelSvelte from "../../../../../../registry/blocks/layers-panel/svelte/LayersPanel.svelte?raw";
+
+export const examples = {
+  react: layersPanelReact,
+  vue: layersPanelVue,
+  solid: layersPanelSolid,
+  svelte: layersPanelSvelte,
+};
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={examples}>
+  <LayersPanelBlockDemo client:visible locale="es" />
+</Preview>
+
+Úsalo en un editor que apila objetos en un lienzo: selecciona una capa, ocúltala o bloquéala, arrástrala delante o detrás de las demás y renómbrala en su sitio. El bloque muestra las capas; tu app las controla.
+
+## Instalación
+
+<Install item="layers-panel" />
+
+## Uso
+
+<ForFramework fw="react">
+
+```tsx
+import { LayersPanel } from "@/components/blocks/layers-panel";
+```
+
+```tsx
+<LayersPanel
+  layers={layers}
+  selectedId={selectedId}
+  onSelect={setSelectedId}
+  onReorder={reorderLayers}
+  onChange={updateLayer}
+  onDuplicate={duplicateLayer}
+  onDelete={deleteLayer}
+  onAdd={addLayer}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import LayersPanel from "@/components/blocks/LayersPanel.vue";
+</script>
+```
+
+```vue
+<LayersPanel
+  :layers="layers"
+  :selected-id="selectedId"
+  @select="selectedId = $event"
+  @reorder="reorderLayers"
+  @change="updateLayer"
+  @duplicate="duplicateLayer"
+  @delete="deleteLayer"
+  @add="addLayer"
+/>
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import LayersPanel from "@/components/blocks/LayersPanel.svelte";
+</script>
+```
+
+```svelte
+<LayersPanel
+  {layers}
+  {selectedId}
+  onselect={(id) => (selectedId = id)}
+  onreorder={reorderLayers}
+  onchange={updateLayer}
+  onduplicate={duplicateLayer}
+  ondelete={deleteLayer}
+  onadd={addLayer}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { LayersPanel } from "@/components/blocks/layers-panel";
+```
+
+```tsx
+<LayersPanel
+  layers={layers()}
+  selectedId={selectedId()}
+  onSelect={setSelectedId}
+  onReorder={reorderLayers}
+  onChange={updateLayer}
+  onDuplicate={duplicateLayer}
+  onDelete={deleteLayer}
+  onAdd={addLayer}
+/>
+```
+
+</ForFramework>
+
+Cada callback nombra una capa por su `id`. `reorderLayers` pone `layers` en el orden que recibe, `updateLayer(id, change)` mezcla el cambio en esa capa y `deleteLayer` la quita cuando tu app lo ha confirmado.
+
+## Referencia de la API
+
+### Props
+
+| Prop          | Tipo                                        | Por defecto            | Descripción                                                                                     |
+| ------------- | ------------------------------------------- | ---------------------- | ----------------------------------------------------------------------------------------------- |
+| `layers`      | `Layer[]`                                   | cinco capas de ejemplo | Una fila por capa, la de arriba primero. La fila de arriba es la capa más al frente.            |
+| `selectedId`  | `string \| null`                            | `null`                 | El `id` de la capa seleccionada.                                                                |
+| `onSelect`    | `(id: string) => void`                      | —                      | Se hizo clic en una fila o se pulsó Enter en ella. Svelte: `onselect`. Vue: `@select`.          |
+| `onReorder`   | `(ids: string[]) => void`                   | —                      | Se soltó una fila en otro sitio: todos los `id`, la fila de arriba primero. Vue: `@reorder`.    |
+| `onChange`    | `(id: string, change: LayerChange) => void` | —                      | Se renombró, ocultó, mostró, bloqueó o desbloqueó una capa. Svelte: `onchange`. Vue: `@change`. |
+| `onDuplicate` | `(id: string) => void`                      | —                      | Se eligió Duplicate en el menú de la fila. Svelte: `onduplicate`. Vue: `@duplicate`.            |
+| `onDelete`    | `(id: string) => void`                      | —                      | Se eligió Delete en el menú o se pulsó la tecla Supr. Svelte: `ondelete`. Vue: `@delete`.       |
+| `onAdd`       | `() => void`                                | —                      | Se pulsó Add layer. Svelte: `onadd`. Vue: `@add`.                                               |
+
+### Layer
+
+| Campo       | Tipo      | Descripción                                                                                               |
+| ----------- | --------- | --------------------------------------------------------------------------------------------------------- |
+| `id`        | `string`  | Nombra la capa en cada callback.                                                                          |
+| `name`      | `string`  | El nombre de la fila. Si es largo se corta con puntos suspensivos; el nombre completo sale en un tooltip. |
+| `visible`   | `boolean` | `false` atenúa la fila y deja pulsado su botón de visibilidad.                                            |
+| `locked`    | `boolean` | `true` deja pulsado su botón de bloqueo, que muestra un candado.                                          |
+| `thumbnail` | `string`  | Opcional. La URL de una imagen, pequeña antes del nombre.                                                 |
+| `icon`      | `string`  | Opcional. El tipo de capa, dibujado si no hay miniatura: `frame`, `group`, `text`, `image` o `shape`.     |
+
+### LayerChange
+
+Uno de `{ name: string }`, `{ visible: boolean }` o `{ locked: boolean }`: el único campo que cambió.
+
+### Partes
+
+| Parte                | Qué es                                                                                                                         |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| Cabecera             | El título "Layers" y un Button Add layer.                                                                                      |
+| Lista                | Una SortableList llamada "Layers", un elemento por capa.                                                                       |
+| Botón del nombre     | El trigger de la fila en la SortableList: el nombre, con el estado en su nombre accesible. Un Tooltip muestra un nombre largo. |
+| Botón de visibilidad | Un Toggle llamado "Hide Logo" o "Show Logo", pulsado mientras la capa está oculta.                                             |
+| Botón de bloqueo     | Un Toggle llamado "Lock Logo" o "Unlock Logo", pulsado mientras la capa está bloqueada.                                        |
+| Menú                 | Un Button ghost llamado "Actions for Logo" que abre un Menu: Duplicate, Rename, Delete.                                        |
+| Campo de renombrar   | Un input de Editable sobre el nombre mientras se renombra.                                                                     |
+| Estado vacío         | "No layers yet" y un Button Add layer, cuando `layers` está vacío.                                                             |
+
+### Estados
+
+| Estado       | Prop             | Qué se muestra                                                                                     |
+| ------------ | ---------------- | -------------------------------------------------------------------------------------------------- |
+| Seleccionada | `selectedId`     | La fila tiene un fondo teñido y una barra al inicio; su botón del nombre lleva `aria-current`.     |
+| Oculta       | `visible: false` | El nombre sale apagado, la miniatura atenuada y el botón de visibilidad pulsado y siempre visible. |
+| Bloqueada    | `locked: true`   | El botón de bloqueo está pulsado, muestra un candado y está siempre visible.                       |
+| Renombrando  | —                | Un input sobre el nombre, con su texto seleccionado.                                               |
+| Vacío        | `layers` es `[]` | "No layers yet" y un botón Add layer, en lugar de la lista.                                        |
+
+### Teclado
+
+| Tecla          | Dónde                 | Hace                                                                        |
+| -------------- | --------------------- | --------------------------------------------------------------------------- |
+| Tab            | El panel              | Entra en la lista por la fila seleccionada y luego a sus botones y su menú. |
+| Arriba / Abajo | Un botón del nombre   | Va a la fila de arriba o de abajo.                                          |
+| Inicio / Fin   | Un botón del nombre   | Va a la primera o a la última fila.                                         |
+| Enter          | Un botón del nombre   | Selecciona la capa.                                                         |
+| F2             | Un botón del nombre   | Renombra la capa.                                                           |
+| Supr           | Un botón del nombre   | Pide borrar la capa. Retroceso también.                                     |
+| Espacio        | Un botón del nombre   | Levanta la fila; las flechas la mueven, Espacio la suelta, Escape cancela.  |
+| Enter / Escape | El campo de renombrar | Guarda / cancela el nombre nuevo.                                           |
+
+### Tamaños
+
+| Paso del contenedor      | Qué cambia                                          |
+| ------------------------ | --------------------------------------------------- |
+| por debajo de `@sm`      | Miniaturas pequeñas; Add layer es solo un icono.    |
+| `@sm` (`--container-sm`) | Miniaturas más grandes; Add layer muestra su texto. |
+
+## Ejemplos
+
+### Anchos de contenedor
+
+El mismo panel a 16rem y a 28rem. Desde 24rem, las miniaturas crecen y Add layer muestra su texto.
+
+<Preview examples={examples} layout="fill">
+  <LayersPanelBlockDemo client:visible locale="es" example="widths" />
+</Preview>
+
+### Vacío
+
+Sin capas, el panel ofrece añadir la primera.
+
+<Preview examples={examples}>
+  <LayersPanelBlockDemo client:visible locale="es" example="empty" />
+</Preview>
+
+### Muchas capas
+
+Doce capas en un panel bajo: la lista se desplaza. Los nombres largos se cortan; pasa el puntero por uno para leerlo entero.
+
+<Preview examples={examples}>
+  <LayersPanelBlockDemo client:visible locale="es" example="many" />
+</Preview>
