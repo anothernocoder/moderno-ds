@@ -1,0 +1,180 @@
+/* ───────────────────────── Vector Pad ───────────────────────── *
+ * Moderno's vector-pad machine (`vectorPad` in @moderno-ui/core): root >
+ * label, then control > grid + crosshair + thumb, then the two number
+ * fields (`Input`, Ark number-inputs with their own scope). The pad sits
+ * under the label and the fields stack beside it. The machine sets the
+ * handle's place on the root as --vector-pad-x / --vector-pad-y (from the
+ * pad's left and top edges) and stamps data-disabled, data-readonly,
+ * data-invalid and data-dragging on every part. `vectorPadRecipe` puts
+ * size on the root; the parts follow it through child combinators
+ * (root > part).                                                       */
+/* @runtime-vars --vector-pad-x --vector-pad-y — the handle's place, set by the machine */
+[data-scope="vector-pad"][data-part="root"] {
+  display: inline-grid;
+  grid-template-columns: auto auto;
+  grid-template-rows: auto auto auto 1fr;
+  align-items: start;
+  gap: var(--spacing-2) var(--spacing-4);
+  max-width: 100%;
+}
+/*
+ * The machine stamps data-disabled on EVERY part, and the base layer dims
+ * anything carrying it (the fields' parts too) — nesting would multiply
+ * the opacity. Dim the root once and leave everything inside it opaque.
+ */
+[data-scope="vector-pad"][data-part="root"][data-disabled] :where([data-part]) {
+  opacity: 1;
+}
+/* The label names the pad and the fields, so it spans both columns. */
+[data-scope="vector-pad"][data-part="label"] {
+  grid-column: 1 / -1;
+  color: var(--foreground);
+  font-size: var(--text-ui-md);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--leading-ui-md);
+}
+/* The pad: a square at any width. It spans the rows the fields stack in. */
+[data-scope="vector-pad"][data-part="control"] {
+  position: relative;
+  grid-column: 1;
+  grid-row: 2 / -1;
+  box-sizing: border-box;
+  width: calc(var(--spacing-8) * 5);
+  max-width: 100%;
+  aspect-ratio: 1;
+  border: 1px solid var(--input);
+  border-radius: var(--radius);
+  background-color: var(--background);
+  box-shadow: var(--shadow-sm);
+  cursor: crosshair;
+  transition: border-color var(--motion-fast);
+}
+/* Hover raises the edge to the focus colour, as on Field's input. */
+[data-scope="vector-pad"][data-part="control"]:hover:not([data-disabled]):not([data-readonly]):not(
+    [data-invalid]
+  ) {
+  border-color: var(--ring);
+}
+[data-scope="vector-pad"][data-part="control"][data-readonly] {
+  cursor: default;
+}
+[data-scope="vector-pad"][data-part="control"][data-invalid] {
+  border-color: var(--destructive);
+}
+/* The grid: a line every quarter of the pad, both ways. */
+[data-scope="vector-pad"][data-part="grid"] {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius);
+  background-image:
+    linear-gradient(to right, var(--border) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+  background-size: 25% 25%;
+  pointer-events: none;
+}
+/* The crosshair: one line each way through the pad's centre. */
+[data-scope="vector-pad"][data-part="crosshair"] {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+[data-scope="vector-pad"][data-part="crosshair"]::before,
+[data-scope="vector-pad"][data-part="crosshair"]::after {
+  content: "";
+  position: absolute;
+  background-color: color-mix(in oklab, var(--muted-foreground) 50%, transparent);
+}
+[data-scope="vector-pad"][data-part="crosshair"]::before {
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  translate: -50% 0;
+}
+[data-scope="vector-pad"][data-part="crosshair"]::after {
+  top: 50%;
+  right: 0;
+  left: 0;
+  height: 1px;
+  translate: 0 -50%;
+}
+/* The handle, centred on the value's spot. It takes focus. */
+[data-scope="vector-pad"][data-part="thumb"] {
+  position: absolute;
+  top: var(--vector-pad-y);
+  left: var(--vector-pad-x);
+  box-sizing: border-box;
+  width: var(--spacing-4);
+  height: var(--spacing-4);
+  translate: -50% -50%;
+  border: calc(var(--spacing-1) / 2) solid var(--primary);
+  border-radius: var(--radius-full);
+  background-color: var(--background);
+  box-shadow: var(--shadow-sm);
+  cursor: grab;
+}
+[data-scope="vector-pad"][data-part="thumb"][data-dragging] {
+  cursor: grabbing;
+}
+[data-scope="vector-pad"][data-part="thumb"][data-readonly] {
+  cursor: default;
+}
+[data-scope="vector-pad"][data-part="thumb"]:focus-visible {
+  outline-color: var(--ring);
+  outline-style: solid;
+  outline-width: 2px;
+  outline-offset: 2px;
+}
+[data-scope="vector-pad"][data-part="thumb"][data-invalid] {
+  border-color: var(--destructive);
+}
+/* The fields stack beside the pad: wide enough for "-100". */
+[data-scope="vector-pad"][data-part="root"] > [data-scope="number-input"][data-part="root"] {
+  grid-column: 2;
+  width: calc(var(--spacing-8) * 3);
+}
+/* Each field's axis ("X", "Y") leads inside its box, like an icon. */
+[data-scope="vector-pad"][data-part="root"]
+  > [data-scope="number-input"][data-part="root"]
+  > [data-part="control"]
+  > [data-part="label"] {
+  align-self: center;
+  padding-inline-start: var(--spacing-3);
+  color: var(--muted-foreground);
+  font-size: var(--text-ui-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--leading-ui-sm);
+}
+[data-scope="vector-pad"][data-part="root"]
+  > [data-scope="number-input"][data-part="root"]
+  > [data-part="control"]
+  > [data-part="input"] {
+  padding-inline-start: var(--spacing-2);
+}
+
+/* Density driven by the recipe's data-size on the root: the pad's side
+   (five of the field heights NumberInput and Field use at that size), the
+   fields' width and the label's type. The fields take the same size from
+   the Root, so their height matches. */
+[data-scope="vector-pad"][data-part="root"][data-size="sm"] > [data-part="label"] {
+  font-size: var(--text-ui-sm);
+  line-height: var(--leading-ui-sm);
+}
+[data-scope="vector-pad"][data-part="root"][data-size="lg"] > [data-part="label"] {
+  font-size: var(--text-ui-lg);
+  line-height: var(--leading-ui-lg);
+}
+[data-scope="vector-pad"][data-part="root"][data-size="sm"] > [data-part="control"] {
+  width: calc(var(--spacing-7) * 5);
+}
+[data-scope="vector-pad"][data-part="root"][data-size="lg"] > [data-part="control"] {
+  width: calc((var(--spacing-8) + var(--spacing-2)) * 5);
+}
+[data-scope="vector-pad"][data-part="root"][data-size="sm"]
+  > [data-scope="number-input"][data-part="root"] {
+  width: calc(var(--spacing-8) * 2.5);
+}
+[data-scope="vector-pad"][data-part="root"][data-size="lg"]
+  > [data-scope="number-input"][data-part="root"] {
+  width: calc(var(--spacing-8) * 3.5);
+}

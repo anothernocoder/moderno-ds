@@ -58,6 +58,7 @@ import toggleComponent from "./components/toggle.ts";
 import toggleGroupComponent from "./components/toggle-group.ts";
 import toolbarComponent from "./components/toolbar.ts";
 import tooltipComponent from "./components/tooltip.ts";
+import vectorPadComponent from "./components/vector-pad.ts";
 
 export const { ENTRIES, AGENT_COMPONENTS, AGENT_EXAMPLES } = assembleComponents([
   accordionComponent,
@@ -109,4 +110,5 @@ export const { ENTRIES, AGENT_COMPONENTS, AGENT_EXAMPLES } = assembleComponents(
   toggleGroupComponent,
   toolbarComponent,
   tooltipComponent,
+  vectorPadComponent,
 ]);

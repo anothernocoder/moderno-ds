@@ -60,3 +60,4 @@ export * from "./exports/toggle-group.js";
 export * from "./exports/toggle.js";
 export * from "./exports/toolbar.js";
 export * from "./exports/tooltip.js";
+export * from "./exports/vector-pad.js";

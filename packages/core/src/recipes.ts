@@ -60,3 +60,4 @@ export * from "./recipes/toggle.js";
 export * from "./recipes/toggle-group.js";
 export * from "./recipes/toolbar.js";
 export * from "./recipes/tooltip.js";
+export * from "./recipes/vector-pad.js";

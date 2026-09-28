@@ -1,0 +1,309 @@
+---
+title: Vector Pad
+description: Lets the user set two values at once, x and y, by dragging a handle on a square pad, with a number field for each.
+group: Components
+order: 34
+component: VectorPad
+pkg: "@moderno-ui/react"
+agentPropsHash: "sha256:51e66107206ddf38c525ddcdb319137c3d73f2216b7d77ed2cfbd038d9a92a8b"
+agent:
+  intent: Let the user set two numbers at once, x and y, by dragging a handle on a square pad, or by typing them in the number field of each axis.
+  whenToUse: A 2D value in a creative tool — a position, a shadow's offset, a light's direction, a focal point — where the user benefits from seeing both values as one spot.
+  whenNotToUse:
+    - case: One number on a straight scale
+      use: Slider
+    - case: A direction as an angle
+      use: AngleSlider
+    - case: An exact number the user types, with no pad
+      use: NumberInput
+  gotchas:
+    - "The value is { x, y }. y grows upward, as on a graph: the top of the pad is the largest y. Pass invertY for screen coordinates, where y grows downward."
+    - "min, max and step take one number for both axes, or { x, y } for each. The range defaults to -100 to 100, and defaultValue to the centre of it."
+    - 'Put VectorPad.Grid, VectorPad.Crosshair and VectorPad.Thumb inside VectorPad.Control. Add one VectorPad.Input per axis after it, with axis="x" or axis="y".'
+    - "Home and a double-click on the pad go back to defaultValue."
+    - "In Vue, bind the value with v-model. In Svelte, bind:value works."
+  theming:
+    - "The pad is --background with an --input edge and --shadow-sm; the grid lines are --border and the crosshair --muted-foreground. The handle is --background with a --primary edge. Do not pass a hex."
+    - "The focus ring around the handle is --ring. Invalid turns the pad's edge and the handle's --destructive."
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import VectorPadDemo from "../../../examples/vector-pad/vector-pad.svelte";
+import baseReact from "../../../examples/vector-pad/react.tsx?raw";
+import baseVue from "../../../examples/vector-pad/vue.vue?raw";
+import baseSolid from "../../../examples/vector-pad/solid.tsx?raw";
+import baseSvelte from "../../../examples/vector-pad/vector-pad.svelte?raw";
+import VectorPadGridDemo from "../../../examples/vector-pad/grid/vector-pad-grid.svelte";
+import gridReact from "../../../examples/vector-pad/grid/react.tsx?raw";
+import gridVue from "../../../examples/vector-pad/grid/vue.vue?raw";
+import gridSolid from "../../../examples/vector-pad/grid/solid.tsx?raw";
+import gridSvelte from "../../../examples/vector-pad/grid/vector-pad-grid.svelte?raw";
+import VectorPadRangeDemo from "../../../examples/vector-pad/range/vector-pad-range.svelte";
+import rangeReact from "../../../examples/vector-pad/range/react.tsx?raw";
+import rangeVue from "../../../examples/vector-pad/range/vue.vue?raw";
+import rangeSolid from "../../../examples/vector-pad/range/solid.tsx?raw";
+import rangeSvelte from "../../../examples/vector-pad/range/vector-pad-range.svelte?raw";
+import VectorPadInvertYDemo from "../../../examples/vector-pad/invert-y/vector-pad-invert-y.svelte";
+import invertYReact from "../../../examples/vector-pad/invert-y/react.tsx?raw";
+import invertYVue from "../../../examples/vector-pad/invert-y/vue.vue?raw";
+import invertYSolid from "../../../examples/vector-pad/invert-y/solid.tsx?raw";
+import invertYSvelte from "../../../examples/vector-pad/invert-y/vector-pad-invert-y.svelte?raw";
+import VectorPadSizesDemo from "../../../examples/vector-pad/sizes/vector-pad-sizes.svelte";
+import sizesReact from "../../../examples/vector-pad/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/vector-pad/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/vector-pad/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/vector-pad/sizes/vector-pad-sizes.svelte?raw";
+import VectorPadDisabledDemo from "../../../examples/vector-pad/disabled/vector-pad-disabled.svelte";
+import disabledReact from "../../../examples/vector-pad/disabled/react.tsx?raw";
+import disabledVue from "../../../examples/vector-pad/disabled/vue.vue?raw";
+import disabledSolid from "../../../examples/vector-pad/disabled/solid.tsx?raw";
+import disabledSvelte from "../../../examples/vector-pad/disabled/vector-pad-disabled.svelte?raw";
+
+<FrameworkSelect locale="en" />
+
+<Preview
+  examples={{
+    react: baseReact,
+    vue: baseVue,
+    solid: baseSolid,
+    svelte: baseSvelte,
+  }}
+>
+  <VectorPadDemo client:visible />
+</Preview>
+
+## Installation
+
+<Install pkg="@moderno-ui/react" />
+
+## Usage
+
+Vector Pad sets two numbers at once, x and y. Use it for a position, an offset or a light's direction. The user drags the handle on the square pad, or types each number in its field.
+
+**y grows upward**, as on a graph: the top of the pad is the largest y.
+
+<ForFramework fw="react">
+
+```tsx
+import { VectorPad } from "@moderno-ui/react";
+```
+
+```tsx
+<VectorPad.Root value={offset} onValueChange={(details) => setOffset(details.value)}>
+  <VectorPad.Label>Offset</VectorPad.Label>
+  <VectorPad.Control>
+    <VectorPad.Thumb />
+  </VectorPad.Control>
+  <VectorPad.Input axis="x" />
+  <VectorPad.Input axis="y" />
+</VectorPad.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { VectorPad } from "@moderno-ui/vue";
+```
+
+```vue
+<VectorPad.Root v-model="offset">
+  <VectorPad.Label>Offset</VectorPad.Label>
+  <VectorPad.Control>
+    <VectorPad.Thumb />
+  </VectorPad.Control>
+  <VectorPad.Input axis="x" />
+  <VectorPad.Input axis="y" />
+</VectorPad.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { VectorPad } from "@moderno-ui/svelte";
+```
+
+```svelte
+<VectorPad.Root bind:value={offset}>
+  <VectorPad.Label>Offset</VectorPad.Label>
+  <VectorPad.Control>
+    <VectorPad.Thumb />
+  </VectorPad.Control>
+  <VectorPad.Input axis="x" />
+  <VectorPad.Input axis="y" />
+</VectorPad.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { VectorPad } from "@moderno-ui/solid";
+```
+
+```tsx
+<VectorPad.Root value={offset()} onValueChange={(details) => setOffset(details.value)}>
+  <VectorPad.Label>Offset</VectorPad.Label>
+  <VectorPad.Control>
+    <VectorPad.Thumb />
+  </VectorPad.Control>
+  <VectorPad.Input axis="x" />
+  <VectorPad.Input axis="y" />
+</VectorPad.Root>
+```
+
+</ForFramework>
+
+The value is `{ x, y }`. It runs from -100 to 100 on each axis and starts at the centre, `{ x: 0, y: 0 }`.
+
+## API Reference
+
+### VectorPad.Root
+
+<PropsTable component="VectorPad" />
+
+| Prop               | Type                                     | Default         | Description                                                                |
+| ------------------ | ---------------------------------------- | --------------- | -------------------------------------------------------------------------- |
+| `value`            | `{ x: number; y: number }`               | —               | Controlled value.                                                          |
+| `defaultValue`     | `{ x: number; y: number }`               | centre of range | Value at first when uncontrolled. Home and a double-click return here.     |
+| `onValueChange`    | `(details: { value: { x, y } }) => void` | —               | Called while the value changes.                                            |
+| `onValueChangeEnd` | `(details: { value: { x, y } }) => void` | —               | Called once, when the user lets go or a key sets the value.                |
+| `min`              | `number \| { x: number; y: number }`     | `-100`          | Smallest value, for both axes or per axis.                                 |
+| `max`              | `number \| { x: number; y: number }`     | `100`           | Largest value, for both axes or per axis.                                  |
+| `step`             | `number \| { x: number; y: number }`     | `1`             | How far one move goes, for both axes or per axis.                          |
+| `invertY`          | `boolean`                                | `false`         | Makes y grow downward, as on screen. The handle still follows the pointer. |
+| `size`             | `"sm" \| "md" \| "lg"`                   | `"md"`          | The pad's size, matched to the Field sizes.                                |
+| `disabled`         | `boolean`                                | `false`         | Dims the pad and the fields and ignores input.                             |
+| `readOnly`         | `boolean`                                | `false`         | Shows the value but ignores input.                                         |
+| `invalid`          | `boolean`                                | `false`         | Marks the value as wrong.                                                  |
+| `getAriaValueText` | `(value: { x, y }) => string`            | `"X 20, Y -10"` | What a screen reader says for a value.                                     |
+
+In Vue, bind the value with `v-model` and listen with `@value-change`.
+
+### VectorPad.Input
+
+| Prop    | Type         | Default      | Description                             |
+| ------- | ------------ | ------------ | --------------------------------------- |
+| `axis`  | `"x" \| "y"` | —            | Required. The axis this field shows.    |
+| `label` | `string`     | `"X"`, `"Y"` | The field's name, shown inside its box. |
+
+### Parts
+
+| Part                  | Element   | Description                                                   |
+| --------------------- | --------- | ------------------------------------------------------------- |
+| `VectorPad.Root`      | `<div>`   | A group named by the label. Carries `data-size`.              |
+| `VectorPad.Label`     | `<label>` | Names the pad and the fields. Clicking it focuses the handle. |
+| `VectorPad.Control`   | `<div>`   | The square pad you press or drag on.                          |
+| `VectorPad.Grid`      | `<div>`   | Optional. Lines every quarter of the pad.                     |
+| `VectorPad.Crosshair` | `<div>`   | Optional. Lines through the pad's centre.                     |
+| `VectorPad.Thumb`     | `<div>`   | The handle, with `role="slider"`. It takes focus.             |
+| `VectorPad.Input`     | `<div>`   | A number field for one axis.                                  |
+
+### Keyboard
+
+| Key                       | Action                                     |
+| ------------------------- | ------------------------------------------ |
+| `ArrowRight`, `ArrowLeft` | Moves the handle one `step` right or left. |
+| `ArrowUp`, `ArrowDown`    | Moves the handle one `step` up or down.    |
+| `Shift` + arrow           | Moves the handle ten steps.                |
+| `Home`                    | Goes back to `defaultValue`.               |
+
+### Data attributes
+
+| Attribute       | Values                                     |
+| --------------- | ------------------------------------------ |
+| `data-dragging` | While the handle is dragged, on every part |
+| `data-disabled` | When `disabled`, on every part             |
+| `data-readonly` | When `readOnly`, on every part             |
+| `data-invalid`  | When `invalid`, on every part              |
+| `data-size`     | On the root: `"sm"`, `"md"` or `"lg"`      |
+
+## Examples
+
+### Grid and crosshair
+
+Add `VectorPad.Grid` and `VectorPad.Crosshair` inside the pad to help the user aim.
+
+<Preview
+  examples={{
+    react: gridReact,
+    vue: gridVue,
+    solid: gridSolid,
+    svelte: gridSvelte,
+  }}
+>
+  <VectorPadGridDemo client:visible />
+</Preview>
+
+### Range and step
+
+Set `min`, `max` and `step` for both axes with one number, or per axis with `{ x, y }`. Here x runs to 200 and y to 100, in steps of 10.
+
+<Preview
+  examples={{
+    react: rangeReact,
+    vue: rangeVue,
+    solid: rangeSolid,
+    svelte: rangeSvelte,
+  }}
+>
+  <VectorPadRangeDemo client:visible />
+</Preview>
+
+### Screen coordinates
+
+Pass `invertY` when y should grow downward, as in CSS. Here `{ x: 0, y: 0 }` is the top-left corner.
+
+<Preview
+  examples={{
+    react: invertYReact,
+    vue: invertYVue,
+    solid: invertYSolid,
+    svelte: invertYSvelte,
+  }}
+>
+  <VectorPadInvertYDemo client:visible />
+</Preview>
+
+### Sizes
+
+The pad and the fields follow the Field sizes.
+
+<Preview
+  examples={{
+    react: sizesReact,
+    vue: sizesVue,
+    solid: sizesSolid,
+    svelte: sizesSvelte,
+  }}
+>
+  <VectorPadSizesDemo client:visible />
+</Preview>
+
+### Disabled
+
+<Preview
+  examples={{
+    react: disabledReact,
+    vue: disabledVue,
+    solid: disabledSolid,
+    svelte: disabledSvelte,
+  }}
+>
+  <VectorPadDisabledDemo client:visible />
+</Preview>
+
+## Notes
+
+- A screen reader says both values ("X 20, Y -10"). Pass `getAriaValueText` to say them in another language.
+- The number fields are a full keyboard alternative: type a value, or step it with the arrow keys.
+- What the user types moves the handle at once. The field shows the handle's value again when the user leaves it or presses Enter: `250` becomes `100`.
+- A drag keeps going when the pointer leaves the pad; the handle stays at the edge.

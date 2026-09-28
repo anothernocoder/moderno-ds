@@ -13,3 +13,4 @@
 
 export * as sortableList from "./machines/sortable-list/index.js";
 export * as toolbar from "./machines/toolbar/index.js";
+export * as vectorPad from "./machines/vector-pad/index.js";

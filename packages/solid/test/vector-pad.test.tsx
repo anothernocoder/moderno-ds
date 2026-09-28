@@ -1,0 +1,276 @@
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { cleanup, fireEvent, render, screen, waitFor } from "@solidjs/testing-library";
+import userEvent from "@testing-library/user-event";
+import { createSignal } from "solid-js";
+import { VectorPad, type VectorPadRootProps, type VectorPadValue } from "../src/index.jsx";
+
+afterEach(cleanup);
+
+function Demo(props: Omit<VectorPadRootProps, "children">) {
+  return (
+    <VectorPad.Root class="offset" {...props}>
+      <VectorPad.Label>Offset</VectorPad.Label>
+      <VectorPad.Control>
+        <VectorPad.Grid />
+        <VectorPad.Crosshair />
+        <VectorPad.Thumb />
+      </VectorPad.Control>
+      <VectorPad.Input axis="x" />
+      <VectorPad.Input axis="y" />
+    </VectorPad.Root>
+  );
+}
+
+const part = (name: string) =>
+  document.querySelector<HTMLElement>(`[data-scope="vector-pad"][data-part="${name}"]`)!;
+const thumb = () => screen.getByRole("slider");
+const field = (axis: "X" | "Y") =>
+  screen.getByRole("spinbutton", { name: axis }) as HTMLInputElement;
+const spoken = () => thumb().getAttribute("aria-valuetext");
+
+/*
+ * jsdom lays nothing out: the pad is given a 200px box at the page's corner,
+ * so a point on it maps to a known value (-100 to 100 each way, y up).
+ */
+function layOutPad() {
+  vi.spyOn(part("control"), "getBoundingClientRect").mockReturnValue({
+    x: 0,
+    y: 0,
+    left: 0,
+    top: 0,
+    width: 200,
+    height: 200,
+    right: 200,
+    bottom: 200,
+    toJSON: () => ({}),
+  });
+}
+
+/*
+ * jsdom has no PointerEvent; a MouseEvent of the pointer type carries the
+ * coordinates and button the machine reads.
+ */
+function pointer(type: string, target: EventTarget, clientX: number, clientY: number) {
+  target.dispatchEvent(
+    new MouseEvent(type, {
+      bubbles: true,
+      cancelable: true,
+      button: 0,
+      buttons: 1,
+      clientX,
+      clientY,
+    }),
+  );
+}
+
+describe("VectorPad (Solid)", () => {
+  it("applies the recipe to the root part, defaulting to md, and sizes the fields with it", () => {
+    render(() => <Demo size="lg" />);
+    expect(part("root").getAttribute("data-size")).toBe("lg");
+    const fieldRoots = document.querySelectorAll('[data-scope="number-input"][data-part="root"]');
+    expect([...fieldRoots].map((root) => root.getAttribute("data-size"))).toEqual(["lg", "lg"]);
+
+    cleanup();
+    render(() => <Demo />);
+    expect(part("root").getAttribute("data-size")).toBe("md");
+  });
+
+  it("forwards native props to the root and to each part", () => {
+    render(() => (
+      <VectorPad.Root class="offset" data-testid="pad">
+        <VectorPad.Control title="Drag me">
+          <VectorPad.Thumb class="knob" />
+        </VectorPad.Control>
+      </VectorPad.Root>
+    ));
+    expect(part("root").className).toBe("offset");
+    expect(part("root").dataset.testid).toBe("pad");
+    expect(part("control").title).toBe("Drag me");
+    expect(part("thumb").className).toBe("knob");
+  });
+
+  it("nests the grid, the crosshair and the handle in the pad", () => {
+    render(() => <Demo />);
+    for (const name of ["grid", "crosshair", "thumb"]) {
+      expect(part("control").contains(part(name)), name).toBe(true);
+    }
+    expect(part("grid").getAttribute("aria-hidden")).toBe("true");
+  });
+
+  it("makes the handle a slider named by the label that says both values", () => {
+    render(() => <Demo defaultValue={{ x: 20, y: -10 }} />);
+    expect(thumb()).toBe(part("thumb"));
+    expect(thumb().getAttribute("aria-labelledby")).toBe(part("label").id);
+    expect(spoken()).toBe("X 20, Y -10");
+    expect(screen.getByRole("group", { name: "Offset" })).toBe(part("root"));
+    expect(part("root").style.getPropertyValue("--vector-pad-x")).toBe("60%");
+    expect(part("root").style.getPropertyValue("--vector-pad-y")).toBe("55%");
+  });
+
+  it("lets the consumer word the spoken value", () => {
+    render(() => <Demo getAriaValueText={({ x, y }) => `${x} a la derecha, ${y} arriba`} />);
+    expect(spoken()).toBe("0 a la derecha, 0 arriba");
+  });
+
+  it("sets x and y where the pad is pressed, and follows a drag live, held at the edges", async () => {
+    const onValueChange = vi.fn();
+    const onValueChangeEnd = vi.fn();
+    render(() => <Demo onValueChange={onValueChange} onValueChangeEnd={onValueChangeEnd} />);
+    layOutPad();
+
+    pointer("pointerdown", part("control"), 150, 50);
+    await waitFor(() => expect(spoken()).toBe("X 50, Y 50"));
+    expect(part("thumb").hasAttribute("data-dragging")).toBe(true);
+
+    pointer("pointermove", document, 120, 140);
+    await waitFor(() => expect(spoken()).toBe("X 20, Y -40"));
+    await waitFor(() => expect(field("X").value).toBe("20"));
+    expect(field("Y").value).toBe("-40");
+    expect(onValueChangeEnd).not.toHaveBeenCalled();
+
+    // The pointer leaves the pad: the handle keeps following, held at the edge.
+    pointer("pointermove", document, 400, -300);
+    await waitFor(() => expect(spoken()).toBe("X 100, Y 100"));
+
+    pointer("pointerup", document, 400, -300);
+    await waitFor(() =>
+      expect(onValueChangeEnd).toHaveBeenCalledWith({ value: { x: 100, y: 100 } }),
+    );
+    expect(onValueChange.mock.calls.map(([details]) => details.value)).toEqual([
+      { x: 50, y: 50 },
+      { x: 20, y: -40 },
+      { x: 100, y: 100 },
+    ]);
+    await waitFor(() => expect(document.activeElement).toBe(thumb()));
+  });
+
+  it("puts the largest y at the bottom with invertY, while the handle still follows the pointer", async () => {
+    render(() => <Demo invertY />);
+    layOutPad();
+    pointer("pointerdown", part("control"), 150, 50);
+    await waitFor(() => expect(spoken()).toBe("X 50, Y -50"));
+    expect(part("root").style.getPropertyValue("--vector-pad-y")).toBe("25%");
+  });
+
+  it("moves one step per arrow, ten with Shift, and goes back to defaultValue on Home", async () => {
+    const user = userEvent.setup();
+    const onValueChangeEnd = vi.fn();
+    render(() => (
+      <Demo defaultValue={{ x: 10, y: 10 }} step={2} onValueChangeEnd={onValueChangeEnd} />
+    ));
+    await user.tab();
+    expect(document.activeElement).toBe(thumb());
+
+    await user.keyboard("{ArrowRight}{ArrowUp}");
+    await waitFor(() => expect(spoken()).toBe("X 12, Y 12"));
+    expect(onValueChangeEnd).toHaveBeenLastCalledWith({ value: { x: 12, y: 12 } });
+    await user.keyboard("{Shift>}{ArrowDown}{/Shift}");
+    await waitFor(() => expect(spoken()).toBe("X 12, Y -8"));
+    await user.keyboard("{ArrowLeft}");
+    await waitFor(() => expect(spoken()).toBe("X 10, Y -8"));
+    await user.keyboard("{Home}");
+    await waitFor(() => expect(spoken()).toBe("X 10, Y 10"));
+  });
+
+  it("goes back to defaultValue on a double-click on the pad", async () => {
+    const user = userEvent.setup();
+    render(() => <Demo defaultValue={{ x: 5, y: 5 }} />);
+    await user.tab();
+    await user.keyboard("{Shift>}{ArrowRight}{/Shift}");
+    await waitFor(() => expect(spoken()).toBe("X 15, Y 5"));
+    fireEvent.dblClick(part("control"));
+    await waitFor(() => expect(spoken()).toBe("X 5, Y 5"));
+  });
+
+  it("takes min, max and step per axis, in the handle and in the fields", async () => {
+    const user = userEvent.setup();
+    render(() => <Demo min={0} max={{ x: 10, y: 1 }} step={{ x: 1, y: 0.1 }} />);
+    expect(spoken()).toBe("X 5, Y 0.5");
+    expect(field("Y").getAttribute("aria-valuemax")).toBe("1");
+    await user.tab();
+    await user.keyboard("{ArrowUp}{ArrowUp}");
+    await waitFor(() => expect(spoken()).toBe("X 5, Y 0.7"));
+  });
+
+  it("names each field by its axis, and lets the consumer rename it", () => {
+    render(() => (
+      <VectorPad.Root>
+        <VectorPad.Input axis="x" label="Horizontal" />
+      </VectorPad.Root>
+    ));
+    expect(screen.getByRole("spinbutton", { name: "Horizontal" })).toBeDefined();
+  });
+
+  it("moves the handle from a field at once, kept in the range, and settles the text on commit", async () => {
+    const user = userEvent.setup({ delay: 20 });
+    render(() => <Demo step={5} />);
+
+    await user.clear(field("X"));
+    await user.type(field("X"), "32");
+    await waitFor(() => expect(spoken()).toBe("X 30, Y 0"));
+    // The text is left alone while typing…
+    expect(field("X").value).toBe("32");
+    // …and settles to the handle's value once committed.
+    await user.tab();
+    await waitFor(() => expect(field("X").value).toBe("30"));
+
+    await user.clear(field("Y"));
+    await user.type(field("Y"), "-250");
+    await waitFor(() => expect(spoken()).toBe("X 30, Y -100"));
+    await user.keyboard("{Enter}");
+    await waitFor(() => expect(field("Y").value).toBe("-100"));
+  });
+
+  it("steps the value with a field's arrow keys", async () => {
+    const user = userEvent.setup();
+    render(() => <Demo defaultValue={{ x: 0, y: 99 }} />);
+    await user.click(field("Y"));
+    await user.keyboard("{ArrowUp}{ArrowUp}");
+    await waitFor(() => expect(spoken()).toBe("X 0, Y 100"));
+  });
+
+  it("focuses the handle when the label is clicked", async () => {
+    const user = userEvent.setup();
+    render(() => <Demo />);
+    console.log("DBG", thumb().outerHTML);
+    await user.click(part("label"));
+    expect(document.activeElement).toBe(thumb());
+  });
+
+  it("follows a controlled value", async () => {
+    const [value, setValue] = createSignal<VectorPadValue>({ x: 30, y: 40 });
+    render(() => <Demo value={value()} />);
+    expect(spoken()).toBe("X 30, Y 40");
+    setValue({ x: -5, y: 6 });
+    await waitFor(() => expect(spoken()).toBe("X -5, Y 6"));
+    await waitFor(() => expect(field("X").value).toBe("-5"));
+  });
+
+  it("holds a controlled value the consumer does not change", async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    render(() => <Demo value={{ x: 30, y: 40 }} onValueChange={onValueChange} />);
+    await user.tab();
+    await user.keyboard("{ArrowRight}");
+    expect(onValueChange).toHaveBeenLastCalledWith({ value: { x: 31, y: 40 } });
+    expect(spoken()).toBe("X 30, Y 40");
+  });
+
+  it("disables the pad and the fields and takes the handle out of the tab order", () => {
+    render(() => <Demo defaultValue={{ x: 40, y: 40 }} disabled />);
+    layOutPad();
+    for (const name of ["root", "label", "control", "thumb"]) {
+      expect(part(name).hasAttribute("data-disabled"), name).toBe(true);
+    }
+    expect(thumb().hasAttribute("tabindex")).toBe(false);
+    expect(thumb().getAttribute("aria-disabled")).toBe("true");
+    expect(field("X").disabled).toBe(true);
+    pointer("pointerdown", part("control"), 0, 0);
+    fireEvent.keyDown(thumb(), { key: "ArrowRight" });
+    expect(spoken()).toBe("X 40, Y 40");
+  });
+
+  it("refuses a part outside a Root", () => {
+    expect(() => render(() => <VectorPad.Thumb />)).toThrow(/inside VectorPad.Root/);
+  });
+});

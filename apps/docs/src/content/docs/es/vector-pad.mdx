@@ -1,0 +1,289 @@
+---
+title: Vector Pad
+description: Permite fijar dos valores a la vez, x e y, arrastrando un tirador sobre un panel cuadrado, con un campo numérico para cada uno.
+group: Componentes
+order: 34
+component: VectorPad
+pkg: "@moderno-ui/react"
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import VectorPadDemo from "../../../examples/vector-pad/vector-pad.svelte";
+import baseReact from "../../../examples/vector-pad/react.tsx?raw";
+import baseVue from "../../../examples/vector-pad/vue.vue?raw";
+import baseSolid from "../../../examples/vector-pad/solid.tsx?raw";
+import baseSvelte from "../../../examples/vector-pad/vector-pad.svelte?raw";
+import VectorPadGridDemo from "../../../examples/vector-pad/grid/vector-pad-grid.svelte";
+import gridReact from "../../../examples/vector-pad/grid/react.tsx?raw";
+import gridVue from "../../../examples/vector-pad/grid/vue.vue?raw";
+import gridSolid from "../../../examples/vector-pad/grid/solid.tsx?raw";
+import gridSvelte from "../../../examples/vector-pad/grid/vector-pad-grid.svelte?raw";
+import VectorPadRangeDemo from "../../../examples/vector-pad/range/vector-pad-range.svelte";
+import rangeReact from "../../../examples/vector-pad/range/react.tsx?raw";
+import rangeVue from "../../../examples/vector-pad/range/vue.vue?raw";
+import rangeSolid from "../../../examples/vector-pad/range/solid.tsx?raw";
+import rangeSvelte from "../../../examples/vector-pad/range/vector-pad-range.svelte?raw";
+import VectorPadInvertYDemo from "../../../examples/vector-pad/invert-y/vector-pad-invert-y.svelte";
+import invertYReact from "../../../examples/vector-pad/invert-y/react.tsx?raw";
+import invertYVue from "../../../examples/vector-pad/invert-y/vue.vue?raw";
+import invertYSolid from "../../../examples/vector-pad/invert-y/solid.tsx?raw";
+import invertYSvelte from "../../../examples/vector-pad/invert-y/vector-pad-invert-y.svelte?raw";
+import VectorPadSizesDemo from "../../../examples/vector-pad/sizes/vector-pad-sizes.svelte";
+import sizesReact from "../../../examples/vector-pad/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/vector-pad/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/vector-pad/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/vector-pad/sizes/vector-pad-sizes.svelte?raw";
+import VectorPadDisabledDemo from "../../../examples/vector-pad/disabled/vector-pad-disabled.svelte";
+import disabledReact from "../../../examples/vector-pad/disabled/react.tsx?raw";
+import disabledVue from "../../../examples/vector-pad/disabled/vue.vue?raw";
+import disabledSolid from "../../../examples/vector-pad/disabled/solid.tsx?raw";
+import disabledSvelte from "../../../examples/vector-pad/disabled/vector-pad-disabled.svelte?raw";
+
+<FrameworkSelect locale="es" />
+
+<Preview
+  examples={{
+    react: baseReact,
+    vue: baseVue,
+    solid: baseSolid,
+    svelte: baseSvelte,
+  }}
+>
+  <VectorPadDemo client:visible />
+</Preview>
+
+## Instalación
+
+<Install pkg="@moderno-ui/react" />
+
+## Uso
+
+Vector Pad fija dos números a la vez, x e y. Úsalo para una posición, un desplazamiento o la dirección de una luz. El usuario arrastra el tirador sobre el panel cuadrado, o escribe cada número en su campo.
+
+**y crece hacia arriba**, como en una gráfica: la parte de arriba del panel es la y más grande.
+
+<ForFramework fw="react">
+
+```tsx
+import { VectorPad } from "@moderno-ui/react";
+```
+
+```tsx
+<VectorPad.Root value={offset} onValueChange={(details) => setOffset(details.value)}>
+  <VectorPad.Label>Desplazamiento</VectorPad.Label>
+  <VectorPad.Control>
+    <VectorPad.Thumb />
+  </VectorPad.Control>
+  <VectorPad.Input axis="x" />
+  <VectorPad.Input axis="y" />
+</VectorPad.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { VectorPad } from "@moderno-ui/vue";
+```
+
+```vue
+<VectorPad.Root v-model="offset">
+  <VectorPad.Label>Desplazamiento</VectorPad.Label>
+  <VectorPad.Control>
+    <VectorPad.Thumb />
+  </VectorPad.Control>
+  <VectorPad.Input axis="x" />
+  <VectorPad.Input axis="y" />
+</VectorPad.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { VectorPad } from "@moderno-ui/svelte";
+```
+
+```svelte
+<VectorPad.Root bind:value={offset}>
+  <VectorPad.Label>Desplazamiento</VectorPad.Label>
+  <VectorPad.Control>
+    <VectorPad.Thumb />
+  </VectorPad.Control>
+  <VectorPad.Input axis="x" />
+  <VectorPad.Input axis="y" />
+</VectorPad.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { VectorPad } from "@moderno-ui/solid";
+```
+
+```tsx
+<VectorPad.Root value={offset()} onValueChange={(details) => setOffset(details.value)}>
+  <VectorPad.Label>Desplazamiento</VectorPad.Label>
+  <VectorPad.Control>
+    <VectorPad.Thumb />
+  </VectorPad.Control>
+  <VectorPad.Input axis="x" />
+  <VectorPad.Input axis="y" />
+</VectorPad.Root>
+```
+
+</ForFramework>
+
+El valor es `{ x, y }`. Va de -100 a 100 en cada eje y empieza en el centro, `{ x: 0, y: 0 }`.
+
+## Referencia de la API
+
+### VectorPad.Root
+
+<PropsTable component="VectorPad" />
+
+| Prop               | Tipo                                     | Por defecto      | Descripción                                                                   |
+| ------------------ | ---------------------------------------- | ---------------- | ----------------------------------------------------------------------------- |
+| `value`            | `{ x: number; y: number }`               | —                | Valor controlado.                                                             |
+| `defaultValue`     | `{ x: number; y: number }`               | centro del rango | Valor inicial cuando no está controlado. Home y un doble clic vuelven aquí.   |
+| `onValueChange`    | `(details: { value: { x, y } }) => void` | —                | Se llama mientras cambia el valor.                                            |
+| `onValueChangeEnd` | `(details: { value: { x, y } }) => void` | —                | Se llama una vez, cuando el usuario suelta o una tecla fija el valor.         |
+| `min`              | `number \| { x: number; y: number }`     | `-100`           | Valor más pequeño, para los dos ejes o por eje.                               |
+| `max`              | `number \| { x: number; y: number }`     | `100`            | Valor más grande, para los dos ejes o por eje.                                |
+| `step`             | `number \| { x: number; y: number }`     | `1`              | Cuánto avanza cada paso, para los dos ejes o por eje.                         |
+| `invertY`          | `boolean`                                | `false`          | Hace que y crezca hacia abajo, como en pantalla. El tirador sigue al puntero. |
+| `size`             | `"sm" \| "md" \| "lg"`                   | `"md"`           | El tamaño del panel, igual a los tamaños de Field.                            |
+| `disabled`         | `boolean`                                | `false`          | Atenúa el panel y los campos e ignora la entrada.                             |
+| `readOnly`         | `boolean`                                | `false`          | Muestra el valor pero ignora la entrada.                                      |
+| `invalid`          | `boolean`                                | `false`          | Marca el valor como incorrecto.                                               |
+| `getAriaValueText` | `(value: { x, y }) => string`            | `"X 20, Y -10"`  | Lo que dice un lector de pantalla para un valor.                              |
+
+En Vue, enlaza el valor con `v-model` y escucha con `@value-change`.
+
+### VectorPad.Input
+
+| Prop    | Tipo         | Por defecto  | Descripción                                 |
+| ------- | ------------ | ------------ | ------------------------------------------- |
+| `axis`  | `"x" \| "y"` | —            | Obligatorio. El eje que muestra este campo. |
+| `label` | `string`     | `"X"`, `"Y"` | El nombre del campo, dentro de su caja.     |
+
+### Partes
+
+| Parte                 | Elemento  | Descripción                                                    |
+| --------------------- | --------- | -------------------------------------------------------------- |
+| `VectorPad.Root`      | `<div>`   | Un grupo nombrado por la etiqueta. Lleva `data-size`.          |
+| `VectorPad.Label`     | `<label>` | Nombra el panel y los campos. Al hacer clic enfoca el tirador. |
+| `VectorPad.Control`   | `<div>`   | El panel cuadrado donde se pulsa o se arrastra.                |
+| `VectorPad.Grid`      | `<div>`   | Opcional. Líneas en cada cuarto del panel.                     |
+| `VectorPad.Crosshair` | `<div>`   | Opcional. Líneas que cruzan el centro del panel.               |
+| `VectorPad.Thumb`     | `<div>`   | El tirador, con `role="slider"`. Recibe el foco.               |
+| `VectorPad.Input`     | `<div>`   | Un campo numérico para un eje.                                 |
+
+### Teclado
+
+| Tecla                     | Acción                                               |
+| ------------------------- | ---------------------------------------------------- |
+| `ArrowRight`, `ArrowLeft` | Mueve el tirador un `step` a la derecha o izquierda. |
+| `ArrowUp`, `ArrowDown`    | Mueve el tirador un `step` arriba o abajo.           |
+| `Shift` + flecha          | Mueve el tirador diez pasos.                         |
+| `Home`                    | Vuelve a `defaultValue`.                             |
+
+### Atributos data
+
+| Atributo        | Valores                                              |
+| --------------- | ---------------------------------------------------- |
+| `data-dragging` | Mientras se arrastra el tirador, en todas las partes |
+| `data-disabled` | Con `disabled`, en todas las partes                  |
+| `data-readonly` | Con `readOnly`, en todas las partes                  |
+| `data-invalid`  | Con `invalid`, en todas las partes                   |
+| `data-size`     | En la raíz: `"sm"`, `"md"` o `"lg"`                  |
+
+## Ejemplos
+
+### Cuadrícula y cruz
+
+Añade `VectorPad.Grid` y `VectorPad.Crosshair` dentro del panel para ayudar a apuntar.
+
+<Preview
+  examples={{
+    react: gridReact,
+    vue: gridVue,
+    solid: gridSolid,
+    svelte: gridSvelte,
+  }}
+>
+  <VectorPadGridDemo client:visible />
+</Preview>
+
+### Rango y paso
+
+Define `min`, `max` y `step` para los dos ejes con un número, o por eje con `{ x, y }`. Aquí x llega a 200 e y a 100, de 10 en 10.
+
+<Preview
+  examples={{
+    react: rangeReact,
+    vue: rangeVue,
+    solid: rangeSolid,
+    svelte: rangeSvelte,
+  }}
+>
+  <VectorPadRangeDemo client:visible />
+</Preview>
+
+### Coordenadas de pantalla
+
+Pasa `invertY` cuando y deba crecer hacia abajo, como en CSS. Aquí `{ x: 0, y: 0 }` es la esquina de arriba a la izquierda.
+
+<Preview
+  examples={{
+    react: invertYReact,
+    vue: invertYVue,
+    solid: invertYSolid,
+    svelte: invertYSvelte,
+  }}
+>
+  <VectorPadInvertYDemo client:visible />
+</Preview>
+
+### Tamaños
+
+El panel y los campos siguen los tamaños de Field.
+
+<Preview
+  examples={{
+    react: sizesReact,
+    vue: sizesVue,
+    solid: sizesSolid,
+    svelte: sizesSvelte,
+  }}
+>
+  <VectorPadSizesDemo client:visible />
+</Preview>
+
+### Deshabilitado
+
+<Preview
+  examples={{
+    react: disabledReact,
+    vue: disabledVue,
+    solid: disabledSolid,
+    svelte: disabledSvelte,
+  }}
+>
+  <VectorPadDisabledDemo client:visible />
+</Preview>
+
+## Notas
+
+- Un lector de pantalla dice los dos valores ("X 20, Y -10"). Pasa `getAriaValueText` para decirlos en otro idioma, por ejemplo `({ x, y }) => \`${x} a la derecha, ${y} arriba\``.
+- Los campos numéricos son una alternativa completa con teclado: escribe un valor o cámbialo con las flechas.
+- Lo que el usuario escribe mueve el tirador al momento. El campo vuelve a mostrar el valor del tirador cuando el usuario sale de él o pulsa Enter: `250` pasa a ser `100`.
+- Un arrastre sigue cuando el puntero sale del panel; el tirador se queda en el borde.

@@ -56,6 +56,7 @@
   import ToggleGroup from "./sections/ToggleGroup.svelte";
   import Toolbar from "./sections/Toolbar.svelte";
   import Tooltip from "./sections/Tooltip.svelte";
+  import VectorPad from "./sections/VectorPad.svelte";
 
   let { open = false }: { open?: boolean } = $props();
 </script>
@@ -107,4 +108,5 @@
   <ToggleGroup {open} />
   <Toolbar {open} />
   <Tooltip {open} />
+  <VectorPad {open} />
 </main>

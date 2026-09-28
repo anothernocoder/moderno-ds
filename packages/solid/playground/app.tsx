@@ -56,6 +56,7 @@ import ToggleSection from "./sections/toggle.jsx";
 import ToggleGroupSection from "./sections/toggle-group.jsx";
 import ToolbarSection from "./sections/toolbar.jsx";
 import TooltipSection from "./sections/tooltip.jsx";
+import VectorPadSection from "./sections/vector-pad.jsx";
 
 export interface AppProps {
   /** Mount the Dialog + Select popovers open (exercises the portal/id path). */
@@ -111,6 +112,7 @@ export function App(props: AppProps) {
       <ToggleGroupSection open={props.open ?? false} />
       <ToolbarSection open={props.open ?? false} />
       <TooltipSection open={props.open ?? false} />
+      <VectorPadSection open={props.open ?? false} />
     </main>
   );
 }

@@ -1,0 +1,7 @@
+value VectorPad
+type VectorPadAxis
+type VectorPadInputProps
+type VectorPadRootProps
+type VectorPadSize
+type VectorPadValue
+type VectorPadValueChangeDetails
