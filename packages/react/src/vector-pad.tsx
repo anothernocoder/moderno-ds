@@ -113,7 +113,8 @@ function VectorPadThumb(props: VectorPadThumbProps) {
  * VectorPad.Input — one axis as an Ark NumberInput, kept in step with the
  * handle both ways. What the user types moves the handle at once, kept in
  * the range and on the step; the text itself is left alone while they type
- * and settles to the handle's value when they commit it (blur or Enter).
+ * and settles to the handle's value when they commit it (blur or Enter),
+ * which also ends the change the field made (`onValueChangeEnd`).
  */
 function VectorPadInput({ axis, label, ...props }: VectorPadInputProps) {
   const { api, size, disabled, readOnly, invalid } = useVectorPadContext();
@@ -139,6 +140,7 @@ function VectorPadInput({ axis, label, ...props }: VectorPadInputProps) {
   function handleValueCommit() {
     setText(String(axisValue));
     setTextValue(axisValue);
+    api.endChange();
   }
 
   return (

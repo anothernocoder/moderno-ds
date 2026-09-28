@@ -60,6 +60,9 @@ export function connect<T extends PropTypes>(
     reset() {
       send({ type: "VALUE.RESET" });
     },
+    endChange() {
+      send({ type: "VALUE.END" });
+    },
 
     getRootProps() {
       return normalize.element({

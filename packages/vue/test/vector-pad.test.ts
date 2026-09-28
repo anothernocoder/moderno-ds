@@ -279,6 +279,37 @@ describe("VectorPad (Vue)", () => {
     await waitFor(() => expect(spoken()).toBe("X 0, Y 100"));
   });
 
+  it("ends a field's change when the field is committed, and only when it moved the value", async () => {
+    const user = userEvent.setup({ delay: 20 });
+    const onValueChange = vi.fn();
+    const onValueChangeEnd = vi.fn();
+    render(Demo, { props: { step: 5, onValueChange, onValueChangeEnd } });
+
+    // Typing moves the handle; Enter ends the change, once.
+    await user.clear(field("X"));
+    await user.type(field("X"), "30");
+    await user.keyboard("{Enter}");
+    await waitFor(() => expect(onValueChangeEnd).toHaveBeenCalledTimes(1));
+    expect(onValueChangeEnd).toHaveBeenLastCalledWith({ value: { x: 30, y: 0 } });
+
+    // Leaving X, which changed nothing since, ends nothing. A field's arrow
+    // keys change the value; leaving the field ends that change.
+    await user.tab();
+    expect(document.activeElement).toBe(field("Y"));
+    await user.keyboard("{ArrowUp}");
+    await waitFor(() => expect(spoken()).toBe("X 30, Y 5"));
+    expect(onValueChangeEnd).toHaveBeenCalledTimes(1);
+    await user.tab();
+    await waitFor(() => expect(onValueChangeEnd).toHaveBeenCalledTimes(2));
+    expect(onValueChangeEnd).toHaveBeenLastCalledWith({ value: { x: 30, y: 5 } });
+
+    // Passing through a field without changing it ends nothing.
+    await user.click(field("X"));
+    await user.tab();
+    expect(onValueChangeEnd).toHaveBeenCalledTimes(2);
+    expect(onValueChange).toHaveBeenLastCalledWith({ value: { x: 30, y: 5 } });
+  });
+
   it("focuses the handle when the label is clicked", async () => {
     const user = userEvent.setup();
     render(Demo);

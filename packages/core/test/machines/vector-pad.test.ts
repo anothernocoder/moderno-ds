@@ -131,6 +131,48 @@ describe("vectorPad machine: value and range", () => {
     expect(run.api.value).toEqual({ x: 30, y: 50 });
   });
 
+  it("ends a change made with setValue or setAxisValue on endChange, once, with the value set last", async () => {
+    const onValueChangeEnd = vi.fn();
+    const { run } = start({ step: 10, onValueChangeEnd });
+
+    run.api.setAxisValue("x", 33);
+    run.api.setAxisValue("x", 47);
+    await settle();
+    expect(onValueChangeEnd).not.toHaveBeenCalled();
+
+    run.api.endChange();
+    await settle();
+    expect(onValueChangeEnd).toHaveBeenCalledOnce();
+    expect(onValueChangeEnd).toHaveBeenLastCalledWith({ value: { x: 50, y: 0 } });
+
+    // Nothing set since: nothing to end.
+    run.api.endChange();
+    await settle();
+    expect(onValueChangeEnd).toHaveBeenCalledOnce();
+  });
+
+  it("ends nothing when setValue left the value as it was", async () => {
+    const onValueChangeEnd = vi.fn();
+    const { run } = start({ onValueChangeEnd });
+    run.api.setValue({ x: 0, y: 0 });
+    run.api.endChange();
+    await settle();
+    expect(onValueChangeEnd).not.toHaveBeenCalled();
+  });
+
+  it("does not end a field's change twice when a key on the handle ended it first", async () => {
+    const onValueChangeEnd = vi.fn();
+    const { run } = start({ onValueChangeEnd });
+    run.api.setAxisValue("y", 20);
+    await settle();
+    await key(run, "ArrowRight");
+    expect(onValueChangeEnd).toHaveBeenLastCalledWith({ value: { x: 1, y: 20 } });
+
+    run.api.endChange();
+    await settle();
+    expect(onValueChangeEnd).toHaveBeenCalledOnce();
+  });
+
   it("reports a change only when the value moves", async () => {
     const onValueChange = vi.fn();
     const { run } = start({ onValueChange });

@@ -17,8 +17,11 @@ A press anywhere on the pad moves the handle there, a drag follows the pointer
 live and stays at the edge when it leaves the pad, and mouse, touch and pen all
 work. The handle is a `role="slider"` that says both values ("X 20, Y -10",
 `getAriaValueText` rewords it); the arrows move it one step (ten with Shift),
-and Home or a double-click return it to `defaultValue`. The root takes `size`
-(`sm`, `md`, `lg`, matched to the Field sizes).
+and Home or a double-click return it to `defaultValue`. `onValueChangeEnd`
+reports each change once it ends: the pointer lets go, a key on the handle sets
+the value, or a number field that changed it is committed (Enter, or leaving
+the field). The root takes `size` (`sm`, `md`, `lg`, matched to the Field
+sizes).
 
-`@moderno-ui/core` gains the first machine of its own (ADR-0010), `vectorPad`
+`@moderno-ui/core` gains a machine of its own (ADR-0010), `vectorPad`
 (`vectorPad.machine`, `vectorPad.connect`, …), and `vectorPadRecipe`.

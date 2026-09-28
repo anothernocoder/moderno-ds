@@ -1,7 +1,7 @@
-import { createMachine } from "@zag-js/core";
+import { createMachine, type Params } from "@zag-js/core";
 import { raf, trackPointerMove } from "@zag-js/dom-query";
 import * as dom from "./vector-pad.dom.js";
-import type { VectorPadSchema } from "./vector-pad.types.js";
+import type { VectorPadSchema, VectorPadValue } from "./vector-pad.types.js";
 import {
   DEFAULT_MAX,
   DEFAULT_MIN,
@@ -16,6 +16,29 @@ import {
   vectorPadValueText,
 } from "./vector-pad.utils.js";
 
+type VectorPadParams = Params<VectorPadSchema>;
+
+/**
+ * Remembers a value set by `setValue` or `setAxisValue` until `endChange`
+ * reports it: from the first set that moves the value, then every set after.
+ */
+function keepUnendedValue(
+  refs: VectorPadParams["refs"],
+  current: VectorPadValue,
+  next: VectorPadValue,
+) {
+  if (refs.get("unendedValue") || !isSameValue(current, next)) refs.set("unendedValue", next);
+}
+
+/** Reports the end of the change in progress with `value`; nothing set before it is left to end. */
+function endChangeWith(
+  { refs, prop }: Pick<VectorPadParams, "refs" | "prop">,
+  value: VectorPadValue,
+) {
+  refs.set("unendedValue", null);
+  prop("onValueChangeEnd")?.({ value });
+}
+
 /**
  * VectorPad: a square pad whose handle sets two values at once.
  *
@@ -25,6 +48,9 @@ import {
  *   leaves the pad keeps moving the handle, held at the pad's edge. Letting
  *   go ends the change (`onValueChangeEnd`) and leaves the handle `focused`.
  * - The arrow keys, Home and a double-click on the pad work in any state.
+ * - `setValue` and `setAxisValue` (the number fields) change the value
+ *   without ending the change; `endChange` (a field's commit) ends it, once,
+ *   and only when they moved it.
  *
  * Every value the machine sets is kept in the range and on the step.
  */
@@ -61,7 +87,7 @@ export const machine = createMachine<VectorPadSchema>({
   },
 
   refs() {
-    return { grabOffset: null };
+    return { grabOffset: null, unendedValue: null };
   },
 
   computed: {
@@ -77,6 +103,7 @@ export const machine = createMachine<VectorPadSchema>({
     "VALUE.SET": { actions: ["setValue"] },
     "VALUE.SET_AXIS": { actions: ["setAxisValue"] },
     "VALUE.RESET": { actions: ["resetValue"] },
+    "VALUE.END": { actions: ["endSetValue"] },
     "THUMB.ARROW": { actions: ["moveByArrow"] },
     "THUMB.HOME": { actions: ["resetValueAndEnd"] },
     "CONTROL.DOUBLE_CLICK": { actions: ["resetValueAndEnd"] },
@@ -143,25 +170,36 @@ export const machine = createMachine<VectorPadSchema>({
       clearGrabOffset({ refs }) {
         refs.set("grabOffset", null);
       },
-      setValue({ context, event, computed }) {
-        context.set("value", snapValue(event.value, computed("bounds")));
+      setValue({ context, event, computed, refs }) {
+        const next = snapValue(event.value, computed("bounds"));
+        keepUnendedValue(refs, context.get("value"), next);
+        context.set("value", next);
       },
-      setAxisValue({ context, event, computed }) {
+      setAxisValue({ context, event, computed, refs }) {
         const axis = event.axis as "x" | "y";
-        const next = snapAxisValue(event.value, axis, computed("bounds"));
-        context.set("value", { ...context.get("value"), [axis]: next });
+        const current = context.get("value");
+        const next = { ...current, [axis]: snapAxisValue(event.value, axis, computed("bounds")) };
+        keepUnendedValue(refs, current, next);
+        context.set("value", next);
+      },
+      // A field's commit: the change it made is over. It reports the value
+      // set last, since a binding may not have applied that set yet.
+      endSetValue(params) {
+        const value = params.refs.get("unendedValue");
+        if (value) endChangeWith(params, value);
       },
       resetValue({ context, prop }) {
         context.set("value", prop("defaultValue"));
       },
       // A key or a double-click is a whole change: it ends as it starts. The
       // value is reported as set here, since a binding may apply the set later.
-      resetValueAndEnd({ context, prop }) {
-        const next = prop("defaultValue");
-        context.set("value", next);
-        prop("onValueChangeEnd")?.({ value: next });
+      resetValueAndEnd(params) {
+        const next = params.prop("defaultValue");
+        params.context.set("value", next);
+        endChangeWith(params, next);
       },
-      moveByArrow({ context, event, computed, prop }) {
+      moveByArrow(params) {
+        const { context, event, computed, prop } = params;
         const next = valueAfterArrow(
           context.get("value"),
           event.arrow,
@@ -170,10 +208,10 @@ export const machine = createMachine<VectorPadSchema>({
           prop("invertY"),
         );
         context.set("value", next);
-        prop("onValueChangeEnd")?.({ value: next });
+        endChangeWith(params, next);
       },
-      invokeOnChangeEnd({ context, prop }) {
-        prop("onValueChangeEnd")?.({ value: context.get("value") });
+      invokeOnChangeEnd(params) {
+        endChangeWith(params, params.context.get("value"));
       },
       focusThumb({ scope }) {
         raf(() => dom.getThumbEl(scope)?.focus({ preventScroll: true }));

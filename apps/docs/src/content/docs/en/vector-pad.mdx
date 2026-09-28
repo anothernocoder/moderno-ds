@@ -5,7 +5,7 @@ group: Components
 order: 34
 component: VectorPad
 pkg: "@moderno-ui/react"
-agentPropsHash: "sha256:51e66107206ddf38c525ddcdb319137c3d73f2216b7d77ed2cfbd038d9a92a8b"
+agentPropsHash: "sha256:9ce78781177f3d9fb607acb280f6105a0c2862aaea6cb717af1638f95189b32c"
 agent:
   intent: Let the user set two numbers at once, x and y, by dragging a handle on a square pad, or by typing them in the number field of each axis.
   whenToUse: A 2D value in a creative tool — a position, a shadow's offset, a light's direction, a focal point — where the user benefits from seeing both values as one spot.
@@ -21,6 +21,7 @@ agent:
     - "min, max and step take one number for both axes, or { x, y } for each. The range defaults to -100 to 100, and defaultValue to the centre of it."
     - 'Put VectorPad.Grid, VectorPad.Crosshair and VectorPad.Thumb inside VectorPad.Control. Add one VectorPad.Input per axis after it, with axis="x" or axis="y".'
     - "Home and a double-click on the pad go back to defaultValue."
+    - "Save or push an undo step in onValueChangeEnd, not onValueChange. It fires once per change: when the pointer lets go, when a key on the handle sets the value, and when a number field that changed the value is committed (Enter, or leaving the field)."
     - "In Vue, bind the value with v-model. In Svelte, bind:value works."
   theming:
     - "The pad is --background with an --input edge and --shadow-sm; the grid lines are --border and the crosshair --muted-foreground. The handle is --background with a --primary edge. Do not pass a hex."
@@ -170,21 +171,21 @@ The value is `{ x, y }`. It runs from -100 to 100 on each axis and starts at the
 
 <PropsTable component="VectorPad" />
 
-| Prop               | Type                                     | Default         | Description                                                                |
-| ------------------ | ---------------------------------------- | --------------- | -------------------------------------------------------------------------- |
-| `value`            | `{ x: number; y: number }`               | —               | Controlled value.                                                          |
-| `defaultValue`     | `{ x: number; y: number }`               | centre of range | Value at first when uncontrolled. Home and a double-click return here.     |
-| `onValueChange`    | `(details: { value: { x, y } }) => void` | —               | Called while the value changes.                                            |
-| `onValueChangeEnd` | `(details: { value: { x, y } }) => void` | —               | Called once, when the user lets go or a key sets the value.                |
-| `min`              | `number \| { x: number; y: number }`     | `-100`          | Smallest value, for both axes or per axis.                                 |
-| `max`              | `number \| { x: number; y: number }`     | `100`           | Largest value, for both axes or per axis.                                  |
-| `step`             | `number \| { x: number; y: number }`     | `1`             | How far one move goes, for both axes or per axis.                          |
-| `invertY`          | `boolean`                                | `false`         | Makes y grow downward, as on screen. The handle still follows the pointer. |
-| `size`             | `"sm" \| "md" \| "lg"`                   | `"md"`          | The pad's size, matched to the Field sizes.                                |
-| `disabled`         | `boolean`                                | `false`         | Dims the pad and the fields and ignores input.                             |
-| `readOnly`         | `boolean`                                | `false`         | Shows the value but ignores input.                                         |
-| `invalid`          | `boolean`                                | `false`         | Marks the value as wrong.                                                  |
-| `getAriaValueText` | `(value: { x, y }) => string`            | `"X 20, Y -10"` | What a screen reader says for a value.                                     |
+| Prop               | Type                                     | Default         | Description                                                                                                                                                       |
+| ------------------ | ---------------------------------------- | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `value`            | `{ x: number; y: number }`               | —               | Controlled value.                                                                                                                                                 |
+| `defaultValue`     | `{ x: number; y: number }`               | centre of range | Value at first when uncontrolled. Home and a double-click return here.                                                                                            |
+| `onValueChange`    | `(details: { value: { x, y } }) => void` | —               | Called while the value changes.                                                                                                                                   |
+| `onValueChangeEnd` | `(details: { value: { x, y } }) => void` | —               | Called once a change ends: the pointer lets go, a key on the handle sets the value, or a number field that changed it is committed (Enter, or leaving the field). |
+| `min`              | `number \| { x: number; y: number }`     | `-100`          | Smallest value, for both axes or per axis.                                                                                                                        |
+| `max`              | `number \| { x: number; y: number }`     | `100`           | Largest value, for both axes or per axis.                                                                                                                         |
+| `step`             | `number \| { x: number; y: number }`     | `1`             | How far one move goes, for both axes or per axis.                                                                                                                 |
+| `invertY`          | `boolean`                                | `false`         | Makes y grow downward, as on screen. The handle still follows the pointer.                                                                                        |
+| `size`             | `"sm" \| "md" \| "lg"`                   | `"md"`          | The pad's size, matched to the Field sizes.                                                                                                                       |
+| `disabled`         | `boolean`                                | `false`         | Dims the pad and the fields and ignores input.                                                                                                                    |
+| `readOnly`         | `boolean`                                | `false`         | Shows the value but ignores input.                                                                                                                                |
+| `invalid`          | `boolean`                                | `false`         | Marks the value as wrong.                                                                                                                                         |
+| `getAriaValueText` | `(value: { x, y }) => string`            | `"X 20, Y -10"` | What a screen reader says for a value.                                                                                                                            |
 
 In Vue, bind the value with `v-model` and listen with `@value-change`.
 

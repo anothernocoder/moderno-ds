@@ -200,7 +200,8 @@ const VectorPadThumbImpl = definePart("Thumb", "div", (api) => api.getThumbProps
  * VectorPad.Input — one axis as an Ark NumberInput, kept in step with the
  * handle both ways. What the user types moves the handle at once, kept in
  * the range and on the step; the text itself is left alone while they type
- * and settles to the handle's value when they commit it (blur or Enter).
+ * and settles to the handle's value when they commit it (blur or Enter),
+ * which also ends the change the field made (`onValueChangeEnd`).
  * The field is built with `useNumberInput`, the only way Ark-Vue passes
  * `onValueCommit` through.
  */
@@ -235,6 +236,7 @@ const VectorPadInputImpl = defineComponent({
     function handleValueCommit() {
       text.value = String(axisValue.value);
       textValue.value = axisValue.value;
+      context.api.value.endChange();
     }
 
     const numberInput = useNumberInput(

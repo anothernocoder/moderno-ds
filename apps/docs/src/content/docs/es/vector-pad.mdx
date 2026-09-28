@@ -150,21 +150,21 @@ El valor es `{ x, y }`. Va de -100 a 100 en cada eje y empieza en el centro, `{ 
 
 <PropsTable component="VectorPad" />
 
-| Prop               | Tipo                                     | Por defecto      | Descripción                                                                   |
-| ------------------ | ---------------------------------------- | ---------------- | ----------------------------------------------------------------------------- |
-| `value`            | `{ x: number; y: number }`               | —                | Valor controlado.                                                             |
-| `defaultValue`     | `{ x: number; y: number }`               | centro del rango | Valor inicial cuando no está controlado. Home y un doble clic vuelven aquí.   |
-| `onValueChange`    | `(details: { value: { x, y } }) => void` | —                | Se llama mientras cambia el valor.                                            |
-| `onValueChangeEnd` | `(details: { value: { x, y } }) => void` | —                | Se llama una vez, cuando el usuario suelta o una tecla fija el valor.         |
-| `min`              | `number \| { x: number; y: number }`     | `-100`           | Valor más pequeño, para los dos ejes o por eje.                               |
-| `max`              | `number \| { x: number; y: number }`     | `100`            | Valor más grande, para los dos ejes o por eje.                                |
-| `step`             | `number \| { x: number; y: number }`     | `1`              | Cuánto avanza cada paso, para los dos ejes o por eje.                         |
-| `invertY`          | `boolean`                                | `false`          | Hace que y crezca hacia abajo, como en pantalla. El tirador sigue al puntero. |
-| `size`             | `"sm" \| "md" \| "lg"`                   | `"md"`           | El tamaño del panel, igual a los tamaños de Field.                            |
-| `disabled`         | `boolean`                                | `false`          | Atenúa el panel y los campos e ignora la entrada.                             |
-| `readOnly`         | `boolean`                                | `false`          | Muestra el valor pero ignora la entrada.                                      |
-| `invalid`          | `boolean`                                | `false`          | Marca el valor como incorrecto.                                               |
-| `getAriaValueText` | `(value: { x, y }) => string`            | `"X 20, Y -10"`  | Lo que dice un lector de pantalla para un valor.                              |
+| Prop               | Tipo                                     | Por defecto      | Descripción                                                                                                                                                                                  |
+| ------------------ | ---------------------------------------- | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `value`            | `{ x: number; y: number }`               | —                | Valor controlado.                                                                                                                                                                            |
+| `defaultValue`     | `{ x: number; y: number }`               | centro del rango | Valor inicial cuando no está controlado. Home y un doble clic vuelven aquí.                                                                                                                  |
+| `onValueChange`    | `(details: { value: { x, y } }) => void` | —                | Se llama mientras cambia el valor.                                                                                                                                                           |
+| `onValueChangeEnd` | `(details: { value: { x, y } }) => void` | —                | Se llama una vez al terminar un cambio: al soltar el puntero, cuando una tecla sobre el control fija el valor, o al confirmar un campo numérico que lo cambió (Enter, o al salir del campo). |
+| `min`              | `number \| { x: number; y: number }`     | `-100`           | Valor más pequeño, para los dos ejes o por eje.                                                                                                                                              |
+| `max`              | `number \| { x: number; y: number }`     | `100`            | Valor más grande, para los dos ejes o por eje.                                                                                                                                               |
+| `step`             | `number \| { x: number; y: number }`     | `1`              | Cuánto avanza cada paso, para los dos ejes o por eje.                                                                                                                                        |
+| `invertY`          | `boolean`                                | `false`          | Hace que y crezca hacia abajo, como en pantalla. El tirador sigue al puntero.                                                                                                                |
+| `size`             | `"sm" \| "md" \| "lg"`                   | `"md"`           | El tamaño del panel, igual a los tamaños de Field.                                                                                                                                           |
+| `disabled`         | `boolean`                                | `false`          | Atenúa el panel y los campos e ignora la entrada.                                                                                                                                            |
+| `readOnly`         | `boolean`                                | `false`          | Muestra el valor pero ignora la entrada.                                                                                                                                                     |
+| `invalid`          | `boolean`                                | `false`          | Marca el valor como incorrecto.                                                                                                                                                              |
+| `getAriaValueText` | `(value: { x, y }) => string`            | `"X 20, Y -10"`  | Lo que dice un lector de pantalla para un valor.                                                                                                                                             |
 
 En Vue, enlaza el valor con `v-model` y escucha con `@value-change`.
 

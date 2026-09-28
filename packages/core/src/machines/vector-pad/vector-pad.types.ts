@@ -63,7 +63,11 @@ export interface VectorPadProps extends DirectionProperty, CommonProperties {
   getAriaValueText?: ((value: VectorPadValue) => string) | undefined;
   /** Called while the value changes. */
   onValueChange?: ((details: VectorPadValueChangeDetails) => void) | undefined;
-  /** Called once a change ends: the pointer lets go, or a key sets the value. */
+  /**
+   * Called once a change ends: the pointer lets go, a key on the handle sets
+   * the value, or a number field that changed it is committed (Enter, or
+   * leaving the field).
+   */
   onValueChangeEnd?: ((details: VectorPadValueChangeDetails) => void) | undefined;
   /** The accessible name of the pad, when it has no Label. */
   "aria-label"?: string | undefined;
@@ -86,6 +90,8 @@ export interface VectorPadSchema {
   refs: {
     /** Where the pointer grabbed the handle, from its centre, in px: a drag keeps it there. */
     grabOffset: { x: number; y: number } | null;
+    /** The value `setValue` / `setAxisValue` set last that no change end has reported yet. */
+    unendedValue: VectorPadValue | null;
   };
   action: string;
   event: EventObject;
@@ -110,6 +116,11 @@ export interface VectorPadApi<T extends PropTypes = PropTypes> {
   setAxisValue(axis: VectorPadAxis, value: number): void;
   /** Goes back to `defaultValue`. */
   reset(): void;
+  /**
+   * Ends a change made with `setValue` or `setAxisValue`: calls
+   * `onValueChangeEnd` once, and only if they moved the value.
+   */
+  endChange(): void;
   getRootProps(): T["element"];
   getLabelProps(): T["label"];
   getControlProps(): T["element"];

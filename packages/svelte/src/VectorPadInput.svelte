@@ -2,7 +2,8 @@
   VectorPad.Input — one axis as an Ark NumberInput, kept in step with the
   handle both ways. What the user types moves the handle at once, kept in the
   range and on the step; the text itself is left alone while they type and
-  settles to the handle's value when they commit it (blur or Enter).
+  settles to the handle's value when they commit it (blur or Enter),
+  which also ends the change the field made (`onValueChangeEnd`).
 
   The field is built with `useNumberInput` and handed to Ark's RootProvider,
   so the text is always the one set here: Ark's own Root would keep what the
@@ -44,6 +45,7 @@
   function handleValueCommit() {
     text = String(axisValue);
     textValue = axisValue;
+    context.api.endChange();
   }
 
   const numberInput = useNumberInput(() => ({
