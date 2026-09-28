@@ -54,6 +54,7 @@
   import Toast from "./sections/Toast.svelte";
   import Toggle from "./sections/Toggle.svelte";
   import ToggleGroup from "./sections/ToggleGroup.svelte";
+  import Toolbar from "./sections/Toolbar.svelte";
   import Tooltip from "./sections/Tooltip.svelte";
 
   let { open = false }: { open?: boolean } = $props();
@@ -104,5 +105,6 @@
   <Toast {open} />
   <Toggle {open} />
   <ToggleGroup {open} />
+  <Toolbar {open} />
   <Tooltip {open} />
 </main>

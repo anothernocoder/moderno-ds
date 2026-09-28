@@ -1,0 +1,269 @@
+---
+title: Toolbar
+description: Una barra de botones, toggles y grupos, como la barra superior de un editor.
+group: Componentes
+order: 47
+component: Toolbar
+pkg: "@moderno-ui/react"
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ToolbarDemo from "../../../examples/toolbar/toolbar.svelte";
+import baseReact from "../../../examples/toolbar/react.tsx?raw";
+import baseVue from "../../../examples/toolbar/vue.vue?raw";
+import baseSolid from "../../../examples/toolbar/solid.tsx?raw";
+import baseSvelte from "../../../examples/toolbar/toolbar.svelte?raw";
+import ToolbarVerticalDemo from "../../../examples/toolbar/vertical/toolbar-vertical.svelte";
+import verticalReact from "../../../examples/toolbar/vertical/react.tsx?raw";
+import verticalVue from "../../../examples/toolbar/vertical/vue.vue?raw";
+import verticalSolid from "../../../examples/toolbar/vertical/solid.tsx?raw";
+import verticalSvelte from "../../../examples/toolbar/vertical/toolbar-vertical.svelte?raw";
+import ToolbarSizesDemo from "../../../examples/toolbar/sizes/toolbar-sizes.svelte";
+import sizesReact from "../../../examples/toolbar/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/toolbar/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/toolbar/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/toolbar/sizes/toolbar-sizes.svelte?raw";
+import ToolbarDisabledDemo from "../../../examples/toolbar/disabled/toolbar-disabled.svelte";
+import disabledReact from "../../../examples/toolbar/disabled/react.tsx?raw";
+import disabledVue from "../../../examples/toolbar/disabled/vue.vue?raw";
+import disabledSolid from "../../../examples/toolbar/disabled/solid.tsx?raw";
+import disabledSvelte from "../../../examples/toolbar/disabled/toolbar-disabled.svelte?raw";
+import ToolbarMenuDemo from "../../../examples/toolbar/menu/toolbar-menu.svelte";
+import menuReact from "../../../examples/toolbar/menu/react.tsx?raw";
+import menuVue from "../../../examples/toolbar/menu/vue.vue?raw";
+import menuSolid from "../../../examples/toolbar/menu/solid.tsx?raw";
+import menuSvelte from "../../../examples/toolbar/menu/toolbar-menu.svelte?raw";
+import ToolbarReadoutDemo from "../../../examples/toolbar/readout/toolbar-readout.svelte";
+import readoutReact from "../../../examples/toolbar/readout/react.tsx?raw";
+import readoutVue from "../../../examples/toolbar/readout/vue.vue?raw";
+import readoutSolid from "../../../examples/toolbar/readout/solid.tsx?raw";
+import readoutSvelte from "../../../examples/toolbar/readout/toolbar-readout.svelte?raw";
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
+  <ToolbarDemo client:visible />
+</Preview>
+
+## Instalación
+
+<Install pkg="@moderno-ui/react" />
+
+## Uso
+
+Una toolbar reúne los controles de un editor en una barra: deshacer, rehacer, estilo de texto, zoom. Con el teclado se llega a toda la barra con un solo Tab y se pasa de un elemento a otro con las flechas.
+
+<ForFramework fw="react">
+
+```tsx
+import { Toolbar } from "@moderno-ui/react";
+```
+
+```tsx
+<Toolbar.Root aria-label="Canvas tools">
+  <Toolbar.Button label="Undo" shortcut="⌘Z" onClick={undo}>
+    <UndoIcon />
+  </Toolbar.Button>
+  <Toolbar.Separator />
+  <Toolbar.Toggle label="Bold" pressed={bold} onPressedChange={setBold}>
+    <BoldIcon />
+  </Toolbar.Toggle>
+</Toolbar.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Toolbar } from "@moderno-ui/vue";
+```
+
+```vue
+<Toolbar.Root aria-label="Canvas tools">
+  <Toolbar.Button label="Undo" shortcut="⌘Z" @click="undo">
+    <UndoIcon />
+  </Toolbar.Button>
+  <Toolbar.Separator />
+  <Toolbar.Toggle v-model:pressed="bold" label="Bold">
+    <BoldIcon />
+  </Toolbar.Toggle>
+</Toolbar.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Toolbar } from "@moderno-ui/svelte";
+```
+
+```svelte
+<Toolbar.Root aria-label="Canvas tools">
+  <Toolbar.Button label="Undo" shortcut="⌘Z" onclick={undo}>
+    <UndoIcon />
+  </Toolbar.Button>
+  <Toolbar.Separator />
+  <Toolbar.Toggle label="Bold" bind:pressed={bold}>
+    <BoldIcon />
+  </Toolbar.Toggle>
+</Toolbar.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Toolbar } from "@moderno-ui/solid";
+```
+
+```tsx
+<Toolbar.Root aria-label="Canvas tools">
+  <Toolbar.Button label="Undo" shortcut="⌘Z" onClick={undo}>
+    <UndoIcon />
+  </Toolbar.Button>
+  <Toolbar.Separator />
+  <Toolbar.Toggle label="Bold" pressed={bold()} onPressedChange={setBold}>
+    <BoldIcon />
+  </Toolbar.Toggle>
+</Toolbar.Root>
+```
+
+</ForFramework>
+
+## Referencia de API
+
+### Toolbar.Root
+
+<PropsTable component="Toolbar" />
+
+| Prop          | Tipo                         | Por defecto    | Descripción                                                                      |
+| ------------- | ---------------------------- | -------------- | -------------------------------------------------------------------------------- |
+| `orientation` | `"horizontal" \| "vertical"` | `"horizontal"` | Pone los elementos en fila o en columna, y elige las flechas.                    |
+| `size`        | `"sm" \| "md" \| "lg"`       | `"md"`         | Alto de cada elemento: los tamaños de Button.                                    |
+| `dir`         | `"ltr" \| "rtl"`             | `"ltr"`        | Dirección del texto. En `rtl` se invierten las flechas izquierda y derecha.      |
+| `aria-label`  | `string`                     | —              | Nombra la toolbar para lectores de pantalla, como `"Canvas tools"`. Obligatorio. |
+
+### Toolbar.Button
+
+| Prop       | Tipo      | Por defecto | Descripción                                                                              |
+| ---------- | --------- | ----------- | ---------------------------------------------------------------------------------------- |
+| `label`    | `string`  | —           | Nombra un botón de solo icono. Es su `aria-label` y el texto de su tooltip.              |
+| `shortcut` | `string`  | —           | Un atajo de teclado que el tooltip muestra entre paréntesis tras el label.               |
+| `disabled` | `boolean` | `false`     | El botón sigue en el orden de las flechas y se anuncia deshabilitado, pero no hace nada. |
+
+Cualquier otra prop, como `onClick`, llega al `<button>`.
+
+### Toolbar.Toggle
+
+Acepta `label`, `shortcut` y `disabled` como `Toolbar.Button`, y además:
+
+| Prop              | Tipo                         | Por defecto | Descripción                                             |
+| ----------------- | ---------------------------- | ----------- | ------------------------------------------------------- |
+| `pressed`         | `boolean`                    | —           | Estado pulsado controlado. Úsalo con `onPressedChange`. |
+| `defaultPressed`  | `boolean`                    | `false`     | Estado pulsado inicial cuando no está controlado.       |
+| `onPressedChange` | `(pressed: boolean) => void` | —           | Se llama con el nuevo estado cuando se pulsa.           |
+
+En Vue, enlázalo con `v-model:pressed` o escucha `@pressed-change`. En Svelte funciona `bind:pressed`.
+
+### Toolbar.Group y Toolbar.Separator
+
+`Toolbar.Group` reúne elementos relacionados. Dale un `aria-label`, como `"Text style"`. `Toolbar.Separator` dibuja una línea entre grupos. Ninguno tiene props propias.
+
+### Partes
+
+| Parte               | Elemento   | Descripción                                                                                    |
+| ------------------- | ---------- | ---------------------------------------------------------------------------------------------- |
+| `Toolbar.Root`      | `<div>`    | `role="toolbar"` con `aria-orientation`. Lleva `data-size`.                                    |
+| `Toolbar.Button`    | `<button>` | Una acción. Con `label`, muestra un tooltip al pasar el ratón y al enfocarlo con el teclado.   |
+| `Toolbar.Toggle`    | `<button>` | Un botón que se queda pulsado, con `aria-pressed`.                                             |
+| `Toolbar.Group`     | `<div>`    | `role="group"`: elementos relacionados.                                                        |
+| `Toolbar.Separator` | `<div>`    | `role="separator"`, a lo ancho de la toolbar: vertical en una fila, horizontal en una columna. |
+
+Cualquier otro elemento dentro de la raíz, como el nivel de zoom, queda en la misma línea que los elementos.
+
+### Teclado
+
+| Tecla                      | Acción                                                                                    |
+| -------------------------- | ----------------------------------------------------------------------------------------- |
+| `Tab`                      | Entra en la toolbar, en el último elemento usado (el primero al empezar), y sale de ella. |
+| `ArrowRight` / `ArrowLeft` | Elemento siguiente / anterior en una fila. Da la vuelta en los extremos.                  |
+| `ArrowDown` / `ArrowUp`    | Elemento siguiente / anterior en una columna. Da la vuelta en los extremos.               |
+| `Home` / `End`             | Primer / último elemento.                                                                 |
+| `Enter`, `Space`           | Activa el elemento enfocado: ejecuta un botón, pulsa un toggle.                           |
+
+### Atributos data
+
+| Atributo           | Valores                                                                                                    |
+| ------------------ | ---------------------------------------------------------------------------------------------------------- |
+| `data-size`        | En la raíz: `"sm"`, `"md"` o `"lg"`                                                                        |
+| `data-orientation` | `"horizontal"` o `"vertical"`, en la raíz, los elementos y los grupos; el de un separador es su propio eje |
+| `data-state`       | En un toggle: `"on"` u `"off"`                                                                             |
+| `data-disabled`    | Presente en un elemento deshabilitado                                                                      |
+
+## Ejemplos
+
+### Vertical
+
+Las flechas arriba y abajo pasan de un elemento a otro.
+
+<Preview
+  examples={{
+    react: verticalReact,
+    vue: verticalVue,
+    solid: verticalSolid,
+    svelte: verticalSvelte,
+  }}
+>
+  <ToolbarVerticalDemo client:visible />
+</Preview>
+
+### Tamaños
+
+<Preview examples={{ react: sizesReact, vue: sizesVue, solid: sizesSolid, svelte: sizesSvelte }}>
+  <ToolbarSizesDemo client:visible />
+</Preview>
+
+### Elemento deshabilitado
+
+Rehacer está deshabilitado. Sigue en el orden de las flechas, así que quien usa el teclado sabe que existe.
+
+<Preview
+  examples={{
+    react: disabledReact,
+    vue: disabledVue,
+    solid: disabledSolid,
+    svelte: disabledSvelte,
+  }}
+>
+  <ToolbarDisabledDemo client:visible />
+</Preview>
+
+### Menú
+
+Un `Toolbar.Button` dentro de `Menu.Trigger` abre un menú. Sigue siendo uno de los elementos de la toolbar.
+
+<Preview examples={{ react: menuReact, vue: menuVue, solid: menuSolid, svelte: menuSvelte }}>
+  <ToolbarMenuDemo client:visible />
+</Preview>
+
+### Texto entre botones
+
+Un texto, como el nivel de zoom, puede ir entre los botones.
+
+<Preview
+  examples={{
+    react: readoutReact,
+    vue: readoutVue,
+    solid: readoutSolid,
+    svelte: readoutSvelte,
+  }}
+>
+  <ToolbarReadoutDemo client:visible />
+</Preview>

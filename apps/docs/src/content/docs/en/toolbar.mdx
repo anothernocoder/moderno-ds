@@ -1,0 +1,290 @@
+---
+title: Toolbar
+description: A bar of buttons, toggles and groups, like the top bar of an editor.
+group: Components
+order: 47
+component: Toolbar
+pkg: "@moderno-ui/react"
+agentPropsHash: "sha256:307783e187e8d5611d2c61ef307b18d187804ef45754d8af8667252fa205ea05"
+agent:
+  intent: A bar of icon buttons, toggles, groups and separators that keyboard users reach with one Tab stop and move through with the arrow keys.
+  whenToUse: The controls of an editor or a creative tool — undo and redo, text style, zoom, a "More" menu — shown together in one row or column.
+  whenNotToUse:
+    - case: A few actions at the end of a card or a form
+      use: Button
+    - case: Choosing one or several options from a small set
+      use: Toggle Group
+    - case: A list of actions that opens from one button
+      use: Menu
+  gotchas:
+    - 'Give Toolbar.Root an aria-label ("Canvas tools"): it is a toolbar and needs a name.'
+    - 'An icon-only item needs a label. The label is its aria-label and the text of its tooltip; shortcut adds the key after it ("Undo (⌘Z)").'
+    - "disabled keeps the item in the arrow-key order, announced as disabled; its onClick never runs. It is not the native disabled attribute."
+    - "Toolbar.Toggle keeps its own pressed state: pressed, defaultPressed and onPressedChange, like Toggle. In Vue use v-model:pressed; in Svelte bind:pressed."
+    - "For a menu, put a Toolbar.Button inside Menu.Trigger asChild. It stays one of the toolbar's items."
+    - "size (sm, md, lg) goes on the root and every item follows it. Each item keeps a hit area of at least --spacing-8 each way, even at sm."
+  theming:
+    - "The bar sits on --background with a --border edge and --radius. Items have no fill at rest, --muted with --muted-foreground on hover, and --accent with --accent-foreground when pressed. Do not pass a hex."
+    - "Separators are --border; the focus ring is --ring, drawn inside the item."
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import ToolbarDemo from "../../../examples/toolbar/toolbar.svelte";
+import baseReact from "../../../examples/toolbar/react.tsx?raw";
+import baseVue from "../../../examples/toolbar/vue.vue?raw";
+import baseSolid from "../../../examples/toolbar/solid.tsx?raw";
+import baseSvelte from "../../../examples/toolbar/toolbar.svelte?raw";
+import ToolbarVerticalDemo from "../../../examples/toolbar/vertical/toolbar-vertical.svelte";
+import verticalReact from "../../../examples/toolbar/vertical/react.tsx?raw";
+import verticalVue from "../../../examples/toolbar/vertical/vue.vue?raw";
+import verticalSolid from "../../../examples/toolbar/vertical/solid.tsx?raw";
+import verticalSvelte from "../../../examples/toolbar/vertical/toolbar-vertical.svelte?raw";
+import ToolbarSizesDemo from "../../../examples/toolbar/sizes/toolbar-sizes.svelte";
+import sizesReact from "../../../examples/toolbar/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/toolbar/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/toolbar/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/toolbar/sizes/toolbar-sizes.svelte?raw";
+import ToolbarDisabledDemo from "../../../examples/toolbar/disabled/toolbar-disabled.svelte";
+import disabledReact from "../../../examples/toolbar/disabled/react.tsx?raw";
+import disabledVue from "../../../examples/toolbar/disabled/vue.vue?raw";
+import disabledSolid from "../../../examples/toolbar/disabled/solid.tsx?raw";
+import disabledSvelte from "../../../examples/toolbar/disabled/toolbar-disabled.svelte?raw";
+import ToolbarMenuDemo from "../../../examples/toolbar/menu/toolbar-menu.svelte";
+import menuReact from "../../../examples/toolbar/menu/react.tsx?raw";
+import menuVue from "../../../examples/toolbar/menu/vue.vue?raw";
+import menuSolid from "../../../examples/toolbar/menu/solid.tsx?raw";
+import menuSvelte from "../../../examples/toolbar/menu/toolbar-menu.svelte?raw";
+import ToolbarReadoutDemo from "../../../examples/toolbar/readout/toolbar-readout.svelte";
+import readoutReact from "../../../examples/toolbar/readout/react.tsx?raw";
+import readoutVue from "../../../examples/toolbar/readout/vue.vue?raw";
+import readoutSolid from "../../../examples/toolbar/readout/solid.tsx?raw";
+import readoutSvelte from "../../../examples/toolbar/readout/toolbar-readout.svelte?raw";
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
+  <ToolbarDemo client:visible />
+</Preview>
+
+## Installation
+
+<Install pkg="@moderno-ui/react" />
+
+## Usage
+
+A toolbar groups the controls of an editor in one bar: undo, redo, text style, zoom. Keyboard users reach the whole bar with one Tab and move between its items with the arrow keys.
+
+<ForFramework fw="react">
+
+```tsx
+import { Toolbar } from "@moderno-ui/react";
+```
+
+```tsx
+<Toolbar.Root aria-label="Canvas tools">
+  <Toolbar.Button label="Undo" shortcut="⌘Z" onClick={undo}>
+    <UndoIcon />
+  </Toolbar.Button>
+  <Toolbar.Separator />
+  <Toolbar.Toggle label="Bold" pressed={bold} onPressedChange={setBold}>
+    <BoldIcon />
+  </Toolbar.Toggle>
+</Toolbar.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Toolbar } from "@moderno-ui/vue";
+```
+
+```vue
+<Toolbar.Root aria-label="Canvas tools">
+  <Toolbar.Button label="Undo" shortcut="⌘Z" @click="undo">
+    <UndoIcon />
+  </Toolbar.Button>
+  <Toolbar.Separator />
+  <Toolbar.Toggle v-model:pressed="bold" label="Bold">
+    <BoldIcon />
+  </Toolbar.Toggle>
+</Toolbar.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Toolbar } from "@moderno-ui/svelte";
+```
+
+```svelte
+<Toolbar.Root aria-label="Canvas tools">
+  <Toolbar.Button label="Undo" shortcut="⌘Z" onclick={undo}>
+    <UndoIcon />
+  </Toolbar.Button>
+  <Toolbar.Separator />
+  <Toolbar.Toggle label="Bold" bind:pressed={bold}>
+    <BoldIcon />
+  </Toolbar.Toggle>
+</Toolbar.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Toolbar } from "@moderno-ui/solid";
+```
+
+```tsx
+<Toolbar.Root aria-label="Canvas tools">
+  <Toolbar.Button label="Undo" shortcut="⌘Z" onClick={undo}>
+    <UndoIcon />
+  </Toolbar.Button>
+  <Toolbar.Separator />
+  <Toolbar.Toggle label="Bold" pressed={bold()} onPressedChange={setBold}>
+    <BoldIcon />
+  </Toolbar.Toggle>
+</Toolbar.Root>
+```
+
+</ForFramework>
+
+## API Reference
+
+### Toolbar.Root
+
+<PropsTable component="Toolbar" />
+
+| Prop          | Type                         | Default        | Description                                                            |
+| ------------- | ---------------------------- | -------------- | ---------------------------------------------------------------------- |
+| `orientation` | `"horizontal" \| "vertical"` | `"horizontal"` | Lays the items out in a row or a column, and picks the arrow keys.     |
+| `size`        | `"sm" \| "md" \| "lg"`       | `"md"`         | Height of every item: Button's sizes.                                  |
+| `dir`         | `"ltr" \| "rtl"`             | `"ltr"`        | Text direction. In `rtl` the Left and Right arrows swap.               |
+| `aria-label`  | `string`                     | —              | Names the toolbar for screen readers, like `"Canvas tools"`. Required. |
+
+### Toolbar.Button
+
+| Prop       | Type      | Default | Description                                                                                          |
+| ---------- | --------- | ------- | ---------------------------------------------------------------------------------------------------- |
+| `label`    | `string`  | —       | Names an icon-only button. It is the `aria-label` and the text of the tooltip.                       |
+| `shortcut` | `string`  | —       | A keyboard shortcut the tooltip shows in parentheses after the label.                                |
+| `disabled` | `boolean` | `false` | The button stays in the arrow-key order and is announced as disabled, but pressing it has no effect. |
+
+Every other prop, like `onClick`, goes to the `<button>`.
+
+### Toolbar.Toggle
+
+Takes `label`, `shortcut` and `disabled` like `Toolbar.Button`, plus:
+
+| Prop              | Type                         | Default | Description                                            |
+| ----------------- | ---------------------------- | ------- | ------------------------------------------------------ |
+| `pressed`         | `boolean`                    | —       | Controlled pressed state. Pair with `onPressedChange`. |
+| `defaultPressed`  | `boolean`                    | `false` | Initial pressed state when uncontrolled.               |
+| `onPressedChange` | `(pressed: boolean) => void` | —       | Called with the new state when it is pressed.          |
+
+In Vue, bind it with `v-model:pressed` or listen with `@pressed-change`. In Svelte, `bind:pressed` works.
+
+### Toolbar.Group and Toolbar.Separator
+
+`Toolbar.Group` holds related items. Give it an `aria-label`, like `"Text style"`. `Toolbar.Separator` draws a line between groups. Neither takes props of its own.
+
+### Parts
+
+| Part                | Element    | Description                                                                 |
+| ------------------- | ---------- | --------------------------------------------------------------------------- |
+| `Toolbar.Root`      | `<div>`    | `role="toolbar"` with `aria-orientation`. Carries `data-size`.              |
+| `Toolbar.Button`    | `<button>` | One action. With a `label`, it shows a tooltip on hover and keyboard focus. |
+| `Toolbar.Toggle`    | `<button>` | A button that stays pressed, with `aria-pressed`.                           |
+| `Toolbar.Group`     | `<div>`    | `role="group"`: related items.                                              |
+| `Toolbar.Separator` | `<div>`    | `role="separator"`, across the toolbar: upright in a row, flat in a column. |
+
+Any other element inside the root, like a zoom readout, sits on the same line as the items.
+
+### Keyboard
+
+| Key                        | Action                                                                                 |
+| -------------------------- | -------------------------------------------------------------------------------------- |
+| `Tab`                      | Moves into the toolbar, to the item used last (the first at the start), and out again. |
+| `ArrowRight` / `ArrowLeft` | Next / previous item in a row. Wraps at the ends.                                      |
+| `ArrowDown` / `ArrowUp`    | Next / previous item in a column. Wraps at the ends.                                   |
+| `Home` / `End`             | First / last item.                                                                     |
+| `Enter`, `Space`           | Activates the focused item: runs a button, presses a toggle.                           |
+
+### Data attributes
+
+| Attribute          | Values                                                                                       |
+| ------------------ | -------------------------------------------------------------------------------------------- |
+| `data-size`        | On the root: `"sm"`, `"md"` or `"lg"`                                                        |
+| `data-orientation` | `"horizontal"` or `"vertical"`, on the root, items and groups; a separator's is its own axis |
+| `data-state`       | On a toggle: `"on"` or `"off"`                                                               |
+| `data-disabled`    | Present on a disabled item                                                                   |
+
+## Examples
+
+### Vertical
+
+The up and down arrow keys move between the items.
+
+<Preview
+  examples={{
+    react: verticalReact,
+    vue: verticalVue,
+    solid: verticalSolid,
+    svelte: verticalSvelte,
+  }}
+>
+  <ToolbarVerticalDemo client:visible />
+</Preview>
+
+### Sizes
+
+<Preview examples={{ react: sizesReact, vue: sizesVue, solid: sizesSolid, svelte: sizesSvelte }}>
+  <ToolbarSizesDemo client:visible />
+</Preview>
+
+### Disabled item
+
+Redo is disabled. It is still in the arrow-key order, so keyboard users hear that it exists.
+
+<Preview
+  examples={{
+    react: disabledReact,
+    vue: disabledVue,
+    solid: disabledSolid,
+    svelte: disabledSvelte,
+  }}
+>
+  <ToolbarDisabledDemo client:visible />
+</Preview>
+
+### Menu
+
+A `Toolbar.Button` inside `Menu.Trigger` opens a menu. It is still one of the toolbar's items.
+
+<Preview examples={{ react: menuReact, vue: menuVue, solid: menuSolid, svelte: menuSvelte }}>
+  <ToolbarMenuDemo client:visible />
+</Preview>
+
+### Text readout
+
+Text, like a zoom level, can sit between the buttons.
+
+<Preview
+  examples={{
+    react: readoutReact,
+    vue: readoutVue,
+    solid: readoutSolid,
+    svelte: readoutSvelte,
+  }}
+>
+  <ToolbarReadoutDemo client:visible />
+</Preview>

@@ -6640,6 +6640,166 @@
     }
   }
 
+  /* ─────────────────────────── Toolbar ─────────────────────────── *
+   * A bar of buttons, toggles, groups and separators. The toolbar machine
+   * (packages/core/src/machines/toolbar) stamps the parts: root > button,
+   * toggle, group > …, separator; data-orientation on the root, the items,
+   * the groups and the separators (a separator's is its own axis, across
+   * the bar's); data-state="on|off" on a toggle; data-disabled on a
+   * disabled item. `toolbarRecipe` puts data-size on the root and every
+   * item follows it, at Button's heights. Anything else inside the root —
+   * a text readout like "100%" — sits on the same centre line.            */
+  [data-scope="toolbar"][data-part="root"] {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-1);
+    padding: var(--spacing-1);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: var(--text-ui-md);
+    /* A readout that changes ("99%" → "100%") keeps its width per digit. */
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  [data-scope="toolbar"][data-part="root"][data-orientation="vertical"] {
+    flex-direction: column;
+  }
+  [data-scope="toolbar"][data-part="group"] {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-1);
+  }
+  [data-scope="toolbar"][data-part="group"][data-orientation="vertical"] {
+    flex-direction: column;
+  }
+
+  /* Items — a ghost Button's look. At every size the icon, the inline padding
+     and the border fit inside the min-width, so an icon-only item is square. */
+  [data-scope="toolbar"][data-part="button"],
+  [data-scope="toolbar"][data-part="toggle"] {
+    position: relative;
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-2);
+    height: var(--spacing-8);
+    min-width: var(--spacing-8);
+    padding-inline: calc(var(--spacing-1) * 1.5);
+    border: 1px solid transparent;
+    border-radius: calc(var(--radius) - var(--spacing-1) / 2);
+    /* Clears the UA `buttonface` grey: at rest an item has no fill. */
+    background-color: transparent;
+    color: inherit;
+    font: inherit;
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    user-select: none;
+    transition:
+      background-color var(--motion-fast),
+      color var(--motion-fast);
+  }
+  /* The hit area: at least --spacing-8 (Button md's height) each way, at
+     every size. A smaller item keeps its visible size and grows this
+     invisible layer instead; the bar's gap leaves room for it, so two
+     neighbours' layers meet but do not overlap. */
+  [data-scope="toolbar"][data-part="button"]::before,
+  [data-scope="toolbar"][data-part="toggle"]::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: max(100%, var(--spacing-8));
+    height: max(100%, var(--spacing-8));
+    translate: -50% -50%;
+  }
+  [data-scope="toolbar"][data-part="button"]:hover,
+  [data-scope="toolbar"][data-part="toggle"]:hover:not([data-state="on"]) {
+    background-color: var(--muted);
+    color: var(--muted-foreground);
+  }
+  /* Pressed: Toggle's accent pair, so "on" reads the same in and out of a
+     toolbar. An open menu's trigger looks pressed too. */
+  [data-scope="toolbar"][data-part="toggle"][data-state="on"],
+  [data-scope="toolbar"][data-part="button"][aria-expanded="true"] {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+  /* The ring goes inside the item, where a neighbour cannot cover it. */
+  [data-scope="toolbar"][data-part="button"]:focus-visible,
+  [data-scope="toolbar"][data-part="toggle"]:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+  }
+
+  /* An icon inside an item: --spacing-4 square at md, and one step per size
+     (below). It never shrinks when a label sits beside it. */
+  [data-scope="toolbar"]:is([data-part="button"], [data-part="toggle"]) > svg {
+    flex: none;
+    width: var(--spacing-4);
+    height: var(--spacing-4);
+  }
+
+  /* Separator — a --border rule across the bar, inset from its ends so it
+     reads as a break between groups, not an edge. */
+  [data-scope="toolbar"][data-part="separator"] {
+    flex: none;
+    align-self: stretch;
+    margin: var(--spacing-1) calc(var(--spacing-1) / 2);
+    background-color: var(--border);
+  }
+  [data-scope="toolbar"][data-part="separator"][data-orientation="vertical"] {
+    width: 1px;
+  }
+  [data-scope="toolbar"][data-part="separator"][data-orientation="horizontal"] {
+    height: 1px;
+    margin: calc(var(--spacing-1) / 2) var(--spacing-1);
+  }
+
+  /* Sizes — Button's heights, from the spacing slots; `lg` sums two. The
+     hit area above stays at least --spacing-8 at `sm`. */
+  [data-scope="toolbar"][data-part="root"][data-size="sm"] {
+    font-size: var(--text-ui-sm);
+  }
+  [data-scope="toolbar"][data-part="root"][data-size="sm"]
+    [data-scope="toolbar"]:is([data-part="button"], [data-part="toggle"]) {
+    height: var(--spacing-7);
+    min-width: var(--spacing-7);
+    padding-inline: var(--spacing-1);
+  }
+  [data-scope="toolbar"][data-part="root"][data-size="sm"]
+    [data-scope="toolbar"]:is([data-part="button"], [data-part="toggle"])
+    > svg {
+    width: calc(var(--spacing-3) + var(--spacing-1) / 2);
+    height: calc(var(--spacing-3) + var(--spacing-1) / 2);
+  }
+  [data-scope="toolbar"][data-part="root"][data-size="lg"] {
+    font-size: var(--text-ui-lg);
+  }
+  [data-scope="toolbar"][data-part="root"][data-size="lg"]
+    [data-scope="toolbar"]:is([data-part="button"], [data-part="toggle"]) {
+    height: calc(var(--spacing-8) + var(--spacing-2));
+    min-width: calc(var(--spacing-8) + var(--spacing-2));
+    padding-inline: var(--spacing-2);
+  }
+  [data-scope="toolbar"][data-part="root"][data-size="lg"]
+    [data-scope="toolbar"]:is([data-part="button"], [data-part="toggle"])
+    > svg {
+    width: var(--spacing-5);
+    height: var(--spacing-5);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-scope="toolbar"][data-part="button"],
+    [data-scope="toolbar"][data-part="toggle"] {
+      transition: none;
+    }
+  }
+
   /* ─────────────────────────── Tooltip ─────────────────────────── *
    * Ark's Root renders no element, so `tooltipRecipe` size lands on the
    * content, the surface. Parts: trigger, positioner > content > arrow >

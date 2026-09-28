@@ -54,6 +54,7 @@ import TagsInputSection from "./sections/tags-input.js";
 import ToastSection from "./sections/toast.js";
 import ToggleSection from "./sections/toggle.js";
 import ToggleGroupSection from "./sections/toggle-group.js";
+import ToolbarSection from "./sections/toolbar.js";
 import TooltipSection from "./sections/tooltip.js";
 
 export const App = defineComponent({
@@ -109,6 +110,7 @@ export const App = defineComponent({
         h(ToastSection, { open: props.open }),
         h(ToggleSection, { open: props.open }),
         h(ToggleGroupSection, { open: props.open }),
+        h(ToolbarSection, { open: props.open }),
         h(TooltipSection, { open: props.open }),
       ]);
   },

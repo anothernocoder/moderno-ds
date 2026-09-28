@@ -12,3 +12,4 @@
  */
 
 export * as sortableList from "./machines/sortable-list/index.js";
+export * as toolbar from "./machines/toolbar/index.js";

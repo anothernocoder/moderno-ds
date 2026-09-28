@@ -56,6 +56,7 @@ import tagsInputComponent from "./components/tags-input.ts";
 import toastComponent from "./components/toast.ts";
 import toggleComponent from "./components/toggle.ts";
 import toggleGroupComponent from "./components/toggle-group.ts";
+import toolbarComponent from "./components/toolbar.ts";
 import tooltipComponent from "./components/tooltip.ts";
 
 export const { ENTRIES, AGENT_COMPONENTS, AGENT_EXAMPLES } = assembleComponents([
@@ -106,5 +107,6 @@ export const { ENTRIES, AGENT_COMPONENTS, AGENT_EXAMPLES } = assembleComponents(
   toastComponent,
   toggleComponent,
   toggleGroupComponent,
+  toolbarComponent,
   tooltipComponent,
 ]);

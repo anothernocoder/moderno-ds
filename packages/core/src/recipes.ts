@@ -58,4 +58,5 @@ export * from "./recipes/tags-input.js";
 export * from "./recipes/toast.js";
 export * from "./recipes/toggle.js";
 export * from "./recipes/toggle-group.js";
+export * from "./recipes/toolbar.js";
 export * from "./recipes/tooltip.js";

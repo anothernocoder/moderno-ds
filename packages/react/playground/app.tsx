@@ -58,6 +58,7 @@ import TagsInputSection from "./sections/tags-input.js";
 import ToastSection from "./sections/toast.js";
 import ToggleSection from "./sections/toggle.js";
 import ToggleGroupSection from "./sections/toggle-group.js";
+import ToolbarSection from "./sections/toolbar.js";
 import TooltipSection from "./sections/tooltip.js";
 
 export interface AppProps {
@@ -112,6 +113,7 @@ export function App({ open = false }: AppProps) {
       <ToastSection open={open} />
       <ToggleSection open={open} />
       <ToggleGroupSection open={open} />
+      <ToolbarSection open={open} />
       <TooltipSection open={open} />
     </main>
   );
