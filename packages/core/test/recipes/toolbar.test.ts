@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { describe, expect, it, vi } from "vitest";
 import {
+  splitToolbarKeyDown,
   toolbarRecipe,
   toolbarTooltipText,
   toolbarTooltipTriggerProps,
@@ -88,5 +89,22 @@ describe("withoutEventHandlers", () => {
 
   it("keeps a prop that starts with on but is not a function", () => {
     expect(withoutEventHandlers({ one: "1" })).toEqual({ one: "1" });
+  });
+});
+
+describe("splitToolbarKeyDown", () => {
+  it("takes the key-down handler out, in any framework's spelling, and keeps the rest", () => {
+    const onKeyDown = () => {};
+    const onFocus = () => {};
+    for (const key of ["onKeyDown", "onKeydown", "onkeydown"]) {
+      expect(splitToolbarKeyDown({ [key]: onKeyDown, onFocus, tabIndex: 0 })).toEqual({
+        keyDown: { [key]: onKeyDown },
+        rest: { onFocus, tabIndex: 0 },
+      });
+    }
+  });
+
+  it("returns an empty handler when the props have none", () => {
+    expect(splitToolbarKeyDown({ id: "more" })).toEqual({ keyDown: {}, rest: { id: "more" } });
   });
 });

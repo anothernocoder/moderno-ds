@@ -12,6 +12,7 @@ import {
 import { Tooltip as ArkTooltip, useToggle, useTooltip } from "@ark-ui/solid";
 import { mergeProps, normalizeProps, useMachine, type PropTypes } from "@zag-js/solid";
 import {
+  splitToolbarKeyDown,
   toolbar,
   toolbarRecipe,
   toolbarTooltipText,
@@ -114,9 +115,10 @@ function ToolbarRoot(props: ToolbarRootProps) {
 
 /**
  * One item: the machine's props, the consumer's, and a tooltip when it has a
- * label. The consumer's handlers run first, so a Menu.Trigger merged in can
- * claim a key before the toolbar moves focus; a disabled item drops them. The
- * tooltip and a Menu.Trigger share the item's id, so both find it.
+ * label. The toolbar's key handler runs first, so its arrows move focus even
+ * on a Menu.Trigger merged in; the consumer's other handlers run before the
+ * machine's, and a disabled item drops them. The tooltip and a Menu.Trigger
+ * share the item's id, so both find it.
  */
 function ToolbarItem(props: {
   part: "button" | "toggle";
@@ -128,19 +130,20 @@ function ToolbarItem(props: {
   const generatedId = createUniqueId();
   const id = () => props.consumer.id ?? generatedId;
   const tooltip = useTooltip(() => ({ ids: { trigger: id() } }));
-  const buttonProps = createMemo(() =>
-    mergeProps(
+  const buttonProps = createMemo(() => {
+    const { keyDown, rest } = splitToolbarKeyDown(props.itemProps());
+    return mergeProps(
       props.own.label
         ? {
             ...toolbarTooltipTriggerProps(tooltip().getTriggerProps()),
             "aria-label": props.own.label,
           }
         : {},
-      props.itemProps(),
+      rest,
       props.own.disabled ? withoutEventHandlers(props.consumer) : { ...props.consumer },
-      { id: id(), "data-scope": "toolbar", "data-part": props.part },
-    ),
-  );
+      { ...keyDown, id: id(), "data-scope": "toolbar", "data-part": props.part },
+    );
+  });
   return (
     <>
       <button {...buttonProps()}>{props.children}</button>

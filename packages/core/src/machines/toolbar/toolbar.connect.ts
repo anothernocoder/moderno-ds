@@ -42,8 +42,9 @@ export function connect<T extends PropTypes>(
         send({ type: "ITEM.FOCUS", value });
       },
       onKeyDown(event: JSX.KeyboardEvent<HTMLButtonElement>) {
-        // Something merged into the item claimed the key first (a Menu.Trigger
-        // opens on ArrowDown, even in a vertical toolbar).
+        // A listener that runs before the item's own (in the capture phase)
+        // claimed the key. The bindings merge this handler so it runs before
+        // anything merged into the item, a Menu.Trigger's included.
         if (event.defaultPrevented) return;
         const type = events[getEventKey(event, { dir: prop("dir"), orientation })];
         if (!type) return;

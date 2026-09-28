@@ -18,6 +18,7 @@ import {
 import { Tooltip as ArkTooltip, useToggle, useTooltip } from "@ark-ui/vue";
 import { mergeProps, normalizeProps, useMachine, type PropTypes } from "@zag-js/vue";
 import {
+  splitToolbarKeyDown,
   toolbar,
   toolbarRecipe,
   toolbarTooltipText,
@@ -119,10 +120,11 @@ type Attrs = SetupContext["attrs"];
 
 /**
  * One item's render function: the machine's props, the consumer's, and a
- * tooltip when it has a label. The consumer's handlers run first, so a
- * Menu.Trigger merged in (`as-child`) can claim a key before the toolbar moves
- * focus; a disabled item drops them. The tooltip and a Menu.Trigger share the
- * item's id, so both find it.
+ * tooltip when it has a label. The toolbar's key handler runs first, so its
+ * arrows move focus even on a Menu.Trigger merged in (`as-child`); the
+ * consumer's other handlers run before the machine's, and a disabled item
+ * drops them. The tooltip and a Menu.Trigger share the item's id, so both
+ * find it.
  */
 function useItem(
   part: "button" | "toggle",
@@ -137,11 +139,13 @@ function useItem(
   const tooltip = useTooltip(computed(() => ({ ids: { trigger: id() } })));
   return () => {
     const consumer = mergeProps(ownHandlers(), attrs);
+    const { keyDown, rest } = splitToolbarKeyDown(machineProps());
     const merged = mergeProps(
       props.label ? toolbarTooltipTriggerProps(tooltip.value.getTriggerProps()) : {},
       { "aria-label": props.label },
-      machineProps(),
+      rest,
       props.disabled ? withoutEventHandlers(consumer) : consumer,
+      keyDown,
     );
     const button = h(
       "button",

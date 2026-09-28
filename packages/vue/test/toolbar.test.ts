@@ -70,6 +70,28 @@ const MenuDemo = defineComponent({
   },
 });
 
+/** A toolbar with two menu buttons and a plain item between them. */
+const MenusDemo = defineComponent({
+  props: { orientation: { type: String as PropType<ToolbarOrientation>, default: undefined } },
+  setup(props) {
+    const menu = (label: string) =>
+      h(Menu.Root, null, () => [
+        h(Menu.Trigger, { asChild: true }, () => h(Toolbar.Button, { label }, () => "⋯")),
+        h(Menu.Positioner, null, () =>
+          h(Menu.Content, null, () => h(Menu.Item, { value: "one" }, () => "One")),
+        ),
+      ]);
+    return () =>
+      h(Toolbar.Root, { "aria-label": "Canvas tools", orientation: props.orientation }, () => [
+        h(Toolbar.Button, null, () => "First"),
+        menu("Shapes"),
+        h(Toolbar.Button, null, () => "Middle"),
+        menu("Export"),
+        h(Toolbar.Button, null, () => "Last"),
+      ]);
+  },
+});
+
 describe("Toolbar (Vue)", () => {
   it("is a named toolbar, horizontal by default, with the recipe's size", () => {
     render(Demo);
@@ -272,6 +294,34 @@ describe("Toolbar (Vue)", () => {
     await screen.findByRole("menu");
     await user.click(screen.getByRole("menuitem", { name: "Export" }));
     expect(onSelect).toHaveBeenCalledWith({ value: "export" });
+  });
+
+  it("moves past menu buttons with Up and Down in a vertical toolbar", async () => {
+    const user = userEvent.setup();
+    render(MenusDemo, { props: { orientation: "vertical" } });
+    item("First").focus();
+
+    await user.keyboard("{ArrowDown}{ArrowDown}");
+    expect(document.activeElement).toBe(item("Middle"));
+    await user.keyboard("{ArrowDown}{ArrowDown}");
+    expect(document.activeElement).toBe(item("Last"));
+    await user.keyboard("{ArrowUp}{ArrowUp}");
+    expect(document.activeElement).toBe(item("Middle"));
+    expect(screen.queryByRole("menu")).toBeNull();
+
+    await user.keyboard("{ArrowUp}{Enter}");
+    await screen.findByRole("menu");
+    expect(item("Shapes").getAttribute("aria-expanded")).toBe("true");
+  });
+
+  it("opens a menu button with ArrowDown in a horizontal toolbar", async () => {
+    const user = userEvent.setup();
+    render(MenusDemo);
+    item("First").focus();
+
+    await user.keyboard("{ArrowRight}{ArrowDown}");
+    await screen.findByRole("menu");
+    expect(item("Shapes").getAttribute("aria-expanded")).toBe("true");
   });
 
   it("keeps a disabled menu trigger closed", async () => {

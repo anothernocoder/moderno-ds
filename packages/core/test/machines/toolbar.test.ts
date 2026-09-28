@@ -195,12 +195,11 @@ describe("toolbar machine", () => {
     expect(document.activeElement).toBe(el("redo"));
   });
 
-  it("leaves alone a key that a part inside the item already handled", async () => {
+  it("leaves alone a key that a capture listener already claimed", async () => {
     const { el } = await renderToolbar([{ value: "more" }, { value: "zoom" }], {
       orientation: "vertical",
     });
     el("more").focus();
-    // A menu trigger opens on ArrowDown and prevents its default first.
     el("more").addEventListener("keydown", (event) => event.preventDefault(), { capture: true });
 
     el("more").dispatchEvent(

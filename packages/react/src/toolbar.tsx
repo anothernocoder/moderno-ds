@@ -2,6 +2,7 @@ import { createContext, useContext, useId, type ComponentPropsWithRef } from "re
 import { Portal, Tooltip as ArkTooltip, useToggle, useTooltip } from "@ark-ui/react";
 import { mergeProps, normalizeProps, useMachine, type PropTypes } from "@zag-js/react";
 import {
+  splitToolbarKeyDown,
   toolbar,
   toolbarRecipe,
   toolbarTooltipText,
@@ -104,19 +105,22 @@ interface ToolbarItemProps extends ToolbarItemOwnProps {
 
 /**
  * One item: the machine's props, the consumer's, and a tooltip when it has a
- * label. The consumer's handlers run first, so a Menu.Trigger merged in can
- * claim a key before the toolbar moves focus; a disabled item drops them. The
- * tooltip and a Menu.Trigger share the item's id, so both find it.
+ * label. The toolbar's key handler runs first, so its arrows move focus even
+ * on a Menu.Trigger merged in; the consumer's other handlers run before the
+ * machine's, and a disabled item drops them. The tooltip and a Menu.Trigger
+ * share the item's id, so both find it.
  */
 function ToolbarItem({ part, label, shortcut, disabled, itemProps, props }: ToolbarItemProps) {
   const generatedId = useId();
   const id = props.id ?? generatedId;
   const tooltip = useTooltip({ ids: { trigger: id } });
+  const { keyDown, rest } = splitToolbarKeyDown(itemProps);
   const merged = mergeProps<ButtonProps>(
     label ? toolbarTooltipTriggerProps(tooltip.getTriggerProps()) : {},
     { "aria-label": label },
-    itemProps,
+    rest,
     disabled ? withoutEventHandlers(props) : props,
+    keyDown,
   );
   const button = <button {...merged} id={id} data-scope="toolbar" data-part={part} />;
   if (!label) return button;

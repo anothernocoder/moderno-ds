@@ -190,13 +190,13 @@ Cualquier otro elemento dentro de la raíz, como el nivel de zoom, queda en la m
 
 ### Teclado
 
-| Tecla                      | Acción                                                                                    |
-| -------------------------- | ----------------------------------------------------------------------------------------- |
-| `Tab`                      | Entra en la toolbar, en el último elemento usado (el primero al empezar), y sale de ella. |
-| `ArrowRight` / `ArrowLeft` | Elemento siguiente / anterior en una fila. Da la vuelta en los extremos.                  |
-| `ArrowDown` / `ArrowUp`    | Elemento siguiente / anterior en una columna. Da la vuelta en los extremos.               |
-| `Home` / `End`             | Primer / último elemento.                                                                 |
-| `Enter`, `Space`           | Activa el elemento enfocado: ejecuta un botón, pulsa un toggle.                           |
+| Tecla                      | Acción                                                                                                             |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `Tab`                      | Entra en la toolbar, en el último elemento usado (el primero al empezar), y sale de ella.                          |
+| `ArrowRight` / `ArrowLeft` | Elemento siguiente / anterior en una fila. Da la vuelta en los extremos.                                           |
+| `ArrowDown` / `ArrowUp`    | Elemento siguiente / anterior en una columna. Da la vuelta en los extremos. En una fila, `ArrowDown` abre un menú. |
+| `Home` / `End`             | Primer / último elemento.                                                                                          |
+| `Enter`, `Space`           | Activa el elemento enfocado: ejecuta un botón, pulsa un toggle, abre un menú.                                      |
 
 ### Atributos data
 
@@ -247,7 +247,7 @@ Rehacer está deshabilitado. Sigue en el orden de las flechas, así que quien us
 
 ### Menú
 
-Un `Toolbar.Button` dentro de `Menu.Trigger` abre un menú. Sigue siendo uno de los elementos de la toolbar.
+Un `Toolbar.Button` dentro de `Menu.Trigger` abre un menú. Sigue siendo uno de los elementos de la toolbar, así que las flechas pasan por él. `Enter` o `Space` abren el menú. En una fila, `ArrowDown` también lo abre; en una columna, `ArrowDown` va al elemento siguiente.
 
 <Preview examples={{ react: menuReact, vue: menuVue, solid: menuSolid, svelte: menuSvelte }}>
   <ToolbarMenuDemo client:visible />
@@ -255,7 +255,7 @@ Un `Toolbar.Button` dentro de `Menu.Trigger` abre un menú. Sigue siendo uno de 
 
 ### Texto entre botones
 
-Un texto, como el nivel de zoom, puede ir entre los botones.
+Un texto, como el nivel de zoom, puede ir entre los botones. Ponle `aria-live="polite"` para que los lectores de pantalla anuncien cada valor nuevo.
 
 <Preview
   examples={{

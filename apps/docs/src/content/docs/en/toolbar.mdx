@@ -211,13 +211,13 @@ Any other element inside the root, like a zoom readout, sits on the same line as
 
 ### Keyboard
 
-| Key                        | Action                                                                                 |
-| -------------------------- | -------------------------------------------------------------------------------------- |
-| `Tab`                      | Moves into the toolbar, to the item used last (the first at the start), and out again. |
-| `ArrowRight` / `ArrowLeft` | Next / previous item in a row. Wraps at the ends.                                      |
-| `ArrowDown` / `ArrowUp`    | Next / previous item in a column. Wraps at the ends.                                   |
-| `Home` / `End`             | First / last item.                                                                     |
-| `Enter`, `Space`           | Activates the focused item: runs a button, presses a toggle.                           |
+| Key                        | Action                                                                                   |
+| -------------------------- | ---------------------------------------------------------------------------------------- |
+| `Tab`                      | Moves into the toolbar, to the item used last (the first at the start), and out again.   |
+| `ArrowRight` / `ArrowLeft` | Next / previous item in a row. Wraps at the ends.                                        |
+| `ArrowDown` / `ArrowUp`    | Next / previous item in a column. Wraps at the ends. In a row, `ArrowDown` opens a menu. |
+| `Home` / `End`             | First / last item.                                                                       |
+| `Enter`, `Space`           | Activates the focused item: runs a button, presses a toggle, opens a menu.               |
 
 ### Data attributes
 
@@ -268,7 +268,7 @@ Redo is disabled. It is still in the arrow-key order, so keyboard users hear tha
 
 ### Menu
 
-A `Toolbar.Button` inside `Menu.Trigger` opens a menu. It is still one of the toolbar's items.
+A `Toolbar.Button` inside `Menu.Trigger` opens a menu. It is still one of the toolbar's items, so the arrow keys move past it. `Enter` or `Space` opens the menu. In a row, `ArrowDown` opens it too; in a column, `ArrowDown` goes to the next item.
 
 <Preview examples={{ react: menuReact, vue: menuVue, solid: menuSolid, svelte: menuSvelte }}>
   <ToolbarMenuDemo client:visible />
@@ -276,7 +276,7 @@ A `Toolbar.Button` inside `Menu.Trigger` opens a menu. It is still one of the to
 
 ### Text readout
 
-Text, like a zoom level, can sit between the buttons.
+Text, like a zoom level, can sit between the buttons. Give it `aria-live="polite"` so screen readers announce each new value.
 
 <Preview
   examples={{

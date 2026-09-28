@@ -20,7 +20,7 @@ const svg = {
     <Toolbar.Button label="Zoom out" @click="zoom = Math.max(25, zoom - 25)">
       <svg v-bind="svg"><path d="M5 12h14" /></svg>
     </Toolbar.Button>
-    <span>{{ zoom }}%</span>
+    <span aria-live="polite">{{ zoom }}%</span>
     <Toolbar.Button label="Zoom in" @click="zoom = Math.min(400, zoom + 25)">
       <svg v-bind="svg"><path d="M5 12h14M12 5v14" /></svg>
     </Toolbar.Button>

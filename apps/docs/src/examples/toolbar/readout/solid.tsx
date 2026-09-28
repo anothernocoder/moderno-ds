@@ -25,7 +25,7 @@ export function ToolbarReadoutDemo() {
       <Toolbar.Button label="Zoom out" onClick={() => setZoom(Math.max(25, zoom() - 25))}>
         <Icon d="M5 12h14" />
       </Toolbar.Button>
-      <span>{zoom()}%</span>
+      <span aria-live="polite">{zoom()}%</span>
       <Toolbar.Button label="Zoom in" onClick={() => setZoom(Math.min(400, zoom() + 25))}>
         <Icon d="M5 12h14M12 5v14" />
       </Toolbar.Button>

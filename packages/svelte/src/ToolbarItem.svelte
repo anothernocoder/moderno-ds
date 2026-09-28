@@ -1,9 +1,10 @@
 <!--
   One Toolbar item, shared by Toolbar.Button and Toolbar.Toggle: the
   machine's props, the consumer's, and a tooltip when it has a label. The
-  consumer's handlers run first, so a Menu.Trigger merged in (asChild) can
-  claim a key before the toolbar moves focus; a disabled item drops them.
-  The tooltip and a Menu.Trigger share the item's id, so both find it.
+  toolbar's key handler runs first, so its arrows move focus even on a
+  Menu.Trigger merged in (asChild); the consumer's other handlers run before
+  the machine's, and a disabled item drops them. The tooltip and a
+  Menu.Trigger share the item's id, so both find it.
 -->
 <script lang="ts">
   import type { Snippet } from "svelte";
@@ -11,6 +12,7 @@
   import { Portal, Tooltip as ArkTooltip, useTooltip } from "@ark-ui/svelte";
   import { mergeProps } from "@zag-js/svelte";
   import {
+    splitToolbarKeyDown,
     toolbarTooltipText,
     toolbarTooltipTriggerProps,
     withoutEventHandlers,
@@ -37,14 +39,16 @@
   // Ark's Svelte useTooltip makes no id of its own.
   const tooltip = useTooltip(() => ({ id: `${generatedId}-tooltip`, ids: { trigger: id } }));
 
-  const merged = $derived(
-    mergeProps(
+  const merged = $derived.by(() => {
+    const { keyDown, rest } = splitToolbarKeyDown(itemProps);
+    return mergeProps(
       label ? toolbarTooltipTriggerProps(tooltip().getTriggerProps()) : {},
       { "aria-label": label },
-      itemProps,
+      rest,
       disabled ? withoutEventHandlers(consumer) : consumer,
-    ),
-  );
+      keyDown,
+    );
+  });
 </script>
 
 <button {...merged} {id} data-scope="toolbar" data-part={part}>

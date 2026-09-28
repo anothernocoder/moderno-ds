@@ -22,7 +22,7 @@
   <Toolbar.Button label="Zoom out" onclick={() => (zoom = Math.max(25, zoom - 25))}>
     {@render icon("M5 12h14")}
   </Toolbar.Button>
-  <span>{zoom}%</span>
+  <span aria-live="polite">{zoom}%</span>
   <Toolbar.Button label="Zoom in" onclick={() => (zoom = Math.min(400, zoom + 25))}>
     {@render icon("M5 12h14M12 5v14")}
   </Toolbar.Button>

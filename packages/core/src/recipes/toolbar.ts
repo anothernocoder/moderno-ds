@@ -68,3 +68,27 @@ export function withoutEventHandlers<P extends object>(props: P): P {
     ),
   ) as P;
 }
+
+/** A key-down handler's name, lower-cased, in every framework's spelling. */
+const KEYDOWN_KEY = "onkeydown";
+
+/**
+ * A Toolbar item's machine props, split into its key-down handler and the
+ * rest. A binding merges `keyDown` after the consumer's props, so it runs
+ * first (Zag's `mergeProps` calls the last handler first): the toolbar's
+ * arrow keys move focus before a Menu.Trigger merged into the item sees them.
+ * Zag's trigger skips a key already handled, so in a vertical toolbar Up and
+ * Down move between items, and the menu opens with Enter and Space (and with
+ * ArrowDown in a horizontal toolbar, whose arrows are Left and Right). The
+ * handler is found under any framework's spelling (`onKeyDown`, Vue's
+ * `onKeydown`, Svelte's `onkeydown`).
+ */
+export function splitToolbarKeyDown<P extends object>(props: P): { keyDown: Partial<P>; rest: P } {
+  const keyDown: Record<string, unknown> = {};
+  const rest: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(props)) {
+    if (key.toLowerCase() === KEYDOWN_KEY) keyDown[key] = value;
+    else rest[key] = value;
+  }
+  return { keyDown: keyDown as Partial<P>, rest: rest as P };
+}

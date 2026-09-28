@@ -3,6 +3,7 @@ import { cleanup, render, screen, waitFor } from "@testing-library/svelte";
 import userEvent from "@testing-library/user-event";
 import Demo from "./fixtures/ToolbarFixture.svelte";
 import MenuDemo from "./fixtures/ToolbarMenuFixture.svelte";
+import MenusDemo from "./fixtures/ToolbarMenusFixture.svelte";
 import BoundDemo from "./fixtures/ToolbarBoundFixture.svelte";
 
 afterEach(cleanup);
@@ -207,6 +208,34 @@ describe("Toolbar (Svelte)", () => {
     await screen.findByRole("menu");
     await user.click(screen.getByRole("menuitem", { name: "Export" }));
     expect(onSelect).toHaveBeenCalledWith({ value: "export" });
+  });
+
+  it("moves past menu buttons with Up and Down in a vertical toolbar", async () => {
+    const user = userEvent.setup();
+    render(MenusDemo, { props: { orientation: "vertical" } });
+    item("First").focus();
+
+    await user.keyboard("{ArrowDown}{ArrowDown}");
+    expect(document.activeElement).toBe(item("Middle"));
+    await user.keyboard("{ArrowDown}{ArrowDown}");
+    expect(document.activeElement).toBe(item("Last"));
+    await user.keyboard("{ArrowUp}{ArrowUp}");
+    expect(document.activeElement).toBe(item("Middle"));
+    expect(screen.queryByRole("menu")).toBeNull();
+
+    await user.keyboard("{ArrowUp}{Enter}");
+    await screen.findByRole("menu");
+    expect(item("Shapes").getAttribute("aria-expanded")).toBe("true");
+  });
+
+  it("opens a menu button with ArrowDown in a horizontal toolbar", async () => {
+    const user = userEvent.setup();
+    render(MenusDemo);
+    item("First").focus();
+
+    await user.keyboard("{ArrowRight}{ArrowDown}");
+    await screen.findByRole("menu");
+    expect(item("Shapes").getAttribute("aria-expanded")).toBe("true");
   });
 
   it("keeps a disabled menu trigger closed", async () => {
