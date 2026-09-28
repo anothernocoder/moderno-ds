@@ -26,6 +26,11 @@ function importedIdentifiers(clause: string): string[] {
   return [clause.trim()].filter(Boolean);
 }
 
+/** `SegmentGroup` → `segment-group`: an Ark component's name spelled as its `data-scope`. */
+function scopeOf(identifier: string): string {
+  return identifier.replace(/(?<=[a-z0-9])([A-Z])/g, "-$1").toLowerCase();
+}
+
 export const noRawArk: Rule = {
   id: "moderno/no-raw-ark",
   severity: "error",
@@ -38,9 +43,11 @@ export const noRawArk: Rule = {
     for (const match of ctx.code.matchAll(ARK_IMPORT)) {
       const [, clause, specifier] = match;
       const identifiers = importedIdentifiers(clause!);
+      // By name, or by scope when Moderno names the component differently
+      // (Ark's SegmentGroup is Moderno's SegmentedControl, scope "segment-group").
       const matchedComponent = manifest?.components.find((c) =>
         identifiers.some(
-          (id) => id.toLowerCase() === c.name.toLowerCase() || id.toLowerCase() === c.scope,
+          (id) => id.toLowerCase() === c.name.toLowerCase() || scopeOf(id) === c.scope,
         ),
       );
       findings.push({

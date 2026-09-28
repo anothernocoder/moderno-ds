@@ -1,6 +1,6 @@
 # Moderno Design System
 
-Framework-agnostic design system monorepo: primitives versioned via npm, blocks/themes via a shadcn-style registry, documentation in Astro. Platform decisions (toolchain, publish, docs, themes): **ADR-0001** (`docs/adr/0001-platform-distribution-docs-theming.md`). Absorption of the predecessor `moderno` and the npm scope: **ADR-0004**. Responsive policy and registry tiers: **ADR-0005**. Docs craft — harvesting Nimbus, Astro 7, examples as files: **ADR-0006**. One file per component, shared lists discovered or generated: **ADR-0009**.
+Framework-agnostic design system monorepo: primitives versioned via npm, blocks/themes via a shadcn-style registry, documentation in Astro. Platform decisions (toolchain, publish, docs, themes): **ADR-0001** (`docs/adr/0001-platform-distribution-docs-theming.md`). Absorption of the predecessor `moderno` and the npm scope: **ADR-0004**. Responsive policy and registry tiers: **ADR-0005**. Docs craft — harvesting Nimbus, Astro 7, examples as files: **ADR-0006**. One file per component, shared lists discovered or generated: **ADR-0009**. Behaviour Ark does not ship, as Zag machines in core, and the shared announcer: **ADR-0010**.
 
 ## Language
 
@@ -115,6 +115,14 @@ _Avoid_: Typography component, custom .text-\* classes in core
 **Component variant**:
 An alternative visual style (outline, sm, destructive…) expressed as `data-variant`, `data-size`, etc. on the `[data-part=root]`. CVA in `@moderno-ui/core` resolves props → data attributes; CSS in `components.css`.
 _Avoid_: Variant class, CVA Tailwind string
+
+**Machine**:
+A Zag 1.x state machine (`createMachine` from `@zag-js/core`) that holds a Primitive's behaviour: its state, the events it reacts to, and a `connect` that turns the state into props for each part. Ark ships one per component it covers; a Primitive Ark does not cover gets its own in `packages/core/src/machines/<slug>/`, on the Zag version Ark resolves, tested once in core and bound in each framework with `@zag-js/<framework>` like Ark does (ADR-0010).
+_Avoid_: controller, store, hook (for the shared behaviour)
+
+**Announcer**:
+`announce(message, { politeness })` from `@moderno-ui/core`: the one way a component tells screen-reader users about a change they cannot see, through a single visually hidden live region per document (`@zag-js/live-region`). Does nothing on the server (ADR-0010).
+_Avoid_: toast (for screen-reader-only messages), a live region per component
 
 **Predecessor (`moderno`)**:
 The earlier design-system repo (`anothernocoder/moderno`: Zag.js directly, `--md-*` tokens, `[data-theme]`, Starlight docs). Its inventory of primitives, blocks, screens and flows is the _source material_ being absorbed into this DS; its code is not copied verbatim. Archived once the absorption is complete. Its `styles`, `class-contract`, `chart-core` and `registry` packages are deprecated on npm in favour of `@moderno-ui/css`, `@moderno-ui/core`, `@moderno-ui/charts-core` and `@moderno-ui/cli`.

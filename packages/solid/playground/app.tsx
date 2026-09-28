@@ -12,6 +12,7 @@
  */
 import AccordionSection from "./sections/accordion.jsx";
 import AlertSection from "./sections/alert.jsx";
+import AngleSliderSection from "./sections/angle-slider.jsx";
 import AvatarSection from "./sections/avatar.jsx";
 import BadgeSection from "./sections/badge.jsx";
 import BarListSection from "./sections/bar-list.jsx";
@@ -22,13 +23,16 @@ import CarouselSection from "./sections/carousel.jsx";
 import ChartsSection from "./sections/charts.jsx";
 import CheckboxSection from "./sections/checkbox.jsx";
 import ChipSection from "./sections/chip.jsx";
+import ColorPickerSection from "./sections/color-picker.jsx";
 import ComboboxSection from "./sections/combobox.jsx";
 import DatePickerSection from "./sections/date-picker.jsx";
 import DialogSection from "./sections/dialog.jsx";
 import DividerSection from "./sections/divider.jsx";
 import DonutChartSection from "./sections/donut-chart.jsx";
 import DrawerSection from "./sections/drawer.jsx";
+import EditableSection from "./sections/editable.jsx";
 import FieldSection from "./sections/field.jsx";
+import FileUploadSection from "./sections/file-upload.jsx";
 import IndicatorSection from "./sections/indicator.jsx";
 import MenuSection from "./sections/menu.jsx";
 import NumberInputSection from "./sections/number-input.jsx";
@@ -37,9 +41,11 @@ import PinInputSection from "./sections/pin-input.jsx";
 import PopoverSection from "./sections/popover.jsx";
 import ProgressSection from "./sections/progress.jsx";
 import RadioGroupSection from "./sections/radio-group.jsx";
+import SegmentedControlSection from "./sections/segmented-control.jsx";
 import SelectSection from "./sections/select.jsx";
 import SkeletonSection from "./sections/skeleton.jsx";
 import SliderSection from "./sections/slider.jsx";
+import SortableListSection from "./sections/sortable-list.jsx";
 import SparkChartSection from "./sections/spark-chart.jsx";
 import SpinnerSection from "./sections/spinner.jsx";
 import SplitterSection from "./sections/splitter.jsx";
@@ -49,7 +55,9 @@ import TagsInputSection from "./sections/tags-input.jsx";
 import ToastSection from "./sections/toast.jsx";
 import ToggleSection from "./sections/toggle.jsx";
 import ToggleGroupSection from "./sections/toggle-group.jsx";
+import ToolbarSection from "./sections/toolbar.jsx";
 import TooltipSection from "./sections/tooltip.jsx";
+import VectorPadSection from "./sections/vector-pad.jsx";
 
 export interface AppProps {
   /** Mount the Dialog + Select popovers open (exercises the portal/id path). */
@@ -61,6 +69,7 @@ export function App(props: AppProps) {
     <main>
       <AccordionSection open={props.open ?? false} />
       <AlertSection open={props.open ?? false} />
+      <AngleSliderSection open={props.open ?? false} />
       <AvatarSection open={props.open ?? false} />
       <BadgeSection open={props.open ?? false} />
       <BarListSection open={props.open ?? false} />
@@ -71,13 +80,16 @@ export function App(props: AppProps) {
       <ChartsSection open={props.open ?? false} />
       <CheckboxSection open={props.open ?? false} />
       <ChipSection open={props.open ?? false} />
+      <ColorPickerSection open={props.open ?? false} />
       <ComboboxSection open={props.open ?? false} />
       <DatePickerSection open={props.open ?? false} />
       <DialogSection open={props.open ?? false} />
       <DividerSection open={props.open ?? false} />
       <DonutChartSection open={props.open ?? false} />
       <DrawerSection open={props.open ?? false} />
+      <EditableSection open={props.open ?? false} />
       <FieldSection open={props.open ?? false} />
+      <FileUploadSection open={props.open ?? false} />
       <IndicatorSection open={props.open ?? false} />
       <MenuSection open={props.open ?? false} />
       <NumberInputSection open={props.open ?? false} />
@@ -86,9 +98,11 @@ export function App(props: AppProps) {
       <PopoverSection open={props.open ?? false} />
       <ProgressSection open={props.open ?? false} />
       <RadioGroupSection open={props.open ?? false} />
+      <SegmentedControlSection open={props.open ?? false} />
       <SelectSection open={props.open ?? false} />
       <SkeletonSection open={props.open ?? false} />
       <SliderSection open={props.open ?? false} />
+      <SortableListSection open={props.open ?? false} />
       <SparkChartSection open={props.open ?? false} />
       <SpinnerSection open={props.open ?? false} />
       <SplitterSection open={props.open ?? false} />
@@ -98,7 +112,9 @@ export function App(props: AppProps) {
       <ToastSection open={props.open ?? false} />
       <ToggleSection open={props.open ?? false} />
       <ToggleGroupSection open={props.open ?? false} />
+      <ToolbarSection open={props.open ?? false} />
       <TooltipSection open={props.open ?? false} />
+      <VectorPadSection open={props.open ?? false} />
     </main>
   );
 }

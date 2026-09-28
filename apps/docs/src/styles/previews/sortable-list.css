@@ -1,0 +1,11 @@
+/* A list fills its container. A lone one centred on the stage gets a
+   sidebar's width instead of shrinking to its longest name, so the items do
+   not change width as they move. In a row of sizes each one shares the line
+   with its siblings. */
+.preview-panel--demo > astro-island > [data-scope="sortable-list"][data-part="root"] {
+  width: min(100%, 16rem);
+}
+.demo-row > [data-scope="sortable-list"][data-part="root"] {
+  flex: 1 1 8rem;
+  max-width: 12rem;
+}

@@ -1,12 +1,16 @@
 value RadioGroup
 type ModernoRadioGroupRootProps
+type RadioGroupAspectRatio
+type RadioGroupColumns
 type RadioGroupIndicatorProps
 type RadioGroupItemControlProps
 type RadioGroupItemDescriptionProps
 type RadioGroupItemHiddenInputProps
+type RadioGroupItemMediaProps
 type RadioGroupItemProps
 type RadioGroupItemTextProps
 type RadioGroupLabelProps
 type RadioGroupRootProps
 type RadioGroupSize
 type RadioGroupValueChangeDetails
+type RadioGroupVariant

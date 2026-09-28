@@ -1,0 +1,5 @@
+value ColorPicker
+type ColorPickerProps
+type ColorPickerSize
+type ColorPickerTranslations
+type ColorPickerValueChangeDetails

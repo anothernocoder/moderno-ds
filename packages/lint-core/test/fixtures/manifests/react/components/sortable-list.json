@@ -1,0 +1,39 @@
+{
+  "name": "SortableList",
+  "scope": "sortable-list",
+  "import": "import { SortableList } from \"@moderno-ui/react\"",
+  "propsHash": "sha256:fixture-sortable-list",
+  "props": [
+    {
+      "name": "children",
+      "type": "ReactNode | ((items: string[]) => ReactNode)",
+      "required": false
+    },
+    { "name": "defaultItems", "type": "string[]", "required": false },
+    { "name": "disabled", "type": "boolean", "required": false },
+    { "name": "items", "type": "string[]", "required": false },
+    {
+      "name": "onReorder",
+      "type": "(details: SortableListReorderDetails) => void",
+      "required": false
+    },
+    { "name": "size", "type": "\"sm\" | \"md\" | \"lg\"", "required": false },
+    {
+      "name": "translations",
+      "type": "Partial<SortableListTranslations>",
+      "required": false
+    }
+  ],
+  "propsComplete": true,
+  "parts": [
+    { "name": "root" },
+    { "name": "item" },
+    { "name": "item-handle" },
+    { "name": "item-trigger" }
+  ],
+  "variants": { "size": ["sm", "md", "lg"] },
+  "guidance": {
+    "intent": "A vertical list whose items the user reorders by dragging or with the keyboard.",
+    "whenToUse": "A short list whose order matters: slides in a deck, layers, steps, a playlist."
+  }
+}

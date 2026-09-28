@@ -42,6 +42,11 @@ import invalidReact from "../../../examples/radio-group/invalid/react.tsx?raw";
 import invalidVue from "../../../examples/radio-group/invalid/vue.vue?raw";
 import invalidSolid from "../../../examples/radio-group/invalid/solid.tsx?raw";
 import invalidSvelte from "../../../examples/radio-group/invalid/radio-group-invalid.svelte?raw";
+import RadioGroupTilesDemo from "../../../examples/radio-group/tiles/radio-group-tiles.svelte";
+import tilesReact from "../../../examples/radio-group/tiles/react.tsx?raw";
+import tilesVue from "../../../examples/radio-group/tiles/vue.vue?raw";
+import tilesSolid from "../../../examples/radio-group/tiles/solid.tsx?raw";
+import tilesSvelte from "../../../examples/radio-group/tiles/radio-group-tiles.svelte?raw";
 
 <FrameworkSelect locale="es" />
 
@@ -157,21 +162,21 @@ import { RadioGroup } from "@moderno-ui/solid";
 
 ### RadioGroup.Root
 
-`size` es el añadido de Moderno y vale `md` por defecto; el resto de props vienen del RadioGroup de Ark.
+La primera tabla recoge las props de Moderno: `variant` (por defecto `"list"`), `size` (por defecto `"md"`) y dos para las tarjetas, `columns` (sin fijar: las tarjetas llenan la fila) y `aspectRatio` (por defecto `"16:9"`). La segunda recoge las props que vienen del RadioGroup de Ark.
 
 <PropsTable component="RadioGroup" />
 
-| Prop            | Tipo                           | Por defecto  | Descripción                                                         |
-| --------------- | ------------------------------ | ------------ | ------------------------------------------------------------------- |
-| `value`         | `string \| null`               | —            | Valor controlado. Úsalo con `onValueChange`.                        |
-| `defaultValue`  | `string \| null`               | —            | Valor inicial cuando no está controlado.                            |
-| `onValueChange` | `(details: { value }) => void` | —            | Se llama cuando el usuario elige una opción.                        |
-| `orientation`   | `"vertical" \| "horizontal"`   | `"vertical"` | Apila las opciones en columna o las pone en fila.                   |
-| `disabled`      | `boolean`                      | `false`      | Deshabilita todas las opciones y atenúa el grupo.                   |
-| `invalid`       | `boolean`                      | `false`      | Pone `aria-invalid` y rodea cada círculo con `--destructive`.       |
-| `readOnly`      | `boolean`                      | `false`      | Muestra la elección pero ignora los clics.                          |
-| `required`      | `boolean`                      | `false`      | Marca los radios como obligatorios.                                 |
-| `name`          | `string`                       | —            | Nombre del campo en el formulario, compartido por todos los radios. |
+| Prop            | Tipo                           | Por defecto  | Descripción                                                                     |
+| --------------- | ------------------------------ | ------------ | ------------------------------------------------------------------------------- |
+| `value`         | `string \| null`               | —            | Valor controlado. Úsalo con `onValueChange`.                                    |
+| `defaultValue`  | `string \| null`               | —            | Valor inicial cuando no está controlado.                                        |
+| `onValueChange` | `(details: { value }) => void` | —            | Se llama cuando el usuario elige una opción.                                    |
+| `orientation`   | `"vertical" \| "horizontal"`   | `"vertical"` | Apila las opciones en columna o las pone en fila.                               |
+| `disabled`      | `boolean`                      | `false`      | Deshabilita todas las opciones y atenúa el grupo.                               |
+| `invalid`       | `boolean`                      | `false`      | Pone `aria-invalid` y pinta cada círculo, o borde de tile, con `--destructive`. |
+| `readOnly`      | `boolean`                      | `false`      | Muestra la elección pero ignora los clics.                                      |
+| `required`      | `boolean`                      | `false`      | Marca los radios como obligatorios.                                             |
+| `name`          | `string`                       | —            | Nombre del campo en el formulario, compartido por todos los radios.             |
 
 ### RadioGroup.Item
 
@@ -185,10 +190,11 @@ import { RadioGroup } from "@moderno-ui/solid";
 
 | Parte                        | Elemento               | Descripción                                                                                                   |
 | ---------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------- |
-| `RadioGroup.Root`            | `<div>`                | `role="radiogroup"`; lleva `data-size` y `data-orientation`.                                                  |
+| `RadioGroup.Root`            | `<div>`                | `role="radiogroup"`; lleva `data-variant`, `data-size` y `data-orientation`.                                  |
 | `RadioGroup.Label`           | `<span>`               | La etiqueta del grupo; da nombre al radiogroup.                                                               |
-| `RadioGroup.Item`            | `<label>`              | Una opción; un clic en cualquier punto la elige.                                                              |
-| `RadioGroup.ItemControl`     | `<div>`                | El círculo del radio.                                                                                         |
+| `RadioGroup.Item`            | `<label>`              | Una opción; un clic en cualquier punto la elige. En una tarjeta, la tarjeta entera.                           |
+| `RadioGroup.ItemMedia`       | `<span>`               | El hueco de Moderno para la imagen u otro contenido de una tarjeta. Dale `alt=""` a la imagen.                |
+| `RadioGroup.ItemControl`     | `<div>`                | El círculo del radio. En una tarjeta, la insignia con la marca de verificación en su esquina.                 |
 | `RadioGroup.ItemText`        | `<span>`               | La etiqueta de la opción; da nombre al radio.                                                                 |
 | `RadioGroup.ItemDescription` | `<span>`               | La pista de Moderno bajo la etiqueta. Ponla dentro de `ItemText`.                                             |
 | `RadioGroup.ItemHiddenInput` | `<input type="radio">` | Radio nativo oculto; lleva el foco, las flechas, `name` y `value`. Renderízalo siempre.                       |
@@ -204,7 +210,10 @@ import { RadioGroup } from "@moderno-ui/solid";
 | `data-invalid`       | Presente con `invalid`                                      |
 | `data-readonly`      | Presente en los ítems con `readOnly`                        |
 | `data-focus-visible` | En el control del ítem cuyo radio tiene el foco del teclado |
+| `data-variant`       | En la raíz: `"list"` o `"tile"`                             |
 | `data-size`          | En la raíz: `"sm"`, `"md"` o `"lg"`                         |
+| `data-columns`       | En la raíz de tarjetas con `columns`: de `"1"` a `"6"`      |
+| `data-aspect-ratio`  | En la raíz de tarjetas con `aspectRatio`, como `"4:3"`      |
 
 ## Ejemplos
 
@@ -277,9 +286,24 @@ RadioGroup no tiene una parte para el texto de error, así que pon el mensaje de
   <RadioGroupInvalidDemo client:visible />
 </Preview>
 
+### Tarjetas
+
+Usa `variant="tile"` para elegir por imagen, como el diseño de una diapositiva. Cada opción pasa a ser una tarjeta; pon la imagen en `RadioGroup.ItemMedia`. Puede ser un `<img alt="">` o cualquier contenido, como el SVG de aquí. Fija `columns` para decidir cuántas tarjetas caben por fila, y `aspectRatio` para cambiar la forma de la imagen.
+
+<Preview
+  examples={{
+    react: tilesReact,
+    vue: tilesVue,
+    solid: tilesSolid,
+    svelte: tilesSvelte,
+  }}
+>
+  <RadioGroupTilesDemo client:visible />
+</Preview>
+
 ## Notas
 
-- `RadioGroup.Root` está envuelto para añadir `size`, y `RadioGroup.ItemDescription` es de Moderno; el resto de partes son las de Ark sin cambios.
-- Estiliza el estado desde `data-state` y los atributos `data-*`; `size` es la única prop visual.
+- `RadioGroup.Root` está envuelto para añadir `variant`, `size`, `columns` y `aspectRatio`; `RadioGroup.ItemMedia` y `RadioGroup.ItemDescription` son de Moderno. El resto de partes son las de Ark sin cambios.
+- Estiliza el estado desde `data-state` y los atributos `data-*`.
 - Las flechas del teclado mueven la elección entre opciones, como en un grupo de radios nativo.
 - RadioGroup reemplaza al Radio del predecesor.

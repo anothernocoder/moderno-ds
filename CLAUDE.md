@@ -40,6 +40,7 @@ A **Primitive** adds:
 | SSR tests           | `packages/react/test/ssr/<slug>.test.tsx`, `packages/vue/test/ssr/<slug>.test.ts`, `packages/solid/test/ssr/<slug>.ssr.test.tsx`, `packages/svelte/test/ssr/<slug>.ssr.test.ts` |
 | Parity fragment     | `docs/parity/<slug>.md`                                                                                                                                                         |
 | Preview CSS         | `apps/docs/src/styles/previews/<scope>.css`, only when its demos need sizing                                                                                                    |
+| Machine             | `packages/core/src/machines/<slug>/`, only when Ark has no machine for it, and its tests in `packages/core/test/machines/<slug>.test.ts` (ADR-0010)                             |
 
 A **Block**, **Screen** or **Flow** adds `registry/<blocks|screens|flows>/<name>/item.json` with its source per framework beside it, and its install test, `tooling/cli/test/install/<name>.test.ts`.
 

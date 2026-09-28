@@ -1,0 +1,6 @@
+/* Pads of three sizes in a row line up by their labels, at the top: the
+   row's baseline would line them up by their last field instead, which
+   leaves each pad at a different height. */
+.demo-row > [data-scope="vector-pad"][data-part="root"] {
+  align-self: flex-start;
+}

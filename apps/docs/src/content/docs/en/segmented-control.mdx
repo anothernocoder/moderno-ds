@@ -1,0 +1,342 @@
+---
+title: Segmented Control
+description: Two to five options side by side in one track. The user picks one, and a pill slides behind it.
+group: Components
+order: 29
+component: SegmentedControl
+pkg: "@moderno-ui/react"
+agentPropsHash: "sha256:670eac12101cccc551634150faf7bc8a2b18daab8982786d6ab911864e046f2b"
+agent:
+  intent: Pick one value from two to five short options shown side by side in one track.
+  whenToUse: A setting with a few values that changes something in place — fit, fill or stretch; list or grid; day, week or month.
+  whenNotToUse:
+    - case: Each option shows a different panel of content
+      use: Tabs
+    - case: More than five options, or options that need a description
+      use: Radio Group or Select
+    - case: Options that can be on at the same time
+      use: Toggle Group with multiple
+    - case: A single on/off setting
+      use: Switch
+  gotchas:
+    - "Render SegmentedControl.Indicator first inside SegmentedControl.Root: it is the pill that slides behind the selected segment."
+    - "Render SegmentedControl.ItemHiddenInput in every SegmentedControl.Item: it is the real radio that carries focus, the arrow keys and the form value."
+    - "Name the group with aria-label on the Root, or put it in a Field with a Field.Label. There is no SegmentedControl.Label."
+    - "For an icon-only segment, keep SegmentedControl.ItemText with the label and add hidden to it: screen readers still read it."
+    - "size and fullWidth are the only visual props; selected, disabled and invalid are Ark's data-state and data-* attributes."
+  theming:
+    - "The track is --muted with a --border edge; the selected segment's pill is --background with a --border edge and --shadow-sm."
+    - "Segments are --muted-foreground; the selected or hovered one is --foreground. Invalid turns the track's edge --destructive. Do not pass a hex."
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import SegmentedControlDemo from "../../../examples/segmented-control/segmented-control.svelte";
+import baseReact from "../../../examples/segmented-control/react.tsx?raw";
+import baseVue from "../../../examples/segmented-control/vue.vue?raw";
+import baseSolid from "../../../examples/segmented-control/solid.tsx?raw";
+import baseSvelte from "../../../examples/segmented-control/segmented-control.svelte?raw";
+import IconsDemo from "../../../examples/segmented-control/icons/segmented-control-icons.svelte";
+import iconsReact from "../../../examples/segmented-control/icons/react.tsx?raw";
+import iconsVue from "../../../examples/segmented-control/icons/vue.vue?raw";
+import iconsSolid from "../../../examples/segmented-control/icons/solid.tsx?raw";
+import iconsSvelte from "../../../examples/segmented-control/icons/segmented-control-icons.svelte?raw";
+import IconOnlyDemo from "../../../examples/segmented-control/icon-only/segmented-control-icon-only.svelte";
+import iconOnlyReact from "../../../examples/segmented-control/icon-only/react.tsx?raw";
+import iconOnlyVue from "../../../examples/segmented-control/icon-only/vue.vue?raw";
+import iconOnlySolid from "../../../examples/segmented-control/icon-only/solid.tsx?raw";
+import iconOnlySvelte from "../../../examples/segmented-control/icon-only/segmented-control-icon-only.svelte?raw";
+import SizesDemo from "../../../examples/segmented-control/sizes/segmented-control-sizes.svelte";
+import sizesReact from "../../../examples/segmented-control/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/segmented-control/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/segmented-control/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/segmented-control/sizes/segmented-control-sizes.svelte?raw";
+import FullWidthDemo from "../../../examples/segmented-control/full-width/segmented-control-full-width.svelte";
+import fullWidthReact from "../../../examples/segmented-control/full-width/react.tsx?raw";
+import fullWidthVue from "../../../examples/segmented-control/full-width/vue.vue?raw";
+import fullWidthSolid from "../../../examples/segmented-control/full-width/solid.tsx?raw";
+import fullWidthSvelte from "../../../examples/segmented-control/full-width/segmented-control-full-width.svelte?raw";
+import DisabledDemo from "../../../examples/segmented-control/disabled/segmented-control-disabled.svelte";
+import disabledReact from "../../../examples/segmented-control/disabled/react.tsx?raw";
+import disabledVue from "../../../examples/segmented-control/disabled/vue.vue?raw";
+import disabledSolid from "../../../examples/segmented-control/disabled/solid.tsx?raw";
+import disabledSvelte from "../../../examples/segmented-control/disabled/segmented-control-disabled.svelte?raw";
+import ControlledDemo from "../../../examples/segmented-control/controlled/segmented-control-controlled.svelte";
+import controlledReact from "../../../examples/segmented-control/controlled/react.tsx?raw";
+import controlledVue from "../../../examples/segmented-control/controlled/vue.vue?raw";
+import controlledSolid from "../../../examples/segmented-control/controlled/solid.tsx?raw";
+import controlledSvelte from "../../../examples/segmented-control/controlled/segmented-control-controlled.svelte?raw";
+import FieldDemo from "../../../examples/segmented-control/field/segmented-control-field.svelte";
+import fieldReact from "../../../examples/segmented-control/field/react.tsx?raw";
+import fieldVue from "../../../examples/segmented-control/field/vue.vue?raw";
+import fieldSolid from "../../../examples/segmented-control/field/solid.tsx?raw";
+import fieldSvelte from "../../../examples/segmented-control/field/segmented-control-field.svelte?raw";
+import LongLabelsDemo from "../../../examples/segmented-control/long-labels/segmented-control-long-labels.svelte";
+import longLabelsReact from "../../../examples/segmented-control/long-labels/react.tsx?raw";
+import longLabelsVue from "../../../examples/segmented-control/long-labels/vue.vue?raw";
+import longLabelsSolid from "../../../examples/segmented-control/long-labels/solid.tsx?raw";
+import longLabelsSvelte from "../../../examples/segmented-control/long-labels/segmented-control-long-labels.svelte?raw";
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
+  <SegmentedControlDemo client:visible />
+</Preview>
+
+## Installation
+
+<Install pkg="@moderno-ui/react" />
+
+## Usage
+
+A segmented control shows a few options in one row, and the user picks exactly one. Use it for a setting that changes a value in place, like how an image fills its frame.
+
+**Segmented control or Tabs?** A segmented control changes a value. Tabs change the view: each tab shows its own panel of content. If picking an option swaps the content below it, use Tabs.
+
+<ForFramework fw="react">
+
+```tsx
+import { SegmentedControl } from "@moderno-ui/react";
+```
+
+```tsx
+<SegmentedControl.Root defaultValue="fit" aria-label="Image scale">
+  <SegmentedControl.Indicator />
+  <SegmentedControl.Item value="fit">
+    <SegmentedControl.ItemText>Fit</SegmentedControl.ItemText>
+    <SegmentedControl.ItemHiddenInput />
+  </SegmentedControl.Item>
+  <SegmentedControl.Item value="fill">
+    <SegmentedControl.ItemText>Fill</SegmentedControl.ItemText>
+    <SegmentedControl.ItemHiddenInput />
+  </SegmentedControl.Item>
+</SegmentedControl.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { SegmentedControl } from "@moderno-ui/vue";
+```
+
+```vue
+<SegmentedControl.Root default-value="fit" aria-label="Image scale">
+  <SegmentedControl.Indicator />
+  <SegmentedControl.Item value="fit">
+    <SegmentedControl.ItemText>Fit</SegmentedControl.ItemText>
+    <SegmentedControl.ItemHiddenInput />
+  </SegmentedControl.Item>
+  <SegmentedControl.Item value="fill">
+    <SegmentedControl.ItemText>Fill</SegmentedControl.ItemText>
+    <SegmentedControl.ItemHiddenInput />
+  </SegmentedControl.Item>
+</SegmentedControl.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { SegmentedControl } from "@moderno-ui/svelte";
+```
+
+```svelte
+<SegmentedControl.Root defaultValue="fit" aria-label="Image scale">
+  <SegmentedControl.Indicator />
+  <SegmentedControl.Item value="fit">
+    <SegmentedControl.ItemText>Fit</SegmentedControl.ItemText>
+    <SegmentedControl.ItemHiddenInput />
+  </SegmentedControl.Item>
+  <SegmentedControl.Item value="fill">
+    <SegmentedControl.ItemText>Fill</SegmentedControl.ItemText>
+    <SegmentedControl.ItemHiddenInput />
+  </SegmentedControl.Item>
+</SegmentedControl.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { SegmentedControl } from "@moderno-ui/solid";
+```
+
+```tsx
+<SegmentedControl.Root defaultValue="fit" aria-label="Image scale">
+  <SegmentedControl.Indicator />
+  <SegmentedControl.Item value="fit">
+    <SegmentedControl.ItemText>Fit</SegmentedControl.ItemText>
+    <SegmentedControl.ItemHiddenInput />
+  </SegmentedControl.Item>
+  <SegmentedControl.Item value="fill">
+    <SegmentedControl.ItemText>Fill</SegmentedControl.ItemText>
+    <SegmentedControl.ItemHiddenInput />
+  </SegmentedControl.Item>
+</SegmentedControl.Root>
+```
+
+</ForFramework>
+
+## API Reference
+
+### SegmentedControl.Root
+
+`size` and `fullWidth` are the Moderno additions; `size` defaults to `md`, and matches Field's sizes. The other props come from Ark's SegmentGroup.
+
+<PropsTable component="SegmentedControl" />
+
+| Prop            | Type                                   | Default | Description                                                                |
+| --------------- | -------------------------------------- | ------- | -------------------------------------------------------------------------- |
+| `value`         | `string \| null`                       | —       | Controlled value. Pair with `onValueChange`.                               |
+| `defaultValue`  | `string \| null`                       | —       | Initial value when uncontrolled.                                           |
+| `onValueChange` | `(details: { value: string }) => void` | —       | Called when the user picks an option.                                      |
+| `disabled`      | `boolean`                              | `false` | Disables every segment and dims the control.                               |
+| `invalid`       | `boolean`                              | `false` | Sets `aria-invalid` on every radio and edges the track in `--destructive`. |
+| `readOnly`      | `boolean`                              | `false` | Shows the choice but ignores clicks.                                       |
+| `name`          | `string`                               | —       | Form field name shared by every radio.                                     |
+| `aria-label`    | `string`                               | —       | Names the group. Not needed inside a `Field` with a `Field.Label`.         |
+
+In Vue, bind the value with `v-model`. In Svelte, use `bind:value`.
+
+### SegmentedControl.Item
+
+| Prop       | Type      | Default | Description                                  |
+| ---------- | --------- | ------- | -------------------------------------------- |
+| `value`    | `string`  | —       | The value this segment stands for. Required. |
+| `disabled` | `boolean` | `false` | Disables this segment only.                  |
+
+### Parts
+
+| Part                               | Element                | Description                                                                      |
+| ---------------------------------- | ---------------------- | -------------------------------------------------------------------------------- |
+| `SegmentedControl.Root`            | `<div>`                | The track. `role="radiogroup"`; carries `data-size` and `data-full-width`.       |
+| `SegmentedControl.Indicator`       | `<div>`                | The pill that slides behind the selected segment. Render it first in the root.   |
+| `SegmentedControl.Item`            | `<label>`              | One segment; clicking anywhere on it picks the option. An icon goes inside it.   |
+| `SegmentedControl.ItemText`        | `<span>`               | The segment's label; it names the radio. A long label ends in an ellipsis.       |
+| `SegmentedControl.ItemHiddenInput` | `<input type="radio">` | Visually hidden native radio; it carries focus, the arrow keys, `name`, `value`. |
+
+### Data attributes
+
+| Attribute            | Values                                                   |
+| -------------------- | -------------------------------------------------------- |
+| `data-state`         | `"checked"` or `"unchecked"`, on every part of a segment |
+| `data-disabled`      | Present on a disabled control or segment                 |
+| `data-invalid`       | Present while `invalid`                                  |
+| `data-focus-visible` | On the segment whose radio has keyboard focus            |
+| `data-size`          | On the root: `"sm"`, `"md"` or `"lg"`                    |
+| `data-full-width`    | Present on the root while `fullWidth`                    |
+
+## Examples
+
+### Icon and text
+
+Put an icon inside the item, before its text. Give the icon `aria-hidden="true"`.
+
+<Preview examples={{ react: iconsReact, vue: iconsVue, solid: iconsSolid, svelte: iconsSvelte }}>
+  <IconsDemo client:visible />
+</Preview>
+
+### Icon only
+
+Keep `ItemText` with the label and add `hidden` to it. It is not shown, but screen readers still read it.
+
+<Preview
+  examples={{
+    react: iconOnlyReact,
+    vue: iconOnlyVue,
+    solid: iconOnlySolid,
+    svelte: iconOnlySvelte,
+  }}
+>
+  <IconOnlyDemo client:visible />
+</Preview>
+
+### Sizes
+
+The track is as tall as a Field input of the same size.
+
+<Preview examples={{ react: sizesReact, vue: sizesVue, solid: sizesSolid, svelte: sizesSvelte }}>
+  <SizesDemo client:visible />
+</Preview>
+
+### Full width
+
+`fullWidth` stretches the track to its container and gives every segment the same width.
+
+<Preview
+  examples={{
+    react: fullWidthReact,
+    vue: fullWidthVue,
+    solid: fullWidthSolid,
+    svelte: fullWidthSvelte,
+  }}
+>
+  <FullWidthDemo client:visible />
+</Preview>
+
+### Disabled option
+
+Pass `disabled` to one `SegmentedControl.Item` to turn off that option only, or to `SegmentedControl.Root` to turn off them all.
+
+<Preview
+  examples={{
+    react: disabledReact,
+    vue: disabledVue,
+    solid: disabledSolid,
+    svelte: disabledSvelte,
+  }}
+>
+  <DisabledDemo client:visible />
+</Preview>
+
+### Controlled
+
+Keep the value in your own state.
+
+<Preview
+  examples={{
+    react: controlledReact,
+    vue: controlledVue,
+    solid: controlledSolid,
+    svelte: controlledSvelte,
+  }}
+>
+  <ControlledDemo client:visible />
+</Preview>
+
+### In a Field
+
+Inside a `Field`, the `Field.Label` names the control and the `Field.HelperText` describes it. No `aria-label` needed.
+
+<Preview examples={{ react: fieldReact, vue: fieldVue, solid: fieldSolid, svelte: fieldSvelte }}>
+  <FieldDemo client:visible />
+</Preview>
+
+### Long labels
+
+A label too long for its segment ends in an ellipsis instead of breaking the track. Hover it to see the full label in a tooltip.
+
+<Preview
+  examples={{
+    react: longLabelsReact,
+    vue: longLabelsVue,
+    solid: longLabelsSolid,
+    svelte: longLabelsSvelte,
+  }}
+>
+  <LongLabelsDemo client:visible />
+</Preview>
+
+## Notes
+
+- Each segment is a native radio: Tab moves into the group, and the arrow keys move and select.
+- The pill slides to the selected segment. With reduced motion turned on, it jumps there instead.
+- The selected segment is a raised pill with an edge and a shadow, so the choice does not rely on colour alone.
+- `SegmentedControl.Root` and `SegmentedControl.ItemText` are wrapped; every other part is Ark's SegmentGroup unchanged. Ark's `Label` is left out, because the root is the track.

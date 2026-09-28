@@ -1,0 +1,170 @@
+/* ──────────────────────── SortableList ────────────────────────── *
+ * The sortable-list machine (packages/core/src/machines/sortable-list):
+ * root > item > item-handle (optional) + item-trigger + anything else the
+ * item holds. The root is a <ul>, each item an <li>. While an item moves,
+ * the machine draws it and the items it passes away from their places with
+ * --sortable-list-offset (a translateY), stamps data-dragging="pointer" or
+ * "keyboard" on the moving item and on the root, and data-settling on the
+ * root for the two frames after a drop. `sortableListRecipe` puts size on
+ * the root; the items follow it.                                         */
+/* @runtime-vars --sortable-list-offset — the machine sets it on an item
+   while it moves or steps aside, in pixels. */
+[data-scope="sortable-list"][data-part="root"] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+/*
+ * A disabled list or item only stops moving: its trigger and whatever else
+ * it holds still work, so it is not dimmed or made inert like the base
+ * layer's [data-disabled]. Only its handle is dimmed.
+ */
+[data-scope="sortable-list"][data-part="root"][data-disabled],
+[data-scope="sortable-list"][data-part="item"][data-disabled] {
+  opacity: 1;
+  pointer-events: auto;
+}
+[data-scope="sortable-list"][data-part="item"] {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  min-height: var(--spacing-8);
+  padding-inline: var(--spacing-1);
+  border-radius: var(--radius);
+  background-color: transparent;
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-size: var(--text-ui-md);
+  /* No offset set means none (transform falls back to its initial value). */
+  transform: translateY(var(--sortable-list-offset));
+  transition:
+    transform var(--motion-fast) ease-out,
+    background-color var(--motion-fast),
+    box-shadow var(--motion-fast);
+}
+/* Without a handle the whole item drags: it shows the grab cursor, keeps
+   its text from being selected, and a touch on it drags instead of
+   scrolling the page. */
+[data-scope="sortable-list"][data-part="item"]:not(:has([data-part="item-handle"])) {
+  touch-action: none;
+  user-select: none;
+  cursor: grab;
+}
+[data-scope="sortable-list"][data-part="item"][data-disabled] {
+  touch-action: auto;
+  cursor: default;
+}
+/* The moving item lifts above the others, on the popover surface. */
+[data-scope="sortable-list"][data-part="item"][data-dragging] {
+  z-index: 1;
+  background-color: var(--popover);
+  color: var(--popover-foreground);
+  box-shadow: var(--shadow-md);
+}
+/* A pointer carries the item directly; only the items it passes glide. */
+[data-scope="sortable-list"][data-part="item"][data-dragging="pointer"] {
+  cursor: grabbing;
+  transition: none;
+}
+[data-scope="sortable-list"][data-part="root"][data-dragging="pointer"] {
+  cursor: grabbing;
+}
+/* The keyboard's item shows the focus ring around the whole item. */
+[data-scope="sortable-list"][data-part="item"][data-dragging="keyboard"] {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+/* Right after a drop the items already stand in their new order: nothing
+   glides for those frames, then the dropped item glides into its slot. */
+[data-scope="sortable-list"][data-part="root"][data-settling] > [data-part="item"] {
+  transition: none;
+}
+
+/* The handle: a small grip button before the item's content. */
+[data-scope="sortable-list"][data-part="item-handle"] {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-6);
+  height: var(--spacing-6);
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius);
+  background-color: transparent;
+  color: var(--muted-foreground);
+  cursor: grab;
+  touch-action: none;
+  transition:
+    background-color var(--motion-fast),
+    color var(--motion-fast);
+}
+[data-scope="sortable-list"][data-part="item-handle"] svg {
+  width: var(--spacing-4);
+  height: var(--spacing-4);
+}
+[data-scope="sortable-list"][data-part="item-handle"]:hover {
+  background-color: var(--muted);
+  color: var(--foreground);
+}
+[data-scope="sortable-list"][data-part="item-handle"][data-dragging="pointer"] {
+  cursor: grabbing;
+}
+[data-scope="sortable-list"][data-part="item-handle"]:disabled {
+  cursor: default;
+}
+
+/* The trigger: the item's name button, filling the rest of the row. */
+[data-scope="sortable-list"][data-part="item-trigger"] {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: var(--spacing-2);
+  min-width: 0;
+  min-height: var(--spacing-7);
+  margin: 0;
+  padding: var(--spacing-1) var(--spacing-2);
+  border: none;
+  border-radius: var(--radius);
+  background-color: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  cursor: inherit;
+  transition: background-color var(--motion-fast);
+}
+[data-scope="sortable-list"][data-part="item-trigger"]:hover {
+  background-color: var(--muted);
+}
+[data-scope="sortable-list"][data-part="item-handle"]:focus-visible,
+[data-scope="sortable-list"][data-part="item-trigger"]:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+
+/* Sizes — the item's height and type follow Button's steps. */
+[data-scope="sortable-list"][data-part="root"][data-size="sm"] > [data-part="item"] {
+  min-height: var(--spacing-7);
+  font-size: var(--text-ui-sm);
+}
+[data-scope="sortable-list"][data-part="root"][data-size="sm"] [data-part="item-trigger"] {
+  min-height: var(--spacing-6);
+}
+[data-scope="sortable-list"][data-part="root"][data-size="lg"] > [data-part="item"] {
+  min-height: calc(var(--spacing-8) + var(--spacing-2));
+  font-size: var(--text-ui-lg);
+}
+[data-scope="sortable-list"][data-part="root"][data-size="lg"] [data-part="item-trigger"] {
+  min-height: var(--spacing-8);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-scope="sortable-list"][data-part="item"] {
+    transition: none;
+  }
+}

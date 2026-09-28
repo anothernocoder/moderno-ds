@@ -1,0 +1,169 @@
+import {
+  createContext,
+  useContext,
+  useId,
+  type ComponentPropsWithRef,
+  type ReactNode,
+} from "react";
+import { mergeProps, normalizeProps, useMachine } from "@zag-js/react";
+import {
+  sortableList,
+  sortableListGripIcon,
+  sortableListRecipe,
+  type SortableListSize,
+} from "@moderno-ui/core";
+
+export type { SortableListSize } from "@moderno-ui/core";
+
+/** What `onReorder` receives: the new order, the moved item, and where it went. */
+export type SortableListReorderDetails = sortableList.ReorderDetails;
+/** The handle's name and the screen-reader announcements, for another language. */
+export type SortableListTranslations = sortableList.SortableListTranslations;
+
+export interface SortableListRootProps extends Omit<
+  ComponentPropsWithRef<"ul">,
+  "children" | "defaultValue"
+> {
+  /** The items' values in their current order. Pair with `onReorder`. */
+  items?: string[];
+  /** The items' values in their first order, when the list holds the order itself. */
+  defaultItems?: string[];
+  /** Called with the new order when an item is dropped in a new place. */
+  onReorder?: (details: SortableListReorderDetails) => void;
+  /** Stops every item from moving. Focus and each item's buttons still work. */
+  disabled?: boolean;
+  /** Item height and type — resolves to `data-size` on the root part. */
+  size?: SortableListSize;
+  /** The handle's name and the announcements, for another language. */
+  translations?: Partial<SortableListTranslations>;
+  /** The items. A function receives the current order, for a list that holds it itself. */
+  children?: ReactNode | ((items: string[]) => ReactNode);
+}
+
+export interface SortableListItemProps extends Omit<ComponentPropsWithRef<"li">, "value"> {
+  /** The item's value: one of the root's `items`. */
+  value: string;
+  /** The item's name, for its handle ("Reorder Logo") and the announcements. Defaults to `value`. */
+  label?: string;
+  /** Stops this item from moving. The others still move past it. */
+  disabled?: boolean;
+}
+
+export type SortableListItemHandleProps = ComponentPropsWithRef<"button">;
+export type SortableListItemTriggerProps = ComponentPropsWithRef<"button">;
+
+type Api = sortableList.SortableListApi;
+
+const SortableListContext = createContext<Api | null>(null);
+const SortableListItemContext = createContext<sortableList.ItemProps | null>(null);
+
+function useSortableList(part: string): Api {
+  const api = useContext(SortableListContext);
+  if (!api) throw new Error(`SortableList.${part} must be inside SortableList.Root.`);
+  return api;
+}
+
+function useSortableListItem(part: string): sortableList.ItemProps {
+  const item = useContext(SortableListItemContext);
+  if (!item) throw new Error(`SortableList.${part} must be inside SortableList.Item.`);
+  return item;
+}
+
+/**
+ * SortableList.Root — the `<ul>`. It runs the sortable-list machine from
+ * `@moderno-ui/core` and hands it to the items; the Moderno `size` recipe
+ * lands on it.
+ */
+function SortableListRoot({
+  id,
+  items,
+  defaultItems,
+  onReorder,
+  disabled,
+  size,
+  translations,
+  children,
+  ...props
+}: SortableListRootProps) {
+  const generatedId = useId();
+  const service = useMachine(sortableList.machine, {
+    id: id ?? generatedId,
+    items,
+    defaultItems,
+    onReorder,
+    disabled,
+    translations,
+  });
+  const api = sortableList.connect(service, normalizeProps);
+  return (
+    <SortableListContext.Provider value={api}>
+      <ul {...mergeProps(api.getRootProps(), sortableListRecipe({ size }), props)}>
+        {typeof children === "function" ? children(api.items) : children}
+      </ul>
+    </SortableListContext.Provider>
+  );
+}
+
+/** SortableList.Item — one `<li>`. It keeps any content; it moves as a whole. */
+function SortableListItem({ value, label, disabled, ...props }: SortableListItemProps) {
+  const api = useSortableList("Item");
+  const item = { value, label, disabled };
+  return (
+    <SortableListItemContext.Provider value={item}>
+      <li {...mergeProps(api.getItemProps(item), props)} />
+    </SortableListItemContext.Provider>
+  );
+}
+
+/** The default grip icon, from the shared geometry in core. */
+function GripIcon() {
+  return (
+    <svg viewBox={sortableListGripIcon.viewBox} fill="currentColor" aria-hidden="true">
+      {sortableListGripIcon.dots.map(({ cx, cy }) => (
+        <circle key={`${cx}-${cy}`} cx={cx} cy={cy} r={sortableListGripIcon.radius} />
+      ))}
+    </svg>
+  );
+}
+
+/**
+ * SortableList.ItemHandle — the optional grip button. With it, only the
+ * handle drags; it is named "Reorder <label>" and Space on it picks the item
+ * up. Its children replace the grip icon.
+ */
+function SortableListItemHandle({ children, ...props }: SortableListItemHandleProps) {
+  const api = useSortableList("ItemHandle");
+  const item = useSortableListItem("ItemHandle");
+  return (
+    <button {...mergeProps(api.getItemHandleProps(item), props)}>{children ?? <GripIcon />}</button>
+  );
+}
+
+/**
+ * SortableList.ItemTrigger — the item's one focus target, usually its name.
+ * Up and Down move between the triggers; without a handle, Space on it picks
+ * the item up.
+ */
+function SortableListItemTrigger(props: SortableListItemTriggerProps) {
+  const api = useSortableList("ItemTrigger");
+  const item = useSortableListItem("ItemTrigger");
+  return <button {...mergeProps(api.getItemTriggerProps(item), props)} />;
+}
+
+/**
+ * SortableList — a vertical list whose items reorder by dragging (mouse,
+ * touch, pen) or with the keyboard. It moves items only; it does not own
+ * their content.
+ *
+ * The sortable-list machine in `@moderno-ui/core` holds the behaviour: the
+ * drag threshold, the gap that opens where the item will land, scrolling
+ * near an edge, roving focus (the list is one Tab stop), Space to pick up,
+ * arrows to move, Space to drop, Escape to cancel, and the announcements.
+ * Anatomy: `Root > Item > ItemHandle (optional) + ItemTrigger`.
+ */
+export const SortableList = {
+  Root: SortableListRoot,
+  Item: SortableListItem,
+  ItemHandle: SortableListItemHandle,
+  ItemTrigger: SortableListItemTrigger,
+};

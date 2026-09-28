@@ -1,0 +1,217 @@
+---
+title: File Upload
+description: Una zona para soltar archivos. Arrastra archivos o haz clic para elegirlos, y mira la lista.
+group: Componentes
+order: 44
+component: FileUpload
+pkg: "@moderno-ui/react"
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import FileUploadDemo from "../../../examples/file-upload/file-upload.svelte";
+import baseReact from "../../../examples/file-upload/react.tsx?raw";
+import baseVue from "../../../examples/file-upload/vue.vue?raw";
+import baseSolid from "../../../examples/file-upload/solid.tsx?raw";
+import baseSvelte from "../../../examples/file-upload/file-upload.svelte?raw";
+import FileUploadMultipleDemo from "../../../examples/file-upload/multiple/file-upload-multiple.svelte";
+import multipleReact from "../../../examples/file-upload/multiple/react.tsx?raw";
+import multipleVue from "../../../examples/file-upload/multiple/vue.vue?raw";
+import multipleSolid from "../../../examples/file-upload/multiple/solid.tsx?raw";
+import multipleSvelte from "../../../examples/file-upload/multiple/file-upload-multiple.svelte?raw";
+import FileUploadFieldDemo from "../../../examples/file-upload/field/file-upload-field.svelte";
+import fieldReact from "../../../examples/file-upload/field/react.tsx?raw";
+import fieldVue from "../../../examples/file-upload/field/vue.vue?raw";
+import fieldSolid from "../../../examples/file-upload/field/solid.tsx?raw";
+import fieldSvelte from "../../../examples/file-upload/field/file-upload-field.svelte?raw";
+import FileUploadDisabledDemo from "../../../examples/file-upload/disabled/file-upload-disabled.svelte";
+import disabledReact from "../../../examples/file-upload/disabled/react.tsx?raw";
+import disabledVue from "../../../examples/file-upload/disabled/vue.vue?raw";
+import disabledSolid from "../../../examples/file-upload/disabled/solid.tsx?raw";
+import disabledSvelte from "../../../examples/file-upload/disabled/file-upload-disabled.svelte?raw";
+import FileUploadSizesDemo from "../../../examples/file-upload/sizes/file-upload-sizes.svelte";
+import sizesReact from "../../../examples/file-upload/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/file-upload/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/file-upload/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/file-upload/sizes/file-upload-sizes.svelte?raw";
+
+<FrameworkSelect locale="es" />
+
+<Preview examples={{ react: baseReact, vue: baseVue, solid: baseSolid, svelte: baseSvelte }}>
+  <FileUploadDemo client:visible />
+</Preview>
+
+## Instalación
+
+<Install pkg="@moderno-ui/react" />
+
+## Uso
+
+Usa un file upload cuando un formulario necesita archivos del ordenador del usuario, como un logo o unas fuentes. El usuario suelta archivos en la zona o hace clic para elegirlos. Los archivos aparecen en una lista debajo.
+
+<ForFramework fw="react">
+
+```tsx
+import { FileUpload } from "@moderno-ui/react";
+```
+
+```tsx
+<FileUpload accept={["image/png"]} onFileChange={(details) => save(details.acceptedFiles)} />
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { FileUpload } from "@moderno-ui/vue";
+```
+
+```vue
+<FileUpload v-model:accepted-files="files" :accept="['image/png']" />
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { FileUpload } from "@moderno-ui/svelte";
+```
+
+```svelte
+<FileUpload bind:acceptedFiles={files} accept={["image/png"]} />
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { FileUpload } from "@moderno-ui/solid";
+```
+
+```tsx
+<FileUpload accept={["image/png"]} onFileChange={(details) => save(details.acceptedFiles)} />
+```
+
+</ForFramework>
+
+Solo recoge los archivos. Envíalos tú a tu servidor.
+
+## Referencia de API
+
+### FileUpload
+
+<PropsTable component="FileUpload" />
+
+También acepta estas props del FileUpload de Ark:
+
+| Prop                   | Tipo                                               | Por defecto | Descripción                                                                |
+| ---------------------- | -------------------------------------------------- | ----------- | -------------------------------------------------------------------------- |
+| `acceptedFiles`        | `File[]`                                           | —           | Los archivos aceptados, para controlar la lista. Úsalo con `onFileChange`. |
+| `defaultAcceptedFiles` | `File[]`                                           | `[]`        | Los archivos con los que empieza cuando no está controlado.                |
+| `minFileSize`          | `number`                                           | `0`         | El archivo más pequeño que acepta, en bytes.                               |
+| `validate`             | `(file, details) => string[] \| null`              | —           | Tu propia regla. Devuelve por qué se rechaza un archivo.                   |
+| `invalid`              | `boolean`                                          | `false`     | Marca la subida como incorrecta: el borde pasa a `--destructive`.          |
+| `readOnly`             | `boolean`                                          | `false`     | Muestra los archivos, pero el usuario no puede cambiarlos.                 |
+| `required`             | `boolean`                                          | `false`     | Hace falta un archivo para enviar el formulario.                           |
+| `name`                 | `string`                                           | —           | Envía los archivos con un formulario bajo este nombre.                     |
+| `locale`               | `string`                                           | `en-US`     | El idioma de los tamaños y de la lista de tipos ("SVG o PNG").             |
+| `onFileAccept`         | `(details: { files }) => void`                     | —           | Se llama con los archivos aceptados cuando cambian.                        |
+| `onFileReject`         | `(details: { files: { file, errors }[] }) => void` | —           | Se llama con los archivos rechazados cuando cambian.                       |
+
+En Vue, enlaza la lista con `v-model:accepted-files` y escucha con `@file-change`. En Svelte, usa `bind:acceptedFiles`.
+
+Un archivo rechazado lleva `errors`: `FILE_INVALID_TYPE`, `FILE_TOO_LARGE`, `FILE_TOO_SMALL`, `TOO_MANY_FILES` o `FILE_EXISTS`. Un mensaje que devuelve `validate` se muestra tal cual.
+
+### Partes
+
+| Parte                 | Elemento   | Descripción                                                             |
+| --------------------- | ---------- | ----------------------------------------------------------------------- |
+| `root`                | `<div>`    | Contiene la zona y las listas. Lleva `data-size`.                       |
+| `dropzone`            | `<div>`    | La zona, `role="button"`. `data-dragging` mientras hay archivos encima. |
+| `dropzone-title`      | `<span>`   | El `label`, o "Drop files here or click to browse".                     |
+| `dropzone-hint`       | `<span>`   | Lo que acepta: "SVG or PNG, up to 2 MB".                                |
+| `item-group`          | `<ul>`     | Una lista. `data-type="accepted"` o `"rejected"`.                       |
+| `item`                | `<li>`     | Un archivo.                                                             |
+| `item-preview`        | `<div>`    | La miniatura de una imagen, o un icono de archivo.                      |
+| `item-name`           | `<div>`    | El nombre, cortado por el medio cuando es largo.                        |
+| `item-size-text`      | `<div>`    | El tamaño.                                                              |
+| `item-error`          | `<span>`   | Por qué no se añadió un archivo.                                        |
+| `item-delete-trigger` | `<button>` | Quita el archivo. Se llama "Remove logo.svg".                           |
+
+### Teclado
+
+| Tecla             | Acción                                       |
+| ----------------- | -------------------------------------------- |
+| `Enter` / `Space` | En la zona, abre el diálogo de archivos.     |
+| `Tab`             | Va a la zona y luego a cada botón de quitar. |
+| `Enter`           | En un botón de quitar, quita el archivo.     |
+
+## Ejemplos
+
+### Varios archivos
+
+`maxFiles` deja al usuario añadir más de un archivo.
+
+<Preview
+  examples={{
+    react: multipleReact,
+    vue: multipleVue,
+    solid: multipleSolid,
+    svelte: multipleSvelte,
+  }}
+>
+  <FileUploadMultipleDemo client:visible />
+</Preview>
+
+### En un campo
+
+Un Field le da a la zona una etiqueta y un texto de ayuda o de error.
+
+<Preview
+  examples={{
+    react: fieldReact,
+    vue: fieldVue,
+    solid: fieldSolid,
+    svelte: fieldSvelte,
+  }}
+>
+  <FileUploadFieldDemo client:visible />
+</Preview>
+
+### Desactivado
+
+<Preview
+  examples={{
+    react: disabledReact,
+    vue: disabledVue,
+    solid: disabledSolid,
+    svelte: disabledSvelte,
+  }}
+>
+  <FileUploadDisabledDemo client:visible />
+</Preview>
+
+### Tamaños
+
+<Preview
+  examples={{
+    react: sizesReact,
+    vue: sizesVue,
+    solid: sizesSolid,
+    svelte: sizesSvelte,
+  }}
+>
+  <FileUploadSizesDemo client:visible />
+</Preview>
+
+## Notas
+
+- Un archivo que rompe una regla aparece en una segunda lista, con el motivo. El usuario lo quita con su botón.
+- Los lectores de pantalla oyen cada archivo añadido, quitado o rechazado.
+- Traduce los textos con `translations`, por ejemplo `{ prompt: "Suelta archivos aquí" }`.

@@ -1,0 +1,37 @@
+{
+  "title": "Layers panel",
+  "description": "A layers panel for an editor, like Figma's, composing the @moderno-ui/{framework} SortableList, Toggle, Menu, Editable, Tooltip and Button primitives: one row per layer, top row front-most, with its thumbnail or kind icon, its name (cut short with the full name in a Tooltip), a visibility Toggle (\"Hide Logo\" / \"Show Logo\"), a lock Toggle (\"Lock Logo\" / \"Unlock Logo\") and a Menu with Duplicate, Rename and Delete; an empty state with Add layer. The list is a SortableList named \"Layers\": one Tab stop on the selected row, Up/Down/Home/End between rows, Tab through the row's toggles and menu, Space picks a row up and a drag reorders it. Each row's name button carries its state (aria-current, \", hidden, locked\"); Enter or a click selects, a double click, F2 or Rename renames it inline with Editable (Enter saves, Escape cancels), Delete asks the app to delete it. Controlled only: it renders layers and selectedId as given and reports onSelect, onReorder, onChange, onDuplicate, onDelete and onAdd. Hidden rows are dimmed; the toggles show on row hover and stay while hidden or locked; responds to its container (@container) — from @sm the thumbnails grow and Add layer shows its label.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}"],
+  "registryDependencies": [],
+  "files": {
+    "react": [
+      {
+        "path": "blocks/layers-panel/react/layers-panel.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/layers-panel.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "blocks/layers-panel/vue/LayersPanel.vue",
+        "type": "registry:block",
+        "target": "src/components/blocks/LayersPanel.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "blocks/layers-panel/svelte/LayersPanel.svelte",
+        "type": "registry:block",
+        "target": "src/components/blocks/LayersPanel.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "blocks/layers-panel/solid/layers-panel.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/layers-panel.tsx"
+      }
+    ]
+  }
+}

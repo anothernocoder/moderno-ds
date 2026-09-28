@@ -1,0 +1,24 @@
+{
+  "name": "Toolbar",
+  "scope": "toolbar",
+  "import": "import { Toolbar } from \"@moderno-ui/react\"",
+  "propsHash": "sha256:fixture-toolbar",
+  "props": [
+    { "name": "orientation", "type": "\"horizontal\" | \"vertical\"", "required": false },
+    { "name": "size", "type": "\"sm\" | \"md\" | \"lg\"", "required": false },
+    { "name": "dir", "type": "\"ltr\" | \"rtl\"", "required": false }
+  ],
+  "propsComplete": true,
+  "parts": [
+    { "name": "root" },
+    { "name": "button" },
+    { "name": "toggle" },
+    { "name": "group" },
+    { "name": "separator" }
+  ],
+  "variants": { "size": ["sm", "md", "lg"] },
+  "guidance": {
+    "intent": "A bar of icon buttons, toggles, groups and separators that keyboard users reach with one Tab stop and move through with the arrow keys.",
+    "whenToUse": "The controls of an editor or a creative tool — undo and redo, text style, zoom, a \"More\" menu — shown together in one row or column."
+  }
+}

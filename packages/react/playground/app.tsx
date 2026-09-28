@@ -16,6 +16,7 @@
  */
 import AccordionSection from "./sections/accordion.js";
 import AlertSection from "./sections/alert.js";
+import AngleSliderSection from "./sections/angle-slider.js";
 import AvatarSection from "./sections/avatar.js";
 import BadgeSection from "./sections/badge.js";
 import BarListSection from "./sections/bar-list.js";
@@ -26,13 +27,16 @@ import CarouselSection from "./sections/carousel.js";
 import ChartsSection from "./sections/charts.js";
 import CheckboxSection from "./sections/checkbox.js";
 import ChipSection from "./sections/chip.js";
+import ColorPickerSection from "./sections/color-picker.js";
 import ComboboxSection from "./sections/combobox.js";
 import DatePickerSection from "./sections/date-picker.js";
 import DialogSection from "./sections/dialog.js";
 import DividerSection from "./sections/divider.js";
 import DonutChartSection from "./sections/donut-chart.js";
 import DrawerSection from "./sections/drawer.js";
+import EditableSection from "./sections/editable.js";
 import FieldSection from "./sections/field.js";
+import FileUploadSection from "./sections/file-upload.js";
 import IndicatorSection from "./sections/indicator.js";
 import MenuSection from "./sections/menu.js";
 import NumberInputSection from "./sections/number-input.js";
@@ -41,9 +45,11 @@ import PinInputSection from "./sections/pin-input.js";
 import PopoverSection from "./sections/popover.js";
 import ProgressSection from "./sections/progress.js";
 import RadioGroupSection from "./sections/radio-group.js";
+import SegmentedControlSection from "./sections/segmented-control.js";
 import SelectSection from "./sections/select.js";
 import SkeletonSection from "./sections/skeleton.js";
 import SliderSection from "./sections/slider.js";
+import SortableListSection from "./sections/sortable-list.js";
 import SparkChartSection from "./sections/spark-chart.js";
 import SpinnerSection from "./sections/spinner.js";
 import SplitterSection from "./sections/splitter.js";
@@ -53,7 +59,9 @@ import TagsInputSection from "./sections/tags-input.js";
 import ToastSection from "./sections/toast.js";
 import ToggleSection from "./sections/toggle.js";
 import ToggleGroupSection from "./sections/toggle-group.js";
+import ToolbarSection from "./sections/toolbar.js";
 import TooltipSection from "./sections/tooltip.js";
+import VectorPadSection from "./sections/vector-pad.js";
 
 export interface AppProps {
   /** Mount the Dialog + Select popovers open (exercises the portal/id path). */
@@ -65,6 +73,7 @@ export function App({ open = false }: AppProps) {
     <main>
       <AccordionSection open={open} />
       <AlertSection open={open} />
+      <AngleSliderSection open={open} />
       <AvatarSection open={open} />
       <BadgeSection open={open} />
       <BarListSection open={open} />
@@ -75,13 +84,16 @@ export function App({ open = false }: AppProps) {
       <ChartsSection open={open} />
       <CheckboxSection open={open} />
       <ChipSection open={open} />
+      <ColorPickerSection open={open} />
       <ComboboxSection open={open} />
       <DatePickerSection open={open} />
       <DialogSection open={open} />
       <DividerSection open={open} />
       <DonutChartSection open={open} />
       <DrawerSection open={open} />
+      <EditableSection open={open} />
       <FieldSection open={open} />
+      <FileUploadSection open={open} />
       <IndicatorSection open={open} />
       <MenuSection open={open} />
       <NumberInputSection open={open} />
@@ -90,9 +102,11 @@ export function App({ open = false }: AppProps) {
       <PopoverSection open={open} />
       <ProgressSection open={open} />
       <RadioGroupSection open={open} />
+      <SegmentedControlSection open={open} />
       <SelectSection open={open} />
       <SkeletonSection open={open} />
       <SliderSection open={open} />
+      <SortableListSection open={open} />
       <SparkChartSection open={open} />
       <SpinnerSection open={open} />
       <SplitterSection open={open} />
@@ -102,7 +116,9 @@ export function App({ open = false }: AppProps) {
       <ToastSection open={open} />
       <ToggleSection open={open} />
       <ToggleGroupSection open={open} />
+      <ToolbarSection open={open} />
       <TooltipSection open={open} />
+      <VectorPadSection open={open} />
     </main>
   );
 }

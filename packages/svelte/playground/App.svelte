@@ -12,6 +12,7 @@
 <script lang="ts">
   import Accordion from "./sections/Accordion.svelte";
   import Alert from "./sections/Alert.svelte";
+  import AngleSlider from "./sections/AngleSlider.svelte";
   import Avatar from "./sections/Avatar.svelte";
   import Badge from "./sections/Badge.svelte";
   import BarList from "./sections/BarList.svelte";
@@ -22,13 +23,16 @@
   import Charts from "./sections/Charts.svelte";
   import Checkbox from "./sections/Checkbox.svelte";
   import Chip from "./sections/Chip.svelte";
+  import ColorPicker from "./sections/ColorPicker.svelte";
   import Combobox from "./sections/Combobox.svelte";
   import DatePicker from "./sections/DatePicker.svelte";
   import Dialog from "./sections/Dialog.svelte";
   import Divider from "./sections/Divider.svelte";
   import DonutChart from "./sections/DonutChart.svelte";
   import Drawer from "./sections/Drawer.svelte";
+  import Editable from "./sections/Editable.svelte";
   import Field from "./sections/Field.svelte";
+  import FileUpload from "./sections/FileUpload.svelte";
   import Indicator from "./sections/Indicator.svelte";
   import Menu from "./sections/Menu.svelte";
   import NumberInput from "./sections/NumberInput.svelte";
@@ -37,9 +41,11 @@
   import Popover from "./sections/Popover.svelte";
   import Progress from "./sections/Progress.svelte";
   import RadioGroup from "./sections/RadioGroup.svelte";
+  import SegmentedControl from "./sections/SegmentedControl.svelte";
   import Select from "./sections/Select.svelte";
   import Skeleton from "./sections/Skeleton.svelte";
   import Slider from "./sections/Slider.svelte";
+  import SortableList from "./sections/SortableList.svelte";
   import SparkChart from "./sections/SparkChart.svelte";
   import Spinner from "./sections/Spinner.svelte";
   import Splitter from "./sections/Splitter.svelte";
@@ -49,7 +55,9 @@
   import Toast from "./sections/Toast.svelte";
   import Toggle from "./sections/Toggle.svelte";
   import ToggleGroup from "./sections/ToggleGroup.svelte";
+  import Toolbar from "./sections/Toolbar.svelte";
   import Tooltip from "./sections/Tooltip.svelte";
+  import VectorPad from "./sections/VectorPad.svelte";
 
   let { open = false }: { open?: boolean } = $props();
 </script>
@@ -57,6 +65,7 @@
 <main>
   <Accordion {open} />
   <Alert {open} />
+  <AngleSlider {open} />
   <Avatar {open} />
   <Badge {open} />
   <BarList {open} />
@@ -67,13 +76,16 @@
   <Charts {open} />
   <Checkbox {open} />
   <Chip {open} />
+  <ColorPicker {open} />
   <Combobox {open} />
   <DatePicker {open} />
   <Dialog {open} />
   <Divider {open} />
   <DonutChart {open} />
   <Drawer {open} />
+  <Editable {open} />
   <Field {open} />
+  <FileUpload {open} />
   <Indicator {open} />
   <Menu {open} />
   <NumberInput {open} />
@@ -82,9 +94,11 @@
   <Popover {open} />
   <Progress {open} />
   <RadioGroup {open} />
+  <SegmentedControl {open} />
   <Select {open} />
   <Skeleton {open} />
   <Slider {open} />
+  <SortableList {open} />
   <SparkChart {open} />
   <Spinner {open} />
   <Splitter {open} />
@@ -94,5 +108,7 @@
   <Toast {open} />
   <Toggle {open} />
   <ToggleGroup {open} />
+  <Toolbar {open} />
   <Tooltip {open} />
+  <VectorPad {open} />
 </main>

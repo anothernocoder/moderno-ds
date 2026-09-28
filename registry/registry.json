@@ -2154,6 +2154,78 @@
       ]
     },
     {
+      "name": "layers-panel-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Layers panel (React)",
+      "description": "A layers panel for an editor, like Figma's, composing the @moderno-ui/react SortableList, Toggle, Menu, Editable, Tooltip and Button primitives: one row per layer, top row front-most, with its thumbnail or kind icon, its name (cut short with the full name in a Tooltip), a visibility Toggle (\"Hide Logo\" / \"Show Logo\"), a lock Toggle (\"Lock Logo\" / \"Unlock Logo\") and a Menu with Duplicate, Rename and Delete; an empty state with Add layer. The list is a SortableList named \"Layers\": one Tab stop on the selected row, Up/Down/Home/End between rows, Tab through the row's toggles and menu, Space picks a row up and a drag reorders it. Each row's name button carries its state (aria-current, \", hidden, locked\"); Enter or a click selects, a double click, F2 or Rename renames it inline with Editable (Enter saves, Escape cancels), Delete asks the app to delete it. Controlled only: it renders layers and selectedId as given and reports onSelect, onReorder, onChange, onDuplicate, onDelete and onAdd. Hidden rows are dimmed; the toggles show on row hover and stay while hidden or locked; responds to its container (@container) — from @sm the thumbnails grow and Add layer shows its label.",
+      "dependencies": [
+        "@moderno-ui/react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/layers-panel/react/layers-panel.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/layers-panel.tsx"
+        }
+      ]
+    },
+    {
+      "name": "layers-panel-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Layers panel (Vue)",
+      "description": "A layers panel for an editor, like Figma's, composing the @moderno-ui/vue SortableList, Toggle, Menu, Editable, Tooltip and Button primitives: one row per layer, top row front-most, with its thumbnail or kind icon, its name (cut short with the full name in a Tooltip), a visibility Toggle (\"Hide Logo\" / \"Show Logo\"), a lock Toggle (\"Lock Logo\" / \"Unlock Logo\") and a Menu with Duplicate, Rename and Delete; an empty state with Add layer. The list is a SortableList named \"Layers\": one Tab stop on the selected row, Up/Down/Home/End between rows, Tab through the row's toggles and menu, Space picks a row up and a drag reorders it. Each row's name button carries its state (aria-current, \", hidden, locked\"); Enter or a click selects, a double click, F2 or Rename renames it inline with Editable (Enter saves, Escape cancels), Delete asks the app to delete it. Controlled only: it renders layers and selectedId as given and reports onSelect, onReorder, onChange, onDuplicate, onDelete and onAdd. Hidden rows are dimmed; the toggles show on row hover and stay while hidden or locked; responds to its container (@container) — from @sm the thumbnails grow and Add layer shows its label.",
+      "dependencies": [
+        "@moderno-ui/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/layers-panel/vue/LayersPanel.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/LayersPanel.vue"
+        }
+      ]
+    },
+    {
+      "name": "layers-panel-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Layers panel (Svelte)",
+      "description": "A layers panel for an editor, like Figma's, composing the @moderno-ui/svelte SortableList, Toggle, Menu, Editable, Tooltip and Button primitives: one row per layer, top row front-most, with its thumbnail or kind icon, its name (cut short with the full name in a Tooltip), a visibility Toggle (\"Hide Logo\" / \"Show Logo\"), a lock Toggle (\"Lock Logo\" / \"Unlock Logo\") and a Menu with Duplicate, Rename and Delete; an empty state with Add layer. The list is a SortableList named \"Layers\": one Tab stop on the selected row, Up/Down/Home/End between rows, Tab through the row's toggles and menu, Space picks a row up and a drag reorders it. Each row's name button carries its state (aria-current, \", hidden, locked\"); Enter or a click selects, a double click, F2 or Rename renames it inline with Editable (Enter saves, Escape cancels), Delete asks the app to delete it. Controlled only: it renders layers and selectedId as given and reports onSelect, onReorder, onChange, onDuplicate, onDelete and onAdd. Hidden rows are dimmed; the toggles show on row hover and stay while hidden or locked; responds to its container (@container) — from @sm the thumbnails grow and Add layer shows its label.",
+      "dependencies": [
+        "@moderno-ui/svelte"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/layers-panel/svelte/LayersPanel.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/LayersPanel.svelte"
+        }
+      ]
+    },
+    {
+      "name": "layers-panel-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Layers panel (Solid)",
+      "description": "A layers panel for an editor, like Figma's, composing the @moderno-ui/solid SortableList, Toggle, Menu, Editable, Tooltip and Button primitives: one row per layer, top row front-most, with its thumbnail or kind icon, its name (cut short with the full name in a Tooltip), a visibility Toggle (\"Hide Logo\" / \"Show Logo\"), a lock Toggle (\"Lock Logo\" / \"Unlock Logo\") and a Menu with Duplicate, Rename and Delete; an empty state with Add layer. The list is a SortableList named \"Layers\": one Tab stop on the selected row, Up/Down/Home/End between rows, Tab through the row's toggles and menu, Space picks a row up and a drag reorders it. Each row's name button carries its state (aria-current, \", hidden, locked\"); Enter or a click selects, a double click, F2 or Rename renames it inline with Editable (Enter saves, Escape cancels), Delete asks the app to delete it. Controlled only: it renders layers and selectedId as given and reports onSelect, onReorder, onChange, onDuplicate, onDelete and onAdd. Hidden rows are dimmed; the toggles show on row hover and stay while hidden or locked; responds to its container (@container) — from @sm the thumbnails grow and Add layer shows its label.",
+      "dependencies": [
+        "@moderno-ui/solid"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/layers-panel/solid/layers-panel.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/layers-panel.tsx"
+        }
+      ]
+    },
+    {
       "name": "list-react",
       "type": "registry:block",
       "version": "0.1.0",
@@ -4670,6 +4742,82 @@
           "path": "blocks/testimonials/solid/testimonials.tsx",
           "type": "registry:block",
           "target": "src/components/blocks/testimonials.tsx"
+        }
+      ]
+    },
+    {
+      "name": "timeline-react",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Timeline (React)",
+      "description": "An animation timeline for an editor panel, composing the @moderno-ui/react Toggle, Tooltip, Button and Slider primitives: play/pause and loop toggles with a \"current / duration\" readout in m:ss:ff, Add keyframe and Delete keyframe buttons, zoom out / zoom in / Fit buttons, a time ruler that is a single-thumb Slider (the playhead, with its time marks as markers, seconds then frames as you zoom in), and one row per animated property — a label that selects the track, then a Slider whose thumbs are its keyframes; a playhead line crosses every track. Controlled only: it renders tracks, time, playing, loop, the selected keyframe and zoom as given and reports every change (times snapped to 1 / fps), announcing the zoom level through announce() from @moderno-ui/core; it holds no clock. Space plays and pauses, Delete removes the selected keyframe, Page Up/Down move a thumb one second; zoom widens the time area, which scrolls sideways with the ruler and every track under a sticky label column and a sticky ruler; responds to its container (@container) — the label column widens at @sm and every ruler mark shows at @md.",
+      "dependencies": [
+        "@moderno-ui/react",
+        "@moderno-ui/core"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/timeline/react/timeline.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/timeline.tsx"
+        }
+      ]
+    },
+    {
+      "name": "timeline-vue",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Timeline (Vue)",
+      "description": "An animation timeline for an editor panel, composing the @moderno-ui/vue Toggle, Tooltip, Button and Slider primitives: play/pause and loop toggles with a \"current / duration\" readout in m:ss:ff, Add keyframe and Delete keyframe buttons, zoom out / zoom in / Fit buttons, a time ruler that is a single-thumb Slider (the playhead, with its time marks as markers, seconds then frames as you zoom in), and one row per animated property — a label that selects the track, then a Slider whose thumbs are its keyframes; a playhead line crosses every track. Controlled only: it renders tracks, time, playing, loop, the selected keyframe and zoom as given and reports every change (times snapped to 1 / fps), announcing the zoom level through announce() from @moderno-ui/core; it holds no clock. Space plays and pauses, Delete removes the selected keyframe, Page Up/Down move a thumb one second; zoom widens the time area, which scrolls sideways with the ruler and every track under a sticky label column and a sticky ruler; responds to its container (@container) — the label column widens at @sm and every ruler mark shows at @md.",
+      "dependencies": [
+        "@moderno-ui/vue",
+        "@moderno-ui/core"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/timeline/vue/Timeline.vue",
+          "type": "registry:block",
+          "target": "src/components/blocks/Timeline.vue"
+        }
+      ]
+    },
+    {
+      "name": "timeline-svelte",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Timeline (Svelte)",
+      "description": "An animation timeline for an editor panel, composing the @moderno-ui/svelte Toggle, Tooltip, Button and Slider primitives: play/pause and loop toggles with a \"current / duration\" readout in m:ss:ff, Add keyframe and Delete keyframe buttons, zoom out / zoom in / Fit buttons, a time ruler that is a single-thumb Slider (the playhead, with its time marks as markers, seconds then frames as you zoom in), and one row per animated property — a label that selects the track, then a Slider whose thumbs are its keyframes; a playhead line crosses every track. Controlled only: it renders tracks, time, playing, loop, the selected keyframe and zoom as given and reports every change (times snapped to 1 / fps), announcing the zoom level through announce() from @moderno-ui/core; it holds no clock. Space plays and pauses, Delete removes the selected keyframe, Page Up/Down move a thumb one second; zoom widens the time area, which scrolls sideways with the ruler and every track under a sticky label column and a sticky ruler; responds to its container (@container) — the label column widens at @sm and every ruler mark shows at @md.",
+      "dependencies": [
+        "@moderno-ui/svelte",
+        "@moderno-ui/core"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/timeline/svelte/Timeline.svelte",
+          "type": "registry:block",
+          "target": "src/components/blocks/Timeline.svelte"
+        }
+      ]
+    },
+    {
+      "name": "timeline-solid",
+      "type": "registry:block",
+      "version": "0.1.0",
+      "title": "Timeline (Solid)",
+      "description": "An animation timeline for an editor panel, composing the @moderno-ui/solid Toggle, Tooltip, Button and Slider primitives: play/pause and loop toggles with a \"current / duration\" readout in m:ss:ff, Add keyframe and Delete keyframe buttons, zoom out / zoom in / Fit buttons, a time ruler that is a single-thumb Slider (the playhead, with its time marks as markers, seconds then frames as you zoom in), and one row per animated property — a label that selects the track, then a Slider whose thumbs are its keyframes; a playhead line crosses every track. Controlled only: it renders tracks, time, playing, loop, the selected keyframe and zoom as given and reports every change (times snapped to 1 / fps), announcing the zoom level through announce() from @moderno-ui/core; it holds no clock. Space plays and pauses, Delete removes the selected keyframe, Page Up/Down move a thumb one second; zoom widens the time area, which scrolls sideways with the ruler and every track under a sticky label column and a sticky ruler; responds to its container (@container) — the label column widens at @sm and every ruler mark shows at @md.",
+      "dependencies": [
+        "@moderno-ui/solid",
+        "@moderno-ui/core"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "blocks/timeline/solid/timeline.tsx",
+          "type": "registry:block",
+          "target": "src/components/blocks/timeline.tsx"
         }
       ]
     },

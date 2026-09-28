@@ -2,9 +2,8 @@
  * jsdom stand-ins for what Ark's carousel reads from a real browser, shared by
  * the four frameworks' Carousel suites.
  *
- * The tsconfig that checks core's tests has no DOM lib, so that core's own
- * sources never see one. The few DOM globals used here are declared for this
- * module alone, typed only as far as it uses them.
+ * The few DOM globals patched here are declared for this module alone, typed
+ * only as far as it uses them.
  */
 
 interface Box {

@@ -1,0 +1,11 @@
+/* A lone editable centred on the stage gets a reading width, as a Field
+   does, instead of shrinking to its text: the box does not change width when
+   an edit starts, and a long value is cut short where a list would cut it.
+   In a row of sizes each one shares the line with its siblings. */
+.preview-panel--demo > astro-island > [data-scope="editable"][data-part="root"] {
+  width: min(100%, 18rem);
+}
+.demo-row > [data-scope="editable"][data-part="root"] {
+  flex: 1 1 8rem;
+  max-width: 12rem;
+}

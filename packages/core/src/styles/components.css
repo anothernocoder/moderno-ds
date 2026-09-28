@@ -328,6 +328,184 @@
     color: var(--destructive);
   }
 
+  /* ───────────────────────── Angle Slider ───────────────────────── *
+   * Ark's angle-slider machine: root > label, then control > thumb +
+   * marker-group > marker, then the angle field (Moderno's `Input`, an Ark
+   * number-input with its own scope) and the hidden input, with an optional
+   * value-text. Ark rotates the thumb and each marker inline (`rotate`), so
+   * both cover the whole dial and turn around its centre: the thumb draws the
+   * needle and its knob at the rim, each marker a tick. 0° is up and the
+   * angle grows clockwise. Ark stamps data-disabled, data-invalid and
+   * data-readonly on the parts, and data-state (under-value | at-value |
+   * over-value) on each marker. `angleSliderRecipe` puts size on the root;
+   * the parts follow it through child combinators (root > part). The dial is
+   * two Field heights across at every size.                               */
+  [data-scope="angle-slider"][data-part="root"] {
+    display: inline-grid;
+    grid-template-columns: auto auto;
+    align-items: center;
+    gap: var(--spacing-2) var(--spacing-4);
+  }
+  /*
+   * Ark stamps data-disabled on EVERY part, and the base layer dims anything
+   * carrying it (the angle field's parts too) — nesting would multiply the
+   * opacity. Dim the root once and leave everything inside it opaque.
+   */
+  [data-scope="angle-slider"][data-part="root"][data-disabled] :where([data-part]) {
+    opacity: 1;
+  }
+  /* The label names the dial and the field, so it spans both. */
+  [data-scope="angle-slider"][data-part="label"] {
+    grid-column: 1 / -1;
+    color: var(--foreground);
+    font-size: var(--text-ui-md);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--leading-ui-md);
+  }
+  /* The dial: a round face with a hub at its centre. Ark reads a click or a
+     drag anywhere on it as the angle from that centre. */
+  [data-scope="angle-slider"][data-part="control"] {
+    position: relative;
+    flex: none;
+    width: calc(var(--spacing-8) * 2);
+    height: calc(var(--spacing-8) * 2);
+    border: 1px solid var(--input);
+    border-radius: var(--radius-full);
+    background-color: var(--background);
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    transition: border-color var(--motion-fast);
+  }
+  [data-scope="angle-slider"][data-part="control"]::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    width: var(--spacing-2);
+    height: var(--spacing-2);
+    margin: auto;
+    border-radius: var(--radius-full);
+    background-color: var(--primary);
+  }
+  /* Hover raises the edge to the focus colour, as on Field's input. */
+  [data-scope="angle-slider"][data-part="control"]:hover:not([data-disabled]):not(
+      [data-readonly]
+    ):not([data-invalid]) {
+    border-color: var(--ring);
+  }
+  [data-scope="angle-slider"][data-part="control"][data-readonly] {
+    cursor: default;
+  }
+  [data-scope="angle-slider"][data-part="control"][data-invalid] {
+    border-color: var(--destructive);
+  }
+  /* The thumb is the whole face, turned to the angle; it lets the pointer
+     through, so a press on the needle sets the angle like one on the face. It
+     is the part that takes focus, and its ring circles the dial. */
+  [data-scope="angle-slider"][data-part="thumb"] {
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-full);
+    pointer-events: none;
+  }
+  [data-scope="angle-slider"][data-part="thumb"]:focus-visible {
+    outline-color: var(--ring);
+    outline-style: solid;
+    outline-width: 2px;
+    outline-offset: 2px;
+  }
+  /* The needle, from the hub up to the knob. */
+  [data-scope="angle-slider"][data-part="thumb"]::before {
+    content: "";
+    position: absolute;
+    top: var(--spacing-2);
+    bottom: 50%;
+    left: 50%;
+    width: calc(var(--spacing-1) / 2);
+    translate: -50% 0;
+    border-radius: var(--radius-full);
+    background-color: var(--primary);
+  }
+  /* The knob at the rim, where the angle points. */
+  [data-scope="angle-slider"][data-part="thumb"]::after {
+    content: "";
+    position: absolute;
+    top: var(--spacing-1);
+    left: 50%;
+    width: var(--spacing-3);
+    height: var(--spacing-3);
+    translate: -50% 0;
+    border: calc(var(--spacing-1) / 2) solid var(--primary);
+    border-radius: var(--radius-full);
+    background-color: var(--background);
+  }
+  [data-scope="angle-slider"][data-part="thumb"][data-invalid]::before {
+    background-color: var(--destructive);
+  }
+  [data-scope="angle-slider"][data-part="thumb"][data-invalid]::after {
+    border-color: var(--destructive);
+  }
+  /* The marks: a tick at the rim for each, turned to its angle by Ark. */
+  [data-scope="angle-slider"][data-part="marker-group"] {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  [data-scope="angle-slider"][data-part="marker"] {
+    position: absolute;
+    inset: 0;
+  }
+  [data-scope="angle-slider"][data-part="marker"]::before {
+    content: "";
+    position: absolute;
+    top: calc(var(--spacing-1) / 2);
+    left: 50%;
+    width: calc(var(--spacing-1) / 2);
+    height: var(--spacing-1);
+    translate: -50% 0;
+    border-radius: var(--radius-full);
+    background-color: var(--muted-foreground);
+  }
+  /* The optional value text reads like the field's figures. */
+  [data-scope="angle-slider"][data-part="value-text"] {
+    color: var(--muted-foreground);
+    font-size: var(--text-ui-sm);
+    line-height: var(--leading-ui-sm);
+    font-variant-numeric: tabular-nums;
+  }
+  /* The angle field: wide enough for "359°", never the row's full width. */
+  [data-scope="angle-slider"][data-part="root"] > [data-scope="number-input"][data-part="root"] {
+    width: calc(var(--spacing-8) * 2.5);
+  }
+
+  /* Density driven by the recipe's data-size on the root: the dial's
+     diameter (two of the field heights NumberInput and Field use at that
+     size), the field's width and the label's type. The field takes the same
+     size from the Root, so its height matches. */
+  [data-scope="angle-slider"][data-part="root"][data-size="sm"] > [data-part="label"] {
+    font-size: var(--text-ui-sm);
+    line-height: var(--leading-ui-sm);
+  }
+  [data-scope="angle-slider"][data-part="root"][data-size="lg"] > [data-part="label"] {
+    font-size: var(--text-ui-lg);
+    line-height: var(--leading-ui-lg);
+  }
+  [data-scope="angle-slider"][data-part="root"][data-size="sm"] > [data-part="control"] {
+    width: calc(var(--spacing-7) * 2);
+    height: calc(var(--spacing-7) * 2);
+  }
+  [data-scope="angle-slider"][data-part="root"][data-size="lg"] > [data-part="control"] {
+    width: calc((var(--spacing-8) + var(--spacing-2)) * 2);
+    height: calc((var(--spacing-8) + var(--spacing-2)) * 2);
+  }
+  [data-scope="angle-slider"][data-part="root"][data-size="sm"]
+    > [data-scope="number-input"][data-part="root"] {
+    width: calc(var(--spacing-8) * 2);
+  }
+  [data-scope="angle-slider"][data-part="root"][data-size="lg"]
+    > [data-scope="number-input"][data-part="root"] {
+    width: calc(var(--spacing-8) * 3);
+  }
+
   /* ─────────────────────────── Avatar ─────────────────────────── *
    * `avatarRecipe` size × shape on the root; Ark's image-loading machine.
    * Parts root > image + fallback. Ark shows one of the two: the fallback
@@ -1321,6 +1499,302 @@
     opacity: 1;
     outline: 2px solid var(--ring);
     outline-offset: 1px;
+  }
+
+  /* ───────────────────────── Color Picker ───────────────────────── *
+   * Ark's color-picker machine, assembled: root > control > trigger >
+   * swatch + value-text, then positioner > content > area (> area-background
+   * + area-thumb), channel-slider[data-channel="hue"] and, with `alpha`,
+   * channel-slider[data-channel="alpha"] (each > channel-slider-track +
+   * channel-slider-thumb), hex-input, eye-dropper-trigger (where the browser
+   * has one) and swatch-group > swatch-trigger > swatch. hex-input is the
+   * component's own part; the rest are Ark's. The trigger is a bordered box
+   * like Select's; the content is a floating surface, like Popover's.
+   * Ark paints the colours inline — the area's gradients, the slider tracks,
+   * each thumb and swatch — and places the thumbs with inline left/top, so
+   * the rules below only size, round, ring and centre them. floating-ui lays
+   * the positioner out inline, so this partial never styles it.
+   * `colorPickerRecipe` puts size on the root; the trigger follows through
+   * child combinators. The popover keeps one density.                    */
+  /* @runtime-vars --color — the colour Ark writes on each swatch. */
+  /* On its own the picker is as wide as its trigger; in a column, such as a
+     Field's, the root stretches and the trigger fills it, like an input. */
+  [data-scope="color-picker"][data-part="root"] {
+    display: inline-flex;
+    flex-direction: column;
+  }
+  [data-scope="color-picker"][data-part="control"] {
+    display: flex;
+  }
+  /* The trigger: the colour's swatch and its hex in a bordered box. Tabular
+     figures keep the hex from jittering while a thumb is dragged. */
+  [data-scope="color-picker"][data-part="trigger"] {
+    display: inline-flex;
+    flex: 1;
+    align-items: center;
+    gap: var(--spacing-2);
+    height: var(--spacing-8);
+    padding-inline: var(--spacing-1) var(--spacing-3);
+    border: 1px solid var(--input);
+    border-radius: var(--radius);
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: var(--text-ui-md);
+    line-height: var(--leading-ui-md);
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+    transition: border-color var(--motion-fast);
+  }
+  [data-scope="color-picker"][data-part="trigger"]:hover:not(:disabled):not([data-invalid]) {
+    border-color: var(--ring);
+  }
+  /* The ring is drawn inside the box, as on Select's trigger: an offset ring
+     would leave the resting border visible inside it — a double border. */
+  [data-scope="color-picker"][data-part="trigger"]:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+  }
+  /* Ark marks the trigger invalid inside an invalid Field. */
+  [data-scope="color-picker"][data-part="trigger"][data-invalid] {
+    border-color: var(--destructive);
+  }
+  [data-scope="color-picker"][data-part="trigger"][data-invalid]:focus-visible {
+    outline-color: var(--destructive);
+  }
+  [data-scope="color-picker"][data-part="value-text"] {
+    white-space: nowrap;
+  }
+  /*
+   * Ark stamps data-disabled on the control and the trigger of a disabled
+   * picker as well as on the root, and the base layer dims anything carrying
+   * it — nesting would multiply the opacity. Dim the root once and leave its
+   * parts opaque.
+   */
+  [data-scope="color-picker"][data-part="root"][data-disabled] :where([data-part]) {
+    opacity: 1;
+  }
+
+  /* A swatch — in the trigger and in each preset button. Ark paints it with
+     its colour inline; a see-through colour is shown over a checkerboard, so
+     the checkerboard (::before) and the colour (::after) are laid over it,
+     with a hairline edge that keeps a colour close to the surface visible. */
+  [data-scope="color-picker"][data-part="swatch"] {
+    flex: none;
+    overflow: hidden;
+    border-radius: calc(var(--radius) - var(--spacing-1));
+  }
+  [data-scope="color-picker"][data-part="swatch"]::before,
+  [data-scope="color-picker"][data-part="swatch"]::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+  /* The checkerboard: two tokens in a 2×2 conic tile. */
+  [data-scope="color-picker"][data-part="swatch"]::before,
+  [data-scope="color-picker"][data-part="channel-slider"][data-channel="alpha"] {
+    background: repeating-conic-gradient(var(--muted) 0% 25%, var(--background) 0% 50%) 0 0 /
+      var(--spacing-2) var(--spacing-2);
+  }
+  [data-scope="color-picker"][data-part="swatch"]::after {
+    background: var(--color);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--foreground) 15%, transparent);
+  }
+  [data-scope="color-picker"][data-part="trigger"] > [data-part="swatch"] {
+    width: var(--spacing-6);
+    height: var(--spacing-6);
+  }
+
+  /* The popover: the popover fill with the 1px --border edge, lifted by the
+     --shadow-md drop alone (never a ring stacked in box-shadow, which would
+     double the border). Above an app's sticky chrome, the same layer as
+     Dialog; Ark copies the z-index onto the positioner. The parts stack in
+     one column; the hex box and the eyedropper share a row. */
+  [data-scope="color-picker"][data-part="content"] {
+    position: relative;
+    z-index: 50;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--spacing-3);
+    width: calc(var(--spacing-8) * 8);
+    padding: var(--spacing-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--popover);
+    color: var(--popover-foreground);
+    font-family: var(--font-sans);
+    font-size: var(--text-ui-sm);
+    line-height: var(--leading-ui-sm);
+    box-shadow: var(--shadow-md);
+  }
+  [data-scope="color-picker"][data-part="content"]:focus-visible {
+    outline: none;
+  }
+  [data-scope="color-picker"][data-part="content"] > * {
+    grid-column: 1 / -1;
+  }
+
+  /* The saturation (across) and brightness (up) area. Ark paints its
+     gradients on the background part and places the thumb inline. */
+  [data-scope="color-picker"][data-part="area"] {
+    height: calc(var(--spacing-8) * 5);
+    border-radius: var(--radius);
+    cursor: crosshair;
+  }
+  [data-scope="color-picker"][data-part="area-background"] {
+    height: 100%;
+    border-radius: var(--radius);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--foreground) 15%, transparent);
+  }
+  /* The hue and alpha sliders: a rounded bar Ark paints (the alpha one over
+     the checkerboard), with the thumb centred on its value. */
+  [data-scope="color-picker"][data-part="channel-slider"] {
+    height: var(--spacing-3);
+    border-radius: var(--radius-full);
+    cursor: pointer;
+  }
+  [data-scope="color-picker"][data-part="channel-slider-track"] {
+    height: 100%;
+    border-radius: var(--radius-full);
+  }
+  /* Every thumb: the colour it stands on, ringed in the surface's colour and
+     lifted by a hairline and a soft shadow, so it reads on any colour. Ark
+     sets left/top inline; `translate` (a property of its own, beside Ark's
+     inline style) centres the thumb on that point. */
+  [data-scope="color-picker"]:is([data-part="area-thumb"], [data-part="channel-slider-thumb"]) {
+    width: var(--spacing-4);
+    height: var(--spacing-4);
+    border: calc(var(--spacing-1) / 2) solid var(--background);
+    border-radius: var(--radius-full);
+    box-shadow:
+      0 0 0 1px color-mix(in oklab, var(--foreground) 30%, transparent),
+      var(--shadow-sm);
+    cursor: grab;
+  }
+  [data-scope="color-picker"][data-part="channel-slider-thumb"] {
+    translate: -50% -50%;
+  }
+  [data-scope="color-picker"]:is(
+      [data-part="area-thumb"],
+      [data-part="channel-slider-thumb"]
+    ):focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  /* The hex box and the eyedropper share a row; alone, the box takes it all. */
+  [data-scope="color-picker"][data-part="hex-input"] {
+    grid-column: 1;
+    min-width: 0;
+    height: var(--spacing-8);
+    padding-inline: var(--spacing-2);
+    border: 1px solid var(--input);
+    border-radius: var(--radius);
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-mono);
+    font-size: var(--text-ui-sm);
+    font-variant-numeric: tabular-nums;
+  }
+  [data-scope="color-picker"][data-part="content"]:not(:has(> [data-part="eye-dropper-trigger"]))
+    > [data-part="hex-input"] {
+    grid-column: 1 / -1;
+  }
+  [data-scope="color-picker"]:is(
+      [data-part="hex-input"],
+      [data-part="eye-dropper-trigger"]
+    ):focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+  }
+  /* A square icon button beside the hex box, with no fill until hovered
+     (this clears the UA `buttonface` grey). */
+  [data-scope="color-picker"][data-part="eye-dropper-trigger"] {
+    grid-column: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--spacing-8);
+    height: var(--spacing-8);
+    padding: 0;
+    border: 1px solid var(--input);
+    border-radius: var(--radius);
+    background-color: transparent;
+    color: var(--muted-foreground);
+    cursor: pointer;
+    transition:
+      background-color var(--motion-fast),
+      color var(--motion-fast);
+  }
+  [data-scope="color-picker"][data-part="eye-dropper-trigger"]:hover:not(:disabled) {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+  [data-scope="color-picker"][data-part="eye-dropper-trigger"] > svg {
+    width: var(--spacing-4);
+    height: var(--spacing-4);
+  }
+
+  /* The preset swatches: small square buttons that wrap. The one matching
+     the value carries data-state="checked" and an outline in the text colour;
+     focus shows the ring colour instead. */
+  [data-scope="color-picker"][data-part="swatch-group"] {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-2);
+  }
+  [data-scope="color-picker"][data-part="swatch-trigger"] {
+    width: var(--spacing-6);
+    height: var(--spacing-6);
+    padding: 0;
+    border: 0;
+    border-radius: calc(var(--radius) - var(--spacing-1));
+    background-color: transparent;
+    cursor: pointer;
+  }
+  [data-scope="color-picker"][data-part="swatch-trigger"] > [data-part="swatch"] {
+    width: 100%;
+    height: 100%;
+  }
+  [data-scope="color-picker"][data-part="swatch-trigger"][data-state="checked"] {
+    outline: 2px solid var(--foreground);
+    outline-offset: 1px;
+  }
+  [data-scope="color-picker"][data-part="swatch-trigger"]:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 1px;
+  }
+
+  /* Density driven by the recipe's data-size on the root: the trigger's
+     height, swatch and type. `lg` exceeds the top spacing slot, so it sums
+     two slots rather than inventing a token. */
+  [data-scope="color-picker"][data-part="root"][data-size="sm"]
+    > [data-part="control"]
+    > [data-part="trigger"] {
+    height: var(--spacing-7);
+    font-size: var(--text-ui-sm);
+    line-height: var(--leading-ui-sm);
+  }
+  [data-scope="color-picker"][data-part="root"][data-size="sm"]
+    > [data-part="control"]
+    > [data-part="trigger"]
+    > [data-part="swatch"] {
+    width: var(--spacing-5);
+    height: var(--spacing-5);
+  }
+  [data-scope="color-picker"][data-part="root"][data-size="lg"]
+    > [data-part="control"]
+    > [data-part="trigger"] {
+    height: calc(var(--spacing-8) + var(--spacing-2));
+    font-size: var(--text-ui-lg);
+    line-height: var(--leading-ui-lg);
+  }
+  [data-scope="color-picker"][data-part="root"][data-size="lg"]
+    > [data-part="control"]
+    > [data-part="trigger"]
+    > [data-part="swatch"] {
+    width: var(--spacing-8);
+    height: var(--spacing-8);
   }
 
   /* ─────────────────────────── Combobox ─────────────────────────── *
@@ -2449,6 +2923,272 @@
     }
   }
 
+  /* ─────────────────────────── Editable ─────────────────────────── *
+   * Ark's editable machine: root > label, then area > preview + input, then
+   * an optional control > edit-trigger + submit-trigger + cancel-trigger. The
+   * preview is the text; it gives way to the input while the user edits
+   * (Ark swaps the two with `hidden`). Both are one box of the same height,
+   * padding, border width and type, so nothing moves when an edit starts: the
+   * preview's border is there, transparent, and shows as a hint on hover.
+   * Ark stamps data-placeholder-shown, data-invalid and data-disabled on the
+   * area, the preview and the input, and aria-readonly on the preview.
+   * `editableRecipe` puts size on the root; the parts follow it through child
+   * combinators (root > area > part, root > control > part). Every size,
+   * `md` included, is keyed on the root's data-size: a Field around the
+   * Editable sizes any `[data-part="input"]` or `[data-part="label"]` inside
+   * it, and only a rule keyed on Editable's own root outranks that, so the
+   * text and the input keep one box whatever Field wraps them.            */
+  [data-scope="editable"][data-part="root"] {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--spacing-2) var(--spacing-1);
+    min-width: 0;
+  }
+  /*
+   * Ark stamps data-disabled on the area AND on the preview and input inside
+   * it, and the base layer dims anything carrying it — nesting would multiply
+   * the opacity. Dim the area once and leave its parts opaque.
+   */
+  [data-scope="editable"][data-part="area"][data-disabled] :where([data-part]) {
+    opacity: 1;
+  }
+  /* The label spans the text and its buttons, above them, as in a Field. */
+  [data-scope="editable"][data-part="label"] {
+    grid-column: 1 / -1;
+    color: var(--foreground);
+    font-weight: var(--font-weight-medium);
+  }
+  [data-scope="editable"][data-part="area"] {
+    grid-column: 1;
+    min-width: 0;
+  }
+  /* The text and the input: one box, Field's input box. */
+  [data-scope="editable"][data-part="preview"],
+  [data-scope="editable"][data-part="input"] {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding-block: 0;
+    border: 1px solid transparent;
+    border-radius: var(--radius);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    transition:
+      border-color var(--motion-fast),
+      background-color var(--motion-fast);
+  }
+  /* One line, cut with an ellipsis when it is longer than the box: the full
+     value is the preview's tooltip. Each size step sets a line that fills the
+     box inside its 1px border, so the text sits where the input's does. */
+  [data-scope="editable"][data-part="preview"] {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    cursor: text;
+  }
+  /* The empty value shows the placeholder, muted like an input's. */
+  [data-scope="editable"][data-part="preview"][data-placeholder-shown],
+  [data-scope="editable"][data-part="input"]::placeholder {
+    color: var(--muted-foreground);
+  }
+  /* Hover draws the input's edge and a muted fill around the text: the hint
+     that it can be edited. Text that cannot be edited never offers it, and an
+     invalid text keeps its error edge. */
+  [data-scope="editable"][data-part="preview"]:hover:not(
+      [data-disabled],
+      [data-invalid],
+      [aria-readonly="true"]
+    ) {
+    border-color: var(--input);
+    background-color: var(--muted);
+  }
+  [data-scope="editable"][data-part="preview"][aria-readonly="true"] {
+    cursor: default;
+  }
+  /* The ring is drawn INSIDE the box (a -2px offset covers the 1px border and
+     one more px), on the text and on the input, as on Field's input. */
+  [data-scope="editable"][data-part="preview"]:focus-visible,
+  [data-scope="editable"][data-part="input"]:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+  }
+  [data-scope="editable"][data-part="input"] {
+    border-color: var(--input);
+    background-color: var(--background);
+  }
+  [data-scope="editable"][data-part="preview"][data-invalid],
+  [data-scope="editable"][data-part="input"][data-invalid] {
+    border-color: var(--destructive);
+  }
+  [data-scope="editable"][data-part="input"][data-invalid] {
+    background-color: color-mix(in oklab, var(--destructive) 4%, var(--background));
+  }
+  /* An invalid value keeps its error colour while focused; a neutral ring
+     over a red border reads as "fixed" before it is. */
+  [data-scope="editable"][data-part="preview"][data-invalid]:focus-visible,
+  [data-scope="editable"][data-part="input"][data-invalid]:focus-visible {
+    outline-color: var(--destructive);
+  }
+  /* The optional buttons sit after the text, as tall as it: a square for an
+     icon, wider for a word. The edit button and the save and cancel buttons
+     take turns in one place, and a hidden one keeps its room (unseen, out of
+     the tab order and the accessibility tree), so the text keeps its width
+     when an edit starts. */
+  [data-scope="editable"][data-part="control"] {
+    display: inline-grid;
+    grid-column: 2;
+    align-items: center;
+    gap: var(--spacing-1);
+  }
+  [data-scope="editable"][data-part="control"] > [data-part="edit-trigger"] {
+    grid-row: 1;
+    grid-column: 1 / span 2;
+    justify-self: start;
+  }
+  [data-scope="editable"][data-part="control"] > [data-part="submit-trigger"] {
+    grid-row: 1;
+    grid-column: 1;
+  }
+  [data-scope="editable"][data-part="control"] > [data-part="cancel-trigger"] {
+    grid-row: 1;
+    grid-column: 2;
+  }
+  [data-scope="editable"][data-part="control"] > [data-part][hidden] {
+    display: inline-flex;
+    visibility: hidden;
+  }
+  [data-scope="editable"][data-part="edit-trigger"],
+  [data-scope="editable"][data-part="submit-trigger"],
+  [data-scope="editable"][data-part="cancel-trigger"] {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-1);
+    padding: 0 var(--spacing-2);
+    border: 1px solid transparent;
+    border-radius: var(--radius);
+    background-color: transparent;
+    color: var(--muted-foreground);
+    font-family: var(--font-sans);
+    font-weight: var(--font-weight-medium);
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      background-color var(--motion-fast),
+      color var(--motion-fast);
+  }
+  [data-scope="editable"][data-part="edit-trigger"]:hover,
+  [data-scope="editable"][data-part="submit-trigger"]:hover,
+  [data-scope="editable"][data-part="cancel-trigger"]:hover {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+  [data-scope="editable"][data-part="edit-trigger"]:focus-visible,
+  [data-scope="editable"][data-part="submit-trigger"]:focus-visible,
+  [data-scope="editable"][data-part="cancel-trigger"]:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+  }
+  /* Ark disables the buttons natively; they get the base layer's dimmed,
+     inert look spelled out on `:disabled`, as Button does. */
+  [data-scope="editable"][data-part="edit-trigger"]:disabled,
+  [data-scope="editable"][data-part="submit-trigger"]:disabled,
+  [data-scope="editable"][data-part="cancel-trigger"]:disabled {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+  [data-scope="editable"][data-part="edit-trigger"] svg,
+  [data-scope="editable"][data-part="submit-trigger"] svg,
+  [data-scope="editable"][data-part="cancel-trigger"] svg {
+    flex: none;
+    width: var(--spacing-4);
+    height: var(--spacing-4);
+  }
+
+  /* Density driven by the recipe's data-size on the root part: Field's sizes.
+     `lg` exceeds the top spacing slot, so it sums two rather than inventing
+     an off-contract value. */
+  [data-scope="editable"][data-part="root"][data-size="md"] > [data-part="label"] {
+    font-size: var(--text-ui-md);
+    line-height: var(--leading-ui-md);
+  }
+  [data-scope="editable"][data-part="root"][data-size="md"]
+    > [data-part="area"]
+    > [data-part="preview"],
+  [data-scope="editable"][data-part="root"][data-size="md"]
+    > [data-part="area"]
+    > [data-part="input"] {
+    height: var(--spacing-8);
+    padding-inline: var(--spacing-3);
+    font-size: var(--text-ui-md);
+  }
+  [data-scope="editable"][data-part="root"][data-size="md"]
+    > [data-part="area"]
+    > [data-part="preview"] {
+    line-height: calc(var(--spacing-8) - 2px);
+  }
+  [data-scope="editable"][data-part="root"][data-size="md"] > [data-part="control"] > [data-part] {
+    min-width: var(--spacing-8);
+    height: var(--spacing-8);
+    font-size: var(--text-ui-md);
+  }
+
+  [data-scope="editable"][data-part="root"][data-size="sm"] {
+    gap: var(--spacing-1);
+  }
+  [data-scope="editable"][data-part="root"][data-size="sm"] > [data-part="label"] {
+    font-size: var(--text-ui-sm);
+    line-height: var(--leading-ui-sm);
+  }
+  [data-scope="editable"][data-part="root"][data-size="sm"]
+    > [data-part="area"]
+    > [data-part="preview"],
+  [data-scope="editable"][data-part="root"][data-size="sm"]
+    > [data-part="area"]
+    > [data-part="input"] {
+    height: var(--spacing-7);
+    padding-inline: var(--spacing-2);
+    font-size: var(--text-ui-sm);
+  }
+  [data-scope="editable"][data-part="root"][data-size="sm"]
+    > [data-part="area"]
+    > [data-part="preview"] {
+    line-height: calc(var(--spacing-7) - 2px);
+  }
+  [data-scope="editable"][data-part="root"][data-size="sm"] > [data-part="control"] > [data-part] {
+    min-width: var(--spacing-7);
+    height: var(--spacing-7);
+    font-size: var(--text-ui-sm);
+  }
+
+  [data-scope="editable"][data-part="root"][data-size="lg"] > [data-part="label"] {
+    font-size: var(--text-ui-lg);
+    line-height: var(--leading-ui-lg);
+  }
+  [data-scope="editable"][data-part="root"][data-size="lg"]
+    > [data-part="area"]
+    > [data-part="preview"],
+  [data-scope="editable"][data-part="root"][data-size="lg"]
+    > [data-part="area"]
+    > [data-part="input"] {
+    height: calc(var(--spacing-8) + var(--spacing-2));
+    padding-inline: var(--spacing-4);
+    font-size: var(--text-ui-lg);
+  }
+  [data-scope="editable"][data-part="root"][data-size="lg"]
+    > [data-part="area"]
+    > [data-part="preview"] {
+    line-height: calc(var(--spacing-8) + var(--spacing-2) - 2px);
+  }
+  [data-scope="editable"][data-part="root"][data-size="lg"] > [data-part="control"] > [data-part] {
+    min-width: calc(var(--spacing-8) + var(--spacing-2));
+    height: calc(var(--spacing-8) + var(--spacing-2));
+    font-size: var(--text-ui-lg);
+  }
+
   /* ─────────────────────────── Field ──────────────────────────── *
    * Ark wires label↔control + `data-invalid`/`data-disabled`; we style. The
    * only prop-driven knob is `fieldRecipe`'s `data-size` on the root, which
@@ -2603,6 +3343,278 @@
   [data-scope="field"][data-size="lg"] [data-part="helper-text"],
   [data-scope="field"][data-size="lg"] [data-part="error-text"] {
     font-size: var(--text-ui-md);
+  }
+
+  /* ───────────────────────── File Upload ───────────────────────── *
+   * Ark's file-upload machine, assembled: root > dropzone (> dropzone-icon,
+   * dropzone-title, dropzone-hint) + the hidden file input, then one
+   * item-group per list (data-type="accepted", then "rejected") > item >
+   * item-preview (> item-preview-image for an image, a file glyph otherwise),
+   * item-name (> item-name-full, item-name-start, item-name-end),
+   * item-size-text, item-error (rejected only) and item-delete-trigger.
+   * dropzone-icon, dropzone-title, dropzone-hint, item-name-*, and item-error
+   * are the component's own parts; the rest are Ark's.
+   * The drop zone is a dashed box as wide as its container; a file dragged
+   * over it (Ark's data-dragging) turns the edge solid --primary and tints
+   * the fill. Each file is a bordered row: thumbnail, name over size, remove.
+   * `fileUploadRecipe` puts size on the root; the zone follows through child
+   * combinators. The file list keeps one density.                         */
+  [data-scope="file-upload"][data-part="root"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+    width: 100%;
+    font-family: var(--font-sans);
+    color: var(--foreground);
+  }
+
+  /* The drop zone: the whole width, tall enough to hit easily, its title and
+     hint centred. Ark makes it a focusable button. */
+  [data-scope="file-upload"][data-part="dropzone"] {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-1);
+    width: 100%;
+    min-height: calc(var(--spacing-8) * 4);
+    padding: var(--spacing-6) var(--spacing-4);
+    border: 1px dashed var(--input);
+    border-radius: var(--radius);
+    background-color: var(--background);
+    text-align: center;
+    cursor: pointer;
+    transition:
+      border-color var(--motion-fast),
+      background-color var(--motion-fast);
+  }
+  [data-scope="file-upload"][data-part="dropzone"]:hover:not([data-invalid]) {
+    border-color: var(--ring);
+  }
+  /* The ring is drawn inside the box, as on a Field's input: an offset ring
+     would leave the dashed edge visible inside it. */
+  [data-scope="file-upload"][data-part="dropzone"]:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+  }
+  /* A file over the zone: a solid --primary edge and a --primary tint, so the
+     drop target is plain before the pointer lets go. */
+  [data-scope="file-upload"][data-part="dropzone"][data-dragging] {
+    border-style: solid;
+    border-color: var(--primary);
+    background-color: color-mix(in oklab, var(--primary) 8%, var(--background));
+  }
+  /* Ark marks the zone invalid inside an invalid Field, or with `invalid`. */
+  [data-scope="file-upload"][data-part="dropzone"][data-invalid] {
+    border-color: var(--destructive);
+  }
+  [data-scope="file-upload"][data-part="dropzone"][data-invalid]:focus-visible {
+    outline-color: var(--destructive);
+  }
+  [data-scope="file-upload"][data-part="dropzone-icon"] {
+    width: var(--spacing-6);
+    height: var(--spacing-6);
+    margin-block-end: var(--spacing-1);
+    color: var(--muted-foreground);
+    transition: color var(--motion-fast);
+  }
+  [data-scope="file-upload"][data-part="dropzone"][data-dragging] > [data-part="dropzone-icon"] {
+    color: var(--primary);
+  }
+  [data-scope="file-upload"][data-part="dropzone-title"] {
+    font-size: var(--text-ui-md);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--leading-ui-md);
+  }
+  [data-scope="file-upload"][data-part="dropzone-hint"] {
+    font-size: var(--text-ui-sm);
+    line-height: var(--leading-ui-sm);
+    color: var(--muted-foreground);
+  }
+
+  /*
+   * Ark stamps data-disabled on the zone, the lists, each row and each remove
+   * button of a disabled upload as well as on the root, and the base layer
+   * dims anything carrying it — nesting would multiply the opacity. Dim the
+   * root once and leave its parts opaque.
+   */
+  [data-scope="file-upload"][data-part="root"][data-disabled] :where([data-part]) {
+    opacity: 1;
+  }
+
+  /* The lists: one row per file, accepted files first, then the ones turned
+     away. */
+  [data-scope="file-upload"][data-part="item-group"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  /* A row: the thumbnail, the name over the size (and, for a file turned
+     away, the reason), and the remove button. The thumbnail and the button
+     span every line of text. */
+  [data-scope="file-upload"][data-part="item"] {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    column-gap: var(--spacing-3);
+    align-items: center;
+    padding: var(--spacing-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--background);
+  }
+  [data-scope="file-upload"][data-part="item"][data-type="rejected"] {
+    border-color: var(--destructive);
+    background-color: color-mix(in oklab, var(--destructive) 4%, var(--background));
+  }
+  [data-scope="file-upload"][data-part="item-preview"] {
+    grid-column: 1;
+    grid-row: 1 / span 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(var(--spacing-8) + var(--spacing-2));
+    height: calc(var(--spacing-8) + var(--spacing-2));
+    overflow: hidden;
+    border-radius: calc(var(--radius) - var(--spacing-1));
+    background-color: var(--muted);
+    color: var(--muted-foreground);
+  }
+  [data-scope="file-upload"][data-part="item-preview"] > svg {
+    width: var(--spacing-5);
+    height: var(--spacing-5);
+  }
+  [data-scope="file-upload"][data-part="item-preview-image"] {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  /* A long name gives way in the middle: the start ends in an ellipsis, the
+     end (the extension and a few characters before it) always shows. Screen
+     readers read the whole name from item-name-full instead. */
+  [data-scope="file-upload"][data-part="item-name"] {
+    grid-column: 2;
+    display: flex;
+    min-width: 0;
+    font-size: var(--text-ui-sm);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--leading-ui-sm);
+  }
+  [data-scope="file-upload"][data-part="item-name-start"] {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: pre;
+  }
+  [data-scope="file-upload"][data-part="item-name-end"] {
+    flex: none;
+    white-space: pre;
+  }
+  /* Visually hidden, still read. The 1px box is a rendering primitive (like
+     a 1px border), not a size on the spacing scale: a zero-size box is
+     skipped by some screen readers. */
+  [data-scope="file-upload"][data-part="item-name-full"] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  [data-scope="file-upload"]:is([data-part="item-size-text"], [data-part="item-error"]) {
+    grid-column: 2;
+    font-size: var(--text-ui-xs);
+    line-height: var(--leading-ui-xs);
+  }
+  [data-scope="file-upload"][data-part="item-size-text"] {
+    color: var(--muted-foreground);
+    font-variant-numeric: tabular-nums;
+  }
+  [data-scope="file-upload"][data-part="item-error"] {
+    color: var(--destructive);
+  }
+  /* The remove button: a square icon button with no fill until hovered (this
+     clears the UA `buttonface` grey). */
+  [data-scope="file-upload"][data-part="item-delete-trigger"] {
+    grid-column: 3;
+    grid-row: 1 / span 3;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--spacing-7);
+    height: var(--spacing-7);
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius);
+    background-color: transparent;
+    color: var(--muted-foreground);
+    cursor: pointer;
+    transition:
+      background-color var(--motion-fast),
+      color var(--motion-fast);
+  }
+  [data-scope="file-upload"][data-part="item-delete-trigger"]:hover:not(:disabled) {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+  [data-scope="file-upload"][data-part="item-delete-trigger"]:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+  }
+  [data-scope="file-upload"][data-part="item-delete-trigger"] > svg {
+    width: var(--spacing-4);
+    height: var(--spacing-4);
+  }
+
+  /* Density driven by the recipe's data-size on the root: the zone's height,
+     padding, icon and type. `lg` sums two slots rather than inventing a
+     token. */
+  [data-scope="file-upload"][data-part="root"][data-size="sm"] > [data-part="dropzone"] {
+    min-height: calc(var(--spacing-8) * 3);
+    padding: var(--spacing-4) var(--spacing-3);
+  }
+  [data-scope="file-upload"][data-part="root"][data-size="sm"]
+    > [data-part="dropzone"]
+    > [data-part="dropzone-icon"] {
+    width: var(--spacing-5);
+    height: var(--spacing-5);
+  }
+  [data-scope="file-upload"][data-part="root"][data-size="sm"]
+    > [data-part="dropzone"]
+    > [data-part="dropzone-title"] {
+    font-size: var(--text-ui-sm);
+    line-height: var(--leading-ui-sm);
+  }
+  [data-scope="file-upload"][data-part="root"][data-size="sm"]
+    > [data-part="dropzone"]
+    > [data-part="dropzone-hint"] {
+    font-size: var(--text-ui-xs);
+    line-height: var(--leading-ui-xs);
+  }
+  [data-scope="file-upload"][data-part="root"][data-size="lg"] > [data-part="dropzone"] {
+    min-height: calc(var(--spacing-8) * 5);
+    padding: var(--spacing-8) var(--spacing-6);
+  }
+  [data-scope="file-upload"][data-part="root"][data-size="lg"]
+    > [data-part="dropzone"]
+    > [data-part="dropzone-icon"] {
+    width: var(--spacing-8);
+    height: var(--spacing-8);
+  }
+  [data-scope="file-upload"][data-part="root"][data-size="lg"]
+    > [data-part="dropzone"]
+    > [data-part="dropzone-title"] {
+    font-size: var(--text-ui-lg);
+    line-height: var(--leading-ui-lg);
+  }
+  [data-scope="file-upload"][data-part="root"][data-size="lg"]
+    > [data-part="dropzone"]
+    > [data-part="dropzone-hint"] {
+    font-size: var(--text-ui-md);
+    line-height: var(--leading-ui-md);
   }
 
   /* ───────────────────────── Indicator ────────────────────────── *
@@ -3719,14 +4731,17 @@
   }
 
   /* ───────────────────────── RadioGroup ───────────────────────── *
-   * `radioGroupRecipe` size on the root part; layout follows Ark's
-   * data-orientation, and every state is Ark's own attribute —
+   * `radioGroupAttrs` on the root part: data-variant (list | tile),
+   * data-size, and for tiles data-columns and data-aspect-ratio. List layout
+   * follows Ark's data-orientation, and every state is Ark's own attribute —
    * data-state="checked|unchecked" plus data-disabled / data-invalid /
    * data-readonly / data-focus-visible on each item and its parts. Parts
-   * root > label + item (> item-control + item-text + item-hidden-input);
-   * item-description is Moderno's, nested in item-text. Ark's indicator (a
+   * root > label + item (> item-media + item-control + item-text +
+   * item-hidden-input); item-description is Moderno's, nested in item-text,
+   * and item-media is Moderno's slot for a tile's image. Ark's indicator (a
    * sliding highlight for segmented looks) is left unstyled. The hidden
-   * native input carries focus, so the ring is drawn on the radio circle.  */
+   * native input carries focus, so the ring is drawn on the radio circle —
+   * or, for a tile, on the whole card.  */
   [data-scope="radio-group"][data-part="root"] {
     display: flex;
     flex-direction: column;
@@ -3847,9 +4862,345 @@
     font-size: var(--text-ui-md);
     line-height: var(--leading-ui-md);
   }
-  @media (prefers-reduced-motion: reduce) {
+  /* ─────────────────────────── Tile ──────────────────────────── *
+   * data-variant="tile" turns the group into a grid of selectable cards.
+   * Unfixed, each row holds as many cards as fit, none narrower than a third
+   * of --container-sm, and they share the row's width; data-columns fixes the
+   * count. auto-fill, not auto-fit: the label spans every track, so auto-fit
+   * could never collapse the empty ones and would gain nothing. Either way
+   * the grid reads the group's own width, never the viewport. The item is
+   * the card, so clicking anywhere on it picks it. Its item-control becomes
+   * a check badge in the corner, shown only when checked, so the choice
+   * reads without colour: a doubled --primary edge plus the check. */
+  [data-scope="radio-group"][data-part="root"][data-variant="tile"] {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, calc(var(--container-sm) / 3)), 1fr));
+    gap: var(--spacing-3);
+  }
+  [data-scope="radio-group"][data-part="root"][data-variant="tile"][data-columns="1"] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  [data-scope="radio-group"][data-part="root"][data-variant="tile"][data-columns="2"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  [data-scope="radio-group"][data-part="root"][data-variant="tile"][data-columns="3"] {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  [data-scope="radio-group"][data-part="root"][data-variant="tile"][data-columns="4"] {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  [data-scope="radio-group"][data-part="root"][data-variant="tile"][data-columns="5"] {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+  [data-scope="radio-group"][data-part="root"][data-variant="tile"][data-columns="6"] {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+  [data-scope="radio-group"][data-part="root"][data-variant="tile"] > [data-part="label"] {
+    grid-column: 1 / -1;
+  }
+  [data-scope="radio-group"][data-variant="tile"] [data-scope="radio-group"][data-part="item"] {
+    position: relative;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-2);
+    padding: var(--spacing-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--card);
+    color: var(--card-foreground);
+    transition:
+      border-color var(--motion-instant),
+      box-shadow var(--motion-instant);
+  }
+  /* Hover darkens the edge of a card that is not the choice. The fill stays
+     --card, so the media's --muted frame still reads against it. An invalid
+     card keeps its --destructive edge under the pointer. */
+  [data-scope="radio-group"][data-variant="tile"]
+    [data-scope="radio-group"][data-part="item"]:hover:not(
+      [data-state="checked"],
+      [data-invalid],
+      [data-readonly]
+    ) {
+    border-color: var(--muted-foreground);
+  }
+  /* Checked: the 1px edge doubles in --primary, drawn inside so nothing moves. */
+  [data-scope="radio-group"][data-variant="tile"]
+    [data-scope="radio-group"][data-part="item"][data-state="checked"] {
+    border-color: var(--primary);
+    box-shadow: inset 0 0 0 1px var(--primary);
+  }
+  /* Invalid: the edge turns --destructive; a checked card's doubled edge
+     drops --primary too, as the list's invalid circle does. */
+  [data-scope="radio-group"][data-variant="tile"]
+    [data-scope="radio-group"][data-part="item"][data-invalid] {
+    border-color: var(--destructive);
+  }
+  [data-scope="radio-group"][data-variant="tile"]
+    [data-scope="radio-group"][data-part="item"][data-invalid][data-state="checked"] {
+    box-shadow: inset 0 0 0 1px var(--destructive);
+  }
+  [data-scope="radio-group"][data-variant="tile"]
+    [data-scope="radio-group"][data-part="item"][data-focus-visible] {
+    outline-color: var(--ring);
+    outline-style: solid;
+    outline-width: 2px;
+    outline-offset: 2px;
+  }
+  [data-scope="radio-group"][data-variant="tile"] [data-scope="radio-group"][data-part="item-text"] {
+    padding-inline: var(--spacing-1);
+    padding-block-end: var(--spacing-1);
+  }
+  /* The check badge: a --primary disc in the card's corner, haloed in --card
+     so it stands off any image, with a --primary-foreground check drawn from
+     two borders. It replaces the radio circle, so its size is its own. */
+  [data-scope="radio-group"][data-variant="tile"]
     [data-scope="radio-group"][data-part="item-control"] {
+    position: absolute;
+    inset-block-start: var(--spacing-3);
+    inset-inline-end: var(--spacing-3);
+    display: grid;
+    place-items: center;
+    width: var(--spacing-5);
+    height: var(--spacing-5);
+    margin: 0;
+    border: none;
+    background-color: var(--primary);
+    box-shadow: 0 0 0 calc(var(--spacing-1) / 2) var(--card);
+    visibility: hidden;
+  }
+  [data-scope="radio-group"][data-variant="tile"]
+    [data-scope="radio-group"][data-part="item-control"][data-state="checked"] {
+    border: none;
+    background-color: var(--primary);
+    visibility: visible;
+  }
+  [data-scope="radio-group"][data-variant="tile"]
+    [data-scope="radio-group"][data-part="item-control"]::after {
+    content: "";
+    width: calc(var(--spacing-5) / 4);
+    height: calc(var(--spacing-5) / 2);
+    margin-block-end: calc(var(--spacing-5) / 10);
+    border-style: solid;
+    border-color: var(--primary-foreground);
+    border-width: 0 calc(var(--spacing-5) / 10) calc(var(--spacing-5) / 10) 0;
+    rotate: 45deg;
+  }
+  /* The card carries the focus ring, so the badge draws none. */
+  [data-scope="radio-group"][data-variant="tile"]
+    [data-scope="radio-group"][data-part="item-control"][data-focus-visible] {
+    outline-style: none;
+  }
+  /* item-media: Moderno's slot for an image or any content, at the root's
+     data-aspect-ratio (16:9 unless set). An image or video fills it and is
+     cropped, never stretched. */
+  [data-scope="radio-group"][data-part="item-media"] {
+    display: block;
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+    border-radius: calc(var(--radius) - var(--spacing-2));
+    background-color: var(--muted);
+    color: var(--muted-foreground);
+  }
+  [data-scope="radio-group"][data-part="item-media"] > :where(img, picture, video, svg) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  [data-scope="radio-group"][data-aspect-ratio="4:3"]
+    [data-scope="radio-group"][data-part="item-media"] {
+    aspect-ratio: 4 / 3;
+  }
+  [data-scope="radio-group"][data-aspect-ratio="3:2"]
+    [data-scope="radio-group"][data-part="item-media"] {
+    aspect-ratio: 3 / 2;
+  }
+  [data-scope="radio-group"][data-aspect-ratio="1:1"]
+    [data-scope="radio-group"][data-part="item-media"] {
+    aspect-ratio: 1 / 1;
+  }
+  [data-scope="radio-group"][data-aspect-ratio="3:4"]
+    [data-scope="radio-group"][data-part="item-media"] {
+    aspect-ratio: 3 / 4;
+  }
+  [data-scope="radio-group"][data-aspect-ratio="9:16"]
+    [data-scope="radio-group"][data-part="item-media"] {
+    aspect-ratio: 9 / 16;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-scope="radio-group"][data-part="item-control"],
+    [data-scope="radio-group"][data-variant="tile"] [data-scope="radio-group"][data-part="item"] {
       transition: none;
+    }
+  }
+
+  /* ─────────────────────── SegmentedControl ─────────────────────── *
+   * Ark's segment group (scope "segment-group", a radio machine): root
+   * (role="radiogroup") > indicator + item (a <label>) > item-text +
+   * item-hidden-input (the real radio, visually hidden, which carries focus
+   * and the arrow keys). The root is the track; the indicator is Ark's
+   * absolutely positioned pill: Ark measures the checked item and hands its
+   * box over as --left/--top/--width/--height, and hides the indicator until
+   * it has one. Ark stamps data-state="checked|unchecked", data-disabled,
+   * data-invalid, data-readonly and data-focus-visible on every item part.
+   * `segmentedControlAttrs` puts data-size (Field's sizes) and a bare
+   * data-full-width on the root; items follow through child combinators, so
+   * a control nested in another keeps its own size.                      */
+  /* @runtime-vars --top --width --height — the checked item's box, set by Ark. */
+  [data-scope="segment-group"][data-part="root"] {
+    display: inline-flex;
+    align-items: stretch;
+    /* Its own width even where a flex column would stretch it (a Field). */
+    width: fit-content;
+    /* Never wider than its container, even as a grid or flex item: its
+       segments shrink and their labels end in an ellipsis instead. */
+    min-width: 0;
+    max-width: 100%;
+    height: var(--spacing-8);
+    padding: calc(var(--spacing-1) / 2);
+    /* The --border edge keeps the track a track in a theme whose --muted
+       matches its --background (theme-contrast). */
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--muted);
+    /* The indicator's stacking context, so it sits behind the items without
+       escaping below the page. Ark sets position: relative inline. */
+    isolation: isolate;
+    vertical-align: middle;
+  }
+  [data-scope="segment-group"][data-part="root"][data-full-width] {
+    display: flex;
+    width: 100%;
+  }
+  [data-scope="segment-group"][data-part="root"][data-invalid] {
+    border-color: var(--destructive);
+  }
+  /*
+   * Ark stamps data-disabled on the root, the indicator and every item part of
+   * a disabled group, and on every part of a disabled item; the base layer dims
+   * anything carrying it, and nesting would multiply the opacity. Dim the
+   * outermost disabled part once and leave what is inside it opaque.
+   */
+  [data-scope="segment-group"][data-part="root"][data-disabled] :where([data-part]),
+  [data-scope="segment-group"][data-part="item"][data-disabled] :where([data-part]) {
+    opacity: 1;
+  }
+  /* One segment: its text (and icon) centred. It shrinks below its content in
+     a narrow container, and its text ends in an ellipsis instead of breaking
+     the track. The border stays transparent unless no indicator is showing. */
+  [data-scope="segment-group"][data-part="root"] > [data-part="item"] {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    flex: 0 1 auto;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-2);
+    min-width: 0;
+    padding-inline: var(--spacing-3);
+    border: 1px solid transparent;
+    border-radius: calc(var(--radius) - var(--spacing-1) / 2);
+    color: var(--muted-foreground);
+    font-family: var(--font-sans);
+    font-size: var(--text-ui-md);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--leading-ui-md);
+    cursor: pointer;
+    user-select: none;
+    transition: color var(--motion-fast);
+  }
+  [data-scope="segment-group"][data-part="root"][data-full-width] > [data-part="item"] {
+    flex: 1 1 0;
+  }
+  [data-scope="segment-group"][data-part="root"] > [data-part="item"][data-hover],
+  [data-scope="segment-group"][data-part="root"] > [data-part="item"][data-state="checked"] {
+    color: var(--foreground);
+  }
+  [data-scope="segment-group"][data-part="root"] > [data-part="item"][data-readonly] {
+    cursor: default;
+  }
+  /* Focus lives on the visually hidden radio, so the ring is drawn on its
+     segment, inside its edge, where a neighbour cannot cover it. */
+  [data-scope="segment-group"][data-part="root"] > [data-part="item"][data-focus-visible] {
+    outline-color: var(--ring);
+    outline-style: solid;
+    outline-width: 2px;
+    outline-offset: -2px;
+  }
+  /* An icon keeps its size while the text beside it shrinks. */
+  [data-scope="segment-group"][data-part="root"] > [data-part="item"] > svg {
+    flex: none;
+    width: var(--spacing-4);
+    height: var(--spacing-4);
+  }
+  /* The base layer paints every part --foreground; the text follows its
+     segment's colour instead. */
+  [data-scope="segment-group"][data-part="item-text"] {
+    min-width: 0;
+    color: inherit;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  /*
+   * The selected segment is a raised --background pill with a --border edge
+   * and --shadow-sm: a shape, not only a colour. Ark sets the indicator's
+   * position, its left edge and its transition inline; the stylesheet gives it
+   * the rest of its box, its look and the timing.
+   */
+  [data-scope="segment-group"][data-part="root"] > [data-part="indicator"] {
+    z-index: 0;
+    top: var(--top);
+    width: var(--width);
+    height: var(--height);
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) - var(--spacing-1) / 2);
+    background-color: var(--background);
+    box-shadow: var(--shadow-sm);
+    --transition-duration: var(--motion-fast);
+    --transition-timing-function: ease-out;
+  }
+  /* No indicator showing — before hydration, or without one — the checked
+     segment wears the same pill itself, so the choice is never invisible. */
+  [data-scope="segment-group"][data-part="root"]:not(:has(> [data-part="indicator"]:not([hidden])))
+    > [data-part="item"][data-state="checked"] {
+    border-color: var(--border);
+    background-color: var(--background);
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* Sizes — the track is as tall as a Field input of the same size. */
+  [data-scope="segment-group"][data-part="root"][data-size="sm"] {
+    height: var(--spacing-7);
+  }
+  [data-scope="segment-group"][data-part="root"][data-size="sm"] > [data-part="item"] {
+    gap: var(--spacing-1);
+    padding-inline: var(--spacing-2);
+    font-size: var(--text-ui-sm);
+    line-height: var(--leading-ui-sm);
+  }
+  [data-scope="segment-group"][data-part="root"][data-size="sm"] > [data-part="item"] > svg {
+    width: var(--spacing-3);
+    height: var(--spacing-3);
+  }
+  [data-scope="segment-group"][data-part="root"][data-size="lg"] {
+    height: calc(var(--spacing-8) + var(--spacing-2));
+  }
+  [data-scope="segment-group"][data-part="root"][data-size="lg"] > [data-part="item"] {
+    padding-inline: var(--spacing-4);
+    font-size: var(--text-ui-lg);
+    line-height: var(--leading-ui-lg);
+  }
+  [data-scope="segment-group"][data-part="root"][data-size="lg"] > [data-part="item"] > svg {
+    width: var(--spacing-5);
+    height: var(--spacing-5);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-scope="segment-group"][data-part="root"] > [data-part="item"] {
+      transition: none;
+    }
+    [data-scope="segment-group"][data-part="root"] > [data-part="indicator"] {
+      --transition-duration: 0ms;
     }
   }
 
@@ -4198,6 +5549,177 @@
     > [data-part="thumb"] {
     width: var(--spacing-6);
     height: var(--spacing-6);
+  }
+
+  /* ──────────────────────── SortableList ────────────────────────── *
+   * The sortable-list machine (packages/core/src/machines/sortable-list):
+   * root > item > item-handle (optional) + item-trigger + anything else the
+   * item holds. The root is a <ul>, each item an <li>. While an item moves,
+   * the machine draws it and the items it passes away from their places with
+   * --sortable-list-offset (a translateY), stamps data-dragging="pointer" or
+   * "keyboard" on the moving item and on the root, and data-settling on the
+   * root for the two frames after a drop. `sortableListRecipe` puts size on
+   * the root; the items follow it.                                         */
+  /* @runtime-vars --sortable-list-offset — the machine sets it on an item
+     while it moves or steps aside, in pixels. */
+  [data-scope="sortable-list"][data-part="root"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  /*
+   * A disabled list or item only stops moving: its trigger and whatever else
+   * it holds still work, so it is not dimmed or made inert like the base
+   * layer's [data-disabled]. Only its handle is dimmed.
+   */
+  [data-scope="sortable-list"][data-part="root"][data-disabled],
+  [data-scope="sortable-list"][data-part="item"][data-disabled] {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  [data-scope="sortable-list"][data-part="item"] {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-1);
+    min-height: var(--spacing-8);
+    padding-inline: var(--spacing-1);
+    border-radius: var(--radius);
+    background-color: transparent;
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: var(--text-ui-md);
+    /* No offset set means none (transform falls back to its initial value). */
+    transform: translateY(var(--sortable-list-offset));
+    transition:
+      transform var(--motion-fast) ease-out,
+      background-color var(--motion-fast),
+      box-shadow var(--motion-fast);
+  }
+  /* Without a handle the whole item drags: it shows the grab cursor, keeps
+     its text from being selected, and a touch on it drags instead of
+     scrolling the page. */
+  [data-scope="sortable-list"][data-part="item"]:not(:has([data-part="item-handle"])) {
+    touch-action: none;
+    user-select: none;
+    cursor: grab;
+  }
+  [data-scope="sortable-list"][data-part="item"][data-disabled] {
+    touch-action: auto;
+    cursor: default;
+  }
+  /* The moving item lifts above the others, on the popover surface. */
+  [data-scope="sortable-list"][data-part="item"][data-dragging] {
+    z-index: 1;
+    background-color: var(--popover);
+    color: var(--popover-foreground);
+    box-shadow: var(--shadow-md);
+  }
+  /* A pointer carries the item directly; only the items it passes glide. */
+  [data-scope="sortable-list"][data-part="item"][data-dragging="pointer"] {
+    cursor: grabbing;
+    transition: none;
+  }
+  [data-scope="sortable-list"][data-part="root"][data-dragging="pointer"] {
+    cursor: grabbing;
+  }
+  /* The keyboard's item shows the focus ring around the whole item. */
+  [data-scope="sortable-list"][data-part="item"][data-dragging="keyboard"] {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+  }
+  /* Right after a drop the items already stand in their new order: nothing
+     glides for those frames, then the dropped item glides into its slot. */
+  [data-scope="sortable-list"][data-part="root"][data-settling] > [data-part="item"] {
+    transition: none;
+  }
+
+  /* The handle: a small grip button before the item's content. */
+  [data-scope="sortable-list"][data-part="item-handle"] {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: var(--spacing-6);
+    height: var(--spacing-6);
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: var(--radius);
+    background-color: transparent;
+    color: var(--muted-foreground);
+    cursor: grab;
+    touch-action: none;
+    transition:
+      background-color var(--motion-fast),
+      color var(--motion-fast);
+  }
+  [data-scope="sortable-list"][data-part="item-handle"] svg {
+    width: var(--spacing-4);
+    height: var(--spacing-4);
+  }
+  [data-scope="sortable-list"][data-part="item-handle"]:hover {
+    background-color: var(--muted);
+    color: var(--foreground);
+  }
+  [data-scope="sortable-list"][data-part="item-handle"][data-dragging="pointer"] {
+    cursor: grabbing;
+  }
+  [data-scope="sortable-list"][data-part="item-handle"]:disabled {
+    cursor: default;
+  }
+
+  /* The trigger: the item's name button, filling the rest of the row. */
+  [data-scope="sortable-list"][data-part="item-trigger"] {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    gap: var(--spacing-2);
+    min-width: 0;
+    min-height: var(--spacing-7);
+    margin: 0;
+    padding: var(--spacing-1) var(--spacing-2);
+    border: none;
+    border-radius: var(--radius);
+    background-color: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    cursor: inherit;
+    transition: background-color var(--motion-fast);
+  }
+  [data-scope="sortable-list"][data-part="item-trigger"]:hover {
+    background-color: var(--muted);
+  }
+  [data-scope="sortable-list"][data-part="item-handle"]:focus-visible,
+  [data-scope="sortable-list"][data-part="item-trigger"]:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+  }
+
+  /* Sizes — the item's height and type follow Button's steps. */
+  [data-scope="sortable-list"][data-part="root"][data-size="sm"] > [data-part="item"] {
+    min-height: var(--spacing-7);
+    font-size: var(--text-ui-sm);
+  }
+  [data-scope="sortable-list"][data-part="root"][data-size="sm"] [data-part="item-trigger"] {
+    min-height: var(--spacing-6);
+  }
+  [data-scope="sortable-list"][data-part="root"][data-size="lg"] > [data-part="item"] {
+    min-height: calc(var(--spacing-8) + var(--spacing-2));
+    font-size: var(--text-ui-lg);
+  }
+  [data-scope="sortable-list"][data-part="root"][data-size="lg"] [data-part="item-trigger"] {
+    min-height: var(--spacing-8);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-scope="sortable-list"][data-part="item"] {
+      transition: none;
+    }
   }
 
   /* ────────────────────────── Spinner ─────────────────────────── *
@@ -5288,6 +6810,166 @@
     }
   }
 
+  /* ─────────────────────────── Toolbar ─────────────────────────── *
+   * A bar of buttons, toggles, groups and separators. The toolbar machine
+   * (packages/core/src/machines/toolbar) stamps the parts: root > button,
+   * toggle, group > …, separator; data-orientation on the root, the items,
+   * the groups and the separators (a separator's is its own axis, across
+   * the bar's); data-state="on|off" on a toggle; data-disabled on a
+   * disabled item. `toolbarRecipe` puts data-size on the root and every
+   * item follows it, at Button's heights. Anything else inside the root —
+   * a text readout like "100%" — sits on the same centre line.            */
+  [data-scope="toolbar"][data-part="root"] {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-1);
+    padding: var(--spacing-1);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: var(--text-ui-md);
+    /* A readout that changes ("99%" → "100%") keeps its width per digit. */
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  [data-scope="toolbar"][data-part="root"][data-orientation="vertical"] {
+    flex-direction: column;
+  }
+  [data-scope="toolbar"][data-part="group"] {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-1);
+  }
+  [data-scope="toolbar"][data-part="group"][data-orientation="vertical"] {
+    flex-direction: column;
+  }
+
+  /* Items — a ghost Button's look. At every size the icon, the inline padding
+     and the border fit inside the min-width, so an icon-only item is square. */
+  [data-scope="toolbar"][data-part="button"],
+  [data-scope="toolbar"][data-part="toggle"] {
+    position: relative;
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-2);
+    height: var(--spacing-8);
+    min-width: var(--spacing-8);
+    padding-inline: calc(var(--spacing-1) * 1.5);
+    border: 1px solid transparent;
+    border-radius: calc(var(--radius) - var(--spacing-1) / 2);
+    /* Clears the UA `buttonface` grey: at rest an item has no fill. */
+    background-color: transparent;
+    color: inherit;
+    font: inherit;
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    user-select: none;
+    transition:
+      background-color var(--motion-fast),
+      color var(--motion-fast);
+  }
+  /* The hit area: at least --spacing-8 (Button md's height) each way, at
+     every size. A smaller item keeps its visible size and grows this
+     invisible layer instead; the bar's gap leaves room for it, so two
+     neighbours' layers meet but do not overlap. */
+  [data-scope="toolbar"][data-part="button"]::before,
+  [data-scope="toolbar"][data-part="toggle"]::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: max(100%, var(--spacing-8));
+    height: max(100%, var(--spacing-8));
+    translate: -50% -50%;
+  }
+  [data-scope="toolbar"][data-part="button"]:hover,
+  [data-scope="toolbar"][data-part="toggle"]:hover:not([data-state="on"]) {
+    background-color: var(--muted);
+    color: var(--muted-foreground);
+  }
+  /* Pressed: Toggle's accent pair, so "on" reads the same in and out of a
+     toolbar. An open menu's trigger looks pressed too. */
+  [data-scope="toolbar"][data-part="toggle"][data-state="on"],
+  [data-scope="toolbar"][data-part="button"][aria-expanded="true"] {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+  /* The ring goes inside the item, where a neighbour cannot cover it. */
+  [data-scope="toolbar"][data-part="button"]:focus-visible,
+  [data-scope="toolbar"][data-part="toggle"]:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+  }
+
+  /* An icon inside an item: --spacing-4 square at md, and one step per size
+     (below). It never shrinks when a label sits beside it. */
+  [data-scope="toolbar"]:is([data-part="button"], [data-part="toggle"]) > svg {
+    flex: none;
+    width: var(--spacing-4);
+    height: var(--spacing-4);
+  }
+
+  /* Separator — a --border rule across the bar, inset from its ends so it
+     reads as a break between groups, not an edge. */
+  [data-scope="toolbar"][data-part="separator"] {
+    flex: none;
+    align-self: stretch;
+    margin: var(--spacing-1) calc(var(--spacing-1) / 2);
+    background-color: var(--border);
+  }
+  [data-scope="toolbar"][data-part="separator"][data-orientation="vertical"] {
+    width: 1px;
+  }
+  [data-scope="toolbar"][data-part="separator"][data-orientation="horizontal"] {
+    height: 1px;
+    margin: calc(var(--spacing-1) / 2) var(--spacing-1);
+  }
+
+  /* Sizes — Button's heights, from the spacing slots; `lg` sums two. The
+     hit area above stays at least --spacing-8 at `sm`. */
+  [data-scope="toolbar"][data-part="root"][data-size="sm"] {
+    font-size: var(--text-ui-sm);
+  }
+  [data-scope="toolbar"][data-part="root"][data-size="sm"]
+    [data-scope="toolbar"]:is([data-part="button"], [data-part="toggle"]) {
+    height: var(--spacing-7);
+    min-width: var(--spacing-7);
+    padding-inline: var(--spacing-1);
+  }
+  [data-scope="toolbar"][data-part="root"][data-size="sm"]
+    [data-scope="toolbar"]:is([data-part="button"], [data-part="toggle"])
+    > svg {
+    width: calc(var(--spacing-3) + var(--spacing-1) / 2);
+    height: calc(var(--spacing-3) + var(--spacing-1) / 2);
+  }
+  [data-scope="toolbar"][data-part="root"][data-size="lg"] {
+    font-size: var(--text-ui-lg);
+  }
+  [data-scope="toolbar"][data-part="root"][data-size="lg"]
+    [data-scope="toolbar"]:is([data-part="button"], [data-part="toggle"]) {
+    height: calc(var(--spacing-8) + var(--spacing-2));
+    min-width: calc(var(--spacing-8) + var(--spacing-2));
+    padding-inline: var(--spacing-2);
+  }
+  [data-scope="toolbar"][data-part="root"][data-size="lg"]
+    [data-scope="toolbar"]:is([data-part="button"], [data-part="toggle"])
+    > svg {
+    width: var(--spacing-5);
+    height: var(--spacing-5);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-scope="toolbar"][data-part="button"],
+    [data-scope="toolbar"][data-part="toggle"] {
+      transition: none;
+    }
+  }
+
   /* ─────────────────────────── Tooltip ─────────────────────────── *
    * Ark's Root renders no element, so `tooltipRecipe` size lands on the
    * content, the surface. Parts: trigger, positioner > content > arrow >
@@ -5374,6 +7056,187 @@
     [data-scope="tooltip"][data-part="content"][data-state] {
       animation: none;
     }
+  }
+
+  /* ───────────────────────── Vector Pad ───────────────────────── *
+   * Moderno's vector-pad machine (`vectorPad` in @moderno-ui/core): root >
+   * label, then control > grid + crosshair + thumb, then the two number
+   * fields (`Input`, Ark number-inputs with their own scope). The pad sits
+   * under the label and the fields stack beside it. The machine sets the
+   * handle's place on the root as --vector-pad-x / --vector-pad-y (from the
+   * pad's left and top edges) and stamps data-disabled, data-readonly,
+   * data-invalid and data-dragging on every part. `vectorPadRecipe` puts
+   * size on the root; the parts follow it through child combinators
+   * (root > part).                                                       */
+  /* @runtime-vars --vector-pad-x --vector-pad-y — the handle's place, set by the machine */
+  [data-scope="vector-pad"][data-part="root"] {
+    display: inline-grid;
+    grid-template-columns: auto auto;
+    grid-template-rows: auto auto auto 1fr;
+    align-items: start;
+    gap: var(--spacing-2) var(--spacing-4);
+    max-width: 100%;
+  }
+  /*
+   * The machine stamps data-disabled on EVERY part, and the base layer dims
+   * anything carrying it (the fields' parts too) — nesting would multiply
+   * the opacity. Dim the root once and leave everything inside it opaque.
+   */
+  [data-scope="vector-pad"][data-part="root"][data-disabled] :where([data-part]) {
+    opacity: 1;
+  }
+  /* The label names the pad and the fields, so it spans both columns. */
+  [data-scope="vector-pad"][data-part="label"] {
+    grid-column: 1 / -1;
+    color: var(--foreground);
+    font-size: var(--text-ui-md);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--leading-ui-md);
+  }
+  /* The pad: a square at any width. It spans the rows the fields stack in. */
+  [data-scope="vector-pad"][data-part="control"] {
+    position: relative;
+    grid-column: 1;
+    grid-row: 2 / -1;
+    box-sizing: border-box;
+    width: calc(var(--spacing-8) * 5);
+    max-width: 100%;
+    aspect-ratio: 1;
+    border: 1px solid var(--input);
+    border-radius: var(--radius);
+    background-color: var(--background);
+    box-shadow: var(--shadow-sm);
+    cursor: crosshair;
+    transition: border-color var(--motion-fast);
+  }
+  /* Hover raises the edge to the focus colour, as on Field's input. */
+  [data-scope="vector-pad"][data-part="control"]:hover:not([data-disabled]):not([data-readonly]):not(
+      [data-invalid]
+    ) {
+    border-color: var(--ring);
+  }
+  [data-scope="vector-pad"][data-part="control"][data-readonly] {
+    cursor: default;
+  }
+  [data-scope="vector-pad"][data-part="control"][data-invalid] {
+    border-color: var(--destructive);
+  }
+  /* The grid: a line every quarter of the pad, both ways. */
+  [data-scope="vector-pad"][data-part="grid"] {
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius);
+    background-image:
+      linear-gradient(to right, var(--border) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+    background-size: 25% 25%;
+    pointer-events: none;
+  }
+  /* The crosshair: one line each way through the pad's centre. */
+  [data-scope="vector-pad"][data-part="crosshair"] {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  [data-scope="vector-pad"][data-part="crosshair"]::before,
+  [data-scope="vector-pad"][data-part="crosshair"]::after {
+    content: "";
+    position: absolute;
+    background-color: color-mix(in oklab, var(--muted-foreground) 50%, transparent);
+  }
+  [data-scope="vector-pad"][data-part="crosshair"]::before {
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 1px;
+    translate: -50% 0;
+  }
+  [data-scope="vector-pad"][data-part="crosshair"]::after {
+    top: 50%;
+    right: 0;
+    left: 0;
+    height: 1px;
+    translate: 0 -50%;
+  }
+  /* The handle, centred on the value's spot. It takes focus. */
+  [data-scope="vector-pad"][data-part="thumb"] {
+    position: absolute;
+    top: var(--vector-pad-y);
+    left: var(--vector-pad-x);
+    box-sizing: border-box;
+    width: var(--spacing-4);
+    height: var(--spacing-4);
+    translate: -50% -50%;
+    border: calc(var(--spacing-1) / 2) solid var(--primary);
+    border-radius: var(--radius-full);
+    background-color: var(--background);
+    box-shadow: var(--shadow-sm);
+    cursor: grab;
+  }
+  [data-scope="vector-pad"][data-part="thumb"][data-dragging] {
+    cursor: grabbing;
+  }
+  [data-scope="vector-pad"][data-part="thumb"][data-readonly] {
+    cursor: default;
+  }
+  [data-scope="vector-pad"][data-part="thumb"]:focus-visible {
+    outline-color: var(--ring);
+    outline-style: solid;
+    outline-width: 2px;
+    outline-offset: 2px;
+  }
+  [data-scope="vector-pad"][data-part="thumb"][data-invalid] {
+    border-color: var(--destructive);
+  }
+  /* The fields stack beside the pad: wide enough for "-100". */
+  [data-scope="vector-pad"][data-part="root"] > [data-scope="number-input"][data-part="root"] {
+    grid-column: 2;
+    width: calc(var(--spacing-8) * 3);
+  }
+  /* Each field's axis ("X", "Y") leads inside its box, like an icon. */
+  [data-scope="vector-pad"][data-part="root"]
+    > [data-scope="number-input"][data-part="root"]
+    > [data-part="control"]
+    > [data-part="label"] {
+    align-self: center;
+    padding-inline-start: var(--spacing-3);
+    color: var(--muted-foreground);
+    font-size: var(--text-ui-sm);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--leading-ui-sm);
+  }
+  [data-scope="vector-pad"][data-part="root"]
+    > [data-scope="number-input"][data-part="root"]
+    > [data-part="control"]
+    > [data-part="input"] {
+    padding-inline-start: var(--spacing-2);
+  }
+
+  /* Density driven by the recipe's data-size on the root: the pad's side
+     (five of the field heights NumberInput and Field use at that size), the
+     fields' width and the label's type. The fields take the same size from
+     the Root, so their height matches. */
+  [data-scope="vector-pad"][data-part="root"][data-size="sm"] > [data-part="label"] {
+    font-size: var(--text-ui-sm);
+    line-height: var(--leading-ui-sm);
+  }
+  [data-scope="vector-pad"][data-part="root"][data-size="lg"] > [data-part="label"] {
+    font-size: var(--text-ui-lg);
+    line-height: var(--leading-ui-lg);
+  }
+  [data-scope="vector-pad"][data-part="root"][data-size="sm"] > [data-part="control"] {
+    width: calc(var(--spacing-7) * 5);
+  }
+  [data-scope="vector-pad"][data-part="root"][data-size="lg"] > [data-part="control"] {
+    width: calc((var(--spacing-8) + var(--spacing-2)) * 5);
+  }
+  [data-scope="vector-pad"][data-part="root"][data-size="sm"]
+    > [data-scope="number-input"][data-part="root"] {
+    width: calc(var(--spacing-8) * 2.5);
+  }
+  [data-scope="vector-pad"][data-part="root"][data-size="lg"]
+    > [data-scope="number-input"][data-part="root"] {
+    width: calc(var(--spacing-8) * 3.5);
   }
 
   /* ──────────────────────── Hidden parts ──────────────────────── *

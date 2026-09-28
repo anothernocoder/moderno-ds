@@ -1,0 +1,250 @@
+---
+title: Layers panel
+description: A layers panel for an editor, like Figma's — one row per layer with its thumbnail, name, visibility and lock toggles and a menu; drag to reorder, double-click to rename.
+group: Blocks
+order: 300
+agent:
+  intent: An editor panel section that lists the layers of a design, top row front-most — each row a thumbnail or icon, a name button, a visibility Toggle, a lock Toggle and a Menu (Duplicate, Rename, Delete) — reordered by dragging (SortableList) and renamed inline (Editable), with an empty state that adds the first layer.
+  whenToUse: "A design tool, a canvas editor or any app that stacks objects in a z-order and needs to select, show, hide, lock, rename, duplicate, delete and reorder them."
+  whenNotToUse:
+    - case: A plain list the user reorders, with no visibility, lock or rename
+      use: SortableList — the reorderable list on its own
+    - case: Nested groups of layers that expand and collapse
+      use: a tree view built for it; this panel lists one flat stack
+    - case: Rows of records with columns and bulk actions
+      use: Table — a data table with row actions
+  gotchas:
+    - "Controlled only. The block renders `layers` and `selectedId` exactly as given and reports changes through callbacks. Write each change back, or nothing moves. Replacing `layers` and editing it in place (a Vue `ref`, Svelte `$state`, a Solid store) both work."
+    - "`layers` is top row first, and the top row is the front-most layer. `onReorder` receives every `id` in the new order, top row first."
+    - "`onChange(id, change)` receives one field at a time: `{ name }` after a rename, `{ visible }` from the eye toggle, `{ locked }` from the lock toggle. A rename to an empty name, or to the same name, reports nothing."
+    - "Delete (the key or the menu item) only reports `onDelete(id)`: your app confirms and removes the layer. Once it is gone, the focus moves to the row below it (or above it)."
+    - "Duplicate and Add layer only report `onDuplicate(id)` and `onAdd()`: your app creates the new layer, gives it an `id` and usually selects it."
+    - "Rename starts on a double click on the name, F2 on the focused row, or Rename in the menu. Enter or a click away saves; Escape cancels. Focus then comes back to the row."
+    - "The list is one Tab stop, on the selected row (or the first row). Up/Down/Home/End move between rows; Tab reaches the focused row's toggles and menu, then leaves the panel. Space picks the row up to move it with the arrows (SortableList)."
+    - 'Each row''s name button carries its state: `aria-current="true"` when selected, and its name ends in ", hidden" and ", locked". The toggles are named "Hide Logo" / "Show Logo" and "Lock Logo" / "Unlock Logo".'
+    - "The toggles and the menu show on row hover or focus. A pressed toggle (a hidden or locked layer) stays; on a touch screen they always show."
+    - "`thumbnail` is an image URL and wins over `icon`. `icon` is a layer kind: `frame`, `group`, `text`, `image` or `shape`; anything else draws a generic layer icon."
+    - "Svelte takes lowercase callbacks (`onselect`, `onreorder`, `onchange`, `onduplicate`, `ondelete`, `onadd`); Vue emits `@select`, `@reorder`, `@change`, `@duplicate`, `@delete` and `@add`."
+    - "The list scrolls when the panel is shorter than it: give the block (or its parent) a height. The layout follows the block's own width, not the viewport: from `--container-sm` the thumbnails grow and Add layer shows its label."
+  theming:
+    - "The block paints its --background, the header's --border and the selected row: a --primary tint with a --primary bar at its start. Hidden rows turn their name --muted-foreground and dim their thumbnail."
+    - "The rows are SortableList, the visibility and lock buttons Toggle, the menu button a ghost Button that opens a Menu, the rename field Editable, the full name a Tooltip."
+    - "Layout comes from the Tailwind preset's contract-backed utilities; the one step is --container-sm."
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import LayersPanelBlockDemo from "../../../islands/LayersPanelBlockDemo.svelte";
+import layersPanelReact from "../../../../../../registry/blocks/layers-panel/react/layers-panel.tsx?raw";
+import layersPanelVue from "../../../../../../registry/blocks/layers-panel/vue/LayersPanel.vue?raw";
+import layersPanelSolid from "../../../../../../registry/blocks/layers-panel/solid/layers-panel.tsx?raw";
+import layersPanelSvelte from "../../../../../../registry/blocks/layers-panel/svelte/LayersPanel.svelte?raw";
+
+export const examples = {
+  react: layersPanelReact,
+  vue: layersPanelVue,
+  solid: layersPanelSolid,
+  svelte: layersPanelSvelte,
+};
+
+<FrameworkSelect locale="en" />
+
+<Preview examples={examples}>
+  <LayersPanelBlockDemo client:visible locale="en" />
+</Preview>
+
+Use it in an editor that stacks objects on a canvas: select a layer, hide or lock it, drag it in front of or behind the others, and rename it in place. The block shows the layers; your app owns them.
+
+## Installation
+
+<Install item="layers-panel" />
+
+## Usage
+
+<ForFramework fw="react">
+
+```tsx
+import { LayersPanel } from "@/components/blocks/layers-panel";
+```
+
+```tsx
+<LayersPanel
+  layers={layers}
+  selectedId={selectedId}
+  onSelect={setSelectedId}
+  onReorder={reorderLayers}
+  onChange={updateLayer}
+  onDuplicate={duplicateLayer}
+  onDelete={deleteLayer}
+  onAdd={addLayer}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="vue">
+
+```vue
+<script setup lang="ts">
+import LayersPanel from "@/components/blocks/LayersPanel.vue";
+</script>
+```
+
+```vue
+<LayersPanel
+  :layers="layers"
+  :selected-id="selectedId"
+  @select="selectedId = $event"
+  @reorder="reorderLayers"
+  @change="updateLayer"
+  @duplicate="duplicateLayer"
+  @delete="deleteLayer"
+  @add="addLayer"
+/>
+```
+
+</ForFramework>
+<ForFramework fw="svelte">
+
+```svelte
+<script lang="ts">
+  import LayersPanel from "@/components/blocks/LayersPanel.svelte";
+</script>
+```
+
+```svelte
+<LayersPanel
+  {layers}
+  {selectedId}
+  onselect={(id) => (selectedId = id)}
+  onreorder={reorderLayers}
+  onchange={updateLayer}
+  onduplicate={duplicateLayer}
+  ondelete={deleteLayer}
+  onadd={addLayer}
+/>
+```
+
+</ForFramework>
+<ForFramework fw="solid">
+
+```tsx
+import { LayersPanel } from "@/components/blocks/layers-panel";
+```
+
+```tsx
+<LayersPanel
+  layers={layers()}
+  selectedId={selectedId()}
+  onSelect={setSelectedId}
+  onReorder={reorderLayers}
+  onChange={updateLayer}
+  onDuplicate={duplicateLayer}
+  onDelete={deleteLayer}
+  onAdd={addLayer}
+/>
+```
+
+</ForFramework>
+
+Each callback names a layer by its `id`. `reorderLayers` puts `layers` in the order it receives, `updateLayer(id, change)` merges the change into that layer, and `deleteLayer` removes it once your app has confirmed.
+
+## API Reference
+
+### Props
+
+| Prop          | Type                                        | Default            | Description                                                                                   |
+| ------------- | ------------------------------------------- | ------------------ | --------------------------------------------------------------------------------------------- |
+| `layers`      | `Layer[]`                                   | five sample layers | One row each, top row first. The top row is the front-most layer.                             |
+| `selectedId`  | `string \| null`                            | `null`             | The selected layer's `id`.                                                                    |
+| `onSelect`    | `(id: string) => void`                      | —                  | A row was clicked, or Enter was pressed on it. Svelte: `onselect`. Vue: `@select`.            |
+| `onReorder`   | `(ids: string[]) => void`                   | —                  | A row was dropped in a new place: every `id`, top row first. Vue: `@reorder`.                 |
+| `onChange`    | `(id: string, change: LayerChange) => void` | —                  | A layer was renamed, hidden, shown, locked or unlocked. Svelte: `onchange`. Vue: `@change`.   |
+| `onDuplicate` | `(id: string) => void`                      | —                  | Duplicate was picked in the row's menu. Svelte: `onduplicate`. Vue: `@duplicate`.             |
+| `onDelete`    | `(id: string) => void`                      | —                  | Delete was picked in the menu, or the Delete key pressed. Svelte: `ondelete`. Vue: `@delete`. |
+| `onAdd`       | `() => void`                                | —                  | Add layer was pressed. Svelte: `onadd`. Vue: `@add`.                                          |
+
+### Layer
+
+| Field       | Type      | Description                                                                                               |
+| ----------- | --------- | --------------------------------------------------------------------------------------------------------- |
+| `id`        | `string`  | Names the layer in every callback.                                                                        |
+| `name`      | `string`  | The row's name. Cut short with an ellipsis when long; the full name is its tooltip.                       |
+| `visible`   | `boolean` | `false` dims the row and presses its visibility toggle.                                                   |
+| `locked`    | `boolean` | `true` presses its lock toggle, which then shows a lock.                                                  |
+| `thumbnail` | `string`  | Optional. An image URL, drawn small before the name.                                                      |
+| `icon`      | `string`  | Optional. The layer kind, drawn when there is no thumbnail: `frame`, `group`, `text`, `image` or `shape`. |
+
+### LayerChange
+
+One of `{ name: string }`, `{ visible: boolean }` or `{ locked: boolean }`: the one field that changed.
+
+### Parts
+
+| Part              | What it is                                                                                                    |
+| ----------------- | ------------------------------------------------------------------------------------------------------------- |
+| Header            | The "Layers" heading and an Add layer Button.                                                                 |
+| List              | A SortableList named "Layers", one item per layer.                                                            |
+| Name button       | The row's SortableList trigger: the name, with the state in its accessible name. A Tooltip shows a long name. |
+| Visibility toggle | A Toggle named "Hide Logo" or "Show Logo", pressed while the layer is hidden.                                 |
+| Lock toggle       | A Toggle named "Lock Logo" or "Unlock Logo", pressed while the layer is locked.                               |
+| Menu              | A ghost Button named "Actions for Logo" that opens a Menu: Duplicate, Rename, Delete.                         |
+| Rename field      | An Editable input over the name while renaming.                                                               |
+| Empty state       | "No layers yet" and an Add layer Button, when `layers` is empty.                                              |
+
+### States
+
+| State    | Prop             | What renders                                                                                 |
+| -------- | ---------------- | -------------------------------------------------------------------------------------------- |
+| Selected | `selectedId`     | The row has a tinted background and a bar at its start; its name button has `aria-current`.  |
+| Hidden   | `visible: false` | The name is muted, the thumbnail dimmed, and the visibility toggle pressed and always shown. |
+| Locked   | `locked: true`   | The lock toggle is pressed, shows a lock and is always shown.                                |
+| Renaming | —                | An input over the name, its text selected.                                                   |
+| Empty    | `layers` is `[]` | "No layers yet" and an Add layer button, in place of the list.                               |
+
+### Keyboard
+
+| Key            | Where            | Does                                                                  |
+| -------------- | ---------------- | --------------------------------------------------------------------- |
+| Tab            | The panel        | Enters the list on the selected row, then its toggles and menu.       |
+| Up / Down      | A name button    | Moves to the row above or below.                                      |
+| Home / End     | A name button    | Moves to the first or last row.                                       |
+| Enter          | A name button    | Selects the layer.                                                    |
+| F2             | A name button    | Renames the layer.                                                    |
+| Delete         | A name button    | Asks to delete the layer. Backspace does too.                         |
+| Space          | A name button    | Picks the row up; the arrows move it, Space drops it, Escape cancels. |
+| Enter / Escape | The rename field | Saves / cancels the new name.                                         |
+
+### Sizing
+
+| Container step           | What changes                                  |
+| ------------------------ | --------------------------------------------- |
+| below `@sm`              | Small thumbnails; Add layer is an icon.       |
+| `@sm` (`--container-sm`) | Bigger thumbnails; Add layer shows its label. |
+
+## Examples
+
+### Container widths
+
+The same panel at 16rem and 28rem. From 24rem, the thumbnails grow and Add layer shows its label.
+
+<Preview examples={examples} layout="fill">
+  <LayersPanelBlockDemo client:visible locale="en" example="widths" />
+</Preview>
+
+### Empty
+
+With no layers, the panel offers to add the first one.
+
+<Preview examples={examples}>
+  <LayersPanelBlockDemo client:visible locale="en" example="empty" />
+</Preview>
+
+### Many layers
+
+Twelve layers in a short panel: the list scrolls. Long names are cut short; hover one to read it all.
+
+<Preview examples={examples}>
+  <LayersPanelBlockDemo client:visible locale="en" example="many" />
+</Preview>

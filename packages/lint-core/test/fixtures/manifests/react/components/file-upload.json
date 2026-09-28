@@ -1,0 +1,44 @@
+{
+  "name": "FileUpload",
+  "scope": "file-upload",
+  "import": "import { FileUpload } from \"@moderno-ui/react\"",
+  "propsHash": "sha256:fixture-file-upload",
+  "props": [
+    { "name": "accept", "type": "FileUploadAccept", "required": false },
+    { "name": "disabled", "type": "boolean", "required": false },
+    { "name": "label", "type": "string", "required": false },
+    { "name": "maxFileSize", "type": "number", "required": false },
+    { "name": "maxFiles", "type": "number", "required": false },
+    {
+      "name": "onFileChange",
+      "type": "((details: FileUploadFileChangeDetails) => void)",
+      "required": false
+    },
+    { "name": "size", "type": "\"sm\" | \"md\" | \"lg\"", "required": false },
+    { "name": "translations", "type": "Partial<FileUploadTranslations>", "required": false }
+  ],
+  "propsComplete": false,
+  "parts": [
+    { "name": "root" },
+    { "name": "dropzone" },
+    { "name": "dropzone-icon" },
+    { "name": "dropzone-title" },
+    { "name": "dropzone-hint" },
+    { "name": "item-group" },
+    { "name": "item" },
+    { "name": "item-preview" },
+    { "name": "item-preview-image" },
+    { "name": "item-name" },
+    { "name": "item-name-full" },
+    { "name": "item-name-start" },
+    { "name": "item-name-end" },
+    { "name": "item-size-text" },
+    { "name": "item-error" },
+    { "name": "item-delete-trigger" }
+  ],
+  "variants": { "size": ["sm", "md", "lg"] },
+  "guidance": {
+    "intent": "Let the user add files by dropping them on a zone or picking them, and see which were taken.",
+    "whenToUse": "A logo, font files, images or documents a form needs from the user's computer."
+  }
+}

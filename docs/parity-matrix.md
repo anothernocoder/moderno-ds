@@ -62,6 +62,27 @@ Legend: ✅ verified by an automated test · ❌ not supported (see its footnote
 | icon part `aria-hidden`        |  ✅   | ✅  |   ✅   |  ✅   |
 | no baked class/style           |  ✅   | ✅  |   ✅   |  ✅   |
 
+### AngleSlider (`angleSliderRecipe`: `data-size`; Ark angle-slider machine)
+
+| State                                                                    | React | Vue | Svelte | Solid |
+| ------------------------------------------------------------------------ | :---: | :-: | :----: | :---: |
+| size → root `data-size` (+ `md`), and the angle field's                  |  ✅   | ✅  |   ✅   |  ✅   |
+| every Ark part exposed, plus `Input`                                     |  ✅   | ✅  |   ✅   |  ✅   |
+| thumb is the `slider`, named by Label, `aria-valuetext` "45 degrees"     |  ✅   | ✅  |   ✅   |  ✅   |
+| `getAriaValueText` words the spoken value                                |  ✅   | ✅  |   ✅   |  ✅   |
+| markers → `data-state` under / at / over the angle                       |  ✅   | ✅  |   ✅   |  ✅   |
+| arrows step by `step`, Home / End → 0° / 359°, Page Up / Down turn 15°   |  ✅   | ✅  |   ✅   |  ✅   |
+| click sets the angle; a drag past 360° carries on from 0°                |  ✅   | ✅  |   ✅   |  ✅   |
+| Shift while dragging snaps to `marks`, and only then                     |  ✅   | ✅  |   ✅   |  ✅   |
+| the field (`45°`, named by Label) sets the dial, wrapped and on the step |  ✅   | ✅  |   ✅   |  ✅   |
+| the field follows the dial, and its arrow keys wrap past 359°            |  ✅   | ✅  |   ✅   |  ✅   |
+| controlled value followed (and wrapped) †                                |  ✅   | ✅  |   ✅   |  ✅   |
+| disabled → dial and field disabled, thumb out of the tab order           |  ✅   | ✅  |   ✅   |  ✅   |
+| native props forwarded to the root                                       |  ✅   | ✅  |   ✅   |  ✅   |
+
+† React, Vue and Solid keep a controlled value the consumer does not change;
+Svelte's `value` is bindable, and `bind:value` receives the settled angle.
+
 ### Avatar (`avatarRecipe`: `data-size` × `data-shape`; Ark image-loading machine)
 
 | State                                      | React | Vue | Svelte | Solid |
@@ -190,6 +211,25 @@ Legend: ✅ verified by an automated test · ❌ not supported (see its footnote
 | no baked class/style                      |  ✅   | ✅  |   ✅   |  ✅   |
 | native props forwarded                    |  ✅   | ✅  |   ✅   |  ✅   |
 
+### ColorPicker (`colorPickerRecipe`: `data-size` on the root; Ark color-picker machine, hex in and out)
+
+| State / prop                                                                       | React | Vue | Svelte | Solid |
+| ---------------------------------------------------------------------------------- | :---: | :-: | :----: | :---: |
+| size → root `data-size` (+ `md`); native props forwarded to the root               |  ✅   | ✅  |   ✅   |  ✅   |
+| trigger shows the swatch and the hex, named "Color #RRGGBB"                        |  ✅   | ✅  |   ✅   |  ✅   |
+| closed by default: no dialog, trigger `aria-expanded="false"`                      |  ✅   | ✅  |   ✅   |  ✅   |
+| opens to the area, the hue slider and the hex box, each named                      |  ✅   | ✅  |   ✅   |  ✅   |
+| `alpha` shows the alpha slider; off, the value is opaque                           |  ✅   | ✅  |   ✅   |  ✅   |
+| `swatches` → one button each; clicking one selects it                              |  ✅   | ✅  |   ✅   |  ✅   |
+| eyedropper only where the browser has one                                          |  ✅   | ✅  |   ✅   |  ✅   |
+| hex box: `#RGB`, `#RRGGBB`, `#RRGGBBAA`, `#` optional, on Enter or blur            |  ✅   | ✅  |   ✅   |  ✅   |
+| invalid hex: value kept, box back to the last valid hex on blur                    |  ✅   | ✅  |   ✅   |  ✅   |
+| arrow keys move the area and the sliders; Escape closes, focus back on the trigger |  ✅   | ✅  |   ✅   |  ✅   |
+| controlled value followed (`v-model` in Vue, `bind:value` in Svelte), hue kept     |  ✅   | ✅  |   ✅   |  ✅   |
+| inside a Field: its label names the trigger, helper/error text describe it         |  ✅   | ✅  |   ✅   |  ✅   |
+| `name` submits the hex with a form                                                 |  ✅   | ✅  |   ✅   |  ✅   |
+| `translations` rename the parts                                                    |  ✅   | ✅  |   ✅   |  ✅   |
+
 ### Combobox (`comboboxRecipe`: `data-size`; Ark combobox machine)
 
 | State                                                                  | React | Vue | Svelte | Solid |
@@ -273,6 +313,30 @@ Legend: ✅ verified by an automated test · ❌ not supported (see its footnote
 | controlled `open` followed (`v-model:open` in Vue, `bind:open` in Svelte) |  ✅   | ✅  |   ✅   |  ✅   |
 | native props forwarded to the content                                     |  ✅   | ✅  |   ✅   |  ✅   |
 
+### Editable (`editableRecipe`: `data-size`; Ark editable machine)
+
+| State                                                                        | React | Vue | Svelte | Solid |
+| ---------------------------------------------------------------------------- | :---: | :-: | :----: | :---: |
+| size → root `data-size` (+ `md`)                                             |  ✅   | ✅  |   ✅   |  ✅   |
+| every Ark part exposed                                                       |  ✅   | ✅  |   ✅   |  ✅   |
+| text is a `button` named by Label + value; input named by Label              |  ✅   | ✅  |   ✅   |  ✅   |
+| double click starts an edit; `activationMode` click / focus                  |  ✅   | ✅  |   ✅   |  ✅   |
+| Enter, F2 or Space on the focused text starts an edit                        |  ✅   | ✅  |   ✅   |  ✅   |
+| an edit starts with the whole text selected                                  |  ✅   | ✅  |   ✅   |  ✅   |
+| Enter saves (`onValueCommit`); Escape puts back the value, even an empty one |  ✅   | ✅  |   ✅   |  ✅   |
+| blur saves; with `submitMode` enter, blur cancels                            |  ✅   | ✅  |   ✅   |  ✅   |
+| focus back to the text after a save or a cancel (no new edit in focus mode)  |  ✅   | ✅  |   ✅   |  ✅   |
+| edit / save / cancel buttons, named by their words                           |  ✅   | ✅  |   ✅   |  ✅   |
+| controlled value followed †                                                  |  ✅   | ✅  |   ✅   |  ✅   |
+| `placeholder` shown when empty; `maxLength` on the input                     |  ✅   | ✅  |   ✅   |  ✅   |
+| disabled / readOnly → out of the tab order, never an input                   |  ✅   | ✅  |   ✅   |  ✅   |
+| a cut-short value shows in full as a tooltip                                 |  ✅   | ✅  |   ✅   |  ✅   |
+| in a Field: its label names both, its helper / error text describe both      |  ✅   | ✅  |   ✅   |  ✅   |
+| value rendered as text, never as HTML                                        |  ✅   | ✅  |   ✅   |  ✅   |
+
+† React, Vue and Solid keep a controlled value the consumer does not change;
+Svelte's `value` is bindable, and `bind:value` receives each change.
+
 ### Field (`fieldRecipe`: `data-size`; state is Ark's `data-invalid` / `data-disabled`)
 
 | State / prop                    | React | Vue | Svelte | Solid |
@@ -285,6 +349,25 @@ Legend: ✅ verified by an automated test · ❌ not supported (see its footnote
 | default size → root `data-size` |  ✅   | ✅  |   ✅   |  ✅   |
 | size → root `data-size` only    |  ✅   | ✅  |   ✅   |  ✅   |
 | textarea control → `data-part`  |  ✅   | ✅  |   ✅   |  ✅   |
+
+### FileUpload (`fileUploadRecipe`: `data-size` on the root; Ark file-upload machine)
+
+| State / prop                                                                    | React | Vue | Svelte | Solid |
+| ------------------------------------------------------------------------------- | :---: | :-: | :----: | :---: |
+| size → root `data-size` (+ `md`); native props forwarded to the root            |  ✅   | ✅  |   ✅   |  ✅   |
+| zone is a focusable button named for what it takes; hint written inside         |  ✅   | ✅  |   ✅   |  ✅   |
+| click, Enter and Space open the file dialog                                     |  ✅   | ✅  |   ✅   |  ✅   |
+| picked or dropped files listed: thumbnail (images), name, size, remove button   |  ✅   | ✅  |   ✅   |  ✅   |
+| `data-dragging` on the zone while files are over it                             |  ✅   | ✅  |   ✅   |  ✅   |
+| `accept`, `maxFiles`, `maxFileSize`: rejected files listed with the reason      |  ✅   | ✅  |   ✅   |  ✅   |
+| one `onFileChange` per change with both lists (`@file-change` in Vue)           |  ✅   | ✅  |   ✅   |  ✅   |
+| remove button named "Remove <file>"; focus moves to the zone                    |  ✅   | ✅  |   ✅   |  ✅   |
+| added, removed and rejected files announced through `announce()`                |  ✅   | ✅  |   ✅   |  ✅   |
+| long names truncated in the middle, extension kept                              |  ✅   | ✅  |   ✅   |  ✅   |
+| `disabled`: no dialog, zone `aria-disabled`                                     |  ✅   | ✅  |   ✅   |  ✅   |
+| inside a Field: its label names the zone, helper/error describe it, state flows |  ✅   | ✅  |   ✅   |  ✅   |
+| controlled list (`v-model:accepted-files` in Vue, `bind:acceptedFiles` Svelte)  |  ✅   | ✅  |   ✅   |  ✅   |
+| `translations` rename the words                                                 |  ✅   | ✅  |   ✅   |  ✅   |
 
 ### Indicator (`indicatorAttrs`: `data-variant` × `data-size` + bare `data-pulse`; CSS-only)
 
@@ -395,21 +478,51 @@ through to the `<nav>` and the machine keeps its default of 1.
 indeterminate progress is `defaultValue={null}`; React, Vue and Svelte take
 `value={null}` too.
 
-### RadioGroup (`radioGroupRecipe`: `data-size`; Ark radio machine)
+### RadioGroup (`radioGroupAttrs`: `data-variant` + `data-size` + `data-columns` + `data-aspect-ratio`; Ark radio machine)
 
-| State                                         | React | Vue | Svelte | Solid |
-| --------------------------------------------- | :---: | :-: | :----: | :---: |
-| size → root `data-size` (+ `md`)              |  ✅   | ✅  |   ✅   |  ✅   |
-| every Ark part exposed + `ItemDescription`    |  ✅   | ✅  |   ✅   |  ✅   |
-| orientation → `data-orientation` (+ vertical) |  ✅   | ✅  |   ✅   |  ✅   |
-| group named by label, radio by text + desc.   |  ✅   | ✅  |   ✅   |  ✅   |
-| click picks → `data-state` + `onValueChange`  |  ✅   | ✅  |   ✅   |  ✅   |
-| checked radio takes keyboard focus            |  ✅   | ✅  |   ✅   |  ✅   |
-| arrow keys move the choice                    |  ✅   | ✅  |   ✅   |  ✅   |
-| disabled option → `data-disabled`, inert      |  ✅   | ✅  |   ✅   |  ✅   |
-| disabled group → every radio disabled         |  ✅   | ✅  |   ✅   |  ✅   |
-| invalid → `data-invalid` + `aria-invalid`     |  ✅   | ✅  |   ✅   |  ✅   |
-| native props forwarded to the root            |  ✅   | ✅  |   ✅   |  ✅   |
+| State                                             | React | Vue | Svelte | Solid |
+| ------------------------------------------------- | :---: | :-: | :----: | :---: |
+| size → root `data-size` (+ `md`)                  |  ✅   | ✅  |   ✅   |  ✅   |
+| variant → root `data-variant` (+ `list`)          |  ✅   | ✅  |   ✅   |  ✅   |
+| tile: columns → `data-columns`, unset → none      |  ✅   | ✅  |   ✅   |  ✅   |
+| tile: aspectRatio → `data-aspect-ratio`           |  ✅   | ✅  |   ✅   |  ✅   |
+| every Ark part exposed + `ItemDescription`        |  ✅   | ✅  |   ✅   |  ✅   |
+| `ItemMedia` → `<span data-part="item-media">`     |  ✅   | ✅  |   ✅   |  ✅   |
+| orientation → `data-orientation` (+ vertical)     |  ✅   | ✅  |   ✅   |  ✅   |
+| group named by label, radio by text + desc.       |  ✅   | ✅  |   ✅   |  ✅   |
+| tile named by its label, by image alt without one |  ✅   | ✅  |   ✅   |  ✅   |
+| click picks → `data-state` + `onValueChange`      |  ✅   | ✅  |   ✅   |  ✅   |
+| click on a tile's image picks it                  |  ✅   | ✅  |   ✅   |  ✅   |
+| checked radio takes keyboard focus                |  ✅   | ✅  |   ✅   |  ✅   |
+| arrow keys move the choice                        |  ✅   | ✅  |   ✅   |  ✅   |
+| disabled option → `data-disabled`, inert          |  ✅   | ✅  |   ✅   |  ✅   |
+| disabled group → every radio disabled             |  ✅   | ✅  |   ✅   |  ✅   |
+| invalid → `data-invalid` + `aria-invalid`         |  ✅   | ✅  |   ✅   |  ✅   |
+| native props forwarded to the root                |  ✅   | ✅  |   ✅   |  ✅   |
+
+### SegmentedControl (`segmentedControlAttrs`: `data-size`, `data-full-width`; Ark segment group)
+
+| State                                                  | React | Vue | Svelte | Solid |
+| ------------------------------------------------------ | :---: | :-: | :----: | :---: |
+| size → root `data-size` (+ `md`); fullWidth → flag     |  ✅   | ✅  |   ✅   |  ✅   |
+| every Ark part but `Label`; `Root`, `ItemText` wrapped |  ✅   | ✅  |   ✅   |  ✅   |
+| segments in a row (`data-orientation="horizontal"`)    |  ✅   | ✅  |   ✅   |  ✅   |
+| group named by `aria-label`, radio by its text         |  ✅   | ✅  |   ✅   |  ✅   |
+| icon-only segment named by a `hidden` ItemText         |  ✅   | ✅  |   ✅   |  ✅   |
+| click picks → `data-state` + `onValueChange`           |  ✅   | ✅  |   ✅   |  ✅   |
+| controlled value followed both ways                    |  ✅   | ✅  |   ✅   |  ✅   |
+| Tab enters on the checked radio; arrows move + pick    |  ✅   | ✅  |   ✅   |  ✅   |
+| disabled segment → `data-disabled`, inert              |  ✅   | ✅  |   ✅   |  ✅   |
+| disabled control → every radio disabled                |  ✅   | ✅  |   ✅   |  ✅   |
+| cut-off label titled with its full text on hover       |  ✅   | ✅  |   ✅   |  ✅   |
+| in a Field: named by its label, described by its text  |  ✅   | ✅  |   ✅   |  ✅   |
+| in a Field: follows its disabled + invalid             |  ✅   | ✅  |   ✅   |  ✅   |
+
+Controlled use differs by binding, as Ark's does: React and Solid take `value`
+with `onValueChange`, Vue binds `v-model` (`modelValue`), Svelte binds
+`bind:value`. Ark-Vue's segment group Root leaves `invalid` and `required` out
+of its props, so the Vue Root runs Ark's `useSegmentGroup` behind Ark's
+`RootProvider` to hand every machine prop to the machine.
 
 ### Select (`selectRecipe`: `data-size`; Ark popover + keyboard)
 
@@ -448,6 +561,31 @@ indeterminate progress is `defaultValue={null}`; React, Vue and Svelte take
 
 † Ark's Solid `ValueText` joins a range's values with a bare comma (`20,80`);
 React, Vue and Svelte write `20, 80`.
+
+### SortableList (`sortableListRecipe`: `data-size`; sortable-list machine in core)
+
+| State                                                                         | React | Vue | Svelte | Solid |
+| ----------------------------------------------------------------------------- | :---: | :-: | :----: | :---: |
+| size → root `data-size` (+ `md`)                                              |  ✅   | ✅  |   ✅   |  ✅   |
+| `<ul role="list">` of `<li>` items; native props forwarded to the root        |  ✅   | ✅  |   ✅   |  ✅   |
+| one Tab stop; Up / Down / Home / End move focus between the triggers          |  ✅   | ✅  |   ✅   |  ✅   |
+| Left / Right move between an item's handle and its trigger                    |  ✅   | ✅  |   ✅   |  ✅   |
+| Space picks up (on the handle, or on the trigger when there is none)          |  ✅   | ✅  |   ✅   |  ✅   |
+| arrows move, Space drops, Escape cancels; focus stays on the moved item       |  ✅   | ✅  |   ✅   |  ✅   |
+| each step announced through `announce()`                                      |  ✅   | ✅  |   ✅   |  ✅   |
+| handle named "Reorder <label>"; Space on a trigger with a handle still clicks |  ✅   | ✅  |   ✅   |  ✅   |
+| pointer drag past the threshold; a shorter press stays a click                |  ✅   | ✅  |   ✅   |  ✅   |
+| `onReorder` with the new order; controlled `items` followed †                 |  ✅   | ✅  |   ✅   |  ✅   |
+| `defaultItems`: the list holds the order and hands it to its children ‡       |  ✅   | ✅  |   ✅   |  ✅   |
+| disabled list → nothing moves, handles disabled, triggers still work          |  ✅   | ✅  |   ✅   |  ✅   |
+| disabled item → it does not move; the others move past it                     |  ✅   | ✅  |   ✅   |  ✅   |
+
+† React and Solid pair `items` with `onReorder`; Vue emits `reorder` and
+`update:items` (`v-model:items`); Svelte's `items` is bindable (`bind:items`).
+
+‡ React: a children function `(items) => …`; Vue: the default slot's
+`{ items }`; Svelte: the `children` snippet's argument; Solid: a children
+function that receives an accessor, `(items) => <For each={items()}>`.
 
 ### SparkChart (`sparkChartNodes` render tree; no Ark machine)
 
@@ -581,6 +719,24 @@ document. The Solid and Svelte roots hand Ark `serverDocument` (from
 | disabled group → every item disabled               |  ✅   | ✅  |   ✅   |  ✅   |
 | native props forwarded to the root                 |  ✅   | ✅  |   ✅   |  ✅   |
 
+### Toolbar (`toolbarRecipe`: `data-size`; toolbar machine in `@moderno-ui/core`, no Ark machine)
+
+| State                                                                     | React | Vue | Svelte | Solid |
+| ------------------------------------------------------------------------- | :---: | :-: | :----: | :---: |
+| size → root `data-size` (+ `md`); orientation → `aria-orientation`        |  ✅   | ✅  |   ✅   |  ✅   |
+| `role="toolbar"` named by `aria-label`; native props forwarded            |  ✅   | ✅  |   ✅   |  ✅   |
+| one Tab stop: the first item, then the item focused last                  |  ✅   | ✅  |   ✅   |  ✅   |
+| arrows move and wrap (Up/Down when vertical, swapped in `rtl`); Home/End  |  ✅   | ✅  |   ✅   |  ✅   |
+| `label` names an icon-only item and shows in a tooltip with its shortcut  |  ✅   | ✅  |   ✅   |  ✅   |
+| the tooltip follows focus from item to item                               |  ✅   | ✅  |   ✅   |  ✅   |
+| toggle: `aria-pressed` + `data-state`, `onPressedChange`, controlled †    |  ✅   | ✅  |   ✅   |  ✅   |
+| disabled item: `aria-disabled`, still reachable, its handlers never run   |  ✅   | ✅  |   ✅   |  ✅   |
+| group → `role="group"`; separator → `role="separator"` across the toolbar |  ✅   | ✅  |   ✅   |  ✅   |
+| a `Menu.Trigger` (as child) makes a toolbar button a menu button          |  ✅   | ✅  |   ✅   |  ✅   |
+
+† React and Solid follow a controlled `pressed`; Vue binds it with
+`v-model:pressed`, and Svelte's `pressed` is bindable (`bind:pressed`).
+
 ### Tooltip (`tooltipRecipe`: `data-size`; Ark tooltip machine)
 
 | State                                                                  | React | Vue | Svelte | Solid |
@@ -601,56 +757,85 @@ controlled `open` did nothing there. The Svelte binding builds its Root on Ark's
 `useTooltip` + `Tooltip.RootProvider` and passes `open` the way Ark's Dialog and
 Popover roots do; `bind:open` stays in step.
 
+### VectorPad (`vectorPadRecipe`: `data-size`; Moderno's `vectorPad` machine in core)
+
+| State                                                                         | React | Vue | Svelte | Solid |
+| ----------------------------------------------------------------------------- | :---: | :-: | :----: | :---: |
+| size → root `data-size` (+ `md`), and the fields'                             |  ✅   | ✅  |   ✅   |  ✅   |
+| root is a `group` named by Label; handle is the `slider`, "X 20, Y -10"       |  ✅   | ✅  |   ✅   |  ✅   |
+| `getAriaValueText` words the spoken value                                     |  ✅   | ✅  |   ✅   |  ✅   |
+| press sets x and y; a drag follows live, held at the edges past the pad       |  ✅   | ✅  |   ✅   |  ✅   |
+| y grows upward; `invertY` flips the value, the handle still follows           |  ✅   | ✅  |   ✅   |  ✅   |
+| arrows move by `step` (Shift ×10), Home and double-click → `defaultValue`     |  ✅   | ✅  |   ✅   |  ✅   |
+| `min` / `max` / `step` for both axes or per axis                              |  ✅   | ✅  |   ✅   |  ✅   |
+| each field (named "X" / "Y") moves the handle, kept in range; follows it back |  ✅   | ✅  |   ✅   |  ✅   |
+| Label click focuses the handle                                                |  ✅   | ✅  |   ✅   |  ✅   |
+| controlled value followed †                                                   |  ✅   | ✅  |   ✅   |  ✅   |
+| disabled → pad and fields disabled, handle out of the tab order               |  ✅   | ✅  |   ✅   |  ✅   |
+| native props forwarded to the root and each part                              |  ✅   | ✅  |   ✅   |  ✅   |
+
+† React, Vue and Solid keep a controlled value the consumer does not change;
+Svelte's `value` is bindable, and `bind:value` receives each value, even when
+it starts unset.
+
 ## SSR (F3.3 / F3.5)
 
 The first rows hold for the whole playground. Then one row per component: its
 SSR test server-renders the component's playground section and checks what the
 row names.
 
-| Guarantee                                                                    | React | Vue | Svelte | Solid |
-| ---------------------------------------------------------------------------- | :---: | :-: | :----: | :---: |
-| warning-free hydration (id path)                                             |  ✅   | ✅¹ |   —²   |  —²   |
-| static server-only island (zero `<script>`)                                  |   —   |  —  |   ✅   |   —   |
-| Accordion open items, hidden contents + ids                                  |  ✅   | ✅  |   ✅   |  ✅   |
-| Alert anatomy + resolved `role` (status / alert)                             |  ✅   | ✅  |   ✅   |  ✅   |
-| Avatar fallback shown / image hidden                                         |  ✅   | ✅  |   ✅   |  ✅   |
-| Badge variants + dot part                                                    |  ✅   | ✅  |   ✅   |  ✅   |
-| BarList rows sorted largest first, bar widths + label                        |  ✅   | ✅  |   ✅   |  ✅   |
-| Button scope/part + recipe `data-*`                                          |  ✅   | ✅  |   ✅   |  ✅   |
-| Callout `role="note"`, variants + hidden icon                                |  ✅   | ✅  |   ✅   |  ✅   |
-| Card scope + every part                                                      |  ✅   | ✅  |   ✅   |  ✅   |
-| Carousel region, slides, current dot + ends                                  |  ✅   | ✅  |   ✅   |  ✅   |
-| LineChart, AreaChart, BarChart, ScatterChart drawn SVG + series              |  ✅   | ✅  |   ✅   |  ✅   |
-| Checkbox `data-state` (checked / indeterminate)                              |  ✅   | ✅  |   ✅   |  ✅   |
-| Chip sizes + named remove trigger                                            |  ✅   | ✅  |   ✅   |  ✅   |
-| Combobox listbox ids, selected items, multiple + empty state                 |  ✅   | ✅  |   ✅   |  ✅   |
-| DatePicker root/content `data-size`, trigger ids, locale inputs + range days |  ✅   | ✅  |   ✅   |  ✅   |
-| Dialog trigger; `defaultOpen` survives                                       |  ✅   | ✅  |   ✅   |  ✅   |
-| Divider separator role, label + vertical label                               |  ✅   | ✅  |   ✅   |  ✅   |
-| DonutChart slices, series index + label                                      |  ✅   | ✅  |   ✅   |  ✅   |
-| Drawer trigger/content ids + `data-placement`, drawer scope                  |  ✅   | ✅  |   ✅   |  ✅   |
-| Field sizes + textarea                                                       |  ✅   | ✅  |   ✅   |  ✅   |
-| Indicator bare `data-pulse`, dot + label parts                               |  ✅   | ✅  |   ✅   |  ✅   |
-| Menu trigger + hidden content wired by id; items, separator, submenu size    |  ✅   | ✅  |   ✅   |  ✅   |
-| NumberInput value, bounds, format + steppers                                 |  ✅   | ✅  |   ✅   |  ✅   |
-| Pagination pages, ellipses, current + ends                                   |  ✅   | ✅  |   ✅   |  ✅   |
-| PinInput `count` → correct server aria                                       |  ✅   | ✅  |   ✅   |  ✅   |
-| Popover trigger/content ids + content `data-size`                            |  ✅   | ✅  |   ✅   |  ✅   |
-| Progress value, state + circle geometry                                      |  ✅   | ✅  |   ✅   |  ✅   |
-| RadioGroup checked item + orientation                                        |  ✅   | ✅  |   ✅   |  ✅   |
-| Select trigger; `defaultOpen` survives                                       |  ✅   | ✅  |   ✅   |  ✅   |
-| Skeleton shapes, `aria-hidden`                                               |  ✅   | ✅  |   ✅   |  ✅   |
-| Slider thumbs, bounds, range offsets + marks                                 |  ✅   | ✅  |   ✅   |  ✅   |
-| SparkChart line, optional fill + last point                                  |  ✅   | ✅  |   ✅   |  ✅   |
-| Spinner `role="status"`, sizes, hidden ring + label                          |  ✅   | ✅  |   ✅   |  ✅   |
-| Splitter panel sizes, separator bounds + controls                            |  ✅   | ✅  |   ✅   |  ✅   |
-| Switch on/off state + switch role                                            |  ✅   | ✅  |   ✅   |  ✅   |
-| Tabs selected tab, hidden panels + tab ids                                   |  ✅   | ✅  |   ✅   |  ✅   |
-| TagsInput tags, delete labels + hidden value                                 |  ✅   | ✅  |   ✅   |  ✅   |
-| Toast group region: id, `role`, `aria-live`, label and placement             |  ✅   | ✅  |   ✅   |  ✅   |
-| Toggle pressed state + indicator content                                     |  ✅   | ✅  |   ✅   |  ✅   |
-| ToggleGroup pressed items, roles + orientation                               |  ✅   | ✅  |   ✅   |  ✅   |
-| Tooltip content hidden + sized; `defaultOpen` describes the trigger          |  ✅   | ✅  |   ✅   |  ✅   |
+| Guarantee                                                                                                                | React | Vue | Svelte | Solid |
+| ------------------------------------------------------------------------------------------------------------------------ | :---: | :-: | :----: | :---: |
+| warning-free hydration (id path)                                                                                         |  ✅   | ✅¹ |   —²   |  —²   |
+| static server-only island (zero `<script>`)                                                                              |   —   |  —  |   ✅   |   —   |
+| Accordion open items, hidden contents + ids                                                                              |  ✅   | ✅  |   ✅   |  ✅   |
+| Alert anatomy + resolved `role` (status / alert)                                                                         |  ✅   | ✅  |   ✅   |  ✅   |
+| AngleSlider thumb angle + spoken value, --angle, marks, field text                                                       |  ✅   | ✅  |   ✅   |  ✅   |
+| Avatar fallback shown / image hidden                                                                                     |  ✅   | ✅  |   ✅   |  ✅   |
+| Badge variants + dot part                                                                                                |  ✅   | ✅  |   ✅   |  ✅   |
+| BarList rows sorted largest first, bar widths + label                                                                    |  ✅   | ✅  |   ✅   |  ✅   |
+| Button scope/part + recipe `data-*`                                                                                      |  ✅   | ✅  |   ✅   |  ✅   |
+| Callout `role="note"`, variants + hidden icon                                                                            |  ✅   | ✅  |   ✅   |  ✅   |
+| Card scope + every part                                                                                                  |  ✅   | ✅  |   ✅   |  ✅   |
+| Carousel region, slides, current dot + ends                                                                              |  ✅   | ✅  |   ✅   |  ✅   |
+| LineChart, AreaChart, BarChart, ScatterChart drawn SVG + series                                                          |  ✅   | ✅  |   ✅   |  ✅   |
+| Checkbox `data-state` (checked / indeterminate)                                                                          |  ✅   | ✅  |   ✅   |  ✅   |
+| Chip sizes + named remove trigger                                                                                        |  ✅   | ✅  |   ✅   |  ✅   |
+| ColorPicker root `data-size`, trigger hex + dialog ids, named area and sliders, Field label                              |  ✅   | ✅  |   ✅   |  ✅   |
+| Combobox listbox ids, selected items, multiple + empty state                                                             |  ✅   | ✅  |   ✅   |  ✅   |
+| DatePicker root/content `data-size`, trigger ids, locale inputs + range days                                             |  ✅   | ✅  |   ✅   |  ✅   |
+| Dialog trigger; `defaultOpen` survives                                                                                   |  ✅   | ✅  |   ✅   |  ✅   |
+| Divider separator role, label + vertical label                                                                           |  ✅   | ✅  |   ✅   |  ✅   |
+| DonutChart slices, series index + label                                                                                  |  ✅   | ✅  |   ✅   |  ✅   |
+| Drawer trigger/content ids + `data-placement`, drawer scope                                                              |  ✅   | ✅  |   ✅   |  ✅   |
+| Editable text as a named button, hidden input named by the label, button names                                           |  ✅   | ✅  |   ✅   |  ✅   |
+| Field sizes + textarea                                                                                                   |  ✅   | ✅  |   ✅   |  ✅   |
+| FileUpload root `data-size`, zone role/tabindex/name from the hint, Field label → file input, zone labelled by the Field |  ✅   | ✅  |   ✅   |  ✅   |
+| Indicator bare `data-pulse`, dot + label parts                                                                           |  ✅   | ✅  |   ✅   |  ✅   |
+| Menu trigger + hidden content wired by id; items, separator, submenu size                                                |  ✅   | ✅  |   ✅   |  ✅   |
+| NumberInput value, bounds, format + steppers                                                                             |  ✅   | ✅  |   ✅   |  ✅   |
+| Pagination pages, ellipses, current + ends                                                                               |  ✅   | ✅  |   ✅   |  ✅   |
+| PinInput `count` → correct server aria                                                                                   |  ✅   | ✅  |   ✅   |  ✅   |
+| Popover trigger/content ids + content `data-size`                                                                        |  ✅   | ✅  |   ✅   |  ✅   |
+| Progress value, state + circle geometry                                                                                  |  ✅   | ✅  |   ✅   |  ✅   |
+| RadioGroup checked item + orientation + tile grid                                                                        |  ✅   | ✅  |   ✅   |  ✅   |
+| SegmentedControl checked segment + hidden indicator                                                                      |  ✅   | ✅  |   ✅   |  ✅   |
+| Select trigger; `defaultOpen` survives                                                                                   |  ✅   | ✅  |   ✅   |  ✅   |
+| Skeleton shapes, `aria-hidden`                                                                                           |  ✅   | ✅  |   ✅   |  ✅   |
+| Slider thumbs, bounds, range offsets + marks                                                                             |  ✅   | ✅  |   ✅   |  ✅   |
+| SortableList `<ul>` with one Tab stop, named handles, disabled item and list                                             |  ✅   | ✅  |   ✅   |  ✅   |
+| SparkChart line, optional fill + last point                                                                              |  ✅   | ✅  |   ✅   |  ✅   |
+| Spinner `role="status"`, sizes, hidden ring + label                                                                      |  ✅   | ✅  |   ✅   |  ✅   |
+| Splitter panel sizes, separator bounds + controls                                                                        |  ✅   | ✅  |   ✅   |  ✅   |
+| Switch on/off state + switch role                                                                                        |  ✅   | ✅  |   ✅   |  ✅   |
+| Tabs selected tab, hidden panels + tab ids                                                                               |  ✅   | ✅  |   ✅   |  ✅   |
+| TagsInput tags, delete labels + hidden value                                                                             |  ✅   | ✅  |   ✅   |  ✅   |
+| Toast group region: id, `role`, `aria-live`, label and placement                                                         |  ✅   | ✅  |   ✅   |  ✅   |
+| Toggle pressed state + indicator content                                                                                 |  ✅   | ✅  |   ✅   |  ✅   |
+| ToggleGroup pressed items, roles + orientation                                                                           |  ✅   | ✅  |   ✅   |  ✅   |
+| Toolbar roles, names, pressed + disabled items, every item a Tab stop until mounted                                      |  ✅   | ✅  |   ✅   |  ✅   |
+| Tooltip content hidden + sized; `defaultOpen` describes the trigger                                                      |  ✅   | ✅  |   ✅   |  ✅   |
+| VectorPad handle as a slider saying both values, --vector-pad-x/-y, field values                                         |  ✅   | ✅  |   ✅   |  ✅   |
 
 ¹ Vue hydration is verified on every portal-free component (all but Dialog and
 Select), where the deterministic `useId` hazard lives; Ark's portaled popovers

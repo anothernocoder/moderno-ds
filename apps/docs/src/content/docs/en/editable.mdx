@@ -1,0 +1,345 @@
+---
+title: Editable
+description: Shows a value as text that the user turns into an input to rename it in place.
+group: Components
+order: 37
+component: Editable
+pkg: "@moderno-ui/react"
+agentPropsHash: "sha256:70f80d46c02f5c61d247ad95c31142d3fa0c53aa134a9250ea62f5079ad4bb4a"
+agent:
+  intent: Show a short value as text that the user turns into an input to rename it in place.
+  whenToUse: Renaming something where it sits — a layer, a slide, a track or a file in an editor's list — without opening a dialog.
+  whenNotToUse:
+    - case: A value the user always types, like a form field
+      use: Field
+    - case: A long text that wraps over several lines
+      use: Field
+  gotchas:
+    - "Put Editable.Input and Editable.Preview inside Editable.Area. Ark shows one of them at a time, in the same place."
+    - "A double click starts an edit by default. Set activationMode to click or focus to change it. Enter, F2 and Space on the focused text start an edit too."
+    - "Blur saves by default. Set submitMode to enter to save only on Enter (or the Save button); a click away then cancels."
+    - "onValueChange reports every keystroke; onValueCommit reports the saved value once. To rename something, listen to onValueCommit."
+    - "A controlled value must be updated in onValueChange, or the input cannot change. In Vue, use v-model. In Svelte, bind:value works."
+  theming:
+    - "The text and the input share Field's box: an --input edge, --radius and the --text-ui-* sizes. Hover shows the --input edge on a --muted fill. Do not pass a hex."
+    - "The focus ring is --ring, drawn inside the box. Invalid turns the edge --destructive."
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import EditableDemo from "../../../examples/editable/editable.svelte";
+import baseReact from "../../../examples/editable/react.tsx?raw";
+import baseVue from "../../../examples/editable/vue.vue?raw";
+import baseSolid from "../../../examples/editable/solid.tsx?raw";
+import baseSvelte from "../../../examples/editable/editable.svelte?raw";
+import EditableButtonsDemo from "../../../examples/editable/buttons/editable-buttons.svelte";
+import buttonsReact from "../../../examples/editable/buttons/react.tsx?raw";
+import buttonsVue from "../../../examples/editable/buttons/vue.vue?raw";
+import buttonsSolid from "../../../examples/editable/buttons/solid.tsx?raw";
+import buttonsSvelte from "../../../examples/editable/buttons/editable-buttons.svelte?raw";
+import EditableActivationDemo from "../../../examples/editable/activation/editable-activation.svelte";
+import activationReact from "../../../examples/editable/activation/react.tsx?raw";
+import activationVue from "../../../examples/editable/activation/vue.vue?raw";
+import activationSolid from "../../../examples/editable/activation/solid.tsx?raw";
+import activationSvelte from "../../../examples/editable/activation/editable-activation.svelte?raw";
+import EditablePlaceholderDemo from "../../../examples/editable/placeholder/editable-placeholder.svelte";
+import placeholderReact from "../../../examples/editable/placeholder/react.tsx?raw";
+import placeholderVue from "../../../examples/editable/placeholder/vue.vue?raw";
+import placeholderSolid from "../../../examples/editable/placeholder/solid.tsx?raw";
+import placeholderSvelte from "../../../examples/editable/placeholder/editable-placeholder.svelte?raw";
+import EditableLongDemo from "../../../examples/editable/long/editable-long.svelte";
+import longReact from "../../../examples/editable/long/react.tsx?raw";
+import longVue from "../../../examples/editable/long/vue.vue?raw";
+import longSolid from "../../../examples/editable/long/solid.tsx?raw";
+import longSvelte from "../../../examples/editable/long/editable-long.svelte?raw";
+import EditableSizesDemo from "../../../examples/editable/sizes/editable-sizes.svelte";
+import sizesReact from "../../../examples/editable/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/editable/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/editable/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/editable/sizes/editable-sizes.svelte?raw";
+import EditableFieldDemo from "../../../examples/editable/field/editable-field.svelte";
+import fieldReact from "../../../examples/editable/field/react.tsx?raw";
+import fieldVue from "../../../examples/editable/field/vue.vue?raw";
+import fieldSolid from "../../../examples/editable/field/solid.tsx?raw";
+import fieldSvelte from "../../../examples/editable/field/editable-field.svelte?raw";
+import EditableDisabledDemo from "../../../examples/editable/disabled/editable-disabled.svelte";
+import disabledReact from "../../../examples/editable/disabled/react.tsx?raw";
+import disabledVue from "../../../examples/editable/disabled/vue.vue?raw";
+import disabledSolid from "../../../examples/editable/disabled/solid.tsx?raw";
+import disabledSvelte from "../../../examples/editable/disabled/editable-disabled.svelte?raw";
+
+<FrameworkSelect locale="en" />
+
+<Preview
+  examples={{
+    react: baseReact,
+    vue: baseVue,
+    solid: baseSolid,
+    svelte: baseSvelte,
+  }}
+>
+  <EditableDemo client:visible />
+</Preview>
+
+## Installation
+
+<Install pkg="@moderno-ui/react" />
+
+## Usage
+
+Editable shows a value as text. The user turns it into an input to rename it in place, like a layer in a layers panel or a file in a list. Use it when a dialog would be too much for one short name.
+
+**Double click** the text to edit it, or press Enter or F2 when it has focus. The whole text is selected. Enter saves, Escape cancels, and a click away saves.
+
+<ForFramework fw="react">
+
+```tsx
+import { Editable } from "@moderno-ui/react";
+```
+
+```tsx
+<Editable.Root value={name} onValueChange={(details) => setName(details.value)}>
+  <Editable.Label>Layer name</Editable.Label>
+  <Editable.Area>
+    <Editable.Input />
+    <Editable.Preview />
+  </Editable.Area>
+</Editable.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Editable } from "@moderno-ui/vue";
+```
+
+```vue
+<Editable.Root v-model="name">
+  <Editable.Label>Layer name</Editable.Label>
+  <Editable.Area>
+    <Editable.Input />
+    <Editable.Preview />
+  </Editable.Area>
+</Editable.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Editable } from "@moderno-ui/svelte";
+```
+
+```svelte
+<Editable.Root bind:value={name}>
+  <Editable.Label>Layer name</Editable.Label>
+  <Editable.Area>
+    <Editable.Input />
+    <Editable.Preview />
+  </Editable.Area>
+</Editable.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Editable } from "@moderno-ui/solid";
+```
+
+```tsx
+<Editable.Root value={name()} onValueChange={(details) => setName(details.value)}>
+  <Editable.Label>Layer name</Editable.Label>
+  <Editable.Area>
+    <Editable.Input />
+    <Editable.Preview />
+  </Editable.Area>
+</Editable.Root>
+```
+
+</ForFramework>
+
+To act only on the saved name, listen to `onValueCommit`: it runs once, on Enter or a click away.
+
+## API Reference
+
+### Editable.Root
+
+`size` is the Moderno addition, and `activationMode` starts on a double click. The other props come from Ark's Editable.
+
+<PropsTable component="Editable" />
+
+| Prop             | Type                                          | Default      | Description                                                                |
+| ---------------- | --------------------------------------------- | ------------ | -------------------------------------------------------------------------- |
+| `value`          | `string`                                      | —            | Controlled value. Update it in `onValueChange`.                            |
+| `defaultValue`   | `string`                                      | `""`         | Value at first when uncontrolled.                                          |
+| `onValueChange`  | `(details: { value: string }) => void`        | —            | Called on every change, and when Escape puts the value back.               |
+| `onValueCommit`  | `(details: { value: string }) => void`        | —            | Called once when the value is saved.                                       |
+| `onValueRevert`  | `(details: { value: string }) => void`        | —            | Called when an edit is cancelled, with the value put back.                 |
+| `activationMode` | `"dblclick" \| "click" \| "focus" \| "none"`  | `"dblclick"` | What turns the text into an input. With `"none"`, only the Edit button.    |
+| `submitMode`     | `"both" \| "enter" \| "blur" \| "none"`       | `"both"`     | What saves: Enter, a click away, both, or only the Save button.            |
+| `selectOnFocus`  | `boolean`                                     | `true`       | Selects the whole text when an edit starts.                                |
+| `placeholder`    | `string \| { edit: string; preview: string }` | —            | Shown when the value is empty.                                             |
+| `maxLength`      | `number`                                      | —            | The most characters the input takes.                                       |
+| `size`           | `"sm" \| "md" \| "lg"`                        | `"md"`       | Text and input height, matched to the Field sizes.                         |
+| `disabled`       | `boolean`                                     | `false`      | Dims the text and ignores input.                                           |
+| `readOnly`       | `boolean`                                     | `false`      | Shows the value but never turns into an input.                             |
+| `invalid`        | `boolean`                                     | `false`      | Marks the value as wrong.                                                  |
+| `name`           | `string`                                      | —            | The form field name of the input.                                          |
+| `translations`   | `{ edit, submit, cancel, input: string }`     | English      | The buttons' names (`"Edit"`, `"Save"`, `"Cancel"`), for another language. |
+
+In Vue, bind the value with `:model-value` or `v-model`, and listen with `@value-commit`.
+
+### Parts
+
+| Part                     | Element    | Description                                                                     |
+| ------------------------ | ---------- | ------------------------------------------------------------------------------- |
+| `Editable.Root`          | `<div>`    | Carries `data-size`.                                                            |
+| `Editable.Label`         | `<label>`  | Optional. Names the text and the input.                                         |
+| `Editable.Area`          | `<div>`    | Holds the text and the input, one in place of the other.                        |
+| `Editable.Preview`       | `<span>`   | The value as text, a button in the tab order. Named by the label and the value. |
+| `Editable.Input`         | `<input>`  | Replaces the text while the user edits. Named by the label.                     |
+| `Editable.Control`       | `<div>`    | Optional. Holds the buttons, after the text.                                    |
+| `Editable.EditTrigger`   | `<button>` | Starts an edit. Hidden while editing.                                           |
+| `Editable.SubmitTrigger` | `<button>` | Saves. Shown while editing.                                                     |
+| `Editable.CancelTrigger` | `<button>` | Cancels. Shown while editing.                                                   |
+
+### Keyboard
+
+| Key                    | Action                                            |
+| ---------------------- | ------------------------------------------------- |
+| `Enter`, `F2`, `Space` | On the focused text: starts an edit.              |
+| `Enter`                | In the input: saves.                              |
+| `Escape`               | In the input: cancels and puts the value back.    |
+| `Tab`                  | Leaves the input, which saves (see `submitMode`). |
+
+After a save or a cancel, focus goes back to the text.
+
+### Data attributes
+
+| Attribute                | Values                                               |
+| ------------------------ | ---------------------------------------------------- |
+| `data-focus`             | On the area, while editing                           |
+| `data-placeholder-shown` | On the area and the text, when the value is empty    |
+| `data-disabled`          | When `disabled`, on the area, the text and the input |
+| `data-invalid`           | When `invalid`, on the text and the input            |
+| `data-size`              | On the root: `"sm"`, `"md"` or `"lg"`                |
+
+## Examples
+
+### Buttons
+
+Add `Editable.Control` with an edit, a save and a cancel button.
+
+<Preview
+  examples={{
+    react: buttonsReact,
+    vue: buttonsVue,
+    solid: buttonsSolid,
+    svelte: buttonsSvelte,
+  }}
+>
+  <EditableButtonsDemo client:visible />
+</Preview>
+
+### Click to edit
+
+Set `activationMode="click"` so one click starts an edit.
+
+<Preview
+  examples={{
+    react: activationReact,
+    vue: activationVue,
+    solid: activationSolid,
+    svelte: activationSvelte,
+  }}
+>
+  <EditableActivationDemo client:visible />
+</Preview>
+
+### Placeholder and max length
+
+The placeholder shows when the value is empty. `maxLength` caps what the user types.
+
+<Preview
+  examples={{
+    react: placeholderReact,
+    vue: placeholderVue,
+    solid: placeholderSolid,
+    svelte: placeholderSvelte,
+  }}
+>
+  <EditablePlaceholderDemo client:visible />
+</Preview>
+
+### Long values
+
+A value longer than the box is cut with an ellipsis. Point at it to see the full value.
+
+<Preview
+  examples={{
+    react: longReact,
+    vue: longVue,
+    solid: longSolid,
+    svelte: longSvelte,
+  }}
+>
+  <EditableLongDemo client:visible />
+</Preview>
+
+### Sizes
+
+The text and the input follow the Field sizes.
+
+<Preview
+  examples={{
+    react: sizesReact,
+    vue: sizesVue,
+    solid: sizesSolid,
+    svelte: sizesSvelte,
+  }}
+>
+  <EditableSizesDemo client:visible />
+</Preview>
+
+### In a Field
+
+Inside a `Field`, the Field's label names the value and its helper text describes it.
+
+<Preview
+  examples={{
+    react: fieldReact,
+    vue: fieldVue,
+    solid: fieldSolid,
+    svelte: fieldSvelte,
+  }}
+>
+  <EditableFieldDemo client:visible />
+</Preview>
+
+### Disabled
+
+<Preview
+  examples={{
+    react: disabledReact,
+    vue: disabledVue,
+    solid: disabledSolid,
+    svelte: disabledSvelte,
+  }}
+>
+  <EditableDisabledDemo client:visible />
+</Preview>
+
+## Notes
+
+- `Editable.Root`, `Editable.Preview` and `Editable.Input` are wrapped; every other part is Ark's unchanged.
+- The text and the input are the same box, so nothing moves when an edit starts.
+- Escape puts back the value from before the edit, even when it was empty.
+- For a value the user always types, use a Field.

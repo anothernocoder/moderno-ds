@@ -12,9 +12,19 @@ import { registryAliases } from "../lint/src/registry.ts";
 // project resolves those aliases.
 const manifest = fileURLToPath(new URL("../../registry/registry.json", import.meta.url));
 
+// A block that announces a change imports `announce()` from core by name, and
+// `registry/` has no `node_modules` to find it in: point the name at core's
+// source, whose own imports then resolve from core.
+const core = fileURLToPath(new URL("../core/src/index.ts", import.meta.url));
+
 export default defineConfig({
   plugins: [svelte()],
-  resolve: { alias: registryAliases(manifest, "svelte") },
+  resolve: {
+    alias: [
+      ...registryAliases(manifest, "svelte"),
+      { find: /^@moderno-ui\/core$/, replacement: core },
+    ],
+  },
   test: {
     name: "svelte-ssr",
     environment: "node",

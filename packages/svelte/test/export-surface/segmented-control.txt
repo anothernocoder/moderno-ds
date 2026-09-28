@@ -1,0 +1,3 @@
+value SegmentedControl
+type SegmentedControlSize
+type SegmentedControlValueChangeDetails

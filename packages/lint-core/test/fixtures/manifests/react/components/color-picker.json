@@ -1,0 +1,46 @@
+{
+  "name": "ColorPicker",
+  "scope": "color-picker",
+  "import": "import { ColorPicker } from \"@moderno-ui/react\"",
+  "propsHash": "sha256:fixture-color-picker",
+  "props": [
+    { "name": "alpha", "type": "boolean", "required": false },
+    { "name": "defaultValue", "type": "string", "required": false },
+    { "name": "name", "type": "string", "required": false },
+    {
+      "name": "onValueChange",
+      "type": "((details: ColorPickerValueChangeDetails) => void)",
+      "required": false
+    },
+    { "name": "portalled", "type": "boolean", "required": false },
+    { "name": "size", "type": "\"sm\" | \"md\" | \"lg\"", "required": false },
+    { "name": "swatches", "type": "string[]", "required": false },
+    { "name": "translations", "type": "Partial<ColorPickerTranslations>", "required": false },
+    { "name": "value", "type": "string", "required": false }
+  ],
+  "propsComplete": false,
+  "parts": [
+    { "name": "root" },
+    { "name": "control" },
+    { "name": "trigger" },
+    { "name": "swatch" },
+    { "name": "value-text" },
+    { "name": "positioner" },
+    { "name": "content" },
+    { "name": "area" },
+    { "name": "area-background" },
+    { "name": "area-thumb" },
+    { "name": "channel-slider" },
+    { "name": "channel-slider-track" },
+    { "name": "channel-slider-thumb" },
+    { "name": "hex-input" },
+    { "name": "eye-dropper-trigger" },
+    { "name": "swatch-group" },
+    { "name": "swatch-trigger" }
+  ],
+  "variants": { "size": ["sm", "md", "lg"] },
+  "guidance": {
+    "intent": "Let the user pick a colour, see-through or not, and get it back as a hex string.",
+    "whenToUse": "A brand colour, a theme colour, a label's colour: any value that is a colour."
+  }
+}

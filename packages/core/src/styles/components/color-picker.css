@@ -1,0 +1,295 @@
+/* ───────────────────────── Color Picker ───────────────────────── *
+ * Ark's color-picker machine, assembled: root > control > trigger >
+ * swatch + value-text, then positioner > content > area (> area-background
+ * + area-thumb), channel-slider[data-channel="hue"] and, with `alpha`,
+ * channel-slider[data-channel="alpha"] (each > channel-slider-track +
+ * channel-slider-thumb), hex-input, eye-dropper-trigger (where the browser
+ * has one) and swatch-group > swatch-trigger > swatch. hex-input is the
+ * component's own part; the rest are Ark's. The trigger is a bordered box
+ * like Select's; the content is a floating surface, like Popover's.
+ * Ark paints the colours inline — the area's gradients, the slider tracks,
+ * each thumb and swatch — and places the thumbs with inline left/top, so
+ * the rules below only size, round, ring and centre them. floating-ui lays
+ * the positioner out inline, so this partial never styles it.
+ * `colorPickerRecipe` puts size on the root; the trigger follows through
+ * child combinators. The popover keeps one density.                    */
+/* @runtime-vars --color — the colour Ark writes on each swatch. */
+/* On its own the picker is as wide as its trigger; in a column, such as a
+   Field's, the root stretches and the trigger fills it, like an input. */
+[data-scope="color-picker"][data-part="root"] {
+  display: inline-flex;
+  flex-direction: column;
+}
+[data-scope="color-picker"][data-part="control"] {
+  display: flex;
+}
+/* The trigger: the colour's swatch and its hex in a bordered box. Tabular
+   figures keep the hex from jittering while a thumb is dragged. */
+[data-scope="color-picker"][data-part="trigger"] {
+  display: inline-flex;
+  flex: 1;
+  align-items: center;
+  gap: var(--spacing-2);
+  height: var(--spacing-8);
+  padding-inline: var(--spacing-1) var(--spacing-3);
+  border: 1px solid var(--input);
+  border-radius: var(--radius);
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-size: var(--text-ui-md);
+  line-height: var(--leading-ui-md);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition: border-color var(--motion-fast);
+}
+[data-scope="color-picker"][data-part="trigger"]:hover:not(:disabled):not([data-invalid]) {
+  border-color: var(--ring);
+}
+/* The ring is drawn inside the box, as on Select's trigger: an offset ring
+   would leave the resting border visible inside it — a double border. */
+[data-scope="color-picker"][data-part="trigger"]:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+/* Ark marks the trigger invalid inside an invalid Field. */
+[data-scope="color-picker"][data-part="trigger"][data-invalid] {
+  border-color: var(--destructive);
+}
+[data-scope="color-picker"][data-part="trigger"][data-invalid]:focus-visible {
+  outline-color: var(--destructive);
+}
+[data-scope="color-picker"][data-part="value-text"] {
+  white-space: nowrap;
+}
+/*
+ * Ark stamps data-disabled on the control and the trigger of a disabled
+ * picker as well as on the root, and the base layer dims anything carrying
+ * it — nesting would multiply the opacity. Dim the root once and leave its
+ * parts opaque.
+ */
+[data-scope="color-picker"][data-part="root"][data-disabled] :where([data-part]) {
+  opacity: 1;
+}
+
+/* A swatch — in the trigger and in each preset button. Ark paints it with
+   its colour inline; a see-through colour is shown over a checkerboard, so
+   the checkerboard (::before) and the colour (::after) are laid over it,
+   with a hairline edge that keeps a colour close to the surface visible. */
+[data-scope="color-picker"][data-part="swatch"] {
+  flex: none;
+  overflow: hidden;
+  border-radius: calc(var(--radius) - var(--spacing-1));
+}
+[data-scope="color-picker"][data-part="swatch"]::before,
+[data-scope="color-picker"][data-part="swatch"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+/* The checkerboard: two tokens in a 2×2 conic tile. */
+[data-scope="color-picker"][data-part="swatch"]::before,
+[data-scope="color-picker"][data-part="channel-slider"][data-channel="alpha"] {
+  background: repeating-conic-gradient(var(--muted) 0% 25%, var(--background) 0% 50%) 0 0 /
+    var(--spacing-2) var(--spacing-2);
+}
+[data-scope="color-picker"][data-part="swatch"]::after {
+  background: var(--color);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--foreground) 15%, transparent);
+}
+[data-scope="color-picker"][data-part="trigger"] > [data-part="swatch"] {
+  width: var(--spacing-6);
+  height: var(--spacing-6);
+}
+
+/* The popover: the popover fill with the 1px --border edge, lifted by the
+   --shadow-md drop alone (never a ring stacked in box-shadow, which would
+   double the border). Above an app's sticky chrome, the same layer as
+   Dialog; Ark copies the z-index onto the positioner. The parts stack in
+   one column; the hex box and the eyedropper share a row. */
+[data-scope="color-picker"][data-part="content"] {
+  position: relative;
+  z-index: 50;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--spacing-3);
+  width: calc(var(--spacing-8) * 8);
+  padding: var(--spacing-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background-color: var(--popover);
+  color: var(--popover-foreground);
+  font-family: var(--font-sans);
+  font-size: var(--text-ui-sm);
+  line-height: var(--leading-ui-sm);
+  box-shadow: var(--shadow-md);
+}
+[data-scope="color-picker"][data-part="content"]:focus-visible {
+  outline: none;
+}
+[data-scope="color-picker"][data-part="content"] > * {
+  grid-column: 1 / -1;
+}
+
+/* The saturation (across) and brightness (up) area. Ark paints its
+   gradients on the background part and places the thumb inline. */
+[data-scope="color-picker"][data-part="area"] {
+  height: calc(var(--spacing-8) * 5);
+  border-radius: var(--radius);
+  cursor: crosshair;
+}
+[data-scope="color-picker"][data-part="area-background"] {
+  height: 100%;
+  border-radius: var(--radius);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--foreground) 15%, transparent);
+}
+/* The hue and alpha sliders: a rounded bar Ark paints (the alpha one over
+   the checkerboard), with the thumb centred on its value. */
+[data-scope="color-picker"][data-part="channel-slider"] {
+  height: var(--spacing-3);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+}
+[data-scope="color-picker"][data-part="channel-slider-track"] {
+  height: 100%;
+  border-radius: var(--radius-full);
+}
+/* Every thumb: the colour it stands on, ringed in the surface's colour and
+   lifted by a hairline and a soft shadow, so it reads on any colour. Ark
+   sets left/top inline; `translate` (a property of its own, beside Ark's
+   inline style) centres the thumb on that point. */
+[data-scope="color-picker"]:is([data-part="area-thumb"], [data-part="channel-slider-thumb"]) {
+  width: var(--spacing-4);
+  height: var(--spacing-4);
+  border: calc(var(--spacing-1) / 2) solid var(--background);
+  border-radius: var(--radius-full);
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, var(--foreground) 30%, transparent),
+    var(--shadow-sm);
+  cursor: grab;
+}
+[data-scope="color-picker"][data-part="channel-slider-thumb"] {
+  translate: -50% -50%;
+}
+[data-scope="color-picker"]:is(
+    [data-part="area-thumb"],
+    [data-part="channel-slider-thumb"]
+  ):focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* The hex box and the eyedropper share a row; alone, the box takes it all. */
+[data-scope="color-picker"][data-part="hex-input"] {
+  grid-column: 1;
+  min-width: 0;
+  height: var(--spacing-8);
+  padding-inline: var(--spacing-2);
+  border: 1px solid var(--input);
+  border-radius: var(--radius);
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-mono);
+  font-size: var(--text-ui-sm);
+  font-variant-numeric: tabular-nums;
+}
+[data-scope="color-picker"][data-part="content"]:not(:has(> [data-part="eye-dropper-trigger"]))
+  > [data-part="hex-input"] {
+  grid-column: 1 / -1;
+}
+[data-scope="color-picker"]:is(
+    [data-part="hex-input"],
+    [data-part="eye-dropper-trigger"]
+  ):focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+/* A square icon button beside the hex box, with no fill until hovered
+   (this clears the UA `buttonface` grey). */
+[data-scope="color-picker"][data-part="eye-dropper-trigger"] {
+  grid-column: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-8);
+  height: var(--spacing-8);
+  padding: 0;
+  border: 1px solid var(--input);
+  border-radius: var(--radius);
+  background-color: transparent;
+  color: var(--muted-foreground);
+  cursor: pointer;
+  transition:
+    background-color var(--motion-fast),
+    color var(--motion-fast);
+}
+[data-scope="color-picker"][data-part="eye-dropper-trigger"]:hover:not(:disabled) {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+[data-scope="color-picker"][data-part="eye-dropper-trigger"] > svg {
+  width: var(--spacing-4);
+  height: var(--spacing-4);
+}
+
+/* The preset swatches: small square buttons that wrap. The one matching
+   the value carries data-state="checked" and an outline in the text colour;
+   focus shows the ring colour instead. */
+[data-scope="color-picker"][data-part="swatch-group"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2);
+}
+[data-scope="color-picker"][data-part="swatch-trigger"] {
+  width: var(--spacing-6);
+  height: var(--spacing-6);
+  padding: 0;
+  border: 0;
+  border-radius: calc(var(--radius) - var(--spacing-1));
+  background-color: transparent;
+  cursor: pointer;
+}
+[data-scope="color-picker"][data-part="swatch-trigger"] > [data-part="swatch"] {
+  width: 100%;
+  height: 100%;
+}
+[data-scope="color-picker"][data-part="swatch-trigger"][data-state="checked"] {
+  outline: 2px solid var(--foreground);
+  outline-offset: 1px;
+}
+[data-scope="color-picker"][data-part="swatch-trigger"]:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+
+/* Density driven by the recipe's data-size on the root: the trigger's
+   height, swatch and type. `lg` exceeds the top spacing slot, so it sums
+   two slots rather than inventing a token. */
+[data-scope="color-picker"][data-part="root"][data-size="sm"]
+  > [data-part="control"]
+  > [data-part="trigger"] {
+  height: var(--spacing-7);
+  font-size: var(--text-ui-sm);
+  line-height: var(--leading-ui-sm);
+}
+[data-scope="color-picker"][data-part="root"][data-size="sm"]
+  > [data-part="control"]
+  > [data-part="trigger"]
+  > [data-part="swatch"] {
+  width: var(--spacing-5);
+  height: var(--spacing-5);
+}
+[data-scope="color-picker"][data-part="root"][data-size="lg"]
+  > [data-part="control"]
+  > [data-part="trigger"] {
+  height: calc(var(--spacing-8) + var(--spacing-2));
+  font-size: var(--text-ui-lg);
+  line-height: var(--leading-ui-lg);
+}
+[data-scope="color-picker"][data-part="root"][data-size="lg"]
+  > [data-part="control"]
+  > [data-part="trigger"]
+  > [data-part="swatch"] {
+  width: var(--spacing-8);
+  height: var(--spacing-8);
+}

@@ -1,0 +1,47 @@
+{
+  "name": "VectorPad",
+  "scope": "vector-pad",
+  "import": "import { VectorPad } from \"@moderno-ui/react\"",
+  "propsHash": "sha256:fixture-vector-pad",
+  "props": [
+    { "name": "size", "type": "\"sm\" | \"md\" | \"lg\"", "required": false },
+    { "name": "value", "type": "vectorPad.Value", "required": false },
+    { "name": "defaultValue", "type": "vectorPad.Value", "required": false },
+    { "name": "min", "type": "vectorPad.AxisSetting", "required": false },
+    { "name": "max", "type": "vectorPad.AxisSetting", "required": false },
+    { "name": "step", "type": "vectorPad.AxisSetting", "required": false },
+    { "name": "invertY", "type": "boolean", "required": false },
+    { "name": "disabled", "type": "boolean", "required": false },
+    { "name": "readOnly", "type": "boolean", "required": false },
+    { "name": "invalid", "type": "boolean", "required": false },
+    {
+      "name": "getAriaValueText",
+      "type": "((value: vectorPad.Value) => string)",
+      "required": false
+    },
+    {
+      "name": "onValueChange",
+      "type": "((details: vectorPad.ValueChangeDetails) => void)",
+      "required": false
+    },
+    {
+      "name": "onValueChangeEnd",
+      "type": "((details: vectorPad.ValueChangeDetails) => void)",
+      "required": false
+    }
+  ],
+  "propsComplete": false,
+  "parts": [
+    { "name": "root" },
+    { "name": "label" },
+    { "name": "control" },
+    { "name": "grid" },
+    { "name": "crosshair" },
+    { "name": "thumb" }
+  ],
+  "variants": { "size": ["sm", "md", "lg"] },
+  "guidance": {
+    "intent": "Let the user set two numbers at once, x and y, by dragging a handle on a square pad, or by typing them in the number field of each axis.",
+    "whenToUse": "A 2D value in a creative tool: a position, a shadow's offset, a light's direction."
+  }
+}

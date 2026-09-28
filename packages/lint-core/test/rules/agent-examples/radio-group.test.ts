@@ -15,4 +15,19 @@ describe("moderno/valid-props over the real RadioGroup manifest", () => {
       expect.stringContaining('Invalid value "xl"'),
     ]);
   });
+
+  it("accepts the tile variant with its column count and media shape", () => {
+    expect(
+      check('<RadioGroup.Root variant="tile" columns={3} aspectRatio="4:3" defaultValue="a" />'),
+    ).toEqual([]);
+  });
+
+  it("rejects a variant or an aspect ratio outside the recipe", () => {
+    expect(check('<RadioGroup.Root variant="grid" />')).toEqual([
+      expect.stringContaining('Invalid value "grid"'),
+    ]);
+    expect(check('<RadioGroup.Root variant="tile" aspectRatio="21:9" />')).toEqual([
+      expect.stringContaining('Invalid value "21:9"'),
+    ]);
+  });
 });

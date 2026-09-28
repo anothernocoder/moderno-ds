@@ -1,0 +1,31 @@
+{
+  "name": "Editable",
+  "scope": "editable",
+  "import": "import { Editable } from \"@moderno-ui/react\"",
+  "propsHash": "sha256:fixture-editable",
+  "props": [
+    { "name": "size", "type": "\"sm\" | \"md\" | \"lg\"", "required": false },
+    {
+      "name": "activationMode",
+      "type": "\"focus\" | \"click\" | \"dblclick\" | \"none\"",
+      "required": false
+    }
+  ],
+  "propsComplete": false,
+  "parts": [
+    { "name": "root" },
+    { "name": "label" },
+    { "name": "area" },
+    { "name": "preview" },
+    { "name": "input" },
+    { "name": "control" },
+    { "name": "edit-trigger" },
+    { "name": "submit-trigger" },
+    { "name": "cancel-trigger" }
+  ],
+  "variants": { "size": ["sm", "md", "lg"] },
+  "guidance": {
+    "intent": "Show a short value as text that the user turns into an input to rename it in place.",
+    "whenToUse": "Renaming something where it sits: a layer, a slide, a track or a file in an editor's list."
+  }
+}

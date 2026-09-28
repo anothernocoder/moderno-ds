@@ -28,7 +28,15 @@
   "scripts": {
     "build": "tsup"
   },
+  "dependencies": {
+    "@zag-js/anatomy": "1.41.2",
+    "@zag-js/core": "1.41.2",
+    "@zag-js/dom-query": "1.41.2",
+    "@zag-js/live-region": "1.41.2",
+    "@zag-js/types": "1.41.2"
+  },
   "devDependencies": {
+    "@zag-js/vanilla": "1.41.2",
     "tsup": "^8.3.5"
   },
   "publishConfig": {

@@ -1,0 +1,328 @@
+---
+title: Editable
+description: Muestra un valor como texto que el usuario convierte en un campo para renombrarlo en su sitio.
+group: Componentes
+order: 37
+component: Editable
+pkg: "@moderno-ui/react"
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import EditableDemo from "../../../examples/editable/editable.svelte";
+import baseReact from "../../../examples/editable/react.tsx?raw";
+import baseVue from "../../../examples/editable/vue.vue?raw";
+import baseSolid from "../../../examples/editable/solid.tsx?raw";
+import baseSvelte from "../../../examples/editable/editable.svelte?raw";
+import EditableButtonsDemo from "../../../examples/editable/buttons/editable-buttons.svelte";
+import buttonsReact from "../../../examples/editable/buttons/react.tsx?raw";
+import buttonsVue from "../../../examples/editable/buttons/vue.vue?raw";
+import buttonsSolid from "../../../examples/editable/buttons/solid.tsx?raw";
+import buttonsSvelte from "../../../examples/editable/buttons/editable-buttons.svelte?raw";
+import EditableActivationDemo from "../../../examples/editable/activation/editable-activation.svelte";
+import activationReact from "../../../examples/editable/activation/react.tsx?raw";
+import activationVue from "../../../examples/editable/activation/vue.vue?raw";
+import activationSolid from "../../../examples/editable/activation/solid.tsx?raw";
+import activationSvelte from "../../../examples/editable/activation/editable-activation.svelte?raw";
+import EditablePlaceholderDemo from "../../../examples/editable/placeholder/editable-placeholder.svelte";
+import placeholderReact from "../../../examples/editable/placeholder/react.tsx?raw";
+import placeholderVue from "../../../examples/editable/placeholder/vue.vue?raw";
+import placeholderSolid from "../../../examples/editable/placeholder/solid.tsx?raw";
+import placeholderSvelte from "../../../examples/editable/placeholder/editable-placeholder.svelte?raw";
+import EditableLongDemo from "../../../examples/editable/long/editable-long.svelte";
+import longReact from "../../../examples/editable/long/react.tsx?raw";
+import longVue from "../../../examples/editable/long/vue.vue?raw";
+import longSolid from "../../../examples/editable/long/solid.tsx?raw";
+import longSvelte from "../../../examples/editable/long/editable-long.svelte?raw";
+import EditableSizesDemo from "../../../examples/editable/sizes/editable-sizes.svelte";
+import sizesReact from "../../../examples/editable/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/editable/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/editable/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/editable/sizes/editable-sizes.svelte?raw";
+import EditableFieldDemo from "../../../examples/editable/field/editable-field.svelte";
+import fieldReact from "../../../examples/editable/field/react.tsx?raw";
+import fieldVue from "../../../examples/editable/field/vue.vue?raw";
+import fieldSolid from "../../../examples/editable/field/solid.tsx?raw";
+import fieldSvelte from "../../../examples/editable/field/editable-field.svelte?raw";
+import EditableDisabledDemo from "../../../examples/editable/disabled/editable-disabled.svelte";
+import disabledReact from "../../../examples/editable/disabled/react.tsx?raw";
+import disabledVue from "../../../examples/editable/disabled/vue.vue?raw";
+import disabledSolid from "../../../examples/editable/disabled/solid.tsx?raw";
+import disabledSvelte from "../../../examples/editable/disabled/editable-disabled.svelte?raw";
+
+<FrameworkSelect locale="es" />
+
+<Preview
+  examples={{
+    react: baseReact,
+    vue: baseVue,
+    solid: baseSolid,
+    svelte: baseSvelte,
+  }}
+>
+  <EditableDemo client:visible />
+</Preview>
+
+## Instalación
+
+<Install pkg="@moderno-ui/react" />
+
+## Uso
+
+Editable muestra un valor como texto. El usuario lo convierte en un campo para renombrarlo en su sitio, como una capa en un panel de capas o un archivo en una lista. Úsalo cuando un diálogo sería demasiado para un nombre corto.
+
+Haz **doble clic** en el texto para editarlo, o pulsa Enter o F2 cuando tiene el foco. Todo el texto queda seleccionado. Enter guarda, Escape cancela y un clic fuera guarda.
+
+<ForFramework fw="react">
+
+```tsx
+import { Editable } from "@moderno-ui/react";
+```
+
+```tsx
+<Editable.Root value={name} onValueChange={(details) => setName(details.value)}>
+  <Editable.Label>Layer name</Editable.Label>
+  <Editable.Area>
+    <Editable.Input />
+    <Editable.Preview />
+  </Editable.Area>
+</Editable.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { Editable } from "@moderno-ui/vue";
+```
+
+```vue
+<Editable.Root v-model="name">
+  <Editable.Label>Layer name</Editable.Label>
+  <Editable.Area>
+    <Editable.Input />
+    <Editable.Preview />
+  </Editable.Area>
+</Editable.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { Editable } from "@moderno-ui/svelte";
+```
+
+```svelte
+<Editable.Root bind:value={name}>
+  <Editable.Label>Layer name</Editable.Label>
+  <Editable.Area>
+    <Editable.Input />
+    <Editable.Preview />
+  </Editable.Area>
+</Editable.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { Editable } from "@moderno-ui/solid";
+```
+
+```tsx
+<Editable.Root value={name()} onValueChange={(details) => setName(details.value)}>
+  <Editable.Label>Layer name</Editable.Label>
+  <Editable.Area>
+    <Editable.Input />
+    <Editable.Preview />
+  </Editable.Area>
+</Editable.Root>
+```
+
+</ForFramework>
+
+Para actuar solo sobre el nombre guardado, escucha `onValueCommit`: se llama una vez, con Enter o un clic fuera.
+
+## Referencia de la API
+
+### Editable.Root
+
+`size` es lo que añade Moderno, y `activationMode` empieza con un doble clic. Las demás props vienen del Editable de Ark.
+
+<PropsTable component="Editable" />
+
+| Prop             | Tipo                                          | Por defecto  | Descripción                                                                  |
+| ---------------- | --------------------------------------------- | ------------ | ---------------------------------------------------------------------------- |
+| `value`          | `string`                                      | —            | Valor controlado. Actualízalo en `onValueChange`.                            |
+| `defaultValue`   | `string`                                      | `""`         | Valor inicial cuando no está controlado.                                     |
+| `onValueChange`  | `(details: { value: string }) => void`        | —            | Se llama en cada cambio, y cuando Escape devuelve el valor.                  |
+| `onValueCommit`  | `(details: { value: string }) => void`        | —            | Se llama una vez cuando se guarda el valor.                                  |
+| `onValueRevert`  | `(details: { value: string }) => void`        | —            | Se llama cuando se cancela una edición, con el valor devuelto.               |
+| `activationMode` | `"dblclick" \| "click" \| "focus" \| "none"`  | `"dblclick"` | Lo que convierte el texto en un campo. Con `"none"`, solo el botón Editar.   |
+| `submitMode`     | `"both" \| "enter" \| "blur" \| "none"`       | `"both"`     | Lo que guarda: Enter, un clic fuera, los dos o solo el botón Guardar.        |
+| `selectOnFocus`  | `boolean`                                     | `true`       | Selecciona todo el texto al empezar una edición.                             |
+| `placeholder`    | `string \| { edit: string; preview: string }` | —            | Se muestra cuando el valor está vacío.                                       |
+| `maxLength`      | `number`                                      | —            | Los caracteres que admite el campo como máximo.                              |
+| `size`           | `"sm" \| "md" \| "lg"`                        | `"md"`       | Altura del texto y del campo, igual a los tamaños de Field.                  |
+| `disabled`       | `boolean`                                     | `false`      | Atenúa el texto e ignora la entrada.                                         |
+| `readOnly`       | `boolean`                                     | `false`      | Muestra el valor pero nunca se convierte en un campo.                        |
+| `invalid`        | `boolean`                                     | `false`      | Marca el valor como incorrecto.                                              |
+| `name`           | `string`                                      | —            | El nombre del campo en un formulario.                                        |
+| `translations`   | `{ edit, submit, cancel, input: string }`     | Inglés       | Los nombres de los botones (`"Edit"`, `"Save"`, `"Cancel"`), en otro idioma. |
+
+En Vue, enlaza el valor con `:model-value` o `v-model`, y escucha con `@value-commit`.
+
+### Partes
+
+| Parte                    | Elemento   | Descripción                                                                          |
+| ------------------------ | ---------- | ------------------------------------------------------------------------------------ |
+| `Editable.Root`          | `<div>`    | Lleva `data-size`.                                                                   |
+| `Editable.Label`         | `<label>`  | Opcional. Nombra el texto y el campo.                                                |
+| `Editable.Area`          | `<div>`    | Contiene el texto y el campo, uno en lugar del otro.                                 |
+| `Editable.Preview`       | `<span>`   | El valor como texto, un botón que recibe el foco. Lo nombran la etiqueta y el valor. |
+| `Editable.Input`         | `<input>`  | Sustituye al texto mientras el usuario edita. Lo nombra la etiqueta.                 |
+| `Editable.Control`       | `<div>`    | Opcional. Contiene los botones, después del texto.                                   |
+| `Editable.EditTrigger`   | `<button>` | Empieza una edición. Se oculta mientras se edita.                                    |
+| `Editable.SubmitTrigger` | `<button>` | Guarda. Se muestra mientras se edita.                                                |
+| `Editable.CancelTrigger` | `<button>` | Cancela. Se muestra mientras se edita.                                               |
+
+### Teclado
+
+| Tecla                  | Acción                                            |
+| ---------------------- | ------------------------------------------------- |
+| `Enter`, `F2`, `Space` | En el texto con foco: empieza una edición.        |
+| `Enter`                | En el campo: guarda.                              |
+| `Escape`               | En el campo: cancela y devuelve el valor.         |
+| `Tab`                  | Sale del campo, lo que guarda (ver `submitMode`). |
+
+Después de guardar o cancelar, el foco vuelve al texto.
+
+### Atributos data
+
+| Atributo                 | Valores                                           |
+| ------------------------ | ------------------------------------------------- |
+| `data-focus`             | En el área, mientras se edita                     |
+| `data-placeholder-shown` | En el área y el texto, cuando el valor está vacío |
+| `data-disabled`          | Con `disabled`, en el área, el texto y el campo   |
+| `data-invalid`           | Con `invalid`, en el texto y el campo             |
+| `data-size`              | En la raíz: `"sm"`, `"md"` o `"lg"`               |
+
+## Ejemplos
+
+### Botones
+
+Añade `Editable.Control` con un botón para editar, uno para guardar y uno para cancelar.
+
+<Preview
+  examples={{
+    react: buttonsReact,
+    vue: buttonsVue,
+    solid: buttonsSolid,
+    svelte: buttonsSvelte,
+  }}
+>
+  <EditableButtonsDemo client:visible />
+</Preview>
+
+### Editar con un clic
+
+Define `activationMode="click"` para que un clic empiece una edición.
+
+<Preview
+  examples={{
+    react: activationReact,
+    vue: activationVue,
+    solid: activationSolid,
+    svelte: activationSvelte,
+  }}
+>
+  <EditableActivationDemo client:visible />
+</Preview>
+
+### Placeholder y longitud máxima
+
+El placeholder se muestra cuando el valor está vacío. `maxLength` limita lo que escribe el usuario.
+
+<Preview
+  examples={{
+    react: placeholderReact,
+    vue: placeholderVue,
+    solid: placeholderSolid,
+    svelte: placeholderSvelte,
+  }}
+>
+  <EditablePlaceholderDemo client:visible />
+</Preview>
+
+### Valores largos
+
+Un valor más largo que la caja se corta con puntos suspensivos. Pasa el puntero por encima para ver el valor completo.
+
+<Preview
+  examples={{
+    react: longReact,
+    vue: longVue,
+    solid: longSolid,
+    svelte: longSvelte,
+  }}
+>
+  <EditableLongDemo client:visible />
+</Preview>
+
+### Tamaños
+
+El texto y el campo siguen los tamaños de Field.
+
+<Preview
+  examples={{
+    react: sizesReact,
+    vue: sizesVue,
+    solid: sizesSolid,
+    svelte: sizesSvelte,
+  }}
+>
+  <EditableSizesDemo client:visible />
+</Preview>
+
+### Dentro de un Field
+
+Dentro de un `Field`, la etiqueta del Field nombra el valor y su texto de ayuda lo describe.
+
+<Preview
+  examples={{
+    react: fieldReact,
+    vue: fieldVue,
+    solid: fieldSolid,
+    svelte: fieldSvelte,
+  }}
+>
+  <EditableFieldDemo client:visible />
+</Preview>
+
+### Deshabilitado
+
+<Preview
+  examples={{
+    react: disabledReact,
+    vue: disabledVue,
+    solid: disabledSolid,
+    svelte: disabledSvelte,
+  }}
+>
+  <EditableDisabledDemo client:visible />
+</Preview>
+
+## Notas
+
+- `Editable.Root`, `Editable.Preview` y `Editable.Input` están envueltos; las demás partes son las de Ark sin cambios.
+- El texto y el campo son la misma caja, así que nada se mueve al empezar una edición.
+- Escape devuelve el valor de antes de la edición, aunque estuviera vacío.
+- Los botones se llaman "Edit", "Save" y "Cancel" por defecto. Pasa `translations` para nombrarlos en otro idioma, por ejemplo `{ edit: "Editar", submit: "Guardar", cancel: "Cancelar", input: "Valor" }`.
+- Para un valor que el usuario siempre escribe, usa un Field.

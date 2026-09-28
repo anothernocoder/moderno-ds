@@ -1,0 +1,37 @@
+{
+  "title": "Timeline",
+  "description": "An animation timeline for an editor panel, composing the @moderno-ui/{framework} Toggle, Tooltip, Button and Slider primitives: play/pause and loop toggles with a \"current / duration\" readout in m:ss:ff, Add keyframe and Delete keyframe buttons, zoom out / zoom in / Fit buttons, a time ruler that is a single-thumb Slider (the playhead, with its time marks as markers, seconds then frames as you zoom in), and one row per animated property — a label that selects the track, then a Slider whose thumbs are its keyframes; a playhead line crosses every track. Controlled only: it renders tracks, time, playing, loop, the selected keyframe and zoom as given and reports every change (times snapped to 1 / fps), announcing the zoom level through announce() from @moderno-ui/core; it holds no clock. Space plays and pauses, Delete removes the selected keyframe, Page Up/Down move a thumb one second; zoom widens the time area, which scrolls sideways with the ruler and every track under a sticky label column and a sticky ruler; responds to its container (@container) — the label column widens at @sm and every ruler mark shows at @md.",
+  "version": "0.1.0",
+  "dependencies": ["@moderno-ui/{framework}", "@moderno-ui/core"],
+  "registryDependencies": [],
+  "files": {
+    "react": [
+      {
+        "path": "blocks/timeline/react/timeline.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/timeline.tsx"
+      }
+    ],
+    "vue": [
+      {
+        "path": "blocks/timeline/vue/Timeline.vue",
+        "type": "registry:block",
+        "target": "src/components/blocks/Timeline.vue"
+      }
+    ],
+    "svelte": [
+      {
+        "path": "blocks/timeline/svelte/Timeline.svelte",
+        "type": "registry:block",
+        "target": "src/components/blocks/Timeline.svelte"
+      }
+    ],
+    "solid": [
+      {
+        "path": "blocks/timeline/solid/timeline.tsx",
+        "type": "registry:block",
+        "target": "src/components/blocks/timeline.tsx"
+      }
+    ]
+  }
+}

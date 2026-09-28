@@ -11,6 +11,7 @@
 import { assembleComponents } from "./component-definition.ts";
 import accordionComponent from "./components/accordion.ts";
 import alertComponent from "./components/alert.ts";
+import angleSliderComponent from "./components/angle-slider.ts";
 import areaChartComponent from "./components/area-chart.ts";
 import avatarComponent from "./components/avatar.ts";
 import badgeComponent from "./components/badge.ts";
@@ -22,13 +23,16 @@ import cardComponent from "./components/card.ts";
 import carouselComponent from "./components/carousel.ts";
 import checkboxComponent from "./components/checkbox.ts";
 import chipComponent from "./components/chip.ts";
+import colorPickerComponent from "./components/color-picker.ts";
 import comboboxComponent from "./components/combobox.ts";
 import datePickerComponent from "./components/date-picker.ts";
 import dialogComponent from "./components/dialog.ts";
 import dividerComponent from "./components/divider.ts";
 import donutChartComponent from "./components/donut-chart.ts";
 import drawerComponent from "./components/drawer.ts";
+import editableComponent from "./components/editable.ts";
 import fieldComponent from "./components/field.ts";
+import fileUploadComponent from "./components/file-upload.ts";
 import indicatorComponent from "./components/indicator.ts";
 import lineChartComponent from "./components/line-chart.ts";
 import menuComponent from "./components/menu.ts";
@@ -39,9 +43,11 @@ import popoverComponent from "./components/popover.ts";
 import progressComponent from "./components/progress.ts";
 import radioGroupComponent from "./components/radio-group.ts";
 import scatterChartComponent from "./components/scatter-chart.ts";
+import segmentedControlComponent from "./components/segmented-control.ts";
 import selectComponent from "./components/select.ts";
 import skeletonComponent from "./components/skeleton.ts";
 import sliderComponent from "./components/slider.ts";
+import sortableListComponent from "./components/sortable-list.ts";
 import sparkChartComponent from "./components/spark-chart.ts";
 import spinnerComponent from "./components/spinner.ts";
 import splitterComponent from "./components/splitter.ts";
@@ -51,11 +57,14 @@ import tagsInputComponent from "./components/tags-input.ts";
 import toastComponent from "./components/toast.ts";
 import toggleComponent from "./components/toggle.ts";
 import toggleGroupComponent from "./components/toggle-group.ts";
+import toolbarComponent from "./components/toolbar.ts";
 import tooltipComponent from "./components/tooltip.ts";
+import vectorPadComponent from "./components/vector-pad.ts";
 
 export const { ENTRIES, AGENT_COMPONENTS, AGENT_EXAMPLES } = assembleComponents([
   accordionComponent,
   alertComponent,
+  angleSliderComponent,
   areaChartComponent,
   avatarComponent,
   badgeComponent,
@@ -67,13 +76,16 @@ export const { ENTRIES, AGENT_COMPONENTS, AGENT_EXAMPLES } = assembleComponents(
   carouselComponent,
   checkboxComponent,
   chipComponent,
+  colorPickerComponent,
   comboboxComponent,
   datePickerComponent,
   dialogComponent,
   dividerComponent,
   donutChartComponent,
   drawerComponent,
+  editableComponent,
   fieldComponent,
+  fileUploadComponent,
   indicatorComponent,
   lineChartComponent,
   menuComponent,
@@ -84,9 +96,11 @@ export const { ENTRIES, AGENT_COMPONENTS, AGENT_EXAMPLES } = assembleComponents(
   progressComponent,
   radioGroupComponent,
   scatterChartComponent,
+  segmentedControlComponent,
   selectComponent,
   skeletonComponent,
   sliderComponent,
+  sortableListComponent,
   sparkChartComponent,
   spinnerComponent,
   splitterComponent,
@@ -96,5 +110,7 @@ export const { ENTRIES, AGENT_COMPONENTS, AGENT_EXAMPLES } = assembleComponents(
   toastComponent,
   toggleComponent,
   toggleGroupComponent,
+  toolbarComponent,
   tooltipComponent,
+  vectorPadComponent,
 ]);

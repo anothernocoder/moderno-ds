@@ -1,6 +1,9 @@
 export { RadioGroup } from "../radio-group.jsx";
 export type {
+  RadioGroupAspectRatio,
+  RadioGroupColumns,
   RadioGroupSize,
+  RadioGroupVariant,
   ModernoRadioGroupRootProps,
   RadioGroupRootProps,
   RadioGroupLabelProps,
@@ -8,6 +11,7 @@ export type {
   RadioGroupItemControlProps,
   RadioGroupItemTextProps,
   RadioGroupItemDescriptionProps,
+  RadioGroupItemMediaProps,
   RadioGroupItemHiddenInputProps,
   RadioGroupIndicatorProps,
   RadioGroupValueChangeDetails,

@@ -1,0 +1,5 @@
+/* Toolbars of three sizes share a row on their centre line: a baseline,
+   which the row uses for text, would sit each bar at a different height. */
+.demo-row:has(> [data-scope="toolbar"]) {
+  align-items: center;
+}

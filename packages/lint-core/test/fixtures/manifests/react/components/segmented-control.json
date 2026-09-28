@@ -1,0 +1,22 @@
+{
+  "name": "SegmentedControl",
+  "scope": "segment-group",
+  "import": "import { SegmentedControl } from \"@moderno-ui/react\"",
+  "propsHash": "sha256:fixture-segmented-control",
+  "props": [
+    { "name": "fullWidth", "type": "boolean", "required": false },
+    { "name": "size", "type": "\"sm\" | \"md\" | \"lg\"", "required": false }
+  ],
+  "propsComplete": false,
+  "parts": [
+    { "name": "root" },
+    { "name": "indicator" },
+    { "name": "item" },
+    { "name": "item-text" }
+  ],
+  "variants": { "size": ["sm", "md", "lg"] },
+  "guidance": {
+    "intent": "Pick one value from a few options shown side by side in one track.",
+    "whenToUse": "Two to five short, mutually exclusive options that change a value in place: fit, fill or stretch; list or grid."
+  }
+}

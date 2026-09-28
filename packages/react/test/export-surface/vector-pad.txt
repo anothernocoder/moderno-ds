@@ -1,0 +1,12 @@
+value VectorPad
+type VectorPadAxis
+type VectorPadControlProps
+type VectorPadCrosshairProps
+type VectorPadGridProps
+type VectorPadInputProps
+type VectorPadLabelProps
+type VectorPadRootProps
+type VectorPadSize
+type VectorPadThumbProps
+type VectorPadValue
+type VectorPadValueChangeDetails

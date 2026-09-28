@@ -12,6 +12,7 @@
 import { defineComponent, h } from "vue";
 import AccordionSection from "./sections/accordion.js";
 import AlertSection from "./sections/alert.js";
+import AngleSliderSection from "./sections/angle-slider.js";
 import AvatarSection from "./sections/avatar.js";
 import BadgeSection from "./sections/badge.js";
 import BarListSection from "./sections/bar-list.js";
@@ -22,13 +23,16 @@ import CarouselSection from "./sections/carousel.js";
 import ChartsSection from "./sections/charts.js";
 import CheckboxSection from "./sections/checkbox.js";
 import ChipSection from "./sections/chip.js";
+import ColorPickerSection from "./sections/color-picker.js";
 import ComboboxSection from "./sections/combobox.js";
 import DatePickerSection from "./sections/date-picker.js";
 import DialogSection from "./sections/dialog.js";
 import DividerSection from "./sections/divider.js";
 import DonutChartSection from "./sections/donut-chart.js";
 import DrawerSection from "./sections/drawer.js";
+import EditableSection from "./sections/editable.js";
 import FieldSection from "./sections/field.js";
+import FileUploadSection from "./sections/file-upload.js";
 import IndicatorSection from "./sections/indicator.js";
 import MenuSection from "./sections/menu.js";
 import NumberInputSection from "./sections/number-input.js";
@@ -37,9 +41,11 @@ import PinInputSection from "./sections/pin-input.js";
 import PopoverSection from "./sections/popover.js";
 import ProgressSection from "./sections/progress.js";
 import RadioGroupSection from "./sections/radio-group.js";
+import SegmentedControlSection from "./sections/segmented-control.js";
 import SelectSection from "./sections/select.js";
 import SkeletonSection from "./sections/skeleton.js";
 import SliderSection from "./sections/slider.js";
+import SortableListSection from "./sections/sortable-list.js";
 import SparkChartSection from "./sections/spark-chart.js";
 import SpinnerSection from "./sections/spinner.js";
 import SplitterSection from "./sections/splitter.js";
@@ -49,7 +55,9 @@ import TagsInputSection from "./sections/tags-input.js";
 import ToastSection from "./sections/toast.js";
 import ToggleSection from "./sections/toggle.js";
 import ToggleGroupSection from "./sections/toggle-group.js";
+import ToolbarSection from "./sections/toolbar.js";
 import TooltipSection from "./sections/tooltip.js";
+import VectorPadSection from "./sections/vector-pad.js";
 
 export const App = defineComponent({
   name: "VueSsrApp",
@@ -62,6 +70,7 @@ export const App = defineComponent({
       h("main", {}, [
         h(AccordionSection, { open: props.open }),
         h(AlertSection, { open: props.open }),
+        h(AngleSliderSection, { open: props.open }),
         h(AvatarSection, { open: props.open }),
         h(BadgeSection, { open: props.open }),
         h(BarListSection, { open: props.open }),
@@ -72,13 +81,16 @@ export const App = defineComponent({
         h(ChartsSection, { open: props.open }),
         h(CheckboxSection, { open: props.open }),
         h(ChipSection, { open: props.open }),
+        h(ColorPickerSection, { open: props.open }),
         h(ComboboxSection, { open: props.open }),
         h(DatePickerSection, { open: props.open }),
         h(DialogSection, { open: props.open }),
         h(DividerSection, { open: props.open }),
         h(DonutChartSection, { open: props.open }),
         h(DrawerSection, { open: props.open }),
+        h(EditableSection, { open: props.open }),
         h(FieldSection, { open: props.open }),
+        h(FileUploadSection, { open: props.open }),
         h(IndicatorSection, { open: props.open }),
         h(MenuSection, { open: props.open }),
         h(NumberInputSection, { open: props.open }),
@@ -87,9 +99,11 @@ export const App = defineComponent({
         h(PopoverSection, { open: props.open }),
         h(ProgressSection, { open: props.open }),
         h(RadioGroupSection, { open: props.open }),
+        h(SegmentedControlSection, { open: props.open }),
         h(SelectSection, { open: props.open }),
         h(SkeletonSection, { open: props.open }),
         h(SliderSection, { open: props.open }),
+        h(SortableListSection, { open: props.open }),
         h(SparkChartSection, { open: props.open }),
         h(SpinnerSection, { open: props.open }),
         h(SplitterSection, { open: props.open }),
@@ -99,7 +113,9 @@ export const App = defineComponent({
         h(ToastSection, { open: props.open }),
         h(ToggleSection, { open: props.open }),
         h(ToggleGroupSection, { open: props.open }),
+        h(ToolbarSection, { open: props.open }),
         h(TooltipSection, { open: props.open }),
+        h(VectorPadSection, { open: props.open }),
       ]);
   },
 });
