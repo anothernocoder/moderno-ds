@@ -160,6 +160,9 @@ test.describe("layers panel — keyboard", () => {
     await page.keyboard.press("Home");
     await expect.poll(() => focused(page)).toBe("Title");
     await page.keyboard.press("ArrowUp");
+    // SortableList focuses the row on the next frame, even when it stays on
+    // Title: let that frame pass, or it takes the focus back from a Tab.
+    await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(resolve)));
     await expect.poll(() => focused(page)).toBe("Title");
 
     for (const next of ["Hide Title", "Lock Title", "Actions for Title"]) {

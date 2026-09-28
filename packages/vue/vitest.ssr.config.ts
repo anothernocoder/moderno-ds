@@ -30,6 +30,11 @@ export default defineConfig({
   test: {
     name: "vue-ssr",
     environment: "node",
+    // A block test that opts into jsdom (`// @vitest-environment jsdom`) opens
+    // Menus and Tooltips, whose positioner needs the browser APIs jsdom lacks
+    // (`ResizeObserver`, …). The root project loads the same stubs; each one is
+    // guarded, so node-mode SSR tests are unaffected.
+    setupFiles: ["../../vitest.setup.ts"],
     include: ["test/**/*.ssr.test.ts"],
   },
 });

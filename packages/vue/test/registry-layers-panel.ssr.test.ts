@@ -179,6 +179,16 @@ describe("LayersPanel block (Vue)", () => {
     expect(handlers.onChange).toHaveBeenLastCalledWith("background", { name: "Sky" });
   });
 
+  it("keeps a row's menu open while its positioner runs", async () => {
+    const user = userEvent.setup();
+    mount();
+    await user.click(screen.getByRole("button", { name: "Actions for Title" }));
+    await screen.findByRole("menuitem", { name: "Delete" });
+    // The positioner starts floating-ui's auto-update one frame after opening.
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    expect(screen.getByRole("menuitem", { name: "Delete" })).toBeTruthy();
+  });
+
   it("emits delete on Delete, and moves the focus to the next row once it is gone", async () => {
     const user = userEvent.setup();
     mountStateful(layers);
