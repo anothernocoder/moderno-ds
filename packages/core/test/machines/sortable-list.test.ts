@@ -85,10 +85,11 @@ const trigger = (value: string) =>
   document.querySelector<HTMLElement>(`[id$=":trigger:${value}"]`)!;
 const handle = (value: string) => document.querySelector<HTMLElement>(`[id$=":handle:${value}"]`)!;
 
-/** A key event as a binding hands it to the connect. */
-function key(name: string) {
+/** A key event as a binding hands it to the connect; `repeat` when the key is held. */
+function key(name: string, { repeat = false }: { repeat?: boolean } = {}) {
   return {
     key: name,
+    repeat,
     defaultPrevented: false,
     altKey: false,
     ctrlKey: false,
@@ -281,6 +282,28 @@ describe("sortableList machine — roving focus", () => {
     await frames();
     expect(document.activeElement).toBe(trigger("colors"));
   });
+
+  it("reaches a disabled item from the handles on its trigger", async () => {
+    const run = start();
+    mount(run, { handles: true });
+    // A binding renders a disabled item's handle as a disabled button.
+    for (const value of ["title", "colors"]) (handle(value) as HTMLButtonElement).disabled = true;
+    const pressOnHandle = async (value: string, name: string) => {
+      handle(value).focus();
+      await run.send({ type: "ITEM.FOCUS", value, part: "handle" });
+      run.api.getItemHandleProps({ value }).onKeyDown(key(name));
+      await frames();
+    };
+
+    await pressOnHandle("logo", "ArrowUp");
+    expect(document.activeElement).toBe(trigger("title"));
+    await pressOnHandle("logo", "Home");
+    expect(document.activeElement).toBe(trigger("title"));
+    await pressOnHandle("logo", "ArrowDown");
+    expect(document.activeElement).toBe(trigger("colors"));
+    await pressOnHandle("fonts", "ArrowUp");
+    expect(document.activeElement).toBe(trigger("colors"));
+  });
 });
 
 describe("sortableList machine — keyboard reorder", () => {
@@ -378,6 +401,30 @@ describe("sortableList machine — keyboard reorder", () => {
     expect(run.context("focusedValue")).toBe("title");
     expect(run.state).toBe("idle");
     expect(run.api.getItemState({ value: "title" }).offset).toBe(0);
+  });
+
+  it("picks up and drops once while Space is held", async () => {
+    const onReorder = vi.fn();
+    const run = start({ onReorder });
+    mount(run);
+    const pressOnTitle = async (name: string, repeat = false) => {
+      const event = key(name, { repeat });
+      run.api.getItemTriggerProps({ value: "title", label: "Title" }).onKeyDown(event);
+      await frames();
+      return event;
+    };
+
+    await pressOnTitle(" ");
+    const held = await pressOnTitle(" ", true);
+    expect(held.preventDefault).toHaveBeenCalled();
+    expect(run.state).toBe("picked");
+
+    await run.send({ type: "MOVE.NEXT" });
+    await pressOnTitle(" ");
+    await pressOnTitle(" ", true);
+    await pressOnTitle("Enter", true);
+    expect(run.state).toBe("idle");
+    expect(onReorder).toHaveBeenCalledTimes(1);
   });
 
   it("does not report a drop in the same place", async () => {
@@ -573,6 +620,25 @@ describe("sortableList machine — pointer reorder", () => {
     run.api.getItemProps({ value: "logo" }).onPointerDown(pointer(trigger("logo")));
     await frames();
     expect(run.state).toBe("pressing");
+  });
+
+  it("stops the browser's own drag of an image where a press moves the item", () => {
+    const run = start();
+    mount(run, { handles: true });
+    const image = document.createElement("img");
+    trigger("logo").parentElement!.append(image);
+    /** Whether the item stops a native drag that starts on `target`. */
+    const stopsDrag = (target: HTMLElement, props: { disabled?: boolean; handle?: boolean }) => {
+      if (props.handle === false) handle("logo").remove();
+      const event = { target, preventDefault: vi.fn() } as unknown as DragEvent;
+      run.api.getItemProps({ value: "logo", disabled: props.disabled }).onDragStart(event);
+      return vi.mocked(event.preventDefault).mock.calls.length > 0;
+    };
+
+    expect(stopsDrag(handle("logo"), {})).toBe(true);
+    expect(stopsDrag(image, {})).toBe(false);
+    expect(stopsDrag(image, { handle: false })).toBe(true);
+    expect(stopsDrag(image, { disabled: true })).toBe(false);
   });
 
   it("swallows the click that ends a drag", async () => {

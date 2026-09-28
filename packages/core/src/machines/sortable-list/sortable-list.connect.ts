@@ -35,6 +35,10 @@ const MOVE_KEYS: Record<string, SortableListEvent["type"]> = {
 
 const hasModifier = (event: JSX.KeyboardEvent) => event.altKey || event.ctrlKey || event.metaKey;
 
+/** A held Space or Enter repeats its keydown: only the first press picks up or drops. */
+const isHeldRepeat = (event: JSX.KeyboardEvent) =>
+  event.repeat && (event.key === " " || event.key === "Enter");
+
 export function connect<T extends PropTypes>(
   service: Service<SortableListSchema>,
   normalize: NormalizeProps<T>,
@@ -90,7 +94,7 @@ export function connect<T extends PropTypes>(
       const type = itemState.dragging ? MOVE_KEYS[event.key] : undefined;
       if (!type) return;
       event.preventDefault();
-      send({ type } as SortableListEvent);
+      if (!isHeldRepeat(event)) send({ type } as SortableListEvent);
       return;
     }
     if (!state.matches("idle")) return;
@@ -112,7 +116,7 @@ export function connect<T extends PropTypes>(
 
     // Space picks the item up on its handle, or on its trigger when it has no handle.
     const picksUp = part === "handle" || !hasHandle;
-    if (event.key === " " && picksUp && !itemState.disabled) {
+    if (event.key === " " && picksUp && !itemState.disabled && !event.repeat) {
       event.preventDefault();
       send({ type: "PICK_UP", value: props.value, label: labelOf(props), part, disabled: false });
     }
@@ -125,6 +129,16 @@ export function connect<T extends PropTypes>(
   function handleItemKeyUp(event: JSX.KeyboardEvent, props: ItemProps, part: ItemFocusPart) {
     if (event.key !== " ") return;
     if (part === "handle" || !dom.hasItemHandle(scope, props.value)) event.preventDefault();
+  }
+
+  /**
+   * Whether a press on `target` starts a move: on the handle when the item has
+   * one, otherwise anywhere in the item except a text field.
+   */
+  function startsMove(target: HTMLElement | null, itemState: ItemState, value: string): boolean {
+    if (itemState.disabled) return false;
+    const handle = dom.getItemHandleEl(scope, value);
+    return handle ? contains(handle, target) : !isEditableElement(target);
   }
 
   /** Focus leaving a picked-up item puts it back. */
@@ -162,21 +176,24 @@ export function connect<T extends PropTypes>(
         "data-dragging": itemState.dragging,
         style: itemState.offset ? { "--sortable-list-offset": `${itemState.offset}px` } : undefined,
         onPointerDown(event) {
-          if (event.button !== 0 || itemState.disabled) return;
-          const target = getEventTarget<HTMLElement>(event);
-          const handle = dom.getItemHandleEl(scope, props.value);
-          // With a handle, only the handle drags; without one, the whole item
-          // does, except a text field inside it.
-          if (handle ? !contains(handle, target) : isEditableElement(target)) return;
+          if (event.button !== 0) return;
+          if (!startsMove(getEventTarget<HTMLElement>(event), itemState, props.value)) return;
           send({
             type: "POINTER.DOWN",
             value: props.value,
             label: labelOf(props),
-            part: handle ? "handle" : "trigger",
+            part: dom.hasItemHandle(scope, props.value) ? "handle" : "trigger",
             disabled: false,
             point: { x: event.clientX, y: event.clientY },
             pointerId: event.pointerId,
           });
+        },
+        // The browser's own drag of an image or a link would cancel the move
+        // with a pointercancel: where a press moves the item, stop it.
+        onDragStart(event) {
+          if (startsMove(getEventTarget<HTMLElement>(event), itemState, props.value)) {
+            event.preventDefault();
+          }
         },
       });
     },

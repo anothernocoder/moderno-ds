@@ -28,10 +28,12 @@ export const hasItemHandle = (scope: Scope, value: string): boolean =>
 
 /**
  * The element of an item that takes focus: the `part` asked for when the item
- * has it, otherwise whichever of the trigger and the handle it has.
+ * has it, otherwise whichever of the trigger and the handle it has. A disabled
+ * handle can not take focus, so a disabled item is reached on its trigger.
  */
 export function getItemFocusEl(scope: Scope, value: string, part: ItemFocusPart) {
-  const handle = getItemHandleEl(scope, value);
+  const handleEl = getItemHandleEl(scope, value);
+  const handle = handleEl?.disabled ? null : handleEl;
   const trigger = getItemTriggerEl(scope, value);
   return part === "handle" ? (handle ?? trigger) : (trigger ?? handle);
 }
