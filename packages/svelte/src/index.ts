@@ -48,6 +48,7 @@ export * from "./exports/scatter-chart.js";
 export * from "./exports/select.js";
 export * from "./exports/skeleton.js";
 export * from "./exports/slider.js";
+export * from "./exports/sortable-list.js";
 export * from "./exports/spark-chart.js";
 export * from "./exports/spinner.js";
 export * from "./exports/splitter.js";

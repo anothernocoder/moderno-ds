@@ -44,6 +44,7 @@ import RadioGroupSection from "./sections/radio-group.js";
 import SelectSection from "./sections/select.js";
 import SkeletonSection from "./sections/skeleton.js";
 import SliderSection from "./sections/slider.js";
+import SortableListSection from "./sections/sortable-list.js";
 import SparkChartSection from "./sections/spark-chart.js";
 import SpinnerSection from "./sections/spinner.js";
 import SplitterSection from "./sections/splitter.js";
@@ -98,6 +99,7 @@ export const App = defineComponent({
         h(SelectSection, { open: props.open }),
         h(SkeletonSection, { open: props.open }),
         h(SliderSection, { open: props.open }),
+        h(SortableListSection, { open: props.open }),
         h(SparkChartSection, { open: props.open }),
         h(SpinnerSection, { open: props.open }),
         h(SplitterSection, { open: props.open }),

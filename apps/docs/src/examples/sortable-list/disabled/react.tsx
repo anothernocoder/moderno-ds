@@ -1,0 +1,20 @@
+import { useState } from "react";
+import { SortableList } from "@moderno-ui/react";
+
+export function SortableListDisabledDemo() {
+  const [slides, setSlides] = useState(["Cover", "Logo", "Colors", "Fonts"]);
+  return (
+    <SortableList.Root
+      items={slides}
+      onReorder={(details) => setSlides(details.items)}
+      aria-label="Slides"
+    >
+      {slides.map((slide) => (
+        <SortableList.Item key={slide} value={slide} disabled={slide === "Cover"}>
+          <SortableList.ItemHandle />
+          <SortableList.ItemTrigger>{slide}</SortableList.ItemTrigger>
+        </SortableList.Item>
+      ))}
+    </SortableList.Root>
+  );
+}

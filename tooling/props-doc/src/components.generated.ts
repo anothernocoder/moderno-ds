@@ -46,6 +46,7 @@ import scatterChartComponent from "./components/scatter-chart.ts";
 import selectComponent from "./components/select.ts";
 import skeletonComponent from "./components/skeleton.ts";
 import sliderComponent from "./components/slider.ts";
+import sortableListComponent from "./components/sortable-list.ts";
 import sparkChartComponent from "./components/spark-chart.ts";
 import spinnerComponent from "./components/spinner.ts";
 import splitterComponent from "./components/splitter.ts";
@@ -95,6 +96,7 @@ export const { ENTRIES, AGENT_COMPONENTS, AGENT_EXAMPLES } = assembleComponents(
   selectComponent,
   skeletonComponent,
   sliderComponent,
+  sortableListComponent,
   sparkChartComponent,
   spinnerComponent,
   splitterComponent,

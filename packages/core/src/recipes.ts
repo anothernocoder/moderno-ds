@@ -49,6 +49,7 @@ export * from "./recipes/radio-group.js";
 export * from "./recipes/select.js";
 export * from "./recipes/skeleton.js";
 export * from "./recipes/slider.js";
+export * from "./recipes/sortable-list.js";
 export * from "./recipes/spinner.js";
 export * from "./recipes/splitter.js";
 export * from "./recipes/switch.js";

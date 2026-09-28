@@ -1,0 +1,300 @@
+---
+title: Sortable List
+description: Una lista vertical cuyos elementos el usuario reordena arrastrando o con el teclado.
+group: Componentes
+order: 39
+component: SortableList
+pkg: "@moderno-ui/react"
+---
+
+import Preview from "../../../components/Preview.astro";
+import PropsTable from "../../../components/PropsTable.astro";
+import Install from "../../../components/Install.astro";
+import FrameworkSelect from "../../../components/FrameworkSelect.astro";
+import ForFramework from "../../../components/ForFramework.astro";
+import SortableListDemo from "../../../examples/sortable-list/sortable-list.svelte";
+import baseReact from "../../../examples/sortable-list/react.tsx?raw";
+import baseVue from "../../../examples/sortable-list/vue.vue?raw";
+import baseSolid from "../../../examples/sortable-list/solid.tsx?raw";
+import baseSvelte from "../../../examples/sortable-list/sortable-list.svelte?raw";
+import SortableListNoHandleDemo from "../../../examples/sortable-list/no-handle/sortable-list-no-handle.svelte";
+import noHandleReact from "../../../examples/sortable-list/no-handle/react.tsx?raw";
+import noHandleVue from "../../../examples/sortable-list/no-handle/vue.vue?raw";
+import noHandleSolid from "../../../examples/sortable-list/no-handle/solid.tsx?raw";
+import noHandleSvelte from "../../../examples/sortable-list/no-handle/sortable-list-no-handle.svelte?raw";
+import SortableListContentDemo from "../../../examples/sortable-list/content/sortable-list-content.svelte";
+import contentReact from "../../../examples/sortable-list/content/react.tsx?raw";
+import contentVue from "../../../examples/sortable-list/content/vue.vue?raw";
+import contentSolid from "../../../examples/sortable-list/content/solid.tsx?raw";
+import contentSvelte from "../../../examples/sortable-list/content/sortable-list-content.svelte?raw";
+import SortableListScrollDemo from "../../../examples/sortable-list/scroll/sortable-list-scroll.svelte";
+import scrollReact from "../../../examples/sortable-list/scroll/react.tsx?raw";
+import scrollVue from "../../../examples/sortable-list/scroll/vue.vue?raw";
+import scrollSolid from "../../../examples/sortable-list/scroll/solid.tsx?raw";
+import scrollSvelte from "../../../examples/sortable-list/scroll/sortable-list-scroll.svelte?raw";
+import SortableListSizesDemo from "../../../examples/sortable-list/sizes/sortable-list-sizes.svelte";
+import sizesReact from "../../../examples/sortable-list/sizes/react.tsx?raw";
+import sizesVue from "../../../examples/sortable-list/sizes/vue.vue?raw";
+import sizesSolid from "../../../examples/sortable-list/sizes/solid.tsx?raw";
+import sizesSvelte from "../../../examples/sortable-list/sizes/sortable-list-sizes.svelte?raw";
+import SortableListDisabledDemo from "../../../examples/sortable-list/disabled/sortable-list-disabled.svelte";
+import disabledReact from "../../../examples/sortable-list/disabled/react.tsx?raw";
+import disabledVue from "../../../examples/sortable-list/disabled/vue.vue?raw";
+import disabledSolid from "../../../examples/sortable-list/disabled/solid.tsx?raw";
+import disabledSvelte from "../../../examples/sortable-list/disabled/sortable-list-disabled.svelte?raw";
+
+<FrameworkSelect locale="es" />
+
+<Preview
+  examples={{
+    react: baseReact,
+    vue: baseVue,
+    solid: baseSolid,
+    svelte: baseSvelte,
+  }}
+>
+  <SortableListDemo client:visible />
+</Preview>
+
+## Instalación
+
+<Install pkg="@moderno-ui/react" />
+
+## Uso
+
+Una lista ordenable deja al usuario poner los elementos en el orden que quiera, como las diapositivas de una presentación en una barra lateral. Arrastra un elemento por su asa, o usa el teclado.
+
+<ForFramework fw="react">
+
+```tsx
+import { SortableList } from "@moderno-ui/react";
+```
+
+```tsx
+const [slides, setSlides] = useState(["Cover", "Logo", "Colors"]);
+
+<SortableList.Root
+  items={slides}
+  onReorder={(details) => setSlides(details.items)}
+  aria-label="Slides"
+>
+  {slides.map((slide) => (
+    <SortableList.Item key={slide} value={slide}>
+      <SortableList.ItemHandle />
+      <SortableList.ItemTrigger>{slide}</SortableList.ItemTrigger>
+    </SortableList.Item>
+  ))}
+</SortableList.Root>;
+```
+
+</ForFramework>
+
+<ForFramework fw="vue">
+
+```ts
+import { SortableList } from "@moderno-ui/vue";
+```
+
+```vue
+<SortableList.Root v-model:items="slides" aria-label="Slides">
+  <SortableList.Item v-for="slide in slides" :key="slide" :value="slide">
+    <SortableList.ItemHandle />
+    <SortableList.ItemTrigger>{{ slide }}</SortableList.ItemTrigger>
+  </SortableList.Item>
+</SortableList.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="svelte">
+
+```ts
+import { SortableList } from "@moderno-ui/svelte";
+```
+
+```svelte
+<SortableList.Root bind:items={slides} aria-label="Slides">
+  {#each slides as slide (slide)}
+    <SortableList.Item value={slide}>
+      <SortableList.ItemHandle />
+      <SortableList.ItemTrigger>{slide}</SortableList.ItemTrigger>
+    </SortableList.Item>
+  {/each}
+</SortableList.Root>
+```
+
+</ForFramework>
+
+<ForFramework fw="solid">
+
+```tsx
+import { SortableList } from "@moderno-ui/solid";
+```
+
+```tsx
+const [slides, setSlides] = createSignal(["Cover", "Logo", "Colors"]);
+
+<SortableList.Root
+  items={slides()}
+  onReorder={(details) => setSlides(details.items)}
+  aria-label="Slides"
+>
+  <For each={slides()}>
+    {(slide) => (
+      <SortableList.Item value={slide}>
+        <SortableList.ItemHandle />
+        <SortableList.ItemTrigger>{slide}</SortableList.ItemTrigger>
+      </SortableList.Item>
+    )}
+  </For>
+</SortableList.Root>;
+```
+
+</ForFramework>
+
+La lista mueve los elementos; tu estado guarda el orden. Dibuja los elementos en el orden de `items` y guarda el orden nuevo cuando se llame a `onReorder`.
+
+## Referencia de la API
+
+### SortableList.Root
+
+<PropsTable component="SortableList" />
+
+| Prop           | Tipo                                                             | Por defecto | Descripción                                                             |
+| -------------- | ---------------------------------------------------------------- | ----------- | ----------------------------------------------------------------------- |
+| `items`        | `string[]`                                                       | —           | Los valores de los elementos en su orden actual. Úsalo con `onReorder`. |
+| `defaultItems` | `string[]`                                                       | `[]`        | El orden inicial, cuando la lista guarda el orden ella misma.           |
+| `onReorder`    | `(details: { items, value, from, to }) => void`                  | —           | Se llama al soltar en un sitio nuevo, con el orden nuevo.               |
+| `disabled`     | `boolean`                                                        | `false`     | Ningún elemento se mueve. El foco y los botones siguen funcionando.     |
+| `size`         | `"sm" \| "md" \| "lg"`                                           | `"md"`      | Altura de los elementos y tamaño del texto.                             |
+| `translations` | `{ handleLabel, pickedUp, moved, dropped, cancelled }` (parcial) | Inglés      | El nombre del asa y lo que oye un lector de pantalla, en otro idioma.   |
+
+`details.value` es el elemento movido, y `from` y `to` son su posición anterior y la nueva, contando desde 0.
+
+En Vue, enlaza el orden con `v-model:items` o escucha `@reorder`. En Svelte, usa `bind:items`.
+
+Con `defaultItems`, la lista guarda el orden y se lo pasa a sus hijos: una función `(items) => …` en React, `{ items }` del slot por defecto en Vue, el argumento del snippet `children` en Svelte y una función que recibe un accessor en Solid.
+
+### SortableList.Item
+
+| Prop       | Tipo      | Por defecto | Descripción                                                         |
+| ---------- | --------- | ----------- | ------------------------------------------------------------------- |
+| `value`    | `string`  | —           | Obligatorio. Uno de los `items` de la raíz.                         |
+| `label`    | `string`  | `value`     | El nombre del elemento, para su asa ("Reorder Logo") y los avisos.  |
+| `disabled` | `boolean` | `false`     | Este elemento no se mueve. Los demás pueden pasar por encima de él. |
+
+### Partes
+
+| Parte                      | Elemento   | Descripción                                                                                    |
+| -------------------------- | ---------- | ---------------------------------------------------------------------------------------------- |
+| `SortableList.Root`        | `<ul>`     | La lista. Lleva `data-size`.                                                                   |
+| `SortableList.Item`        | `<li>`     | Un elemento. Admite cualquier contenido: texto, una miniatura, botones.                        |
+| `SortableList.ItemHandle`  | `<button>` | Opcional. Un asa, llamada "Reorder `label`". Solo el asa arrastra. Sus hijos cambian el icono. |
+| `SortableList.ItemTrigger` | `<button>` | Obligatorio. Donde el elemento recibe el foco; suele ser su nombre.                            |
+
+### Teclado
+
+| Tecla                                 | Acción                                                                      |
+| ------------------------------------- | --------------------------------------------------------------------------- |
+| `Tab`                                 | Lleva el foco a la lista y luego fuera. La lista es una sola parada de Tab. |
+| `ArrowDown`, `ArrowUp`                | Lleva el foco al elemento siguiente o al anterior.                          |
+| `Home`, `End`                         | Lleva el foco al primer o al último elemento.                               |
+| `ArrowLeft`, `ArrowRight`             | Mueve el foco entre el asa de un elemento y su trigger.                     |
+| `Space`                               | En el asa (o en el trigger de un elemento sin asa): levanta el elemento.    |
+| `ArrowDown`, `ArrowUp`, `Home`, `End` | Con un elemento levantado: lo mueve.                                        |
+| `Space`, `Enter`                      | Suelta el elemento. El foco se queda en él.                                 |
+| `Escape`                              | Devuelve el elemento a donde estaba.                                        |
+
+Un lector de pantalla oye cada paso: "Logo picked up. Position 2 of 4.", "Moved to position 3.", "Dropped." Cambia estas frases con `translations`.
+
+### Atributos data
+
+| Atributo        | Valores                                                                                   |
+| --------------- | ----------------------------------------------------------------------------------------- |
+| `data-dragging` | `"pointer"` o `"keyboard"`, en la raíz y en el elemento que se mueve, su asa y su trigger |
+| `data-settling` | En la raíz, un momento después de soltar                                                  |
+| `data-disabled` | En la raíz con `disabled`, y en un elemento deshabilitado y su asa                        |
+| `data-value`    | En cada elemento: su valor                                                                |
+| `data-size`     | En la raíz: `"sm"`, `"md"` o `"lg"`                                                       |
+
+## Ejemplos
+
+### Sin asa
+
+Sin `SortableList.ItemHandle`, todo el elemento arrastra. Space en el trigger lo levanta. Un clic corto sigue siendo un clic en el trigger.
+
+<Preview
+  examples={{
+    react: noHandleReact,
+    vue: noHandleVue,
+    solid: noHandleSolid,
+    svelte: noHandleSvelte,
+  }}
+>
+  <SortableListNoHandleDemo client:visible />
+</Preview>
+
+### Cualquier contenido
+
+Un elemento admite cualquier cosa junto a su trigger: una miniatura, un botón. El botón sigue funcionando.
+
+<Preview
+  examples={{
+    react: contentReact,
+    vue: contentVue,
+    solid: contentSolid,
+    svelte: contentSvelte,
+  }}
+>
+  <SortableListContentDemo client:visible />
+</Preview>
+
+### Lista larga
+
+Dentro de una caja con scroll, la lista se desplaza sola cuando arrastras cerca de su borde de arriba o de abajo.
+
+<Preview
+  examples={{
+    react: scrollReact,
+    vue: scrollVue,
+    solid: scrollSolid,
+    svelte: scrollSvelte,
+  }}
+>
+  <SortableListScrollDemo client:visible />
+</Preview>
+
+### Tamaños
+
+<Preview
+  examples={{
+    react: sizesReact,
+    vue: sizesVue,
+    solid: sizesSolid,
+    svelte: sizesSvelte,
+  }}
+>
+  <SortableListSizesDemo client:visible />
+</Preview>
+
+### Elemento deshabilitado
+
+Un elemento deshabilitado se queda donde está; los demás pueden pasar por encima. Pon `disabled` en la raíz para detener toda la lista.
+
+<Preview
+  examples={{
+    react: disabledReact,
+    vue: disabledVue,
+    solid: disabledSolid,
+    svelte: disabledSvelte,
+  }}
+>
+  <SortableListDisabledDemo client:visible />
+</Preview>
+
+## Notas
+
+- El comportamiento es una máquina de Zag en `@moderno-ui/core`, igual en los cuatro frameworks.
+- Una pulsación solo se vuelve arrastre cuando el puntero se mueve unos píxeles, así que un clic en un botón dentro de un elemento sigue funcionando.
+- Ratón, táctil y lápiz arrastran. En táctil, el asa (o el elemento, sin asa) no desplaza la página.
+- El elemento movido se desliza a su sitio, salvo que el usuario pida menos movimiento.
