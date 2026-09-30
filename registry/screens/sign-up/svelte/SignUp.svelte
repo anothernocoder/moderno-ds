@@ -187,7 +187,7 @@
           <h2 class="text-body font-semibold tracking-tight">What you get on day one</h2>
           <ul class="grid gap-4">
             {#each highlights as highlight (highlight.id)}
-              <li class="grid gap-1 border-l-2 border-border pl-4">
+              <li class="grid gap-1 border-l border-border pl-4">
                 <p class="text-ui-md font-medium">{highlight.title}</p>
                 {#if highlight.description}
                   <p class="text-ui-md text-muted-foreground">{highlight.description}</p>

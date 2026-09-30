@@ -42,6 +42,11 @@ describe("@moderno-ui/core components.css — Slider", () => {
     expect(prop(decls, "--slider-thumb-offset-1")).toBe("50%");
   });
 
+  it("hides the thumb's focus ring while the last input was a pointer", () => {
+    const decls = ruleDecls(root, `:root[data-input-modality="pointer"] ${THUMB}:focus-visible`);
+    expect(prop(decls, "outline-style")).toBe("none");
+  });
+
   it("sizes the thumb from spacing slots at every size", () => {
     const thumbs = [
       THUMB,

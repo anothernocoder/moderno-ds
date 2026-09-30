@@ -31,6 +31,7 @@ import {
   isAngleOutsideTurn,
   numberInputRecipe,
   resolveAngle,
+  trackInputModality,
   wrapAngle,
   type AngleSliderSize,
   type AngleSliderValueChangeDetails,
@@ -115,6 +116,8 @@ function AngleSliderRoot(props: ModernoAngleSliderRootProps) {
   const angle = () => (local.value === undefined ? uncontrolled() : wrapAngle(local.value));
   const step = () => local.step ?? 1;
   const isShiftHeld = createShiftWhilePressed();
+  // A press focuses the thumb (Ark); the modality keeps that from drawing a focus ring.
+  onMount(() => onCleanup(trackInputModality()));
 
   function settle(details: { value: number }) {
     const next = resolveAngle(details.value, { marks: local.marks, snapToMarks: isShiftHeld() });

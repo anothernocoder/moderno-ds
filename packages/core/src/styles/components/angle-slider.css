@@ -83,6 +83,12 @@
   outline-width: 2px;
   outline-offset: 2px;
 }
+/* A press focuses the thumb from script, which the browser counts as
+   :focus-visible. The ring is for the keyboard, so it hides while the last
+   input was a pointer (`trackInputModality` marks <html>). */
+:root[data-input-modality="pointer"] [data-scope="angle-slider"][data-part="thumb"]:focus-visible {
+  outline-style: none;
+}
 /* The needle, from the hub up to the knob. */
 [data-scope="angle-slider"][data-part="thumb"]::before {
   content: "";
@@ -101,10 +107,10 @@
   position: absolute;
   top: var(--spacing-1);
   left: 50%;
-  width: var(--spacing-3);
-  height: var(--spacing-3);
+  width: var(--spacing-2);
+  height: var(--spacing-2);
   translate: -50% 0;
-  border: calc(var(--spacing-1) / 2) solid var(--primary);
+  border: 1px solid var(--primary);
   border-radius: var(--radius-full);
   background-color: var(--background);
 }

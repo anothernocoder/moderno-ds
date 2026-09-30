@@ -764,7 +764,7 @@ main.main--wide {
   main :where(blockquote):not(.preview-panel--demo *) {
     margin: 1.5rem 0;
     padding: 0.25rem 0 0.25rem 1rem;
-    border-inline-start: 2px solid var(--docs-border);
+    border-inline-start: 1px solid var(--docs-border);
     color: var(--docs-fg-muted);
   }
   main :where(hr):not(.preview-panel--demo *) {
@@ -968,8 +968,38 @@ main.main--wide {
 .toc-list a[aria-current="true"] {
   color: var(--docs-fg);
   font-weight: var(--font-weight-medium);
-  border-left: 2px solid var(--docs-fg);
-  padding-left: calc(0.875rem - 1px);
+}
+/* The active rail segment: `toc.ts` traces the whole rail (straight runs and
+   S-curves) into this SVG path and dashes it so only the active link's
+   stretch shows. Moving the dash slides it along the rail, through the
+   curves, instead of jumping between items. `.toc` is sticky (positioned), so
+   it is the SVG's containing block and the links' offsetParent alike. Hidden
+   until the script first places it; it glides only after that. The SVG is a
+   1px box drawing outside itself, so it never widens the rail's scroll area. */
+.toc-indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  overflow: visible;
+  pointer-events: none;
+  visibility: hidden;
+}
+.toc-indicator[data-ready] {
+  visibility: visible;
+}
+.toc-indicator path {
+  fill: none;
+  stroke: var(--docs-fg);
+  stroke-width: 1;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .toc-indicator[data-ready] path {
+    transition:
+      stroke-dasharray var(--motion-normal) cubic-bezier(0.22, 1, 0.36, 1),
+      stroke-dashoffset var(--motion-normal) cubic-bezier(0.22, 1, 0.36, 1);
+  }
 }
 /* The S-curve bridging an indent change — a block between two links in the
    same flex column, spanning the 1rem gap between the h2 segment's x=0 line
@@ -1155,6 +1185,9 @@ main.main--wide {
 }
 .preview-panel--demo[data-layout="fill"]:has(.demo-tabs) {
   padding: 0;
+}
+.breakpoint-frame {
+  margin-inline: auto;
 }
 @media (max-width: 40rem) {
   .preview-panel--demo {
@@ -1353,7 +1386,7 @@ main.main--wide {
 .demo-tab:hover {
   color: var(--docs-fg);
 }
-.demo-tab[aria-selected="true"] {
+.demo-tab:is([aria-selected="true"], [aria-checked="true"]) {
   background: var(--background);
   color: var(--docs-fg);
   box-shadow:
@@ -1388,18 +1421,16 @@ main.main--wide {
   }
 }
 
-/* A container drawn on purpose: a dashed outline with its width written on it,
-   so a block laid out for a narrow box reads as "this is the 18rem sidebar" and
-   not as a layout bug. */
+/* A container of a set width with its width written above it, so a block laid
+   out for a narrow box reads as "this is the 18rem sidebar" and not as a
+   layout bug. */
 .demo-viewport {
   position: relative;
   margin-inline: auto;
   /* `--viewport-width` is the width the *content* gets; the frame adds its own
-     padding and border around it, and never outgrows the stage. */
-  width: min(100%, calc(var(--viewport-width, 100%) + 2rem + 2px));
+     padding around it, and never outgrows the stage. */
+  width: min(100%, calc(var(--viewport-width, 100%) + 2rem));
   padding: 1rem;
-  border: 1px dashed color-mix(in oklch, var(--foreground) 30%, transparent);
-  border-radius: var(--radius);
 }
 .demo-viewport[data-label]::before {
   content: attr(data-label);

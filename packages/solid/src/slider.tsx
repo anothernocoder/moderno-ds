@@ -1,7 +1,7 @@
-import { splitProps } from "solid-js";
+import { onCleanup, onMount, splitProps } from "solid-js";
 import { Slider as ArkSlider } from "@ark-ui/solid";
 import type { SliderRootProps } from "@ark-ui/solid";
-import { sliderRecipe, type SliderSize } from "@moderno-ui/core";
+import { sliderRecipe, trackInputModality, type SliderSize } from "@moderno-ui/core";
 
 export type { SliderSize } from "@moderno-ui/core";
 
@@ -13,9 +13,12 @@ export type ModernoSliderRootProps = SliderRootProps & {
 /**
  * Slider.Root with the Moderno `size` recipe folded in. Ark's Root spreads
  * unknown props onto its `data-part="root"` element, so the recipe's
- * attribute rides along and `components.css` sizes the parts from it.
+ * attribute rides along and `components.css` sizes the parts from it. It
+ * tracks the input modality, so a press — which Ark answers by focusing the
+ * thumb — draws no focus ring.
  */
 function SliderRoot(props: ModernoSliderRootProps) {
+  onMount(() => onCleanup(trackInputModality()));
   const [local, rest] = splitProps(props, ["size"]);
   return <ArkSlider.Root {...rest} {...sliderRecipe({ size: local.size })} />;
 }

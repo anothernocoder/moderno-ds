@@ -188,7 +188,7 @@ const resolvedHighlights = computed(() => props.highlights ?? trialHighlights);
             <li
               v-for="highlight in resolvedHighlights"
               :key="highlight.id"
-              class="grid gap-1 border-l-2 border-border pl-4"
+              class="grid gap-1 border-l border-border pl-4"
             >
               <p class="text-ui-md font-medium">{{ highlight.title }}</p>
               <p v-if="highlight.description" class="text-ui-md text-muted-foreground">

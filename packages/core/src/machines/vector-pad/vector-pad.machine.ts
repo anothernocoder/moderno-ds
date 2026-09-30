@@ -1,5 +1,6 @@
 import { createMachine, type Params } from "@zag-js/core";
 import { raf, trackPointerMove } from "@zag-js/dom-query";
+import { trackInputModality } from "../../input-modality.js";
 import * as dom from "./vector-pad.dom.js";
 import type { VectorPadSchema, VectorPadValue } from "./vector-pad.types.js";
 import {
@@ -52,7 +53,9 @@ function endChangeWith(
  *   without ending the change; `endChange` (a field's commit) ends it, once,
  *   and only when they moved it.
  *
- * Every value the machine sets is kept in the range and on the step.
+ * Every value the machine sets is kept in the range and on the step. It
+ * tracks the input modality so a press, which focuses the handle, draws no
+ * focus ring.
  */
 export const machine = createMachine<VectorPadSchema>({
   props({ props }) {
@@ -99,6 +102,8 @@ export const machine = createMachine<VectorPadSchema>({
     return "idle";
   },
 
+  effects: ["trackInputModality"],
+
   on: {
     "VALUE.SET": { actions: ["setValue"] },
     "VALUE.SET_AXIS": { actions: ["setAxisValue"] },
@@ -143,6 +148,7 @@ export const machine = createMachine<VectorPadSchema>({
 
   implementations: {
     effects: {
+      trackInputModality,
       trackPointerMove({ scope, send }) {
         return trackPointerMove(scope.getDoc(), {
           onPointerMove({ point }) {

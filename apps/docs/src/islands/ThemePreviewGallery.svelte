@@ -764,7 +764,12 @@
     font-size: 0.875rem;
     line-height: 1.5;
   }
+  /* `position: relative` makes each card the containing block of the hidden
+     form inputs inside it (absolute, no offsets). Otherwise their containing
+     block is the body, and Safari places them as if the columns were one long
+     column, far below the gallery, stretching the page with blank space. */
   .tpg > :global(*) {
+    position: relative;
     break-inside: avoid;
     margin-bottom: 1rem;
   }
