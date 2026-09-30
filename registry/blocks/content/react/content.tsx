@@ -129,7 +129,7 @@ export function Content({
                 </div>
               ))}
               {quote ? (
-                <figure className="grid gap-3 border-l-2 border-border pl-4 @sm:pl-6">
+                <figure className="grid gap-3 border-l border-border pl-4 @sm:pl-6">
                   <blockquote className="font-serif text-body-lg">{quote.text}</blockquote>
                   <figcaption className="text-ui-md text-muted-foreground">
                     {quote.author}

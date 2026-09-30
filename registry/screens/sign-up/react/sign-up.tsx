@@ -193,7 +193,7 @@ export function SignUp({
               <h2 className="text-body font-semibold tracking-tight">What you get on day one</h2>
               <ul className="grid gap-4">
                 {highlights.map((highlight) => (
-                  <li key={highlight.id} className="grid gap-1 border-l-2 border-border pl-4">
+                  <li key={highlight.id} className="grid gap-1 border-l border-border pl-4">
                     <p className="text-ui-md font-medium">{highlight.title}</p>
                     {highlight.description ? (
                       <p className="text-ui-md text-muted-foreground">{highlight.description}</p>

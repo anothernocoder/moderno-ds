@@ -23,9 +23,16 @@
  * screen, so the source stays "always visible" — the page just doesn't turn
  * into a wall of code under every stage. Decided per framework, since a Vue
  * file and a React file for the same demo differ in length.
+ *
+ * On a Blocks page a `fill` stage gets a Mobile / Tablet / Desktop switch
+ * (BreakpointSwitch) that sizes a frame around the demo, so every block shows
+ * its narrow and wide layouts.
  */
 import type { CodeLanguage } from "astro";
+import { getEntry } from "astro:content";
 import CodeBlock from "./CodeBlock.astro";
+import BreakpointSwitch from "../islands/BreakpointSwitch.svelte";
+import { currentLocale, defaultLocale, useTranslations } from "../i18n/ui.ts";
 
 type Framework = "react" | "vue" | "svelte" | "solid";
 
@@ -47,11 +54,40 @@ const LANG: Record<Framework, CodeLanguage> = {
 /** Sources up to this many lines show in full; longer ones start collapsed. */
 const COLLAPSE_AFTER = 18;
 const lineCount = (code: string) => code.trimEnd().split("\n").length;
+
+const locale = currentLocale(Astro.params.lang);
+// Groups are translated, so read the English twin (every slug has one).
+const page = Astro.params.slug
+  ? await getEntry("docs", `${defaultLocale}/${Astro.params.slug}`)
+  : undefined;
+const breakpoints = layout === "fill" && page?.data.group === "Blocks";
+const t = useTranslations(locale);
 ---
 
 <div class="preview">
+  {
+    breakpoints && (
+      <BreakpointSwitch
+        client:load
+        labels={{
+          group: t("preview.breakpoint"),
+          mobile: t("preview.mobile"),
+          tablet: t("preview.tablet"),
+          desktop: t("preview.desktop"),
+        }}
+      />
+    )
+  }
   <div class="preview-panel preview-panel--demo" data-layout={layout}>
-    <slot />
+    {
+      breakpoints ? (
+        <div class="breakpoint-frame">
+          <slot />
+        </div>
+      ) : (
+        <slot />
+      )
+    }
   </div>
   <div class="preview-panel preview-panel--code">
     {

@@ -104,10 +104,10 @@
   top: var(--vector-pad-y);
   left: var(--vector-pad-x);
   box-sizing: border-box;
-  width: var(--spacing-4);
-  height: var(--spacing-4);
+  width: var(--spacing-3);
+  height: var(--spacing-3);
   translate: -50% -50%;
-  border: calc(var(--spacing-1) / 2) solid var(--primary);
+  border: 1px solid var(--primary);
   border-radius: var(--radius-full);
   background-color: var(--background);
   box-shadow: var(--shadow-sm);
@@ -124,6 +124,12 @@
   outline-style: solid;
   outline-width: 2px;
   outline-offset: 2px;
+}
+/* A press focuses the thumb from script, which the browser counts as
+   :focus-visible. The ring is for the keyboard, so it hides while the last
+   input was a pointer (`trackInputModality` marks <html>). */
+:root[data-input-modality="pointer"] [data-scope="vector-pad"][data-part="thumb"]:focus-visible {
+  outline-style: none;
 }
 [data-scope="vector-pad"][data-part="thumb"][data-invalid] {
   border-color: var(--destructive);

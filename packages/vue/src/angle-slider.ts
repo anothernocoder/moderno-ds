@@ -34,6 +34,7 @@ import {
   isAngleOutsideTurn,
   numberInputRecipe,
   resolveAngle,
+  trackInputModality,
   wrapAngle,
   type AngleSliderSize,
   type AngleSliderValueChangeDetails,
@@ -110,12 +111,16 @@ const AngleSliderRootImpl = defineComponent({
 
     // Whether Shift is held during the current pointer press.
     const shift = createShiftTracker();
+    // A press focuses the thumb (Ark); the modality keeps that from drawing a focus ring.
+    let stopTracking: (() => void) | undefined;
     onMounted(() => {
+      stopTracking = trackInputModality();
       for (const type of ANGLE_SLIDER_SHIFT_EVENTS) {
         document.addEventListener(type, shift.track, true);
       }
     });
     onBeforeUnmount(() => {
+      stopTracking?.();
       for (const type of ANGLE_SLIDER_SHIFT_EVENTS) {
         document.removeEventListener(type, shift.track, true);
       }

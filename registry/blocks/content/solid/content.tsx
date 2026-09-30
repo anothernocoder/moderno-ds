@@ -142,7 +142,7 @@ export function Content(props: ContentProps) {
                   </For>
                   <Show when={quote()}>
                     {(shown) => (
-                      <figure class="grid gap-3 border-l-2 border-border pl-4 @sm:pl-6">
+                      <figure class="grid gap-3 border-l border-border pl-4 @sm:pl-6">
                         <blockquote class="font-serif text-body-lg">{shown().text}</blockquote>
                         <figcaption class="text-ui-md text-muted-foreground">
                           {shown().author}

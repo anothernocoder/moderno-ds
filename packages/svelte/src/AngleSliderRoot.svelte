@@ -20,6 +20,7 @@
     angleSliderValueText,
     createShiftTracker,
     resolveAngle,
+    trackInputModality,
     wrapAngle,
   } from "@moderno-ui/core";
   import { setAngleSliderSettings, type ModernoAngleSliderRootProps } from "./angle-slider-props.js";
@@ -61,6 +62,9 @@
       }
     };
   });
+
+  // A press focuses the thumb (Ark); the modality keeps that from drawing a focus ring.
+  $effect(trackInputModality);
 
   function settle(details: { value: number }) {
     const next = resolveAngle(details.value, { marks, snapToMarks: shift.isHeld() });

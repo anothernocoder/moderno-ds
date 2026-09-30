@@ -98,6 +98,7 @@ exports[`@moderno-ui/core exports > exports exactly the pinned names 1`] = `
   "toolbarTooltipText",
   "toolbarTooltipTriggerProps",
   "tooltipRecipe",
+  "trackInputModality",
   "vectorPad",
   "vectorPadRecipe",
   "withoutEventHandlers",

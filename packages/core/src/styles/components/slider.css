@@ -48,7 +48,7 @@
   grid-column: 1 / -1;
   display: flex;
   align-items: center;
-  height: var(--spacing-5);
+  height: var(--spacing-4);
   cursor: pointer;
 }
 [data-scope="slider"][data-part="track"] {
@@ -66,10 +66,10 @@
    own, beside Ark's inline `transform`) centres it across. */
 [data-scope="slider"][data-part="thumb"] {
   top: 50%;
-  width: var(--spacing-5);
-  height: var(--spacing-5);
+  width: var(--spacing-4);
+  height: var(--spacing-4);
   translate: 0 -50%;
-  border: calc(var(--spacing-1) / 2) solid var(--primary);
+  border: 1px solid var(--primary);
   border-radius: var(--radius-full);
   background-color: var(--background);
   box-shadow: var(--shadow-sm);
@@ -83,6 +83,12 @@
   outline-style: solid;
   outline-width: 2px;
   outline-offset: 2px;
+}
+/* A press focuses the thumb from script, which the browser counts as
+   :focus-visible. The ring is for the keyboard, so it hides while the last
+   input was a pointer (`trackInputModality` marks <html>). */
+:root[data-input-modality="pointer"] [data-scope="slider"][data-part="thumb"]:focus-visible {
+  outline-style: none;
 }
 [data-scope="slider"][data-part="range"][data-invalid] {
   background-color: var(--destructive);
@@ -154,7 +160,7 @@
 }
 [data-scope="slider"][data-part="control"][data-orientation="vertical"] {
   flex-direction: column;
-  width: var(--spacing-5);
+  width: var(--spacing-4);
   height: calc(var(--spacing-8) * 4);
 }
 [data-scope="slider"][data-part="track"][data-orientation="vertical"] {
@@ -192,19 +198,19 @@
 }
 [data-scope="slider"][data-part="root"][data-size="sm"]
   > [data-part="control"][data-orientation="horizontal"] {
-  height: var(--spacing-4);
+  height: var(--spacing-3);
 }
 [data-scope="slider"][data-part="root"][data-size="lg"]
   > [data-part="control"][data-orientation="horizontal"] {
-  height: var(--spacing-6);
+  height: var(--spacing-5);
 }
 [data-scope="slider"][data-part="root"][data-size="sm"]
   > [data-part="control"][data-orientation="vertical"] {
-  width: var(--spacing-4);
+  width: var(--spacing-3);
 }
 [data-scope="slider"][data-part="root"][data-size="lg"]
   > [data-part="control"][data-orientation="vertical"] {
-  width: var(--spacing-6);
+  width: var(--spacing-5);
 }
 [data-scope="slider"][data-part="root"][data-size="sm"]
   > [data-part="control"]
@@ -229,12 +235,12 @@
 [data-scope="slider"][data-part="root"][data-size="sm"]
   > [data-part="control"]
   > [data-part="thumb"] {
-  width: var(--spacing-4);
-  height: var(--spacing-4);
+  width: var(--spacing-3);
+  height: var(--spacing-3);
 }
 [data-scope="slider"][data-part="root"][data-size="lg"]
   > [data-part="control"]
   > [data-part="thumb"] {
-  width: var(--spacing-6);
-  height: var(--spacing-6);
+  width: var(--spacing-5);
+  height: var(--spacing-5);
 }

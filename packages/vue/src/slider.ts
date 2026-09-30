@@ -1,11 +1,19 @@
-import { defineComponent, h, type Component, type DefineComponent, type PropType } from "vue";
+import {
+  defineComponent,
+  h,
+  onBeforeUnmount,
+  onMounted,
+  type Component,
+  type DefineComponent,
+  type PropType,
+} from "vue";
 import { Slider as ArkSlider } from "@ark-ui/vue";
 import type {
   SliderRootProps,
   SliderValueChangeDetails,
   SliderFocusChangeDetails,
 } from "@ark-ui/vue";
-import { sliderRecipe, type SliderSize } from "@moderno-ui/core";
+import { sliderRecipe, trackInputModality, type SliderSize } from "@moderno-ui/core";
 
 export type { SliderSize } from "@moderno-ui/core";
 
@@ -29,7 +37,8 @@ export interface ModernoSliderRootProps extends SliderRootProps {
  * unknown attributes onto its `data-part="root"` element, so the recipe's
  * attribute rides along and `components.css` sizes the parts from it.
  * `defaultValue`, `modelValue`, `min`, `max`, `step`, `orientation`, … pass
- * straight through via attrs.
+ * straight through via attrs. It tracks the input modality, so a press —
+ * which Ark answers by focusing the thumb — draws no focus ring.
  */
 const SliderRootImpl = defineComponent({
   name: "ModernoSliderRoot",
@@ -38,6 +47,9 @@ const SliderRootImpl = defineComponent({
     size: { type: String as PropType<SliderSize>, default: undefined },
   },
   setup(props, { slots, attrs }) {
+    let stopTracking: (() => void) | undefined;
+    onMounted(() => (stopTracking = trackInputModality()));
+    onBeforeUnmount(() => stopTracking?.());
     // Ark's Root re-typed as a plain Component so the merged bag isn't checked
     // against its full prop union (we only add the recipe's data-*).
     const Root = ArkSlider.Root as unknown as Component;

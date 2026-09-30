@@ -413,6 +413,12 @@
     outline-width: 2px;
     outline-offset: 2px;
   }
+  /* A press focuses the thumb from script, which the browser counts as
+     :focus-visible. The ring is for the keyboard, so it hides while the last
+     input was a pointer (`trackInputModality` marks <html>). */
+  :root[data-input-modality="pointer"] [data-scope="angle-slider"][data-part="thumb"]:focus-visible {
+    outline-style: none;
+  }
   /* The needle, from the hub up to the knob. */
   [data-scope="angle-slider"][data-part="thumb"]::before {
     content: "";
@@ -431,10 +437,10 @@
     position: absolute;
     top: var(--spacing-1);
     left: 50%;
-    width: var(--spacing-3);
-    height: var(--spacing-3);
+    width: var(--spacing-2);
+    height: var(--spacing-2);
     translate: -50% 0;
-    border: calc(var(--spacing-1) / 2) solid var(--primary);
+    border: 1px solid var(--primary);
     border-radius: var(--radius-full);
     background-color: var(--background);
   }
@@ -1664,7 +1670,7 @@
   [data-scope="color-picker"]:is([data-part="area-thumb"], [data-part="channel-slider-thumb"]) {
     width: var(--spacing-4);
     height: var(--spacing-4);
-    border: calc(var(--spacing-1) / 2) solid var(--background);
+    border: 1px solid var(--background);
     border-radius: var(--radius-full);
     box-shadow:
       0 0 0 1px color-mix(in oklab, var(--foreground) 30%, transparent),
@@ -1757,7 +1763,7 @@
     height: 100%;
   }
   [data-scope="color-picker"][data-part="swatch-trigger"][data-state="checked"] {
-    outline: 2px solid var(--foreground);
+    outline: 1px solid var(--foreground);
     outline-offset: 1px;
   }
   [data-scope="color-picker"][data-part="swatch-trigger"]:focus-visible {
@@ -4965,7 +4971,7 @@
     margin: 0;
     border: none;
     background-color: var(--primary);
-    box-shadow: 0 0 0 calc(var(--spacing-1) / 2) var(--card);
+    box-shadow: 0 0 0 1px var(--card);
     visibility: hidden;
   }
   [data-scope="radio-group"][data-variant="tile"]
@@ -5360,7 +5366,7 @@
     grid-column: 1 / -1;
     display: flex;
     align-items: center;
-    height: var(--spacing-5);
+    height: var(--spacing-4);
     cursor: pointer;
   }
   [data-scope="slider"][data-part="track"] {
@@ -5378,10 +5384,10 @@
      own, beside Ark's inline `transform`) centres it across. */
   [data-scope="slider"][data-part="thumb"] {
     top: 50%;
-    width: var(--spacing-5);
-    height: var(--spacing-5);
+    width: var(--spacing-4);
+    height: var(--spacing-4);
     translate: 0 -50%;
-    border: calc(var(--spacing-1) / 2) solid var(--primary);
+    border: 1px solid var(--primary);
     border-radius: var(--radius-full);
     background-color: var(--background);
     box-shadow: var(--shadow-sm);
@@ -5395,6 +5401,12 @@
     outline-style: solid;
     outline-width: 2px;
     outline-offset: 2px;
+  }
+  /* A press focuses the thumb from script, which the browser counts as
+     :focus-visible. The ring is for the keyboard, so it hides while the last
+     input was a pointer (`trackInputModality` marks <html>). */
+  :root[data-input-modality="pointer"] [data-scope="slider"][data-part="thumb"]:focus-visible {
+    outline-style: none;
   }
   [data-scope="slider"][data-part="range"][data-invalid] {
     background-color: var(--destructive);
@@ -5466,7 +5478,7 @@
   }
   [data-scope="slider"][data-part="control"][data-orientation="vertical"] {
     flex-direction: column;
-    width: var(--spacing-5);
+    width: var(--spacing-4);
     height: calc(var(--spacing-8) * 4);
   }
   [data-scope="slider"][data-part="track"][data-orientation="vertical"] {
@@ -5504,19 +5516,19 @@
   }
   [data-scope="slider"][data-part="root"][data-size="sm"]
     > [data-part="control"][data-orientation="horizontal"] {
-    height: var(--spacing-4);
+    height: var(--spacing-3);
   }
   [data-scope="slider"][data-part="root"][data-size="lg"]
     > [data-part="control"][data-orientation="horizontal"] {
-    height: var(--spacing-6);
+    height: var(--spacing-5);
   }
   [data-scope="slider"][data-part="root"][data-size="sm"]
     > [data-part="control"][data-orientation="vertical"] {
-    width: var(--spacing-4);
+    width: var(--spacing-3);
   }
   [data-scope="slider"][data-part="root"][data-size="lg"]
     > [data-part="control"][data-orientation="vertical"] {
-    width: var(--spacing-6);
+    width: var(--spacing-5);
   }
   [data-scope="slider"][data-part="root"][data-size="sm"]
     > [data-part="control"]
@@ -5541,14 +5553,14 @@
   [data-scope="slider"][data-part="root"][data-size="sm"]
     > [data-part="control"]
     > [data-part="thumb"] {
-    width: var(--spacing-4);
-    height: var(--spacing-4);
+    width: var(--spacing-3);
+    height: var(--spacing-3);
   }
   [data-scope="slider"][data-part="root"][data-size="lg"]
     > [data-part="control"]
     > [data-part="thumb"] {
-    width: var(--spacing-6);
-    height: var(--spacing-6);
+    width: var(--spacing-5);
+    height: var(--spacing-5);
   }
 
   /* ──────────────────────── SortableList ────────────────────────── *
@@ -7164,10 +7176,10 @@
     top: var(--vector-pad-y);
     left: var(--vector-pad-x);
     box-sizing: border-box;
-    width: var(--spacing-4);
-    height: var(--spacing-4);
+    width: var(--spacing-3);
+    height: var(--spacing-3);
     translate: -50% -50%;
-    border: calc(var(--spacing-1) / 2) solid var(--primary);
+    border: 1px solid var(--primary);
     border-radius: var(--radius-full);
     background-color: var(--background);
     box-shadow: var(--shadow-sm);
@@ -7184,6 +7196,12 @@
     outline-style: solid;
     outline-width: 2px;
     outline-offset: 2px;
+  }
+  /* A press focuses the thumb from script, which the browser counts as
+     :focus-visible. The ring is for the keyboard, so it hides while the last
+     input was a pointer (`trackInputModality` marks <html>). */
+  :root[data-input-modality="pointer"] [data-scope="vector-pad"][data-part="thumb"]:focus-visible {
+    outline-style: none;
   }
   [data-scope="vector-pad"][data-part="thumb"][data-invalid] {
     border-color: var(--destructive);

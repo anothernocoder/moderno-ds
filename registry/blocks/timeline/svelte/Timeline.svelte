@@ -686,8 +686,8 @@
                   >
                     <span
                       class={selected
-                        ? "size-3.5 rotate-45 rounded-sm border-2 border-primary bg-primary outline-2 outline-offset-2 outline-foreground"
-                        : "size-2.5 rotate-45 rounded-sm border-2 border-primary bg-background"}
+                        ? "size-2.25 rotate-45 rounded-sm border border-primary bg-primary"
+                        : "size-2 rotate-45 rounded-sm border border-primary bg-background"}
                     ></span>
                     <Slider.HiddenInput />
                   </Slider.Thumb>

@@ -192,7 +192,7 @@ export function LongFormContent(props: LongFormContentProps) {
                           </div>
                           <Show when={index() === 0 && quote()}>
                             {(shown) => (
-                              <figure class="grid gap-4 border-l-2 border-primary pl-4 @sm:pl-6">
+                              <figure class="grid gap-4 border-l border-primary pl-4 @sm:pl-6">
                                 <blockquote class="font-serif text-body-lg text-balance @md:text-heading-sm">
                                   <p>{shown().text}</p>
                                 </blockquote>

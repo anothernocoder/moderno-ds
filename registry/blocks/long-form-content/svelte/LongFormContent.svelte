@@ -175,7 +175,7 @@
                   {/each}
                 </div>
                 {#if index === 0 && quote}
-                  <figure class="grid gap-4 border-l-2 border-primary pl-4 @sm:pl-6">
+                  <figure class="grid gap-4 border-l border-primary pl-4 @sm:pl-6">
                     <blockquote class="font-serif text-body-lg text-balance @md:text-heading-sm">
                       <p>{quote.text}</p>
                     </blockquote>

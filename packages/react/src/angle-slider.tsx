@@ -28,6 +28,7 @@ import {
   isAngleOutsideTurn,
   numberInputRecipe,
   resolveAngle,
+  trackInputModality,
   wrapAngle,
   type AngleSliderSize,
   type AngleSliderValueChangeDetails,
@@ -111,6 +112,8 @@ function AngleSliderRoot({
   const [uncontrolled, setUncontrolled] = useState(() => wrapAngle(defaultValue));
   const angle = value === undefined ? uncontrolled : wrapAngle(value);
   const isShiftHeld = useShiftWhilePressed();
+  // A press focuses the thumb (Ark); the modality keeps that from drawing a focus ring.
+  useEffect(trackInputModality, []);
 
   function settle(details: { value: number }) {
     const next = resolveAngle(details.value, { marks, snapToMarks: isShiftHeld() });

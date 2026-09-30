@@ -30,7 +30,7 @@ agent:
     - "The layout follows the block's own width, not the viewport: the label column widens from `--container-sm`, and every ruler mark shows from `--container-md` (below it, every other one, and always the whole seconds)."
   theming:
     - "The block paints only its borders (--border), its --background (so the sticky ruler and label column cover the tracks they scroll over), the playhead line and the keyframe diamonds (--primary). The play and loop buttons and the track labels are Toggle, the add, delete and zoom buttons ghost Button, their labels Tooltip, the ruler and tracks Slider."
-    - "The selected keyframe is a larger, filled diamond with a --foreground outline; the others are small hollow diamonds."
+    - "The selected keyframe is a filled diamond, one pixel larger; the others are small hollow diamonds."
     - "Layout comes from the Tailwind preset's contract-backed utilities; the two steps are --container-sm and --container-md."
 ---
 
@@ -211,7 +211,7 @@ The block has no clock. While `playing` is true, your app advances `time` (for e
 | Paused         | —                                    | The play button shows a play icon and is not pressed.                                                                                                                     |
 | Playing        | `playing`                            | The play button is pressed and shows a pause icon.                                                                                                                        |
 | Looping        | `loop`                               | The loop button is pressed.                                                                                                                                               |
-| Selected       | `selectedKeyframe`                   | That keyframe is a larger, filled diamond with an outline; its name ends in "selected".                                                                                   |
+| Selected       | `selectedKeyframe`                   | That keyframe is a filled diamond, one pixel larger; its name ends in "selected".                                                                                         |
 | Track selected | `selectedKeyframe`, or a label press | That track's label is pressed; Add keyframe adds to it.                                                                                                                   |
 | Zoomed         | `zoom` above `1`                     | The time area is `zoom` times wider and scrolls sideways; the ruler marks get denser.                                                                                     |
 | Disabled       | —                                    | Add keyframe with no track selected or with a keyframe on the playhead's frame; Delete keyframe with none selected; Zoom out and Fit at `1`; Zoom in at the deepest zoom. |

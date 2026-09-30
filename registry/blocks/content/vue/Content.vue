@@ -131,7 +131,7 @@ const showArticle = computed(
               {{ paragraph }}
             </p>
           </div>
-          <figure v-if="resolvedQuote" class="grid gap-3 border-l-2 border-border pl-4 @sm:pl-6">
+          <figure v-if="resolvedQuote" class="grid gap-3 border-l border-border pl-4 @sm:pl-6">
             <blockquote class="font-serif text-body-lg">{{ resolvedQuote.text }}</blockquote>
             <figcaption class="text-ui-md text-muted-foreground">
               {{ resolvedQuote.author }}

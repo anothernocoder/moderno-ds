@@ -162,7 +162,7 @@ export function SignUp(props: SignUpProps) {
               <ul class="grid gap-4">
                 <For each={highlights()}>
                   {(highlight) => (
-                    <li class="grid gap-1 border-l-2 border-border pl-4">
+                    <li class="grid gap-1 border-l border-border pl-4">
                       <p class="text-ui-md font-medium">{highlight.title}</p>
                       <Show when={highlight.description}>
                         {(description) => (

@@ -194,6 +194,9 @@ importers:
       '@zag-js/dom-query':
         specifier: 1.41.2
         version: 1.41.2
+      '@zag-js/focus-visible':
+        specifier: 1.41.2
+        version: 1.41.2
       '@zag-js/live-region':
         specifier: 1.41.2
         version: 1.41.2

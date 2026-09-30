@@ -185,7 +185,7 @@ const resolvedQuote = computed(() => (props.quote === undefined ? sampleQuote : 
                 </div>
                 <figure
                   v-if="index === 0 && resolvedQuote"
-                  class="grid gap-4 border-l-2 border-primary pl-4 @sm:pl-6"
+                  class="grid gap-4 border-l border-primary pl-4 @sm:pl-6"
                 >
                   <blockquote class="font-serif text-body-lg text-balance @md:text-heading-sm">
                     <p>{{ resolvedQuote.text }}</p>

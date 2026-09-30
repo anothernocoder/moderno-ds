@@ -197,6 +197,23 @@ const pageTitle = slug === "index" ? title : `${title} — Moderno`;
           {t("sidebar.noMatches")}
         </p>
       </aside>
+      <!-- Each page is a full load, so the sidebar would start back at the top.
+           Keep its scroll across pages: save it on leave, restore it here,
+           inline and right after the sidebar, before the first paint. -->
+      <script is:inline>
+        (() => {
+          const sidebar = document.getElementById("docs-sidebar");
+          const key = "docs-sidebar-scroll";
+          try {
+            sidebar.scrollTop = Number(sessionStorage.getItem(key)) || 0;
+            addEventListener("pagehide", () =>
+              sessionStorage.setItem(key, String(sidebar.scrollTop)),
+            );
+          } catch {
+            // Storage blocked: the sidebar just starts at the top.
+          }
+        })();
+      </script>
 
       <main id="main" class:list={[wide && "main--wide"]} data-pagefind-body>
         <slot />

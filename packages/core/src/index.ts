@@ -3,8 +3,9 @@
  *
  * CVA (props → deterministic data-attributes), class utilities, the component
  * recipes, the Zag machines for behaviour Ark does not ship (ADR-0010), the
- * screen-reader announcer, and the shared `styles/components.css` skeleton. No
- * framework imports: each framework package binds the machines itself.
+ * screen-reader announcer, the input-modality tracker, and the shared
+ * `styles/components.css` skeleton. No framework imports: each framework
+ * package binds the machines itself.
  */
 
 export { cva } from "./cva.js";
@@ -18,6 +19,8 @@ export type { ServerDocument } from "./server-document.js";
 
 export { announce } from "./announce.js";
 export type { AnnounceOptions, AnnouncePoliteness } from "./announce.js";
+
+export { trackInputModality } from "./input-modality.js";
 
 // Every recipe and its variant types. `recipes.ts` is written by `pnpm gen`
 // from `recipes/*.ts`, so a new component adds its recipe file, not a name here.
