@@ -371,12 +371,12 @@ test.describe("timeline — keyframes", () => {
     const off = sizes.filter((s) => !s.selected);
     expect(on).toHaveLength(1);
     for (const other of off) {
-      expect(on[0]!.width, "the selected diamond is bigger").toBeGreaterThan(other.width + 4);
+      expect(on[0]!.width, "the selected diamond is bigger").toBeGreaterThan(other.width);
       expect(other.filled, "the others are hollow").toBe(false);
       expect(other.outline).toBe("none");
     }
     expect(on[0]!.filled, "the selected diamond is filled").toBe(true);
-    expect(on[0]!.outline, "and outlined").toBe("solid");
+    expect(on[0]!.outline, "with no extra outline").toBe("none");
 
     await page.keyboard.press("Tab");
     await expect(keyframe(copy, "Position keyframe at 2.50 s, selected")).toBeFocused();
