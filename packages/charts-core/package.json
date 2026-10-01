@@ -1,6 +1,6 @@
 {
   "name": "@moderno-ui/charts-core",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Framework-agnostic chart math: pure functions over d3-scale/d3-shape/d3-array/d3-path. No DOM, SSR-safe. Forbids d3-selection/d3-transition.",
   "repository": {
     "type": "git",

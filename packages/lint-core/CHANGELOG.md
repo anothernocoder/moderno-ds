@@ -1,5 +1,40 @@
 # @moderno-ui/lint-core
 
+## 0.4.1
+
+### Patch Changes
+
+- c7d3d87: Add three CSS-only primitives in all four framework packages:
+
+  - **Badge** — a short status label (`neutral`, `solid`, `outline`, and the
+    `info`/`success`/`warning`/`error` statuses) at two sizes, with an optional
+    leading `dot`.
+  - **Chip** — a compact token (`outline`, `muted`, `solid`) whose `removable`
+    flag adds a named remove button reporting through `onRemove` (Vue: `@remove`).
+  - **Indicator** — a status dot with an optional label and a `pulse` ring that
+    stops under `prefers-reduced-motion`. A bare dot named by `aria-label` gets
+    `role="img"`, so screen readers read its status.
+
+  `@moderno-ui/core` gains `badgeRecipe`, `chipRecipe`, `indicatorRecipe`,
+  `indicatorAttrs` and `indicatorRole`. `moderno/valid-props` no longer folds a Vue `aria-*`/`data-*`
+  attribute to camelCase and reports it as an unknown prop.
+
+- 69946ef: Add **SegmentedControl** in all four framework packages, over Ark's
+  SegmentGroup: `Root > Indicator + Item (> icon + ItemText + ItemHiddenInput)`.
+  Two to five options sit side by side in one track, one is selected, and a pill
+  slides behind it (it holds still under `prefers-reduced-motion`). Each segment
+  is a native radio, so Tab enters the group and the arrow keys move and select.
+  `SegmentedControl.Root` takes `size` (`sm`, `md`, `lg`, matching Field) and
+  `fullWidth`; inside a `Field`, the Field's label names it and its helper or
+  error text describes it. A long label ends in an ellipsis and shows in full as
+  a tooltip. Ark's `Label` is left out: name the control with `aria-label` or a
+  `Field.Label`.
+
+  `@moderno-ui/core` gains `segmentedControlRecipe`, `segmentedControlAttrs`,
+  `segmentedControlFieldProps` and `syncTruncationTitle`. `moderno/no-raw-ark`
+  now also suggests the Moderno component whose scope matches a raw Ark import
+  (`SegmentGroup` → `SegmentedControl`).
+
 ## 0.4.0
 
 ### Minor Changes

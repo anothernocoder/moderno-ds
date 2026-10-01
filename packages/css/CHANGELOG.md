@@ -1,5 +1,83 @@
 # @moderno-ui/css
 
+## 0.5.0
+
+### Minor Changes
+
+- 78d610b: **If you are upgrading from 0.2.x: 0.3.0 and later is a different library.**
+  0.3.0 and 0.4.0 should have said so and did not. The 0.2.x packages came from an
+  earlier repo, `anothernocoder/moderno`. From 0.3.0, `@moderno-ui/*` is built
+  from `anothernocoder/moderno-ds` and every component was rewritten. There is no
+  codemod; plan a migration.
+
+  - **Zag → Ark anatomy.** Components are built on Ark UI and use Ark's parts and
+    names: `Sheet` is now `Drawer` (with `placement`), an on/off `Toggle` is now
+    `Switch`, `Radio` is now `RadioGroup`, and the combined `Input` is now `Field`
+    with `Field.Label`, `Field.Input` and the rest.
+  - **`--md-*` → the token contract.** Themes set semantic slots (`--background`,
+    `--primary`, `--border`, …) instead of `--md-*` variables, and dark mode is the
+    `.dark` class instead of `[data-theme]`. See `CONTRACT.md`.
+  - **`@moderno-ui/tokens` → `@moderno-ui/css`.** One package ships the variables,
+    the component styles, the Tailwind preset and the contract. `styles` also moved
+    to `@moderno-ui/css`, `class-contract` to `@moderno-ui/core`, `chart-core` to
+    `@moderno-ui/charts-core`, and `registry` and `create-moderno-ui` to
+    `@moderno-ui/cli`.
+
+  The root README has the full migration note.
+
+### Patch Changes
+
+- b7eea08: Lighter controls, and no focus ring on a mouse press.
+
+  - **Slider:** smaller thumbs (`sm` 12px, `md` 16px, `lg` 20px, were 16/20/24) with a 1px border.
+  - **Angle Slider:** the knob is 8px with a 1px border.
+  - **Vector Pad:** the handle is 12px with a 1px border.
+  - **Color Picker and Radio Group:** the selected swatch outline, the picker thumbs and the tile ring are now 1px.
+  - **Focus ring:** Slider, Angle Slider and Vector Pad no longer draw it when a thumb is clicked or dragged. Ark focuses the thumb from script on pointerdown, which browsers count as `:focus-visible`. Keyboard focus still shows the ring.
+
+  `@moderno-ui/core` gains `trackInputModality()`. It sets `data-input-modality` (`pointer`, `keyboard` or `virtual`) on `<html>` and returns a cleanup. It does nothing on the server. The Slider and Angle Slider roots in every framework package start it on mount, and the Vector Pad machine runs it itself. `@moderno-ui/css` picks up the new styles from core.
+
+- Updated dependencies [88a5167]
+- Updated dependencies [2ef774b]
+- Updated dependencies [9193504]
+- Updated dependencies [c7d3d87]
+- Updated dependencies [2ed7eb4]
+- Updated dependencies [71dd05a]
+- Updated dependencies [e382e26]
+- Updated dependencies [f415bea]
+- Updated dependencies [4a395ab]
+- Updated dependencies [f28650e]
+- Updated dependencies [b7eea08]
+- Updated dependencies [6035afd]
+- Updated dependencies [d817e03]
+- Updated dependencies [986137e]
+- Updated dependencies [3437240]
+- Updated dependencies [796926f]
+- Updated dependencies [7ea4320]
+- Updated dependencies [e5c929a]
+- Updated dependencies [e601e4e]
+- Updated dependencies [9fef080]
+- Updated dependencies [677509c]
+- Updated dependencies [d947a35]
+- Updated dependencies [abee231]
+- Updated dependencies [49cf29c]
+- Updated dependencies [69946ef]
+- Updated dependencies [7329652]
+- Updated dependencies [cbab2a4]
+- Updated dependencies [94c8e8c]
+- Updated dependencies [d2b686b]
+- Updated dependencies [eb32ab5]
+- Updated dependencies [8cb82f1]
+- Updated dependencies [95d7aff]
+- Updated dependencies [2a93f10]
+- Updated dependencies [15fbb24]
+- Updated dependencies [15e6251]
+- Updated dependencies [aee39b6]
+- Updated dependencies [939c799]
+- Updated dependencies [48a1af8]
+- Updated dependencies [18b05a6]
+  - @moderno-ui/core@0.5.0
+
 ## 0.4.0
 
 ### Minor Changes

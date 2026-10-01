@@ -1,5 +1,13 @@
 # @moderno-ui/mcp
 
+## 0.3.2
+
+### Patch Changes
+
+- Updated dependencies [c7d3d87]
+- Updated dependencies [69946ef]
+  - @moderno-ui/lint-core@0.4.1
+
 ## 0.3.1
 
 ### Patch Changes

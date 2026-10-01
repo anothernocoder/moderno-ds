@@ -1,5 +1,13 @@
 # @moderno-ui/theme-compile
 
+## 0.0.2
+
+### Patch Changes
+
+- Updated dependencies [78d610b]
+- Updated dependencies [b7eea08]
+  - @moderno-ui/css@0.5.0
+
 ## 0.0.1
 
 ### Patch Changes
