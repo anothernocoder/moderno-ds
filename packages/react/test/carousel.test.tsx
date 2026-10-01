@@ -2,6 +2,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { act, cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import type { ReactElement } from "react";
 import { Carousel, type CarouselSize, type CarouselPageChangeDetails } from "../src/index.js";
 import {
   CAROUSEL_WIDTH,
@@ -80,6 +81,24 @@ const parts = (name: string) => [
 const currentPage = () =>
   parts("indicator").findIndex((indicator) => indicator.hasAttribute("data-current"));
 
+/**
+ * Renders, then lets Ark finish mounting before a test interacts. One frame
+ * after mount Ark re-measures the slides and re-sets the page it reads from
+ * zag's React state, which only catches up with a page change once React
+ * re-renders. On a slow runner that frame can land between a click and the
+ * re-render, and put the old page back. Ark scrolls to the page a frame later,
+ * so two frames clear both.
+ */
+async function renderMounted(ui: ReactElement) {
+  render(ui);
+  await act(
+    () =>
+      new Promise<void>((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+      ),
+  );
+}
+
 let undoLayout: () => void;
 beforeEach(() => {
   undoLayout = layOutCarouselSlides();
@@ -138,7 +157,7 @@ describe("Carousel", () => {
   it("steps with next and prev, and reports the page", async () => {
     const user = userEvent.setup();
     const onPageChange = vi.fn();
-    render(<Demo onPageChange={onPageChange} />);
+    await renderMounted(<Demo onPageChange={onPageChange} />);
     await waitFor(() => expect(part("next-trigger")).toHaveProperty("disabled", false));
     await user.click(part("next-trigger"));
     await waitFor(() => expect(currentPage()).toBe(1));
@@ -150,7 +169,7 @@ describe("Carousel", () => {
 
   it("goes to the page of a clicked indicator", async () => {
     const user = userEvent.setup();
-    render(<Demo />);
+    await renderMounted(<Demo />);
     await waitFor(() => expect(parts("indicator")).toHaveLength(3));
     await user.click(screen.getByRole("button", { name: "Go to slide 3" }));
     await waitFor(() => expect(currentPage()).toBe(2));
@@ -158,7 +177,7 @@ describe("Carousel", () => {
 
   it("disables prev on the first page and next on the last", async () => {
     const user = userEvent.setup();
-    render(<Demo />);
+    await renderMounted(<Demo />);
     await waitFor(() => expect(part("next-trigger")).toHaveProperty("disabled", false));
     expect(part("prev-trigger")).toHaveProperty("disabled", true);
     await user.click(screen.getByRole("button", { name: "Go to slide 3" }));
@@ -168,7 +187,7 @@ describe("Carousel", () => {
 
   it("wraps around from the last page with loop", async () => {
     const user = userEvent.setup();
-    render(<Demo loop defaultPage={2} />);
+    await renderMounted(<Demo loop defaultPage={2} />);
     await waitFor(() => expect(currentPage()).toBe(2));
     expect(part("next-trigger")).toHaveProperty("disabled", false);
     await user.click(part("next-trigger"));
