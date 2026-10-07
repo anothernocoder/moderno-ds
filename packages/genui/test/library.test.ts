@@ -2,8 +2,18 @@ import { readdirSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { createLibrary, createParser } from "@openuidev/lang-core";
 import { discoverManifests, type ComponentsManifest } from "@moderno-ui/lint-core";
-import { describe, expect, it } from "vitest";
+import type {
+  AreaChartProps,
+  BarChartProps,
+  BarListProps,
+  DonutChartProps,
+  LineChartProps,
+  SparkChartProps,
+} from "@moderno-ui/react";
+import { describe, expect, expectTypeOf, it } from "vitest";
+import type { z } from "zod/v4";
 import exampleManifest from "../../../docs/prd/phase-7/example.react.moderno.agent.json" with { type: "json" };
+import { CHART_DATA_TYPES } from "../src/library/props.ts";
 import { createSubLibrary, fromManifest, type GenUIComponent } from "../src/server.ts";
 
 // The real manifests, found the way @moderno-ui/mcp finds them.
@@ -119,6 +129,54 @@ describe("fromManifest", () => {
     expect(invalid.meta.errors).toEqual([
       expect.objectContaining({ code: "type-mismatch", component: "Button", path: "/variant" }),
     ]);
+  });
+});
+
+describe("chart data", () => {
+  const charts = ["BarChart", "AreaChart", "LineChart", "DonutChart", "BarList", "SparkChart"];
+  const library = createSubLibrary(fromManifest(reactManifest, contract), charts);
+  const parser = createParser(library.toJSONSchema());
+
+  it("shows the series and point shapes in the prompt", () => {
+    const prompt = signatures(library.prompt());
+    const signature = (name: string) => prompt.find((line) => line.startsWith(`${name}(`));
+    const series = (points: string) => `{name?: string, ${points}}[]`;
+
+    expect(signature("BarChart")).toContain(`series: ${series("values: number[]")}`);
+    for (const name of ["AreaChart", "LineChart"])
+      expect(signature(name)).toContain(`series: ${series("points: {x: number, y: number}[]")}`);
+    expect(signature("DonutChart")).toContain("data: {name?: string, value: number}[]");
+    expect(signature("BarList")).toContain("data: {name: string, value: number}[]");
+    expect(signature("SparkChart")).toContain("points: {x: number, y: number}[]");
+  });
+
+  it("rejects a series in the wrong shape and parses the right one clean", () => {
+    const bar = (series: string) =>
+      parser.parse(`root = Stack([sales])\nsales = BarChart(["W1", "W2"], 240, [${series}], 480)`);
+
+    expect(bar('{"name": "Sales", "data": [1, 2]}').meta.errors).toEqual([
+      expect.objectContaining({ component: "BarChart", path: "/series/0/values" }),
+    ]);
+    expect(bar('{"name": "Sales", "values": [1, 2]}').meta.errors).toEqual([]);
+
+    const spark = parser.parse("root = Stack([trend])\ntrend = SparkChart([12, 14])");
+    expect(spark.meta.errors).toEqual([
+      expect.objectContaining({ code: "type-mismatch", path: "/points/0" }),
+      expect.objectContaining({ code: "type-mismatch", path: "/points/1" }),
+    ]);
+  });
+
+  it("parses into the data @moderno-ui/react's chart props take", () => {
+    // Checked by `pnpm typecheck`: a renamed or added field in charts-core fails here.
+    type Parsed<Name extends keyof typeof CHART_DATA_TYPES> = z.infer<
+      ReturnType<(typeof CHART_DATA_TYPES)[Name]>
+    >;
+    expectTypeOf<Parsed<"BarSeries">>().toExtend<BarChartProps["series"][number]>();
+    expectTypeOf<Parsed<"CartesianSeries">>().toExtend<AreaChartProps["series"][number]>();
+    expectTypeOf<Parsed<"CartesianSeries">>().toExtend<LineChartProps["series"][number]>();
+    expectTypeOf<Parsed<"DonutDatum">>().toExtend<DonutChartProps["data"][number]>();
+    expectTypeOf<Parsed<"BarListItem">>().toExtend<BarListProps["data"][number]>();
+    expectTypeOf<Parsed<"XYPoint">>().toExtend<SparkChartProps["points"][number]>();
   });
 });
 

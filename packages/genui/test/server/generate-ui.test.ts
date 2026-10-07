@@ -169,6 +169,24 @@ describe("generateUI", () => {
     expect(joined(chunks.slice(2), "program")).toBe(VALID);
   });
 
+  it("retries once when a chart's series has the wrong shape", async () => {
+    mockedJudge.mockResolvedValue(routes("widget", { BarChart: 0.9 }));
+    const chart = (series: string) =>
+      `\`\`\`openui-lang\nroot = Stack([sales])\nsales = BarChart(["W1", "W2"], 240, [${series}], 480)\n\`\`\``;
+    const { llm, calls } = scriptedLLM(
+      [chart('{"name": "Sales", "data": [28, 31]}')],
+      [chart('{"name": "Sales", "values": [28, 31]}')],
+    );
+
+    const chunks = await collect(
+      generateUI({ message: "sales this month", judge: judgeConfig, llm, manifest, contract }),
+    );
+
+    expect(calls).toHaveLength(2);
+    expect(calls[1]!.messages.at(-1)!.content).toContain('"path": "/series/0/values"');
+    expect(chunks.map((chunk) => chunk.type)).toEqual(["program", "discard", "program"]);
+  });
+
   it("yields text and program chunks while the LLM is still streaming", async () => {
     mockedJudge.mockResolvedValue(routes("widget", { Button: 0.9 }));
     const events: string[] = [];

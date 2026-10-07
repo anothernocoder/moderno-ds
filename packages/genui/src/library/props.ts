@@ -31,6 +31,25 @@ const PLAIN_TYPES: Record<string, () => z.ZodType> = {
   "number[]": () => z.array(z.number()),
 };
 
+const xyPoint = () => z.object({ x: z.number(), y: z.number() });
+
+/**
+ * The element types of the charts' data props, by the name props-doc gives
+ * them (`readonly BarSeries[]`). Spelled out so the prompt shows the shape and
+ * the parser rejects a wrong one. They mirror `@moderno-ui/charts-core`; a type
+ * test in `test/library.test.ts` fails when the two drift.
+ */
+export const CHART_DATA_TYPES = {
+  XYPoint: xyPoint,
+  BarSeries: () => z.object({ name: z.string().optional(), values: z.array(z.number()) }),
+  CartesianSeries: () => z.object({ name: z.string().optional(), points: z.array(xyPoint()) }),
+  BarListItem: () => z.object({ name: z.string(), value: z.number() }),
+  DonutDatum: () => z.object({ name: z.string().optional(), value: z.number() }),
+} satisfies Record<string, () => z.ZodType>;
+
+/** `BarSeries[]` */
+const ARRAY_OF = /^(\w+)\[\]$/;
+
 function isBlocked(prop: AgentProp): boolean {
   return (
     BLOCKED_NAMES.has(prop.name) || BLOCKED_PATTERN.test(prop.name) || prop.type.includes("=>")
@@ -51,9 +70,13 @@ function toZodType(prop: AgentProp, variants: Record<string, readonly string[]>)
   if (STRING_UNION.test(type)) {
     return asEnum(type.split("|").map((member) => JSON.parse(member.trim()) as string));
   }
-  // ponytail: props-doc only names a structured type (`readonly BarSeries[]`),
-  // so a required one is untyped data and an optional one is left out. Give
-  // the manifest the expanded shape when charts need strict validation.
+  const elementName = ARRAY_OF.exec(type)?.[1] ?? "";
+  if (Object.hasOwn(CHART_DATA_TYPES, elementName)) {
+    return z.array(CHART_DATA_TYPES[elementName as keyof typeof CHART_DATA_TYPES]());
+  }
+  // ponytail: props-doc only names any other structured type
+  // (`Partial<ChartMargin>`), so a required one is untyped data and an
+  // optional one is left out. Add it to CHART_DATA_TYPES when a model needs it.
   return prop.required ? z.any().describe(`TypeScript type: ${prop.type}`) : null;
 }
 
