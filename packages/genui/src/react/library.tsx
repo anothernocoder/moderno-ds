@@ -13,11 +13,12 @@ import {
   type Library,
 } from "@openuidev/react-lang";
 import * as Moderno from "@moderno-ui/react";
+import { actionField } from "../library/blocks.ts";
 import type { GenUIComponent } from "../library/from-manifest.ts";
 import { useWidgetForm } from "./form-values.ts";
 import { SIMPLE_FORM_RENDERERS } from "./simple-forms.tsx";
 
-type AnyComponent = ComponentType<Record<string, unknown> & { children?: ReactNode }>;
+export type AnyComponent = ComponentType<Record<string, unknown> & { children?: ReactNode }>;
 type Exports = Record<string, unknown>;
 
 const reactExports = Moderno as unknown as Exports;
@@ -83,6 +84,40 @@ const ActionButton: ComponentRenderer = ({ props: { children, action, ...props }
   );
 };
 
+/**
+ * A host's Block. Its OpenUI props pass through, minus the click actions: each
+ * label with a callback (`actionLabel` + `onAction`) gets a callback that runs
+ * its `actionClick`, or sends the label with the values of the widget's form,
+ * as a Button does. An omitted label is "": no button, not the sample's.
+ */
+export function renderBlock(
+  Block: AnyComponent,
+  actions: { label: string; callback: string }[],
+): ComponentRenderer {
+  return function BlockNode({ props: { children, ...props }, renderNode }) {
+    const triggerAction = useTriggerAction();
+    const form = useWidgetForm();
+    const blockProps: Record<string, unknown> = { ...props };
+    for (const { label, callback } of actions) {
+      const text = typeof props[label] === "string" ? props[label] : "";
+      const plan = props[actionField(label)] as ActionPlan | undefined;
+      delete blockProps[actionField(label)];
+      blockProps[label] = text;
+      if (!text) continue;
+      // A form Block's submit event: the page stays, the values go to the assistant.
+      blockProps[callback] = (event?: { preventDefault?: () => void }) => {
+        event?.preventDefault?.();
+        void (plan ? triggerAction(text, undefined, plan) : triggerAction(text, form));
+      };
+    }
+    return hasChildren(children) ? (
+      <Block {...blockProps}>{renderNode(children)}</Block>
+    ) : (
+      <Block {...blockProps} />
+    );
+  };
+}
+
 const spacing = (gap: unknown) => (gap === undefined ? undefined : `var(--spacing-${String(gap)})`);
 
 // The layouts have no moderno component: a flex column or row, and a grid.
@@ -118,8 +153,8 @@ const RENDERERS: Record<string, ComponentRenderer> = {
   Grid,
 };
 
-function rendererFor(name: string): ComponentRenderer {
-  const renderer = RENDERERS[name];
+function rendererFor(name: string, blocks: Record<string, ComponentRenderer>): ComponentRenderer {
+  const renderer = blocks[name] ?? RENDERERS[name];
   if (renderer) return renderer;
   const component = reactComponent(name);
   if (!component) throw new Error(`[genui] No @moderno-ui/react component renders "${name}".`);
@@ -128,10 +163,14 @@ function rendererFor(name: string): ComponentRenderer {
 
 /**
  * The OpenUI library that renders the given neutral components (the full
- * library or a sub-library's) with `@moderno-ui/react`. `Stack` is the root.
- * Throws when a component has no React renderer.
+ * library or a sub-library's) with `@moderno-ui/react`, and the host's Blocks
+ * with their `blocks` renderer (`renderBlock`). `Stack` is the root. Throws
+ * when a component has no renderer.
  */
-export function createReactLibrary(components: GenUIComponent[]): Library {
+export function createReactLibrary(
+  components: GenUIComponent[],
+  blocks: Record<string, ComponentRenderer> = {},
+): Library {
   return createLibrary({
     root: "Stack",
     components: components.map((component) =>
@@ -139,7 +178,7 @@ export function createReactLibrary(components: GenUIComponent[]): Library {
         name: component.name,
         description: component.description,
         props: component.props,
-        component: rendererFor(component.name),
+        component: rendererFor(component.name, blocks),
       }),
     ),
   });

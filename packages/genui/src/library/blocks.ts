@@ -51,6 +51,14 @@ function callbackOf(label: AgentProp, props: AgentProp[]): string | undefined {
   );
 }
 
+/** Each label with the callback its button fires: `{label: "actionLabel", callback: "onAction"}`. */
+export function blockActions(block: AgentBlock): { label: string; callback: string }[] {
+  return block.props.flatMap((prop) => {
+    const callback = callbackOf(prop, block.props);
+    return callback ? [{ label: prop.name, callback }] : [];
+  });
+}
+
 function toZod(type: string, shapes: AgentBlock["shapes"]): z.ZodType | null {
   const bare = bareType(type);
   const plain = PLAIN_TYPES[bare];
