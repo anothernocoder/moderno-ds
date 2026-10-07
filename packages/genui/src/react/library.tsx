@@ -14,6 +14,7 @@ import {
 } from "@openuidev/react-lang";
 import * as Moderno from "@moderno-ui/react";
 import type { GenUIComponent } from "../library/from-manifest.ts";
+import { SIMPLE_FORM_RENDERERS } from "./simple-forms.tsx";
 
 type AnyComponent = ComponentType<Record<string, unknown> & { children?: ReactNode }>;
 type Exports = Record<string, unknown>;
@@ -44,11 +45,18 @@ function textOf(children: unknown): string {
     : "";
 }
 
+/** No children at all, not even `[]`: a void part (`<input>`) throws on any. */
+function hasChildren(children: unknown): boolean {
+  return Array.isArray(children) ? children.length > 0 : children != null;
+}
+
 /** Props pass through; `children` (text and components) goes through `renderNode`. */
 function render(Component: AnyComponent): ComponentRenderer {
   return function ModernoNode({ props: { children, ...props }, renderNode }) {
-    return (
-      <Component {...props}>{children === undefined ? undefined : renderNode(children)}</Component>
+    return hasChildren(children) ? (
+      <Component {...props}>{renderNode(children)}</Component>
+    ) : (
+      <Component {...props} />
     );
   };
 }
@@ -96,7 +104,12 @@ const Grid: ComponentRenderer = ({ props: { children, columns, gap }, renderNode
   </div>
 );
 
-const RENDERERS: Record<string, ComponentRenderer> = { Button: ActionButton, Stack, Grid };
+const RENDERERS: Record<string, ComponentRenderer> = {
+  ...SIMPLE_FORM_RENDERERS,
+  Button: ActionButton,
+  Stack,
+  Grid,
+};
 
 function rendererFor(name: string): ComponentRenderer {
   const renderer = RENDERERS[name];

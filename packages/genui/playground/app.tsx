@@ -17,7 +17,7 @@ import {
 } from "@openuidev/react-headless";
 import { Alert, Avatar, Button, Field, Spinner } from "@moderno-ui/react";
 import type { ChatMessage } from "../src/server.ts";
-import { GenUI, type ActionEvent } from "../src/react.ts";
+import { GenUI, type ActionEvent, type OpenUIError } from "../src/react.ts";
 import { lastAttempt, splitAnswer } from "./answer.ts";
 import { Markdown } from "./markdown.tsx";
 
@@ -66,14 +66,41 @@ function AssistantMessage({
         <Markdown text={part.text} />
       </div>
     ) : (
-      <div key={index} className="widget">
-        <GenUI
-          response={part.text}
-          isStreaming={isStreaming && index === parts.length - 1}
-          onAction={onAction}
-        />
-      </div>
+      <Widget
+        key={index}
+        program={part.text}
+        isStreaming={isStreaming && index === parts.length - 1}
+        onAction={onAction}
+      />
     ),
+  );
+}
+
+/** A program, and an alert instead of a silent hole when part of it fails to render. */
+function Widget({
+  program,
+  isStreaming,
+  onAction,
+}: {
+  program: string;
+  isStreaming: boolean;
+  onAction: (event: ActionEvent) => void;
+}) {
+  const [failed, setFailed] = useState<string[]>([]);
+  const onError = (errors: OpenUIError[]) =>
+    setFailed(errors.flatMap((error) => (error.code === "render-error" ? [error.message] : [])));
+  return (
+    <div className="widget">
+      <GenUI response={program} isStreaming={isStreaming} onAction={onAction} onError={onError} />
+      {failed.length > 0 && (
+        <Alert.Root variant="error" size="sm">
+          <Alert.Content>
+            <Alert.Title>Part of this answer could not be shown</Alert.Title>
+            <Alert.Description>{failed.join(" ")}</Alert.Description>
+          </Alert.Content>
+        </Alert.Root>
+      )}
+    </div>
   );
 }
 

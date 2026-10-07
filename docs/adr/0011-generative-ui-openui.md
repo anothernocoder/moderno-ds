@@ -35,6 +35,17 @@ the component list are decided once, here.
 4. **One package, `@moderno-ui/genui`**, built with tsup like
    `@moderno-ui/mcp`. It has two entry points: `./server` (the library, the
    prompt and the router, no React) and `./react` (the renderer).
+5. **A form compound is one Simple form** in the library (#331). A Select,
+   a NumberInput or a Field needs ids, values and a collection that OpenUI
+   Lang cannot express, so the model writes plain arguments
+   (`Select(label, options, placeholder?)`, `NumberInput(label, min?, max?,
+   step?, defaultValue?)`) and the adapter renders the full anatomy from the
+   docs example. Its parts are not in the library. Overlays, toasts, app-shell
+   layouts and in-place editors (`Dialog`, `Toast`, `Splitter`, `Editable`…)
+   are left out: they do not belong inside an answer. A part the examples
+   only self-close (`<Avatar.Image />`) takes no children, so a void element
+   never gets any. A contract test renders a program for every component the
+   library exposes and fails on a render error or a component without one.
 
 ### Rejected: Vercel json-render
 
@@ -78,3 +89,6 @@ from the components and checked for drift (`pnpm agent:check-drift`).
   against that kind's keywords with the scoring `search_components` uses, and
   the second call asks a Noul for the top 8 only. A doubtful `text` surface
   is treated as UI, since inline mode lets the LLM answer in text anyway.
+- A component that fails to render reaches `<GenUI onError>` as
+  `runtime/render-error`, like a parse error, so the host retries or answers
+  in text instead of showing a silent hole.

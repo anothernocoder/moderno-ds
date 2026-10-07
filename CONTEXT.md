@@ -220,3 +220,6 @@ _Avoid_: mode, output type
 **Sub-library**:
 The OpenUI component library cut down to the primitives the **Router** picked, so the LLM's prompt lists only those. Built from the full library, which is derived from `moderno.agent.json`, never written by hand (ADR-0011).
 _Avoid_: toolkit, component subset (unqualified)
+
+**Simple form**:
+How the generative library exposes a form compound (Select, NumberInput, Field…): one component with plain arguments, like `Select(label, options)`, instead of its parts. The framework adapter renders the whole anatomy from the docs example, so the LLM cannot get the structure wrong (ADR-0011).

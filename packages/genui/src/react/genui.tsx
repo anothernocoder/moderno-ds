@@ -2,7 +2,7 @@
  * `<GenUI>`: draws an OpenUI Lang response with `@moderno-ui/react`. It adds
  * no styles; the installed theme styles everything (ADR-0011).
  */
-import { Renderer, type ActionEvent, type Library } from "@openuidev/react-lang";
+import { Renderer, type ActionEvent, type Library, type OpenUIError } from "@openuidev/react-lang";
 import type { ComponentsManifest, ContractManifest } from "@moderno-ui/lint-core";
 import contract from "@moderno-ui/css/moderno.agent.json" with { type: "json" };
 import reactManifest from "@moderno-ui/react/moderno.agent.json" with { type: "json" };
@@ -28,15 +28,22 @@ export interface GenUIProps {
   isStreaming?: boolean;
   /** A component fired an action, e.g. a Button with `@ToAssistant("…")`. The host handles it. */
   onAction?: (event: ActionEvent) => void;
+  /**
+   * The finished program has errors: a parse error, or a component that failed
+   * to render (`runtime/render-error`). Called with `[]` once they are gone.
+   * The host retries or falls back to text, as `generateUI` does.
+   */
+  onError?: (errors: OpenUIError[]) => void;
 }
 
-export function GenUI({ response, isStreaming = false, onAction }: GenUIProps) {
+export function GenUI({ response, isStreaming = false, onAction, onError }: GenUIProps) {
   return (
     <Renderer
       response={response}
       library={modernoLibrary()}
       isStreaming={isStreaming}
       onAction={onAction}
+      onError={onError}
     />
   );
 }

@@ -49,6 +49,8 @@
     "@moderno-ui/css": "workspace:*",
     "@moderno-ui/react": "workspace:*",
     "@openuidev/react-headless": "~0.17.0",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "ai": "^6.0.301",

@@ -5,13 +5,15 @@
  * its renderer.
  *
  * A ref must exist before the container that uses it, so components come out
- * in tiers: leaves, then compound parts (`CardHeader`), then compound roots
+ * in tiers: leaves and Simple forms, then the Simple forms that hold panels
+ * of leaves (`Tabs`), then compound parts (`CardHeader`), then compound roots
  * (`Card`), then the `Stack` and `Grid` layouts, which also hold each other.
  */
 import { defineComponent, tagSchemaId, type DefinedComponent } from "@openuidev/lang-core";
 import { z } from "zod/v4";
 import type { AgentComponent, ComponentsManifest, ContractManifest } from "@moderno-ui/lint-core";
 import { propFields } from "./props.ts";
+import { NOT_GENERATIVE, simpleFormOf, type SimpleForm } from "./simple-forms.ts";
 
 export type GenUIComponent = DefinedComponent<z.ZodObject, null>;
 
@@ -25,6 +27,15 @@ function rendersChildren(component: AgentComponent): boolean {
   return (component.examples ?? []).some((example) =>
     example.code.includes(`</${component.name}>`),
   );
+}
+
+/**
+ * A part renders a void element (`<input>`, `<img>`) when the examples only
+ * ever self-close it: `<Avatar.Image />`, never `</Avatar.Image>`.
+ */
+function isVoidPart(component: AgentComponent, tag: string): boolean {
+  const code = (component.examples ?? []).map((example) => example.code).join("\n");
+  return new RegExp(`<${tag}[\\s/>]`).test(code) && !code.includes(`</${tag}>`);
 }
 
 function describe(component: AgentComponent): string {
@@ -69,6 +80,22 @@ function defineLeaf(component: AgentComponent): GenUIComponent {
   return define(component.name, describe(component), fields);
 }
 
+/** Its plain arguments, its panels when it holds them, then its recipe variants. */
+function defineSimpleForm(
+  component: AgentComponent,
+  form: SimpleForm,
+  leaves: GenUIComponent[],
+): GenUIComponent {
+  const panels: [string, z.ZodType][] = form.panels
+    ? [["children", childrenOf(leaves).describe("One panel per entry, in the same order.")]]
+    : [];
+  return define(component.name, describe(component), [
+    ...form.fields,
+    ...panels,
+    ...propFields(component),
+  ]);
+}
+
 // ponytail: every part accepts any leaf and every root any leaf plus its own
 // parts, so an Accordion item cannot hold its trigger. Per-part child rules
 // when the manifest describes them.
@@ -79,7 +106,9 @@ function defineCompound(component: AgentComponent, leaves: GenUIComponent[]) {
       define(
         component.name + pascalCase(part.name),
         [`The ${part.name} part of ${component.name}.`, part.description].filter(Boolean).join(" "),
-        [["children", childrenOf(leaves).optional()]],
+        isVoidPart(component, `${component.name}.${pascalCase(part.name)}`)
+          ? []
+          : [["children", childrenOf(leaves).optional()]],
       ),
     );
   const root = define(component.name, describe(component), [
@@ -138,20 +167,35 @@ function defineLayouts(components: GenUIComponent[], contract: ContractManifest)
 }
 
 /**
- * One OpenUI component per primitive and per compound part, plus `Stack` and
- * `Grid`, whose gap steps come from the contract's spacing tokens.
+ * One OpenUI component per primitive (a Simple form for a form compound) and
+ * per compound part, plus `Stack` and `Grid`, whose gap steps come from the
+ * contract's spacing tokens. The primitives in `NOT_GENERATIVE` are left out.
  */
 export function fromManifest(
   manifest: ComponentsManifest,
   contract: ContractManifest,
 ): GenUIComponent[] {
-  const leaves = manifest.components.filter((component) => !isCompound(component)).map(defineLeaf);
-  const compounds = manifest.components
-    .filter(isCompound)
+  const generative = manifest.components.filter((component) => !NOT_GENERATIVE.has(component.name));
+  const formOf = (component: AgentComponent) =>
+    isCompound(component) ? simpleFormOf(component.name) : undefined;
+  const leaves = generative.flatMap((component) => {
+    const form = formOf(component);
+    if (!form) return isCompound(component) ? [] : [defineLeaf(component)];
+    return form.panels ? [] : [defineSimpleForm(component, form, [])];
+  });
+  // ponytail: panels and parts hold leaves only, so a Card cannot hold Tabs
+  // (a Stack holds both). Widen when a model needs the nesting.
+  const withPanels = generative.flatMap((component) => {
+    const form = formOf(component);
+    return form?.panels ? [defineSimpleForm(component, form, leaves)] : [];
+  });
+  const compounds = generative
+    .filter((component) => isCompound(component) && !formOf(component))
     .map((component) => defineCompound(component, leaves));
 
   const components = [
     ...leaves,
+    ...withPanels,
     ...compounds.flatMap(({ parts }) => parts),
     ...compounds.map(({ root }) => root),
   ];

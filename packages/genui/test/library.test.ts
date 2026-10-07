@@ -14,6 +14,7 @@ import { describe, expect, expectTypeOf, it } from "vitest";
 import type { z } from "zod/v4";
 import exampleManifest from "../../../docs/prd/phase-7/example.react.moderno.agent.json" with { type: "json" };
 import { CHART_DATA_TYPES } from "../src/library/props.ts";
+import { NOT_GENERATIVE } from "../src/library/simple-forms.ts";
 import { createSubLibrary, fromManifest, type GenUIComponent } from "../src/server.ts";
 
 // The real manifests, found the way @moderno-ui/mcp finds them.
@@ -103,7 +104,10 @@ describe("fromManifest", () => {
     const names = components.map((component) => component.name);
 
     expect(new Set(names).size).toBe(names.length);
-    for (const primitive of reactManifest.components) expect(names).toContain(primitive.name);
+    for (const primitive of reactManifest.components) {
+      if (NOT_GENERATIVE.has(primitive.name)) expect(names).not.toContain(primitive.name);
+      else expect(names).toContain(primitive.name);
+    }
     expect(names).toContain("CardHeader");
     expect(() => fullLibrary(components).prompt()).not.toThrow();
   });
@@ -129,6 +133,28 @@ describe("fromManifest", () => {
     expect(invalid.meta.errors).toEqual([
       expect.objectContaining({ code: "type-mismatch", component: "Button", path: "/variant" }),
     ]);
+  });
+
+  it("gives a part the examples only self-close no children, so it never gets any", () => {
+    const byName = new Map(
+      fromManifest(reactManifest, contract).map((component) => [component.name, component]),
+    );
+
+    expect(Object.keys(byName.get("AvatarImage")!.props.shape)).toEqual([]);
+    expect(Object.keys(byName.get("AvatarFallback")!.props.shape)).toEqual(["children"]);
+  });
+
+  it("gives a form compound its Simple form instead of its parts", () => {
+    const names = fromManifest(reactManifest, contract).map((component) => component.name);
+    const prompt = signatures(fullLibrary(fromManifest(reactManifest, contract)).prompt());
+
+    expect(names.filter((name) => name.startsWith("Select"))).toEqual(["Select"]);
+    expect(prompt.find((line) => line.startsWith("Select("))).toMatch(
+      /^Select\(label: string, options: \(string \| \{label: string, value: string\}\)\[\], placeholder\?: string, size\?: "sm" \| "md" \| "lg"\)/,
+    );
+    expect(prompt.find((line) => line.startsWith("Tabs("))).toMatch(
+      /^Tabs\(tabs: string\[\], children: \(string \| /,
+    );
   });
 });
 

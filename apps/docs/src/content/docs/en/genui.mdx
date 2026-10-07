@@ -182,6 +182,8 @@ The full adapter, with `contentDeltas`, is in `packages/genui/playground/server/
 
 `fromManifest(manifest, contract)` turns `moderno.agent.json` into OpenUI components, one per Moderno component and part, plus the `Stack` and `Grid` layouts. It reads the real components, so the list never drifts from them.
 
+A form component, like `Select`, `NumberInput` or `Field`, comes as one **simple form** with plain arguments instead of its parts: `Select("Size", ["Small", "Large"])`. `<GenUI>` draws the whole component from them, so the LLM cannot get its structure wrong. Overlays, toasts and app-shell layouts, like `Dialog`, `Toast` and `Splitter`, are left out: they do not belong inside an answer.
+
 ### createSubLibrary
 
 `createSubLibrary(components, names)` keeps only the named components, the parts they hold, and the layouts. The LLM's prompt then lists fewer components, so it is smaller, faster and cheaper. `generateUI` calls it with the router's picks.
@@ -190,11 +192,12 @@ The full adapter, with `contentDeltas`, is in `packages/genui/playground/server/
 
 `<GenUI>` from `@moderno-ui/genui/react` draws an OpenUI Lang program with `@moderno-ui/react`.
 
-| Prop          | Type                           | Default | Description                                                     |
-| ------------- | ------------------------------ | ------- | --------------------------------------------------------------- |
-| `response`    | `string \| null`               | —       | The program so far. `null` draws nothing.                       |
-| `isStreaming` | `boolean`                      | `false` | True while the program is still arriving.                       |
-| `onAction`    | `(event: ActionEvent) => void` | —       | A component fired an action, such as a button's `@ToAssistant`. |
+| Prop          | Type                              | Default | Description                                                                                                        |
+| ------------- | --------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------ |
+| `response`    | `string \| null`                  | —       | The program so far. `null` draws nothing.                                                                          |
+| `isStreaming` | `boolean`                         | `false` | True while the program is still arriving.                                                                          |
+| `onAction`    | `(event: ActionEvent) => void`    | —       | A component fired an action, such as a button's `@ToAssistant`.                                                    |
+| `onError`     | `(errors: OpenUIError[]) => void` | —       | The finished program has errors, such as a component that failed to render. Retry, or answer in text. `[]` clears. |
 
 ## Examples
 
