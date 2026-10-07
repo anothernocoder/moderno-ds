@@ -109,10 +109,18 @@ const STATES = [
 ] as const;
 type State = (typeof STATES)[number];
 
+/**
+ * Scrolls `state`'s copy into view and waits for its island to hydrate (it
+ * mounts `client:visible`). Typing before then lands in the server-rendered
+ * field, and hydration puts the field back to empty.
+ */
 async function showState(page: Page, state: State): Promise<void> {
   const block = page.locator(`[data-demo-state="${state}"] ${BLOCK}`);
   await block.scrollIntoViewIfNeeded();
   await block.waitFor({ state: "visible" });
+  await page
+    .locator(`astro-island:not([ssr]):has([data-demo-state="${state}"])`)
+    .waitFor({ state: "attached" });
 }
 
 async function blockMetrics(page: Page, state: State): Promise<BlockMetrics[]> {
