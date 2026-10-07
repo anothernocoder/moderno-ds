@@ -1,5 +1,5 @@
-// `@moderno-ui/genui/server`: no React. The component library and the router
-// land here (#312, #313, #315).
+// `@moderno-ui/genui/server`: no React. The component library, the router and
+// the pipeline that joins them with an LLM.
 export {
   judge,
   SystemOneError,
@@ -17,3 +17,10 @@ export {
 } from "./router/route.ts";
 export { fromManifest, type GenUIComponent } from "./library/from-manifest.ts";
 export { createSubLibrary } from "./library/sub-library.ts";
+export {
+  generateUI,
+  type ChatMessage,
+  type GenerateUIOptions,
+  type GenUIChunk,
+  type LLM,
+} from "./server/generate-ui.ts";
