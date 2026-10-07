@@ -222,6 +222,9 @@ importers:
 
   packages/genui:
     dependencies:
+      '@moderno-ui/lint-core':
+        specifier: workspace:*
+        version: link:../lint-core
       '@openuidev/lang-core':
         specifier: ~0.3.1
         version: 0.3.1(@modelcontextprotocol/sdk@1.29.0(zod@3.25.76))(zod@3.25.76)
@@ -232,6 +235,9 @@ importers:
         specifier: ^3.25.0
         version: 3.25.76
     devDependencies:
+      '@moderno-ui/css':
+        specifier: workspace:*
+        version: link:../css
       '@moderno-ui/react':
         specifier: workspace:*
         version: link:../react

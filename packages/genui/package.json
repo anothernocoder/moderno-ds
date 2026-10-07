@@ -31,6 +31,7 @@
     "build": "tsup"
   },
   "dependencies": {
+    "@moderno-ui/lint-core": "workspace:*",
     "@openuidev/lang-core": "~0.3.1",
     "@openuidev/react-lang": "~0.3.1",
     "zod": "^3.25.0"
@@ -40,6 +41,7 @@
     "react": "^19.0.0"
   },
   "devDependencies": {
+    "@moderno-ui/css": "workspace:*",
     "@moderno-ui/react": "workspace:*",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

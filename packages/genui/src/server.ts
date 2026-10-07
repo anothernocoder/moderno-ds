@@ -15,3 +15,5 @@ export {
   type RouteOptions,
   type Surface,
 } from "./router/route.ts";
+export { fromManifest, type GenUIComponent } from "./library/from-manifest.ts";
+export { createSubLibrary } from "./library/sub-library.ts";
