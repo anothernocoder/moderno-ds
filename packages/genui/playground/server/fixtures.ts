@@ -6,34 +6,40 @@ import { confirmCard, salesCard } from "../examples.ts";
 const WIDGETS = { sales: salesCard.response, order: confirmCard.response };
 type Topic = keyof typeof WIDGETS | "text";
 
-/** A message that matches a button of any earlier card is that button talking, so it gets a text reply. */
+const KIND: Record<Topic, string> = { sales: "chart", order: "confirm", text: "content" };
+
+/**
+ * Once a user turn has asked for the order, the confirm card is in the chat, so
+ * a later order message is its button talking and gets a text reply. User turns
+ * tell, since the router's state has each card swapped for a note.
+ */
 function topicOf(message: string, context: ChatMessage[]): Topic {
   if (/sales|ventas/i.test(message)) return "sales";
-  const button = `@ToAssistant(${JSON.stringify(message)})`;
-  const fromButton = context.some((turn) => turn.content.includes(button));
-  if (/order|pedido/i.test(message) && !fromButton) return "order";
+  const cardShown = context.some(
+    (turn) => turn.role === "user" && /order|pedido/i.test(turn.content),
+  );
+  if (/order|pedido/i.test(message) && !cardShown) return "order";
   return "text";
 }
 
-/** Answers the Router's questions: the Surface, and a Noul of 1 for each component the canned widget uses. */
+/** Answers the Router's questions: the Surface, the kind, and a Noul of 1 for each component the canned widget uses. */
 export function fixtureAnswers(
   state: { message: string; context: ChatMessage[] },
   questions: Record<string, Question>,
 ): Record<string, Answer> {
   const topic = topicOf(state.message, state.context);
   const widget = topic === "text" ? "" : WIDGETS[topic];
+  const choices: Record<string, string> = {
+    surface: topic === "text" ? "text" : "widget",
+    kind: KIND[topic],
+  };
   const answers: Record<string, Answer> = {};
   for (const key of Object.keys(questions)) {
+    const choice = choices[key];
     const name = key.slice(key.indexOf(":") + 1);
-    answers[key] =
-      key === "surface"
-        ? {
-            type: "choice",
-            choice: topic === "text" ? "text" : "widget",
-            probabilities: {},
-            confidence: 1,
-          }
-        : { type: "noul", noul: new RegExp(`\\b${name}\\(`).test(widget) ? 1 : 0 };
+    answers[key] = choice
+      ? { type: "choice", choice, probabilities: { [choice]: 1 }, confidence: 1 }
+      : { type: "noul", noul: new RegExp(`\\b${name}\\(`).test(widget) ? 1 : 0 };
   }
   return answers;
 }

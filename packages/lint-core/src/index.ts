@@ -11,6 +11,7 @@ export {
   type ContractManifest,
   type Framework,
 } from "./manifests.ts";
+export { rankComponents, type RankedComponent } from "./search.ts";
 export {
   ALL_RULES,
   runRules,

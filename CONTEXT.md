@@ -210,7 +210,7 @@ An agent answering with live UI built from moderno components instead of text: a
 _Avoid_: AI UI, dynamic UI, chat widgets (for the capability)
 
 **Router**:
-The one System One call (Jev or Nimble over `POST /v1/systemone`) that reads a message and its chat context and returns typed judgments: the **Surface** and which primitives are relevant. It never writes UI (ADR-0011).
+The System One calls (Jev or Nimble over `POST /v1/systemone`) that read a message, with its chat context as background, and return typed judgments: the **Surface** and which primitives are relevant. It never writes UI (ADR-0011).
 _Avoid_: classifier, planner, agent (for this call)
 
 **Surface**:

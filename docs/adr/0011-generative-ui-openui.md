@@ -72,3 +72,9 @@ from the components and checked for drift (`pnpm agent:check-drift`).
   and `zustand`; only the demo chat uses it.
 - `react` and `@moderno-ui/react` are peers of `@moderno-ui/genui`, so the
   app's copy of React and of the components is the one that renders.
+- **The router makes two calls, ten questions in all** (#321). One Noul per
+  primitive cost Nimble ~0.2 s each, so the first call asks the surface and
+  the kind of UI (chart, form, confirm…), the library is ranked locally
+  against that kind's keywords with the scoring `search_components` uses, and
+  the second call asks a Noul for the top 8 only. A doubtful `text` surface
+  is treated as UI, since inline mode lets the LLM answer in text anyway.

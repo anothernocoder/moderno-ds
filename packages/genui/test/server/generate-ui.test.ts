@@ -32,9 +32,11 @@ const judgeConfig = { baseUrl: "http://localhost:11434", model: "nimble" };
 const VALID = 'root = Stack([save])\nsave = Button("primary", "md", ["Save"])\n';
 const INVALID = 'root = Stack([save])\nsave = Button("huge")\n';
 
+/** Both router calls' answers in one map: the Surface, a `confirm` kind, and the Nouls. */
 function routes(surface: string, nouls: Record<string, number> = {}): Record<string, Answer> {
   const answers: Record<string, Answer> = {
     surface: { type: "choice", choice: surface, probabilities: {}, confidence: 0.9 },
+    kind: { type: "choice", choice: "confirm", probabilities: {}, confidence: 0.9 },
   };
   for (const [name, noul] of Object.entries(nouls))
     answers[`component:${name}`] = { type: "noul", noul };
@@ -81,9 +83,9 @@ describe("generateUI", () => {
       generateUI({ message: "save it", context, judge: judgeConfig, llm, manifest, contract }),
     );
 
-    const [config, state, questions] = mockedJudge.mock.calls[0]!;
+    const [config, state, questions] = mockedJudge.mock.calls[1]!;
     expect(config).toBe(judgeConfig);
-    expect(state).toEqual({ message: "save it", context });
+    expect(state).toEqual({ context, message: "save it" });
     expect(Object.keys(questions)).toContain("component:Card");
     expect(Object.keys(questions)).not.toContain("component:CardHeader");
     expect(Object.keys(questions)).not.toContain("component:Stack");
@@ -100,6 +102,25 @@ describe("generateUI", () => {
       .map((line) => line.slice(0, line.indexOf("(")))
       .filter((name) => name in library.components);
     expect(listed).toEqual(["Button", "Stack", "Grid"]);
+  });
+
+  it("gives the router the earlier programs as a note, and the LLM the full chat", async () => {
+    mockedJudge.mockResolvedValue(routes("text"));
+    const { llm, calls } = scriptedLLM(["Hi!"]);
+    const context: ChatMessage[] = [
+      { role: "user", content: "sales" },
+      { role: "assistant", content: `Here:\n\`\`\`openui-lang\n${VALID}\`\`\`\nDone.` },
+    ];
+
+    await collect(
+      generateUI({ message: "hola", context, judge: judgeConfig, llm, manifest, contract }),
+    );
+
+    expect(mockedJudge.mock.calls[0]![1]).toEqual({
+      context: [context[0], { role: "assistant", content: "Here:\n(UI shown)\nDone." }],
+      message: "hola",
+    });
+    expect(calls[0]!.messages).toEqual([...context, { role: "user", content: "hola" }]);
   });
 
   it("answers a text surface in plain text without a library or a program", async () => {

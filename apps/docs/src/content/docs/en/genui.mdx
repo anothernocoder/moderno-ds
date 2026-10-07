@@ -108,15 +108,18 @@ Each chunk is a `GenUIChunk`:
 
 ### route
 
-`route(message, context, library, options)` is the router on its own. `generateUI` calls it for you. It makes one `judge` call and returns `{ surface, components }`.
+`route(message, context, components, options)` is the router on its own. `generateUI` calls it for you. `components` is the manifest's `components`. It returns `{ surface, components }`.
 
-| Option          | Type          | Default | Description                                             |
-| --------------- | ------------- | ------- | ------------------------------------------------------- |
-| `judge`         | `JudgeConfig` | —       | The System One server.                                  |
-| `threshold`     | `number`      | `0.5`   | A component is picked when its score is at least this.  |
-| `minConfidence` | `number`      | `0.5`   | Below this surface confidence, every component is kept. |
+It makes two `judge` calls, ten questions in all. The first asks the surface and the kind of UI (a chart, a form, a confirm card…). The second asks about the 8 components that best match that kind.
 
-`library` is `{ components: Record<string, { description: string }> }`. When no component passes the threshold, all of them are kept.
+| Option          | Type          | Default | Description                                                                                 |
+| --------------- | ------------- | ------- | ------------------------------------------------------------------------------------------- |
+| `judge`         | `JudgeConfig` | —       | The System One server.                                                                      |
+| `threshold`     | `number`      | `0.5`   | A component is picked when its score is at least this.                                      |
+| `minConfidence` | `number`      | `0.5`   | Below this confidence, a `text` surface is treated as UI. The LLM may still answer in text. |
+| `shortlist`     | `number`      | `8`     | How many components the second call asks about.                                             |
+
+When no component passes the threshold, all of them are kept.
 
 ### judge
 
