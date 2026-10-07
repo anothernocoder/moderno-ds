@@ -87,6 +87,8 @@ import { GenUI } from "@moderno-ui/genui/react";
 
 `generateUI(options)` de `@moderno-ui/genui/server`. Pregunta al router, luego al LLM, y emite los trozos según llegan. Si el programa no es válido, pregunta otra vez al LLM con los errores. Si vuelve a fallar, responde con texto.
 
+Un programa válido también tiene que ser usable. El prompt le da al LLM unas reglas de UI: elegir el control según el dato, un solo botón primario por formulario, etiquetas en el idioma del usuario, sin emojis. Luego un lint revisa el programa. Un `NumberInput` para un código, un `Select` sin opciones, un formulario sin exactamente un botón primario, o un botón primario con su propia acción cuentan como errores, así que activan el mismo reintento.
+
 | Opción     | Tipo                 | Por defecto | Descripción                                                                 |
 | ---------- | -------------------- | ----------- | --------------------------------------------------------------------------- |
 | `message`  | `string`             | —           | El mensaje del usuario.                                                     |
@@ -184,6 +186,8 @@ El adaptador completo, con `contentDeltas`, está en `packages/genui/playground/
 
 Un componente de formulario, como `Select`, `NumberInput` o `Field`, llega como una sola **forma simple** con argumentos planos en vez de sus partes: `Select("Talla", ["Pequeña", "Grande"])`. `<GenUI>` dibuja el componente completo a partir de ellos, así que el LLM no puede equivocarse en su estructura. Los overlays, los toasts y los layouts de la app, como `Dialog`, `Toast` y `Splitter`, quedan fuera: no tienen lugar dentro de una respuesta.
 
+El LLM no puede fijar `size`: cada control de un widget se dibuja en `md`, así que todos tienen la misma altura. Cada descripción dice también cuándo no usar el componente y qué usar en su lugar.
+
 ### createSubLibrary
 
 `createSubLibrary(components, names)` deja solo los componentes nombrados, las partes que contienen y los layouts. El prompt del LLM lista menos componentes, así que es más corto, más rápido y más barato. `generateUI` lo llama con lo que eligió el router.
@@ -192,12 +196,12 @@ Un componente de formulario, como `Select`, `NumberInput` o `Field`, llega como 
 
 `<GenUI>` de `@moderno-ui/genui/react` dibuja un programa de OpenUI Lang con `@moderno-ui/react`.
 
-| Prop          | Tipo                              | Por defecto | Descripción                                                                                                                 |
-| ------------- | --------------------------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------- |
-| `response`    | `string \| null`                  | —           | El programa hasta ahora. `null` no dibuja nada.                                                                             |
-| `isStreaming` | `boolean`                         | `false`     | Verdadero mientras el programa sigue llegando.                                                                              |
-| `onAction`    | `(event: ActionEvent) => void`    | —           | Un componente lanzó una acción, como el `@ToAssistant` de un botón.                                                         |
-| `onError`     | `(errors: OpenUIError[]) => void` | —           | El programa terminado tiene errores, como un componente que no se pudo dibujar. Reintenta o responde en texto. `[]` limpia. |
+| Prop          | Tipo                              | Por defecto | Descripción                                                                                                                               |
+| ------------- | --------------------------------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `response`    | `string \| null`                  | —           | El programa hasta ahora. `null` no dibuja nada.                                                                                           |
+| `isStreaming` | `boolean`                         | `false`     | Verdadero mientras el programa sigue llegando.                                                                                            |
+| `onAction`    | `(event: ActionEvent) => void`    | —           | Un componente lanzó una acción, como el `@ToAssistant` de un botón. Un botón sin acción envía su etiqueta con los valores del formulario. |
+| `onError`     | `(errors: OpenUIError[]) => void` | —           | El programa terminado tiene errores, como un componente que no se pudo dibujar. Reintenta o responde en texto. `[]` limpia.               |
 
 ## Ejemplos
 

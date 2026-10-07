@@ -2,7 +2,7 @@ import { GenUI } from "@moderno-ui/genui/react";
 
 // The OpenUI Lang the LLM wrote for "sales this month".
 const response = `root = Stack([card])
-card = Card("outline", "md", [header, content])
+card = Card("outline", [header, content])
 header = CardHeader([title, description])
 title = CardTitle(["Sales this month"])
 description = CardDescription(["Revenue per week, in thousands of dollars."])

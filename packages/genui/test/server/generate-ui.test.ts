@@ -29,14 +29,18 @@ const manifest = installed.components.find((candidate) => candidate.framework ==
 const contract = installed.contract!;
 const judgeConfig = { baseUrl: "http://localhost:11434", model: "nimble" };
 
-const VALID = 'root = Stack([save])\nsave = Button("primary", "md", ["Save"])\n';
+const VALID = 'root = Stack([save])\nsave = Button("primary", ["Save"])\n';
 const INVALID = 'root = Stack([save])\nsave = Button("huge")\n';
 
-/** Both router calls' answers in one map: the Surface, a `confirm` kind, and the Nouls. */
-function routes(surface: string, nouls: Record<string, number> = {}): Record<string, Answer> {
+/** Both router calls' answers in one map: the Surface, the kind (`confirm` by default), and the Nouls. */
+function routes(
+  surface: string,
+  nouls: Record<string, number> = {},
+  kind = "confirm",
+): Record<string, Answer> {
   const answers: Record<string, Answer> = {
     surface: { type: "choice", choice: surface, probabilities: {}, confidence: 0.9 },
-    kind: { type: "choice", choice: "confirm", probabilities: {}, confidence: 0.9 },
+    kind: { type: "choice", choice: kind, probabilities: {}, confidence: 0.9 },
   };
   for (const [name, noul] of Object.entries(nouls))
     answers[`component:${name}`] = { type: "noul", noul };
@@ -101,7 +105,19 @@ describe("generateUI", () => {
       .filter((line) => /^[A-Z]\w*\(/.test(line))
       .map((line) => line.slice(0, line.indexOf("(")))
       .filter((name) => name in library.components);
-    expect(listed).toEqual(["Button", "Stack", "Grid"]);
+    // Toggle: Button's whenNotToUse says "use Toggle" for on/off state.
+    expect(listed).toEqual(["Button", "ToggleIndicator", "Toggle", "Stack", "Grid"]);
+  });
+
+  it("adds the components a pick's whenNotToUse points to", async () => {
+    mockedJudge.mockResolvedValue(routes("widget", { Field: 0.9, Button: 0.9 }, "form"));
+    const { llm } = scriptedLLM([`\`\`\`openui-lang\n${VALID}\`\`\``]);
+
+    await collect(generateUI({ message: "a form", judge: judgeConfig, llm, manifest, contract }));
+
+    // Field: "Not for picking from a known list of options: use Select", and Checkbox or Switch.
+    const names = vi.mocked(createSubLibrary).mock.calls.at(-1)![1];
+    expect(names).toEqual(expect.arrayContaining(["Field", "Button", "Select", "Checkbox"]));
   });
 
   it("gives the router the earlier programs as a note, and the LLM the full chat", async () => {
@@ -190,6 +206,74 @@ describe("generateUI", () => {
     expect(joined(chunks.slice(2), "program")).toBe(VALID);
   });
 
+  it("lints the QA chance card, retries with its usability errors, and keeps the fixed card", async () => {
+    // No Noul passes, so the LLM gets the whole library.
+    mockedJudge.mockResolvedValue(routes("widget"));
+    // What a model wrote for "a chance bet card" in the QA of PR #319.
+    const qaCard = [
+      "root = Stack([card])",
+      'card = Card("outline", [header, content, footer])',
+      'header = CardHeader([CardTitle(["🍀 Chance"])])',
+      "content = CardContent([number, lottery, amount])",
+      'number = NumberInput("Número (4 cifras)", "lg")',
+      'lottery = Select("Lotería", ["Lotería de Bogotá", "Lotería de Medellín"], "Elige", "lg")',
+      'amount = NumberInput("Valor (COP)", 1000, 100000, 1000, 5000, "md")',
+      "footer = CardFooter([play])",
+      'play = Button("primary", "lg", ["Jugar"], Action([@ToAssistant("Quiero jugar mi chance con el número, la lotería y el valor que seleccioné")]))',
+    ].join("\n");
+    const fixedCard = [
+      "root = Stack([card])",
+      'card = Card("outline", [header, content, footer])',
+      'header = CardHeader([CardTitle(["Chance"])])',
+      "content = CardContent([number, lottery, amount])",
+      'number = Field("Número", "4827", null, null, "numeric", 4)',
+      'lottery = Select("Lotería", ["Lotería de Bogotá", "Lotería de Medellín"], "Elige")',
+      'amount = Field("Valor (COP)", "5000", null, null, "numeric")',
+      'footer = CardFooter([Button("primary", ["Jugar"])])',
+    ].join("\n");
+    const { llm, calls } = scriptedLLM(
+      [`\`\`\`openui-lang\n${qaCard}\n\`\`\``],
+      [`\`\`\`openui-lang\n${fixedCard}\n\`\`\``],
+    );
+
+    const chunks = await collect(
+      generateUI({
+        message: "crea un card de chance",
+        judge: judgeConfig,
+        llm,
+        manifest,
+        contract,
+      }),
+    );
+
+    expect(calls[0]!.system).toContain("- Every control renders at one size");
+    expect(calls).toHaveLength(2);
+    const discard = chunks.find((chunk) => chunk.type === "discard")!;
+    const errors = (discard as Extract<GenUIChunk, { type: "discard" }>).errors;
+    // The stepper for a 4-digit code and the action that drops the values: the lint.
+    expect(errors).toContainEqual(
+      expect.objectContaining({ code: "usability", statementId: "number" }),
+    );
+    expect(errors).toContainEqual(
+      expect.objectContaining({
+        code: "usability",
+        statementId: "play",
+        message: expect.stringContaining("drops the values"),
+      }),
+    );
+    // The mixed sizes: no control takes a size, so each one is rejected.
+    for (const sized of ["number", "lottery", "amount", "play"]) {
+      expect(errors, sized).toContainEqual(
+        expect.objectContaining({
+          code: expect.stringMatching(/excess-args|type-mismatch/),
+          statementId: sized,
+        }),
+      );
+    }
+    expect(calls[1]!.messages.at(-1)!.content).toContain("drops the values");
+    expect(chunks.map((chunk) => chunk.type)).toEqual(["program", "discard", "program"]);
+  });
+
   it("retries once when a chart's series has the wrong shape", async () => {
     mockedJudge.mockResolvedValue(routes("widget", { BarChart: 0.9 }));
     const chart = (series: string) =>
@@ -215,7 +299,7 @@ describe("generateUI", () => {
       "Here",
       " it is:\n``",
       "`openui-lang\nroot = Sta",
-      'ck([save])\nsave = Button("primary", "md", ["Save"])\n``',
+      'ck([save])\nsave = Button("primary", ["Save"])\n``',
       "`\nDone.",
     ];
     const llm: LLM = async function* () {

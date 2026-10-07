@@ -38,10 +38,30 @@ function isVoidPart(component: AgentComponent, tag: string): boolean {
   return new RegExp(`<${tag}[\\s/>]`).test(code) && !code.includes(`</${tag}>`);
 }
 
+/**
+ * A gotcha about JSX anatomy, a framework, styling or event handlers. The
+ * Simple forms and the adapter handle those, so the model never needs them.
+ */
+// ponytail: a keyword filter. Tag gotchas in the manifest if it lets a wrong one through.
+const NOT_FOR_THE_MODEL =
+  /\b[A-Z]\w*\.[A-Z]\w*|\b(Vue|Svelte|Solid|Ark|className|style|portal|slot|SSR|htmlFor|div|parts?)\b|data-|-text\b|\bon[A-Z]|v-model|<\w|\w=[{"]/i;
+
+/** What it is and when to use it, when not to (and what instead), and the gotchas that apply to the model. */
 function describe(component: AgentComponent): string {
-  const { intent, whenToUse } = component.guidance ?? {};
-  return [intent, whenToUse].filter(Boolean).join(" ") || component.name;
+  const { intent, whenToUse, whenNotToUse = [], gotchas = [] } = component.guidance ?? {};
+  return (
+    [
+      intent,
+      whenToUse,
+      ...whenNotToUse.map(({ case: notFor, use }) => `Not for ${lowerFirst(notFor)}: use ${use}.`),
+      ...gotchas.filter((gotcha) => !NOT_FOR_THE_MODEL.test(gotcha)),
+    ]
+      .filter(Boolean)
+      .join(" ") || component.name
+  );
 }
+
+const lowerFirst = (text: string) => text.charAt(0).toLowerCase() + text.slice(1);
 
 /** `item-trigger` → `ItemTrigger` */
 function pascalCase(kebab: string): string {
@@ -74,7 +94,9 @@ function defineLeaf(component: AgentComponent): GenUIComponent {
   if (component.name === "Button") {
     fields.push([
       "action",
-      action.optional().describe("Default: sends the label to the assistant"),
+      action
+        .optional()
+        .describe("Default: sends the label and the values of the form to the assistant"),
     ]);
   }
   return define(component.name, describe(component), fields);

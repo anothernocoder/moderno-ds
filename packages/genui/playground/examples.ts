@@ -10,7 +10,7 @@ export interface Example {
 export const salesCard: Example = {
   title: "Sales card with a bar chart",
   response: `root = Stack([card])
-card = Card("outline", "md", [header, content])
+card = Card("outline", [header, content])
 header = CardHeader([title, description])
 title = CardTitle(["Sales this month"])
 description = CardDescription(["Revenue per week, in thousands of dollars."])
@@ -21,20 +21,20 @@ chart = BarChart(["Week 1", "Week 2", "Week 3", "Week 4"], 220, [{name: "Revenue
 export const confirmCard: Example = {
   title: "Confirm card with two buttons",
   response: `root = Stack([card])
-card = Card("outline", "md", [header, footer])
+card = Card("outline", [header, footer])
 header = CardHeader([title, description])
 title = CardTitle(["Confirm your order"])
 description = CardDescription(["3 items, $84.00, delivered on Friday."])
 footer = CardFooter([actions])
 actions = Stack([cancel, confirm], "row", "2")
-cancel = Button("outline", "md", ["Cancel"], Action([@ToAssistant("Cancel my order")]))
-confirm = Button("primary", "md", ["Confirm order"], Action([@ToAssistant("Confirm my order")]))`,
+cancel = Button("outline", ["Cancel"], Action([@ToAssistant("Cancel my order")]))
+confirm = Button("primary", ["Confirm order"], Action([@ToAssistant("Confirm my order")]))`,
 };
 
 export const paymentAlert: Example = {
   title: "Alert",
   response: `root = Stack([alert])
-alert = Alert("warning", "md", [content])
+alert = Alert("warning", [content])
 content = AlertContent([title, description])
 title = AlertTitle(["Payment failed"])
 description = AlertDescription(["Your card was declined. Update it to keep your plan."])`,

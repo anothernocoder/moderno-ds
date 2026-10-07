@@ -14,6 +14,7 @@ import {
 } from "@openuidev/react-lang";
 import * as Moderno from "@moderno-ui/react";
 import type { GenUIComponent } from "../library/from-manifest.ts";
+import { useWidgetForm } from "./form-values.ts";
 import { SIMPLE_FORM_RENDERERS } from "./simple-forms.tsx";
 
 type AnyComponent = ComponentType<Record<string, unknown> & { children?: ReactNode }>;
@@ -61,14 +62,20 @@ function render(Component: AnyComponent): ComponentRenderer {
   };
 }
 
-/** A click runs the button's `action`, or sends its label to the assistant. */
+/**
+ * A click runs the button's `action`, or sends its label to the assistant
+ * with the values of the widget's form (`form-values.ts`).
+ */
 const ActionButton: ComponentRenderer = ({ props: { children, action, ...props }, renderNode }) => {
   const triggerAction = useTriggerAction();
+  const form = useWidgetForm();
   return (
     <Moderno.Button
       {...props}
       onClick={() =>
-        void triggerAction(textOf(children), undefined, action as ActionPlan | undefined)
+        void (action
+          ? triggerAction(textOf(children), undefined, action as ActionPlan)
+          : triggerAction(textOf(children), form))
       }
     >
       {children === undefined ? undefined : renderNode(children)}

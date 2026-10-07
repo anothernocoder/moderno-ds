@@ -87,6 +87,8 @@ import { GenUI } from "@moderno-ui/genui/react";
 
 `generateUI(options)` from `@moderno-ui/genui/server`. It asks the router, then the LLM, and yields chunks as they arrive. If the program is invalid, it asks the LLM once more with the errors. If that fails too, it answers in text.
 
+A valid program must also be usable. The prompt gives the LLM a few UI rules: pick the control by the data, one primary button per form, labels in the user's language, no emoji. Then a lint checks the program. A `NumberInput` for a code, a `Select` with no options, a form without exactly one primary button, or a primary button with its own action count as errors, so they trigger the same retry.
+
 | Option     | Type                 | Default | Description                                                       |
 | ---------- | -------------------- | ------- | ----------------------------------------------------------------- |
 | `message`  | `string`             | —       | The user's message.                                               |
@@ -184,6 +186,8 @@ The full adapter, with `contentDeltas`, is in `packages/genui/playground/server/
 
 A form component, like `Select`, `NumberInput` or `Field`, comes as one **simple form** with plain arguments instead of its parts: `Select("Size", ["Small", "Large"])`. `<GenUI>` draws the whole component from them, so the LLM cannot get its structure wrong. Overlays, toasts and app-shell layouts, like `Dialog`, `Toast` and `Splitter`, are left out: they do not belong inside an answer.
 
+The LLM cannot set `size`: every control in a widget renders at `md`, so their heights match. Each description also says when not to use the component, and what to use instead.
+
 ### createSubLibrary
 
 `createSubLibrary(components, names)` keeps only the named components, the parts they hold, and the layouts. The LLM's prompt then lists fewer components, so it is smaller, faster and cheaper. `generateUI` calls it with the router's picks.
@@ -192,12 +196,12 @@ A form component, like `Select`, `NumberInput` or `Field`, comes as one **simple
 
 `<GenUI>` from `@moderno-ui/genui/react` draws an OpenUI Lang program with `@moderno-ui/react`.
 
-| Prop          | Type                              | Default | Description                                                                                                        |
-| ------------- | --------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------ |
-| `response`    | `string \| null`                  | —       | The program so far. `null` draws nothing.                                                                          |
-| `isStreaming` | `boolean`                         | `false` | True while the program is still arriving.                                                                          |
-| `onAction`    | `(event: ActionEvent) => void`    | —       | A component fired an action, such as a button's `@ToAssistant`.                                                    |
-| `onError`     | `(errors: OpenUIError[]) => void` | —       | The finished program has errors, such as a component that failed to render. Retry, or answer in text. `[]` clears. |
+| Prop          | Type                              | Default | Description                                                                                                                          |
+| ------------- | --------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `response`    | `string \| null`                  | —       | The program so far. `null` draws nothing.                                                                                            |
+| `isStreaming` | `boolean`                         | `false` | True while the program is still arriving.                                                                                            |
+| `onAction`    | `(event: ActionEvent) => void`    | —       | A component fired an action, such as a button's `@ToAssistant`. A button with no action sends its label with the values of the form. |
+| `onError`     | `(errors: OpenUIError[]) => void` | —       | The finished program has errors, such as a component that failed to render. Retry, or answer in text. `[]` clears.                   |
 
 ## Examples
 

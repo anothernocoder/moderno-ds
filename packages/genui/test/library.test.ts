@@ -69,7 +69,7 @@ describe("fromManifest", () => {
     const prompt = fullLibrary(fromManifest(example, contract)).prompt();
 
     expect(prompt).toContain(
-      'Button(variant?: "primary" | "secondary" | "outline" | "ghost" | "destructive", size?: "sm" | "md" | "lg"',
+      'Button(variant?: "primary" | "secondary" | "outline" | "ghost" | "destructive", children?: string[]',
     );
   });
 
@@ -78,12 +78,34 @@ describe("fromManifest", () => {
 
     expect(signatures(prompt())).toMatchInlineSnapshot(`
       [
-        "Widget(count: number, data: any, variant?: "a" | "b", size?: "sm" | "md", label?: string, tone?: "calm" | "loud") — Widget",
+        "Widget(count: number, data: any, variant?: "a" | "b", label?: string, tone?: "calm" | "loud") — Widget",
         "Stack(children: (string | Widget | Stack | Grid)[], direction?: "column" | "row", gap?: "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8", justify?: "start" | "center" | "end" | "between") — Lays out its children in a column or a row. justify "between" spreads a row apart, like a label and its price.",
         "Grid(children: (string | Widget | Stack | Grid)[], columns?: number, gap?: "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8") — Lays out its children in equal columns.",
       ]
     `);
     expect(prompt()).toBe(prompt());
+  });
+
+  it("tells the model when not to use a component, and what to use instead", () => {
+    const library = createSubLibrary(fromManifest(reactManifest, contract), ["NumberInput"]);
+    const numberInput = signatures(library.prompt()).find((line) =>
+      line.startsWith("NumberInput("),
+    );
+
+    expect(numberInput).toContain(
+      "Not for free text, or a number that is really a code, like a phone number or a zip code: use Field.",
+    );
+    expect(numberInput).toContain(
+      "Not for a short one-time code, one digit per box: use PinInput.",
+    );
+    // A gotcha about JSX anatomy or a framework is not for the model.
+    expect(numberInput).not.toMatch(/NumberInput\.Control|Vue|clampValueOnBlur/);
+  });
+
+  it("never lets the model size a control: every control renders at one size", () => {
+    for (const component of fromManifest(reactManifest, contract)) {
+      expect(Object.keys(component.props.shape), component.name).not.toContain("size");
+    }
   });
 
   it("never exposes functions, ref, className, style or DOM-only props", () => {
@@ -119,11 +141,11 @@ describe("fromManifest", () => {
     const valid = parser.parse(
       [
         "root = Stack([card])",
-        'card = Card("outline", "md", [header, content])',
+        'card = Card("outline", [header, content])',
         'header = CardHeader([title, "Revenue"])',
         'title = CardTitle(["Monthly report"])',
         "content = CardContent([save])",
-        'save = Button("primary", "md", ["Save"])',
+        'save = Button("primary", ["Save"])',
       ].join("\n"),
     );
     expect(valid.meta.errors).toEqual([]);
@@ -150,7 +172,7 @@ describe("fromManifest", () => {
 
     expect(names.filter((name) => name.startsWith("Select"))).toEqual(["Select"]);
     expect(prompt.find((line) => line.startsWith("Select("))).toMatch(
-      /^Select\(label: string, options: \(string \| \{label: string, value: string\}\)\[\], placeholder\?: string, size\?: "sm" \| "md" \| "lg"\)/,
+      /^Select\(label: string, options: \(string \| \{label: string, value: string\}\)\[\], placeholder\?: string\) — /,
     );
     expect(prompt.find((line) => line.startsWith("Tabs("))).toMatch(
       /^Tabs\(tabs: string\[\], children: \(string \| /,
@@ -215,7 +237,7 @@ describe("Button's action", () => {
 
     const parser = createParser(library.toJSONSchema());
     const result = parser.parse(
-      'root = Stack([ok])\nok = Button("primary", "md", ["OK"], Action([@ToAssistant("OK")]))',
+      'root = Stack([ok])\nok = Button("primary", ["OK"], Action([@ToAssistant("OK")]))',
     );
     expect(result.meta.errors).toEqual([]);
   });

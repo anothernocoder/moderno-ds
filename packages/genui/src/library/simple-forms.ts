@@ -38,16 +38,13 @@ export const SIMPLE_FORMS = {
       ["helperText", text("A hint below the input.")],
       [
         "type",
-        optional(
-          z.enum(["text", "email", "password", "tel", "url", "search"]),
-          "Default: text. Use NumberInput for an amount.",
-        ),
+        optional(z.enum(["text", "email", "password", "tel", "url", "search"]), "Default: text."),
       ],
       [
         "inputMode",
         optional(
           z.enum(["text", "numeric", "decimal", "tel", "email", "url"]),
-          "The phone keyboard to show.",
+          'The phone keyboard to show: "numeric" for a code or an amount of money.',
         ),
       ],
       ["maxLength", number("The most characters it accepts.")],

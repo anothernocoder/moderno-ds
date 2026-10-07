@@ -35,9 +35,9 @@ const part = (scope: string, name: string, within: ParentNode = document) =>
 
 /** The smallest valid program per component, parts included in their root's. */
 const CONTRACTS: Record<string, Contract> = {
-  Badge: { program: program("root = Stack([b])", 'b = Badge("info", "sm", false, ["New"])') },
+  Badge: { program: program("root = Stack([b])", 'b = Badge("info", false, ["New"])') },
   Button: {
-    program: program("root = Stack([b])", 'b = Button("primary", "md", ["Save"])'),
+    program: program("root = Stack([b])", 'b = Button("primary", ["Save"])'),
     async works(user, onAction) {
       await user.click(screen.getByRole("button", { name: "Save" }));
       expect(onAction).toHaveBeenCalledWith(
@@ -46,16 +46,16 @@ const CONTRACTS: Record<string, Contract> = {
     },
   },
   Chip: {
-    program: program("root = Stack([c])", 'c = Chip("outline", "md", false, null, ["React"])'),
+    program: program("root = Stack([c])", 'c = Chip("outline", false, null, ["React"])'),
   },
-  ColorPicker: { program: program("root = Stack([c])", 'c = ColorPicker("md")') },
+  ColorPicker: { program: program("root = Stack([c])", "c = ColorPicker()") },
   Divider: { program: program("root = Stack([d])", 'd = Divider("horizontal")') },
-  FileUpload: { program: program("root = Stack([f])", 'f = FileUpload("md", false, "Logo")') },
+  FileUpload: { program: program("root = Stack([f])", 'f = FileUpload(false, "Logo")') },
   Indicator: {
-    program: program("root = Stack([i])", 'i = Indicator("success", "sm", false, ["Online"])'),
+    program: program("root = Stack([i])", 'i = Indicator("success", false, ["Online"])'),
   },
   Skeleton: { program: program("root = Stack([s])", 's = Skeleton("text")') },
-  Spinner: { program: program("root = Stack([s])", 's = Spinner("md", "Loading")') },
+  Spinner: { program: program("root = Stack([s])", 's = Spinner("Loading")') },
   AreaChart: {
     program: program(
       "root = Stack([c])",
@@ -92,12 +92,12 @@ const CONTRACTS: Record<string, Contract> = {
   Alert: {
     program: program(
       "root = Stack([a])",
-      'a = Alert("warning", "md", [icon, content, action])',
+      'a = Alert("warning", [icon, content, action])',
       'icon = AlertIcon(["!"])',
       "content = AlertContent([title, description])",
       'title = AlertTitle(["Payment failed"])',
       'description = AlertDescription(["Update your card."])',
-      'action = AlertAction([Button("outline", "sm", ["Update"])])',
+      'action = AlertAction([Button("outline", ["Update"])])',
     ),
   },
   Callout: {
@@ -113,18 +113,18 @@ const CONTRACTS: Record<string, Contract> = {
   Card: {
     program: program(
       'root = Grid([card], 1, "2")',
-      'card = Card("outline", "md", [header, content, footer])',
+      'card = Card("outline", [header, content, footer])',
       "header = CardHeader([title, description])",
       'title = CardTitle(["Order"])',
       'description = CardDescription(["3 items"])',
       'content = CardContent(["Total: $84.00"])',
-      'footer = CardFooter([Button("primary", "md", ["Pay"])])',
+      'footer = CardFooter([Button("primary", ["Pay"])])',
     ),
   },
   Avatar: {
     program: program(
       "root = Stack([a])",
-      'a = Avatar("md", "circle", [image, fallback])',
+      'a = Avatar("circle", [image, fallback])',
       "image = AvatarImage()",
       'fallback = AvatarFallback(["AL"])',
     ),
@@ -135,7 +135,7 @@ const CONTRACTS: Record<string, Contract> = {
   Toggle: {
     program: program(
       "root = Stack([t])",
-      't = Toggle("ghost", "md", [ToggleIndicator(["★"]), "Favorite"])',
+      't = Toggle("ghost", [ToggleIndicator(["★"]), "Favorite"])',
     ),
     async works(user) {
       const toggle = screen.getByRole("button", { name: /Favorite/ });
@@ -298,7 +298,7 @@ const CONTRACTS: Record<string, Contract> = {
   Accordion: {
     program: program(
       "root = Stack([a])",
-      'a = Accordion(["Shipping"], [Badge("info", "sm", false, ["3 days"])])',
+      'a = Accordion(["Shipping"], [Badge("info", false, ["3 days"])])',
     ),
     async works(user) {
       const trigger = screen.getByRole("button", { name: /Shipping/ });
@@ -347,13 +347,13 @@ describe("the chance card", () => {
   // The program a model wrote for a "chance" lottery ticket (issue #331).
   const chanceCard = program(
     "root = Stack([card])",
-    'card = Card("outline", "md", [header, content, footer])',
+    'card = Card("outline", [header, content, footer])',
     'header = CardHeader([CardTitle(["Chance"]), CardDescription(["Pick a lottery, a number and your bet."])])',
     "content = CardContent([lottery, number, bet])",
     'lottery = Select("Lottery", ["Lotería de Bogotá", "Lotería de Medellín", "Lotería del Valle", "Lotería de Cundinamarca", "Lotería de Boyacá", "Lotería del Cauca"], "Pick a lottery")',
     'number = NumberInput("Number", 0, 9999, 1)',
     'bet = NumberInput("Bet (COP)", 1000, 100000, 1000, 5000)',
-    'footer = CardFooter([Button("primary", "md", ["Place bet"])])',
+    'footer = CardFooter([Button("primary", ["Place bet"])])',
   );
 
   it("renders two working inputs and a Select with six options", async () => {
@@ -382,6 +382,57 @@ describe("the chance card", () => {
       "Lotería de Bogotá",
     );
     expect(errors).toEqual([]);
+  });
+
+  it("renders every control at one size, so their heights match", () => {
+    renderProgram(chanceCard);
+
+    const sized = [...document.querySelectorAll<HTMLElement>("[data-size]")];
+    const scopes = new Set(sized.map((element) => element.dataset.scope));
+    expect([...scopes]).toEqual(expect.arrayContaining(["select", "number-input", "button"]));
+    expect(new Set(sized.map((element) => element.dataset.size))).toEqual(new Set(["md"]));
+  });
+
+  it("sends the values of the form with its button's label", async () => {
+    const user = userEvent.setup();
+    const onAction = vi.fn();
+    renderProgram(chanceCard, onAction);
+
+    await user.type(screen.getByRole("spinbutton", { name: "Number" }), "4827");
+    await user.click(screen.getByRole("combobox", { name: "Lottery" }));
+    await user.click((await screen.findAllByRole("option"))[0]!);
+    await user.click(screen.getByRole("button", { name: "Place bet" }));
+
+    expect(onAction).toHaveBeenCalledTimes(1);
+    const message = (onAction.mock.calls[0]![0] as ActionEvent).humanFriendlyMessage;
+    expect(message).toMatch(/^Place bet — /);
+    expect(message.split(" — ")[1]!.split("; ").sort()).toEqual([
+      "Bet (COP): 5000",
+      "Lottery: Lotería de Bogotá",
+      "Number: 4827",
+    ]);
+  });
+});
+
+describe("a Button with its own action", () => {
+  it("sends its message as written, without the values", async () => {
+    const onAction = vi.fn();
+    renderProgram(
+      program(
+        "root = Stack([name, cancel])",
+        'name = Field("Name")',
+        'cancel = Button("outline", ["Cancel"], Action([@ToAssistant("Cancel it")]))',
+      ),
+      onAction,
+    );
+
+    const user = userEvent.setup();
+    await user.type(screen.getByRole("textbox", { name: "Name" }), "Ada");
+    await user.click(screen.getByRole("button", { name: "Cancel" }));
+
+    expect(onAction).toHaveBeenCalledWith(
+      expect.objectContaining({ humanFriendlyMessage: "Cancel it" }),
+    );
   });
 });
 

@@ -17,4 +17,6 @@ export {
   type GenerateUIOptions,
   type GenUIChunk,
   type LLM,
+  type ProgramError,
 } from "./server/generate-ui.ts";
+export { checkUsability, UI_RULES, type UsabilityError } from "./server/usability.ts";

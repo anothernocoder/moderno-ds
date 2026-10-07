@@ -2,7 +2,8 @@
  * The React renderers of the Simple forms (`../library/simple-forms.ts`). Each
  * one draws the whole anatomy of its docs example from plain arguments, so a
  * model cannot get the structure wrong. The arguments the form does not name
- * (its recipe variants) go to the Root.
+ * (its recipe variants) go to the Root. Each control keeps its value in the
+ * widget's form under its label (`form-values.ts`), options by their label.
  */
 import { useEffect, useMemo, type ReactNode } from "react";
 import type { ComponentRenderer } from "@openuidev/react-lang";
@@ -29,6 +30,7 @@ import {
   useListCollection,
 } from "@moderno-ui/react";
 import { SIMPLE_FORMS } from "../library/simple-forms.ts";
+import { useFormValue } from "./form-values.ts";
 
 type Option = { label: string; value: string };
 
@@ -47,6 +49,10 @@ const strings = (value: unknown): string[] =>
 
 const asString = (value: unknown) => (value === undefined ? undefined : String(value));
 
+/** The labels of the picked option values. */
+const labelsOf = (items: Option[], values: readonly string[]) =>
+  values.map((value) => items.find((item) => item.value === value)?.label ?? value);
+
 /** Rebuilt only when the options change, so a re-render keeps the user's pick. */
 function useOptions(options: unknown): Option[] {
   const key = JSON.stringify(options ?? []);
@@ -56,8 +62,13 @@ function useOptions(options: unknown): Option[] {
 const SelectForm: ComponentRenderer = ({ props: { label, options, placeholder, ...root } }) => {
   const items = useOptions(options);
   const collection = useMemo(() => createListCollection({ items }), [items]);
+  const save = useFormValue(label);
   return (
-    <Select.Root {...root} collection={collection}>
+    <Select.Root
+      {...root}
+      collection={collection}
+      onValueChange={(details) => save(labelsOf(items, details.value))}
+    >
       <Select.Label>{String(label)}</Select.Label>
       <Select.Control>
         <Select.Trigger>
@@ -88,11 +99,13 @@ const ComboboxForm: ComponentRenderer = ({ props: { label, options, placeholder,
   const { collection, filter, set } = useListCollection({ initialItems: items, filter: contains });
   // A streamed option list grows after the first render.
   useEffect(() => set(items), [items, set]);
+  const save = useFormValue(label);
   return (
     <Combobox.Root
       {...root}
       collection={collection}
       onInputValueChange={(details) => filter(details.inputValue)}
+      onValueChange={(details) => save(labelsOf(items, details.value))}
     >
       <Combobox.Label>{String(label)}</Combobox.Label>
       <Combobox.Control>
@@ -117,42 +130,51 @@ const ComboboxForm: ComponentRenderer = ({ props: { label, options, placeholder,
 
 const FieldForm: ComponentRenderer = ({
   props: { label, placeholder, helperText, type, inputMode, maxLength, ...root },
-}) => (
-  <Field.Root {...root}>
-    <Field.Label>{String(label)}</Field.Label>
-    <Field.Input
-      placeholder={asString(placeholder)}
-      type={asString(type)}
-      inputMode={inputMode as "text" | undefined}
-      maxLength={maxLength as number | undefined}
-    />
-    {helperText === undefined ? null : <Field.HelperText>{String(helperText)}</Field.HelperText>}
-  </Field.Root>
-);
+}) => {
+  const save = useFormValue(label);
+  return (
+    <Field.Root {...root}>
+      <Field.Label>{String(label)}</Field.Label>
+      <Field.Input
+        placeholder={asString(placeholder)}
+        type={asString(type)}
+        inputMode={inputMode as "text" | undefined}
+        maxLength={maxLength as number | undefined}
+        onChange={(event) => save(event.target.value)}
+      />
+      {helperText === undefined ? null : <Field.HelperText>{String(helperText)}</Field.HelperText>}
+    </Field.Root>
+  );
+};
 
 const NumberInputForm: ComponentRenderer = ({
   props: { label, min, max, step, defaultValue, ...root },
-}) => (
-  <NumberInput.Root
-    {...root}
-    min={min as number | undefined}
-    max={max as number | undefined}
-    step={step as number | undefined}
-    defaultValue={asString(defaultValue)}
-  >
-    <NumberInput.Label>{String(label)}</NumberInput.Label>
-    <NumberInput.Control>
-      <NumberInput.Input />
-      <NumberInput.DecrementTrigger>−</NumberInput.DecrementTrigger>
-      <NumberInput.IncrementTrigger>+</NumberInput.IncrementTrigger>
-    </NumberInput.Control>
-  </NumberInput.Root>
-);
+}) => {
+  const save = useFormValue(label, asString(defaultValue));
+  return (
+    <NumberInput.Root
+      {...root}
+      min={min as number | undefined}
+      max={max as number | undefined}
+      step={step as number | undefined}
+      defaultValue={asString(defaultValue)}
+      onValueChange={(details) => save(details.value)}
+    >
+      <NumberInput.Label>{String(label)}</NumberInput.Label>
+      <NumberInput.Control>
+        <NumberInput.Input />
+        <NumberInput.DecrementTrigger>−</NumberInput.DecrementTrigger>
+        <NumberInput.IncrementTrigger>+</NumberInput.IncrementTrigger>
+      </NumberInput.Control>
+    </NumberInput.Root>
+  );
+};
 
 const PinInputForm: ComponentRenderer = ({ props: { label, length, ...root } }) => {
   const count = Math.max(1, Number(length) || 4);
+  const save = useFormValue(label);
   return (
-    <PinInput.Root {...root} count={count}>
+    <PinInput.Root {...root} count={count} onValueChange={(details) => save(details.valueAsString)}>
       <PinInput.Label>{String(label)}</PinInput.Label>
       <PinInput.Control>
         {Array.from({ length: count }, (_, index) => (
@@ -166,28 +188,40 @@ const PinInputForm: ComponentRenderer = ({ props: { label, length, ...root } }) 
 
 const RadioGroupForm: ComponentRenderer = ({
   props: { label, options, defaultValue, ...root },
-}) => (
-  <RadioGroup.Root {...root} defaultValue={asString(defaultValue)}>
-    <RadioGroup.Label>{String(label)}</RadioGroup.Label>
-    {toOptions(options).map((option) => (
-      <RadioGroup.Item key={option.value} value={option.value}>
-        <RadioGroup.ItemControl />
-        <RadioGroup.ItemText>{option.label}</RadioGroup.ItemText>
-        <RadioGroup.ItemHiddenInput />
-      </RadioGroup.Item>
-    ))}
-  </RadioGroup.Root>
-);
+}) => {
+  const items = toOptions(options);
+  const picked = asString(defaultValue);
+  const save = useFormValue(label, picked && labelsOf(items, [picked])[0]);
+  return (
+    <RadioGroup.Root
+      {...root}
+      defaultValue={picked}
+      onValueChange={(details) => save(labelsOf(items, details.value ? [details.value] : []))}
+    >
+      <RadioGroup.Label>{String(label)}</RadioGroup.Label>
+      {items.map((option) => (
+        <RadioGroup.Item key={option.value} value={option.value}>
+          <RadioGroup.ItemControl />
+          <RadioGroup.ItemText>{option.label}</RadioGroup.ItemText>
+          <RadioGroup.ItemHiddenInput />
+        </RadioGroup.Item>
+      ))}
+    </RadioGroup.Root>
+  );
+};
 
 const SegmentedControlForm: ComponentRenderer = ({
   props: { label, options, defaultValue, ...root },
 }) => {
   const items = toOptions(options);
+  const picked = asString(defaultValue) ?? items[0]?.value;
+  const save = useFormValue(label, picked && labelsOf(items, [picked])[0]);
   return (
     <SegmentedControl.Root
       {...root}
       aria-label={String(label)}
-      defaultValue={asString(defaultValue) ?? items[0]?.value}
+      defaultValue={picked}
+      onValueChange={(details) => save(labelsOf(items, details.value ? [details.value] : []))}
     >
       <SegmentedControl.Indicator />
       {items.map((option) => (
@@ -200,83 +234,118 @@ const SegmentedControlForm: ComponentRenderer = ({
   );
 };
 
-const ToggleGroupForm: ComponentRenderer = ({ props: { label, options, multiple, ...root } }) => (
-  <ToggleGroup.Root {...root} aria-label={String(label)} multiple={multiple === true}>
-    {toOptions(options).map((option) => (
-      <ToggleGroup.Item key={option.value} value={option.value}>
-        {option.label}
-      </ToggleGroup.Item>
-    ))}
-  </ToggleGroup.Root>
-);
+const ToggleGroupForm: ComponentRenderer = ({ props: { label, options, multiple, ...root } }) => {
+  const items = toOptions(options);
+  const save = useFormValue(label);
+  return (
+    <ToggleGroup.Root
+      {...root}
+      aria-label={String(label)}
+      multiple={multiple === true}
+      onValueChange={(details) => save(labelsOf(items, details.value))}
+    >
+      {items.map((option) => (
+        <ToggleGroup.Item key={option.value} value={option.value}>
+          {option.label}
+        </ToggleGroup.Item>
+      ))}
+    </ToggleGroup.Root>
+  );
+};
 
 const TagsInputForm: ComponentRenderer = ({
   props: { label, defaultValue, placeholder, ...root },
-}) => (
-  <TagsInput.Root {...root} defaultValue={strings(defaultValue)}>
-    <TagsInput.Label>{String(label)}</TagsInput.Label>
-    <TagsInput.Control>
-      <TagsInput.Context>
-        {(tagsInput) =>
-          tagsInput.value.map((value, index) => (
-            <TagsInput.Item key={index} index={index} value={value}>
-              <TagsInput.ItemPreview>
-                <TagsInput.ItemText>{value}</TagsInput.ItemText>
-                <TagsInput.ItemDeleteTrigger>×</TagsInput.ItemDeleteTrigger>
-              </TagsInput.ItemPreview>
-              <TagsInput.ItemInput />
-            </TagsInput.Item>
-          ))
-        }
-      </TagsInput.Context>
-      <TagsInput.Input placeholder={asString(placeholder)} />
-    </TagsInput.Control>
-    <TagsInput.HiddenInput />
-  </TagsInput.Root>
-);
+}) => {
+  const save = useFormValue(label, strings(defaultValue));
+  return (
+    <TagsInput.Root
+      {...root}
+      defaultValue={strings(defaultValue)}
+      onValueChange={(details) => save(details.value)}
+    >
+      <TagsInput.Label>{String(label)}</TagsInput.Label>
+      <TagsInput.Control>
+        <TagsInput.Context>
+          {(tagsInput) =>
+            tagsInput.value.map((value, index) => (
+              <TagsInput.Item key={index} index={index} value={value}>
+                <TagsInput.ItemPreview>
+                  <TagsInput.ItemText>{value}</TagsInput.ItemText>
+                  <TagsInput.ItemDeleteTrigger>×</TagsInput.ItemDeleteTrigger>
+                </TagsInput.ItemPreview>
+                <TagsInput.ItemInput />
+              </TagsInput.Item>
+            ))
+          }
+        </TagsInput.Context>
+        <TagsInput.Input placeholder={asString(placeholder)} />
+      </TagsInput.Control>
+      <TagsInput.HiddenInput />
+    </TagsInput.Root>
+  );
+};
 
-const CheckboxForm: ComponentRenderer = ({ props: { label, defaultChecked, ...root } }) => (
-  <Checkbox.Root {...root} defaultChecked={defaultChecked === true}>
-    <Checkbox.Control>
-      <Checkbox.Indicator>✓</Checkbox.Indicator>
-    </Checkbox.Control>
-    <Checkbox.Label>{String(label)}</Checkbox.Label>
-    <Checkbox.HiddenInput />
-  </Checkbox.Root>
-);
+const CheckboxForm: ComponentRenderer = ({ props: { label, defaultChecked, ...root } }) => {
+  const save = useFormValue(label, defaultChecked === true);
+  return (
+    <Checkbox.Root
+      {...root}
+      defaultChecked={defaultChecked === true}
+      onCheckedChange={(details) => save(details.checked)}
+    >
+      <Checkbox.Control>
+        <Checkbox.Indicator>✓</Checkbox.Indicator>
+      </Checkbox.Control>
+      <Checkbox.Label>{String(label)}</Checkbox.Label>
+      <Checkbox.HiddenInput />
+    </Checkbox.Root>
+  );
+};
 
-const SwitchForm: ComponentRenderer = ({ props: { label, defaultChecked, ...root } }) => (
-  <Switch.Root {...root} defaultChecked={defaultChecked === true}>
-    <Switch.Control>
-      <Switch.Thumb />
-    </Switch.Control>
-    <Switch.Label>{String(label)}</Switch.Label>
-    <Switch.HiddenInput />
-  </Switch.Root>
-);
+const SwitchForm: ComponentRenderer = ({ props: { label, defaultChecked, ...root } }) => {
+  const save = useFormValue(label, defaultChecked === true);
+  return (
+    <Switch.Root
+      {...root}
+      defaultChecked={defaultChecked === true}
+      onCheckedChange={(details) => save(details.checked)}
+    >
+      <Switch.Control>
+        <Switch.Thumb />
+      </Switch.Control>
+      <Switch.Label>{String(label)}</Switch.Label>
+      <Switch.HiddenInput />
+    </Switch.Root>
+  );
+};
 
 const SliderForm: ComponentRenderer = ({
   props: { label, min, max, step, defaultValue, ...root },
-}) => (
-  <Slider.Root
-    {...root}
-    min={min as number | undefined}
-    max={max as number | undefined}
-    step={step as number | undefined}
-    defaultValue={[Number(defaultValue ?? min ?? 0)]}
-  >
-    <Slider.Label>{String(label)}</Slider.Label>
-    <Slider.ValueText />
-    <Slider.Control>
-      <Slider.Track>
-        <Slider.Range />
-      </Slider.Track>
-      <Slider.Thumb index={0}>
-        <Slider.HiddenInput />
-      </Slider.Thumb>
-    </Slider.Control>
-  </Slider.Root>
-);
+}) => {
+  const start = Number(defaultValue ?? min ?? 0);
+  const save = useFormValue(label, start);
+  return (
+    <Slider.Root
+      {...root}
+      min={min as number | undefined}
+      max={max as number | undefined}
+      step={step as number | undefined}
+      defaultValue={[start]}
+      onValueChange={(details) => save(details.value[0])}
+    >
+      <Slider.Label>{String(label)}</Slider.Label>
+      <Slider.ValueText />
+      <Slider.Control>
+        <Slider.Track>
+          <Slider.Range />
+        </Slider.Track>
+        <Slider.Thumb index={0}>
+          <Slider.HiddenInput />
+        </Slider.Thumb>
+      </Slider.Control>
+    </Slider.Root>
+  );
+};
 
 const ProgressForm: ComponentRenderer = ({ props: { label, value, max, ...root } }) => (
   <Progress.Root {...root} value={Number(value) || 0} max={max as number | undefined}>
@@ -288,56 +357,59 @@ const ProgressForm: ComponentRenderer = ({ props: { label, value, max, ...root }
   </Progress.Root>
 );
 
-const DatePickerForm: ComponentRenderer = ({ props: { label, placeholder, ...root } }) => (
-  <DatePicker.Root {...root}>
-    <DatePicker.Label>{String(label)}</DatePicker.Label>
-    <DatePicker.Control>
-      <DatePicker.Input placeholder={asString(placeholder)} />
-      <DatePicker.Trigger aria-label="Open calendar">▾</DatePicker.Trigger>
-    </DatePicker.Control>
-    <Portal>
-      <DatePicker.Positioner>
-        <DatePicker.Content>
-          <DatePicker.View view="day">
-            <DatePicker.Context>
-              {(datePicker) => (
-                <>
-                  <DatePicker.ViewControl>
-                    <DatePicker.PrevTrigger>‹</DatePicker.PrevTrigger>
-                    <DatePicker.RangeText />
-                    <DatePicker.NextTrigger>›</DatePicker.NextTrigger>
-                  </DatePicker.ViewControl>
-                  <DatePicker.Table>
-                    <DatePicker.TableHead>
-                      <DatePicker.TableRow>
-                        {datePicker.weekDays.map((weekDay, index) => (
-                          <DatePicker.TableHeader key={index}>
-                            {weekDay.short}
-                          </DatePicker.TableHeader>
-                        ))}
-                      </DatePicker.TableRow>
-                    </DatePicker.TableHead>
-                    <DatePicker.TableBody>
-                      {datePicker.weeks.map((week, index) => (
-                        <DatePicker.TableRow key={index}>
-                          {week.map((day, dayIndex) => (
-                            <DatePicker.TableCell key={dayIndex} value={day}>
-                              <DatePicker.TableCellTrigger>{day.day}</DatePicker.TableCellTrigger>
-                            </DatePicker.TableCell>
+const DatePickerForm: ComponentRenderer = ({ props: { label, placeholder, ...root } }) => {
+  const save = useFormValue(label);
+  return (
+    <DatePicker.Root {...root} onValueChange={(details) => save(details.valueAsString)}>
+      <DatePicker.Label>{String(label)}</DatePicker.Label>
+      <DatePicker.Control>
+        <DatePicker.Input placeholder={asString(placeholder)} />
+        <DatePicker.Trigger aria-label="Open calendar">▾</DatePicker.Trigger>
+      </DatePicker.Control>
+      <Portal>
+        <DatePicker.Positioner>
+          <DatePicker.Content>
+            <DatePicker.View view="day">
+              <DatePicker.Context>
+                {(datePicker) => (
+                  <>
+                    <DatePicker.ViewControl>
+                      <DatePicker.PrevTrigger>‹</DatePicker.PrevTrigger>
+                      <DatePicker.RangeText />
+                      <DatePicker.NextTrigger>›</DatePicker.NextTrigger>
+                    </DatePicker.ViewControl>
+                    <DatePicker.Table>
+                      <DatePicker.TableHead>
+                        <DatePicker.TableRow>
+                          {datePicker.weekDays.map((weekDay, index) => (
+                            <DatePicker.TableHeader key={index}>
+                              {weekDay.short}
+                            </DatePicker.TableHeader>
                           ))}
                         </DatePicker.TableRow>
-                      ))}
-                    </DatePicker.TableBody>
-                  </DatePicker.Table>
-                </>
-              )}
-            </DatePicker.Context>
-          </DatePicker.View>
-        </DatePicker.Content>
-      </DatePicker.Positioner>
-    </Portal>
-  </DatePicker.Root>
-);
+                      </DatePicker.TableHead>
+                      <DatePicker.TableBody>
+                        {datePicker.weeks.map((week, index) => (
+                          <DatePicker.TableRow key={index}>
+                            {week.map((day, dayIndex) => (
+                              <DatePicker.TableCell key={dayIndex} value={day}>
+                                <DatePicker.TableCellTrigger>{day.day}</DatePicker.TableCellTrigger>
+                              </DatePicker.TableCell>
+                            ))}
+                          </DatePicker.TableRow>
+                        ))}
+                      </DatePicker.TableBody>
+                    </DatePicker.Table>
+                  </>
+                )}
+              </DatePicker.Context>
+            </DatePicker.View>
+          </DatePicker.Content>
+        </DatePicker.Positioner>
+      </Portal>
+    </DatePicker.Root>
+  );
+};
 
 /** The i-th panel, rendered on its own. */
 function panel(children: unknown, index: number, renderNode: (value: unknown) => ReactNode) {

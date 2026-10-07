@@ -1,12 +1,14 @@
 // One chat turn in, a validated OpenUI Lang stream out: the Router picks the
-// Surface and components, the LLM writes against the Sub-library, and a bad
-// program gets one retry before the turn falls back to text (ADR-0011).
+// Surface and components, the LLM writes against the Sub-library under the UI
+// rules, and a program that is invalid or fails the usability lint gets one
+// retry before the turn falls back to text (ADR-0011).
 import { createStreamingParser, type ValidationError } from "@openuidev/lang-core";
-import type { ComponentsManifest, ContractManifest } from "@moderno-ui/lint-core";
+import type { AgentComponent, ComponentsManifest, ContractManifest } from "@moderno-ui/lint-core";
 import { fromManifest } from "../library/from-manifest.ts";
 import { createSubLibrary } from "../library/sub-library.ts";
 import type { JudgeConfig } from "../router/judge.ts";
 import { route } from "../router/route.ts";
+import { checkUsability, UI_RULES, type UsabilityError } from "./usability.ts";
 
 export interface ChatMessage {
   role: "user" | "assistant";
@@ -34,8 +36,11 @@ export type GenUIChunk =
   | { type: "text"; text: string }
   /** The next piece of the OpenUI Lang program, without its fences. */
   | { type: "program"; text: string }
-  /** Drop everything yielded so far this turn: the program was invalid, and a new answer follows. */
-  | { type: "discard"; errors: ValidationError[] };
+  /** Drop everything yielded so far this turn: the program was invalid or unusable, and a new answer follows. */
+  | { type: "discard"; errors: ProgramError[] };
+
+/** Why a program was discarded: the parser's validation errors, then the usability lint's. */
+export type ProgramError = ValidationError | UsabilityError;
 
 const TEXT_PROMPT = "Reply in plain text. Do not write code or UI.";
 const FENCE = "```";
@@ -52,8 +57,11 @@ export async function* generateUI(options: GenerateUIOptions): AsyncGenerator<Ge
     return;
   }
 
-  const library = createSubLibrary(fromManifest(manifest, contract), picked.components);
-  const system = library.prompt({ inlineMode: true });
+  const library = createSubLibrary(
+    fromManifest(manifest, contract),
+    withAlternatives(picked.components, manifest.components),
+  );
+  const system = library.prompt({ inlineMode: true, additionalRules: UI_RULES });
   const schema = library.toJSONSchema();
 
   const first = yield* streamProgram(llm(system, messages), schema);
@@ -77,6 +85,23 @@ export async function* generateUI(options: GenerateUIOptions): AsyncGenerator<Ge
 }
 
 /**
+ * The picked components plus the ones their `whenNotToUse` points to
+ * (`Field` → "use Select"), so the model can follow that guidance: the router
+ * picks a Field for a lottery, and the model still finds the Select.
+ */
+function withAlternatives(names: string[], components: AgentComponent[]): string[] {
+  const known = new Set(components.map((component) => component.name));
+  const alternatives = components
+    .filter((component) => names.includes(component.name))
+    .flatMap((component) => component.guidance?.whenNotToUse ?? [])
+    // "Checkbox or Switch", "Radio Group": the names it mentions, spaces dropped.
+    .flatMap(({ use }) => use.match(/[A-Z][a-z]+(?: [A-Z][a-z]+)*/g) ?? [])
+    .map((name) => name.replace(/ /g, ""))
+    .filter((name) => known.has(name));
+  return [...new Set([...names, ...alternatives])];
+}
+
+/**
  * The chat with each program swapped for a short note. A program in the router's
  * state pulls a small model's judgment of the next message toward it.
  */
@@ -89,18 +114,19 @@ async function* answerInText(llm: LLM, messages: ChatMessage[]): AsyncGenerator<
   for await (const text of llm(TEXT_PROMPT, messages)) yield { type: "text", text };
 }
 
-/** Streams one answer, feeding its program to the parser, and returns the finished program's errors. */
+/** Streams one answer, feeding its program to the parser, and returns the finished program's errors and lint failures. */
 async function* streamProgram(
   stream: AsyncIterable<string>,
   schema: Parameters<typeof createStreamingParser>[0],
-): AsyncGenerator<GenUIChunk, { output: string; errors: ValidationError[] }> {
+): AsyncGenerator<GenUIChunk, { output: string; errors: ProgramError[] }> {
   const parser = createStreamingParser(schema);
   let output = "";
   for await (const chunk of splitFences(stream, (text) => (output += text))) {
     if (chunk.type === "program") parser.push(chunk.text);
     yield chunk;
   }
-  return { output, errors: parser.getResult().meta.errors };
+  const { root, meta } = parser.getResult();
+  return { output, errors: [...meta.errors, ...checkUsability(root)] };
 }
 
 /**

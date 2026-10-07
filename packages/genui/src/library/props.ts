@@ -7,8 +7,13 @@
 import { z } from "zod/v4";
 import type { AgentComponent, AgentProp } from "@moderno-ui/lint-core";
 
-/** Code, refs, styles and DOM plumbing: nothing a model may set. */
+/**
+ * Code, refs, styles and DOM plumbing: nothing a model may set. Nor `size`:
+ * every control of a widget renders at the recipe's default (`md`), so their
+ * heights always match.
+ */
 const BLOCKED_NAMES = new Set([
+  "size",
   "ref",
   "className",
   "style",

@@ -46,6 +46,18 @@ the component list are decided once, here.
    only self-close (`<Avatar.Image />`) takes no children, so a void element
    never gets any. A contract test renders a program for every component the
    library exposes and fails on a render error or a component without one.
+6. **Generated UI must be usable, not just valid** (#332). Each component's
+   description carries its `whenNotToUse` ("Not for X: use Y") and the
+   gotchas that apply to OpenUI Lang arguments; the system prompt adds a short
+   list of UI rules. No component takes `size`: every control of a widget
+   renders at the recipe default (`md`), so heights match. A Button with no
+   action triggers its widget's OpenUI form, where every control keeps its
+   value under its label, and `<GenUI>` adds those values to the message; a
+   Button with its own action sends its message as written. A usability lint
+   (`checkUsability`) runs on the parsed program, and its errors trigger the
+   same one retry as parse errors: a Select or RadioGroup with no options, a
+   form without exactly one primary Button or whose primary Button sets an
+   action, a NumberInput for a code.
 
 ### Rejected: Vercel json-render
 
