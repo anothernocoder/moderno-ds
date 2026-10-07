@@ -49,7 +49,7 @@ export function createServer(opts: CreateServerOptions = {}): McpServer {
     {
       title: "Search Moderno components",
       description:
-        "Find the right Moderno primitive by intent (e.g. 'modal', 'pick one option') rather than by name. Returns components ranked by relevance, each with its intent/when-to-use guidance.",
+        "Find the right Moderno primitive or block by intent (e.g. 'modal', 'pick one option', 'kpi') rather than by name. Returns primitives and blocks ranked by relevance, each with its kind, its intent/when-to-use guidance, and how to get it: an `import` for a primitive, an `install` command for a block. Prefer a block when one fits; compose primitives only for what no block covers.",
       inputSchema: {
         query: z.string().describe("Free-text description of the UI need."),
         framework: FRAMEWORK,
@@ -69,9 +69,9 @@ export function createServer(opts: CreateServerOptions = {}): McpServer {
     {
       title: "Get a Moderno component's API",
       description:
-        "Props, data-parts, and variants for one component, read from the INSTALLED @moderno-ui/<framework> package's manifest — not the latest docs. Use this before writing any Moderno component usage.",
+        "Props, data-parts, and variants for one component, read from the INSTALLED @moderno-ui/<framework> package's manifest — not the latest docs. For a block: its props, the fields of the object types they use (`shapes`), and its `install` command. Use this before writing any Moderno component usage.",
       inputSchema: {
-        name: z.string().describe("Component name, e.g. 'Button'."),
+        name: z.string().describe("Component or block name, e.g. 'Button' or 'KpiCard'."),
         framework: FRAMEWORK,
       },
     },
@@ -89,9 +89,9 @@ export function createServer(opts: CreateServerOptions = {}): McpServer {
     {
       title: "Get framework-specific usage examples",
       description:
-        "Working usage snippets for one component, in the requested framework's own syntax (JSX, Vue SFC, Svelte, etc.) — never translate an example from one framework to another by hand.",
+        "Working usage snippets for one component or block, in the requested framework's own syntax (JSX, Vue SFC, Svelte, etc.) — never translate an example from one framework to another by hand. A block's example is its full source, as `install` copies it.",
       inputSchema: {
-        name: z.string().describe("Component name, e.g. 'Select'."),
+        name: z.string().describe("Component or block name, e.g. 'Select' or 'KpiCard'."),
         framework: FRAMEWORK,
       },
     },

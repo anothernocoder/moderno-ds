@@ -42,13 +42,22 @@ The tools read and verify; the agent writes the code itself.
 
 | Tool                | Input                | Returns                                                                       |
 | ------------------- | -------------------- | ----------------------------------------------------------------------------- |
-| `search_components` | `query`, `framework` | Components ranked by intent, with import path and when to use.                |
-| `get_component_api` | `name`, `framework`  | Props, `data-part`s and variants from the installed package.                  |
+| `search_components` | `query`, `framework` | Primitives and blocks ranked by intent, with how to get them and when to use. |
+| `get_component_api` | `name`, `framework`  | Props, `data-part`s and variants from the installed package, or a block's.    |
 | `get_contract`      | none                 | Token slots, the dark-mode and multi-brand model, the `data-part` convention. |
 | `get_examples`      | `name`, `framework`  | Working snippets in that framework's own syntax.                              |
 | `validate_usage`    | `code`, `framework`  | Rule findings. An empty list means clean.                                     |
 
 `framework` is one of `react`, `vue`, `svelte`, `solid` or `astro`.
+
+The tools also know the registry's [blocks](/en/blocks/): ready-made sections like `KpiCard`, `OrderSummary` or `Table`. A block is not imported from a package. You copy it into the app with the CLI, so its entry has an `install` command instead of an `import`.
+
+```
+search_components({ query: "kpi", framework: "react" })
+→ { matches: [{ name: "KpiCard", kind: "block", install: "npx @moderno-ui/cli add kpi-card-react", … }, …] }
+```
+
+`get_component_api` and `get_examples` take a block name too. Use a block when one fits; compose primitives only for what no block covers.
 
 ## The agent loop
 

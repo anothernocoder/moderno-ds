@@ -1,0 +1,66 @@
+{
+  "name": "KpiCard",
+  "slug": "kpi-card",
+  "kind": "block",
+  "description": "One headline number with its change and its trend, composing the @moderno-ui/react Alert, Badge, Button, Card, Skeleton and SparkChart primitives: the metric's label and period, its value in the display face, its change tinted by whether that change is good news and a sparkline of the period, with its own empty, loading and error renders; responds to its container (@container) across all three contract steps — the value and the sparkline side by side at @sm, a larger value and a wider sparkline at @md, the widest sparkline at @lg.",
+  "install": "npx @moderno-ui/cli add kpi-card-react",
+  "frameworks": ["react", "vue", "svelte", "solid"],
+  "propsHash": "sha256:fixture-kpi-card",
+  "props": [
+    {
+      "name": "label",
+      "type": "string",
+      "required": false
+    },
+    {
+      "name": "metric",
+      "type": "KpiCardMetric | null",
+      "required": false
+    },
+    {
+      "name": "period",
+      "type": "string",
+      "required": false
+    }
+  ],
+  "shapes": {
+    "KpiCardMetric": [
+      {
+        "name": "caption",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "delta",
+        "type": "string",
+        "required": false
+      },
+      {
+        "name": "tone",
+        "type": "\"negative\" | \"neutral\" | \"positive\"",
+        "required": false
+      },
+      {
+        "name": "trend",
+        "type": "number[]",
+        "required": false
+      },
+      {
+        "name": "value",
+        "type": "string",
+        "required": true
+      }
+    ]
+  },
+  "composes": ["Alert", "Badge", "Button", "Card", "Skeleton", "SparkChart"],
+  "examples": [
+    {
+      "title": "KPI card",
+      "code": "import { KpiCard } from \"@/components/blocks/kpi-card\";\n\n<KpiCard label=\"Revenue\" period=\"This month\" metric={{ value: \"$48,200\", delta: \"+12%\", tone: \"positive\" }} />"
+    }
+  ],
+  "guidance": {
+    "intent": "One key number on a dashboard — its label and period, its value, its change and a small line of how it moved over the period.",
+    "whenToUse": "A dashboard tile for one metric people check often: revenue, sign-ups, churn, open tickets. Put several in a grid for a dashboard's top row."
+  }
+}

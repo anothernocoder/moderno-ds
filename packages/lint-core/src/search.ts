@@ -1,20 +1,31 @@
 /**
- * Ranks components against a free-text query by their name, scope and curated
- * `guidance`. Free and local: `@moderno-ui/mcp`'s `search_components` answers
- * with it, and `@moderno-ui/genui`'s router shortlists with it.
+ * Ranks components (primitives and blocks) against a free-text query by their
+ * name, scope or description, and curated `guidance`. Free and local:
+ * `@moderno-ui/mcp`'s `search_components` answers with it, and
+ * `@moderno-ui/genui`'s router shortlists with it.
  */
-import type { AgentComponent } from "@moderno-ui/props-doc/agent-manifest";
+import type { AgentGuidance } from "@moderno-ui/props-doc/agent-manifest";
 
-export interface RankedComponent {
-  component: AgentComponent;
+/** What ranking reads from a primitive (`AgentComponent`) or a block (`AgentBlock`). */
+export interface Rankable {
+  name: string;
+  scope?: string;
+  description?: string;
+  kind?: string;
+  guidance?: AgentGuidance;
+}
+
+export interface RankedComponent<T extends Rankable = Rankable> {
+  component: T;
   score: number;
 }
 
-function haystack(component: AgentComponent): string {
+function haystack(component: Rankable): string {
   const g = component.guidance;
   return [
     component.name,
     component.scope,
+    component.description,
     g?.intent,
     g?.whenToUse,
     ...(g?.gotchas ?? []),
@@ -33,7 +44,7 @@ function tokenize(query: string): string[] {
     .filter(Boolean);
 }
 
-function score(component: AgentComponent, tokens: string[]): number {
+function score(component: Rankable, tokens: string[]): number {
   const hay = haystack(component);
   const name = component.name.toLowerCase();
   let s = 0;
@@ -45,10 +56,23 @@ function score(component: AgentComponent, tokens: string[]): number {
   return s;
 }
 
-/** Every component with its score for `query`, best first; ties by name. */
-export function rankComponents(components: AgentComponent[], query: string): RankedComponent[] {
+/** 0 for a block, 1 for a primitive: on a tie the block wins, since it already composes the primitive. */
+function kindOrder(component: Rankable): number {
+  return component.kind === "block" ? 0 : 1;
+}
+
+/** Every component with its score for `query`, best first; ties go to blocks, then by name. */
+export function rankComponents<T extends Rankable>(
+  components: T[],
+  query: string,
+): RankedComponent<T>[] {
   const tokens = tokenize(query);
   return components
     .map((component) => ({ component, score: score(component, tokens) }))
-    .sort((a, b) => b.score - a.score || a.component.name.localeCompare(b.component.name));
+    .sort(
+      (a, b) =>
+        b.score - a.score ||
+        kindOrder(a.component) - kindOrder(b.component) ||
+        a.component.name.localeCompare(b.component.name),
+    );
 }

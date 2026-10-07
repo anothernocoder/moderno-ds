@@ -24,6 +24,7 @@ import type { ComponentsManifest, Framework } from "@moderno-ui/props-doc/agent-
 import type { ContractManifest } from "@moderno-ui/props-doc/contract-manifest";
 
 export type {
+  AgentBlock,
   AgentComponent,
   AgentExample,
   AgentGuidance,

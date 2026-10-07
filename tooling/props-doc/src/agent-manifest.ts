@@ -35,6 +35,8 @@ import { extractProps, type ComponentDoc, type ComponentEntry, type PropDoc } fr
 import { AGENT_COMPONENTS, AGENT_EXAMPLES } from "./components.generated.ts";
 import type { AgentBlock } from "./agent-blocks.ts";
 
+export type { AgentBlock };
+
 export { AGENT_COMPONENTS };
 
 export type Framework = "react" | "vue" | "svelte" | "solid" | "astro";

@@ -34,17 +34,28 @@ describe("getComponentApi", () => {
 
   it("returns the framework-appropriate import string", () => {
     const react = getComponentApi(manifests, { name: "Button", framework: "react" });
-    expect(react.component.import).toBe('import { Button } from "@moderno-ui/react"');
+    expect(react.component).toHaveProperty("import", 'import { Button } from "@moderno-ui/react"');
 
     const vue = getComponentApi(manifests, { name: "Button", framework: "vue" });
-    expect(vue.component.import).toBe('import { Button } from "@moderno-ui/vue"');
+    expect(vue.component).toHaveProperty("import", 'import { Button } from "@moderno-ui/vue"');
+  });
+
+  it("returns a block's props, object shapes and install command", () => {
+    const result = getComponentApi(manifests, { name: "kpicard", framework: "react" });
+    expect(result.component).toMatchObject({
+      name: "KpiCard",
+      kind: "block",
+      install: "npx @moderno-ui/cli add kpi-card-react",
+    });
+    expect(result.component.props.map((p) => p.name)).toEqual(["label", "metric", "period"]);
+    expect(result.component).toHaveProperty("shapes.KpiCardMetric");
   });
 
   it("throws with the available component names when asked for one that doesn't exist", () => {
     // The fixture lists its components in slug order, one file each, so a new
     // one can sort between these: check each name, not who its neighbours are.
     const lookup = () => getComponentApi(manifests, { name: "Sheet", framework: "react" });
-    for (const name of ["Button", "Card", "Checkbox", "Dialog"]) {
+    for (const name of ["Button", "Card", "Checkbox", "Dialog", "KpiCard"]) {
       expect(lookup).toThrow(new RegExp(`Available: .*\\b${name}\\b`));
     }
   });
