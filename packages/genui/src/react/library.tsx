@@ -13,6 +13,7 @@ import {
   type Library,
 } from "@openuidev/react-lang";
 import * as Moderno from "@moderno-ui/react";
+import { z } from "zod/v4";
 import { actionField } from "../library/blocks.ts";
 import type { GenUIComponent } from "../library/from-manifest.ts";
 import { useWidgetForm } from "./form-values.ts";
@@ -153,12 +154,37 @@ const RENDERERS: Record<string, ComponentRenderer> = {
   Grid,
 };
 
-function rendererFor(name: string, blocks: Record<string, ComponentRenderer>): ComponentRenderer {
-  const renderer = blocks[name] ?? RENDERERS[name];
-  if (renderer) return renderer;
+/** `"out"` while `"outline"` streams in: a value its enum does not have (yet). */
+function isCutEnum(schema: z.ZodType | undefined, value: unknown): boolean {
+  const bare = schema instanceof z.ZodOptional ? (schema.unwrap() as z.ZodType) : schema;
+  return bare instanceof z.ZodEnum && !bare.options.includes(value as never);
+}
+
+/**
+ * A program skips an optional argument with `null`, and a variant still
+ * streaming in is cut short: the component gets neither, so it shows no "null"
+ * text and keeps its default until the value arrives whole. A Block keeps its
+ * props: its defaults are sample data (`renderBlock`).
+ */
+function settled(renderer: ComponentRenderer, shape: Record<string, z.ZodType>): ComponentRenderer {
+  return function Settled({ props, ...node }) {
+    const given = Object.entries(props).filter(
+      ([name, value]) => value !== null && !isCutEnum(shape[name], value),
+    );
+    return renderer({ ...node, props: Object.fromEntries(given) });
+  };
+}
+
+function rendererFor(
+  { name, props }: GenUIComponent,
+  blocks: Record<string, ComponentRenderer>,
+): ComponentRenderer {
+  if (blocks[name]) return blocks[name];
+  const shape = props.shape as Record<string, z.ZodType>;
+  if (RENDERERS[name]) return settled(RENDERERS[name], shape);
   const component = reactComponent(name);
   if (!component) throw new Error(`[genui] No @moderno-ui/react component renders "${name}".`);
-  return render(component);
+  return settled(render(component), shape);
 }
 
 /**
@@ -178,7 +204,7 @@ export function createReactLibrary(
         name: component.name,
         description: component.description,
         props: component.props,
-        component: rendererFor(component.name, blocks),
+        component: rendererFor(component, blocks),
       }),
     ),
   });

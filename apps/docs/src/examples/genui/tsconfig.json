@@ -4,6 +4,16 @@
   "extends": "../../../tsconfig.json",
   "compilerOptions": {
     "jsx": "react-jsx",
-    "jsxImportSource": "react"
+    "jsxImportSource": "react",
+    // A Block is imported as an app does, from where `moderno add` puts it;
+    // astro.config.mjs resolves it to the registry source the same way.
+    "paths": {
+      "@/components/blocks/stat-row": [
+        "../../../../../registry/blocks/stat-row/react/stat-row.tsx"
+      ],
+      "@moderno-ui/react": ["../../../node_modules/@moderno-ui/react/dist/index.d.ts"],
+      "react": ["../../../node_modules/@types/react"],
+      "react/*": ["../../../node_modules/@types/react/*"]
+    }
   }
 }

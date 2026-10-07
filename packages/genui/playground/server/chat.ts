@@ -38,11 +38,15 @@ export type ChatEvent =
   | { type: "TEXT_MESSAGE_END"; messageId: string }
   | { type: "RUN_ERROR"; message: string };
 
-/** Answers the last message of `messages` as one assistant message: text, fenced programs, and discard marks. */
+/**
+ * Answers the last message of `messages` as one assistant message: text, fenced
+ * programs, and discard marks. `blocks` names the Blocks the page renders.
+ */
 export async function* chatTurn(
   messages: ChatMessage[],
   judge: JudgeConfig,
   llm: LLM,
+  blocks: readonly string[] = [],
 ): AsyncGenerator<ChatEvent> {
   const messageId = crypto.randomUUID();
   const content = (delta: string): ChatEvent => ({
@@ -58,6 +62,7 @@ export async function* chatTurn(
       context: messages.slice(0, -1),
       judge,
       llm,
+      blocks,
       manifest: reactManifest as unknown as ComponentsManifest,
       contract: contract as unknown as ContractManifest,
     })) {

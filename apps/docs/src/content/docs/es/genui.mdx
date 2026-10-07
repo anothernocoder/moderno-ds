@@ -16,6 +16,8 @@ import ConfirmCard from "../../../examples/genui/confirm/react.tsx";
 import confirmReact from "../../../examples/genui/confirm/react.tsx?raw";
 import TextTurn from "../../../examples/genui/text/react.tsx";
 import textReact from "../../../examples/genui/text/react.tsx?raw";
+import SalesStats from "../../../examples/genui/blocks/react.tsx";
+import blocksReact from "../../../examples/genui/blocks/react.tsx?raw";
 
 <Preview examples={{ react: baseReact }}>
   <StaticReact component={PaymentAlert} />
@@ -97,6 +99,7 @@ Un programa válido también tiene que ser usable. El prompt le da al LLM unas r
 | `llm`      | `LLM`                | —           | El modelo que escribe la respuesta.                                         |
 | `manifest` | `ComponentsManifest` | —           | `@moderno-ui/react/moderno.agent.json`. El router elige de ahí.             |
 | `contract` | `ContractManifest`   | —           | `@moderno-ui/css/moderno.agent.json`. Los espacios del layout salen de ahí. |
+| `blocks`   | `readonly string[]`  | `[]`        | Los nombres de los Blocks que dibuja tu página. El router puede elegirlos.  |
 
 `ChatMessage` es `{ role: "user" | "assistant"; content: string }`.
 
@@ -202,6 +205,7 @@ El LLM no puede fijar `size`: cada control de un widget se dibuja en `md`, así 
 | `isStreaming` | `boolean`                         | `false`     | Verdadero mientras el programa sigue llegando.                                                                                            |
 | `onAction`    | `(event: ActionEvent) => void`    | —           | Un componente lanzó una acción, como el `@ToAssistant` de un botón. Un botón sin acción envía su etiqueta con los valores del formulario. |
 | `onError`     | `(errors: OpenUIError[]) => void` | —           | El programa terminado tiene errores, como un componente que no se pudo dibujar. Reintenta o responde en texto. `[]` limpia.               |
+| `blocks`      | `Record<string, ComponentType>`   | `{}`        | Tus Blocks instalados, por nombre: `{ StatRow }`. Dale a `generateUI` los mismos nombres.                                                 |
 
 ## Ejemplos
 
@@ -228,5 +232,19 @@ Cuando el router elige `text`, el turno no tiene programa. Muestra el texto y pa
 <Preview examples={{ react: textReact }}>
   <StaticReact component={TextTurn} />
 </Preview>
+
+### Usa tus blocks
+
+Un **Block** es una pieza ya hecha, como una fila de métricas o el resumen de un pedido. Cuando uno encaja, el LLM lo usa en vez de armarlo con componentes pequeños.
+
+<Preview examples={{ react: blocksReact }} layout="fill">
+  <StaticReact component={SalesStats} />
+</Preview>
+
+1. Instálalo: `npx @moderno-ui/cli add stat-row-react`.
+2. Dáselo a `<GenUI>`: `<GenUI blocks={{ StatRow }} … />`.
+3. Dale su nombre a `generateUI`: `generateUI({ …, blocks: ["StatRow"] })`.
+
+Eso es todo. El LLM llena el Block con sus propios datos, nunca con los de ejemplo.
 
 Pruébalos todos en vivo en el playground: `pnpm --filter @moderno-ui/genui dev`.

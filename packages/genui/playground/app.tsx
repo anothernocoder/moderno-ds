@@ -19,9 +19,10 @@ import { Alert, Avatar, Button, Field, Spinner } from "@moderno-ui/react";
 import type { ChatMessage } from "../src/server.ts";
 import { GenUI, type ActionEvent, type OpenUIError } from "../src/react.ts";
 import { lastAttempt, splitAnswer } from "./answer.ts";
+import { blocks } from "./blocks.ts";
 import { Markdown } from "./markdown.tsx";
 
-const SUGGESTIONS = ["Sales this month", "Confirm my order", "Hello"];
+const SUGGESTIONS = ["Ventas del mes", "Confirma mi pedido", "Quiero jugar un chance", "Hola"];
 
 function textOf(message: Message): string {
   const { content } = message as { content?: unknown };
@@ -44,7 +45,7 @@ const llm: ChatLLM = {
     fetch("/api/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ messages: toChatMessages(messages) }),
+      body: JSON.stringify({ messages: toChatMessages(messages), blocks: Object.keys(blocks) }),
       signal,
     }),
   streamProtocol: agUIAdapter(),
@@ -91,7 +92,13 @@ function Widget({
     setFailed(errors.flatMap((error) => (error.code === "render-error" ? [error.message] : [])));
   return (
     <div className="widget">
-      <GenUI response={program} isStreaming={isStreaming} onAction={onAction} onError={onError} />
+      <GenUI
+        blocks={blocks}
+        response={program}
+        isStreaming={isStreaming}
+        onAction={onAction}
+        onError={onError}
+      />
       {failed.length > 0 && (
         <Alert.Root variant="error" size="sm">
           <Alert.Content>
@@ -130,7 +137,7 @@ function Composer({ onSend, disabled }: { onSend: (text: string) => void; disabl
         <Field.Root>
           <Field.Input
             aria-label="Message"
-            placeholder="Ask for sales this month…"
+            placeholder="Pide las ventas del mes…"
             value={text}
             onChange={(event) => setText(event.target.value)}
           />

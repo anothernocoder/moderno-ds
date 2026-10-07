@@ -3,7 +3,15 @@
   "compilerOptions": {
     "jsx": "react-jsx",
     "lib": ["ES2023", "DOM", "DOM.Iterable"],
-    "types": ["node"]
+    "types": ["node"],
+    // The Generative UI docs example imports a Block as an app does; it and
+    // the registry source it resolves to (no node_modules) use these copies.
+    "paths": {
+      "@/components/blocks/stat-row": ["../../registry/blocks/stat-row/react/stat-row.tsx"],
+      "@moderno-ui/react": ["./src/index.ts"],
+      "react": ["./node_modules/@types/react"],
+      "react/*": ["./node_modules/@types/react/*"]
+    }
   },
   "include": [
     "src/**/*.ts",
