@@ -103,6 +103,9 @@ importers:
       '@astrojs/vercel':
         specifier: ^11.0.10
         version: 11.0.10(astro@7.3.1(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(@types/node@22.19.21)(@vercel/functions@3.9.5(ws@8.21.0))(yaml@2.9.0))(react@19.2.7)(rollup@4.62.0)(svelte@5.56.3(@typescript-eslint/types@8.61.1))(vue@3.5.38(typescript@5.9.3))(ws@8.21.0)
+      '@moderno-ui/genui':
+        specifier: workspace:*
+        version: link:../../packages/genui
       '@moderno-ui/props-doc':
         specifier: workspace:*
         version: link:../../tooling/props-doc

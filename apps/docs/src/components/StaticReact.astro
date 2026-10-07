@@ -1,0 +1,19 @@
+---
+/**
+ * StaticReact — renders a React example to HTML at build time, with no island.
+ * The docs have no React integration (their islands are Svelte); a page whose
+ * demo exists only in React, like Generative UI, shows it through this. The
+ * demo is static: it draws the component, but its clicks do nothing.
+ */
+import type { ComponentType } from "react";
+import { createElement } from "react";
+import { renderToString } from "react-dom/server";
+
+interface Props {
+  component: ComponentType;
+}
+
+const html = renderToString(createElement(Astro.props.component));
+---
+
+<Fragment set:html={html} />
