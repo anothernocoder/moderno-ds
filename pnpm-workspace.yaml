@@ -6,6 +6,8 @@ packages:
 allowBuilds:
   esbuild: true
   sharp: false
+  # Its postinstall only sends telemetry (ADR-0011).
+  "@openuidev/lang-core": false
 
 # Astro (apps/docs) pulls vite 8; the framework test toolchains
 # (vite-plugin-solid/svelte/vue) are on vite 5. Pin the shared vitest toolchain
