@@ -68,8 +68,8 @@ describe("fromManifest", () => {
     expect(signatures(prompt())).toMatchInlineSnapshot(`
       [
         "Widget(count: number, data: any, variant?: "a" | "b", size?: "sm" | "md", label?: string, tone?: "calm" | "loud") — Widget",
-        "Stack(children: (string | Widget)[], direction?: "column" | "row", gap?: "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8") — Lays out its children in a column or a row.",
-        "Grid(children: (string | Widget)[], columns?: number, gap?: "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8") — Lays out its children in equal columns.",
+        "Stack(children: (string | Widget | Stack | Grid)[], direction?: "column" | "row", gap?: "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8") — Lays out its children in a column or a row.",
+        "Grid(children: (string | Widget | Stack | Grid)[], columns?: number, gap?: "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8") — Lays out its children in equal columns.",
       ]
     `);
     expect(prompt()).toBe(prompt());
@@ -142,6 +142,32 @@ describe("createSubLibrary", () => {
       (line) => line.split(" — ")[0]!.match(/\b[A-Z]\w*\b/g) ?? [],
     );
     expect(new Set(listed)).toEqual(new Set(kept));
+  });
+
+  it("lets the layouts hold each other, so a dashboard nests a Grid in the root Stack", () => {
+    const library = createSubLibrary(fromManifest(reactManifest, contract), [
+      "Card",
+      "Button",
+      "BarChart",
+    ]);
+    const prompt = signatures(library.prompt());
+    expect(prompt.find((line) => line.startsWith("Stack("))).toMatch(
+      /^Stack\(children: \(string \| [^)]*\bStack \| Grid\)\[\]/,
+    );
+    expect(prompt.find((line) => line.startsWith("Grid("))).toMatch(
+      /^Grid\(children: \(string \| [^)]*\bStack \| Grid\)\[\]/,
+    );
+
+    const parser = createParser(library.toJSONSchema());
+    const result = parser.parse(
+      [
+        "root = Stack([grid])",
+        "grid = Grid([row, row])",
+        'row = Stack([save], "row")',
+        'save = Button("primary")',
+      ].join("\n"),
+    );
+    expect(result.meta.errors).toEqual([]);
   });
 });
 

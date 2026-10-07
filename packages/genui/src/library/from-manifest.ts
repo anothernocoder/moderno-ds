@@ -6,7 +6,7 @@
  *
  * A ref must exist before the container that uses it, so components come out
  * in tiers: leaves, then compound parts (`CardHeader`), then compound roots
- * (`Card`), then the `Stack` and `Grid` layouts.
+ * (`Card`), then the `Stack` and `Grid` layouts, which also hold each other.
  */
 import { defineComponent, type DefinedComponent } from "@openuidev/lang-core";
 import { z } from "zod/v4";
@@ -77,8 +77,11 @@ function defineCompound(component: AgentComponent, leaves: GenUIComponent[]) {
   return { root, parts };
 }
 
+/**
+ * `Stack` and `Grid` hold any component and each other, so layouts nest
+ * (`Stack([Grid([...])])`). The getter defers the children until both exist.
+ */
 function defineLayouts(components: GenUIComponent[], contract: ContractManifest): GenUIComponent[] {
-  const children = childrenOf(components);
   const gap = z
     .enum(
       contract.slots.spacing.map((token) => token.replace(/^--spacing-/, "")) as [
@@ -88,18 +91,30 @@ function defineLayouts(components: GenUIComponent[], contract: ContractManifest)
     )
     .optional()
     .describe("A spacing token step.");
-  return [
-    define("Stack", "Lays out its children in a column or a row.", [
-      ["children", children],
-      ["direction", z.enum(["column", "row"]).optional().describe("Default: column")],
-      ["gap", gap],
-    ]),
-    define("Grid", "Lays out its children in equal columns.", [
-      ["children", children],
-      ["columns", z.number().optional()],
-      ["gap", gap],
-    ]),
+  let children: z.ZodArray | undefined;
+  const layout = (name: string, description: string, fields: Record<string, z.ZodType>) =>
+    defineComponent({
+      name,
+      description,
+      component: null,
+      props: z.object({
+        get children() {
+          return (children ??= childrenOf([...components, ...layouts]));
+        },
+        ...fields,
+      }),
+    });
+  const layouts: GenUIComponent[] = [
+    layout("Stack", "Lays out its children in a column or a row.", {
+      direction: z.enum(["column", "row"]).optional().describe("Default: column"),
+      gap,
+    }),
+    layout("Grid", "Lays out its children in equal columns.", {
+      columns: z.number().optional(),
+      gap,
+    }),
   ];
+  return layouts;
 }
 
 /**

@@ -16,17 +16,30 @@ function childOptions(component: GenUIComponent): readonly z.core.$ZodType[] {
   return array.element instanceof z.ZodUnion ? array.element.options : [];
 }
 
-/** The component with `children` swapped for `options`, keeping its position and optionality. */
-function withChildOptions(component: GenUIComponent, options: z.core.$ZodType[]): GenUIComponent {
-  const children = z.array(z.union(options as [z.core.$ZodType, ...z.core.$ZodType[]]));
+/**
+ * The component with `children` swapped for `options`, keeping its position and
+ * optionality. `options` is read on first use, so containers can hold each other.
+ */
+function withChildOptions(
+  component: GenUIComponent,
+  options: () => z.core.$ZodType[],
+): GenUIComponent {
+  const optional = component.props.shape.children instanceof z.ZodOptional;
+  let children: z.ZodType | undefined;
+  const shape = { ...component.props.shape };
+  Object.defineProperty(shape, "children", {
+    enumerable: true,
+    get: () => {
+      if (children) return children;
+      const array = z.array(z.union(options() as [z.core.$ZodType, ...z.core.$ZodType[]]));
+      return (children = optional ? array.optional() : array);
+    },
+  });
   return defineComponent({
     name: component.name,
     description: component.description,
     component: null,
-    props: component.props.extend({
-      children:
-        component.props.shape.children instanceof z.ZodOptional ? children.optional() : children,
-    }),
+    props: z.object(shape),
   });
 }
 
@@ -34,7 +47,6 @@ function withChildOptions(component: GenUIComponent, options: z.core.$ZodType[])
  * A library of the named components, the compound parts they hold, and the
  * `Stack` and `Grid` layouts (`Stack` is the root). Every container's children
  * are narrowed to what is kept, so the prompt lists nothing else.
- * `components` must be in `fromManifest` order: children before containers.
  */
 export function createSubLibrary(components: GenUIComponent[], names: string[]): Library<null> {
   const byRef = new Map<z.core.$ZodType, GenUIComponent>(
@@ -49,14 +61,13 @@ export function createSubLibrary(components: GenUIComponent[], names: string[]):
     }
   }
 
-  // Old ref → the kept component's ref, rebuilt children-first.
+  // Old ref → the kept component. Children resolve lazily, once every component is kept.
   const kept = new Map<z.core.$ZodType, GenUIComponent>();
   for (const component of components) {
     if (!keep.has(component.name)) continue;
     const options = childOptions(component);
     const next = options.length
-      ? withChildOptions(
-          component,
+      ? withChildOptions(component, () =>
           options.flatMap((option) => {
             if (!byRef.has(option)) return [option];
             const child = kept.get(option);
