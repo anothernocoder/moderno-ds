@@ -117,10 +117,18 @@ function defineLayouts(components: GenUIComponent[], contract: ContractManifest)
       }),
     });
   const layouts: GenUIComponent[] = [
-    layout("Stack", "Lays out its children in a column or a row.", {
-      direction: z.enum(["column", "row"]).optional().describe("Default: column"),
-      gap,
-    }),
+    layout(
+      "Stack",
+      'Lays out its children in a column or a row. justify "between" spreads a row apart, like a label and its price.',
+      {
+        direction: z.enum(["column", "row"]).optional().describe("Default: column"),
+        gap,
+        justify: z
+          .enum(["start", "center", "end", "between"])
+          .optional()
+          .describe("Default: start"),
+      },
+    ),
     layout("Grid", "Lays out its children in equal columns.", {
       columns: z.number().optional(),
       gap,

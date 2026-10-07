@@ -68,7 +68,7 @@ describe("fromManifest", () => {
     expect(signatures(prompt())).toMatchInlineSnapshot(`
       [
         "Widget(count: number, data: any, variant?: "a" | "b", size?: "sm" | "md", label?: string, tone?: "calm" | "loud") — Widget",
-        "Stack(children: (string | Widget | Stack | Grid)[], direction?: "column" | "row", gap?: "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8") — Lays out its children in a column or a row.",
+        "Stack(children: (string | Widget | Stack | Grid)[], direction?: "column" | "row", gap?: "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8", justify?: "start" | "center" | "end" | "between") — Lays out its children in a column or a row. justify "between" spreads a row apart, like a label and its price.",
         "Grid(children: (string | Widget | Stack | Grid)[], columns?: number, gap?: "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8") — Lays out its children in equal columns.",
       ]
     `);

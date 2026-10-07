@@ -7,7 +7,7 @@
  * The theme belongs to the page, not to `<GenUI>`: the toolbar only sets
  * `data-brand` and `.dark` on `<html>` (`?brand=contrast&mode=dark` on load).
  */
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import {
   agUIAdapter,
   ChatProvider,
@@ -15,10 +15,11 @@ import {
   type ChatLLM,
   type Message,
 } from "@openuidev/react-headless";
-import { Alert, Button, Card, Field } from "@moderno-ui/react";
+import { Alert, Avatar, Button, Field, Spinner } from "@moderno-ui/react";
 import type { ChatMessage } from "../src/server.ts";
 import { GenUI, type ActionEvent } from "../src/react.ts";
 import { lastAttempt, splitAnswer } from "./answer.ts";
+import { Markdown } from "./markdown.tsx";
 
 const SUGGESTIONS = ["Sales this month", "Confirm my order", "Hello"];
 
@@ -61,7 +62,9 @@ function AssistantMessage({
   const parts = splitAnswer(content);
   return parts.map((part, index) =>
     part.type === "text" ? (
-      <p key={index}>{part.text.trim()}</p>
+      <div key={index} className="text">
+        <Markdown text={part.text} />
+      </div>
     ) : (
       <div key={index} className="widget">
         <GenUI
@@ -71,6 +74,18 @@ function AssistantMessage({
         />
       </div>
     ),
+  );
+}
+
+/** One assistant column: the avatar mark, then the reply's text and widgets. */
+function AssistantRow({ children }: { children: ReactNode }) {
+  return (
+    <li className="assistant">
+      <Avatar.Root size="sm" aria-hidden="true">
+        <Avatar.Fallback>AI</Avatar.Fallback>
+      </Avatar.Root>
+      <div className="reply">{children}</div>
+    </li>
   );
 }
 
@@ -84,17 +99,19 @@ function Composer({ onSend, disabled }: { onSend: (text: string) => void; disabl
   };
   return (
     <form className="composer" onSubmit={submit}>
-      <Field.Root>
-        <Field.Input
-          aria-label="Message"
-          placeholder="Ask for sales this month…"
-          value={text}
-          onChange={(event) => setText(event.target.value)}
-        />
-      </Field.Root>
-      <Button type="submit" variant="primary" disabled={disabled}>
-        Send
-      </Button>
+      <div>
+        <Field.Root>
+          <Field.Input
+            aria-label="Message"
+            placeholder="Ask for sales this month…"
+            value={text}
+            onChange={(event) => setText(event.target.value)}
+          />
+        </Field.Root>
+        <Button type="submit" variant="primary" disabled={disabled}>
+          Send
+        </Button>
+      </div>
     </form>
   );
 }
@@ -105,6 +122,14 @@ function Thread() {
   const onAction = (event: ActionEvent) => {
     if (event.type === "continue_conversation") send(event.humanFriendlyMessage);
   };
+  const last = messages.at(-1);
+  const thinking = isRunning && !(last?.role === "assistant" && textOf(last).trim());
+
+  // Keep the newest message in view as a turn starts and streams. The page
+  // ends with the sticky composer, so its bottom shows the thread's last line.
+  useEffect(() => {
+    if (isRunning) window.scrollTo({ top: document.documentElement.scrollHeight });
+  }, [messages, isRunning]);
 
   return (
     <>
@@ -112,19 +137,22 @@ function Thread() {
         {messages.map((message, index) =>
           message.role === "user" ? (
             <li key={message.id} className="user">
-              <Card.Root variant="muted" size="sm">
-                <Card.Content>{textOf(message)}</Card.Content>
-              </Card.Root>
+              {textOf(message)}
             </li>
-          ) : message.role === "assistant" ? (
-            <li key={message.id} className="assistant">
+          ) : message.role === "assistant" && textOf(message).trim() ? (
+            <AssistantRow key={message.id}>
               <AssistantMessage
                 content={textOf(message)}
                 isStreaming={isRunning && index === messages.length - 1}
                 onAction={onAction}
               />
-            </li>
+            </AssistantRow>
           ) : null,
+        )}
+        {thinking && (
+          <AssistantRow>
+            <Spinner size="sm" label="Thinking" />
+          </AssistantRow>
         )}
       </ol>
       {threadError && (

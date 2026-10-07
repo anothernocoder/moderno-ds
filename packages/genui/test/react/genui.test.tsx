@@ -46,6 +46,21 @@ describe("GenUI", () => {
     consoleError.mockRestore();
   });
 
+  it('spreads a Stack row apart with justify "between"', () => {
+    render({
+      response: [
+        "root = Stack([row])",
+        'row = Stack(["T-shirt x2", "$40.00"], "row", "2", "between")',
+      ].join("\n"),
+    });
+
+    const row = [...container.querySelectorAll<HTMLElement>("div[style]")].find(
+      (div) => div.style.flexDirection === "row",
+    );
+    expect(row?.textContent).toBe("T-shirt x2$40.00");
+    expect(row?.style.justifyContent).toBe("space-between");
+  });
+
   it("calls onAction with the event of a @ToAssistant button", () => {
     const onAction = vi.fn();
     render({ response: confirmCard.response, onAction });

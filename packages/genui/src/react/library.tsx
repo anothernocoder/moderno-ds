@@ -71,11 +71,12 @@ const ActionButton: ComponentRenderer = ({ props: { children, action, ...props }
 const spacing = (gap: unknown) => (gap === undefined ? undefined : `var(--spacing-${String(gap)})`);
 
 // The layouts have no moderno component: a flex column or row, and a grid.
-const Stack: ComponentRenderer = ({ props: { children, direction, gap }, renderNode }) => (
+const Stack: ComponentRenderer = ({ props: { children, direction, gap, justify }, renderNode }) => (
   <div
     style={{
       display: "flex",
       flexDirection: direction === "row" ? "row" : "column",
+      justifyContent: justify === "between" ? "space-between" : (justify as string | undefined),
       gap: spacing(gap),
     }}
   >

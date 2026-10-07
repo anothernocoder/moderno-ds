@@ -56,6 +56,19 @@ describe("the playground chat in fixture mode", () => {
     ]);
     expect(splitAnswer(reply)).toEqual([{ type: "text", text: expect.stringContaining("placed") }]);
   }, 10_000);
+
+  it("answers a button on an earlier confirm card in text, not with the card again", async () => {
+    stubFixtureSystemOne();
+    const card = await answer([{ role: "user", content: "confirm my order" }]);
+    const reply = await answer([
+      { role: "user", content: "confirm my order" },
+      { role: "assistant", content: card },
+      { role: "user", content: "hello" },
+      { role: "assistant", content: "Hi!" },
+      { role: "user", content: "Confirm my order" },
+    ]);
+    expect(splitAnswer(reply)).toEqual([{ type: "text", text: expect.stringContaining("placed") }]);
+  }, 10_000);
 });
 
 describe("splitAnswer", () => {

@@ -6,11 +6,12 @@ import { confirmCard, salesCard } from "../examples.ts";
 const WIDGETS = { sales: salesCard.response, order: confirmCard.response };
 type Topic = keyof typeof WIDGETS | "text";
 
-/** A message right after the confirm card is its button talking, so it gets a text reply. */
+/** A message that matches a button of any earlier card is that button talking, so it gets a text reply. */
 function topicOf(message: string, context: ChatMessage[]): Topic {
   if (/sales|ventas/i.test(message)) return "sales";
-  const afterConfirmCard = context.at(-1)?.content.includes("@ToAssistant") ?? false;
-  if (/order|pedido/i.test(message) && !afterConfirmCard) return "order";
+  const button = `@ToAssistant(${JSON.stringify(message)})`;
+  const fromButton = context.some((turn) => turn.content.includes(button));
+  if (/order|pedido/i.test(message) && !fromButton) return "order";
   return "text";
 }
 

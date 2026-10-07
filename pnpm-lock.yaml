@@ -238,6 +238,12 @@ importers:
         specifier: ^3.25.0
         version: 3.25.76
     devDependencies:
+      '@fontsource/hedvig-letters-sans':
+        specifier: ^5.3.0
+        version: 5.3.0
+      '@fontsource/hedvig-letters-serif':
+        specifier: ^5.3.0
+        version: 5.3.0
       '@moderno-ui/css':
         specifier: workspace:*
         version: link:../css

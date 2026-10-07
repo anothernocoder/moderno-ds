@@ -1,5 +1,7 @@
 import "./no-devtools.ts";
 import { createRoot } from "react-dom/client";
+import "@fontsource/hedvig-letters-sans";
+import "@fontsource/hedvig-letters-serif";
 import "@moderno-ui/css";
 import "../../../registry/themes/theme-moderno/theme.css";
 import "../../../registry/themes/theme-contrast/theme.css";
