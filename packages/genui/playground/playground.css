@@ -7,50 +7,66 @@ body {
 }
 
 main {
-  display: grid;
-  gap: var(--spacing-8);
-  justify-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 40rem;
+  min-height: 100dvh;
+  margin: 0 auto;
   padding: var(--spacing-6) var(--spacing-4);
 }
 
-nav {
+nav,
+.suggestions {
   display: flex;
   flex-wrap: wrap;
   gap: var(--spacing-2);
   justify-content: center;
 }
 
-section {
+.thread {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.user {
+  align-self: flex-end;
+  max-width: 80%;
+}
+
+.assistant {
   display: grid;
   gap: var(--spacing-3);
   justify-items: center;
+}
+
+.assistant p {
+  justify-self: start;
+  margin: 0;
+}
+
+.widget {
   width: 100%;
   max-width: 28rem;
 }
 
-h2 {
-  margin: 0;
-  font-size: var(--text-ui-sm);
-  color: var(--muted-foreground);
+/* The composer stays at the bottom of the viewport while the thread scrolls. */
+.composer {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  gap: var(--spacing-2);
+  padding-block: var(--spacing-3);
+  background: var(--background);
 }
 
-/* Centres the response both ways, at a fixed height so streaming does not shift the page. */
-.frame {
-  display: grid;
-  place-items: center;
-  width: 100%;
-  min-height: 22rem;
-  box-sizing: border-box;
-  padding: var(--spacing-4);
-  border: 1px dashed var(--border);
-  border-radius: var(--radius);
-}
-
-.frame > * {
-  width: 100%;
-}
-
-output {
-  font-size: var(--text-ui-sm);
-  color: var(--muted-foreground);
+.composer > :first-child {
+  flex: 1;
 }

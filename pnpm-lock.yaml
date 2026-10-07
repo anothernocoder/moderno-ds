@@ -241,12 +241,18 @@ importers:
       '@moderno-ui/react':
         specifier: workspace:*
         version: link:../react
+      '@openuidev/react-headless':
+        specifier: ~0.17.0
+        version: 0.17.0(ai@6.0.301(zod@3.25.76))(react@19.2.7)(zustand@4.5.7(@types/react@19.2.17)(react@19.2.7))
       '@types/react':
         specifier: ^19.2.17
         version: 19.2.17
       '@types/react-dom':
         specifier: ^19.2.3
         version: 19.2.3(@types/react@19.2.17)
+      ai:
+        specifier: ^6.0.301
+        version: 6.0.301(zod@3.25.76)
       react:
         specifier: ^19.1.0
         version: 19.2.7
@@ -259,6 +265,9 @@ importers:
       vite:
         specifier: ^5.4.21
         version: 5.4.21(@types/node@22.19.21)(lightningcss@1.33.0)
+      zustand:
+        specifier: ^4.5.7
+        version: 4.5.7(@types/react@19.2.17)(react@19.2.7)
 
   packages/lint:
     dependencies:
@@ -505,6 +514,25 @@ importers:
         version: 8.5.1(postcss@8.5.15)(typescript@5.9.3)(yaml@2.9.0)
 
 packages:
+
+  '@ag-ui/core@0.0.53':
+    resolution: {integrity: sha512-11UocR7fFdMWw503bWCX2IOK15vbWfxT11Mn9xOiPBVO/UVcn57ywGrlLL4UaBlPgmUTvuzr2yYR2ElSqiN2wQ==}
+
+  '@ai-sdk/gateway@3.0.210':
+    resolution: {integrity: sha512-XUC2HGvDLhpfHKT7yXirZELHWIHzPJLtE3CE3FO6fjcQHcKR5nrsHxOp00THk1SivDo3IZB1yS6Un4+kAQ8eJg==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4.1.8
+
+  '@ai-sdk/provider-utils@4.0.57':
+    resolution: {integrity: sha512-89a7sPvZqXsP3PigcAQLWntu/duIVEcN/RyChAB+j6p3C7NwW767sVttvL8r0+BetTg63uAXQoYHCZZueQKBSw==}
+    engines: {node: '>=18.17'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4.1.8
+
+  '@ai-sdk/provider@3.0.18':
+    resolution: {integrity: sha512-IpefF5ssZVOZCD4Wu7zxt6PwZoGT2HLVjxpJ10Bjx6EAmRfLYJPjyrfxb0RYDlwvXnDb9nkQ7Do/oJVDuRFzew==}
+    engines: {node: '>=18'}
 
   '@ark-ui/react@5.37.2':
     resolution: {integrity: sha512-Q0R2Ah50kUhup0Ljxg65zGJq5yBV52BLm1coRkjHHid40d1yclaDGfhPL48kcF/xtjAFlGLkL6SiENkGvfh+mw==}
@@ -1752,6 +1780,10 @@ packages:
   '@one-ini/wasm@0.1.1':
     resolution: {integrity: sha512-XuySG1E38YScSJoMlqovLru4KTUNSjgVTIjyh7qMX6aNN5HY5Ct5LhRJdxO79JtTzKfzV/bnWpz+zquYrISsvw==}
 
+  '@opentelemetry/api@1.9.1':
+    resolution: {integrity: sha512-gLyJlPHPZYdAk1JENA9LeHejZe1Ti77/pTeFm/nMXmQH/HFZlcS/O2XJB+L8fkbrNSqhdtlvjBVjxwUYanNH5Q==}
+    engines: {node: '>=8.0.0'}
+
   '@openuidev/devtools@0.2.2':
     resolution: {integrity: sha512-MAA7VsK+Ir9kanBqoPSCgkr10HVk/79BVZMaLiHc4tlnvCl6pN2Ouzl+XFy7d/41n7J27XJxC7vcuQhn2sF1Wg==}
     peerDependencies:
@@ -1774,6 +1806,16 @@ packages:
 
   '@openuidev/observability@0.0.4':
     resolution: {integrity: sha512-4fjIrWu3TqTlfDE/m7cG10CH1vV7wQk5GPwMOmXeF9vJtkg92dg4Bdk3AjKgud7H7Xypwwjgt52VcLGZCE2CJQ==}
+
+  '@openuidev/react-headless@0.17.0':
+    resolution: {integrity: sha512-G0DEQk9g3ub+jsBjPdBXYrGL0pjVlJsQ2QqQmsOkh4r6vAo4JU0pAC3TNWyMYE5A3+EZDKydF5xI9TcB3vbXRA==}
+    peerDependencies:
+      ai: ^6.0.0 || ^7.0.0
+      react: ^18.3.1 || ^19.0.0
+      zustand: ^4.5.5
+    peerDependenciesMeta:
+      ai:
+        optional: true
 
   '@openuidev/react-lang@0.3.1':
     resolution: {integrity: sha512-+uOY65n4SSudWPPI2FPj2repAcUVmtnNnILQDfhhJKauH56lG6ubIdNhe5KghHmWIw9zTTsUZZePCvGFF7XSAQ==}
@@ -2130,6 +2172,9 @@ packages:
       '@solidjs/router':
         optional: true
 
+  '@standard-schema/spec@1.1.0':
+    resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
+
   '@sveltejs/acorn-typescript@1.0.10':
     resolution: {integrity: sha512-4WfKk68eTih+MiJD4fSbxN7E8kVBmTMPWHUPYjvl2N0rMs53YLTT8/YjKU5Dtnz5LqDjl7LEw4U7lXR2W3J5WA==}
     peerDependencies:
@@ -2432,6 +2477,10 @@ packages:
     resolution: {integrity: sha512-m1QFg+U+3yPOnP1xSYJ73UIRxLOXdts1JOhiOiyPYqEsALgrXFFINvgUaD6R6iNvaBFAjHllBCbkfx4FuOdpaA==}
     engines: {node: '>=20'}
     hasBin: true
+
+  '@vercel/oidc@3.2.0':
+    resolution: {integrity: sha512-UycprH3T6n3jH0k44NHMa7pnFHGu/N05MjojYr+Mc6I7obkoLIJujSWwin1pCvdy/eOxrI/l3uDLQsmcrOb4ug==}
+    engines: {node: '>= 20'}
 
   '@vercel/oidc@3.8.5':
     resolution: {integrity: sha512-RwXYtnt6za+5UO4IaLywN/6B95AlLqynPRUWRJxeJ/qufwkcLUbZNUxYtzT0uMpuraWhlNcGqPNGkTnZr4BGBw==}
@@ -2843,6 +2892,12 @@ packages:
   agent-base@7.1.4:
     resolution: {integrity: sha512-MnA+YT8fwfJPgBx3m60MNqakm30XOkyIoH1y6huTQvC0PwZG7ki8NacLBcrPbNoo8vEZy7Jpuk7+jMO+CUovTQ==}
     engines: {node: '>= 14'}
+
+  ai@6.0.301:
+    resolution: {integrity: sha512-pb7vIIBXKw4VGpbLmXvD+u5qbUe+2Mm7hEEkHs6Z2XBiifxAUEB38gl5JbaRi3BWsFqN13GP25/NHhf/DvPjgg==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4.1.8
 
   ajv-draft-04@1.0.0:
     resolution: {integrity: sha512-mv00Te6nmYbRp5DCwclxtt7yV/joXJPGS7nM+97GdxvuttCOfgI3K4U25zboyeX0O+myI8ERluxQe5wljMmVIw==}
@@ -4078,6 +4133,9 @@ packages:
   json-schema-typed@8.0.2:
     resolution: {integrity: sha512-fQhoXdcvc3V28x7C7BMs4P5+kNlgUURe2jmUT1T//oBRMDrqy1QPelJimwZGo7Hg9VPV3EQV5Bnq4hbFy2vetA==}
 
+  json-schema@0.4.0:
+    resolution: {integrity: sha512-es94M3nTIfsEPisRafak+HDLfHXnKBhV3vU5eqPcS3flIWqcxJWgXHXiey3YrpaNsanY5ei1VoYEbOzijuq9BA==}
+
   json-stable-stringify-without-jsonify@1.0.1:
     resolution: {integrity: sha512-Bdboy+l7tA3OGW6FjyFHWkP5LuByj1Tk33Ljyq0axyzdk9//JSi2u3fP1QSmd1KNwq6VOKYGlAu87CisVir6Pw==}
 
@@ -5221,6 +5279,10 @@ packages:
   undici-types@6.21.0:
     resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
 
+  undici@6.29.0:
+    resolution: {integrity: sha512-R+RODBqp6i2pPflGdq+xIOUkl+RNfGgHwoinecKu/JCuf2uO06cOKoDbI2P7Dn6KcswdKwrczbU6IYJ6K8X+wg==}
+    engines: {node: '>=18.17'}
+
   undici@8.10.2:
     resolution: {integrity: sha512-/y4/bH9YNU5hi9NIrpOuvGXFcxrj3CMrV+/AYpowAYTpHn8gX/XPFjNy766FPoYY0miQhdW977JFWKGNhBdwyQ==}
     engines: {node: '>=22.19.0'}
@@ -5327,6 +5389,11 @@ packages:
 
   uri-js@4.4.1:
     resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==}
+
+  use-sync-external-store@1.7.0:
+    resolution: {integrity: sha512-6L+EeigHMQhdaIPNIFUKwfWJSwWFQ8gJbJ2DLOs5sDIegTwR9fRxvnM3uciHKjIZhFz+KAv2emhWMRvDmMcY8A==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
   vary@1.1.2:
     resolution: {integrity: sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==}
@@ -5741,10 +5808,48 @@ packages:
   zod@4.5.4:
     resolution: {integrity: sha512-sC95tT5iHHH9gtpj6A81kh+NEaRAUFN+qlUPDUbRfOMvNf5QCBqsb3WgvnpVtK5Y+4UfA6KqufotuTvMGiTlsA==}
 
+  zustand@4.5.7:
+    resolution: {integrity: sha512-CHOUy7mu3lbD6o6LJLfllpjkzhHXSBlX8B9+qPddUsIfeF5S/UZ5q0kmCsnRqT1UHFQZchNFDDzMbQsuesHWlw==}
+    engines: {node: '>=12.7.0'}
+    peerDependencies:
+      '@types/react': '>=16.8'
+      immer: '>=9.0.6'
+      react: '>=16.8'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      immer:
+        optional: true
+      react:
+        optional: true
+
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
 
 snapshots:
+
+  '@ag-ui/core@0.0.53':
+    dependencies:
+      zod: 3.25.76
+
+  '@ai-sdk/gateway@3.0.210(zod@3.25.76)':
+    dependencies:
+      '@ai-sdk/provider': 3.0.18
+      '@ai-sdk/provider-utils': 4.0.57(zod@3.25.76)
+      '@vercel/oidc': 3.2.0
+      zod: 3.25.76
+
+  '@ai-sdk/provider-utils@4.0.57(zod@3.25.76)':
+    dependencies:
+      '@ai-sdk/provider': 3.0.18
+      '@standard-schema/spec': 1.1.0
+      eventsource-parser: 3.1.0
+      undici: 6.29.0
+      zod: 3.25.76
+
+  '@ai-sdk/provider@3.0.18':
+    dependencies:
+      json-schema: 0.4.0
 
   '@ark-ui/react@5.37.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
@@ -7213,6 +7318,8 @@ snapshots:
 
   '@one-ini/wasm@0.1.1': {}
 
+  '@opentelemetry/api@1.9.1': {}
+
   '@openuidev/devtools@0.2.2(@openuidev/observability@0.0.4)(@openuidev/react-lang@0.3.1(@modelcontextprotocol/sdk@1.29.0(zod@3.25.76))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(zod@3.25.76))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@openuidev/observability': 0.0.4
@@ -7230,6 +7337,15 @@ snapshots:
       '@modelcontextprotocol/sdk': 1.29.0(zod@3.25.76)
 
   '@openuidev/observability@0.0.4': {}
+
+  '@openuidev/react-headless@0.17.0(ai@6.0.301(zod@3.25.76))(react@19.2.7)(zustand@4.5.7(@types/react@19.2.17)(react@19.2.7))':
+    dependencies:
+      '@ag-ui/core': 0.0.53
+      '@openuidev/observability': 0.0.4
+      react: 19.2.7
+      zustand: 4.5.7(@types/react@19.2.17)(react@19.2.7)
+    optionalDependencies:
+      ai: 6.0.301(zod@3.25.76)
 
   '@openuidev/react-lang@0.3.1(@modelcontextprotocol/sdk@1.29.0(zod@3.25.76))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(zod@3.25.76)':
     dependencies:
@@ -7452,6 +7568,8 @@ snapshots:
     dependencies:
       '@testing-library/dom': 10.4.1
       solid-js: 1.9.13
+
+  '@standard-schema/spec@1.1.0': {}
 
   '@sveltejs/acorn-typescript@1.0.10(acorn@8.17.0)':
     dependencies:
@@ -7805,6 +7923,8 @@ snapshots:
       - encoding
       - rollup
       - supports-color
+
+  '@vercel/oidc@3.2.0': {}
 
   '@vercel/oidc@3.8.5':
     dependencies:
@@ -8627,6 +8747,14 @@ snapshots:
   acorn@8.17.0: {}
 
   agent-base@7.1.4: {}
+
+  ai@6.0.301(zod@3.25.76):
+    dependencies:
+      '@ai-sdk/gateway': 3.0.210(zod@3.25.76)
+      '@ai-sdk/provider': 3.0.18
+      '@ai-sdk/provider-utils': 4.0.57(zod@3.25.76)
+      '@opentelemetry/api': 1.9.1
+      zod: 3.25.76
 
   ajv-draft-04@1.0.0(ajv@8.20.0):
     optionalDependencies:
@@ -10022,6 +10150,8 @@ snapshots:
 
   json-schema-typed@8.0.2: {}
 
+  json-schema@0.4.0: {}
+
   json-stable-stringify-without-jsonify@1.0.1: {}
 
   json5@2.2.3: {}
@@ -11209,6 +11339,8 @@ snapshots:
 
   undici-types@6.21.0: {}
 
+  undici@6.29.0: {}
+
   undici@8.10.2: {}
 
   unified@11.0.5:
@@ -11278,6 +11410,10 @@ snapshots:
   uri-js@4.4.1:
     dependencies:
       punycode: 2.3.1
+
+  use-sync-external-store@1.7.0(react@19.2.7):
+    dependencies:
+      react: 19.2.7
 
   vary@1.1.2: {}
 
@@ -11666,5 +11802,12 @@ snapshots:
   zod@4.4.3: {}
 
   zod@4.5.4: {}
+
+  zustand@4.5.7(@types/react@19.2.17)(react@19.2.7):
+    dependencies:
+      use-sync-external-store: 1.7.0(react@19.2.7)
+    optionalDependencies:
+      '@types/react': 19.2.17
+      react: 19.2.7
 
   zwitch@2.0.4: {}

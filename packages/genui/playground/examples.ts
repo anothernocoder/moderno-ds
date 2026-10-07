@@ -1,6 +1,6 @@
 /**
- * Fixed OpenUI Lang responses, as an LLM would write them. The playground
- * streams them line by line; the tests render them.
+ * Fixed OpenUI Lang responses, as an LLM would write them. Fixture mode
+ * answers with them (server/fixtures.ts); the tests render them.
  */
 export interface Example {
   title: string;

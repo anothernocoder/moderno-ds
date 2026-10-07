@@ -46,12 +46,15 @@
   "devDependencies": {
     "@moderno-ui/css": "workspace:*",
     "@moderno-ui/react": "workspace:*",
+    "@openuidev/react-headless": "~0.17.0",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
+    "ai": "^6.0.301",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "tsup": "^8.3.5",
-    "vite": "^5.4.21"
+    "vite": "^5.4.21",
+    "zustand": "^4.5.7"
   },
   "publishConfig": {
     "access": "public"
