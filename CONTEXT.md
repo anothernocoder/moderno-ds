@@ -1,6 +1,6 @@
 # Moderno Design System
 
-Framework-agnostic design system monorepo: primitives versioned via npm, blocks/themes via a shadcn-style registry, documentation in Astro. Platform decisions (toolchain, publish, docs, themes): **ADR-0001** (`docs/adr/0001-platform-distribution-docs-theming.md`). Absorption of the predecessor `moderno` and the npm scope: **ADR-0004**. Responsive policy and registry tiers: **ADR-0005**. Docs craft — harvesting Nimbus, Astro 7, examples as files: **ADR-0006**. One file per component, shared lists discovered or generated: **ADR-0009**. Behaviour Ark does not ship, as Zag machines in core, and the shared announcer: **ADR-0010**. Generative UI on OpenUI, routed by System One: **ADR-0011**.
+Framework-agnostic design system monorepo: primitives versioned via npm, blocks/themes via a shadcn-style registry, documentation in Astro. Platform decisions (toolchain, publish, docs, themes): **ADR-0001** (`docs/adr/0001-platform-distribution-docs-theming.md`). Absorption of the predecessor `moderno` and the npm scope: **ADR-0004**. Responsive policy and registry tiers: **ADR-0005**. Docs craft — harvesting Nimbus, Astro 7, examples as files: **ADR-0006**. One file per component, shared lists discovered or generated: **ADR-0009**. Behaviour Ark does not ship, as Zag machines in core, and the shared announcer: **ADR-0010**. Generative UI on OpenUI, routed by System One: **ADR-0011**. Blocks in the agent manifest: **ADR-0012**.
 
 ## Language
 

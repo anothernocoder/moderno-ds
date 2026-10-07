@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "types": [],
+    "baseUrl": "../..",
+    "paths": {
+      "@moderno-ui/react": ["packages/react/src/index.ts"],
+      "@moderno-ui/core": ["packages/core/src/index.ts"],
+      "@moderno-ui/charts-core": ["packages/charts-core/src/index.ts"],
+      "*": ["packages/react/node_modules/@types/*", "packages/react/node_modules/*"]
+    }
+  },
+  "include": ["../../registry/blocks/*/react/*.tsx"]
+}

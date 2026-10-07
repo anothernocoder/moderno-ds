@@ -33,6 +33,7 @@
 import { createHash } from "node:crypto";
 import { extractProps, type ComponentDoc, type ComponentEntry, type PropDoc } from "./index.ts";
 import { AGENT_COMPONENTS, AGENT_EXAMPLES } from "./components.generated.ts";
+import type { AgentBlock } from "./agent-blocks.ts";
 
 export { AGENT_COMPONENTS };
 
@@ -107,6 +108,8 @@ export interface ComponentsManifest {
   framework: Framework;
   generatedFrom: { propsDoc: boolean; mdxAgentBlock: boolean };
   components: AgentComponent[];
+  /** The registry's Blocks that ship in this framework (ADR-0012), from `agent-blocks.ts`. */
+  blocks?: AgentBlock[];
 }
 
 /**
@@ -156,6 +159,8 @@ export interface BuildComponentsManifestOptions {
   resolvedProps?: Map<string, ComponentDoc>;
   /** Curated guidance per component name, from each component's docs `agent:` block. */
   guidance: Record<string, AgentGuidance | undefined>;
+  /** The Blocks entries, built by `buildAgentBlocks`. */
+  blocks?: AgentBlock[];
 }
 
 export function buildComponentsManifest(opts: BuildComponentsManifestOptions): ComponentsManifest {
@@ -192,5 +197,6 @@ export function buildComponentsManifest(opts: BuildComponentsManifestOptions): C
       mdxAgentBlock: built.every((c) => c.guidance !== undefined),
     },
     components: built,
+    ...(opts.blocks ? { blocks: opts.blocks } : {}),
   };
 }

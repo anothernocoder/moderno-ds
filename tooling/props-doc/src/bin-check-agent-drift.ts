@@ -7,6 +7,10 @@
  * is authored once in English, see `mdx-frontmatter.ts`) rather than building
  * a full `moderno.agent.json`, so this runs standalone in CI without a prior
  * package build.
+ *
+ * Blocks (ADR-0012): each block's props hash must match the one `pnpm gen`
+ * recorded in `blocks.generated.ts`, so a block whose props changed without
+ * `pnpm gen` fails here.
  */
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -17,6 +21,8 @@ import {
   type AgentGuidance,
 } from "./agent-manifest.ts";
 import { checkAgentDrift, type AgentDriftCheckInput } from "./agent-drift.ts";
+import { checkBlockDrift, currentBlockHashes } from "./agent-blocks.ts";
+import { BLOCK_PROPS_HASHES } from "./blocks.generated.ts";
 import { readFrontmatter } from "./mdx-frontmatter.ts";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -61,6 +67,25 @@ function main(): number {
   }
 
   console.log(`✓ agent: blocks current for all ${AGENT_COMPONENTS.length} components`);
+  return checkBlocks();
+}
+
+const BLOCK_DRIFT_MESSAGES = {
+  "props-changed": "props changed since the last `pnpm gen`",
+  "not-generated": "new block, not generated yet",
+  removed: "block deleted, still generated",
+} as const;
+
+function checkBlocks(): number {
+  const issues = checkBlockDrift(BLOCK_PROPS_HASHES, currentBlockHashes(repoRoot));
+  if (issues.length > 0) {
+    console.error("✗ block manifest drift detected, run `pnpm gen`:");
+    for (const { slug, reason } of issues) {
+      console.error(`  ${slug} (registry/blocks/${slug}) — ${BLOCK_DRIFT_MESSAGES[reason]}`);
+    }
+    return 1;
+  }
+  console.log(`✓ manifest current for all ${Object.keys(BLOCK_PROPS_HASHES).length} blocks`);
   return 0;
 }
 

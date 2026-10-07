@@ -51,6 +51,12 @@ export interface ComponentDoc {
    * above all — must not treat an incomplete list as exhaustive.
    */
   propsComplete: boolean;
+  /**
+   * The workspace-declared object types the props use (`KpiCardMetric`), each
+   * expanded into its fields and keyed by type name, so a consumer can fill a
+   * structured prop without reading the source. Only with `expandShapes`.
+   */
+  shapes?: Record<string, PropDoc[]>;
 }
 
 /** A component to document: where its props interface lives. */
@@ -79,10 +85,15 @@ export interface ExtractOptions {
    * `node_modules` (inherited DOM/React attributes).
    */
   include?: (declFilePath: string) => boolean;
+  /**
+   * Also expand the object types the props use into `shapes`, and print an
+   * aliased literal union as its members.
+   */
+  expandShapes?: boolean;
 }
 
 import { dirname, resolve } from "node:path";
-import { Node, Project, SymbolFlags, type Symbol as TsSymbol } from "ts-morph";
+import { Node, Project, SymbolFlags, type Symbol as TsSymbol, type Type } from "ts-morph";
 import { orderUnionMembers } from "./union-order.ts";
 
 /** Default origin filter: keep workspace `packages/` declarations, drop deps. */
@@ -145,6 +156,7 @@ export function extractProps(opts: ExtractOptions): ComponentDoc[] {
     }
 
     const props: PropDoc[] = [];
+    const shapes: Record<string, PropDoc[]> | undefined = opts.expandShapes ? {} : undefined;
     let propsComplete = true;
     for (const sym of decl.getType().getProperties()) {
       const decls = sym.getDeclarations();
@@ -154,19 +166,82 @@ export function extractProps(opts: ExtractOptions): ComponentDoc[] {
         continue;
       }
 
-      const required = (sym.getFlags() & SymbolFlags.Optional) === 0;
-      const name = sym.getName();
-      const type = orderUnionMembers(
-        formatType(sym.getTypeAtLocation(decl).getText(decl)),
-        entry.variants?.[name],
-      );
-      const prop: PropDoc = { name, type, required };
-      const description = jsDocSummary(sym);
-      if (description) prop.description = description;
-      props.push(prop);
+      props.push(propDoc(sym, decl, entry.variants?.[sym.getName()], opts.expandShapes));
+      if (shapes) collectShapes(sym.getTypeAtLocation(decl), decl, include, shapes);
     }
 
-    props.sort((a, b) => a.name.localeCompare(b.name));
-    return { name: entry.name, props, propsComplete };
+    props.sort(byName);
+    return { name: entry.name, props, propsComplete, ...(shapes ? { shapes } : {}) };
   });
+}
+
+function byName(a: PropDoc, b: PropDoc): number {
+  return a.name.localeCompare(b.name);
+}
+
+/**
+ * A union of string or number literals (with `null`), spelled out instead of
+ * printed under its alias: `KpiCardTone` tells a reader nothing, its members do.
+ */
+function spelledLiteralUnion(type: Type): string | undefined {
+  if (!type.isUnion()) return undefined;
+  const members = type.getUnionTypes().filter((member) => !member.isUndefined());
+  const literal = (member: Type) =>
+    member.isStringLiteral() || member.isNumberLiteral() || member.isNull();
+  return members.length > 1 && members.every(literal)
+    ? members.map((member) => member.getText()).join(" | ")
+    : undefined;
+}
+
+/**
+ * One property as a `PropDoc`, its type printed as seen from `at`. With
+ * `spellLiterals`, an aliased literal union is printed as its members.
+ */
+function propDoc(
+  sym: TsSymbol,
+  at: Node,
+  variantOrder?: readonly string[],
+  spellLiterals = false,
+): PropDoc {
+  const type = sym.getTypeAtLocation(at);
+  const text = (spellLiterals && spelledLiteralUnion(type)) || formatType(type.getText(at));
+  const prop: PropDoc = {
+    name: sym.getName(),
+    type: orderUnionMembers(text, variantOrder),
+    required: (sym.getFlags() & SymbolFlags.Optional) === 0,
+  };
+  const description = jsDocSummary(sym);
+  if (description) prop.description = description;
+  return prop;
+}
+
+/**
+ * Adds every named object type `type` reaches (through unions, arrays and
+ * nested fields) to `shapes`, when it is declared in a file `include` keeps.
+ * Functions, library types (`Record`, `ReactNode`) and inline object
+ * literals stay as their printed type.
+ */
+function collectShapes(
+  type: Type,
+  at: Node,
+  include: (declFilePath: string) => boolean,
+  shapes: Record<string, PropDoc[]>,
+): void {
+  if (type.isUnion()) {
+    for (const member of type.getUnionTypes()) collectShapes(member, at, include, shapes);
+    return;
+  }
+  const element = type.getArrayElementType();
+  if (element) return collectShapes(element, at, include, shapes);
+  if (!type.isObject() || type.getCallSignatures().length > 0) return;
+
+  const sym = type.getAliasSymbol() ?? type.getSymbol();
+  const decl = sym?.getDeclarations()[0];
+  const name = sym?.getName();
+  if (!decl || !name || name === "__type" || name in shapes) return;
+  if (!include(decl.getSourceFile().getFilePath())) return;
+
+  const fields = type.getProperties();
+  shapes[name] = fields.map((field) => propDoc(field, decl, undefined, true)).sort(byName);
+  for (const field of fields) collectShapes(field.getTypeAtLocation(decl), decl, include, shapes);
 }

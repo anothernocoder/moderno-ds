@@ -19,7 +19,7 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { readAgentGuidance } from "./mdx-frontmatter.ts";
-import type { AgentComponentSpec, AgentGuidance, Framework } from "./agent-manifest.ts";
+import type { AgentGuidance, Framework } from "./agent-manifest.ts";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(here, "../../..");
@@ -40,8 +40,9 @@ function readVersion(packageDir: string): string {
   return pkg.version;
 }
 
+/** Each component's or block's `agent:` block, keyed by its name. */
 function readAllGuidance(
-  components: AgentComponentSpec[],
+  components: { name: string; slug: string }[],
 ): Record<string, AgentGuidance | undefined> {
   return Object.fromEntries(
     components.map((c) => [c.name, readAgentGuidance(join(DOCS_EN_DIR, `${c.slug}.mdx`))]),
@@ -64,20 +65,33 @@ async function main(): Promise<number> {
       ? (await import("./contract-manifest.ts")).buildContractManifest(readVersion(packageDir))
       : await (async () => {
           const { AGENT_COMPONENTS, buildComponentsManifest } = await import("./agent-manifest.ts");
+          const { buildAgentBlocks, listRegistryBlocks, resolveBlockProps } =
+            await import("./agent-blocks.ts");
+          const { framework } = FRAMEWORK_PACKAGES[target]!;
+          const blocks = listRegistryBlocks(repoRoot);
           return buildComponentsManifest({
             ...FRAMEWORK_PACKAGES[target]!,
             version: readVersion(packageDir),
             reactTsConfigFilePath: REACT_TSCONFIG,
             guidance: readAllGuidance(AGENT_COMPONENTS),
+            blocks: buildAgentBlocks({
+              repoRoot,
+              framework,
+              blocks,
+              resolvedProps: resolveBlockProps(blocks, repoRoot),
+              primitives: AGENT_COMPONENTS.map((c) => c.name),
+              guidance: readAllGuidance(blocks),
+            }),
           });
         })();
 
   const file = join(outDir, "moderno.agent.json");
   writeFileSync(file, JSON.stringify(manifest, null, 2) + "\n");
-  const count = "components" in manifest ? manifest.components.length : 0;
-  console.log(
-    `✓ moderno.agent.json (${manifest.kind}${count ? `, ${count} components` : ""}) → ${file}`,
-  );
+  const counts =
+    "components" in manifest
+      ? `, ${manifest.components.length} components, ${manifest.blocks?.length ?? 0} blocks`
+      : "";
+  console.log(`✓ moderno.agent.json (${manifest.kind}${counts}) → ${file}`);
   return 0;
 }
 
