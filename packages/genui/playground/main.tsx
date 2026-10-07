@@ -1,3 +1,4 @@
+import "./no-devtools.ts";
 import { createRoot } from "react-dom/client";
 import "@moderno-ui/css";
 import "../../../registry/themes/theme-moderno/theme.css";
