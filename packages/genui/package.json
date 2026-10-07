@@ -28,7 +28,9 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "build": "tsup"
+    "build": "tsup",
+    "dev": "vite playground",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
     "@moderno-ui/lint-core": "workspace:*",
@@ -37,15 +39,19 @@
     "zod": "^3.25.0"
   },
   "peerDependencies": {
+    "@moderno-ui/css": "workspace:>=0.5.0 <1.0.0",
     "@moderno-ui/react": "workspace:>=0.5.0 <1.0.0",
     "react": "^19.0.0"
   },
   "devDependencies": {
     "@moderno-ui/css": "workspace:*",
     "@moderno-ui/react": "workspace:*",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "tsup": "^8.3.5"
+    "tsup": "^8.3.5",
+    "vite": "^5.4.21"
   },
   "publishConfig": {
     "access": "public"

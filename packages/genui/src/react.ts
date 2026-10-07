@@ -1,3 +1,4 @@
-// `@moderno-ui/genui/react`: the OpenUI renderer bound to @moderno-ui/react
-// lands here (#314).
-export {};
+// `@moderno-ui/genui/react`: the OpenUI renderer bound to @moderno-ui/react.
+export type { ActionEvent } from "@openuidev/react-lang";
+export { createReactLibrary } from "./react/library.tsx";
+export { GenUI, type GenUIProps } from "./react/genui.tsx";

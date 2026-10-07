@@ -122,6 +122,21 @@ describe("fromManifest", () => {
   });
 });
 
+describe("Button's action", () => {
+  it("accepts Action([@ToAssistant(…)]) after its children", () => {
+    const library = createSubLibrary(fromManifest(reactManifest, contract), ["Button"]);
+    expect(signatures(library.prompt()).find((line) => line.startsWith("Button("))).toContain(
+      "children?: string[], action?: ActionExpression)",
+    );
+
+    const parser = createParser(library.toJSONSchema());
+    const result = parser.parse(
+      'root = Stack([ok])\nok = Button("primary", "md", ["OK"], Action([@ToAssistant("OK")]))',
+    );
+    expect(result.meta.errors).toEqual([]);
+  });
+});
+
 describe("createSubLibrary", () => {
   it("keeps only the named components, their parts and the layouts", () => {
     const library = createSubLibrary(fromManifest(reactManifest, contract), ["Card", "Button"]);
@@ -138,10 +153,12 @@ describe("createSubLibrary", () => {
     ];
 
     expect(Object.keys(library.components)).toEqual(kept);
-    const listed = signatures(library.prompt()).flatMap(
-      (line) => line.split(" — ")[0]!.match(/\b[A-Z]\w*\b/g) ?? [],
-    );
-    expect(new Set(listed)).toEqual(new Set(kept));
+    // Component signatures only; the Action section's lines are OpenUI's.
+    const listed = signatures(library.prompt())
+      .filter((line) => line.split("(")[0]! in library.components)
+      .flatMap((line) => line.split(" — ")[0]!.match(/\b[A-Z]\w*\b/g) ?? []);
+    // `ActionExpression` is the type of Button's `action`.
+    expect(new Set(listed)).toEqual(new Set([...kept, "ActionExpression"]));
   });
 
   it("lets the layouts hold each other, so a dashboard nests a Grid in the root Stack", () => {

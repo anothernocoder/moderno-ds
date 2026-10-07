@@ -1,0 +1,12 @@
+import { createRoot } from "react-dom/client";
+import "@moderno-ui/css";
+import "../../../registry/themes/theme-moderno/theme.css";
+import "../../../registry/themes/theme-contrast/theme.css";
+import "./playground.css";
+import { App } from "./app.tsx";
+
+const query = new URLSearchParams(location.search);
+if (query.get("brand") === "contrast") document.documentElement.dataset.brand = "contrast";
+if (query.get("mode") === "dark") document.documentElement.classList.add("dark");
+
+createRoot(document.getElementById("root")!).render(<App />);

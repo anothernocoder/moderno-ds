@@ -1,0 +1,56 @@
+/* The playground page only: <GenUI> itself adds no styles. */
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+main {
+  display: grid;
+  gap: var(--spacing-8);
+  justify-items: center;
+  padding: var(--spacing-6) var(--spacing-4);
+}
+
+nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2);
+  justify-content: center;
+}
+
+section {
+  display: grid;
+  gap: var(--spacing-3);
+  justify-items: center;
+  width: 100%;
+  max-width: 28rem;
+}
+
+h2 {
+  margin: 0;
+  font-size: var(--text-ui-sm);
+  color: var(--muted-foreground);
+}
+
+/* Centres the response both ways, at a fixed height so streaming does not shift the page. */
+.frame {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  min-height: 22rem;
+  box-sizing: border-box;
+  padding: var(--spacing-4);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+}
+
+.frame > * {
+  width: 100%;
+}
+
+output {
+  font-size: var(--text-ui-sm);
+  color: var(--muted-foreground);
+}

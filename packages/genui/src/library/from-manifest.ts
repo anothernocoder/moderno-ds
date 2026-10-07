@@ -8,7 +8,7 @@
  * in tiers: leaves, then compound parts (`CardHeader`), then compound roots
  * (`Card`), then the `Stack` and `Grid` layouts, which also hold each other.
  */
-import { defineComponent, type DefinedComponent } from "@openuidev/lang-core";
+import { defineComponent, tagSchemaId, type DefinedComponent } from "@openuidev/lang-core";
 import { z } from "zod/v4";
 import type { AgentComponent, ComponentsManifest, ContractManifest } from "@moderno-ui/lint-core";
 import { propFields } from "./props.ts";
@@ -51,9 +51,21 @@ function define(name: string, description: string, fields: [string, z.ZodType][]
   });
 }
 
+/** What a click does: `Action([@ToAssistant("Confirm my order")])`. */
+const action = z.any();
+tagSchemaId(action, "ActionExpression");
+
 function defineLeaf(component: AgentComponent): GenUIComponent {
   const fields = propFields(component);
   if (rendersChildren(component)) fields.push(["children", z.array(z.string()).optional()]);
+  // ponytail: Button is the one component that fires an action. Read it from
+  // the manifest when another component needs one.
+  if (component.name === "Button") {
+    fields.push([
+      "action",
+      action.optional().describe("Default: sends the label to the assistant"),
+    ]);
+  }
   return define(component.name, describe(component), fields);
 }
 
