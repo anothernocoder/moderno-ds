@@ -92,12 +92,14 @@ describe("generateUI", () => {
     const { system, messages } = calls[0]!;
     expect(messages).toEqual([...context, { role: "user", content: "save it" }]);
     expect(system).toContain("Inline Mode");
-    const listed = system.split("\n").filter((line) => /^[A-Z]\w*\(/.test(line));
-    expect(listed.map((line) => line.slice(0, line.indexOf("(")))).toEqual([
-      "Button",
-      "Stack",
-      "Grid",
-    ]);
+    // Component signatures only; the Action section's lines are OpenUI's.
+    const library = vi.mocked(createSubLibrary).mock.results.at(-1)!.value;
+    const listed = system
+      .split("\n")
+      .filter((line) => /^[A-Z]\w*\(/.test(line))
+      .map((line) => line.slice(0, line.indexOf("(")))
+      .filter((name) => name in library.components);
+    expect(listed).toEqual(["Button", "Stack", "Grid"]);
   });
 
   it("answers a text surface in plain text without a library or a program", async () => {
