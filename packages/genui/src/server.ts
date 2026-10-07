@@ -8,13 +8,7 @@ export {
   type JudgeConfig,
   type Question,
 } from "./router/judge.ts";
-export {
-  route,
-  type RoutableLibrary,
-  type Route,
-  type RouteOptions,
-  type Surface,
-} from "./router/route.ts";
+export { route, type Route, type RouteOptions, type Surface } from "./router/route.ts";
 export { fromManifest, type GenUIComponent } from "./library/from-manifest.ts";
 export { createSubLibrary } from "./library/sub-library.ts";
 export {

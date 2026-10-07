@@ -1,95 +1,197 @@
+import { fileURLToPath } from "node:url";
+import { discoverManifests, type AgentComponent } from "@moderno-ui/lint-core";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { judge, type Answer } from "../../src/router/judge.ts";
+import { judge, type Answer, type Question } from "../../src/router/judge.ts";
 import { route, type RouteOptions } from "../../src/router/route.ts";
+import nimble from "./fixtures/nimble.json" with { type: "json" };
 
 vi.mock("../../src/router/judge.ts", () => ({ judge: vi.fn() }));
 const mockedJudge = vi.mocked(judge);
 
-const library = {
-  components: {
-    Chart: { description: "Plots numbers over time." },
-    Button: { description: "A clickable action." },
-    Alert: { description: "A short status message." },
-  },
-};
+const reactComponents = discoverManifests(
+  fileURLToPath(new URL("../..", import.meta.url)),
+).components.find((manifest) => manifest.framework === "react")!.components;
+
+function component(name: string, intent = ""): AgentComponent {
+  return { name, scope: name.toLowerCase(), guidance: { intent } } as AgentComponent;
+}
+
+const library = [
+  component("BarChart", "Magnitude compared across categories."),
+  component("Button", "A single click action."),
+  component("Alert", "An inline status message."),
+];
+const names = library.map((c) => c.name);
 const options: RouteOptions = { judge: { baseUrl: "http://localhost:11434", model: "nimble" } };
 
-function answers(surface: string, confidence: number, nouls: Record<string, number> = {}) {
-  const result: Record<string, Answer> = {
-    surface: { type: "choice", choice: surface, probabilities: {}, confidence },
-  };
-  for (const [name, noul] of Object.entries(nouls))
-    result[`component:${name}`] = { type: "noul", noul };
-  return result;
+function choice(choice: string, confidence: number, probabilities: Record<string, number> = {}) {
+  return { type: "choice", choice, probabilities, confidence } as const;
+}
+
+/** The first call's answers: the Surface and the kind. */
+function firstAnswers(surface: Answer, kind = "chart"): Record<string, Answer> {
+  return { surface, kind: choice(kind, 0.9) };
+}
+
+/** The second call's answers: one Noul per name. */
+function nouls(values: Record<string, number>): Record<string, Answer> {
+  return Object.fromEntries(
+    Object.entries(values).map(([name, noul]) => [`component:${name}`, { type: "noul", noul }]),
+  );
+}
+
+function askedQuestions(): Record<string, Question>[] {
+  return mockedJudge.mock.calls.map((call) => call[2]);
 }
 
 beforeEach(() => mockedJudge.mockReset());
 
 describe("route", () => {
-  it("asks the surface Choice and one Noul per component in one judge call", async () => {
-    mockedJudge.mockResolvedValue(answers("widget", 0.9, { Chart: 0.8 }));
+  it("asks the Surface and the kind, then one short Noul per shortlisted component", async () => {
+    mockedJudge
+      .mockResolvedValueOnce(firstAnswers(choice("widget", 0.9)))
+      .mockResolvedValueOnce(nouls({ BarChart: 0.8 }));
     const context = [{ role: "user", content: "hi" }];
 
     await route("sales this month", context, library, options);
 
-    expect(mockedJudge).toHaveBeenCalledTimes(1);
-    const [config, state, questions] = mockedJudge.mock.calls[0]!;
-    expect(config).toBe(options.judge);
-    expect(state).toEqual({ message: "sales this month", context });
-    expect(Object.keys(questions)).toEqual([
-      "surface",
-      "component:Chart",
-      "component:Button",
-      "component:Alert",
-    ]);
-    expect(questions.surface).toMatchObject({ type: "choice" });
-    expect(Object.keys(questions.surface!.criteria!)).toEqual([
+    expect(mockedJudge).toHaveBeenCalledTimes(2);
+    for (const [config, state] of mockedJudge.mock.calls) {
+      expect(config).toBe(options.judge);
+      expect(state).toEqual({ context, message: "sales this month" });
+    }
+    const [first, second] = askedQuestions();
+    expect(Object.keys(first!)).toEqual(["surface", "kind"]);
+    expect(Object.keys(first!.surface!.criteria!)).toEqual([
       "text",
       "widget",
       "screen",
       "dashboard",
     ]);
-    expect(questions["component:Chart"]).toEqual({
+    expect(first!.kind).toMatchObject({ type: "choice" });
+    expect(Object.keys(second!)).toContain("component:BarChart");
+    expect(second!["component:BarChart"]).toEqual({
       type: "noul",
-      instructions: "Would a Chart — Plots numbers over time. — help answer `message`?",
+      instructions: "Does a BarChart help answer `message`?",
     });
   });
 
   it("keeps only the components at or above the threshold", async () => {
-    mockedJudge.mockResolvedValue(answers("widget", 0.9, { Chart: 0.8, Button: 0.5, Alert: 0.2 }));
+    const answers = nouls({ BarChart: 0.8, Button: 0.5, Alert: 0.2 });
+    for (let turn = 0; turn < 2; turn++)
+      mockedJudge
+        .mockResolvedValueOnce(firstAnswers(choice("widget", 0.9)))
+        .mockResolvedValueOnce(answers);
     await expect(route("m", [], library, options)).resolves.toEqual({
       surface: "widget",
-      components: ["Chart", "Button"],
+      components: ["BarChart", "Button"],
     });
     await expect(route("m", [], library, { ...options, threshold: 0.7 })).resolves.toEqual({
       surface: "widget",
-      components: ["Chart"],
+      components: ["BarChart"],
     });
   });
 
-  it("returns no components for a text surface", async () => {
-    mockedJudge.mockResolvedValue(answers("text", 0.9, { Chart: 0.9 }));
+  it("prunes on the Nouls even when the Surface confidence is low", async () => {
+    mockedJudge
+      .mockResolvedValueOnce(
+        firstAnswers(choice("widget", 0.25, { widget: 0.49, dashboard: 0.38 })),
+      )
+      .mockResolvedValueOnce(nouls({ BarChart: 0.93, Button: 0.1, Alert: 0.2 }));
+    await expect(route("ventas del mes", [], library, options)).resolves.toEqual({
+      surface: "widget",
+      components: ["BarChart"],
+    });
+  });
+
+  it("treats a doubtful text Surface as its likeliest UI one", async () => {
+    mockedJudge
+      .mockResolvedValueOnce(
+        firstAnswers(
+          choice("text", 0.3, { text: 0.6, widget: 0.1, screen: 0.05, dashboard: 0.25 }),
+        ),
+      )
+      .mockResolvedValueOnce(nouls({ BarChart: 0.9 }));
+    await expect(route("m", [], library, options)).resolves.toEqual({
+      surface: "dashboard",
+      components: ["BarChart"],
+    });
+  });
+
+  it("returns no components for a confident text Surface, after one call", async () => {
+    mockedJudge.mockResolvedValueOnce(firstAnswers(choice("text", 0.9)));
     await expect(route("hola", [], library, options)).resolves.toEqual({
       surface: "text",
       components: [],
     });
-  });
-
-  it("falls back to the full library when the surface confidence is low", async () => {
-    mockedJudge.mockResolvedValue(answers("text", 0.3, { Chart: 0.9 }));
-    await expect(route("m", [], library, options)).resolves.toEqual({
-      surface: "text",
-      components: ["Chart", "Button", "Alert"],
-    });
+    expect(mockedJudge).toHaveBeenCalledTimes(1);
   });
 
   it("falls back to the full library when no component passes", async () => {
-    mockedJudge.mockResolvedValue(
-      answers("dashboard", 0.9, { Chart: 0.1, Button: 0.1, Alert: 0.1 }),
-    );
+    mockedJudge
+      .mockResolvedValueOnce(firstAnswers(choice("dashboard", 0.2)))
+      .mockResolvedValueOnce(nouls({ BarChart: 0.1, Button: 0.1, Alert: 0.1 }));
     await expect(route("m", [], library, options)).resolves.toEqual({
       surface: "dashboard",
-      components: ["Chart", "Button", "Alert"],
+      components: names,
+    });
+  });
+
+  it("asks at most ten questions whatever the library size", async () => {
+    const big = Array.from({ length: 200 }, (_, i) => component(`Chart${i}`, "A chart."));
+    mockedJudge
+      .mockResolvedValueOnce(firstAnswers(choice("widget", 0.9)))
+      .mockResolvedValueOnce(nouls({ Chart0: 0.9 }));
+    await route("m", [], big, options);
+    const total = askedQuestions().reduce(
+      (sum, questions) => sum + Object.keys(questions).length,
+      0,
+    );
+    expect(total).toBeLessThanOrEqual(10);
+  });
+});
+
+describe("route's shortlist on the react library", () => {
+  it.each([
+    ["chart", ["BarChart", "BarList", "LineChart", "AreaChart", "SparkChart", "Card"]],
+    ["confirm", ["Card", "Button", "Dialog"]],
+    ["form", ["Field", "Select", "DatePicker", "Checkbox", "Button"]],
+  ])("puts the %s components in the top 8", async (kind, relevant) => {
+    mockedJudge
+      .mockResolvedValueOnce(firstAnswers(choice("widget", 0.9), kind))
+      .mockResolvedValueOnce({});
+    await route("m", [], reactComponents, options);
+    const shortlist = Object.keys(askedQuestions()[1]!).map((key) =>
+      key.slice("component:".length),
+    );
+    expect(shortlist).toHaveLength(8);
+    expect(shortlist).toEqual(expect.arrayContaining(relevant));
+  });
+});
+
+describe("route on recorded Nimble answers", () => {
+  const cases = Object.values(nimble);
+
+  it.each([
+    ["ventas del mes", "dashboard", ["BarChart", "BarList", "LineChart", "AreaChart"]],
+    ["confirma mi pedido", "screen", ["Button"]],
+    ["quiero registrarme: nombre, email y fecha de nacimiento", "widget", ["Field", "DatePicker"]],
+  ])("prunes %j", async (message, surface, expected) => {
+    const recorded = cases.find((c) => c.message === message)!;
+    for (const answers of recorded.answers)
+      mockedJudge.mockResolvedValueOnce(answers as Record<string, Answer>);
+    const result = await route(message, recorded.context, reactComponents, options);
+    expect(result.surface).toBe(surface);
+    expect(result.components).toEqual(expect.arrayContaining(expected));
+    expect(result.components.length).toBeLessThanOrEqual(8);
+  });
+
+  it("answers 'hola' after a sales turn in text", async () => {
+    const recorded = cases.find((c) => c.message === "hola")!;
+    mockedJudge.mockResolvedValueOnce(recorded.answers[0] as Record<string, Answer>);
+    await expect(route("hola", recorded.context, reactComponents, options)).resolves.toEqual({
+      surface: "text",
+      components: [],
     });
   });
 });

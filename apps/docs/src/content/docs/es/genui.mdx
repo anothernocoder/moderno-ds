@@ -108,15 +108,18 @@ Cada trozo es un `GenUIChunk`:
 
 ### route
 
-`route(message, context, library, options)` es el router solo. `generateUI` lo llama por ti. Hace una llamada a `judge` y devuelve `{ surface, components }`.
+`route(message, context, components, options)` es el router solo. `generateUI` lo llama por ti. `components` son los `components` del manifiesto. Devuelve `{ surface, components }`.
 
-| Opción          | Tipo          | Por defecto | Descripción                                                                 |
-| --------------- | ------------- | ----------- | --------------------------------------------------------------------------- |
-| `judge`         | `JudgeConfig` | —           | El servidor System One.                                                     |
-| `threshold`     | `number`      | `0.5`       | Un componente se elige cuando su puntuación llega a este valor.             |
-| `minConfidence` | `number`      | `0.5`       | Si la confianza en la superficie es menor, se quedan todos los componentes. |
+Hace dos llamadas a `judge`, diez preguntas en total. La primera pregunta la superficie y el tipo de UI (un gráfico, un formulario, una tarjeta de confirmación…). La segunda pregunta por los 8 componentes que mejor encajan con ese tipo.
 
-`library` es `{ components: Record<string, { description: string }> }`. Si ningún componente pasa el umbral, se quedan todos.
+| Opción          | Tipo          | Por defecto | Descripción                                                                                             |
+| --------------- | ------------- | ----------- | ------------------------------------------------------------------------------------------------------- |
+| `judge`         | `JudgeConfig` | —           | El servidor System One.                                                                                 |
+| `threshold`     | `number`      | `0.5`       | Un componente se elige cuando su puntuación llega a este valor.                                         |
+| `minConfidence` | `number`      | `0.5`       | Si la confianza es menor, una superficie `text` se trata como UI. El LLM aún puede responder con texto. |
+| `shortlist`     | `number`      | `8`         | Por cuántos componentes pregunta la segunda llamada.                                                    |
+
+Si ningún componente pasa el umbral, se quedan todos.
 
 ### judge
 

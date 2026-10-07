@@ -1,0 +1,254 @@
+{
+  "ventas del mes": {
+    "message": "ventas del mes",
+    "context": [],
+    "answers": [
+      {
+        "surface": {
+          "type": "choice",
+          "choice": "text",
+          "probabilities": {
+            "text": 0.6813830963427172,
+            "widget": 0.08137960572297889,
+            "screen": 0.016024594490368593,
+            "dashboard": 0.22121270344393526
+          },
+          "confidence": 0.37566018555812697
+        },
+        "kind": {
+          "type": "choice",
+          "choice": "chart",
+          "probabilities": {
+            "chart": 0.8032866931397512,
+            "form": 0.045318334141700195,
+            "confirm": 0.008923709093305606,
+            "status": 0.13959029638816217,
+            "content": 0.0027215775064484003,
+            "navigation": 0.00008218451947577984,
+            "creative": 0.00007720521115659609
+          },
+          "confidence": 0.665595190867616
+        }
+      },
+      {
+        "component:Card": {
+          "type": "noul",
+          "noul": 0.24508501313237172
+        },
+        "component:SparkChart": {
+          "type": "noul",
+          "noul": 0.9324533088603709
+        },
+        "component:BarChart": {
+          "type": "noul",
+          "noul": 0.9796676466573412
+        },
+        "component:DonutChart": {
+          "type": "noul",
+          "noul": 0.6224593312018546
+        },
+        "component:AreaChart": {
+          "type": "noul",
+          "noul": 0.9740426428022031
+        },
+        "component:LineChart": {
+          "type": "noul",
+          "noul": 0.9859363729567544
+        },
+        "component:ScatterChart": {
+          "type": "noul",
+          "noul": 0.04742587317756679
+        },
+        "component:BarList": {
+          "type": "noul",
+          "noul": 0.9525741268224334
+        }
+      }
+    ]
+  },
+  "confirma mi pedido +ctx": {
+    "message": "confirma mi pedido",
+    "context": [
+      {
+        "role": "user",
+        "content": "ventas del mes"
+      },
+      {
+        "role": "assistant",
+        "content": "Aquí están las ventas del mes.\n(UI shown)"
+      }
+    ],
+    "answers": [
+      {
+        "surface": {
+          "type": "choice",
+          "choice": "screen",
+          "probabilities": {
+            "text": 0.0016867985854724286,
+            "widget": 0.0673789331354308,
+            "screen": 0.9301374810461089,
+            "dashboard": 0.0007967872329880309
+          },
+          "confidence": 0.808433325914718
+        },
+        "kind": {
+          "type": "choice",
+          "choice": "confirm",
+          "probabilities": {
+            "chart": 0.0012113273880676788,
+            "form": 0.025899321546833425,
+            "confirm": 0.9718648710664134,
+            "status": 0.0007347071998126702,
+            "content": 0.00022407303599081765,
+            "navigation": 0.0000389380550850379,
+            "creative": 0.000026761707796918847
+          },
+          "confidence": 0.928898637113578
+        }
+      },
+      {
+        "component:Card": {
+          "type": "noul",
+          "noul": 0.07585818002124355
+        },
+        "component:Button": {
+          "type": "noul",
+          "noul": 0.5621765008857981
+        },
+        "component:Dialog": {
+          "type": "noul",
+          "noul": 0.34864513533394575
+        },
+        "component:Alert": {
+          "type": "noul",
+          "noul": 0.10669059394565118
+        },
+        "component:Carousel": {
+          "type": "noul",
+          "noul": 0.04742587317756679
+        },
+        "component:Drawer": {
+          "type": "noul",
+          "noul": 0.29421497216298875
+        },
+        "component:Editable": {
+          "type": "noul",
+          "noul": 0.0953494648991095
+        },
+        "component:Menu": {
+          "type": "noul",
+          "noul": 0.22270013882530884
+        }
+      }
+    ]
+  },
+  "hola +ctx": {
+    "message": "hola",
+    "context": [
+      {
+        "role": "user",
+        "content": "ventas del mes"
+      },
+      {
+        "role": "assistant",
+        "content": "Aquí están las ventas del mes.\n(UI shown)"
+      }
+    ],
+    "answers": [
+      {
+        "surface": {
+          "type": "choice",
+          "choice": "text",
+          "probabilities": {
+            "text": 0.8291554324833451,
+            "widget": 0.04677774854929524,
+            "screen": 0.025038324511397893,
+            "dashboard": 0.09902849445596154
+          },
+          "confidence": 0.5528342475833581
+        },
+        "kind": {
+          "type": "choice",
+          "choice": "chart",
+          "probabilities": {
+            "chart": 0.715486600137181,
+            "form": 0.05182967547520002,
+            "confirm": 0.024482605133905745,
+            "status": 0.12433292799178972,
+            "content": 0.07541173283886357,
+            "navigation": 0.0079483381640827,
+            "creative": 0.0005081202589774558
+          },
+          "confidence": 0.49628480248914997
+        }
+      }
+    ]
+  },
+  "quiero registrarme: nombre, email y fecha de nacimiento": {
+    "message": "quiero registrarme: nombre, email y fecha de nacimiento",
+    "context": [],
+    "answers": [
+      {
+        "surface": {
+          "type": "choice",
+          "choice": "widget",
+          "probabilities": {
+            "text": 0.0014025090573616611,
+            "widget": 0.993031927807319,
+            "screen": 0.0052109533121434655,
+            "dashboard": 0.0003546098231758184
+          },
+          "confidence": 0.966552090287603
+        },
+        "kind": {
+          "type": "choice",
+          "choice": "form",
+          "probabilities": {
+            "chart": 0.0005179155017869206,
+            "form": 0.9968066566272308,
+            "confirm": 0.0021805057079176443,
+            "status": 0.0002772201913385968,
+            "content": 0.00006185618568975947,
+            "navigation": 0.00006584556691654313,
+            "creative": 0.00009000021911962927
+          },
+          "confidence": 0.987249334627651
+        }
+      },
+      {
+        "component:Field": {
+          "type": "noul",
+          "noul": 0.9241418199787566
+        },
+        "component:Checkbox": {
+          "type": "noul",
+          "noul": 0.04742587317756679
+        },
+        "component:Button": {
+          "type": "noul",
+          "noul": 0.29421497216298875
+        },
+        "component:DatePicker": {
+          "type": "noul",
+          "noul": 0.9947798743064417
+        },
+        "component:Menu": {
+          "type": "noul",
+          "noul": 0.06008665017400762
+        },
+        "component:Select": {
+          "type": "noul",
+          "noul": 0.11920292202211755
+        },
+        "component:Editable": {
+          "type": "noul",
+          "noul": 0.8519528019683106
+        },
+        "component:Switch": {
+          "type": "noul",
+          "noul": 0.022977369910025615
+        }
+      }
+    ]
+  }
+}

@@ -39,28 +39,20 @@ export type GenUIChunk =
 
 const TEXT_PROMPT = "Reply in plain text. Do not write code or UI.";
 const FENCE = "```";
+const PROGRAM_NOTE = "(UI shown)";
 
 /** Yields the text and program chunks of one LLM turn as they arrive. */
 export async function* generateUI(options: GenerateUIOptions): AsyncGenerator<GenUIChunk> {
   const { message, context = [], judge, llm, manifest, contract } = options;
   const messages: ChatMessage[] = [...context, { role: "user", content: message }];
 
-  const components = fromManifest(manifest, contract);
-  const primitives = new Set(manifest.components.map((component) => component.name));
-  const routable = {
-    components: Object.fromEntries(
-      components
-        .filter((component) => primitives.has(component.name))
-        .map((component) => [component.name, { description: component.description }]),
-    ),
-  };
-  const picked = await route(message, context, routable, { judge });
+  const picked = await route(message, withoutPrograms(context), manifest.components, { judge });
   if (picked.surface === "text") {
     yield* answerInText(llm, messages);
     return;
   }
 
-  const library = createSubLibrary(components, picked.components);
+  const library = createSubLibrary(fromManifest(manifest, contract), picked.components);
   const system = library.prompt({ inlineMode: true });
   const schema = library.toJSONSchema();
 
@@ -82,6 +74,15 @@ export async function* generateUI(options: GenerateUIOptions): AsyncGenerator<Ge
   if (retry.errors.length === 0) return;
   yield { type: "discard", errors: retry.errors };
   yield* answerInText(llm, messages);
+}
+
+/**
+ * The chat with each program swapped for a short note. A program in the router's
+ * state pulls a small model's judgment of the next message toward it.
+ */
+function withoutPrograms(context: ChatMessage[]): ChatMessage[] {
+  const program = new RegExp(`${FENCE}[\\s\\S]*?(${FENCE}|$)`, "g");
+  return context.map((turn) => ({ ...turn, content: turn.content.replace(program, PROGRAM_NOTE) }));
 }
 
 async function* answerInText(llm: LLM, messages: ChatMessage[]): AsyncGenerator<GenUIChunk> {
