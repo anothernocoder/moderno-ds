@@ -11,3 +11,6 @@ coverage/
 test-results/
 playwright-report/
 blob-report/
+
+# Local env files (API keys for the genui demo and others).
+.env*.local
