@@ -1,0 +1,232 @@
+---
+title: Generative UI
+description: Let an agent answer with live Moderno components, such as a chart or a confirm card, drawn in your theme.
+group: Guides
+order: 5
+---
+
+import Preview from "../../../components/Preview.astro";
+import Install from "../../../components/Install.astro";
+import StaticReact from "../../../components/StaticReact.astro";
+import PaymentAlert from "../../../examples/genui/react.tsx";
+import baseReact from "../../../examples/genui/react.tsx?raw";
+import SalesCard from "../../../examples/genui/chart/react.tsx";
+import chartReact from "../../../examples/genui/chart/react.tsx?raw";
+import ConfirmCard from "../../../examples/genui/confirm/react.tsx";
+import confirmReact from "../../../examples/genui/confirm/react.tsx?raw";
+import TextTurn from "../../../examples/genui/text/react.tsx";
+import textReact from "../../../examples/genui/text/react.tsx?raw";
+
+<Preview examples={{ react: baseReact }}>
+  <StaticReact component={PaymentAlert} />
+</Preview>
+
+Generative UI lets an agent reply with UI instead of only text. Ask for "sales this month" and the reply is a card with a chart. Ask to "confirm my order" and it is a card with buttons. Say "hello" and it is plain text.
+
+Use it in a chat or an assistant panel, when a small piece of UI answers better than a paragraph. It is React only for now.
+
+Each turn has three steps:
+
+1. A **router** (a System One model, Jev or Nimble) picks the **surface**: `text`, `widget`, `screen` or `dashboard`, and the components that help.
+2. An **LLM** writes the answer in OpenUI Lang, using only those components.
+3. `<GenUI>` draws the answer with `@moderno-ui/react`. Your theme styles it, so it needs no CSS of its own.
+
+## Installation
+
+<Install pkg="@moderno-ui/genui" />
+
+It needs React and the Moderno React package next to it:
+
+```sh
+npm install react react-dom @moderno-ui/react @moderno-ui/css
+```
+
+OpenUI sends telemetry by default. Turn it off where you install and where you run the server:
+
+```sh
+OPENUI_TELEMETRY_DISABLED=1
+```
+
+## Usage
+
+On the server, `generateUI` answers one message. It streams chunks of text and of OpenUI Lang.
+
+```ts
+import { generateUI } from "@moderno-ui/genui/server";
+import manifest from "@moderno-ui/react/moderno.agent.json" with { type: "json" };
+import contract from "@moderno-ui/css/moderno.agent.json" with { type: "json" };
+
+const chunks = generateUI({
+  message: "sales this month",
+  judge: {
+    baseUrl: "https://api.typesafe.ai",
+    model: "jev-latest",
+    apiKey: process.env.JEV_API_KEY,
+  },
+  llm, // your LLM, see "llm" below
+  manifest,
+  contract,
+});
+
+for await (const chunk of chunks) {
+  // Send each chunk to the page.
+}
+```
+
+On the page, `<GenUI>` draws the OpenUI Lang it has so far.
+
+```tsx
+import { GenUI } from "@moderno-ui/genui/react";
+
+<GenUI response={program} isStreaming={!done} />;
+```
+
+## API Reference
+
+### generateUI
+
+`generateUI(options)` from `@moderno-ui/genui/server`. It asks the router, then the LLM, and yields chunks as they arrive. If the program is invalid, it asks the LLM once more with the errors. If that fails too, it answers in text.
+
+A valid program must also be usable. The prompt gives the LLM a few UI rules: pick the control by the data, one primary button per form, labels in the user's language, no emoji. Then a lint checks the program. A `NumberInput` for a code, a `Select` with no options, a form without exactly one primary button, or a primary button with its own action count as errors, so they trigger the same retry.
+
+| Option     | Type                 | Default | Description                                                       |
+| ---------- | -------------------- | ------- | ----------------------------------------------------------------- |
+| `message`  | `string`             | —       | The user's message.                                               |
+| `context`  | `ChatMessage[]`      | `[]`    | The turns before `message`, oldest first.                         |
+| `judge`    | `JudgeConfig`        | —       | The System One server the router asks.                            |
+| `llm`      | `LLM`                | —       | The model that writes the answer.                                 |
+| `manifest` | `ComponentsManifest` | —       | `@moderno-ui/react/moderno.agent.json`. The router picks from it. |
+| `contract` | `ContractManifest`   | —       | `@moderno-ui/css/moderno.agent.json`. Layout gaps come from it.   |
+
+`ChatMessage` is `{ role: "user" | "assistant"; content: string }`.
+
+Each chunk is a `GenUIChunk`:
+
+| Chunk                         | What to do with it                                         |
+| ----------------------------- | ---------------------------------------------------------- |
+| `{ type: "text", text }`      | Show it as chat text.                                      |
+| `{ type: "program", text }`   | Append it to the program you pass to `<GenUI>`.            |
+| `{ type: "discard", errors }` | Drop everything this turn has shown. A new answer follows. |
+
+### route
+
+`route(message, context, components, options)` is the router on its own. `generateUI` calls it for you. `components` is the manifest's `components`. It returns `{ surface, components }`.
+
+It makes two `judge` calls, ten questions in all. The first asks the surface and the kind of UI (a chart, a form, a confirm card…). The second asks about the 8 components that best match that kind.
+
+| Option          | Type          | Default | Description                                                                                 |
+| --------------- | ------------- | ------- | ------------------------------------------------------------------------------------------- |
+| `judge`         | `JudgeConfig` | —       | The System One server.                                                                      |
+| `threshold`     | `number`      | `0.5`   | A component is picked when its score is at least this.                                      |
+| `minConfidence` | `number`      | `0.5`   | Below this confidence, a `text` surface is treated as UI. The LLM may still answer in text. |
+| `shortlist`     | `number`      | `8`     | How many components the second call asks about.                                             |
+
+When no component passes the threshold, all of them are kept.
+
+### judge
+
+`JudgeConfig` says which System One server routes the message. Jev on TypeSafe and Nimble on Ollama speak the same API (`POST /v1/systemone`), so only the config changes.
+
+| Field       | Type     | Default | Description                                           |
+| ----------- | -------- | ------- | ----------------------------------------------------- |
+| `baseUrl`   | `string` | —       | The server's URL.                                     |
+| `model`     | `string` | —       | `jev-latest` or `nimble`.                             |
+| `apiKey`    | `string` | —       | Sent as `Authorization: Bearer`. Ollama needs none.   |
+| `retries`   | `number` | `3`     | Retries after a 429 or 529.                           |
+| `backoffMs` | `number` | `500`   | The first wait between retries. It doubles each time. |
+
+Jev on TypeSafe:
+
+```ts
+const judge = {
+  baseUrl: "https://api.typesafe.ai",
+  model: "jev-latest",
+  apiKey: process.env.JEV_API_KEY,
+};
+```
+
+Nimble on a local Ollama (0.35 or later, after `ollama pull nimble`):
+
+```ts
+const judge = { baseUrl: "http://localhost:11434", model: "nimble" };
+```
+
+A refused request throws a `SystemOneError` with its `status` and `body`.
+
+### llm
+
+`LLM` is a function: it gets the system prompt and the messages, and streams the reply as text. You pick the provider. This one, from the playground, calls OpenRouter:
+
+```ts
+import type { LLM } from "@moderno-ui/genui/server";
+
+export function openRouterLLM(apiKey: string, model: string): LLM {
+  return async function* (system, messages) {
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model,
+        stream: true,
+        messages: [{ role: "system", content: system }, ...messages],
+      }),
+    });
+    if (!response.ok || !response.body)
+      throw new Error(`OpenRouter failed with ${response.status}`);
+    yield* contentDeltas(response.body); // each `choices[0].delta.content` of the SSE stream
+  };
+}
+```
+
+The full adapter, with `contentDeltas`, is in `packages/genui/playground/server/openrouter.ts`.
+
+### fromManifest
+
+`fromManifest(manifest, contract)` turns `moderno.agent.json` into OpenUI components, one per Moderno component and part, plus the `Stack` and `Grid` layouts. It reads the real components, so the list never drifts from them.
+
+A form component, like `Select`, `NumberInput` or `Field`, comes as one **simple form** with plain arguments instead of its parts: `Select("Size", ["Small", "Large"])`. `<GenUI>` draws the whole component from them, so the LLM cannot get its structure wrong. Overlays, toasts and app-shell layouts, like `Dialog`, `Toast` and `Splitter`, are left out: they do not belong inside an answer.
+
+The LLM cannot set `size`: every control in a widget renders at `md`, so their heights match. Each description also says when not to use the component, and what to use instead.
+
+### createSubLibrary
+
+`createSubLibrary(components, names)` keeps only the named components, the parts they hold, and the layouts. The LLM's prompt then lists fewer components, so it is smaller, faster and cheaper. `generateUI` calls it with the router's picks.
+
+### GenUI
+
+`<GenUI>` from `@moderno-ui/genui/react` draws an OpenUI Lang program with `@moderno-ui/react`.
+
+| Prop          | Type                              | Default | Description                                                                                                                          |
+| ------------- | --------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `response`    | `string \| null`                  | —       | The program so far. `null` draws nothing.                                                                                            |
+| `isStreaming` | `boolean`                         | `false` | True while the program is still arriving.                                                                                            |
+| `onAction`    | `(event: ActionEvent) => void`    | —       | A component fired an action, such as a button's `@ToAssistant`. A button with no action sends its label with the values of the form. |
+| `onError`     | `(errors: OpenUIError[]) => void` | —       | The finished program has errors, such as a component that failed to render. Retry, or answer in text. `[]` clears.                   |
+
+## Examples
+
+### Chart widget
+
+A card with a bar chart, for "sales this month".
+
+<Preview examples={{ react: chartReact }}>
+  <StaticReact component={SalesCard} />
+</Preview>
+
+### Confirm card with an action
+
+Each button sends its message back as the user's next turn.
+
+<Preview examples={{ react: confirmReact }}>
+  <StaticReact component={ConfirmCard} />
+</Preview>
+
+### Text-only turn
+
+When the router picks `text`, the turn has no program. Show the text and give `<GenUI>` `null`.
+
+<Preview examples={{ react: textReact }}>
+  <StaticReact component={TextTurn} />
+</Preview>
+
+Try them all live in the playground: `pnpm --filter @moderno-ui/genui dev`.

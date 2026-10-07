@@ -11,6 +11,8 @@
  * — never a string literal. All four always render; CSS shows only the one
  * matching the page's `<FrameworkSelect>` choice, read off `data-framework` on
  * `<html>` (docs.css), so switching frameworks needs no client script here.
+ * A feature that exists in one framework only (Generative UI is React) passes
+ * just that source, and it shows whatever the selector says.
  *
  * One Preview shows one idea (the default use, one axis of variants, one
  * state), so its source is exactly what is on the stage. `layout` picks the
@@ -37,7 +39,8 @@ import { currentLocale, defaultLocale, useTranslations } from "../i18n/ui.ts";
 type Framework = "react" | "vue" | "svelte" | "solid";
 
 interface Props {
-  examples: Record<Framework, string>;
+  /** One source per framework; a React-only feature passes just `react`, shown whatever the selector says. */
+  examples: Partial<Record<Framework, string>>;
   layout?: "center" | "fill";
 }
 
@@ -54,6 +57,10 @@ const LANG: Record<Framework, CodeLanguage> = {
 /** Sources up to this many lines show in full; longer ones start collapsed. */
 const COLLAPSE_AFTER = 18;
 const lineCount = (code: string) => code.trimEnd().split("\n").length;
+const sources = FRAMEWORKS.flatMap((fw) => {
+  const code = examples[fw];
+  return code === undefined ? [] : [{ fw, code }];
+});
 
 const locale = currentLocale(Astro.params.lang);
 // Groups are translated, so read the English twin (every slug has one).
@@ -91,13 +98,9 @@ const t = useTranslations(locale);
   </div>
   <div class="preview-panel preview-panel--code">
     {
-      FRAMEWORKS.map((fw) => (
-        <div class="preview-source" data-fw={fw}>
-          <CodeBlock
-            code={examples[fw]}
-            lang={LANG[fw]}
-            collapsible={lineCount(examples[fw]) > COLLAPSE_AFTER}
-          />
+      sources.map(({ fw, code }) => (
+        <div class="preview-source" data-fw={sources.length > 1 ? fw : undefined}>
+          <CodeBlock code={code} lang={LANG[fw]} collapsible={lineCount(code) > COLLAPSE_AFTER} />
         </div>
       ))
     }

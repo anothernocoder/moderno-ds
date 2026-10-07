@@ -35,6 +35,7 @@
     "@astrojs/sitemap": "^3.7.4",
     "@astrojs/svelte": "^9.0.1",
     "@astrojs/vercel": "^11.0.10",
+    "@moderno-ui/genui": "workspace:*",
     "@moderno-ui/props-doc": "workspace:*",
     "@moderno-ui/react": "workspace:*",
     "@moderno-ui/solid": "workspace:*",

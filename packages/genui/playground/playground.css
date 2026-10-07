@@ -1,0 +1,122 @@
+/* The playground page only: <GenUI> itself adds no styles. */
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 44rem;
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: var(--spacing-6) var(--spacing-4) 0;
+}
+
+nav,
+.suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2);
+  justify-content: center;
+}
+
+.thread {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--spacing-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* User and assistant text share one size and line height. */
+.user,
+.reply {
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+}
+
+/* The user's turn: a compact bubble on the right, as wide as its text. */
+.user {
+  align-self: flex-end;
+  max-width: 75%;
+  padding: var(--spacing-2) var(--spacing-3);
+  border-radius: var(--radius-lg);
+  background: var(--primary);
+  color: var(--primary-foreground);
+  overflow-wrap: anywhere;
+}
+
+/* The assistant's turn: the avatar mark, then one left-aligned column of text and widgets. */
+.assistant {
+  display: flex;
+  gap: var(--spacing-3);
+  align-items: flex-start;
+}
+
+.reply {
+  display: grid;
+  flex: 1;
+  gap: var(--spacing-3);
+  justify-items: start;
+  min-width: 0;
+}
+
+.text > * {
+  margin: 0;
+}
+
+.text > * + * {
+  margin-top: var(--spacing-2);
+}
+
+.text ul,
+.text ol {
+  padding-left: var(--spacing-5);
+}
+
+.widget {
+  width: 100%;
+  max-width: 28rem;
+}
+
+/* The composer stays at the bottom of the viewport while the thread scrolls. */
+.composer {
+  position: sticky;
+  bottom: 0;
+  padding-bottom: var(--spacing-4);
+  background: var(--background);
+}
+
+.composer > div {
+  display: flex;
+  gap: var(--spacing-2);
+  align-items: center;
+  padding: var(--spacing-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--card);
+}
+
+.composer > div:focus-within {
+  outline: 2px solid var(--ring);
+  outline-offset: -1px;
+}
+
+.composer > div > :first-child {
+  flex: 1;
+}
+
+/* The container draws the border and the focus ring, so the input has none. */
+.composer [data-scope="field"][data-part="input"] {
+  border: 0;
+  outline: none;
+  background: transparent;
+}

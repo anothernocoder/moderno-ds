@@ -1,6 +1,6 @@
 # Moderno Design System
 
-Framework-agnostic design system monorepo: primitives versioned via npm, blocks/themes via a shadcn-style registry, documentation in Astro. Platform decisions (toolchain, publish, docs, themes): **ADR-0001** (`docs/adr/0001-platform-distribution-docs-theming.md`). Absorption of the predecessor `moderno` and the npm scope: **ADR-0004**. Responsive policy and registry tiers: **ADR-0005**. Docs craft — harvesting Nimbus, Astro 7, examples as files: **ADR-0006**. One file per component, shared lists discovered or generated: **ADR-0009**. Behaviour Ark does not ship, as Zag machines in core, and the shared announcer: **ADR-0010**.
+Framework-agnostic design system monorepo: primitives versioned via npm, blocks/themes via a shadcn-style registry, documentation in Astro. Platform decisions (toolchain, publish, docs, themes): **ADR-0001** (`docs/adr/0001-platform-distribution-docs-theming.md`). Absorption of the predecessor `moderno` and the npm scope: **ADR-0004**. Responsive policy and registry tiers: **ADR-0005**. Docs craft — harvesting Nimbus, Astro 7, examples as files: **ADR-0006**. One file per component, shared lists discovered or generated: **ADR-0009**. Behaviour Ark does not ship, as Zag machines in core, and the shared announcer: **ADR-0010**. Generative UI on OpenUI, routed by System One: **ADR-0011**.
 
 ## Language
 
@@ -204,3 +204,22 @@ _Avoid_: Per-block code tabs, language tabs
 **Sidebar filter**:
 Narrowing the sidebar to the pages whose titles match what is typed. Operates on the navigation only; finding content is Docs search.
 _Avoid_: Search (for the sidebar), quick find
+
+**Generative UI**:
+An agent answering with live UI built from moderno components instead of text: a **Router** picks the **Surface** and the components, an LLM writes OpenUI Lang against a **Sub-library**, and OpenUI's `<Renderer>` draws it with `@moderno-ui/react`, styled by the installed theme. Lives in `@moderno-ui/genui` (ADR-0011).
+_Avoid_: AI UI, dynamic UI, chat widgets (for the capability)
+
+**Router**:
+The System One calls (Jev or Nimble over `POST /v1/systemone`) that read a message, with its chat context as background, and return typed judgments: the **Surface** and which primitives are relevant. It never writes UI (ADR-0011).
+_Avoid_: classifier, planner, agent (for this call)
+
+**Surface**:
+What the answer becomes, as the **Router** decides it: `text`, `widget`, `screen` or `dashboard`.
+_Avoid_: mode, output type
+
+**Sub-library**:
+The OpenUI component library cut down to the primitives the **Router** picked, so the LLM's prompt lists only those. Built from the full library, which is derived from `moderno.agent.json`, never written by hand (ADR-0011).
+_Avoid_: toolkit, component subset (unqualified)
+
+**Simple form**:
+How the generative library exposes a form compound (Select, NumberInput, Field…): one component with plain arguments, like `Select(label, options)`, instead of its parts. The framework adapter renders the whole anatomy from the docs example, so the LLM cannot get the structure wrong (ADR-0011).
