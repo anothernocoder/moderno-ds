@@ -4,6 +4,7 @@
  * order is part of the API: required props, then recipe variants, then the
  * rest, each group in manifest order.
  */
+import { tagSchemaId } from "@openuidev/lang-core";
 import { z } from "zod/v4";
 import type { AgentComponent, AgentProp } from "@moderno-ui/lint-core";
 
@@ -26,9 +27,9 @@ const BLOCKED_NAMES = new Set([
 const BLOCKED_PATTERN = /^(on[A-Z]|aria-|data-)/;
 
 /** `"sm" | "md" | "lg"` */
-const STRING_UNION = /^"[^"]*"(\s*\|\s*"[^"]*")*$/;
+export const STRING_UNION = /^"[^"]*"(\s*\|\s*"[^"]*")*$/;
 
-const PLAIN_TYPES: Record<string, () => z.ZodType> = {
+export const PLAIN_TYPES: Record<string, () => z.ZodType> = {
   string: () => z.string(),
   number: () => z.number(),
   boolean: () => z.boolean(),
@@ -52,10 +53,14 @@ export const CHART_DATA_TYPES = {
   DonutDatum: () => z.object({ name: z.string().optional(), value: z.number() }),
 } satisfies Record<string, () => z.ZodType>;
 
+/** What a click does: `Action([@ToAssistant("Confirm my order")])`. */
+export const action = z.any();
+tagSchemaId(action, "ActionExpression");
+
 /** `BarSeries[]` */
 const ARRAY_OF = /^(\w+)\[\]$/;
 
-function isBlocked(prop: AgentProp): boolean {
+export function isBlocked(prop: AgentProp): boolean {
   return (
     BLOCKED_NAMES.has(prop.name) || BLOCKED_PATTERN.test(prop.name) || prop.type.includes("=>")
   );

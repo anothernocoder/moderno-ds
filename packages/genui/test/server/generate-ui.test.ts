@@ -32,7 +32,10 @@ const judgeConfig = { baseUrl: "http://localhost:11434", model: "nimble" };
 const VALID = 'root = Stack([save])\nsave = Button("primary", ["Save"])\n';
 const INVALID = 'root = Stack([save])\nsave = Button("huge")\n';
 
-/** Both router calls' answers in one map: the Surface, the kind (`confirm` by default), and the Nouls. */
+/**
+ * Both router calls' answers in one map: the Surface, the kind (`confirm` by
+ * default), and the Nouls, by component name or by key (`block:KpiCard`).
+ */
 function routes(
   surface: string,
   nouls: Record<string, number> = {},
@@ -43,7 +46,7 @@ function routes(
     kind: { type: "choice", choice: kind, probabilities: {}, confidence: 0.9 },
   };
   for (const [name, noul] of Object.entries(nouls))
-    answers[`component:${name}`] = { type: "noul", noul };
+    answers[name.includes(":") ? name : `component:${name}`] = { type: "noul", noul };
   return answers;
 }
 
@@ -327,6 +330,159 @@ describe("generateUI", () => {
     expect(joined(chunks, "text")).toBe("Here it is:\n\nDone.");
     expect(joined(chunks, "program")).toBe(VALID);
     expect(chunks.some((chunk) => chunk.type === "discard")).toBe(false);
+  });
+});
+
+describe("generateUI with Blocks", () => {
+  const blocks = ["KpiCard", "StatRow", "OrderSummary", "FormLayout", "LoginForm"];
+  const fenced = (...lines: string[]) => [`\`\`\`openui-lang\n${lines.join("\n")}\n\`\`\``];
+  const pickedNames = () => vi.mocked(createSubLibrary).mock.calls.at(-1)![1];
+  const blockQuestions = () =>
+    Object.keys(mockedJudge.mock.calls.at(-1)![2]).filter((key) => key.startsWith("block:"));
+
+  it("offers no Block unless the host lists it", async () => {
+    mockedJudge.mockResolvedValue(routes("widget", { Button: 0.9, "block:StatRow": 0.9 }));
+    const { llm } = scriptedLLM(fenced(VALID));
+
+    await collect(generateUI({ message: "m", judge: judgeConfig, llm, manifest, contract }));
+    expect(blockQuestions()).toEqual([]);
+    expect(pickedNames()).not.toContain("StatRow");
+
+    await collect(
+      generateUI({
+        message: "m",
+        judge: judgeConfig,
+        llm,
+        manifest,
+        contract,
+        blocks: ["KpiCard"],
+      }),
+    );
+    expect(blockQuestions()).toEqual(["block:KpiCard"]);
+    expect(pickedNames()).not.toContain("StatRow");
+    expect(pickedNames()).not.toContain("KpiCard");
+  });
+
+  it('routes "ventas del mes" to StatRow and KpiCard plus a chart, with one example each', async () => {
+    mockedJudge.mockResolvedValue(
+      routes(
+        "dashboard",
+        {
+          BarChart: 0.9,
+          LineChart: 0.3,
+          "block:StatRow": 0.9,
+          "block:KpiCard": 0.8,
+          "block:OrderSummary": 0.1,
+          "block:FormLayout": 0.05,
+          "block:LoginForm": 0.02,
+        },
+        "chart",
+      ),
+    );
+    const { llm, calls } = scriptedLLM(fenced(VALID));
+
+    await collect(
+      generateUI({
+        message: "ventas del mes",
+        judge: judgeConfig,
+        llm,
+        manifest,
+        contract,
+        blocks,
+      }),
+    );
+
+    expect(blockQuestions().sort()).toEqual(blocks.map((name) => `block:${name}`).sort());
+    expect(mockedJudge.mock.calls[1]![2]["block:StatRow"]).toMatchObject({
+      type: "noul",
+      instructions: expect.stringContaining("ready-made StatRow block"),
+    });
+    const names = pickedNames();
+    expect(names).toEqual(expect.arrayContaining(["BarChart", "StatRow", "KpiCard", "Card"]));
+    for (const name of ["OrderSummary", "FormLayout", "LoginForm", "LineChart"])
+      expect(names).not.toContain(name);
+
+    const { system } = calls[0]!;
+    expect(system).toContain(
+      "- Use a Block when one fits. Compose primitives only for what no Block covers.",
+    );
+    expect(system).not.toContain("For a form, use");
+    expect(system).toMatch(/^statRow = StatRow\(/m);
+    expect(system).toMatch(/^kpiCard = KpiCard\(/m);
+  });
+
+  it("routes the chance card request to a form Block", async () => {
+    mockedJudge.mockResolvedValue(
+      routes(
+        "widget",
+        { Field: 0.9, Select: 0.9, "block:FormLayout": 0.9, "block:StatRow": 0.1 },
+        "form",
+      ),
+    );
+    const { llm, calls } = scriptedLLM(fenced(VALID));
+
+    await collect(
+      generateUI({
+        message: "crea un card de apuesta de chance: número de 4 cifras, lotería y valor",
+        judge: judgeConfig,
+        llm,
+        manifest,
+        contract,
+        blocks,
+      }),
+    );
+
+    expect(pickedNames()).toEqual(expect.arrayContaining(["FormLayout", "Field", "Select"]));
+    expect(pickedNames()).not.toContain("StatRow");
+    expect(calls[0]!.system).toContain("- For a form, use FormLayout rather than composing Field");
+  });
+
+  it("retries a KpiCard that omits its metric, with the parser's error", async () => {
+    mockedJudge.mockResolvedValue(routes("widget", { "block:KpiCard": 0.9 }, "chart"));
+    const kpi = (args: string) => fenced("root = Stack([sales])", `sales = KpiCard(${args})`);
+    const { llm, calls } = scriptedLLM(
+      kpi('"Ventas"'),
+      kpi('"Ventas", {"value": "$48.294", "delta": "+12%", "tone": "positive"}, "Este mes"'),
+    );
+
+    const chunks = await collect(
+      generateUI({ message: "ventas", judge: judgeConfig, llm, manifest, contract, blocks }),
+    );
+
+    expect(calls).toHaveLength(2);
+    expect(chunks.map((chunk) => chunk.type)).toEqual(["program", "discard", "program"]);
+    expect((chunks[1] as Extract<GenUIChunk, { type: "discard" }>).errors).toContainEqual(
+      expect.objectContaining({ code: "missing-required", component: "KpiCard", path: "/metric" }),
+    );
+    expect(calls[1]!.messages.at(-1)!.content).toContain('"path": "/metric"');
+  });
+
+  it("lints a form Block: a second primary Button is retried", async () => {
+    mockedJudge.mockResolvedValue(
+      routes("widget", { Field: 0.9, Button: 0.9, "block:FormLayout": 0.9 }, "form"),
+    );
+    const form = (button: string) =>
+      fenced(
+        "root = Stack([form])",
+        `form = FormLayout([number, ${button}], "Elige tu número", "Jugando", "Chance", null, null, "Jugar")`,
+        'number = Field("Número", "", null, null, "numeric", 4)',
+        'play = Button("primary", ["Jugar"])',
+        'back = Button("outline", ["Volver"])',
+      );
+    const { llm, calls } = scriptedLLM(form("play"), form("back"));
+
+    const chunks = await collect(
+      generateUI({ message: "chance", judge: judgeConfig, llm, manifest, contract, blocks }),
+    );
+
+    expect(calls).toHaveLength(2);
+    expect((chunks[1] as Extract<GenUIChunk, { type: "discard" }>).errors).toEqual([
+      expect.objectContaining({
+        code: "usability",
+        message: expect.stringContaining("FormLayout sends the form itself"),
+      }),
+    ]);
+    expect(chunks.map((chunk) => chunk.type)).toEqual(["program", "discard", "program"]);
   });
 });
 

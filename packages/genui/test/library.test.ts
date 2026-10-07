@@ -13,6 +13,7 @@ import type {
 import { describe, expect, expectTypeOf, it } from "vitest";
 import type { z } from "zod/v4";
 import exampleManifest from "../../../docs/prd/phase-7/example.react.moderno.agent.json" with { type: "json" };
+import { blockExample } from "../src/library/blocks.ts";
 import { CHART_DATA_TYPES } from "../src/library/props.ts";
 import { NOT_GENERATIVE } from "../src/library/simple-forms.ts";
 import { createSubLibrary, fromManifest, type GenUIComponent } from "../src/server.ts";
@@ -21,6 +22,7 @@ import { createSubLibrary, fromManifest, type GenUIComponent } from "../src/serv
 const installed = discoverManifests(fileURLToPath(new URL("..", import.meta.url)));
 const reactManifest = installed.components.find((manifest) => manifest.framework === "react")!;
 const contract = installed.contract!;
+const allBlocks = (reactManifest.blocks ?? []).map((block) => block.name);
 
 const example = exampleManifest as unknown as ComponentsManifest;
 
@@ -103,7 +105,7 @@ describe("fromManifest", () => {
   });
 
   it("never lets the model size a control: every control renders at one size", () => {
-    for (const component of fromManifest(reactManifest, contract)) {
+    for (const component of fromManifest(reactManifest, contract, allBlocks)) {
       expect(Object.keys(component.props.shape), component.name).not.toContain("size");
     }
   });
@@ -111,7 +113,7 @@ describe("fromManifest", () => {
   it("never exposes functions, ref, className, style or DOM-only props", () => {
     const blocked = /^(ref|className|style|id|ids|dir|format|on[A-Z].*|aria-.*)$/;
     for (const manifest of [kitchenSink, reactManifest]) {
-      for (const component of fromManifest(manifest, contract)) {
+      for (const component of fromManifest(manifest, contract, allBlocks)) {
         const keys = Object.keys(component.props.shape);
         expect(
           keys.filter((key) => blocked.test(key)),
@@ -176,6 +178,102 @@ describe("fromManifest", () => {
     );
     expect(prompt.find((line) => line.startsWith("Tabs("))).toMatch(
       /^Tabs\(tabs: string\[\], children: \(string \| /,
+    );
+  });
+});
+
+describe("Blocks", () => {
+  const components = fromManifest(reactManifest, contract, allBlocks);
+  const byName = new Map(components.map((component) => [component.name, component]));
+  /** `[name, required]` per argument, in order. */
+  const args = (name: string) =>
+    Object.entries(byName.get(name)!.props.shape).map(([key, field]) => [
+      key,
+      !(field as z.ZodType).safeParse(undefined).success,
+    ]);
+
+  it("are in the library only when the host lists them", () => {
+    const names = (blocks?: string[]) =>
+      fromManifest(reactManifest, contract, blocks).map((component) => component.name);
+
+    expect(names()).not.toContain("KpiCard");
+    expect(names(["KpiCard"])).toContain("KpiCard");
+    expect(names(["KpiCard"])).not.toContain("StatRow");
+    expect(allBlocks.length).toBeGreaterThan(60);
+    for (const block of allBlocks) expect(byName.has(block), block).toBe(true);
+  });
+
+  it("require their content, drop host state and callbacks, and make each labelled callback an action", () => {
+    expect(args("KpiCard")).toEqual([
+      ["label", true],
+      ["metric", true],
+      ["period", true],
+      ["actionLabel", false],
+      ["actionClick", false],
+    ]);
+    expect(args("StatRow")).toEqual([
+      ["description", true],
+      ["heading", true],
+      ["stats", true],
+      ["actionLabel", false],
+      ["actionClick", false],
+    ]);
+    expect(args("OrderSummary")).toEqual([
+      ["heading", true],
+      ["items", true],
+      ["total", true],
+      ["totals", true],
+    ]);
+    // A form Block holds the fields it is given, and its submit button is an action.
+    expect(args("FormLayout")).toEqual([
+      ["children", true],
+      ["description", true],
+      ["pendingLabel", true],
+      ["title", true],
+      ["cancelLabel", false],
+      ["cancelClick", false],
+      ["submitLabel", false],
+      ["submitClick", false],
+    ]);
+  });
+
+  it("show their object shapes and actions in the prompt", () => {
+    const prompt = signatures(createSubLibrary(components, ["KpiCard"]).prompt());
+
+    expect(prompt.find((line) => line.startsWith("KpiCard("))).toMatch(
+      /^KpiCard\(label: string, metric: \{caption\?: string, delta\?: string, tone\?: "negative" \| "neutral" \| "positive", trend\?: number\[\], value: string\}, period: string, actionLabel\?: string, actionClick\?: ActionExpression\) — /,
+    );
+  });
+
+  it("describe when not to use them and their gotchas, never their sample data or host state", () => {
+    const kpiCard = byName.get("KpiCard")!.description!;
+
+    expect(kpiCard).toContain("use StatRow");
+    expect(kpiCard).toContain("`tone` is what the change means");
+    expect(kpiCard).not.toMatch(/sample|moderno add|`loading`|`disabled`/);
+  });
+
+  it("each parse their own example with no errors", () => {
+    const parser = createParser(createSubLibrary(components, allBlocks).toJSONSchema());
+
+    for (const name of allBlocks) {
+      const example = blockExample(byName.get(name)!);
+      expect(parser.parse(example).meta.errors, example).toEqual([]);
+    }
+    expect(blockExample(byName.get("OrderSummary")!)).toBe(
+      [
+        "root = Stack([orderSummary])",
+        'orderSummary = OrderSummary("heading", [{"id": "id", "name": "name", "price": "price", "quantity": 1}], "total", [{"amount": "amount", "label": "label"}])',
+      ].join("\n"),
+    );
+  });
+
+  it("reject a KpiCard with no metric", () => {
+    const parser = createParser(createSubLibrary(components, ["KpiCard"]).toJSONSchema());
+    const { meta } = parser.parse('root = Stack([sales])\nsales = KpiCard("Ventas")');
+
+    expect(meta.errors).toContainEqual(
+      expect.objectContaining({ code: "missing-required", component: "KpiCard", path: "/metric" }),
     );
   });
 });

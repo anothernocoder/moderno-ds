@@ -7,12 +7,14 @@
  * A ref must exist before the container that uses it, so components come out
  * in tiers: leaves and Simple forms, then the Simple forms that hold panels
  * of leaves (`Tabs`), then compound parts (`CardHeader`), then compound roots
- * (`Card`), then the `Stack` and `Grid` layouts, which also hold each other.
+ * (`Card`), then the Blocks the host renders, then the `Stack` and `Grid`
+ * layouts, which also hold each other.
  */
-import { defineComponent, tagSchemaId, type DefinedComponent } from "@openuidev/lang-core";
+import { defineComponent, type DefinedComponent } from "@openuidev/lang-core";
 import { z } from "zod/v4";
 import type { AgentComponent, ComponentsManifest, ContractManifest } from "@moderno-ui/lint-core";
-import { propFields } from "./props.ts";
+import { blockFields, type AgentBlock } from "./blocks.ts";
+import { action, propFields } from "./props.ts";
 import { NOT_GENERATIVE, simpleFormOf, type SimpleForm } from "./simple-forms.ts";
 
 export type GenUIComponent = DefinedComponent<z.ZodObject, null>;
@@ -46,15 +48,24 @@ function isVoidPart(component: AgentComponent, tag: string): boolean {
 const NOT_FOR_THE_MODEL =
   /\b[A-Z]\w*\.[A-Z]\w*|\b(Vue|Svelte|Solid|Ark|className|style|portal|slot|SSR|htmlFor|div|parts?)\b|data-|-text\b|\bon[A-Z]|v-model|<\w|\w=[{"]/i;
 
+/** A Block's gotcha about its host state, its sample data or editing its file: not the model's business. */
+const NOT_FOR_THE_MODEL_IN_A_BLOCK =
+  /`(loading|error|errors|disabled)`|sample|moderno add|is yours/i;
+
 /** What it is and when to use it, when not to (and what instead), and the gotchas that apply to the model. */
-function describe(component: AgentComponent): string {
+function describe(
+  component: Pick<AgentComponent, "name" | "guidance">,
+  notForTheModel?: RegExp,
+): string {
   const { intent, whenToUse, whenNotToUse = [], gotchas = [] } = component.guidance ?? {};
   return (
     [
       intent,
       whenToUse,
       ...whenNotToUse.map(({ case: notFor, use }) => `Not for ${lowerFirst(notFor)}: use ${use}.`),
-      ...gotchas.filter((gotcha) => !NOT_FOR_THE_MODEL.test(gotcha)),
+      ...gotchas.filter(
+        (gotcha) => !NOT_FOR_THE_MODEL.test(gotcha) && !notForTheModel?.test(gotcha),
+      ),
     ]
       .filter(Boolean)
       .join(" ") || component.name
@@ -81,10 +92,6 @@ function define(name: string, description: string, fields: [string, z.ZodType][]
     component: null,
   });
 }
-
-/** What a click does: `Action([@ToAssistant("Confirm my order")])`. */
-const action = z.any();
-tagSchemaId(action, "ActionExpression");
 
 function defineLeaf(component: AgentComponent): GenUIComponent {
   const fields = propFields(component);
@@ -188,14 +195,25 @@ function defineLayouts(components: GenUIComponent[], contract: ContractManifest)
   return layouts;
 }
 
+/** A Block holds leaves as its `children` (a FormLayout's fields), like a compound part. */
+function defineBlock(block: AgentBlock, leaves: GenUIComponent[]): GenUIComponent {
+  return define(
+    block.name,
+    describe(block, NOT_FOR_THE_MODEL_IN_A_BLOCK),
+    blockFields(block, childrenOf(leaves)),
+  );
+}
+
 /**
- * One OpenUI component per primitive (a Simple form for a form compound) and
- * per compound part, plus `Stack` and `Grid`, whose gap steps come from the
- * contract's spacing tokens. The primitives in `NOT_GENERATIVE` are left out.
+ * One OpenUI component per primitive (a Simple form for a form compound), per
+ * compound part and per Block in `blocks` (the ones the host renders), plus
+ * `Stack` and `Grid`, whose gap steps come from the contract's spacing tokens.
+ * The primitives in `NOT_GENERATIVE` are left out.
  */
 export function fromManifest(
   manifest: ComponentsManifest,
   contract: ContractManifest,
+  blocks: readonly string[] = [],
 ): GenUIComponent[] {
   const generative = manifest.components.filter((component) => !NOT_GENERATIVE.has(component.name));
   const formOf = (component: AgentComponent) =>
@@ -215,11 +233,17 @@ export function fromManifest(
     .filter((component) => isCompound(component) && !formOf(component))
     .map((component) => defineCompound(component, leaves));
 
-  const components = [
+  const primitives = [
     ...leaves,
     ...withPanels,
     ...compounds.flatMap(({ parts }) => parts),
     ...compounds.map(({ root }) => root),
+  ];
+  const components = [
+    ...primitives,
+    ...(manifest.blocks ?? [])
+      .filter((block) => blocks.includes(block.name))
+      .map((block) => defineBlock(block, leaves)),
   ];
   return [...components, ...defineLayouts(components, contract)];
 }
