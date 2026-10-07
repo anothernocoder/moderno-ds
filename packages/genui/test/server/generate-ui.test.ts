@@ -434,7 +434,38 @@ describe("generateUI with Blocks", () => {
 
     expect(pickedNames()).toEqual(expect.arrayContaining(["FormLayout", "Field", "Select"]));
     expect(pickedNames()).not.toContain("StatRow");
-    expect(calls[0]!.system).toContain("- For a form, use FormLayout rather than composing Field");
+    expect(calls[0]!.system).toContain(
+      "- For a form, use FormLayout rather than composing one by hand: FormLayout holds its Field, Select, NumberInput controls as children.",
+    );
+  });
+
+  it("gives a form Block its fields when the router picks only the Block", async () => {
+    mockedJudge.mockResolvedValue(routes("widget", { "block:FormLayout": 0.9 }, "form"));
+    const { llm, calls } = scriptedLLM(fenced(VALID));
+
+    await collect(
+      generateUI({ message: "chance", judge: judgeConfig, llm, manifest, contract, blocks }),
+    );
+
+    expect(pickedNames()).toEqual(
+      expect.arrayContaining(["FormLayout", "Field", "Select", "NumberInput"]),
+    );
+    const formLayout = calls[0]!.system.split("\n").find((line) => line.startsWith("FormLayout("));
+    expect(formLayout).toMatch(/^FormLayout\(children: \(string \| [^)]*\bField\b[^)]*\)\[\]/);
+    expect(formLayout).toMatch(/\bSelect\b/);
+    expect(formLayout).toMatch(/\bNumberInput\b/);
+  });
+
+  it("adds no form fields for a Block that holds none", async () => {
+    mockedJudge.mockResolvedValue(routes("widget", { "block:KpiCard": 0.9 }, "chart"));
+    const { llm } = scriptedLLM(fenced(VALID));
+
+    await collect(
+      generateUI({ message: "ventas", judge: judgeConfig, llm, manifest, contract, blocks }),
+    );
+
+    for (const name of ["Field", "Select", "NumberInput"])
+      expect(pickedNames()).not.toContain(name);
   });
 
   it("retries a KpiCard that omits its metric, with the parser's error", async () => {
@@ -464,7 +495,7 @@ describe("generateUI with Blocks", () => {
     const form = (button: string) =>
       fenced(
         "root = Stack([form])",
-        `form = FormLayout([number, ${button}], "Elige tu número", "Jugando", "Chance", null, null, "Jugar")`,
+        `form = FormLayout([number, ${button}], "Elige tu número", "Chance", null, null, "Jugar")`,
         'number = Field("Número", "", null, null, "numeric", 4)',
         'play = Button("primary", ["Jugar"])',
         'back = Button("outline", ["Volver"])',

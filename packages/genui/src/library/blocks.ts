@@ -15,10 +15,11 @@ import { action, isBlocked, PLAIN_TYPES, STRING_UNION } from "./props.ts";
 
 export type AgentBlock = NonNullable<ComponentsManifest["blocks"]>[number];
 
-/** What the host knows and the model does not: the load state, form errors, a link's token, a typed query. */
+/** What the host knows and the model does not: the load state and its label, form errors, a link's token, a typed query. */
 // ponytail: a name list. Mark host state in the manifest if a Block adds another.
 const HOST_STATE = new Set([
   "loading",
+  "pendingLabel",
   "error",
   "errors",
   "disabled",

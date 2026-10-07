@@ -8,7 +8,7 @@ import {
   type ValidationError,
 } from "@openuidev/lang-core";
 import type { AgentComponent, ComponentsManifest, ContractManifest } from "@moderno-ui/lint-core";
-import { blockExample, submitsForm } from "../library/blocks.ts";
+import { blockExample, submitsForm, type AgentBlock } from "../library/blocks.ts";
 import { fromManifest } from "../library/from-manifest.ts";
 import { createSubLibrary } from "../library/sub-library.ts";
 import type { JudgeConfig } from "../router/judge.ts";
@@ -56,13 +56,24 @@ const PROGRAM_NOTE = "(UI shown)";
 /** The primitives that place Blocks, besides `Stack` and `Grid`, which every Sub-library has. */
 const BLOCK_PLACERS = ["Card"];
 
+/**
+ * The controls a form Block that takes `children` (`FormLayout`) holds. They join
+ * its Sub-library even when the router picked only the Block, or it has no fields.
+ */
+const FORM_FIELDS = ["Field", "Select", "NumberInput"];
+
+const holdsFields = (block: AgentBlock) =>
+  submitsForm(block) && block.props.some((prop) => prop.name === "children");
+
 /** The rules a turn with Blocks adds to `UI_RULES`. */
-function blockRules(formBlocks: string[]): string[] {
+function blockRules(formBlocks: AgentBlock[]): string[] {
+  const holders = formBlocks.filter(holdsFields).map((block) => block.name);
+  const names = formBlocks.map((block) => block.name);
   return [
     "Use a Block when one fits. Compose primitives only for what no Block covers.",
-    ...(formBlocks.length
+    ...(names.length
       ? [
-          `For a form, use ${formBlocks.join(" or ")} rather than composing Field, Select and NumberInput by hand. It has its own submit button: add no primary Button and leave its submit action out.`,
+          `For a form, use ${names.join(" or ")} rather than composing one by hand${holders.length ? `: ${holders.join(" or ")} holds its ${FORM_FIELDS.join(", ")} controls as children` : ""}. It has its own submit button: add no primary Button and leave its submit action out.`,
         ]
       : []),
   ];
@@ -83,17 +94,20 @@ export async function* generateUI(options: GenerateUIOptions): AsyncGenerator<Ge
     return;
   }
 
+  const pickedBlocks = offered.filter((block) => picked.blocks.includes(block.name));
+  const pickedForms = pickedBlocks.filter(submitsForm);
   const library = createSubLibrary(fromManifest(manifest, contract, picked.blocks), [
-    ...withAlternatives(picked.components, manifest.components),
+    ...withAlternatives(
+      [...picked.components, ...(pickedForms.some(holdsFields) ? FORM_FIELDS : [])],
+      manifest.components,
+    ),
     ...picked.blocks,
     ...(picked.blocks.length ? BLOCK_PLACERS : []),
   ]);
   const formBlocks = offered.filter(submitsForm).map((block) => block.name);
   const system = library.prompt({
     inlineMode: true,
-    additionalRules: picked.blocks.length
-      ? [...UI_RULES, ...blockRules(formBlocks.filter((name) => picked.blocks.includes(name)))]
-      : UI_RULES,
+    additionalRules: picked.blocks.length ? [...UI_RULES, ...blockRules(pickedForms)] : UI_RULES,
     // OpenUI's own examples are replaced, so only a turn with Blocks passes any.
     examples: picked.blocks.length
       ? picked.blocks.map((name) => blockExample(library.components[name]!))

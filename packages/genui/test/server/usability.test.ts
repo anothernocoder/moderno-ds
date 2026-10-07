@@ -77,7 +77,7 @@ describe("checkUsability", () => {
   describe("on a program with Blocks", () => {
     // The lint's root Stack holds every line, so the Block's children are written inline.
     const formLayout = (children: string, ...rest: string[]) =>
-      `form = FormLayout([${children}], "Elige tu número", "Jugando", "Chance"${rest.map((arg) => `, ${arg}`).join("")})`;
+      `form = FormLayout([${children}], "Elige tu número", "Chance"${rest.map((arg) => `, ${arg}`).join("")})`;
     const number = 'Field("Número", "", null, null, "numeric", 4)';
     const play = 'Button("primary", ["Jugar"])';
 

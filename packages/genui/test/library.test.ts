@@ -228,7 +228,6 @@ describe("Blocks", () => {
     expect(args("FormLayout")).toEqual([
       ["children", true],
       ["description", true],
-      ["pendingLabel", true],
       ["title", true],
       ["cancelLabel", false],
       ["cancelClick", false],
