@@ -85,10 +85,12 @@ describe("route", () => {
     await expect(route("m", [], library, options)).resolves.toEqual({
       surface: "widget",
       components: ["BarChart", "Button"],
+      blocks: [],
     });
     await expect(route("m", [], library, { ...options, threshold: 0.7 })).resolves.toEqual({
       surface: "widget",
       components: ["BarChart"],
+      blocks: [],
     });
   });
 
@@ -101,6 +103,7 @@ describe("route", () => {
     await expect(route("ventas del mes", [], library, options)).resolves.toEqual({
       surface: "widget",
       components: ["BarChart"],
+      blocks: [],
     });
   });
 
@@ -115,6 +118,7 @@ describe("route", () => {
     await expect(route("m", [], library, options)).resolves.toEqual({
       surface: "dashboard",
       components: ["BarChart"],
+      blocks: [],
     });
   });
 
@@ -123,6 +127,7 @@ describe("route", () => {
     await expect(route("hola", [], library, options)).resolves.toEqual({
       surface: "text",
       components: [],
+      blocks: [],
     });
     expect(mockedJudge).toHaveBeenCalledTimes(1);
   });
@@ -134,6 +139,7 @@ describe("route", () => {
     await expect(route("m", [], library, options)).resolves.toEqual({
       surface: "dashboard",
       components: names,
+      blocks: [],
     });
   });
 
@@ -148,6 +154,52 @@ describe("route", () => {
       0,
     );
     expect(total).toBeLessThanOrEqual(10);
+  });
+});
+
+describe("route with Blocks", () => {
+  const blocks = [
+    { name: "StatRow", guidance: { intent: "A row of headline numbers." } },
+    { name: "OrderSummary", guidance: { intent: "A read-only order summary." } },
+  ] as RouteOptions["blocks"];
+
+  it("asks one Noul per Block the host renders, worded so a fitting Block wins", async () => {
+    mockedJudge
+      .mockResolvedValueOnce(firstAnswers(choice("dashboard", 0.9)))
+      .mockResolvedValueOnce({
+        ...nouls({ BarChart: 0.9 }),
+        "block:StatRow": { type: "noul", noul: 0.9 },
+      });
+
+    await expect(route("ventas del mes", [], library, { ...options, blocks })).resolves.toEqual({
+      surface: "dashboard",
+      components: ["BarChart"],
+      blocks: ["StatRow"],
+    });
+    const questions = askedQuestions()[1]!;
+    expect(Object.keys(questions)).toEqual(
+      expect.arrayContaining(["block:StatRow", "block:OrderSummary"]),
+    );
+    expect(questions["block:StatRow"]).toEqual({
+      type: "noul",
+      instructions:
+        "Does the ready-made StatRow block show what `message` asks for, or a part of it? A row of headline numbers.",
+      criteria: {
+        true: "It fits: a ready-made block beats building the same thing from smaller components.",
+      },
+    });
+  });
+
+  it("keeps a picked Block without falling back to every primitive", async () => {
+    mockedJudge
+      .mockResolvedValueOnce(firstAnswers(choice("widget", 0.9)))
+      .mockResolvedValueOnce({ "block:OrderSummary": { type: "noul", noul: 0.8 } });
+
+    await expect(route("mi pedido", [], library, { ...options, blocks })).resolves.toEqual({
+      surface: "widget",
+      components: [],
+      blocks: ["OrderSummary"],
+    });
   });
 });
 
@@ -192,6 +244,7 @@ describe("route on recorded Nimble answers", () => {
     await expect(route("hola", recorded.context, reactComponents, options)).resolves.toEqual({
       surface: "text",
       components: [],
+      blocks: [],
     });
   });
 });

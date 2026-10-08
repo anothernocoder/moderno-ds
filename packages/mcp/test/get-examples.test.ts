@@ -28,6 +28,12 @@ describe("getExamples", () => {
     expect(react.examples[0]!.code).not.toEqual(vue.examples[0]!.code);
   });
 
+  it("returns a block's example: its registry source", () => {
+    const result = getExamples(manifests, { name: "KpiCard", framework: "react" });
+    expect(result.name).toBe("KpiCard");
+    expect(result.examples[0]!.code).toContain("<KpiCard");
+  });
+
   it("returns an empty list rather than throwing when a component has no curated examples", () => {
     const result = getExamples(manifests, { name: "Dialog", framework: "react" });
     expect(result.examples).toEqual([]);

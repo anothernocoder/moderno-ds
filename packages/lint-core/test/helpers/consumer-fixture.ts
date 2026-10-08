@@ -50,21 +50,25 @@ function readJson(file: string): unknown {
 /**
  * The fixture manifest for one package, as the text its `moderno.agent.json`
  * would hold. A package with many components keeps them one file each — a
- * folder with `_package.json` (every field but `components`) and
- * `components/<slug>.json` — so adding a component to the fixture is adding a
- * file; the rest are a single `<name>.json`.
+ * folder with `_package.json` (every field but `components` and `blocks`),
+ * `components/<slug>.json` and, optionally, `blocks/<slug>.json` — so adding
+ * a component or block to the fixture is adding a file; the rest are a single
+ * `<name>.json`.
  */
 function readManifestFixture(fixture: string): string {
   const folder = join(manifestFixturesDir, fixture);
   if (!existsSync(folder)) return readFileSync(`${folder}.json`, "utf8");
 
-  const componentsDir = join(folder, "components");
-  const components = readdirSync(componentsDir)
-    .filter((file) => file.endsWith(".json"))
-    .sort()
-    .map((file) => readJson(join(componentsDir, file)));
+  const readEntries = (dir: string) =>
+    readdirSync(dir)
+      .filter((file) => file.endsWith(".json"))
+      .sort()
+      .map((file) => readJson(join(dir, file)));
+  const components = readEntries(join(folder, "components"));
+  const blocksDir = join(folder, "blocks");
+  const blocks = existsSync(blocksDir) ? { blocks: readEntries(blocksDir) } : {};
   const pkg = readJson(join(folder, "_package.json")) as object;
-  return JSON.stringify({ ...pkg, components }, null, 2);
+  return JSON.stringify({ ...pkg, components, ...blocks }, null, 2);
 }
 
 function installPackage(nodeModulesDir: string, name: string, version: string): string {

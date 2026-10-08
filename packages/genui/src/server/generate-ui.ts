@@ -1,9 +1,14 @@
 // One chat turn in, a validated OpenUI Lang stream out: the Router picks the
-// Surface and components, the LLM writes against the Sub-library under the UI
-// rules, and a program that is invalid or fails the usability lint gets one
-// retry before the turn falls back to text (ADR-0011).
-import { createStreamingParser, type ValidationError } from "@openuidev/lang-core";
+// Surface, components and Blocks, the LLM writes against the Sub-library under
+// the UI rules, and a program that is invalid or fails the usability lint gets
+// one retry before the turn falls back to text (ADR-0011, ADR-0012).
+import {
+  createStreamingParser,
+  type ElementNode,
+  type ValidationError,
+} from "@openuidev/lang-core";
 import type { AgentComponent, ComponentsManifest, ContractManifest } from "@moderno-ui/lint-core";
+import { blockExample, submitsForm, type AgentBlock } from "../library/blocks.ts";
 import { fromManifest } from "../library/from-manifest.ts";
 import { createSubLibrary } from "../library/sub-library.ts";
 import type { JudgeConfig } from "../router/judge.ts";
@@ -25,8 +30,10 @@ export interface GenerateUIOptions {
   /** The System One server the Router asks. */
   judge: JudgeConfig;
   llm: LLM;
-  /** The framework's `moderno.agent.json`: its primitives are what the Router picks from. */
+  /** The framework's `moderno.agent.json`: its primitives and Blocks are what the Router picks from. */
   manifest: ComponentsManifest;
+  /** The names of the Blocks the host renders (`KpiCard`). Only these are offered; none by default. */
+  blocks?: readonly string[];
   /** The contract manifest: the layouts' gap steps come from its spacing tokens. */
   contract: ContractManifest;
 }
@@ -46,25 +53,70 @@ const TEXT_PROMPT = "Reply in plain text. Do not write code or UI.";
 const FENCE = "```";
 const PROGRAM_NOTE = "(UI shown)";
 
+/** The primitives that place Blocks, besides `Stack` and `Grid`, which every Sub-library has. */
+const BLOCK_PLACERS = ["Card"];
+
+/**
+ * The controls a form Block that takes `children` (`FormLayout`) holds. They join
+ * its Sub-library even when the router picked only the Block, or it has no fields.
+ */
+const FORM_FIELDS = ["Field", "Select", "NumberInput"];
+
+const holdsFields = (block: AgentBlock) =>
+  submitsForm(block) && block.props.some((prop) => prop.name === "children");
+
+/** The rules a turn with Blocks adds to `UI_RULES`. */
+function blockRules(formBlocks: AgentBlock[]): string[] {
+  const holders = formBlocks.filter(holdsFields).map((block) => block.name);
+  const names = formBlocks.map((block) => block.name);
+  return [
+    "Use a Block when one fits. Compose primitives only for what no Block covers.",
+    ...(names.length
+      ? [
+          `For a form, use ${names.join(" or ")} rather than composing one by hand${holders.length ? `: ${holders.join(" or ")} holds its ${FORM_FIELDS.join(", ")} controls as children` : ""}. It has its own submit button: add no primary Button and leave its submit action out.`,
+        ]
+      : []),
+  ];
+}
+
 /** Yields the text and program chunks of one LLM turn as they arrive. */
 export async function* generateUI(options: GenerateUIOptions): AsyncGenerator<GenUIChunk> {
-  const { message, context = [], judge, llm, manifest, contract } = options;
+  const { message, context = [], judge, llm, manifest, contract, blocks = [] } = options;
   const messages: ChatMessage[] = [...context, { role: "user", content: message }];
+  const offered = (manifest.blocks ?? []).filter((block) => blocks.includes(block.name));
 
-  const picked = await route(message, withoutPrograms(context), manifest.components, { judge });
+  const picked = await route(message, withoutPrograms(context), manifest.components, {
+    judge,
+    blocks: offered,
+  });
   if (picked.surface === "text") {
     yield* answerInText(llm, messages);
     return;
   }
 
-  const library = createSubLibrary(
-    fromManifest(manifest, contract),
-    withAlternatives(picked.components, manifest.components),
-  );
-  const system = library.prompt({ inlineMode: true, additionalRules: UI_RULES });
+  const pickedBlocks = offered.filter((block) => picked.blocks.includes(block.name));
+  const pickedForms = pickedBlocks.filter(submitsForm);
+  const library = createSubLibrary(fromManifest(manifest, contract, picked.blocks), [
+    ...withAlternatives(
+      [...picked.components, ...(pickedForms.some(holdsFields) ? FORM_FIELDS : [])],
+      manifest.components,
+    ),
+    ...picked.blocks,
+    ...(picked.blocks.length ? BLOCK_PLACERS : []),
+  ]);
+  const formBlocks = offered.filter(submitsForm).map((block) => block.name);
+  const system = library.prompt({
+    inlineMode: true,
+    additionalRules: picked.blocks.length ? [...UI_RULES, ...blockRules(pickedForms)] : UI_RULES,
+    // OpenUI's own examples are replaced, so only a turn with Blocks passes any.
+    examples: picked.blocks.length
+      ? picked.blocks.map((name) => blockExample(library.components[name]!))
+      : undefined,
+  });
   const schema = library.toJSONSchema();
+  const lint = (root: ElementNode | null) => checkUsability(root, new Set(formBlocks));
 
-  const first = yield* streamProgram(llm(system, messages), schema);
+  const first = yield* streamProgram(llm(system, messages), schema, lint);
   if (first.errors.length === 0) return;
   yield { type: "discard", errors: first.errors };
 
@@ -78,6 +130,7 @@ export async function* generateUI(options: GenerateUIOptions): AsyncGenerator<Ge
       },
     ]),
     schema,
+    lint,
   );
   if (retry.errors.length === 0) return;
   yield { type: "discard", errors: retry.errors };
@@ -118,6 +171,7 @@ async function* answerInText(llm: LLM, messages: ChatMessage[]): AsyncGenerator<
 async function* streamProgram(
   stream: AsyncIterable<string>,
   schema: Parameters<typeof createStreamingParser>[0],
+  lint: (root: ElementNode | null) => UsabilityError[],
 ): AsyncGenerator<GenUIChunk, { output: string; errors: ProgramError[] }> {
   const parser = createStreamingParser(schema);
   let output = "";
@@ -126,7 +180,7 @@ async function* streamProgram(
     yield chunk;
   }
   const { root, meta } = parser.getResult();
-  return { output, errors: [...meta.errors, ...checkUsability(root)] };
+  return { output, errors: [...meta.errors, ...lint(root)] };
 }
 
 /**

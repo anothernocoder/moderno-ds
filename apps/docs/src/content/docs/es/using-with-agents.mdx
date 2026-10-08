@@ -40,15 +40,24 @@ Un tema añadido con la CLI trae su `DESIGN.md`: en la raíz del proyecto si el 
 
 Las herramientas leen y verifican; el agente escribe el código él mismo.
 
-| Herramienta         | Entrada              | Devuelve                                                                           |
-| ------------------- | -------------------- | ---------------------------------------------------------------------------------- |
-| `search_components` | `query`, `framework` | Componentes ordenados por intención, con ruta de import y cuándo usarlos.          |
-| `get_component_api` | `name`, `framework`  | Props, `data-part`s y variantes del paquete instalado.                             |
-| `get_contract`      | ninguna              | Slots de tokens, el modelo de modo oscuro y multimarca, la convención `data-part`. |
-| `get_examples`      | `name`, `framework`  | Snippets funcionales en la sintaxis propia de ese framework.                       |
-| `validate_usage`    | `code`, `framework`  | Hallazgos de las reglas. Una lista vacía significa que está limpio.                |
+| Herramienta         | Entrada              | Devuelve                                                                            |
+| ------------------- | -------------------- | ----------------------------------------------------------------------------------- |
+| `search_components` | `query`, `framework` | Primitivos y bloques ordenados por intención, con cómo obtenerlos y cuándo usarlos. |
+| `get_component_api` | `name`, `framework`  | Props, `data-part`s y variantes del paquete instalado, o los de un bloque.          |
+| `get_contract`      | ninguna              | Slots de tokens, el modelo de modo oscuro y multimarca, la convención `data-part`.  |
+| `get_examples`      | `name`, `framework`  | Snippets funcionales en la sintaxis propia de ese framework.                        |
+| `validate_usage`    | `code`, `framework`  | Hallazgos de las reglas. Una lista vacía significa que está limpio.                 |
 
 `framework` es uno de `react`, `vue`, `svelte`, `solid` o `astro`.
+
+Las herramientas también conocen los [bloques](/es/blocks/) del registro: secciones listas como `KpiCard`, `OrderSummary` o `Table`. Un bloque no se importa de un paquete. Lo copias a la app con la CLI, así que su entrada trae un comando `install` en lugar de un `import`.
+
+```
+search_components({ query: "kpi", framework: "react" })
+→ { matches: [{ name: "KpiCard", kind: "block", install: "npx @moderno-ui/cli add kpi-card-react", … }, …] }
+```
+
+`get_component_api` y `get_examples` también aceptan el nombre de un bloque. Usa un bloque cuando encaje; compón primitivos solo para lo que ningún bloque cubre.
 
 ## El ciclo del agente
 

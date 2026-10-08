@@ -5,6 +5,7 @@
  * one retry (ADR-0011).
  */
 import type { ElementNode } from "@openuidev/lang-core";
+import { actionField } from "../library/blocks.ts";
 
 /** The UI rules of the system prompt, one line each. */
 export const UI_RULES = [
@@ -81,8 +82,18 @@ function isCodeStepper(input: ElementNode): boolean {
   );
 }
 
-/** The usability errors of a parsed program; `[]` when it has none. */
-export function checkUsability(root: ElementNode | null): UsabilityError[] {
+/** A form Block's own submit button: `FormLayout(…, submitLabel, submitClick)`. */
+const SUBMIT_ACTION = actionField("submitLabel");
+
+/**
+ * The usability errors of a parsed program; `[]` when it has none.
+ * `formBlocks` names the Blocks that submit a form: each is a form with its
+ * own primary action.
+ */
+export function checkUsability(
+  root: ElementNode | null,
+  formBlocks: ReadonlySet<string> = new Set(),
+): UsabilityError[] {
   const all = elements(root);
   const errors: UsabilityError[] = [];
 
@@ -101,21 +112,35 @@ export function checkUsability(root: ElementNode | null): UsabilityError[] {
     }
   }
 
-  if (!all.some((element) => CONTROLS.has(element.typeName))) return errors;
-  const primaries = all.filter((element) => element.typeName === "Button" && isPrimary(element));
-  if (primaries.length === 0) {
+  const submitters = all.filter((element) => formBlocks.has(element.typeName));
+  if (!submitters.length && !all.some((element) => CONTROLS.has(element.typeName))) return errors;
+  const buttons = all.filter((element) => element.typeName === "Button" && isPrimary(element));
+  const primaries = buttons.length + submitters.length;
+  if (primaries === 0) {
     errors.push(error(root!, "The form has no primary Button to send it: add one."));
   }
-  if (primaries.length > 1) {
+  if (primaries > 1) {
     errors.push(
       error(
         root!,
-        `The form has ${primaries.length} primary Buttons: keep one, make the rest outline.`,
+        submitters.length
+          ? `The form has ${primaries} primary actions, and ${submitters[0]!.typeName} sends the form itself: keep it, make every Button outline.`
+          : `The form has ${primaries} primary Buttons: keep one, make the rest outline.`,
       ),
     );
   }
+  for (const block of submitters) {
+    if (block.props[SUBMIT_ACTION] !== undefined) {
+      errors.push(
+        error(
+          block,
+          `${block.typeName} sets ${SUBMIT_ACTION}, which drops the values of the form. Leave it out: it then sends its label with the values.`,
+        ),
+      );
+    }
+  }
   // Only the default action sends the values: a fixed message or a URL drops them.
-  for (const button of primaries) {
+  for (const button of buttons) {
     if (button.props.action !== undefined) {
       errors.push(
         error(

@@ -32,6 +32,11 @@
         "components": {
           "type": "array",
           "items": { "$ref": "#/definitions/component" }
+        },
+        "blocks": {
+          "type": "array",
+          "description": "The registry's Blocks that ship in this framework (ADR-0012). Generated from each block's item.json and React source. Installed with the CLI, not imported from the package.",
+          "items": { "$ref": "#/definitions/block" }
         }
       }
     },
@@ -98,6 +103,80 @@
             "properties": {
               "title": { "type": "string" },
               "code": { "type": "string", "description": "Framework-specific snippet." }
+            }
+          }
+        },
+        "guidance": { "$ref": "#/definitions/guidance" }
+      }
+    },
+    "block": {
+      "type": "object",
+      "required": [
+        "name",
+        "slug",
+        "kind",
+        "description",
+        "install",
+        "frameworks",
+        "propsHash",
+        "props",
+        "shapes",
+        "composes",
+        "examples"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Component name the block exports.",
+          "examples": ["KpiCard"]
+        },
+        "slug": {
+          "type": "string",
+          "description": "Registry folder and docs page.",
+          "examples": ["kpi-card"]
+        },
+        "kind": { "const": "block" },
+        "description": { "type": "string", "description": "From the block's item.json." },
+        "install": {
+          "type": "string",
+          "description": "CLI command that copies the block into the app.",
+          "examples": ["npx @moderno-ui/cli add kpi-card-react"]
+        },
+        "frameworks": {
+          "type": "array",
+          "description": "Every framework the block ships in.",
+          "items": { "enum": ["react", "vue", "svelte", "solid", "astro"] }
+        },
+        "propsHash": {
+          "type": "string",
+          "description": "Hash of props and shapes. pnpm gen records it; agent:check-drift compares."
+        },
+        "props": {
+          "type": "array",
+          "description": "From the React block's <Name>Props interface.",
+          "items": { "$ref": "#/definitions/prop" }
+        },
+        "shapes": {
+          "type": "object",
+          "description": "Each object type the props use (KpiCardMetric), expanded into its fields, keyed by type name.",
+          "additionalProperties": { "type": "array", "items": { "$ref": "#/definitions/prop" } }
+        },
+        "composes": {
+          "type": "array",
+          "description": "The primitives the block renders.",
+          "items": { "type": "string" }
+        },
+        "examples": {
+          "type": "array",
+          "description": "The registry item itself, in this framework (the Example rule).",
+          "items": {
+            "type": "object",
+            "required": ["title", "code"],
+            "additionalProperties": false,
+            "properties": {
+              "title": { "type": "string" },
+              "code": { "type": "string" }
             }
           }
         },

@@ -3,10 +3,16 @@
  * `components[].examples` (curated at build time in
  * `@moderno-ui/props-doc`'s `agent-examples.ts`, one entry per (component,
  * framework), verified against each binding's own test fixtures). No separate
- * example store here: read the aggregated manifest, return what's there.
+ * example store here: read the aggregated manifest, return what's there. A
+ * block's example is its registry source in that framework (ADR-0012).
  */
 import type { AgentExample, AggregatedManifests, Framework } from "@moderno-ui/lint-core";
-import { componentNotFoundError, findFrameworkManifest, frameworkNotFoundError } from "./shared.ts";
+import {
+  componentNotFoundError,
+  findComponentOrBlock,
+  findFrameworkManifest,
+  frameworkNotFoundError,
+} from "./shared.ts";
 
 export interface GetExamplesInput {
   name: string;
@@ -26,9 +32,7 @@ export function getExamples(
   const manifest = findFrameworkManifest(manifests, input.framework);
   if (!manifest) throw frameworkNotFoundError(manifests, input.framework);
 
-  const component = manifest.components.find(
-    (c) => c.name.toLowerCase() === input.name.toLowerCase(),
-  );
+  const component = findComponentOrBlock(manifest, input.name);
   if (!component) throw componentNotFoundError(manifest, input.name);
 
   return {

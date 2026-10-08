@@ -1,8 +1,9 @@
-// The Router: System One picks the Surface and the primitives the LLM's
-// Sub-library needs (CONTEXT.md, ADR-0011). It asks ten questions whatever
-// the library size: the Surface and the kind of UI first, then one Noul for
-// each of the few components that kind shortlists.
+// The Router: System One picks the Surface and the primitives and Blocks the
+// LLM's Sub-library needs (CONTEXT.md, ADR-0011, ADR-0012). It asks the
+// Surface and the kind of UI first, then one Noul for each of the few
+// primitives that kind shortlists and for each Block the host renders.
 import { rankComponents, type AgentComponent } from "@moderno-ui/lint-core";
+import type { AgentBlock } from "../library/blocks.ts";
 import { judge, type JudgeConfig, type Question } from "./judge.ts";
 
 export type Surface = "text" | "widget" | "screen" | "dashboard";
@@ -15,12 +16,16 @@ export interface RouteOptions {
   minConfidence?: number;
   /** How many components get a Noul. Default 8. */
   shortlist?: number;
+  /** The Blocks the host renders. Each gets a Noul; none by default. */
+  blocks?: AgentBlock[];
 }
 
 export interface Route {
   surface: Surface;
   /** Names of the components the LLM gets. */
   components: string[];
+  /** Names of the Blocks the LLM gets. */
+  blocks: string[];
 }
 
 const SURFACE_CRITERIA: Record<Surface, string> = {
@@ -71,6 +76,7 @@ const KINDS: Record<string, { criteria: string; keywords: string }> = {
 };
 
 const COMPONENT_KEY = "component:";
+const BLOCK_KEY = "block:";
 
 const FIRST_QUESTIONS: Record<string, Question> = {
   surface: {
@@ -98,7 +104,7 @@ export async function route(
   components: AgentComponent[],
   options: RouteOptions,
 ): Promise<Route> {
-  const { threshold = 0.5, minConfidence = 0.5, shortlist = 8 } = options;
+  const { threshold = 0.5, minConfidence = 0.5, shortlist = 8, blocks = [] } = options;
   const state = { context, message };
 
   const first = await judge(options.judge, state, FIRST_QUESTIONS);
@@ -107,7 +113,7 @@ export async function route(
   if (surfaceAnswer?.type !== "choice" || kindAnswer?.type !== "choice")
     throw new Error("System One returned no surface or kind choice");
   if (surfaceAnswer.choice === "text" && surfaceAnswer.confidence >= minConfidence)
-    return { surface: "text", components: [] };
+    return { surface: "text", components: [], blocks: [] };
   const surface = mostLikelyUI(surfaceAnswer.probabilities, surfaceAnswer.choice as Surface);
 
   const keywords = KINDS[kindAnswer.choice]?.keywords ?? "";
@@ -121,15 +127,30 @@ export async function route(
       instructions: `Does a ${name} help answer \`message\`?`,
     };
   }
+  // ponytail: every offered Block gets a Noul. Shortlist them like the
+  // primitives if hosts offer dozens.
+  for (const block of blocks) {
+    questions[BLOCK_KEY + block.name] = {
+      type: "noul",
+      instructions: `Does the ready-made ${block.name} block show what \`message\` asks for, or a part of it? ${block.guidance?.intent ?? block.description}`,
+      criteria: {
+        true: "It fits: a ready-made block beats building the same thing from smaller components.",
+      },
+    };
+  }
   const nouls = await judge(options.judge, state, questions);
 
-  const picked = candidates.filter((name) => {
-    const answer = nouls[COMPONENT_KEY + name];
+  const passes = (key: string) => {
+    const answer = nouls[key];
     return answer?.type === "noul" && answer.noul >= threshold;
-  });
+  };
+  const picked = candidates.filter((name) => passes(COMPONENT_KEY + name));
+  const pickedBlocks = blocks.map((block) => block.name).filter((name) => passes(BLOCK_KEY + name));
+  const nothingPicked = picked.length === 0 && pickedBlocks.length === 0;
   return {
     surface,
-    components: picked.length > 0 ? picked : components.map((component) => component.name),
+    components: nothingPicked ? components.map((component) => component.name) : picked,
+    blocks: pickedBlocks,
   };
 }
 
