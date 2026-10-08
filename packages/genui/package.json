@@ -1,6 +1,6 @@
 {
   "name": "@moderno-ui/genui",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Generative UI for Moderno: a System One model routes each message, an LLM writes OpenUI Lang against a component library derived from moderno.agent.json, and OpenUI's Renderer draws it with @moderno-ui/react.",
   "repository": {
     "type": "git",
