@@ -1,5 +1,6 @@
 # Tasks
 - [ ] Migrar los componentes de moderno (legacy)
+- [ ] Agregar el resto de componentes de Ark UI y comportamientos
 - [ ] Fixes Moderno-DS
   - [ ] Componentes del Doc Site deben ser componentes de la libreria o blocks
   - [ ] Los blocks o estilo de codigo debe ser escrito clean code como los de schadcn, legibles
