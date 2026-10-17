@@ -7,6 +7,12 @@
       "runtimeArgs": ["--filter", "@moderno-ui/docs", "dev"],
       "port": 4321,
       "autoPort": true
+    },
+    {
+      "name": "genui",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@moderno-ui/genui", "dev", "--port", "5180", "--strictPort"],
+      "port": 5180
     }
   ]
 }
