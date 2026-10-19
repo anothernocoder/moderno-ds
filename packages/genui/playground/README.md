@@ -6,15 +6,29 @@ An agentic chat built on `@moderno-ui/genui`. You type, the dev server answers w
 pnpm --filter @moderno-ui/genui dev
 ```
 
-Then try "sales this month", "confirm my order" or "hello". The toolbar switches between theme-moderno and theme-contrast, light and dark (`?brand=contrast&mode=dark` on load).
+Then try "ventas del mes", "confirma mi pedido", "quiero jugar un chance" or "hola". The toolbar switches between theme-moderno and theme-contrast, light and dark (`?brand=contrast&mode=dark` on load).
 
 ## Fixture mode
 
 With no keys set, the demo runs offline: a canned System One server picks the Surface and a canned LLM streams a fixed answer.
 
-- "sales this month" shows a card with a bar chart.
-- "confirm my order" shows a confirm card. Its buttons post back to the thread.
+- "ventas del mes" shows the `StatRow` Block and a card with a bar chart.
+- "confirma mi pedido" shows the `OrderSummary` Block with cancel and confirm buttons. They post back to the thread.
+- "quiero jugar un chance" shows the `FormLayout` Block with a field, a select and a number input. Its submit sends their values.
 - Anything else gets a text reply.
+
+## Blocks
+
+`blocks.ts` imports the Blocks from `registry/blocks/*/react` and passes them to `<GenUI blocks>`; the chat route offers the same names to `generateUI({ blocks })`. Their Tailwind utilities are compiled over the moderno preset by the docs' compiler (`tailwind.ts`). To add one, import it in `blocks.ts`.
+
+## QA script
+
+```sh
+pnpm --filter @moderno-ui/genui e2e                  # fixture mode
+GENUI_REAL=1 pnpm --filter @moderno-ui/genui e2e     # real mode, keys from .env.local
+```
+
+Each QA message runs in all four themes, at desktop and 375px: it types, picks, submits, and checks layout, control heights and the console. `QA_SHOTS=<dir>` saves a screenshot of each chat.
 
 Set `GENUI_FIXTURES=1` to force fixture mode when keys are set.
 

@@ -1,5 +1,7 @@
 import "./no-devtools.ts";
 import { createRoot } from "react-dom/client";
+// First: its layer statement fixes the cascade order of the styles below.
+import "virtual:blocks.css";
 import "@fontsource/hedvig-letters-sans";
 import "@fontsource/hedvig-letters-serif";
 import "@moderno-ui/css";

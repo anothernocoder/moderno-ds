@@ -5,6 +5,11 @@
   "compilerOptions": {
     "types": ["astro/client"],
     "allowImportingTsExtensions": true,
-    "rewriteRelativeImportExtensions": true
+    "rewriteRelativeImportExtensions": true,
+    // The Generative UI example imports a React Block as an app does; Vite
+    // resolves it through registryAliases in astro.config.mjs.
+    "paths": {
+      "@/components/blocks/stat-row": ["../../registry/blocks/stat-row/react/stat-row.tsx"]
+    }
   }
 }

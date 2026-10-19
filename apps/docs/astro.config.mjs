@@ -70,7 +70,19 @@ export default defineConfig({
         // alias above: the preview must be the shipped file, not a copy that can
         // drift from it. The Svelte SSR suite resolves them the same way.
         ...registryAliases(registryManifest, "svelte"),
+        // The Generative UI page renders React Blocks at build time
+        // (StaticReact.astro), imported as an app does: `@/components/blocks/stat-row`.
+        // Their kebab-case names never clash with the Svelte ones (`StatRow`).
+        {
+          find: /^@moderno-ui\/react$/,
+          replacement: fileURLToPath(new URL("./node_modules/@moderno-ui/react", import.meta.url)),
+        },
+        ...registryAliases(registryManifest, "react"),
       ],
+      // A React Block's own `react` import, from registry/, which has none.
+      dedupe: ["react", "react-dom"],
     },
+    // registry/ has no tsconfig: its React Blocks' JSX compiles as the examples' does.
+    esbuild: { jsx: "automatic" },
   },
 });
