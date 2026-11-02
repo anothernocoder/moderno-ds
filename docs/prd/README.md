@@ -15,6 +15,12 @@ Platform decisions already made live in [ADR-0001](../adr/0001-platform-distribu
 | 6     | [phase-6-docs.md](phase-6-docs.md)                       | Bilingual Astro site + Theme Builder + registry `/r/`                                 | en/es docs with parity + builder exports   |
 | 7     | [phase-7-agentic.md](phase-7-agentic.md)                 | `@moderno-ui/mcp` (read+verify) + `@moderno-ui/lint` + per-package agent manifests    | Agent builds a screen; validate loop green |
 
+## Feature PRDs
+
+| PRD                                    | Summary                                                                                                                   | Status   |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | -------- |
+| [moderno-studio.md](moderno-studio.md) | Moderno Studio: authenticated visual editor that writes token-only changes to the shared component CSS (all 4 frameworks) | Proposal |
+
 ## Convention
 
 Each phase confirms its DoD before moving on to the next (brief rule: "proceed in order, confirm at the end of each one"). Phase 0 has an explicit human gate: confirm the token contract before writing components.
