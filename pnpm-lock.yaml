@@ -324,7 +324,7 @@ importers:
   packages/mcp:
     dependencies:
       '@modelcontextprotocol/sdk':
-        specifier: ^1.29.0
+        specifier: ^1.32.0
         version: 1.32.2(zod@3.25.76)
       '@moderno-ui/lint-core':
         specifier: workspace:*
