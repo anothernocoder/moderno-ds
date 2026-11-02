@@ -10,11 +10,14 @@ Configured on `anothernocoder/moderno-ds` → `main`:
 | ------------------------------------- | --------------------------------------------- |
 | Require a pull request before merging | on                                            |
 | Required approving reviews            | 0 (open a PR, you may self-merge)             |
+| Required status checks                | `lint` (the branch need not be up to date)    |
 | Force pushes                          | blocked                                       |
 | Branch deletion                       | blocked                                       |
 | Include administrators                | off (admins may push directly in emergencies) |
 
 GitHub rejects any non-PR push to `main` for non-admins regardless of local setup. This is the real gate.
+
+The "version packages" PR is opened with `GITHUB_TOKEN`, which does not trigger CI, so `lint` never reports on it. An admin merges it with a bypass.
 
 Inspect or change it with the GitHub CLI:
 
