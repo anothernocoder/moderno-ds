@@ -5,12 +5,21 @@ on:
     branches: [main]
   pull_request:
 
+# A new push to a PR cancels the run it makes stale. On main every run has a
+# group of its own, so none is ever cancelled, in progress or pending.
+concurrency:
+  group: ${{ github.event_name == 'pull_request' && github.ref || github.run_id }}
+  cancel-in-progress: true
+
 # OpenUI (@moderno-ui/genui) sends telemetry unless this is set (ADR-0011).
 env:
   OPENUI_TELEMETRY_DISABLED: "1"
 
 jobs:
-  verify:
+  # `checks` and `test` build every package but the docs: nothing they run reads
+  # apps/docs/dist, and each e2e shard builds the docs anyway, so a broken docs
+  # build still fails the run.
+  checks:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -25,19 +34,38 @@ jobs:
       # Every generated file is committed (ADR-0009): fail before the build if
       # one is stale or was edited by hand.
       - run: pnpm gen --check
-      - run: pnpm -r build
+      - run: pnpm -r --filter '!@moderno-ui/docs' build
       # The registry is what consumers copy: a block that hardcodes a colour or
       # a dimension never reaches them (ADR-0005, CONTRACT.md "Responsive
       # policy"). Needs the build above — the CLI runs on @moderno-ui/lint-core.
       - run: pnpm lint:registry
       # theme:build rewrites the committed theme outputs, so the freshness tests
-      # below would pass on a stale theme; a diff here is what catches it.
+      # would pass on a stale theme; a diff here is what catches it.
       - run: pnpm theme:build
       - run: git diff --exit-code
       - run: pnpm docs:parity
       - run: pnpm agent:check-drift
       - run: pnpm typecheck
-      - run: pnpm test
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          # Astro 7 (apps/docs) requires >=22.12; the range keeps CI on the
+          # latest 22 LTS patch rather than pinning one that ages out.
+          node-version: "^22.12"
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # Many suites import workspace packages through their built entries.
+      - run: pnpm -r --filter '!@moderno-ui/docs' build
+      - run: pnpm test --shard=${{ matrix.shard }}/2
 
   # Docs end-to-end: build the docs, then assert facts about the build — the
   # sidebar's contents, that every island hydrates, and which CSS rule wins
@@ -48,6 +76,10 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.63.0-noble
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -63,11 +95,11 @@ jobs:
       # be built first — Pagefind index included, since the search UI is part of
       # every page it loads.
       - run: pnpm --filter @moderno-ui/docs... build
-      - run: pnpm docs:e2e
+      - run: pnpm docs:e2e --shard=${{ matrix.shard }}/4
       - if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: e2e-results
+          name: e2e-results-${{ matrix.shard }}
           path: apps/docs/test-results
           if-no-files-found: ignore
           retention-days: 14
