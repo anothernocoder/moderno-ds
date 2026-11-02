@@ -15,7 +15,7 @@ const PAGE = "/en/button/";
 /** Titles of every currently-visible (non-hidden) sidebar row, in document order. */
 function visibleTitles(page: Page) {
   return page.evaluate(() =>
-    [...document.querySelectorAll<HTMLLIElement>('.sidebar [data-sidebar-item]')]
+    [...document.querySelectorAll<HTMLLIElement>(".sidebar [data-sidebar-item]")]
       .filter((li) => !li.hidden)
       .map((li) => li.querySelector("a")?.textContent?.trim() ?? ""),
   );
@@ -45,10 +45,17 @@ test.describe("sidebar filter", () => {
 
     await expect
       .poll(() => visibleTitles(page))
-      .toEqual(["Line Chart", "Area Chart", "Bar Chart", "Scatter Chart", "Donut Chart", "Spark Chart"]);
+      .toEqual([
+        "Line Chart",
+        "Area Chart",
+        "Bar Chart",
+        "Scatter Chart",
+        "Donut Chart",
+        "Spark Chart",
+      ]);
     await expect.poll(() => visibleGroups(page)).toEqual(["Components"]);
 
-    const noMatches = page.locator('[data-sidebar-empty]');
+    const noMatches = page.locator("[data-sidebar-empty]");
     await expect(noMatches).toBeHidden();
 
     // Clearing restores the full, unfiltered navigation.
@@ -92,7 +99,7 @@ test.describe("sidebar filter", () => {
     await page.fill("[data-sidebar-filter]", "zzz-nothing-matches-zzz");
     await expect.poll(() => visibleTitles(page)).toEqual([]);
     await expect.poll(() => visibleGroups(page)).toEqual([]);
-    await expect(page.locator('[data-sidebar-empty]')).toBeVisible();
+    await expect(page.locator("[data-sidebar-empty]")).toBeVisible();
   });
 
   test("`/` focuses the filter and Escape clears it", async ({ page }) => {
@@ -106,13 +113,22 @@ test.describe("sidebar filter", () => {
     await expect(filter).toBeFocused();
 
     const fullTitles = await page.evaluate(() =>
-      [...document.querySelectorAll<HTMLLIElement>('.sidebar [data-sidebar-item]')].map(
+      [...document.querySelectorAll<HTMLLIElement>(".sidebar [data-sidebar-item]")].map(
         (li) => li.querySelector("a")?.textContent?.trim() ?? "",
       ),
     );
 
     await filter.fill("chart");
-    await expect.poll(() => visibleTitles(page)).toEqual(["Line Chart", "Area Chart", "Bar Chart", "Scatter Chart", "Donut Chart", "Spark Chart"]);
+    await expect
+      .poll(() => visibleTitles(page))
+      .toEqual([
+        "Line Chart",
+        "Area Chart",
+        "Bar Chart",
+        "Scatter Chart",
+        "Donut Chart",
+        "Spark Chart",
+      ]);
 
     await page.keyboard.press("Escape");
 

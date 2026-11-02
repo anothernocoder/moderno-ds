@@ -13,7 +13,9 @@ import { expect, test } from "@playwright/test";
 const PAGE = "/en/button/";
 
 test.describe("search dialog", () => {
-  test("click opens the dialog focused and empty; Esc closes it and returns focus", async ({ page }) => {
+  test("click opens the dialog focused and empty; Esc closes it and returns focus", async ({
+    page,
+  }) => {
     await page.goto(PAGE, { waitUntil: "networkidle" });
 
     const trigger = page.locator("[data-search-trigger]");
@@ -99,7 +101,10 @@ test.describe("search dialog", () => {
     await page.goto("/es/button/", { waitUntil: "networkidle" });
 
     await page.locator("[data-search-trigger]").click();
-    await expect(page.locator("[data-search-input]")).toHaveAttribute("placeholder", "Buscar en la documentación…");
+    await expect(page.locator("[data-search-input]")).toHaveAttribute(
+      "placeholder",
+      "Buscar en la documentación…",
+    );
 
     await page.locator("[data-search-input]").fill("Checkbox");
     const results = page.locator("[data-search-result]");

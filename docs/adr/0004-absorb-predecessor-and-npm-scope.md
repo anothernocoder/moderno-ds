@@ -10,7 +10,7 @@ directly, `--md-*` brand tokens, `[data-theme]` dark-by-default, Starlight docs,
 39 primitives, 63 blocks, 17 screens, 4 flows) and this repo, `moderno-ds`
 (Ark UI, shadcn-style token contract, `.dark`, plain Astro docs, registry + CLI).
 This ADR records that **`moderno-ds` is the successor**: the predecessor's
-inventory is *source material* to be re-implemented here, not code to be merged,
+inventory is _source material_ to be re-implemented here, not code to be merged,
 and its npm packages are superseded under the same scope.
 
 ## Context

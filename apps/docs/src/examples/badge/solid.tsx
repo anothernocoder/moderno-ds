@@ -2,7 +2,5 @@
 import { Badge } from "@moderno-ui/solid";
 
 export function BadgeDemo() {
-  return (
-    <Badge>New</Badge>
-  );
+  return <Badge>New</Badge>;
 }

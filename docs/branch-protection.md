@@ -6,13 +6,13 @@
 
 Configured on `anothernocoder/moderno-ds` → `main`:
 
-| Rule | Value |
-| --- | --- |
-| Require a pull request before merging | on |
-| Required approving reviews | 0 (open a PR, you may self-merge) |
-| Force pushes | blocked |
-| Branch deletion | blocked |
-| Include administrators | off (admins may push directly in emergencies) |
+| Rule                                  | Value                                         |
+| ------------------------------------- | --------------------------------------------- |
+| Require a pull request before merging | on                                            |
+| Required approving reviews            | 0 (open a PR, you may self-merge)             |
+| Force pushes                          | blocked                                       |
+| Branch deletion                       | blocked                                       |
+| Include administrators                | off (admins may push directly in emergencies) |
 
 GitHub rejects any non-PR push to `main` for non-admins regardless of local setup. This is the real gate.
 

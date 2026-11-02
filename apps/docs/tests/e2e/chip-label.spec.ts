@@ -35,7 +35,9 @@ test.describe("chip label", () => {
     await page.goto(PAGE, { waitUntil: "networkidle" });
 
     const labels = await page.evaluate((text) => {
-      const roots = document.querySelectorAll<HTMLElement>('main [data-scope="chip"][data-part="root"]');
+      const roots = document.querySelectorAll<HTMLElement>(
+        'main [data-scope="chip"][data-part="root"]',
+      );
       return [...roots].map((root): LabelMetrics => {
         const label = root.querySelector<HTMLElement>('[data-part="label"]')!;
         label.textContent = text;
@@ -61,7 +63,9 @@ test.describe("chip label", () => {
     await page.goto(PAGE, { waitUntil: "networkidle" });
 
     const label = await page.evaluate((text) => {
-      const root = document.querySelector<HTMLElement>('main [data-scope="chip"][data-part="root"]')!;
+      const root = document.querySelector<HTMLElement>(
+        'main [data-scope="chip"][data-part="root"]',
+      )!;
       const label = root.querySelector<HTMLElement>('[data-part="label"]')!;
       root.style.width = "6rem";
       label.textContent = `${text} ${text} ${text}`;

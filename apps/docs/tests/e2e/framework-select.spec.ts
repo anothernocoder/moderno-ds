@@ -61,7 +61,9 @@ test.describe("framework selector", () => {
       expect(await previews.count()).toBeGreaterThan(1);
       for (const preview of await previews.all()) {
         await expect(preview.locator(`.preview-source[data-fw='${fw}']`)).toBeVisible();
-        for (const hidden of await preview.locator(`.preview-source:not([data-fw='${fw}'])`).all()) {
+        for (const hidden of await preview
+          .locator(`.preview-source:not([data-fw='${fw}'])`)
+          .all()) {
           await expect(hidden).toBeHidden();
         }
       }
@@ -85,6 +87,8 @@ test.describe("framework selector", () => {
     await page.goto("/es/button/", { waitUntil: "networkidle" });
     await expect(page.getByRole("radio", { name: "React" })).toBeChecked();
     await pickFramework(page, "Svelte");
-    await expect(page.locator(".preview").first().locator(".preview-source[data-fw='svelte']")).toBeVisible();
+    await expect(
+      page.locator(".preview").first().locator(".preview-source[data-fw='svelte']"),
+    ).toBeVisible();
   });
 });

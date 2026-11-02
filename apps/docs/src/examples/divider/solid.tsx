@@ -2,7 +2,5 @@
 import { Divider } from "@moderno-ui/solid";
 
 export function DividerDemo() {
-  return (
-    <Divider />
-  );
+  return <Divider />;
 }
