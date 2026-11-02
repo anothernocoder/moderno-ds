@@ -117,7 +117,7 @@ An alternative visual style (outline, sm, destructive…) expressed as `data-var
 _Avoid_: Variant class, CVA Tailwind string
 
 **Focus ring**:
-Drawn on the part that shows focus with `--ring`. A bordered control draws it inset (`outline-offset: -2px`), so its resting border does not show inside the ring. Small indicator controls (Checkbox, RadioGroup and later ones like them) are exempt and keep it outset (`outline-offset: 2px`): an inset ring would cover the checked mark.
+Drawn on the part that shows focus with `--ring`. A bordered control draws it inset (`outline-offset: -2px`), so its resting border does not show inside the ring. Small indicator controls (Checkbox, RadioGroup and later ones like them) are exempt and keep it outset (`outline-offset: 2px`): when checked, their fill or border is `--primary`, the same colour as `--ring` in `theme-moderno`, so an inset ring would not show.
 _Avoid_: Inset ring on a 16px indicator
 
 **Machine**:
