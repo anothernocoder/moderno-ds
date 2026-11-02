@@ -1,5 +1,20 @@
 # @moderno-ui/mcp
 
+## 0.4.0
+
+### Minor Changes
+
+- 5713892: The MCP returns Blocks. `search_components` ranks the registry's blocks next to the primitives and gives each match a `kind`: a primitive has its `import`, a block its `install` command, and a block wins a tie with a primitive. `get_component_api` and `get_examples` accept a block name. `rankComponents` ranks any entry with a name, scope or description, and guidance.
+
+### Patch Changes
+
+- 1933dd4: Require `@modelcontextprotocol/sdk` 1.32 or newer, so an install can no longer resolve a version with a known security advisory.
+- 688a896: `rankComponents(components, query)` moves the `search_components` scoring into `@moderno-ui/lint-core`, so the genui router shortlists with the same ranking. `search_components` answers as before.
+- 219da4b: Move to zod 4 and require 4.6.7 or newer, so an install can no longer resolve a version with a known security advisory. The tools and their inputs do not change.
+- Updated dependencies [5713892]
+- Updated dependencies [688a896]
+  - @moderno-ui/lint-core@0.5.0
+
 ## 0.3.2
 
 ### Patch Changes
