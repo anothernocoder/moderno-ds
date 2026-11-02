@@ -155,12 +155,7 @@
     {#snippet stage(id)}
       <div class="checkout-stage" {@attach fresh}>
         <DeviceFrame device={frameOf(id)}>
-          <CheckoutFlow
-            initialLines={lines}
-            {onstepchange}
-            {onorderplaced}
-            {oncontinueshopping}
-          />
+          <CheckoutFlow initialLines={lines} {onstepchange} {onorderplaced} {oncontinueshopping} />
         </DeviceFrame>
 
         <div class="demo-readout" role="group" aria-label={copy.readout}>

@@ -14,4 +14,9 @@
   const placement = getDrawerPlacement();
 </script>
 
-<ArkDialog.Content bind:ref {...rest} {...DRAWER_SCOPE} {...drawerRecipe({ placement: placement() })} />
+<ArkDialog.Content
+  bind:ref
+  {...rest}
+  {...DRAWER_SCOPE}
+  {...drawerRecipe({ placement: placement() })}
+/>

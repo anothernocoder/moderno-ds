@@ -125,13 +125,22 @@
 
                   <Field.Root required invalid={missing.includes("email")} disabled={loading}>
                     <Field.Label>Email</Field.Label>
-                    <Field.Input name="email" type="email" autocomplete="email" value={record.email} />
+                    <Field.Input
+                      name="email"
+                      type="email"
+                      autocomplete="email"
+                      value={record.email}
+                    />
                     <Field.ErrorText>Enter an email.</Field.ErrorText>
                   </Field.Root>
 
                   <Field.Root disabled={loading}>
                     <Field.Label>Role</Field.Label>
-                    <Field.Input name="role" autocomplete="organization-title" value={record.role} />
+                    <Field.Input
+                      name="role"
+                      autocomplete="organization-title"
+                      value={record.role}
+                    />
                   </Field.Root>
 
                   <Field.Root disabled={loading}>

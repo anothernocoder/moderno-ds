@@ -50,7 +50,9 @@
       <Alert.Root variant="error">
         <Alert.Content>
           <Alert.Title>{error}</Alert.Title>
-          <Alert.Description>The rest of the page still works. Try again in a moment.</Alert.Description>
+          <Alert.Description
+            >The rest of the page still works. Try again in a moment.</Alert.Description
+          >
           <Alert.Action>
             <Button type="button" variant="outline" size="sm" {disabled} onclick={onretry}>
               Try again
@@ -61,8 +63,13 @@
     {:else if loading}
       <div role="status" aria-busy="true" class="relative">
         <span class="sr-only">Loading the product…</span>
-        <Card.Root aria-hidden="true" class="overflow-hidden @sm:grid @sm:grid-cols-5 @sm:grid-rows-[auto_1fr_auto] @lg:grid-cols-2 @lg:grid-rows-[1fr_auto_1fr]">
-          <div class="relative aspect-square bg-muted @sm:col-span-2 @sm:row-span-3 @sm:aspect-auto @lg:col-span-1 @lg:aspect-square">
+        <Card.Root
+          aria-hidden="true"
+          class="overflow-hidden @sm:grid @sm:grid-cols-5 @sm:grid-rows-[auto_1fr_auto] @lg:grid-cols-2 @lg:grid-rows-[1fr_auto_1fr]"
+        >
+          <div
+            class="relative aspect-square bg-muted @sm:col-span-2 @sm:row-span-3 @sm:aspect-auto @lg:col-span-1 @lg:aspect-square"
+          >
             <Skeleton shape="rect" class="absolute inset-0 size-full rounded-none" />
           </div>
           <Card.Header class="gap-3 @sm:col-span-3 @lg:col-span-1 @lg:self-end">
@@ -85,8 +92,12 @@
         This product is no longer available.
       </p>
     {:else}
-      <Card.Root class="overflow-hidden @sm:grid @sm:grid-cols-5 @sm:grid-rows-[auto_1fr_auto] @lg:grid-cols-2 @lg:grid-rows-[1fr_auto_1fr]">
-        <div class="relative aspect-square bg-muted @sm:col-span-2 @sm:row-span-3 @sm:aspect-auto @lg:col-span-1 @lg:aspect-square">
+      <Card.Root
+        class="overflow-hidden @sm:grid @sm:grid-cols-5 @sm:grid-rows-[auto_1fr_auto] @lg:grid-cols-2 @lg:grid-rows-[1fr_auto_1fr]"
+      >
+        <div
+          class="relative aspect-square bg-muted @sm:col-span-2 @sm:row-span-3 @sm:aspect-auto @lg:col-span-1 @lg:aspect-square"
+        >
           {#if product.image}
             <img
               src={product.image.src}

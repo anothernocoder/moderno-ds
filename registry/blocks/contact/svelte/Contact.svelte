@@ -127,7 +127,9 @@
         <Alert.Root variant="success" class="self-start">
           <Alert.Content>
             <Alert.Title>Message sent</Alert.Title>
-            <Alert.Description>Thanks for writing. We reply within one business day.</Alert.Description>
+            <Alert.Description
+              >Thanks for writing. We reply within one business day.</Alert.Description
+            >
           </Alert.Content>
         </Alert.Root>
       {:else}

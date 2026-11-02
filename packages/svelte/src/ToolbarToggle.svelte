@@ -32,9 +32,7 @@
     },
   }));
 
-  const itemProps = $derived(
-    api().getToggleProps({ value, disabled, pressed: toggle().pressed }),
-  );
+  const itemProps = $derived(api().getToggleProps({ value, disabled, pressed: toggle().pressed }));
   const consumer = $derived(
     mergeProps({ onclick: () => toggle().setPressed(!toggle().pressed) }, rest),
   );

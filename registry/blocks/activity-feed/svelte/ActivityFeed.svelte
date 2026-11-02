@@ -115,7 +115,9 @@
       <Alert.Root variant="error">
         <Alert.Content>
           <Alert.Title>{error}</Alert.Title>
-          <Alert.Description>Your activity is safe. Only this view failed to load.</Alert.Description>
+          <Alert.Description
+            >Your activity is safe. Only this view failed to load.</Alert.Description
+          >
           <Alert.Action>
             <Button type="button" variant="outline" size="sm" onclick={onretry}>Try again</Button>
           </Alert.Action>
@@ -155,7 +157,9 @@
           <li
             class="group/event grid grid-cols-[auto_minmax(0,1fr)] gap-x-3 pb-6 last:pb-0 @md:grid-cols-[auto_minmax(0,1fr)_auto] @lg:grid-cols-[auto_auto_minmax(0,1fr)]"
           >
-            <div class="relative col-start-1 row-start-1 row-end-5 flex justify-center @lg:col-start-2">
+            <div
+              class="relative col-start-1 row-start-1 row-end-5 flex justify-center @lg:col-start-2"
+            >
               <Avatar.Root size="sm">
                 <Avatar.Fallback>{event.actor.initials}</Avatar.Fallback>
                 {#if event.actor.avatarUrl}
@@ -169,7 +173,8 @@
             </div>
             <p class="col-start-2 row-start-1 pt-1.5 text-ui-md @lg:col-start-3">
               <span class="font-semibold">{event.actor.name}</span>
-              {event.action}{#if event.target}{" "}<span class="font-medium">{event.target}</span>{/if}
+              {event.action}{#if event.target}{" "}<span class="font-medium">{event.target}</span
+                >{/if}
             </p>
             <time
               datetime={event.datetime}

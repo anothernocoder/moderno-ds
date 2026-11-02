@@ -35,50 +35,48 @@ const t = useTranslations(locale);
 const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
 ---
 
-{
-  items.length > 0 && (
-    <nav class="toc" aria-label={t("toc.title")}>
-      <p class="toc-title">{t("toc.title")}</p>
-      <ul class="toc-list">
-        {items.map((h, i) => {
-          const prevDepth = i > 0 ? items[i - 1].depth : h.depth;
-          const nextDepth = i < items.length - 1 ? items[i + 1].depth : h.depth;
-          const goingDeeper = h.depth > prevDepth;
-          const goingShallower = nextDepth < h.depth;
-          return (
-            <li class={`toc-item toc-item--${h.depth}`}>
-              {goingDeeper && (
-                <svg
-                  class="toc-connector toc-connector--in"
-                  aria-hidden="true"
-                  viewBox="0 0 1 1"
-                  preserveAspectRatio="none"
-                >
-                  <path d="M 0 0 C 0 0.5, 1 0.5, 1 1" vector-effect="non-scaling-stroke" />
-                </svg>
-              )}
-              <a href={`#${h.slug}`} data-toc-link={h.slug}>
-                {h.text}
-              </a>
-              {goingShallower && (
-                <svg
-                  class="toc-connector toc-connector--out"
-                  aria-hidden="true"
-                  viewBox="0 0 1 1"
-                  preserveAspectRatio="none"
-                >
-                  <path d="M 1 0 C 1 0.5, 0 0.5, 0 1" vector-effect="non-scaling-stroke" />
-                </svg>
-              )}
-            </li>
-          );
-        })}
-      </ul>
-      <svg class="toc-indicator" aria-hidden="true">
-        <path />
-      </svg>
-    </nav>
-  )
-}
+{items.length > 0 && (
+  <nav class="toc" aria-label={t("toc.title")}>
+    <p class="toc-title">{t("toc.title")}</p>
+    <ul class="toc-list">
+      {items.map((h, i) => {
+        const prevDepth = i > 0 ? items[i - 1].depth : h.depth;
+        const nextDepth = i < items.length - 1 ? items[i + 1].depth : h.depth;
+        const goingDeeper = h.depth > prevDepth;
+        const goingShallower = nextDepth < h.depth;
+        return (
+          <li class={`toc-item toc-item--${h.depth}`}>
+            {goingDeeper && (
+              <svg
+                class="toc-connector toc-connector--in"
+                aria-hidden="true"
+                viewBox="0 0 1 1"
+                preserveAspectRatio="none"
+              >
+                <path d="M 0 0 C 0 0.5, 1 0.5, 1 1" vector-effect="non-scaling-stroke" />
+              </svg>
+            )}
+            <a href={`#${h.slug}`} data-toc-link={h.slug}>
+              {h.text}
+            </a>
+            {goingShallower && (
+              <svg
+                class="toc-connector toc-connector--out"
+                aria-hidden="true"
+                viewBox="0 0 1 1"
+                preserveAspectRatio="none"
+              >
+                <path d="M 1 0 C 1 0.5, 0 0.5, 0 1" vector-effect="non-scaling-stroke" />
+              </svg>
+            )}
+          </li>
+        );
+      })}
+    </ul>
+    <svg class="toc-indicator" aria-hidden="true">
+      <path />
+    </svg>
+  </nav>
+)}
 
 <script src="../scripts/toc.ts"></script>

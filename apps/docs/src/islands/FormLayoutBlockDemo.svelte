@@ -33,8 +33,12 @@
       errors: { email: "Enter a valid email address.", about: "Keep this under 280 characters." },
     },
     es: {
-      error: "No pudimos guardar tus cambios. Corrige los dos campos de abajo e inténtalo de nuevo.",
-      errors: { email: "Introduce un correo electrónico válido.", about: "Mantenlo por debajo de 280 caracteres." },
+      error:
+        "No pudimos guardar tus cambios. Corrige los dos campos de abajo e inténtalo de nuevo.",
+      errors: {
+        email: "Introduce un correo electrónico válido.",
+        about: "Mantenlo por debajo de 280 caracteres.",
+      },
     },
   }[locale];
 </script>
@@ -42,13 +46,28 @@
 <div class="demo-state" data-demo-state={state}>
   {#if state === "widths"}
     <div class="demo-widths">
-      <div data-demo-state="narrow" class="demo-viewport" style="--viewport-width: 18rem" data-label="18rem">
+      <div
+        data-demo-state="narrow"
+        class="demo-viewport"
+        style="--viewport-width: 18rem"
+        data-label="18rem"
+      >
         <FormLayout />
       </div>
-      <div data-demo-state="panel" class="demo-viewport" style="--viewport-width: 30rem" data-label="30rem">
+      <div
+        data-demo-state="panel"
+        class="demo-viewport"
+        style="--viewport-width: 30rem"
+        data-label="30rem"
+      >
         <FormLayout />
       </div>
-      <div data-demo-state="wide" class="demo-viewport" style="--viewport-width: 50rem" data-label="50rem">
+      <div
+        data-demo-state="wide"
+        class="demo-viewport"
+        style="--viewport-width: 50rem"
+        data-label="50rem"
+      >
         <div class="demo-scroll">
           <div class="demo-wide"><FormLayout /></div>
         </div>

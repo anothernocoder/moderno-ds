@@ -120,9 +120,7 @@
     {:else}
       <ul class="mx-auto w-full max-w-lg divide-y divide-border border-y border-border">
         {#each roles as role (role.id)}
-          <li
-            class="grid gap-3 py-4 @sm:grid-cols-[minmax(0,1fr)_auto] @sm:items-center @sm:gap-6"
-          >
+          <li class="grid gap-3 py-4 @sm:grid-cols-[minmax(0,1fr)_auto] @sm:items-center @sm:gap-6">
             <div class="grid min-w-0 gap-2">
               <h3 class="text-body font-semibold">{role.title}</h3>
               <div class="flex flex-wrap items-center gap-x-3 gap-y-1">

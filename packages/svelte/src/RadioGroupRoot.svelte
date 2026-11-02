@@ -10,13 +10,8 @@
   import type { RadioGroupRootProps } from "@ark-ui/svelte";
   import { radioGroupAttrs, type RadioGroupAttrsProps } from "@moderno-ui/core";
 
-  let {
-    variant,
-    size,
-    columns,
-    aspectRatio,
-    ...rest
-  }: RadioGroupRootProps & RadioGroupAttrsProps = $props();
+  let { variant, size, columns, aspectRatio, ...rest }: RadioGroupRootProps & RadioGroupAttrsProps =
+    $props();
 </script>
 
 <ArkRadioGroup.Root {...rest} {...radioGroupAttrs({ variant, size, columns, aspectRatio })} />

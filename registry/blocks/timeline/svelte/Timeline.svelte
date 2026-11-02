@@ -249,19 +249,24 @@
   const maxZoom = $derived(deepestZoom(duration, fps));
   const zoomLevel = $derived(clamp(zoom, 1, maxZoom));
   const marks = $derived(rulerMarks(duration, fps, zoomLevel));
-  const sortedTracks = $derived(tracks.map((track) => ({ ...track, keyframes: byTime(track.keyframes) })));
+  const sortedTracks = $derived(
+    tracks.map((track) => ({ ...track, keyframes: byTime(track.keyframes) })),
+  );
 
   // The track a label press picked, or the last delete left; the selected keyframe's track wins.
   let pickedTrackId = $state<string | null>(null);
   const selectedTrackId = $derived(selectedKeyframe?.trackId ?? pickedTrackId);
   const selectedTrack = $derived(sortedTracks.find((track) => track.id === selectedTrackId));
   const selectedIndex = $derived(
-    selectedTrack?.keyframes.findIndex((keyframe) => keyframe.id === selectedKeyframe?.keyframeId) ??
-      -1,
+    selectedTrack?.keyframes.findIndex(
+      (keyframe) => keyframe.id === selectedKeyframe?.keyframeId,
+    ) ?? -1,
   );
   const canAdd = $derived(
     selectedTrack !== undefined &&
-      !selectedTrack.keyframes.some((keyframe) => snapToFrame(keyframe.time, fps) === playheadFrame),
+      !selectedTrack.keyframes.some(
+        (keyframe) => snapToFrame(keyframe.time, fps) === playheadFrame,
+      ),
   );
 
   let section: HTMLElement | undefined;
@@ -537,7 +542,13 @@
       >
         {#snippet asChild(toggleProps)}
           <Tooltip.Trigger {...toggleProps()}>
-            <svg class="size-4" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true">
+            <svg
+              class="size-4"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              stroke="none"
+              aria-hidden="true"
+            >
               {#if playing}
                 <path d="M6 4h4v16H6zM14 4h4v16h-4z" />
               {:else}
@@ -633,7 +644,10 @@
           </Slider.Control>
           <Slider.MarkerGroup>
             {#each marks as mark (mark.time)}
-              <Slider.Marker value={mark.time} class={mark.wideOnly ? "hidden @md:block" : undefined}>
+              <Slider.Marker
+                value={mark.time}
+                class={mark.wideOnly ? "hidden @md:block" : undefined}
+              >
                 {mark.label}
               </Slider.Marker>
             {/each}

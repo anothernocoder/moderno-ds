@@ -195,10 +195,7 @@
         {#if colors.length > 0}
           <ArkColorPicker.SwatchGroup role="group" aria-label={labels.swatches}>
             {#each colors as color (color)}
-              <ArkColorPicker.SwatchTrigger
-                value={color}
-                aria-label={`${labels.swatch} ${color}`}
-              >
+              <ArkColorPicker.SwatchTrigger value={color} aria-label={`${labels.swatch} ${color}`}>
                 <ArkColorPicker.Swatch value={color} />
               </ArkColorPicker.SwatchTrigger>
             {/each}

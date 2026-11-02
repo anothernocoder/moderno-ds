@@ -10,7 +10,12 @@ const { locale } = Astro.props;
 const t = useTranslations(locale);
 ---
 
-<button type="button" class="theme-toggle" data-theme-toggle aria-label={`${t("theme.light")} / ${t("theme.dark")}`}>
+<button
+  type="button"
+  class="theme-toggle"
+  data-theme-toggle
+  aria-label={`${t("theme.light")} / ${t("theme.dark")}`}
+>
   <Sun class="theme-toggle-light" aria-hidden="true" size={16} />
   <Moon class="theme-toggle-dark" aria-hidden="true" size={16} />
 </button>

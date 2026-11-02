@@ -29,26 +29,24 @@ const segments = (text: string) => text.split("`");
     </tr>
   </thead>
   <tbody>
-    {
-      table.rows.map((row) => (
-        <tr>
-          <td>
-            <code>{row.name}</code>
-            {row.value && (
-              <div class="contract-value">
-                <code>{row.value}</code>
-              </div>
-            )}
-            {row.darkValue && (
-              <div class="contract-value">
-                <code class="contract-scope">.dark</code> <code>{row.darkValue}</code>
-              </div>
-            )}
-          </td>
-          <td>{segments(row.role).map((part, i) => (i % 2 === 1 ? <code>{part}</code> : part))}</td>
-        </tr>
-      ))
-    }
+    {table.rows.map((row) => (
+      <tr>
+        <td>
+          <code>{row.name}</code>
+          {row.value && (
+            <div class="contract-value">
+              <code>{row.value}</code>
+            </div>
+          )}
+          {row.darkValue && (
+            <div class="contract-value">
+              <code class="contract-scope">.dark</code> <code>{row.darkValue}</code>
+            </div>
+          )}
+        </td>
+        <td>{segments(row.role).map((part, i) => (i % 2 === 1 ? <code>{part}</code> : part))}</td>
+      </tr>
+    ))}
   </tbody>
 </table>
 

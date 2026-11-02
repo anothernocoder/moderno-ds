@@ -72,7 +72,9 @@
         <Alert.Title>{error}</Alert.Title>
         <Alert.Description>The announcement shows here once it loads.</Alert.Description>
         <Alert.Action>
-          <Button type="button" variant="outline" size="sm" {disabled} onclick={onretry}>Try again</Button>
+          <Button type="button" variant="outline" size="sm" {disabled} onclick={onretry}
+            >Try again</Button
+          >
         </Alert.Action>
       </Alert.Content>
     </Alert.Root>
@@ -80,7 +82,10 @@
 
   {#if loading}
     <div role="status" aria-busy="true">
-      <div aria-hidden="true" class="flex items-center gap-3 border-b border-border bg-muted px-4 py-3">
+      <div
+        aria-hidden="true"
+        class="flex items-center gap-3 border-b border-border bg-muted px-4 py-3"
+      >
         <Skeleton shape="rect" class="h-5 w-12 shrink-0" />
         <Skeleton shape="text" class="w-2/3" />
         <Skeleton shape="rect" class="ms-auto h-8 w-24 shrink-0" />
@@ -106,14 +111,22 @@
             <strong class="font-semibold">{title}</strong>
           {/if}
           {#if title && message}
-            <span aria-hidden="true" class="hidden text-muted-foreground @md:mx-2 @md:inline">·</span>
+            <span aria-hidden="true" class="hidden text-muted-foreground @md:mx-2 @md:inline"
+              >·</span
+            >
           {/if}
           {#if message}
             <span class="text-muted-foreground">{message}</span>
           {/if}
         </p>
         {#if actionLabel}
-          <Button type="button" size="sm" class="shrink-0 justify-self-start" {disabled} onclick={onaction}>
+          <Button
+            type="button"
+            size="sm"
+            class="shrink-0 justify-self-start"
+            {disabled}
+            onclick={onaction}
+          >
             {actionLabel}
             {@render icon(arrowPaths)}
           </Button>

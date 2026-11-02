@@ -126,7 +126,9 @@
               <Alert.Title>{error}</Alert.Title>
               <Alert.Description>Nothing was changed. Try loading them again.</Alert.Description>
               <Alert.Action>
-                <Button type="button" variant="outline" size="sm" onclick={onretry}>Try again</Button>
+                <Button type="button" variant="outline" size="sm" onclick={onretry}
+                  >Try again</Button
+                >
               </Alert.Action>
             </Alert.Content>
           </Alert.Root>
@@ -222,10 +224,15 @@
                               <div class="flex flex-col-reverse gap-2 @sm:flex-row @sm:justify-end">
                                 <Dialog.CloseTrigger>
                                   {#snippet asChild(closeProps)}
-                                    <Button {...closeProps()} type="button" variant="outline">Cancel</Button>
+                                    <Button {...closeProps()} type="button" variant="outline"
+                                      >Cancel</Button
+                                    >
                                   {/snippet}
                                 </Dialog.CloseTrigger>
-                                <Button type="submit" variant={destructive ? "destructive" : "primary"}>
+                                <Button
+                                  type="submit"
+                                  variant={destructive ? "destructive" : "primary"}
+                                >
                                   {action.confirm}
                                 </Button>
                               </div>
@@ -234,7 +241,9 @@
                             <div class="flex flex-col-reverse gap-2 @sm:flex-row @sm:justify-end">
                               <Dialog.CloseTrigger>
                                 {#snippet asChild(closeProps)}
-                                  <Button {...closeProps()} type="button" variant="outline">Cancel</Button>
+                                  <Button {...closeProps()} type="button" variant="outline"
+                                    >Cancel</Button
+                                  >
                                 {/snippet}
                               </Dialog.CloseTrigger>
                               <Button

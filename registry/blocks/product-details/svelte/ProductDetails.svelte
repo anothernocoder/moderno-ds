@@ -144,7 +144,9 @@
       <Alert.Root variant="error">
         <Alert.Content>
           <Alert.Title>{error}</Alert.Title>
-          <Alert.Description>The rest of the page still works. Try again in a moment.</Alert.Description>
+          <Alert.Description
+            >The rest of the page still works. Try again in a moment.</Alert.Description
+          >
           <Alert.Action>
             <Button type="button" variant="outline" size="sm" {disabled} onclick={onretry}>
               Try again

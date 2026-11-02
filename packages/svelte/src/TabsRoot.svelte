@@ -9,11 +9,8 @@
   import type { TabsRootProps } from "@ark-ui/svelte";
   import { tabsRecipe, type TabsSize, type TabsVariant } from "@moderno-ui/core";
 
-  let {
-    variant,
-    size,
-    ...rest
-  }: TabsRootProps & { variant?: TabsVariant; size?: TabsSize } = $props();
+  let { variant, size, ...rest }: TabsRootProps & { variant?: TabsVariant; size?: TabsSize } =
+    $props();
 </script>
 
 <ArkTabs.Root {...rest} {...tabsRecipe({ variant, size })} />

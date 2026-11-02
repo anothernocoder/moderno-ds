@@ -191,9 +191,7 @@
             </span>
             <div class="grid gap-1">
               <p class="text-ui-md font-medium">Your friend signs up</p>
-              <p class="text-ui-md text-muted-foreground">
-                They create an account from your link.
-              </p>
+              <p class="text-ui-md text-muted-foreground">They create an account from your link.</p>
             </div>
           </li>
           <li class="flex gap-3">
@@ -214,7 +212,9 @@
       </section>
     </div>
 
-    <footer class="grid gap-2 text-ui-md text-muted-foreground @md:flex @md:items-center @md:justify-between">
+    <footer
+      class="grid gap-2 text-ui-md text-muted-foreground @md:flex @md:items-center @md:justify-between"
+    >
       <p>© Moderno</p>
       <nav class="flex gap-4" aria-label="Legal">
         <a

@@ -685,8 +685,8 @@
       <span class="tpg-heading">Delete “Midnight Drive”?</span>
     </div>
     <span class="tpg-muted">
-      This removes the release from every store within 48 hours. Earnings you already made stay
-      in your balance.
+      This removes the release from every store within 48 hours. Earnings you already made stay in
+      your balance.
     </span>
     <Checkbox.Root size="sm">
       <Checkbox.Control>

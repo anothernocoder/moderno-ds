@@ -136,7 +136,10 @@
 <section class="@container moderno-block-login text-foreground">
   <Card.Root class="mx-auto w-full max-w-sm">
     <Card.Header role={forgot || verify ? "status" : undefined}>
-      <Card.Title class="text-body-lg @md:text-heading-sm" aria-level={titleLevel === 3 ? undefined : titleLevel}>
+      <Card.Title
+        class="text-body-lg @md:text-heading-sm"
+        aria-level={titleLevel === 3 ? undefined : titleLevel}
+      >
         {title}
       </Card.Title>
       <Card.Description>{description}</Card.Description>

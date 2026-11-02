@@ -10,11 +10,7 @@
   import type { ToastRootProps } from "@ark-ui/svelte";
   import { toastRecipe, type ToastSize } from "@moderno-ui/core";
 
-  let {
-    size,
-    ref = $bindable(null),
-    ...rest
-  }: ToastRootProps & { size?: ToastSize } = $props();
+  let { size, ref = $bindable(null), ...rest }: ToastRootProps & { size?: ToastSize } = $props();
 </script>
 
 <ArkToast.Root bind:ref {...rest} {...toastRecipe({ size })} />

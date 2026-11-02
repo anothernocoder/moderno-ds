@@ -48,7 +48,10 @@
       <Field.Root invalid={Boolean(errors?.website)} disabled={inert}>
         <Field.Label>Store address</Field.Label>
         <div class="flex">
-          <span class="flex shrink-0 items-center rounded-s-lg border border-e-0 border-input bg-muted px-3 text-ui-md text-muted-foreground in-data-invalid:border-destructive">https://</span>
+          <span
+            class="flex shrink-0 items-center rounded-s-lg border border-e-0 border-input bg-muted px-3 text-ui-md text-muted-foreground in-data-invalid:border-destructive"
+            >https://</span
+          >
           <Field.Input
             name="website"
             inputmode="url"
@@ -65,7 +68,10 @@
       <Field.Root invalid={Boolean(errors?.price)} disabled={inert}>
         <Field.Label>Price</Field.Label>
         <div class="flex">
-          <span class="flex shrink-0 items-center rounded-s-lg border border-e-0 border-input bg-muted px-3 text-ui-md text-muted-foreground in-data-invalid:border-destructive">$</span>
+          <span
+            class="flex shrink-0 items-center rounded-s-lg border border-e-0 border-input bg-muted px-3 text-ui-md text-muted-foreground in-data-invalid:border-destructive"
+            >$</span
+          >
           <Field.Input
             name="price"
             inputmode="decimal"
@@ -73,7 +79,10 @@
             value={price}
             class="min-w-0 flex-1 rounded-none"
           />
-          <span class="flex shrink-0 items-center rounded-e-lg border border-s-0 border-input bg-muted px-3 text-ui-md text-muted-foreground in-data-invalid:border-destructive">USD</span>
+          <span
+            class="flex shrink-0 items-center rounded-e-lg border border-s-0 border-input bg-muted px-3 text-ui-md text-muted-foreground in-data-invalid:border-destructive"
+            >USD</span
+          >
         </div>
         <Field.HelperText>Before tax.</Field.HelperText>
         <Field.ErrorText>{errors?.price}</Field.ErrorText>

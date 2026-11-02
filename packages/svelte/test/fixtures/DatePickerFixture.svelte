@@ -1,10 +1,6 @@
 <script lang="ts">
   import { DatePicker, parseDate } from "../../src/index.js";
-  import type {
-    DatePickerSize,
-    DatePickerValueChangeDetails,
-    DateValue,
-  } from "../../src/index.js";
+  import type { DatePickerSize, DatePickerValueChangeDetails, DateValue } from "../../src/index.js";
 
   let {
     size = undefined,

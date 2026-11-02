@@ -44,7 +44,6 @@
 
   const placeholders = ["first", "second", "third"];
 
-
   let {
     brand = "Northwind",
     homeHref = "/",
@@ -189,7 +188,9 @@
                             >
                               {item.label}
                             </p>
-                            <ul class="m-0 ms-3 grid list-none gap-1 border-s border-border p-0 ps-2">
+                            <ul
+                              class="m-0 ms-3 grid list-none gap-1 border-s border-border p-0 ps-2"
+                            >
                               {#each item.links as link (link.id)}
                                 <li>{@render navLink(link, () => (drawerOpen = false))}</li>
                               {/each}
@@ -220,9 +221,7 @@
           <Alert.Title>{error}</Alert.Title>
           <Alert.Description>The rest of the page still works.</Alert.Description>
           <Alert.Action>
-            <Button type="button" variant="outline" size="sm" onclick={onretry}>
-              Try again
-            </Button>
+            <Button type="button" variant="outline" size="sm" onclick={onretry}>Try again</Button>
           </Alert.Action>
         </Alert.Content>
       </Alert.Root>

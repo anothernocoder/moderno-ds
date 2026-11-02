@@ -37,14 +37,7 @@
   import bowlImage from "../assets/shopping-cart/bowl.svg?url";
   import vaseImage from "../assets/shopping-cart/vase.svg?url";
 
-  type State =
-    | "default"
-    | "widths"
-    | "no-images"
-    | "empty"
-    | "loading"
-    | "error"
-    | "disabled";
+  type State = "default" | "widths" | "no-images" | "empty" | "loading" | "error" | "disabled";
 
   // `state` is read as `shown`: the name `state` would turn `$state` into a store read.
   let { locale = "en", state: shown = "default" }: { locale?: "en" | "es"; state?: State } =
@@ -135,16 +128,36 @@
 <div class="demo-state" data-demo-state={shown}>
   {#if shown === "widths"}
     <div class="demo-widths">
-      <div data-demo-state="narrow" class="demo-viewport" style="--viewport-width: 18rem" data-label="18rem">
+      <div
+        data-demo-state="narrow"
+        class="demo-viewport"
+        style="--viewport-width: 18rem"
+        data-label="18rem"
+      >
         <ShoppingCart items={staticItems} subtotal={staticSubtotal} />
       </div>
-      <div data-demo-state="compact" class="demo-viewport" style="--viewport-width: 30rem" data-label="30rem">
+      <div
+        data-demo-state="compact"
+        class="demo-viewport"
+        style="--viewport-width: 30rem"
+        data-label="30rem"
+      >
         <ShoppingCart items={staticItems} subtotal={staticSubtotal} />
       </div>
-      <div data-demo-state="panel" class="demo-viewport" style="--viewport-width: 40rem" data-label="40rem">
+      <div
+        data-demo-state="panel"
+        class="demo-viewport"
+        style="--viewport-width: 40rem"
+        data-label="40rem"
+      >
         <ShoppingCart items={staticItems} subtotal={staticSubtotal} />
       </div>
-      <div data-demo-state="wide" class="demo-viewport" style="--viewport-width: 50rem" data-label="50rem">
+      <div
+        data-demo-state="wide"
+        class="demo-viewport"
+        style="--viewport-width: 50rem"
+        data-label="50rem"
+      >
         <div class="demo-scroll">
           <div class="demo-wide">
             <ShoppingCart items={staticItems} subtotal={staticSubtotal} />
@@ -159,7 +172,12 @@
   {:else if shown === "loading"}
     <ShoppingCart loading />
   {:else if shown === "error"}
-    <ShoppingCart items={staticItems} subtotal={staticSubtotal} {error} onretry={() => (error = "")} />
+    <ShoppingCart
+      items={staticItems}
+      subtotal={staticSubtotal}
+      {error}
+      onretry={() => (error = "")}
+    />
   {:else if shown === "disabled"}
     <ShoppingCart items={staticItems} subtotal={staticSubtotal} disabled />
   {:else}

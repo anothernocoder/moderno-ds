@@ -330,7 +330,10 @@
     </div>
 
     <div class="grid gap-8 pt-6 @md:grid-cols-[auto_minmax(0,1fr)] @lg:gap-10">
-      <aside aria-label="Filters" class="hidden @md:grid @md:w-48 @md:content-start @md:gap-3 @lg:w-60">
+      <aside
+        aria-label="Filters"
+        class="hidden @md:grid @md:w-48 @md:content-start @md:gap-3 @lg:w-60"
+      >
         <div class="flex items-center justify-between gap-2">
           <p class="text-ui-md font-semibold">Filters</p>
           {@render clearButton("sm")}

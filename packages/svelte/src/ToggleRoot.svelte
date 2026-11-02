@@ -9,11 +9,8 @@
   import type { ToggleRootProps } from "@ark-ui/svelte";
   import { toggleRecipe, type ToggleSize, type ToggleVariant } from "@moderno-ui/core";
 
-  let {
-    variant,
-    size,
-    ...rest
-  }: ToggleRootProps & { variant?: ToggleVariant; size?: ToggleSize } = $props();
+  let { variant, size, ...rest }: ToggleRootProps & { variant?: ToggleVariant; size?: ToggleSize } =
+    $props();
 </script>
 
 <ArkToggle.Root {...rest} {...toggleRecipe({ variant, size })} />

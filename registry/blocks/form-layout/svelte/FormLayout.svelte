@@ -58,7 +58,9 @@
       <div class="grid gap-6 @lg:grid-cols-3">
         <header class="grid content-start gap-1">
           <h3 class="text-ui-md font-medium">Profile</h3>
-          <p class="text-ui-md text-muted-foreground">How you appear to the rest of your workspace.</p>
+          <p class="text-ui-md text-muted-foreground">
+            How you appear to the rest of your workspace.
+          </p>
         </header>
 
         <div class="grid gap-5 @md:grid-cols-2 @lg:col-span-2">

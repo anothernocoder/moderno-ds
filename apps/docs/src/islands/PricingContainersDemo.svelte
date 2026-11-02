@@ -24,15 +24,35 @@
     en: {
       label: "Pricing container widths",
       tabs: [
-        { id: "narrow", label: "Narrow", caption: "Capped at 24rem (--container-sm), under the block's @md step, so the plans stack." },
-        { id: "wide", label: "Wide", caption: "The stage's full width: three-up once it is at least 36rem (--container-md) — narrow the window and it stacks on its own." },
+        {
+          id: "narrow",
+          label: "Narrow",
+          caption:
+            "Capped at 24rem (--container-sm), under the block's @md step, so the plans stack.",
+        },
+        {
+          id: "wide",
+          label: "Wide",
+          caption:
+            "The stage's full width: three-up once it is at least 36rem (--container-md) — narrow the window and it stacks on its own.",
+        },
       ],
     },
     es: {
       label: "Anchos de contenedor de Pricing",
       tabs: [
-        { id: "narrow", label: "Estrecho", caption: "Limitado a 24rem (--container-sm), por debajo del paso @md del bloque, así que los planes se apilan." },
-        { id: "wide", label: "Ancho", caption: "Todo el ancho del escenario: tres columnas en cuanto mide al menos 36rem (--container-md) — estrecha la ventana y se apila por su cuenta." },
+        {
+          id: "narrow",
+          label: "Estrecho",
+          caption:
+            "Limitado a 24rem (--container-sm), por debajo del paso @md del bloque, así que los planes se apilan.",
+        },
+        {
+          id: "wide",
+          label: "Ancho",
+          caption:
+            "Todo el ancho del escenario: tres columnas en cuanto mide al menos 36rem (--container-md) — estrecha la ventana y se apila por su cuenta.",
+        },
       ],
     },
   }[locale];

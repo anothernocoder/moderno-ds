@@ -29,14 +29,16 @@
       error: "We could not load this comment.",
       noteHeading: "Grace Hopper",
       noteMeta: "Pinned note",
-      noteBody: "Reviews happen on Thursdays. Share a link to your file by Wednesday evening so everyone has time to look.",
+      noteBody:
+        "Reviews happen on Thursdays. Share a link to your file by Wednesday evening so everyone has time to look.",
       noteAction: "Open thread",
     },
     es: {
       error: "No pudimos cargar este comentario.",
       noteHeading: "Grace Hopper",
       noteMeta: "Nota fijada",
-      noteBody: "Las revisiones son los jueves. Comparte el enlace a tu archivo el miércoles por la tarde para que todos tengan tiempo de verlo.",
+      noteBody:
+        "Las revisiones son los jueves. Comparte el enlace a tu archivo el miércoles por la tarde para que todos tengan tiempo de verlo.",
       noteAction: "Abrir el hilo",
     },
   }[locale];
@@ -45,16 +47,36 @@
 <div class="demo-state" data-demo-state={state}>
   {#if state === "widths"}
     <div class="demo-widths">
-      <div data-demo-state="narrow" class="demo-viewport" style="--viewport-width: 18rem" data-label="18rem">
+      <div
+        data-demo-state="narrow"
+        class="demo-viewport"
+        style="--viewport-width: 18rem"
+        data-label="18rem"
+      >
         <MediaObject />
       </div>
-      <div data-demo-state="compact" class="demo-viewport" style="--viewport-width: 30rem" data-label="30rem">
+      <div
+        data-demo-state="compact"
+        class="demo-viewport"
+        style="--viewport-width: 30rem"
+        data-label="30rem"
+      >
         <MediaObject />
       </div>
-      <div data-demo-state="panel" class="demo-viewport" style="--viewport-width: 40rem" data-label="40rem">
+      <div
+        data-demo-state="panel"
+        class="demo-viewport"
+        style="--viewport-width: 40rem"
+        data-label="40rem"
+      >
         <MediaObject />
       </div>
-      <div data-demo-state="wide" class="demo-viewport" style="--viewport-width: 50rem" data-label="50rem">
+      <div
+        data-demo-state="wide"
+        class="demo-viewport"
+        style="--viewport-width: 50rem"
+        data-label="50rem"
+      >
         <div class="demo-scroll">
           <div class="demo-wide"><MediaObject /></div>
         </div>

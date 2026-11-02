@@ -24,7 +24,12 @@
 
 {#snippet nodes(list: ChartNode[])}
   {#each list as n, i (i)}
-    {#if n.tag === "g"}<g {...n.attrs}>{@render nodes(n.children ?? [])}</g>{:else if n.tag === "text"}<text {...n.attrs}>{n.text}</text>{:else if n.tag === "line"}<line {...n.attrs} />{:else if n.tag === "path"}<path {...n.attrs} />{:else if n.tag === "rect"}<rect {...n.attrs} />{:else if n.tag === "circle"}<circle {...n.attrs} />{/if}
+    {#if n.tag === "g"}<g {...n.attrs}>{@render nodes(n.children ?? [])}</g
+      >{:else if n.tag === "text"}<text {...n.attrs}>{n.text}</text>{:else if n.tag === "line"}<line
+        {...n.attrs}
+      />{:else if n.tag === "path"}<path {...n.attrs} />{:else if n.tag === "rect"}<rect
+        {...n.attrs}
+      />{:else if n.tag === "circle"}<circle {...n.attrs} />{/if}
   {/each}
 {/snippet}
 

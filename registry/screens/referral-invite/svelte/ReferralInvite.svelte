@@ -144,7 +144,9 @@
           </span>
           <div class="grid gap-1">
             <p class="text-ui-md font-medium">They join Moderno</p>
-            <p class="text-ui-md text-muted-foreground">Your invite link is in the email we send.</p>
+            <p class="text-ui-md text-muted-foreground">
+              Your invite link is in the email we send.
+            </p>
           </div>
         </li>
         <li class="flex gap-3">

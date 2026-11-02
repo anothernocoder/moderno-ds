@@ -100,7 +100,9 @@
       <Alert.Root variant="error">
         <Alert.Content>
           <Alert.Title>{error}</Alert.Title>
-          <Alert.Description>The rest of the page still works. Try again in a moment.</Alert.Description>
+          <Alert.Description
+            >The rest of the page still works. Try again in a moment.</Alert.Description
+          >
           <Alert.Action>
             <Button type="button" variant="outline" size="sm" {disabled} onclick={onretry}>
               Try again
@@ -142,7 +144,9 @@
                 />
               {/if}
               {#if product.badge}
-                <Badge variant="solid" size="sm" class="absolute start-2 top-2">{product.badge}</Badge>
+                <Badge variant="solid" size="sm" class="absolute start-2 top-2"
+                  >{product.badge}</Badge
+                >
               {/if}
             </div>
             <div class="grid gap-1">
@@ -161,7 +165,9 @@
               <p class="relative flex flex-wrap items-baseline gap-x-2 text-ui-md tabular-nums">
                 <span>{product.price}</span>
                 {#if product.compareAtPrice}
-                  <s class="text-muted-foreground"><span class="sr-only">Was</span> {product.compareAtPrice}</s>
+                  <s class="text-muted-foreground"
+                    ><span class="sr-only">Was</span> {product.compareAtPrice}</s
+                  >
                 {/if}
               </p>
             </div>
@@ -183,7 +189,9 @@
           {#snippet render(pagination)}
             {#each pagination().pages as item, index (index)}
               {#if item.type === "page"}
-                <Pagination.Item {...item} disabled={disabled || undefined}>{item.value}</Pagination.Item>
+                <Pagination.Item {...item} disabled={disabled || undefined}
+                  >{item.value}</Pagination.Item
+                >
               {:else}
                 <Pagination.Ellipsis {index}>…</Pagination.Ellipsis>
               {/if}

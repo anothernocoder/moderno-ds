@@ -140,7 +140,9 @@
                 <div class="grid min-w-0 gap-3">
                   <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
                     <h3 class="text-body font-semibold">Order {order.number}</h3>
-                    <Badge variant={order.statusVariant ?? "neutral"} size="sm" dot>{order.status}</Badge>
+                    <Badge variant={order.statusVariant ?? "neutral"} size="sm" dot
+                      >{order.status}</Badge
+                    >
                   </div>
                   <dl class="grid gap-1 @sm:flex @sm:gap-x-8">
                     <div

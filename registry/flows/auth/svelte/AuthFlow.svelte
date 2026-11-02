@@ -295,9 +295,15 @@
     />
   {:else if step === "forgot-password"}
     {#if sent}
-      <aside class="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-border bg-muted p-3 text-ui-md text-muted-foreground">
+      <aside
+        class="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-border bg-muted p-3 text-ui-md text-muted-foreground"
+      >
         <p>Example only: there is no mail server behind this flow.</p>
-        <button type="button" class="rounded-sm border border-border bg-background px-3 py-2 text-ui-md font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring" onclick={openResetLink}>
+        <button
+          type="button"
+          class="rounded-sm border border-border bg-background px-3 py-2 text-ui-md font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          onclick={openResetLink}
+        >
           Open the reset link
         </button>
       </aside>

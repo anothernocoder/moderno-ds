@@ -110,7 +110,9 @@
                 <div class="flex flex-col gap-2 @sm:flex-row @sm:justify-end">
                   <Dialog.CloseTrigger>
                     {#snippet asChild(closeProps)}
-                      <Button {...closeProps()} type="button" variant="outline" autofocus>Close</Button>
+                      <Button {...closeProps()} type="button" variant="outline" autofocus
+                        >Close</Button
+                      >
                     {/snippet}
                   </Dialog.CloseTrigger>
                 </div>
@@ -153,7 +155,10 @@
 
                   <Field.Root disabled={loading}>
                     <Field.Label>Message</Field.Label>
-                    <Field.Textarea name="message" placeholder="What would you like to talk about?" />
+                    <Field.Textarea
+                      name="message"
+                      placeholder="What would you like to talk about?"
+                    />
                   </Field.Root>
 
                   <div class="flex flex-col-reverse gap-2 @sm:flex-row @sm:justify-end">

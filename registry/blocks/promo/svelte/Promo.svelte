@@ -90,7 +90,9 @@
         <Alert.Title>{error}</Alert.Title>
         <Alert.Description>The offer shows here once it loads.</Alert.Description>
         <Alert.Action>
-          <Button type="button" variant="outline" size="sm" {disabled} onclick={onretry}>Try again</Button>
+          <Button type="button" variant="outline" size="sm" {disabled} onclick={onretry}
+            >Try again</Button
+          >
         </Alert.Action>
       </Alert.Content>
     </Alert.Root>
@@ -98,7 +100,10 @@
 
   {#if loading}
     <div role="status" aria-busy="true">
-      <div aria-hidden="true" class="flex items-center gap-3 border-b border-border bg-muted px-4 py-3">
+      <div
+        aria-hidden="true"
+        class="flex items-center gap-3 border-b border-border bg-muted px-4 py-3"
+      >
         <Skeleton shape="text" class="w-1/2" />
         <Skeleton shape="rect" class="ms-auto h-8 w-24 shrink-0" />
         <Skeleton shape="rect" class="h-8 w-24 shrink-0" />
@@ -121,7 +126,10 @@
             <strong class="font-semibold">{offer}</strong>
           {/if}
           {#if offer && detail}
-            <span aria-hidden="true" class="hidden text-muted-foreground @sm:mx-2 @sm:inline @md:hidden @lg:inline">·</span>
+            <span
+              aria-hidden="true"
+              class="hidden text-muted-foreground @sm:mx-2 @sm:inline @md:hidden @lg:inline">·</span
+            >
           {/if}
           {#if detail}
             <span class="text-muted-foreground">{detail}</span>
@@ -153,7 +161,14 @@
       </div>
       <div class="flex shrink-0 @lg:flex-1 @lg:justify-end">
         {#if dismissible}
-          <Button type="button" variant="ghost" size="sm" {disabled} aria-label="Dismiss promotion" onclick={dismiss}>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            {disabled}
+            aria-label="Dismiss promotion"
+            onclick={dismiss}
+          >
             {@render icon(dismissPaths)}
           </Button>
         {/if}

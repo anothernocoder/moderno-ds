@@ -15,7 +15,11 @@
   ]);
 </script>
 
-<SortableList.Root bind:items={slides} style="max-height: 12rem; overflow-y: auto" aria-label="Slides">
+<SortableList.Root
+  bind:items={slides}
+  style="max-height: 12rem; overflow-y: auto"
+  aria-label="Slides"
+>
   {#each slides as slide (slide)}
     <SortableList.Item value={slide}>
       <SortableList.ItemHandle />

@@ -33,10 +33,17 @@ const bundlePath = `${base}/${locale}/pagefind/`;
   >
     <SearchIcon aria-hidden="true" size={15} />
     <span class="search-trigger-label">{t("search.trigger")}</span>
-    <kbd class="search-trigger-kbd" aria-hidden="true">{t("search.shortcut")}</kbd>
+    <kbd class="search-trigger-kbd" aria-hidden="true">
+      {t("search.shortcut")}
+    </kbd>
   </button>
 
-  <dialog class="search-dialog" data-search-dialog data-bundle={bundlePath} aria-label={t("search.label")}>
+  <dialog
+    class="search-dialog"
+    data-search-dialog
+    data-bundle={bundlePath}
+    aria-label={t("search.label")}
+  >
     <div class="search-dialog-inner">
       <div class="search-input-row">
         <SearchIcon aria-hidden="true" size={16} />
@@ -50,10 +57,22 @@ const bundlePath = `${base}/${locale}/pagefind/`;
           spellcheck="false"
         />
       </div>
-      <div class="search-results" data-search-results role="listbox" aria-label={t("search.label")} hidden></div>
-      <p class="search-state" data-search-empty>{t("search.empty")}</p>
-      <p class="search-state" data-search-no-results hidden>{t("search.noResults")}</p>
-      <p class="search-state" data-search-missing hidden>{t("search.indexMissing")}</p>
+      <div
+        class="search-results"
+        data-search-results
+        role="listbox"
+        aria-label={t("search.label")}
+        hidden
+      ></div>
+      <p class="search-state" data-search-empty>
+        {t("search.empty")}
+      </p>
+      <p class="search-state" data-search-no-results hidden>
+        {t("search.noResults")}
+      </p>
+      <p class="search-state" data-search-missing hidden>
+        {t("search.indexMissing")}
+      </p>
     </div>
   </dialog>
 </div>

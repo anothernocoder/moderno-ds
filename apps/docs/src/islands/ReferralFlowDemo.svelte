@@ -125,7 +125,10 @@
         <div class="demo-readout" role="group" aria-label={copy.readout}>
           <ol class="demo-steps">
             {#each steps as name (name)}
-              <li class:is-current={step === name} aria-current={step === name ? "step" : undefined}>
+              <li
+                class:is-current={step === name}
+                aria-current={step === name ? "step" : undefined}
+              >
                 <code>{name}</code>
               </li>
             {/each}

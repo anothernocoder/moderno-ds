@@ -156,7 +156,12 @@
     if (fresh.length === 0) return;
     friends = [
       ...friends,
-      ...fresh.map((email) => ({ id: email, name: email.split("@")[0]!, email, status: "Invited" })),
+      ...fresh.map((email) => ({
+        id: email,
+        name: email.split("@")[0]!,
+        email,
+        status: "Invited",
+      })),
     ];
     oninvite?.(fresh);
   }

@@ -38,7 +38,10 @@
         aria-busy="true"
         class="grid justify-items-center gap-6 @lg:flex @lg:items-center @lg:justify-between @lg:gap-10"
       >
-        <div aria-hidden="true" class="grid w-full max-w-md justify-items-center gap-3 @lg:justify-items-start">
+        <div
+          aria-hidden="true"
+          class="grid w-full max-w-md justify-items-center gap-3 @lg:justify-items-start"
+        >
           <Skeleton shape="text" class="h-7 w-3/4 @md:h-8" />
           <Skeleton shape="text" class="w-full" />
         </div>

@@ -48,9 +48,13 @@
     const last = tabs.length - 1;
     const next =
       event.key === "ArrowRight"
-        ? index === last ? 0 : index + 1
+        ? index === last
+          ? 0
+          : index + 1
         : event.key === "ArrowLeft"
-          ? index === 0 ? last : index - 1
+          ? index === 0
+            ? last
+            : index - 1
           : event.key === "Home"
             ? 0
             : event.key === "End"

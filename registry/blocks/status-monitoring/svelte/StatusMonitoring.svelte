@@ -172,7 +172,8 @@
       <Card.Root>
         <Card.Header class="items-center text-center">
           <Card.Title>No services yet</Card.Title>
-          <Card.Description>Add a service to start tracking its status and uptime.</Card.Description>
+          <Card.Description>Add a service to start tracking its status and uptime.</Card.Description
+          >
         </Card.Header>
       </Card.Root>
     {/if}

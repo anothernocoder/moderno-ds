@@ -1,5 +1,13 @@
 <script lang="ts">
-  import { Alert, Avatar, Badge, Button, Card, Skeleton, type BadgeVariant } from "@moderno-ui/svelte";
+  import {
+    Alert,
+    Avatar,
+    Badge,
+    Button,
+    Card,
+    Skeleton,
+    type BadgeVariant,
+  } from "@moderno-ui/svelte";
 
   interface ListItem {
     id: string;
@@ -163,10 +171,14 @@
                   class="col-start-2 flex flex-wrap items-center gap-2 @md:col-start-3 @md:row-start-1 @md:flex-col @md:items-end @md:gap-1 @lg:flex-row @lg:items-center @lg:gap-4"
                 >
                   {#if item.status}
-                    <Badge variant={item.statusVariant ?? "neutral"} size="sm" dot>{item.status}</Badge>
+                    <Badge variant={item.statusVariant ?? "neutral"} size="sm" dot
+                      >{item.status}</Badge
+                    >
                   {/if}
                   {#if item.meta}
-                    <span class="text-ui-xs text-muted-foreground @lg:w-28 @lg:text-right">{item.meta}</span>
+                    <span class="text-ui-xs text-muted-foreground @lg:w-28 @lg:text-right"
+                      >{item.meta}</span
+                    >
                   {/if}
                 </div>
               {/if}

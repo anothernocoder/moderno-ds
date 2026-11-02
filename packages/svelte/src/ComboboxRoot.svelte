@@ -20,10 +20,4 @@
   }: ComboboxRootProps<T> & { size?: ComboboxSize } = $props();
 </script>
 
-<ArkCombobox.Root
-  bind:value
-  bind:inputValue
-  bind:open
-  {...rest}
-  {...comboboxRecipe({ size })}
-/>
+<ArkCombobox.Root bind:value bind:inputValue bind:open {...rest} {...comboboxRecipe({ size })} />

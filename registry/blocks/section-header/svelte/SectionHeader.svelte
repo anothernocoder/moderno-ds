@@ -96,7 +96,10 @@
                   {crumb.label}
                 </a>
               {:else}
-                <span aria-current={current ? "page" : undefined} class="font-medium text-foreground">
+                <span
+                  aria-current={current ? "page" : undefined}
+                  class="font-medium text-foreground"
+                >
                   {crumb.label}
                 </span>
               {/if}
@@ -185,7 +188,8 @@
       <Alert.Root variant="error">
         <Alert.Content>
           <Alert.Title>{error}</Alert.Title>
-          <Alert.Description>Only these details failed to load; nothing was lost.</Alert.Description>
+          <Alert.Description>Only these details failed to load; nothing was lost.</Alert.Description
+          >
           <Alert.Action>
             <Button type="button" variant="outline" size="sm" {disabled} onclick={onretry}>
               Try again

@@ -95,9 +95,7 @@
     </div>
 
     <div class="grid min-w-0 grid-rows-[auto_1fr]">
-      <header
-        class="flex h-14 items-center gap-3 border-b border-border px-4 @sm:px-6 @lg:px-8"
-      >
+      <header class="flex h-14 items-center gap-3 border-b border-border px-4 @sm:px-6 @lg:px-8">
         <Drawer.Root placement="left" lazyMount unmountOnExit bind:open={drawerOpen}>
           <Drawer.Trigger>
             {#snippet asChild(triggerProps)}

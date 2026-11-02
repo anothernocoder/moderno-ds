@@ -10,11 +10,7 @@
   import type { PopoverSize } from "@moderno-ui/core";
   import { setPopoverSize } from "./popover-size.js";
 
-  let {
-    size,
-    open = $bindable(),
-    ...rest
-  }: PopoverRootProps & { size?: PopoverSize } = $props();
+  let { size, open = $bindable(), ...rest }: PopoverRootProps & { size?: PopoverSize } = $props();
 
   setPopoverSize(() => size);
 </script>
