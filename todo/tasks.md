@@ -1,64 +1,65 @@
 # Tasks
-- [ ] Migrar los componentes de moderno (legacy)
-- [ ] Fixes Moderno-DS
-  - [ ] Componentes del Doc Site deben ser componentes de la libreria o blocks
-  - [ ] Los blocks o estilo de codigo debe ser escrito clean code como los de schadcn, legibles
-  - [ ] Los blocks, screens y flows pueden tener varios archivos, asi que el preview debe mostrar el arbol de archivos y el codigo de cada archivo como schadcn. Usar la libreria de pieter computer o desde 0
-  - [ ] Centrar el selector de mobile, table y desktop y cambiarlo por iconos
-  - [ ] Agregar header de tag + title + description + cta en intro de blogs y hacer la intro con el render de elevenlabs masonry grid
-  - [ ] Mejorar la pagina de Agents con prompts de ejemplos, botones de Copy to Claude, Codes, Cursor, Pi, etc
-    - [ ] Agregar un seccion para instalar las skill
-    - [ ] Hacer sencilla la docs del MCP y como instalarlo
-- [ ] Implementar playground
-- [ ] Revisar badges readme repo y video demo
-- [ ] Crear soporte de variante
-- [ ] Refinamiento de componentes y variantes
-- [ ] Crear Skill para describir imagenes en formato MD con primitivas de moderno
-- [ ] Create Moderno Skill to generate Design.md y Design System Theme for moderno a partir de una imagen.
-- [ ] Crear mi propia tool o playground para iterar componentes de moderno y poder exportarlos a claude o html o cualquier framework
-- [ ] Probar el Moderno repo en 
-    - [ ] V0 design system 2
-- [ ] Unir Design Tools como un Playground
-  - [ ] Agregar nuevas tools de pixel point de examples y del video de Figma y algunas de Inspo Vault
-  - [ ] Minitool card - https://id-cards.kshv.me
-  - [ ] Minitool Reso Paper Fold - https://riso-paper-fold.vercel.app
-  - [ ] Minitool particles linear Kowalski. 
-  - [ ] Minitool Shader Gradient background
-  - [ ] Minitool Dither Lab
-  - [ ] Miniool Dot Matrix
-  - [ ] Minitool Liquid Glass
-  - [ ] Minitool ASCII imagen converter
-  - [ ] Minitool QR Generator and QR lector
-  - [ ] Minitool Card Cloudaflare - https://cloudflare.pay
-  - [ ] Replicar tool de la carpeta inspo
-  - [ ] Minitool para crear Ads, OG Images, Posts, Covers, Carousels, deberia poder leer el thema de moderno. Seleccionable de select o se le puede pasar el css
-  - [ ] Minitool para mockups
-  - [ ] Minitool generte graphics brands based on references
-  - [ ] Minitool para construir logos
-  - [ ] Minitool para construis Brand Guide HTML
-  - [ ] Minitool con videos templates de motion graphics de Inspo Vault en Hyperframes
-  - [ ] https://texture.fayaz.workers.dev
-  - [ ] https://www.playgrnd.tools
-  - [ ] https://www.designminis.com
-  - [ ] https://human-atlas-seven.vercel.app
-  - [ ] https://light-stroke-rail.vercel.app/?ref=designminis.com
-  - [ ] Scenes para motion graphics
-- [ ] Generar prompts de cada image o video (ui, ads, realistics) de Inspo Vault y Websites
-- [ ] Convert cada imagen o layout de Inspo Vault y Websites en new blocks, screens y flows
-- [ ] Add slides for decks a inspo vault.
-- [ ] Skill para motion graphics + remotion + hyperframes
-- [ ] Crear template de emails con primitivas de moderno y aplicar Design Systems. Usar react-email, mjml o html puro
-  - [ ] Crear un minitool para ello
-- [ ] Meter jev + json render para generative UI + code blocks
-- [ ] Crear bloques de shells como cossui layout y lines kumo-ui
-- [ ] Meter componentes de librerias, como tremor, elevenlabs, referentes,etc
-- [ ] Pasar Skill de Emil Kowalski
-- [ ] Agregar componentes de AI
-- [ ] Mejoras los componentes actuales, timeline, etc
-- [ ] Arreglar margins/paddings en Mobile
-- [ ] Mejorar el search bar
-- [ ] Pasar Skill de Improve Architecture
-- [ ] Pasar Skill de Ponytail
+- [x] Migrar los componentes de moderno (legacy) (solo falta cerrar #266, #72, #70 y #69)
+- [ ] Fixes Moderno-DS (Epic #355)
+  - [ ] Componentes del Doc Site deben ser componentes de la libreria o blocks (#361, #362)
+  - [ ] Los blocks o estilo de codigo debe ser escrito clean code como los de schadcn, legibles (Epic #365: #366, #367)
+  - [ ] Los blocks, screens y flows pueden tener varios archivos, asi que el preview debe mostrar el arbol de archivos y el codigo de cada archivo como schadcn (#370, usa TreeView #369)
+  - [x] Centrar el selector de mobile, table y desktop y cambiarlo por iconos
+  - [ ] Agregar header de tag + title + description + cta en intro de blocks y hacer la intro con el render de elevenlabs masonry grid (#356)
+  - [ ] Mejorar la pagina de Agents con prompts de ejemplos, botones de Copy to Claude, Codes, Cursor, Pi, etc (#357)
+    - [ ] Agregar un seccion para instalar las skill (#360)
+    - [ ] Hacer sencilla la docs del MCP y como instalarlo (#357)
+- [ ] Implementar playground (Moderno Studio, Epic #398)
+- [ ] Revisar badges readme repo y video demo (#364)
+- [ ] Crear soporte de variante (#371)
+- [ ] Refinamiento de componentes y variantes (Moderno Studio, Epic #398)
+- [ ] Crear Skill para describir imagenes en formato MD con primitivas de moderno (#407)
+- [ ] Create Moderno Skill to generate Design.md y Design System Theme for moderno a partir de una imagen. (#408)
+- [ ] Crear mi propia tool o playground para iterar componentes de moderno y poder exportarlos a claude o html o cualquier framework (Moderno Studio, Epic #398)
+- [ ] Probar el Moderno repo en
+    - [ ] V0 design system 2 (#417)
+- [ ] Unir Design Tools como un Playground (mini-tools#26)
+  - [ ] Agregar nuevas tools de pixel point de examples y del video de Figma y algunas de Inspo Vault (mini-tools#39)
+  - [ ] Minitool card - https://id-cards.kshv.me (mini-tools#33)
+  - [ ] Minitool Reso Paper Fold - https://riso-paper-fold.vercel.app (mini-tools#32)
+  - [ ] Minitool particles linear Kowalski. (mini-tools#30)
+  - [x] Minitool Shader Gradient background (shaders de Paper en mini-tools)
+  - [x] Minitool Dither Lab
+  - [ ] Miniool Dot Matrix (mini-tools#27)
+  - [ ] Minitool Liquid Glass (mini-tools#28)
+  - [x] Minitool ASCII imagen converter
+  - [ ] Minitool QR Generator and QR lector (mini-tools#31)
+  - [ ] Minitool Card Cloudaflare - https://cloudflare.pay (mini-tools#33, falta la URL completa)
+  - [ ] Replicar tool de la carpeta inspo (mini-tools#39)
+  - [ ] Minitool para crear Ads, OG Images, Posts, Covers, Carousels, deberia poder leer el thema de moderno. Seleccionable de select o se le puede pasar el css (mini-tools#34)
+  - [x] Minitool para mockups
+  - [ ] Minitool generte graphics brands based on references (mini-tools#36)
+  - [ ] Minitool para construir logos (mini-tools#35)
+  - [x] Minitool para construis Brand Guide HTML (Guías en mini-tools)
+  - [ ] Minitool con videos templates de motion graphics de Inspo Vault en Hyperframes (mini-tools#37)
+  - [ ] https://texture.fayaz.workers.dev (mini-tools#39)
+  - [ ] https://www.playgrnd.tools (mini-tools#39)
+  - [ ] https://www.designminis.com (mini-tools#39)
+  - [ ] https://human-atlas-seven.vercel.app (mini-tools#39)
+  - [ ] https://light-stroke-rail.vercel.app/?ref=designminis.com (mini-tools#39)
+  - [ ] Scenes para motion graphics (mini-tools#37)
+- [ ] Generar prompts de cada image o video (ui, ads, realistics) de Inspo Vault y Websites (#411)
+- [ ] Convert cada imagen o layout de Inspo Vault y Websites en new blocks, screens y flows (Epic #410: #412, #413)
+- [ ] Add slides for decks a inspo vault. (sin ticket: curaduria manual en graphic/decks)
+- [ ] Skill para motion graphics + remotion + hyperframes (#409)
+- [ ] Crear template de emails con primitivas de moderno y aplicar Design Systems. Usar react-email, mjml o html puro (#389, #390)
+  - [ ] Crear un minitool para ello (mini-tools#38)
+- [x] Meter jev + json render para generative UI + code blocks (genui con Jev y OpenUI, ADR-0011)
+- [ ] Crear bloques de shells como cossui layout y lines kumo-ui (#388)
+- [ ] Meter componentes de librerias, como tremor, elevenlabs, referentes,etc (#387)
+- [ ] Pasar Skill de Emil Kowalski (#414)
+- [ ] Agregar componentes de AI (#382, #383, #384, #385, #386)
+- [ ] Agregar el resto de componentes y comportamientos de Ark UI (Epic #368: #369, #372 a #381)
+- [ ] Mejoras los componentes actuales, timeline, etc (Timeline #366, el resto con Moderno Studio #398)
+- [ ] Arreglar margins/paddings en Mobile (#363)
+- [ ] Mejorar el search bar (#230, #238)
+- [ ] Pasar Skill de Improve Architecture (#415)
+- [ ] Pasar Skill de Ponytail (#416)
 - [x] Arreglar espacio en blanco scroll en Theme Builder.
 - [x] Tamaño de texto de los parrafos de 17px a 15px, y headings de bold a semibold o 500
 - [x] Animacion fluida de linea en On this page menu
