@@ -39,7 +39,7 @@ the component list are decided once, here.
    a NumberInput or a Field needs ids, values and a collection that OpenUI
    Lang cannot express, so the model writes plain arguments
    (`Select(label, options, placeholder?)`, `NumberInput(label, min?, max?,
-   step?, defaultValue?)`) and the adapter renders the full anatomy from the
+step?, defaultValue?)`) and the adapter renders the full anatomy from the
    docs example. Its parts are not in the library. Overlays, toasts, app-shell
    layouts and in-place editors (`Dialog`, `Toast`, `Splitter`, `Editable`…)
    are left out: they do not belong inside an answer. A part the examples

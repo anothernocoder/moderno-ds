@@ -2,7 +2,5 @@
 import { Chip } from "@moderno-ui/solid";
 
 export function ChipDemo() {
-  return (
-    <Chip>Design</Chip>
-  );
+  return <Chip>Design</Chip>;
 }

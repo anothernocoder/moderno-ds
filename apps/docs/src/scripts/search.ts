@@ -77,7 +77,9 @@ if (
   let indexMissing = false;
   function loadPagefind(): Promise<PagefindModule> {
     if (!modulePromise) {
-      modulePromise = import(/* @vite-ignore */ `${bundlePath}pagefind.js`) as Promise<PagefindModule>;
+      modulePromise = import(
+        /* @vite-ignore */ `${bundlePath}pagefind.js`
+      ) as Promise<PagefindModule>;
     }
     return modulePromise;
   }

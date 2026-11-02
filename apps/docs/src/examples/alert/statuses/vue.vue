@@ -22,7 +22,9 @@ import { Alert } from "@moderno-ui/vue";
       </Alert.Icon>
       <Alert.Content>
         <Alert.Title>Trial ending soon</Alert.Title>
-        <Alert.Description>Your workspace switches to the free plan in three days.</Alert.Description>
+        <Alert.Description
+          >Your workspace switches to the free plan in three days.</Alert.Description
+        >
       </Alert.Content>
     </Alert.Root>
 

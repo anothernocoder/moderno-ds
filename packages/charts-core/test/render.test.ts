@@ -74,9 +74,7 @@ describe("chart render tree — shared frame", () => {
   it("carries data-scope on every part — components.css compounds scope+part", () => {
     const walk = (n: ChartNode): ChartNode[] => [n, ...(n.children ?? []).flatMap(walk)];
     for (const n of walk(root)) {
-      expect(n.attrs["data-scope"], `<${n.tag} data-part="${n.attrs["data-part"]}">`).toBe(
-        "chart",
-      );
+      expect(n.attrs["data-scope"], `<${n.tag} data-part="${n.attrs["data-part"]}">`).toBe("chart");
     }
   });
 });

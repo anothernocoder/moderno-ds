@@ -1,4 +1,5 @@
 # Tasks
+
 - [x] Migrar los componentes de moderno (legacy) (solo falta cerrar #266, #72, #70 y #69)
 - [ ] Fixes Moderno-DS (Epic #355)
   - [ ] Componentes del Doc Site deben ser componentes de la libreria o blocks (#361, #362)
@@ -17,7 +18,7 @@
 - [ ] Create Moderno Skill to generate Design.md y Design System Theme for moderno a partir de una imagen. (#408)
 - [ ] Crear mi propia tool o playground para iterar componentes de moderno y poder exportarlos a claude o html o cualquier framework (Moderno Studio, Epic #398)
 - [ ] Probar el Moderno repo en
-    - [ ] V0 design system 2 (#417)
+  - [ ] V0 design system 2 (#417)
 - [ ] Unir Design Tools como un Playground (mini-tools#26)
   - [ ] Agregar nuevas tools de pixel point de examples y del video de Figma y algunas de Inspo Vault (mini-tools#39)
   - [ ] Minitool card - https://id-cards.kshv.me (mini-tools#33)

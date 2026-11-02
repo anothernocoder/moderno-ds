@@ -337,9 +337,7 @@ for (const scheme of ["light", "dark"] as const) {
       // Default: the page's h1, the four details each with Change, the order
       // with its total, and the two buttons.
       const initial = await read("tablet");
-      await expect(initial.root.getByRole("heading", { level: 1 })).toHaveText(
-        "Review your order",
-      );
+      await expect(initial.root.getByRole("heading", { level: 1 })).toHaveText("Review your order");
       await expect(initial.root.getByRole("heading", { level: 2 })).toHaveText([
         "Delivery and payment",
         "Order summary",

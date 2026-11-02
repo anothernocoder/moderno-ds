@@ -16,6 +16,24 @@ env:
   OPENUI_TELEMETRY_DISABLED: "1"
 
 jobs:
+  # A job of its own: neither tool needs a build, so this reports in a minute or
+  # two, and a formatting error never hides what `checks` would find. Required
+  # by branch protection under this name (docs/branch-protection.md).
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          # Astro 7 (apps/docs) requires >=22.12; the range keeps CI on the
+          # latest 22 LTS patch rather than pinning one that ages out.
+          node-version: "^22.12"
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm format
+
   # `checks` and `test` build every package but the docs: nothing they run reads
   # apps/docs/dist, and each e2e shard builds the docs anyway, so a broken docs
   # build still fails the run.

@@ -23,7 +23,9 @@ export function AlertActionDemo() {
         <Alert.Title>Card expiring</Alert.Title>
         <Alert.Description>The card ending 4242 expires next month.</Alert.Description>
         <Alert.Action>
-          <Button size="sm" variant="outline">Update card</Button>
+          <Button size="sm" variant="outline">
+            Update card
+          </Button>
         </Alert.Action>
       </Alert.Content>
     </Alert.Root>
