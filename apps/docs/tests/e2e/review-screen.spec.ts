@@ -1,7 +1,6 @@
 /**
  * The review screen, checked where it is shown to a reader: the built docs
- * page, at the three widths of the responsive policy (375 / 768 / 1280) in both
- * colour schemes, and in the three site themes.
+ * page, at the three widths of the responsive policy (375 / 768 / 1280), and in the three site themes.
  *
  * Four claims:
  *
@@ -238,82 +237,81 @@ async function contrastRatios(page: Page, tab: Tab): Promise<Record<string, numb
   );
 }
 
+// Geometry and logic, which no colour changes: one pass is enough.
+test.describe("review — either scheme", () => {
+  for (const width of WIDTHS) {
+    test(`lays itself out from its container at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1200 });
+      await page.goto(PAGE, { waitUntil: "networkidle" });
+      await page.evaluate(() => document.fonts.ready.then(() => true));
+      await hydrated(page);
+
+      const screens: ScreenMetrics[] = [];
+      for (const tab of TABS) {
+        await showTab(page, tab);
+        const mounted = await screenMetrics(page, tab);
+        expect(mounted, `${width}px, ${tab}: mounted copies`).toHaveLength(1);
+        screens.push(mounted[0]!);
+      }
+
+      const widths = screens.map((s) => s.containerWidth);
+      expect(
+        widths.some((w) => w < CONTAINER_SM),
+        `${width}px: a copy below @sm`,
+      ).toBe(true);
+      expect(
+        widths.some((w) => w >= CONTAINER_MD && w < CONTAINER_LG),
+        `${width}px: a copy between @md and @lg`,
+      ).toBe(true);
+      expect(
+        widths.some((w) => w >= CONTAINER_LG),
+        `${width}px: a copy at or above @lg`,
+      ).toBe(true);
+
+      for (const [index, screen] of screens.entries()) {
+        const where = `${width}px, ${TABS[index]} (${screen.containerWidth}px)`;
+        const beside = screen.containerWidth >= CONTAINER_LG;
+        expect(screen.mastheadDisplay, `${where}: masthead`).toBe(
+          screen.containerWidth >= CONTAINER_SM ? "flex" : "grid",
+        );
+        expect(screen.actionsDirection, `${where}: buttons`).toBe(
+          screen.containerWidth >= CONTAINER_SM ? "row" : "column-reverse",
+        );
+        expect(screen.footerDisplay, `${where}: footer`).toBe(
+          screen.containerWidth >= CONTAINER_MD ? "flex" : "grid",
+        );
+        expect(screen.bodyColumns, `${where}: body columns`).toBe(beside ? 5 : 1);
+        expect(screen.summaryUnderDetails, `${where}: summary under the details`).toBe(!beside);
+        expect(screen.rootHeight, `${where}: root height`).toBeGreaterThanOrEqual(
+          screen.frameHeight,
+        );
+
+        // One h1 for the route, then headings that descend one rank at a time.
+        expect(screen.headingLevels[0], `${where}: first heading`).toBe(1);
+        expect(
+          screen.headingLevels.filter((l) => l === 1),
+          `${where}: one h1`,
+        ).toHaveLength(1);
+        for (const [i, level] of screen.headingLevels.entries()) {
+          if (i === 0) continue;
+          expect(
+            level,
+            `${where}: heading ${i + 1} of ${screen.headingLevels.join("/")}`,
+          ).toBeLessThanOrEqual(screen.headingLevels[i - 1]! + 1);
+        }
+      }
+
+      // The phone and tablet frames stack the summary; the desktop frame sets it beside the details.
+      expect(screens[0]!.summaryUnderDetails, `${width}px: phone summary`).toBe(true);
+      expect(screens[1]!.summaryUnderDetails, `${width}px: tablet summary`).toBe(true);
+      expect(screens[2]!.summaryUnderDetails, `${width}px: desktop summary`).toBe(false);
+    });
+  }
+});
+
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`review — ${scheme}`, () => {
     test.use({ colorScheme: scheme });
-
-    for (const width of WIDTHS) {
-      test(`lays itself out from its container at ${width}px`, async ({ page }) => {
-        await page.setViewportSize({ width, height: 1200 });
-        await page.goto(PAGE, { waitUntil: "networkidle" });
-        await page.evaluate(() => document.fonts.ready.then(() => true));
-        await hydrated(page);
-
-        expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(
-          scheme === "dark",
-        );
-
-        const screens: ScreenMetrics[] = [];
-        for (const tab of TABS) {
-          await showTab(page, tab);
-          const mounted = await screenMetrics(page, tab);
-          expect(mounted, `${scheme} ${width}px, ${tab}: mounted copies`).toHaveLength(1);
-          screens.push(mounted[0]!);
-        }
-
-        const widths = screens.map((s) => s.containerWidth);
-        expect(
-          widths.some((w) => w < CONTAINER_SM),
-          `${scheme} ${width}px: a copy below @sm`,
-        ).toBe(true);
-        expect(
-          widths.some((w) => w >= CONTAINER_MD && w < CONTAINER_LG),
-          `${scheme} ${width}px: a copy between @md and @lg`,
-        ).toBe(true);
-        expect(
-          widths.some((w) => w >= CONTAINER_LG),
-          `${scheme} ${width}px: a copy at or above @lg`,
-        ).toBe(true);
-
-        for (const [index, screen] of screens.entries()) {
-          const where = `${scheme} ${width}px, ${TABS[index]} (${screen.containerWidth}px)`;
-          const beside = screen.containerWidth >= CONTAINER_LG;
-          expect(screen.mastheadDisplay, `${where}: masthead`).toBe(
-            screen.containerWidth >= CONTAINER_SM ? "flex" : "grid",
-          );
-          expect(screen.actionsDirection, `${where}: buttons`).toBe(
-            screen.containerWidth >= CONTAINER_SM ? "row" : "column-reverse",
-          );
-          expect(screen.footerDisplay, `${where}: footer`).toBe(
-            screen.containerWidth >= CONTAINER_MD ? "flex" : "grid",
-          );
-          expect(screen.bodyColumns, `${where}: body columns`).toBe(beside ? 5 : 1);
-          expect(screen.summaryUnderDetails, `${where}: summary under the details`).toBe(!beside);
-          expect(screen.rootHeight, `${where}: root height`).toBeGreaterThanOrEqual(
-            screen.frameHeight,
-          );
-
-          // One h1 for the route, then headings that descend one rank at a time.
-          expect(screen.headingLevels[0], `${where}: first heading`).toBe(1);
-          expect(
-            screen.headingLevels.filter((l) => l === 1),
-            `${where}: one h1`,
-          ).toHaveLength(1);
-          for (const [i, level] of screen.headingLevels.entries()) {
-            if (i === 0) continue;
-            expect(
-              level,
-              `${where}: heading ${i + 1} of ${screen.headingLevels.join("/")}`,
-            ).toBeLessThanOrEqual(screen.headingLevels[i - 1]! + 1);
-          }
-        }
-
-        // The phone and tablet frames stack the summary; the desktop frame sets it beside the details.
-        expect(screens[0]!.summaryUnderDetails, `${width}px: phone summary`).toBe(true);
-        expect(screens[1]!.summaryUnderDetails, `${width}px: tablet summary`).toBe(true);
-        expect(screens[2]!.summaryUnderDetails, `${width}px: desktop summary`).toBe(false);
-      });
-    }
 
     test("renders each state it is handed and reports what the shopper does", async ({ page }) => {
       await page.goto(PAGE, { waitUntil: "networkidle" });

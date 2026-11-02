@@ -1,6 +1,6 @@
 /**
  * The input-group block, checked on the built docs page at the three widths of
- * the responsive policy (375 / 768 / 1280) in both colour schemes. It asserts
+ * the responsive policy (375 / 768 / 1280). It asserts
  * text and computed styles; no screenshot baseline is committed.
  *
  * Five claims:
@@ -321,173 +321,172 @@ async function textRatios(
   );
 }
 
+// Geometry and logic, which no colour changes: one pass is enough.
+test.describe("input-group — either scheme", () => {
+  for (const width of WIDTHS) {
+    test(`lays itself out from its container at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1200 });
+      await page.goto(PAGE, { waitUntil: "networkidle" });
+      await page.evaluate(() => document.fonts.ready.then(() => true));
+
+      const blocks: (BlockMetrics & { state: State })[] = [];
+      for (const state of STATES) {
+        await showState(page, state);
+        const mounted = await blockMetrics(page, state);
+        expect(mounted, `${state}: mounted copies`).toHaveLength(1);
+        const block = { ...mounted[0]!, state };
+        blocks.push(block);
+        const where = `${width}px, ${state} (${block.containerWidth}px)`;
+
+        expect(block.heading, `${where}: heading`).toBe("Storefront");
+        expect(block.roomyGaps, `${where}: room between parts`).toBe(
+          block.containerWidth >= CONTAINER_SM,
+        );
+        expect(block.largeHeading, `${where}: heading size`).toBe(
+          block.containerWidth >= CONTAINER_MD,
+        );
+        expect(block.groupsPerRow, `${where}: groups per row`).toBe(
+          block.containerWidth >= CONTAINER_MD ? 2 : 1,
+        );
+        expect(block.headingBeside, `${where}: heading beside the groups`).toBe(
+          block.containerWidth >= CONTAINER_LG,
+        );
+
+        expect(
+          block.groups.map((group) => group.label),
+          `${where}: groups`,
+        ).toEqual(LABELS);
+        expect(
+          block.groups.map((group) => group.addOns),
+          `${where}: add-ons`,
+        ).toEqual(ADD_ONS);
+        for (const group of block.groups) {
+          const part = `${where}, ${group.label}`;
+          expect(group.sameHeight, `${part}: one height`).toBe(true);
+          expect(group.flush, `${part}: no gap between parts`).toBe(true);
+          expect(group.joinedCorners, `${part}: joined corners`).toBe(true);
+          expect(group.addOnsShareEdge, `${part}: add-ons share the edge`).toBe(true);
+        }
+
+        if (block.offCentre) {
+          expect(block.offCentre.x, `${where}: centred across`).toBeLessThanOrEqual(2);
+          expect(block.offCentre.y, `${where}: centred down`).toBeLessThanOrEqual(2);
+        }
+
+        // The 50rem frame scrolls inside itself; the panel holding the demo
+        // never pushes the page sideways.
+        const panel = await page.evaluate((state) => {
+          const el = document
+            .querySelector(`[data-demo-state="${state}"]`)!
+            .closest(".preview-panel--demo") as HTMLElement;
+          return { scroll: el.scrollWidth, client: el.clientWidth };
+        }, state);
+        expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
+      }
+
+      const byState = (state: State) => blocks.find((block) => block.state === state)!;
+      const values = (state: State) => byState(state).groups.map((group) => group.value);
+      const live = (state: State) =>
+        byState(state).groups.every((group) => !group.disabled) &&
+        !byState(state).copy.disabled &&
+        !byState(state).search.disabled;
+
+      for (const state of ["default", "narrow", "compact", "two-up", "wide"] as const) {
+        expect(values(state), `${state}: sample values`).toEqual([
+          "acme.shop",
+          "49.00",
+          "mdn_pub_5c1e8a93d0b74f2a",
+          "",
+        ]);
+        expect(live(state), `${state}: every control live`).toBe(true);
+      }
+
+      const empty = byState("empty");
+      expect(values("empty"), "empty: no values").toEqual(["", "", "", ""]);
+      expect(
+        empty.groups.map((group) => group.placeholder),
+        "empty: placeholders",
+      ).toEqual(["your-shop.com", "0.00", "No key yet", "Name or SKU"]);
+      expect(empty.copy.disabled, "empty: nothing to copy").toBe(true);
+      expect(empty.search.disabled, "empty: search stays live").toBe(false);
+
+      const loading = byState("loading");
+      expect(loading.search, "loading: a busy Search").toEqual({
+        label: "Searching",
+        disabled: true,
+        busy: "true",
+        spinner: true,
+      });
+      expect(
+        loading.groups.every((group) => group.disabled),
+        "loading: inputs inert",
+      ).toBe(true);
+      expect(loading.groups[3]!.value, "loading: the query stays").toBe("Linen shirt");
+
+      const error = byState("error");
+      expect(
+        error.groups.map((group) => group.invalid),
+        "error: invalid groups",
+      ).toEqual([true, true, false, true]);
+      expect(
+        error.groups.map((group) => group.error),
+        "error: messages",
+      ).toEqual([
+        "Enter an address like acme.shop, without spaces.",
+        "Enter a price above zero.",
+        null,
+        "Type at least two letters.",
+      ]);
+      expect(live("error"), "error: every control live").toBe(true);
+
+      const disabled = byState("disabled");
+      expect(
+        disabled.groups.every((group) => group.disabled),
+        "disabled: inputs",
+      ).toBe(true);
+      expect(disabled.copy.disabled && disabled.search.disabled, "disabled: buttons").toBe(true);
+      expect(disabled.search.spinner, "disabled: no spinner").toBe(false);
+
+      for (const block of blocks) {
+        expect(block.copy, `${block.state}: Copy`).toMatchObject({
+          label: "Copy",
+          name: "Copy API key",
+        });
+        if (block.state !== "loading") {
+          expect(block.search, `${block.state}: Search`).toMatchObject({
+            label: "Search",
+            busy: "false",
+            spinner: false,
+          });
+        }
+        if (block.state !== "error") {
+          expect(
+            block.groups.some((group) => group.invalid || group.error),
+            `${block.state}: nothing invalid`,
+          ).toBe(false);
+        }
+      }
+
+      // Each step is exercised on both sides at every viewport, so a step that
+      // silently stopped firing cannot pass this file.
+      const containerWidths = blocks.map((b) => b.containerWidth);
+      for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
+        expect(
+          containerWidths.some((w) => w < step),
+          `a copy under ${step}px`,
+        ).toBe(true);
+        expect(
+          containerWidths.some((w) => w >= step),
+          `a copy over ${step}px`,
+        ).toBe(true);
+      }
+    });
+  }
+});
+
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`input-group — ${scheme}`, () => {
     test.use({ colorScheme: scheme });
-
-    for (const width of WIDTHS) {
-      test(`lays itself out from its container at ${width}px`, async ({ page }) => {
-        await page.setViewportSize({ width, height: 1200 });
-        await page.goto(PAGE, { waitUntil: "networkidle" });
-        await page.evaluate(() => document.fonts.ready.then(() => true));
-
-        expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(
-          scheme === "dark",
-        );
-
-        const blocks: (BlockMetrics & { state: State })[] = [];
-        for (const state of STATES) {
-          await showState(page, state);
-          const mounted = await blockMetrics(page, state);
-          expect(mounted, `${state}: mounted copies`).toHaveLength(1);
-          const block = { ...mounted[0]!, state };
-          blocks.push(block);
-          const where = `${scheme} ${width}px, ${state} (${block.containerWidth}px)`;
-
-          expect(block.heading, `${where}: heading`).toBe("Storefront");
-          expect(block.roomyGaps, `${where}: room between parts`).toBe(
-            block.containerWidth >= CONTAINER_SM,
-          );
-          expect(block.largeHeading, `${where}: heading size`).toBe(
-            block.containerWidth >= CONTAINER_MD,
-          );
-          expect(block.groupsPerRow, `${where}: groups per row`).toBe(
-            block.containerWidth >= CONTAINER_MD ? 2 : 1,
-          );
-          expect(block.headingBeside, `${where}: heading beside the groups`).toBe(
-            block.containerWidth >= CONTAINER_LG,
-          );
-
-          expect(
-            block.groups.map((group) => group.label),
-            `${where}: groups`,
-          ).toEqual(LABELS);
-          expect(
-            block.groups.map((group) => group.addOns),
-            `${where}: add-ons`,
-          ).toEqual(ADD_ONS);
-          for (const group of block.groups) {
-            const part = `${where}, ${group.label}`;
-            expect(group.sameHeight, `${part}: one height`).toBe(true);
-            expect(group.flush, `${part}: no gap between parts`).toBe(true);
-            expect(group.joinedCorners, `${part}: joined corners`).toBe(true);
-            expect(group.addOnsShareEdge, `${part}: add-ons share the edge`).toBe(true);
-          }
-
-          if (block.offCentre) {
-            expect(block.offCentre.x, `${where}: centred across`).toBeLessThanOrEqual(2);
-            expect(block.offCentre.y, `${where}: centred down`).toBeLessThanOrEqual(2);
-          }
-
-          // The 50rem frame scrolls inside itself; the panel holding the demo
-          // never pushes the page sideways.
-          const panel = await page.evaluate((state) => {
-            const el = document
-              .querySelector(`[data-demo-state="${state}"]`)!
-              .closest(".preview-panel--demo") as HTMLElement;
-            return { scroll: el.scrollWidth, client: el.clientWidth };
-          }, state);
-          expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
-        }
-
-        const byState = (state: State) => blocks.find((block) => block.state === state)!;
-        const values = (state: State) => byState(state).groups.map((group) => group.value);
-        const live = (state: State) =>
-          byState(state).groups.every((group) => !group.disabled) &&
-          !byState(state).copy.disabled &&
-          !byState(state).search.disabled;
-
-        for (const state of ["default", "narrow", "compact", "two-up", "wide"] as const) {
-          expect(values(state), `${state}: sample values`).toEqual([
-            "acme.shop",
-            "49.00",
-            "mdn_pub_5c1e8a93d0b74f2a",
-            "",
-          ]);
-          expect(live(state), `${state}: every control live`).toBe(true);
-        }
-
-        const empty = byState("empty");
-        expect(values("empty"), "empty: no values").toEqual(["", "", "", ""]);
-        expect(
-          empty.groups.map((group) => group.placeholder),
-          "empty: placeholders",
-        ).toEqual(["your-shop.com", "0.00", "No key yet", "Name or SKU"]);
-        expect(empty.copy.disabled, "empty: nothing to copy").toBe(true);
-        expect(empty.search.disabled, "empty: search stays live").toBe(false);
-
-        const loading = byState("loading");
-        expect(loading.search, "loading: a busy Search").toEqual({
-          label: "Searching",
-          disabled: true,
-          busy: "true",
-          spinner: true,
-        });
-        expect(
-          loading.groups.every((group) => group.disabled),
-          "loading: inputs inert",
-        ).toBe(true);
-        expect(loading.groups[3]!.value, "loading: the query stays").toBe("Linen shirt");
-
-        const error = byState("error");
-        expect(
-          error.groups.map((group) => group.invalid),
-          "error: invalid groups",
-        ).toEqual([true, true, false, true]);
-        expect(
-          error.groups.map((group) => group.error),
-          "error: messages",
-        ).toEqual([
-          "Enter an address like acme.shop, without spaces.",
-          "Enter a price above zero.",
-          null,
-          "Type at least two letters.",
-        ]);
-        expect(live("error"), "error: every control live").toBe(true);
-
-        const disabled = byState("disabled");
-        expect(
-          disabled.groups.every((group) => group.disabled),
-          "disabled: inputs",
-        ).toBe(true);
-        expect(disabled.copy.disabled && disabled.search.disabled, "disabled: buttons").toBe(true);
-        expect(disabled.search.spinner, "disabled: no spinner").toBe(false);
-
-        for (const block of blocks) {
-          expect(block.copy, `${block.state}: Copy`).toMatchObject({
-            label: "Copy",
-            name: "Copy API key",
-          });
-          if (block.state !== "loading") {
-            expect(block.search, `${block.state}: Search`).toMatchObject({
-              label: "Search",
-              busy: "false",
-              spinner: false,
-            });
-          }
-          if (block.state !== "error") {
-            expect(
-              block.groups.some((group) => group.invalid || group.error),
-              `${block.state}: nothing invalid`,
-            ).toBe(false);
-          }
-        }
-
-        // Each step is exercised on both sides at every viewport, so a step that
-        // silently stopped firing cannot pass this file.
-        const containerWidths = blocks.map((b) => b.containerWidth);
-        for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
-          expect(
-            containerWidths.some((w) => w < step),
-            `a copy under ${step}px`,
-          ).toBe(true);
-          expect(
-            containerWidths.some((w) => w >= step),
-            `a copy over ${step}px`,
-          ).toBe(true);
-        }
-      });
-    }
 
     test("turns an invalid field's add-ons red with its input", async ({ page }) => {
       await page.goto(PAGE, { waitUntil: "networkidle" });

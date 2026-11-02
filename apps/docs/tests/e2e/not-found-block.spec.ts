@@ -1,6 +1,6 @@
 /**
  * The Not Found block, checked on the built docs page at the three widths of
- * the responsive policy (375 / 768 / 1280) in both colour schemes. It asserts
+ * the responsive policy (375 / 768 / 1280). It asserts
  * text and computed styles; no screenshot baseline is committed.
  *
  * Four claims:
@@ -288,153 +288,164 @@ async function textRatios(page: Page, state: "default" | "error"): Promise<Recor
   );
 }
 
+// Geometry and logic, which no colour changes: one pass is enough.
+test.describe("not-found — either scheme", () => {
+  for (const width of WIDTHS) {
+    test(`lays itself out from its container at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1200 });
+      await page.goto(PAGE, { waitUntil: "networkidle" });
+      await page.evaluate(() => document.fonts.ready.then(() => true));
+
+      const blocks: Array<BlockMetrics & { state: State }> = [];
+      for (const state of STATES) {
+        await showState(page, state);
+        const mounted = await blockMetrics(page, state);
+        expect(mounted, `${state}: mounted copies`).toHaveLength(1);
+        const block = mounted[0]!;
+        blocks.push({ ...block, state });
+        const where = `${width}px, ${state} (${block.containerWidth}px)`;
+
+        const sm = block.containerWidth >= CONTAINER_SM;
+        const lg = block.containerWidth >= CONTAINER_LG;
+        const split = lg && state !== "empty";
+        expect(block.actionsBeside, `${where}: actions side by side`).toBe(sm);
+        expect(block.actionFullWidth, `${where}: action as wide as the message`).toBe(!sm);
+        expect(block.split, `${where}: message and pages in two columns`).toBe(
+          state === "empty" ? null : lg,
+        );
+        expect(block.textAlign, `${where}: text alignment`).toBe(split ? "start" : "center");
+        if (!split) {
+          expect(block.messageOffCentre, `${where}: message centred`).toBeLessThan(1);
+          if (block.pagesOffCentre !== null) {
+            expect(block.pagesOffCentre, `${where}: pages centred`).toBeLessThan(1);
+          }
+        }
+        expect(block.alert, `${where}: error announced`).toBe(state === "error");
+
+        // The message is the same in every state: the code, a serif h1 and
+        // the description, then both actions.
+        expect(block.code, `${where}: code`).toBe(CODE);
+        expect(block.title, `${where}: title`).toBe(TITLE);
+        expect(block.serifTitle, `${where}: serif title`).toBe(true);
+        expect(block.description, `${where}: description`).not.toBeNull();
+
+        if (state === "error") {
+          expect(block.actions, `${where}: actions and retry`).toEqual([...ACTIONS, "Try again"]);
+          expect(block.actionVariants, `${where}: variants`).toEqual([
+            "primary",
+            "outline",
+            "outline",
+          ]);
+        } else {
+          expect(block.actions, `${where}: actions`).toEqual(ACTIONS);
+          expect(block.actionVariants, `${where}: variants`).toEqual(["primary", "outline"]);
+        }
+
+        if (state === "loading") {
+          expect(block.placeholders, `${where}: placeholders`).toBe(7);
+        } else {
+          expect(block.placeholders, `${where}: no placeholders`).toBe(0);
+        }
+
+        if (state === "empty" || state === "loading" || state === "error") {
+          expect(block.links, `${where}: no popular pages`).toEqual([]);
+        } else {
+          expect(block.links, `${where}: popular pages`).toEqual(LINKS);
+          expect(block.linksTitle, `${where}: pages title`).toBe(LINKS_TITLE);
+          expect(block.navName, `${where}: nav name`).toBe(LINKS_TITLE);
+          // The list is the --card surface with a --border hairline.
+          expect(block.list?.background, `${where}: list surface`).toBe(block.tokens.card);
+          expect(block.list?.border, `${where}: list border colour`).toBe(block.tokens.border);
+          expect(block.list?.borderWidth, `${where}: list border`).toBeGreaterThan(0);
+        }
+
+        // The 50rem frame scrolls inside itself; the panel holding the demo
+        // never pushes the page sideways.
+        const panel = await page.evaluate((state) => {
+          const el = document
+            .querySelector(`[data-demo-state="${state}"]`)!
+            .closest(".preview-panel--demo") as HTMLElement;
+          return { scroll: el.scrollWidth, client: el.clientWidth };
+        }, state);
+        expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
+      }
+
+      expect(
+        blocks.filter((block) => block.allActionsInert).map((block) => block.state),
+        "the disabled render",
+      ).toEqual(["disabled"]);
+
+      // The title steps up at `--container-md`: one size below it, one
+      // larger size from it on.
+      const below = new Set(
+        blocks.filter((b) => b.containerWidth < CONTAINER_MD).map((b) => b.titleSize),
+      );
+      const above = new Set(
+        blocks.filter((b) => b.containerWidth >= CONTAINER_MD).map((b) => b.titleSize),
+      );
+      expect(below.size, "one title size below @md").toBe(1);
+      expect(above.size, "one title size from @md").toBe(1);
+      expect([...above][0]!, "the title steps up at @md").toBeGreaterThan([...below][0]!);
+
+      // Each step is exercised on both sides at every viewport, so a step that
+      // silently stopped firing cannot pass this file.
+      const containerWidths = blocks.map((b) => b.containerWidth);
+      for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
+        expect(
+          containerWidths.some((w) => w < step),
+          `a copy under ${step}px`,
+        ).toBe(true);
+        expect(
+          containerWidths.some((w) => w >= step),
+          `a copy over ${step}px`,
+        ).toBe(true);
+      }
+    });
+  }
+
+  test("sits in the middle of its preview", async ({ page }) => {
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    for (const state of ["default", "empty", "loading", "error", "disabled"] as const) {
+      await showState(page, state);
+      const gaps = await page.evaluate(
+        ({ state, selector }) => {
+          const wrapper = document.querySelector(`[data-demo-state="${state}"]`)!;
+          const panel = wrapper.closest(".preview-panel--demo")!.getBoundingClientRect();
+          const content = wrapper
+            .querySelector(selector)!
+            .firstElementChild!.getBoundingClientRect();
+          return {
+            above: content.top - panel.top,
+            below: panel.bottom - content.bottom,
+            before: content.left - panel.left,
+            after: panel.right - content.right,
+          };
+        },
+        { state, selector: BLOCK },
+      );
+      expect(Math.abs(gaps.above - gaps.below), `${state}: vertical`).toBeLessThan(2);
+      expect(Math.abs(gaps.before - gaps.after), `${state}: horizontal`).toBeLessThan(2);
+    }
+  });
+
+  test("treats an empty error string as no error", async ({ page }) => {
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await showState(page, "error");
+    const block = page.locator(`[data-demo-state="error"] ${BLOCK}`);
+
+    // The demo's retry clears its message to "", the way a consumer holding
+    // the error as a string does once the load succeeds.
+    await block.getByRole("button", { name: "Try again" }).click();
+
+    await expect(block.locator('[data-scope="alert"]')).toHaveCount(0);
+    await expect(block.locator("nav a")).toHaveCount(LINKS.length);
+    await expect(block.locator('[data-scope="button"]')).toHaveText(ACTIONS);
+  });
+});
+
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`not-found — ${scheme}`, () => {
     test.use({ colorScheme: scheme });
-
-    for (const width of WIDTHS) {
-      test(`lays itself out from its container at ${width}px`, async ({ page }) => {
-        await page.setViewportSize({ width, height: 1200 });
-        await page.goto(PAGE, { waitUntil: "networkidle" });
-        await page.evaluate(() => document.fonts.ready.then(() => true));
-
-        expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(
-          scheme === "dark",
-        );
-
-        const blocks: Array<BlockMetrics & { state: State }> = [];
-        for (const state of STATES) {
-          await showState(page, state);
-          const mounted = await blockMetrics(page, state);
-          expect(mounted, `${state}: mounted copies`).toHaveLength(1);
-          const block = mounted[0]!;
-          blocks.push({ ...block, state });
-          const where = `${scheme} ${width}px, ${state} (${block.containerWidth}px)`;
-
-          const sm = block.containerWidth >= CONTAINER_SM;
-          const lg = block.containerWidth >= CONTAINER_LG;
-          const split = lg && state !== "empty";
-          expect(block.actionsBeside, `${where}: actions side by side`).toBe(sm);
-          expect(block.actionFullWidth, `${where}: action as wide as the message`).toBe(!sm);
-          expect(block.split, `${where}: message and pages in two columns`).toBe(
-            state === "empty" ? null : lg,
-          );
-          expect(block.textAlign, `${where}: text alignment`).toBe(split ? "start" : "center");
-          if (!split) {
-            expect(block.messageOffCentre, `${where}: message centred`).toBeLessThan(1);
-            if (block.pagesOffCentre !== null) {
-              expect(block.pagesOffCentre, `${where}: pages centred`).toBeLessThan(1);
-            }
-          }
-          expect(block.alert, `${where}: error announced`).toBe(state === "error");
-
-          // The message is the same in every state: the code, a serif h1 and
-          // the description, then both actions.
-          expect(block.code, `${where}: code`).toBe(CODE);
-          expect(block.title, `${where}: title`).toBe(TITLE);
-          expect(block.serifTitle, `${where}: serif title`).toBe(true);
-          expect(block.description, `${where}: description`).not.toBeNull();
-
-          if (state === "error") {
-            expect(block.actions, `${where}: actions and retry`).toEqual([...ACTIONS, "Try again"]);
-            expect(block.actionVariants, `${where}: variants`).toEqual([
-              "primary",
-              "outline",
-              "outline",
-            ]);
-          } else {
-            expect(block.actions, `${where}: actions`).toEqual(ACTIONS);
-            expect(block.actionVariants, `${where}: variants`).toEqual(["primary", "outline"]);
-          }
-
-          if (state === "loading") {
-            expect(block.placeholders, `${where}: placeholders`).toBe(7);
-          } else {
-            expect(block.placeholders, `${where}: no placeholders`).toBe(0);
-          }
-
-          if (state === "empty" || state === "loading" || state === "error") {
-            expect(block.links, `${where}: no popular pages`).toEqual([]);
-          } else {
-            expect(block.links, `${where}: popular pages`).toEqual(LINKS);
-            expect(block.linksTitle, `${where}: pages title`).toBe(LINKS_TITLE);
-            expect(block.navName, `${where}: nav name`).toBe(LINKS_TITLE);
-            // The list is the --card surface with a --border hairline.
-            expect(block.list?.background, `${where}: list surface`).toBe(block.tokens.card);
-            expect(block.list?.border, `${where}: list border colour`).toBe(block.tokens.border);
-            expect(block.list?.borderWidth, `${where}: list border`).toBeGreaterThan(0);
-          }
-
-          // The 50rem frame scrolls inside itself; the panel holding the demo
-          // never pushes the page sideways.
-          const panel = await page.evaluate((state) => {
-            const el = document
-              .querySelector(`[data-demo-state="${state}"]`)!
-              .closest(".preview-panel--demo") as HTMLElement;
-            return { scroll: el.scrollWidth, client: el.clientWidth };
-          }, state);
-          expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
-        }
-
-        expect(
-          blocks.filter((block) => block.allActionsInert).map((block) => block.state),
-          "the disabled render",
-        ).toEqual(["disabled"]);
-
-        // The title steps up at `--container-md`: one size below it, one
-        // larger size from it on.
-        const below = new Set(
-          blocks.filter((b) => b.containerWidth < CONTAINER_MD).map((b) => b.titleSize),
-        );
-        const above = new Set(
-          blocks.filter((b) => b.containerWidth >= CONTAINER_MD).map((b) => b.titleSize),
-        );
-        expect(below.size, "one title size below @md").toBe(1);
-        expect(above.size, "one title size from @md").toBe(1);
-        expect([...above][0]!, "the title steps up at @md").toBeGreaterThan([...below][0]!);
-
-        // Each step is exercised on both sides at every viewport, so a step that
-        // silently stopped firing cannot pass this file.
-        const containerWidths = blocks.map((b) => b.containerWidth);
-        for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
-          expect(
-            containerWidths.some((w) => w < step),
-            `a copy under ${step}px`,
-          ).toBe(true);
-          expect(
-            containerWidths.some((w) => w >= step),
-            `a copy over ${step}px`,
-          ).toBe(true);
-        }
-      });
-    }
-
-    test("sits in the middle of its preview", async ({ page }) => {
-      await page.goto(PAGE, { waitUntil: "networkidle" });
-      for (const state of ["default", "empty", "loading", "error", "disabled"] as const) {
-        await showState(page, state);
-        const gaps = await page.evaluate(
-          ({ state, selector }) => {
-            const wrapper = document.querySelector(`[data-demo-state="${state}"]`)!;
-            const panel = wrapper.closest(".preview-panel--demo")!.getBoundingClientRect();
-            const content = wrapper
-              .querySelector(selector)!
-              .firstElementChild!.getBoundingClientRect();
-            return {
-              above: content.top - panel.top,
-              below: panel.bottom - content.bottom,
-              before: content.left - panel.left,
-              after: panel.right - content.right,
-            };
-          },
-          { state, selector: BLOCK },
-        );
-        expect(Math.abs(gaps.above - gaps.below), `${scheme} ${state}: vertical`).toBeLessThan(2);
-        expect(Math.abs(gaps.before - gaps.after), `${scheme} ${state}: horizontal`).toBeLessThan(
-          2,
-        );
-      }
-    });
 
     test("clears AA contrast on every text it paints", async ({ page }) => {
       await page.goto(PAGE, { waitUntil: "networkidle" });
@@ -529,20 +540,6 @@ for (const scheme of ["light", "dark"] as const) {
       const alert = page.locator(`[data-demo-state="error"] ${BLOCK} [role="alert"]`);
       await expect(alert).toContainText(ERROR);
       await expect(alert.getByRole("button", { name: "Try again" })).toBeVisible();
-    });
-
-    test("treats an empty error string as no error", async ({ page }) => {
-      await page.goto(PAGE, { waitUntil: "networkidle" });
-      await showState(page, "error");
-      const block = page.locator(`[data-demo-state="error"] ${BLOCK}`);
-
-      // The demo's retry clears its message to "", the way a consumer holding
-      // the error as a string does once the load succeeds.
-      await block.getByRole("button", { name: "Try again" }).click();
-
-      await expect(block.locator('[data-scope="alert"]')).toHaveCount(0);
-      await expect(block.locator("nav a")).toHaveCount(LINKS.length);
-      await expect(block.locator('[data-scope="button"]')).toHaveText(ACTIONS);
     });
   });
 }

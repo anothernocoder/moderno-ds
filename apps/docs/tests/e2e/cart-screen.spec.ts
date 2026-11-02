@@ -1,7 +1,6 @@
 /**
  * The cart screen, checked where it is shown to a reader: the built docs page,
- * at the three widths of the responsive policy (375 / 768 / 1280) in both
- * colour schemes, and in the three site themes.
+ * at the three widths of the responsive policy (375 / 768 / 1280), and in the three site themes.
  *
  * Four claims:
  *
@@ -222,83 +221,82 @@ async function contrastRatios(page: Page, tab: Tab): Promise<Record<string, numb
   );
 }
 
+// Geometry and logic, which no colour changes: one pass is enough.
+test.describe("cart — either scheme", () => {
+  for (const width of WIDTHS) {
+    test(`lays itself out from its container at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1200 });
+      await page.goto(PAGE, { waitUntil: "networkidle" });
+      await page.evaluate(() => document.fonts.ready.then(() => true));
+      await hydrated(page);
+
+      const screens: ScreenMetrics[] = [];
+      for (const tab of TABS) {
+        await showTab(page, tab);
+        const mounted = await screenMetrics(page, tab);
+        expect(mounted, `${width}px, ${tab}: mounted copies`).toHaveLength(1);
+        screens.push(mounted[0]!);
+      }
+
+      const widths = screens.map((s) => s.containerWidth);
+      expect(
+        widths.some((w) => w < CONTAINER_SM),
+        `${width}px: a copy below @sm`,
+      ).toBe(true);
+      expect(
+        widths.some((w) => w >= CONTAINER_MD),
+        `${width}px: a copy at or above @md`,
+      ).toBe(true);
+
+      for (const [index, screen] of screens.entries()) {
+        const tab = TABS[index]!;
+        const where = `${width}px, ${tab} (${screen.containerWidth}px)`;
+        expect(screen.mastheadDisplay, `${where}: masthead`).toBe(
+          screen.containerWidth >= CONTAINER_SM ? "flex" : "grid",
+        );
+        expect(screen.footerDisplay, `${where}: footer`).toBe(
+          screen.containerWidth >= CONTAINER_MD ? "flex" : "grid",
+        );
+        expect(screen.rootHeight, `${where}: root height`).toBeGreaterThanOrEqual(
+          screen.frameHeight,
+        );
+
+        // The lines and the summary are only drawn by the width tabs; the
+        // block reads its own container, the screen's width less its padding.
+        if (WIDTH_TABS.includes(tab)) {
+          const beside = screen.blockWidth >= CONTAINER_LG;
+          expect(screen.cartColumns, `${where}: cart columns`).toBe(beside ? 3 : 1);
+          expect(screen.summaryUnderLines, `${where}: summary under the lines`).toBe(!beside);
+        } else {
+          expect(screen.cartColumns, `${where}: no cart drawn`).toBeNull();
+        }
+
+        // One h1 for the route, then headings that descend one rank at a time.
+        expect(screen.headingLevels[0], `${where}: first heading`).toBe(1);
+        expect(
+          screen.headingLevels.filter((l) => l === 1),
+          `${where}: one h1`,
+        ).toHaveLength(1);
+        for (const [i, level] of screen.headingLevels.entries()) {
+          if (i === 0) continue;
+          expect(
+            level,
+            `${where}: heading ${i + 1} of ${screen.headingLevels.join("/")}`,
+          ).toBeLessThanOrEqual(screen.headingLevels[i - 1]! + 1);
+        }
+      }
+
+      // The phone and tablet frames stack the summary; the desktop frame sets it beside the lines.
+      expect(screens[0]!.summaryUnderLines, `${width}px: phone summary`).toBe(true);
+      expect(screens[1]!.summaryUnderLines, `${width}px: tablet summary`).toBe(true);
+      expect(screens[2]!.summaryUnderLines, `${width}px: desktop summary`).toBe(false);
+    });
+  }
+});
+
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`cart — ${scheme}`, () => {
     test.use({ colorScheme: scheme });
-
-    for (const width of WIDTHS) {
-      test(`lays itself out from its container at ${width}px`, async ({ page }) => {
-        await page.setViewportSize({ width, height: 1200 });
-        await page.goto(PAGE, { waitUntil: "networkidle" });
-        await page.evaluate(() => document.fonts.ready.then(() => true));
-        await hydrated(page);
-
-        expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(
-          scheme === "dark",
-        );
-
-        const screens: ScreenMetrics[] = [];
-        for (const tab of TABS) {
-          await showTab(page, tab);
-          const mounted = await screenMetrics(page, tab);
-          expect(mounted, `${scheme} ${width}px, ${tab}: mounted copies`).toHaveLength(1);
-          screens.push(mounted[0]!);
-        }
-
-        const widths = screens.map((s) => s.containerWidth);
-        expect(
-          widths.some((w) => w < CONTAINER_SM),
-          `${scheme} ${width}px: a copy below @sm`,
-        ).toBe(true);
-        expect(
-          widths.some((w) => w >= CONTAINER_MD),
-          `${scheme} ${width}px: a copy at or above @md`,
-        ).toBe(true);
-
-        for (const [index, screen] of screens.entries()) {
-          const tab = TABS[index]!;
-          const where = `${scheme} ${width}px, ${tab} (${screen.containerWidth}px)`;
-          expect(screen.mastheadDisplay, `${where}: masthead`).toBe(
-            screen.containerWidth >= CONTAINER_SM ? "flex" : "grid",
-          );
-          expect(screen.footerDisplay, `${where}: footer`).toBe(
-            screen.containerWidth >= CONTAINER_MD ? "flex" : "grid",
-          );
-          expect(screen.rootHeight, `${where}: root height`).toBeGreaterThanOrEqual(
-            screen.frameHeight,
-          );
-
-          // The lines and the summary are only drawn by the width tabs; the
-          // block reads its own container, the screen's width less its padding.
-          if (WIDTH_TABS.includes(tab)) {
-            const beside = screen.blockWidth >= CONTAINER_LG;
-            expect(screen.cartColumns, `${where}: cart columns`).toBe(beside ? 3 : 1);
-            expect(screen.summaryUnderLines, `${where}: summary under the lines`).toBe(!beside);
-          } else {
-            expect(screen.cartColumns, `${where}: no cart drawn`).toBeNull();
-          }
-
-          // One h1 for the route, then headings that descend one rank at a time.
-          expect(screen.headingLevels[0], `${where}: first heading`).toBe(1);
-          expect(
-            screen.headingLevels.filter((l) => l === 1),
-            `${where}: one h1`,
-          ).toHaveLength(1);
-          for (const [i, level] of screen.headingLevels.entries()) {
-            if (i === 0) continue;
-            expect(
-              level,
-              `${where}: heading ${i + 1} of ${screen.headingLevels.join("/")}`,
-            ).toBeLessThanOrEqual(screen.headingLevels[i - 1]! + 1);
-          }
-        }
-
-        // The phone and tablet frames stack the summary; the desktop frame sets it beside the lines.
-        expect(screens[0]!.summaryUnderLines, `${width}px: phone summary`).toBe(true);
-        expect(screens[1]!.summaryUnderLines, `${width}px: tablet summary`).toBe(true);
-        expect(screens[2]!.summaryUnderLines, `${width}px: desktop summary`).toBe(false);
-      });
-    }
 
     test("renders each state it is handed and reports what the shopper does", async ({ page }) => {
       await page.goto(PAGE, { waitUntil: "networkidle" });

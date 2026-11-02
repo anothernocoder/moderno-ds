@@ -1,6 +1,6 @@
 /**
  * The contact-modal block, checked on the built docs page at the three widths
- * of the responsive policy (375 / 768 / 1280) in both colour schemes. It
+ * of the responsive policy (375 / 768 / 1280). It
  * asserts text and computed styles; no screenshot baseline is committed.
  *
  * Six claims:
@@ -273,117 +273,145 @@ async function dialogMetrics(dialog: Locator): Promise<DialogMetrics> {
   });
 }
 
+// Geometry and logic, which no colour changes: one pass is enough.
+test.describe("contact-modal — either scheme", () => {
+  for (const width of WIDTHS) {
+    test(`lays itself out from its container at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1200 });
+      await page.goto(PAGE, { waitUntil: "networkidle" });
+      await page.evaluate(() => document.fonts.ready.then(() => true));
+
+      const blocks: Array<BlockMetrics & { state: State }> = [];
+      for (const state of STATES) {
+        await showState(page, state);
+        const mounted = await blockMetrics(page, state);
+        expect(mounted, `${state}: mounted copies`).toHaveLength(1);
+        const block = mounted[0]!;
+        blocks.push({ ...block, state });
+        const where = `${width}px, ${state} (${block.containerWidth}px)`;
+        const sm = block.containerWidth >= CONTAINER_SM;
+        const lg = block.containerWidth >= CONTAINER_LG;
+
+        expect(block.heading, `${where}: heading`).toBe(HEADING);
+        expect(block.serifHeading, `${where}: serif heading`).toBe(true);
+        expect(block.trigger, `${where}: trigger`).toBe(TRIGGER);
+        expect(block.opensDialog, `${where}: trigger opens a dialog`).toBe(true);
+        expect(block.triggerDisabled, `${where}: disabled trigger`).toBe(state === "disabled");
+        expect(block.triggerFillsRow, `${where}: trigger fills its row`).toBe(!sm);
+        expect(block.panelPadding, `${where}: panel padding`).toBe(sm ? 32 : 24);
+        expect(block.triggerBesideText, `${where}: text beside the trigger`).toBe(lg);
+        expect(block.paddingTop, `${where}: room above`).toBe(lg ? 64 : 48);
+        expect(block.offCentre, `${where}: centred`).toBeLessThan(1);
+
+        // The 50rem frame scrolls inside itself; the panel holding the demo
+        // never pushes the page sideways.
+        const panel = await page.evaluate((state) => {
+          const el = document
+            .querySelector(`[data-demo-state="${state}"]`)!
+            .closest(".preview-panel--demo") as HTMLElement;
+          return { scroll: el.scrollWidth, client: el.clientWidth };
+        }, state);
+        expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
+      }
+
+      // The heading steps up at `--container-md`: one size below it, one
+      // larger size from it on.
+      const below = new Set(
+        blocks.filter((b) => b.containerWidth < CONTAINER_MD).map((b) => b.headingSize),
+      );
+      const above = new Set(
+        blocks.filter((b) => b.containerWidth >= CONTAINER_MD).map((b) => b.headingSize),
+      );
+      expect(below.size, "one heading size below @md").toBe(1);
+      expect(above.size, "one heading size from @md").toBe(1);
+      expect([...above][0]!, "the heading steps up at @md").toBeGreaterThan([...below][0]!);
+
+      // Each step is exercised on both sides at every viewport, so a step that
+      // silently stopped firing cannot pass this file.
+      const containerWidths = blocks.map((b) => b.containerWidth);
+      for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
+        expect(
+          containerWidths.some((w) => w < step),
+          `a copy under ${step}px`,
+        ).toBe(true);
+        expect(
+          containerWidths.some((w) => w >= step),
+          `a copy over ${step}px`,
+        ).toBe(true);
+      }
+
+      // The dialog is a container of its own: name and email sit side by
+      // side and the buttons sit in a row, send last, once its content box
+      // reaches `--container-sm`; below it both stack, send on top and full
+      // width.
+      const dialog = await openDialog(page, "default");
+      const layout = await dialog.evaluate((content) => {
+        const style = getComputedStyle(content);
+        const box =
+          content.clientWidth -
+          parseFloat(style.paddingInlineStart) -
+          parseFloat(style.paddingInlineEnd);
+        const rect = (selector: string) => content.querySelector(selector)!.getBoundingClientRect();
+        const name = rect('[name="name"]');
+        const email = rect('[name="email"]');
+        const cancel = rect('button[type="button"]');
+        const send = rect('button[type="submit"]');
+        return {
+          box,
+          fieldsInRow: Math.abs(name.top - email.top) < 1,
+          buttonsInRow: Math.abs(cancel.top - send.top) < 1,
+          sendFirst: send.bottom <= cancel.top,
+          sendLast: send.left >= cancel.right,
+          fullWidth: Math.abs(send.width - box) < 1 && Math.abs(cancel.width - box) < 1,
+        };
+      });
+      const row = layout.box >= CONTAINER_SM;
+      const where = `${width}px, dialog (${layout.box}px)`;
+      expect(layout.fieldsInRow, `${where}: name and email side by side`).toBe(row);
+      expect(layout.buttonsInRow, `${where}: buttons in a row`).toBe(row);
+      if (row) {
+        expect(layout.sendLast, `${where}: send last`).toBe(true);
+      } else {
+        expect(layout.sendFirst, `${where}: send on top`).toBe(true);
+        expect(layout.fullWidth, `${where}: stacked full width`).toBe(true);
+      }
+    });
+  }
+
+  test("sits in the middle of its preview", async ({ page }) => {
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    for (const state of ["default", "empty", "loading", "error", "disabled", "sent"] as const) {
+      await showState(page, state);
+      const gaps = await page.evaluate(
+        ({ state, selector }) => {
+          const wrapper = document.querySelector(`[data-demo-state="${state}"]`)!;
+          const panel = wrapper.closest(".preview-panel--demo")!.getBoundingClientRect();
+          const block = wrapper.querySelector(selector)!;
+          const content = [...block.firstElementChild!.children].map((el) =>
+            el.getBoundingClientRect(),
+          );
+          const top = Math.min(...content.map((r) => r.top));
+          const bottom = Math.max(...content.map((r) => r.bottom));
+          const left = Math.min(...content.map((r) => r.left));
+          const right = Math.max(...content.map((r) => r.right));
+          return {
+            above: top - panel.top,
+            below: panel.bottom - bottom,
+            before: left - panel.left,
+            after: panel.right - right,
+          };
+        },
+        { state, selector: BLOCK },
+      );
+      expect(Math.abs(gaps.above - gaps.below), `${state}: vertical`).toBeLessThan(2);
+      expect(Math.abs(gaps.before - gaps.after), `${state}: horizontal`).toBeLessThan(2);
+    }
+  });
+});
+
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`contact-modal — ${scheme}`, () => {
     test.use({ colorScheme: scheme });
-
-    for (const width of WIDTHS) {
-      test(`lays itself out from its container at ${width}px`, async ({ page }) => {
-        await page.setViewportSize({ width, height: 1200 });
-        await page.goto(PAGE, { waitUntil: "networkidle" });
-        await page.evaluate(() => document.fonts.ready.then(() => true));
-
-        expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(
-          scheme === "dark",
-        );
-
-        const blocks: Array<BlockMetrics & { state: State }> = [];
-        for (const state of STATES) {
-          await showState(page, state);
-          const mounted = await blockMetrics(page, state);
-          expect(mounted, `${state}: mounted copies`).toHaveLength(1);
-          const block = mounted[0]!;
-          blocks.push({ ...block, state });
-          const where = `${scheme} ${width}px, ${state} (${block.containerWidth}px)`;
-          const sm = block.containerWidth >= CONTAINER_SM;
-          const lg = block.containerWidth >= CONTAINER_LG;
-
-          expect(block.heading, `${where}: heading`).toBe(HEADING);
-          expect(block.serifHeading, `${where}: serif heading`).toBe(true);
-          expect(block.trigger, `${where}: trigger`).toBe(TRIGGER);
-          expect(block.opensDialog, `${where}: trigger opens a dialog`).toBe(true);
-          expect(block.triggerDisabled, `${where}: disabled trigger`).toBe(state === "disabled");
-          expect(block.triggerFillsRow, `${where}: trigger fills its row`).toBe(!sm);
-          expect(block.panelPadding, `${where}: panel padding`).toBe(sm ? 32 : 24);
-          expect(block.triggerBesideText, `${where}: text beside the trigger`).toBe(lg);
-          expect(block.paddingTop, `${where}: room above`).toBe(lg ? 64 : 48);
-          expect(block.offCentre, `${where}: centred`).toBeLessThan(1);
-
-          // The 50rem frame scrolls inside itself; the panel holding the demo
-          // never pushes the page sideways.
-          const panel = await page.evaluate((state) => {
-            const el = document
-              .querySelector(`[data-demo-state="${state}"]`)!
-              .closest(".preview-panel--demo") as HTMLElement;
-            return { scroll: el.scrollWidth, client: el.clientWidth };
-          }, state);
-          expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
-        }
-
-        // The heading steps up at `--container-md`: one size below it, one
-        // larger size from it on.
-        const below = new Set(
-          blocks.filter((b) => b.containerWidth < CONTAINER_MD).map((b) => b.headingSize),
-        );
-        const above = new Set(
-          blocks.filter((b) => b.containerWidth >= CONTAINER_MD).map((b) => b.headingSize),
-        );
-        expect(below.size, "one heading size below @md").toBe(1);
-        expect(above.size, "one heading size from @md").toBe(1);
-        expect([...above][0]!, "the heading steps up at @md").toBeGreaterThan([...below][0]!);
-
-        // Each step is exercised on both sides at every viewport, so a step that
-        // silently stopped firing cannot pass this file.
-        const containerWidths = blocks.map((b) => b.containerWidth);
-        for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
-          expect(
-            containerWidths.some((w) => w < step),
-            `a copy under ${step}px`,
-          ).toBe(true);
-          expect(
-            containerWidths.some((w) => w >= step),
-            `a copy over ${step}px`,
-          ).toBe(true);
-        }
-
-        // The dialog is a container of its own: name and email sit side by
-        // side and the buttons sit in a row, send last, once its content box
-        // reaches `--container-sm`; below it both stack, send on top and full
-        // width.
-        const dialog = await openDialog(page, "default");
-        const layout = await dialog.evaluate((content) => {
-          const style = getComputedStyle(content);
-          const box =
-            content.clientWidth -
-            parseFloat(style.paddingInlineStart) -
-            parseFloat(style.paddingInlineEnd);
-          const rect = (selector: string) =>
-            content.querySelector(selector)!.getBoundingClientRect();
-          const name = rect('[name="name"]');
-          const email = rect('[name="email"]');
-          const cancel = rect('button[type="button"]');
-          const send = rect('button[type="submit"]');
-          return {
-            box,
-            fieldsInRow: Math.abs(name.top - email.top) < 1,
-            buttonsInRow: Math.abs(cancel.top - send.top) < 1,
-            sendFirst: send.bottom <= cancel.top,
-            sendLast: send.left >= cancel.right,
-            fullWidth: Math.abs(send.width - box) < 1 && Math.abs(cancel.width - box) < 1,
-          };
-        });
-        const row = layout.box >= CONTAINER_SM;
-        const where = `${scheme} ${width}px, dialog (${layout.box}px)`;
-        expect(layout.fieldsInRow, `${where}: name and email side by side`).toBe(row);
-        expect(layout.buttonsInRow, `${where}: buttons in a row`).toBe(row);
-        if (row) {
-          expect(layout.sendLast, `${where}: send last`).toBe(true);
-        } else {
-          expect(layout.sendFirst, `${where}: send on top`).toBe(true);
-          expect(layout.fullWidth, `${where}: stacked full width`).toBe(true);
-        }
-      });
-    }
 
     test("renders each state inside its dialog", async ({ page }) => {
       await page.goto(PAGE, { waitUntil: "networkidle" });
@@ -432,38 +460,6 @@ for (const scheme of ["light", "dark"] as const) {
       await expect(trigger(page, "disabled")).toBeDisabled();
       await trigger(page, "disabled").click({ force: true });
       await expect(page.getByRole("dialog")).toHaveCount(0);
-    });
-
-    test("sits in the middle of its preview", async ({ page }) => {
-      await page.goto(PAGE, { waitUntil: "networkidle" });
-      for (const state of ["default", "empty", "loading", "error", "disabled", "sent"] as const) {
-        await showState(page, state);
-        const gaps = await page.evaluate(
-          ({ state, selector }) => {
-            const wrapper = document.querySelector(`[data-demo-state="${state}"]`)!;
-            const panel = wrapper.closest(".preview-panel--demo")!.getBoundingClientRect();
-            const block = wrapper.querySelector(selector)!;
-            const content = [...block.firstElementChild!.children].map((el) =>
-              el.getBoundingClientRect(),
-            );
-            const top = Math.min(...content.map((r) => r.top));
-            const bottom = Math.max(...content.map((r) => r.bottom));
-            const left = Math.min(...content.map((r) => r.left));
-            const right = Math.max(...content.map((r) => r.right));
-            return {
-              above: top - panel.top,
-              below: panel.bottom - bottom,
-              before: left - panel.left,
-              after: panel.right - right,
-            };
-          },
-          { state, selector: BLOCK },
-        );
-        expect(Math.abs(gaps.above - gaps.below), `${scheme} ${state}: vertical`).toBeLessThan(2);
-        expect(Math.abs(gaps.before - gaps.after), `${scheme} ${state}: horizontal`).toBeLessThan(
-          2,
-        );
-      }
     });
 
     test("clears AA contrast on every text it paints", async ({ page }) => {

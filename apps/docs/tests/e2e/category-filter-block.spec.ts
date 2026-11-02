@@ -1,6 +1,6 @@
 /**
  * The category-filter block, checked on the built docs page at the three
- * widths of the responsive policy (375 / 768 / 1280) in both colour schemes.
+ * widths of the responsive policy (375 / 768 / 1280).
  * It asserts text and computed styles; no screenshot baseline is committed.
  *
  * Seven claims:
@@ -320,169 +320,192 @@ async function closeDrawer(page: Page, drawer: Locator): Promise<void> {
   await expect(drawer).toBeHidden();
 }
 
+// Geometry and logic, which no colour changes: one pass is enough.
+test.describe("category-filter — either scheme", () => {
+  for (const width of WIDTHS) {
+    test(`lays itself out from its container at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1200 });
+      await page.goto(PAGE, { waitUntil: "networkidle" });
+      await page.evaluate(() => document.fonts.ready.then(() => true));
+
+      const blocks: Array<BlockMetrics & { state: State }> = [];
+      for (const state of STATES) {
+        await showState(page, state);
+        const mounted = await blockMetrics(page, state);
+        expect(mounted, `${state}: mounted copies`).toHaveLength(1);
+        const copy = mounted[0]!;
+        blocks.push({ ...copy, state });
+        const where = `${width}px, ${state} (${copy.containerWidth}px)`;
+        const sidebarShown = copy.containerWidth >= CONTAINER_MD;
+
+        expect(copy.heading, `${where}: heading`).toBe(HEADING);
+        expect(copy.serifHeading, `${where}: serif heading`).toBe(true);
+        expect(copy.description, `${where}: description`).toBe(DESCRIPTION);
+        expect(copy.headerDisplay, `${where}: button beside the heading`).toBe(
+          copy.containerWidth >= CONTAINER_SM ? "flex" : "grid",
+        );
+        expect(copy.buttonDisplay === "none", `${where}: Filters button hidden`).toBe(sidebarShown);
+        expect(copy.sidebarDisplay === "none", `${where}: sidebar hidden`).toBe(!sidebarShown);
+        if (!sidebarShown) {
+          expect(copy.buttonOpensDialog, `${where}: Filters opens a dialog`).toBe(true);
+          expect(copy.buttonText, `${where}: Filters text`).toBe("Filters");
+          expect(copy.buttonFillsRow, `${where}: Filters fills its row`).toBe(
+            copy.containerWidth < CONTAINER_SM,
+          );
+        } else {
+          expect(copy.sidebarBeside, `${where}: sidebar beside the products`).toBe(true);
+          expect(copy.sidebarWidth, `${where}: sidebar width`).toBeCloseTo(
+            copy.containerWidth >= CONTAINER_LG ? SIDEBAR_LG : SIDEBAR_MD,
+            0,
+          );
+        }
+        expect(copy.paddingTop, `${where}: room above`).toBe(
+          copy.containerWidth >= CONTAINER_LG ? 64 : 48,
+        );
+        expect(copy.results, `${where}: the consumer's products`).toMatch(/^\d+ products?$/);
+        expect(copy.buttonDisabled, `${where}: Filters disabled`).toBe(state === "disabled");
+
+        if (state === "loading") {
+          expect(copy.placeholders, `${where}: placeholders`).toBe(9);
+          expect(copy.facets, `${where}: no facets while loading`).toEqual([]);
+        } else if (state === "empty") {
+          expect(copy.empty, `${where}: empty message`).toBe(EMPTY);
+          expect(copy.facets, `${where}: no facets`).toEqual([]);
+        } else if (state === "error") {
+          expect(copy.alert, `${where}: error title`).toBe(ERROR);
+          expect(copy.retry, `${where}: retry`).toBe("Try again");
+          expect(copy.facets, `${where}: no facets`).toEqual([]);
+        } else {
+          expect(copy.facets, `${where}: facets`).toEqual(FACETS);
+          expect(copy.headedFacets, `${where}: every facet is an h3`).toBe(FACETS.length);
+          expect(copy.chevrons, `${where}: one hidden chevron per facet`).toBe(FACETS.length);
+          expect(copy.openFacets, `${where}: every facet starts open`).toBe(FACETS.length);
+          expect(copy.options, `${where}: options`).toEqual(OPTIONS);
+          expect(copy.counts, `${where}: counts`).toEqual(COUNTS);
+          expect(copy.valueText, `${where}: price range`).toBe(FULL_RANGE);
+          expect(copy.thumbs, `${where}: thumbs named`).toEqual(["Minimum price", "Maximum price"]);
+          expect(copy.clearDisabled, `${where}: nothing to clear`).toBe(true);
+          expect(copy.empty, `${where}: no empty message`).toBeNull();
+          expect(copy.alert, `${where}: no alert`).toBeNull();
+        }
+
+        const panel = await page.evaluate((state) => {
+          const el = document
+            .querySelector(`[data-demo-state="${state}"]`)!
+            .closest(".preview-panel--demo") as HTMLElement;
+          return { scroll: el.scrollWidth, client: el.clientWidth };
+        }, state);
+        expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
+      }
+
+      expect(
+        blocks.filter((b) => b.allOptionsDisabled).map((b) => b.state),
+        "the disabled render",
+      ).toEqual(["disabled"]);
+      expect(
+        blocks.filter((b) => b.thumbsDisabled).map((b) => b.state),
+        "disabled price",
+      ).toEqual(["disabled"]);
+      expect(
+        blocks.filter((b) => b.allOptionsLive).map((b) => b.state),
+        "every other render with options",
+      ).toEqual(["default", "narrow", "compact", "panel", "wide"]);
+
+      // The heading steps up at `--container-md`.
+      const below = new Set(
+        blocks.filter((b) => b.containerWidth < CONTAINER_MD).map((b) => b.headingSize),
+      );
+      const above = new Set(
+        blocks.filter((b) => b.containerWidth >= CONTAINER_MD).map((b) => b.headingSize),
+      );
+      expect(below.size, "one heading size below @md").toBe(1);
+      expect(above.size, "one heading size from @md").toBe(1);
+      expect([...above][0]!, "heading steps up at @md").toBeGreaterThan([...below][0]!);
+
+      // Each step is exercised on both sides at every viewport, so a step that
+      // silently stopped firing cannot pass this file.
+      const containerWidths = blocks.map((b) => b.containerWidth);
+      for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
+        expect(
+          containerWidths.some((w) => w < step),
+          `a copy under ${step}px`,
+        ).toBe(true);
+        expect(
+          containerWidths.some((w) => w >= step),
+          `a copy over ${step}px`,
+        ).toBe(true);
+      }
+
+      // Below `--container-md` the filters live in a Drawer from the left:
+      // pinned to the left edge, full height, as wide as the viewport up to
+      // `--container-sm`, with Clear all and Show results in a row at its foot.
+      const drawer = await openDrawer(page, "narrow");
+      await expect(drawer).toHaveAttribute("data-placement", "left");
+      await expect.poll(() => drawer.evaluate((el) => el.getBoundingClientRect().left)).toBe(0);
+      const layout = await drawer.evaluate((content) => {
+        const rect = content.getBoundingClientRect();
+        const buttons = [...content.querySelectorAll<HTMLElement>('[data-scope="button"]')];
+        const clear = buttons.find((b) => b.textContent?.trim() === "Clear all")!;
+        const show = buttons.find((b) => b.textContent?.trim() === "Show results")!;
+        return {
+          width: rect.width,
+          top: rect.top,
+          height: rect.height,
+          viewport: window.innerHeight,
+          facets: [
+            ...content.querySelectorAll('[data-scope="accordion"][data-part="item-trigger"]'),
+          ].map((t) => t.textContent?.trim()),
+          inRow: Math.abs(clear.getBoundingClientRect().top - show.getBoundingClientRect().top) < 1,
+          showLast: show.getBoundingClientRect().left >= clear.getBoundingClientRect().right,
+          showVariant: show.getAttribute("data-variant"),
+        };
+      });
+      const where = `${width}px, drawer`;
+      expect(layout.width, `${where}: width`).toBeCloseTo(Math.min(width, CONTAINER_SM), 0);
+      expect(layout.top, `${where}: top`).toBeCloseTo(0, 0);
+      expect(layout.height, `${where}: full height`).toBeCloseTo(layout.viewport, 0);
+      expect(layout.facets, `${where}: the same facets`).toEqual(FACETS);
+      expect(layout.inRow, `${where}: buttons in a row`).toBe(true);
+      expect(layout.showLast, `${where}: Show results last`).toBe(true);
+      expect(layout.showVariant, `${where}: Show results is primary`).toBe("primary");
+      await closeDrawer(page, drawer);
+    });
+  }
+
+  test("sits in the middle of its preview", async ({ page }) => {
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    for (const state of ["default", "empty", "loading", "error", "disabled"] as const) {
+      await showState(page, state);
+      const gaps = await page.evaluate(
+        ({ state, selector }) => {
+          const wrapper = document.querySelector(`[data-demo-state="${state}"]`)!;
+          const panel = wrapper.closest(".preview-panel--demo")!.getBoundingClientRect();
+          const section = wrapper.querySelector(selector)!;
+          const content = [...section.firstElementChild!.children].map((el) =>
+            el.getBoundingClientRect(),
+          );
+          const top = Math.min(...content.map((r) => r.top));
+          const bottom = Math.max(...content.map((r) => r.bottom));
+          const left = Math.min(...content.map((r) => r.left));
+          const right = Math.max(...content.map((r) => r.right));
+          return {
+            above: top - panel.top,
+            below: panel.bottom - bottom,
+            before: left - panel.left,
+            after: panel.right - right,
+          };
+        },
+        { state, selector: BLOCK },
+      );
+      expect(Math.abs(gaps.above - gaps.below), `${state}: vertical`).toBeLessThan(2);
+      expect(Math.abs(gaps.before - gaps.after), `${state}: horizontal`).toBeLessThan(2);
+    }
+  });
+});
+
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`category-filter — ${scheme}`, () => {
     test.use({ colorScheme: scheme });
-
-    for (const width of WIDTHS) {
-      test(`lays itself out from its container at ${width}px`, async ({ page }) => {
-        await page.setViewportSize({ width, height: 1200 });
-        await page.goto(PAGE, { waitUntil: "networkidle" });
-        await page.evaluate(() => document.fonts.ready.then(() => true));
-
-        expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(
-          scheme === "dark",
-        );
-
-        const blocks: Array<BlockMetrics & { state: State }> = [];
-        for (const state of STATES) {
-          await showState(page, state);
-          const mounted = await blockMetrics(page, state);
-          expect(mounted, `${state}: mounted copies`).toHaveLength(1);
-          const copy = mounted[0]!;
-          blocks.push({ ...copy, state });
-          const where = `${scheme} ${width}px, ${state} (${copy.containerWidth}px)`;
-          const sidebarShown = copy.containerWidth >= CONTAINER_MD;
-
-          expect(copy.heading, `${where}: heading`).toBe(HEADING);
-          expect(copy.serifHeading, `${where}: serif heading`).toBe(true);
-          expect(copy.description, `${where}: description`).toBe(DESCRIPTION);
-          expect(copy.headerDisplay, `${where}: button beside the heading`).toBe(
-            copy.containerWidth >= CONTAINER_SM ? "flex" : "grid",
-          );
-          expect(copy.buttonDisplay === "none", `${where}: Filters button hidden`).toBe(
-            sidebarShown,
-          );
-          expect(copy.sidebarDisplay === "none", `${where}: sidebar hidden`).toBe(!sidebarShown);
-          if (!sidebarShown) {
-            expect(copy.buttonOpensDialog, `${where}: Filters opens a dialog`).toBe(true);
-            expect(copy.buttonText, `${where}: Filters text`).toBe("Filters");
-            expect(copy.buttonFillsRow, `${where}: Filters fills its row`).toBe(
-              copy.containerWidth < CONTAINER_SM,
-            );
-          } else {
-            expect(copy.sidebarBeside, `${where}: sidebar beside the products`).toBe(true);
-            expect(copy.sidebarWidth, `${where}: sidebar width`).toBeCloseTo(
-              copy.containerWidth >= CONTAINER_LG ? SIDEBAR_LG : SIDEBAR_MD,
-              0,
-            );
-          }
-          expect(copy.paddingTop, `${where}: room above`).toBe(
-            copy.containerWidth >= CONTAINER_LG ? 64 : 48,
-          );
-          expect(copy.results, `${where}: the consumer's products`).toMatch(/^\d+ products?$/);
-          expect(copy.buttonDisabled, `${where}: Filters disabled`).toBe(state === "disabled");
-
-          if (state === "loading") {
-            expect(copy.placeholders, `${where}: placeholders`).toBe(9);
-            expect(copy.facets, `${where}: no facets while loading`).toEqual([]);
-          } else if (state === "empty") {
-            expect(copy.empty, `${where}: empty message`).toBe(EMPTY);
-            expect(copy.facets, `${where}: no facets`).toEqual([]);
-          } else if (state === "error") {
-            expect(copy.alert, `${where}: error title`).toBe(ERROR);
-            expect(copy.retry, `${where}: retry`).toBe("Try again");
-            expect(copy.facets, `${where}: no facets`).toEqual([]);
-          } else {
-            expect(copy.facets, `${where}: facets`).toEqual(FACETS);
-            expect(copy.headedFacets, `${where}: every facet is an h3`).toBe(FACETS.length);
-            expect(copy.chevrons, `${where}: one hidden chevron per facet`).toBe(FACETS.length);
-            expect(copy.openFacets, `${where}: every facet starts open`).toBe(FACETS.length);
-            expect(copy.options, `${where}: options`).toEqual(OPTIONS);
-            expect(copy.counts, `${where}: counts`).toEqual(COUNTS);
-            expect(copy.valueText, `${where}: price range`).toBe(FULL_RANGE);
-            expect(copy.thumbs, `${where}: thumbs named`).toEqual([
-              "Minimum price",
-              "Maximum price",
-            ]);
-            expect(copy.clearDisabled, `${where}: nothing to clear`).toBe(true);
-            expect(copy.empty, `${where}: no empty message`).toBeNull();
-            expect(copy.alert, `${where}: no alert`).toBeNull();
-          }
-
-          const panel = await page.evaluate((state) => {
-            const el = document
-              .querySelector(`[data-demo-state="${state}"]`)!
-              .closest(".preview-panel--demo") as HTMLElement;
-            return { scroll: el.scrollWidth, client: el.clientWidth };
-          }, state);
-          expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
-        }
-
-        expect(
-          blocks.filter((b) => b.allOptionsDisabled).map((b) => b.state),
-          "the disabled render",
-        ).toEqual(["disabled"]);
-        expect(
-          blocks.filter((b) => b.thumbsDisabled).map((b) => b.state),
-          "disabled price",
-        ).toEqual(["disabled"]);
-        expect(
-          blocks.filter((b) => b.allOptionsLive).map((b) => b.state),
-          "every other render with options",
-        ).toEqual(["default", "narrow", "compact", "panel", "wide"]);
-
-        // The heading steps up at `--container-md`.
-        const below = new Set(
-          blocks.filter((b) => b.containerWidth < CONTAINER_MD).map((b) => b.headingSize),
-        );
-        const above = new Set(
-          blocks.filter((b) => b.containerWidth >= CONTAINER_MD).map((b) => b.headingSize),
-        );
-        expect(below.size, "one heading size below @md").toBe(1);
-        expect(above.size, "one heading size from @md").toBe(1);
-        expect([...above][0]!, "heading steps up at @md").toBeGreaterThan([...below][0]!);
-
-        // Each step is exercised on both sides at every viewport, so a step that
-        // silently stopped firing cannot pass this file.
-        const containerWidths = blocks.map((b) => b.containerWidth);
-        for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
-          expect(
-            containerWidths.some((w) => w < step),
-            `a copy under ${step}px`,
-          ).toBe(true);
-          expect(
-            containerWidths.some((w) => w >= step),
-            `a copy over ${step}px`,
-          ).toBe(true);
-        }
-
-        // Below `--container-md` the filters live in a Drawer from the left:
-        // pinned to the left edge, full height, as wide as the viewport up to
-        // `--container-sm`, with Clear all and Show results in a row at its foot.
-        const drawer = await openDrawer(page, "narrow");
-        await expect(drawer).toHaveAttribute("data-placement", "left");
-        await expect.poll(() => drawer.evaluate((el) => el.getBoundingClientRect().left)).toBe(0);
-        const layout = await drawer.evaluate((content) => {
-          const rect = content.getBoundingClientRect();
-          const buttons = [...content.querySelectorAll<HTMLElement>('[data-scope="button"]')];
-          const clear = buttons.find((b) => b.textContent?.trim() === "Clear all")!;
-          const show = buttons.find((b) => b.textContent?.trim() === "Show results")!;
-          return {
-            width: rect.width,
-            top: rect.top,
-            height: rect.height,
-            viewport: window.innerHeight,
-            facets: [
-              ...content.querySelectorAll('[data-scope="accordion"][data-part="item-trigger"]'),
-            ].map((t) => t.textContent?.trim()),
-            inRow:
-              Math.abs(clear.getBoundingClientRect().top - show.getBoundingClientRect().top) < 1,
-            showLast: show.getBoundingClientRect().left >= clear.getBoundingClientRect().right,
-            showVariant: show.getAttribute("data-variant"),
-          };
-        });
-        const where = `${scheme} ${width}px, drawer`;
-        expect(layout.width, `${where}: width`).toBeCloseTo(Math.min(width, CONTAINER_SM), 0);
-        expect(layout.top, `${where}: top`).toBeCloseTo(0, 0);
-        expect(layout.height, `${where}: full height`).toBeCloseTo(layout.viewport, 0);
-        expect(layout.facets, `${where}: the same facets`).toEqual(FACETS);
-        expect(layout.inRow, `${where}: buttons in a row`).toBe(true);
-        expect(layout.showLast, `${where}: Show results last`).toBe(true);
-        expect(layout.showVariant, `${where}: Show results is primary`).toBe("primary");
-        await closeDrawer(page, drawer);
-      });
-    }
 
     test("renders each state inside its drawer", async ({ page }) => {
       await page.setViewportSize({ width: 375, height: 900 });
@@ -506,38 +529,6 @@ for (const scheme of ["light", "dark"] as const) {
 
       await showState(page, "disabled");
       await expect(filtersButton(page, "disabled")).toBeDisabled();
-    });
-
-    test("sits in the middle of its preview", async ({ page }) => {
-      await page.goto(PAGE, { waitUntil: "networkidle" });
-      for (const state of ["default", "empty", "loading", "error", "disabled"] as const) {
-        await showState(page, state);
-        const gaps = await page.evaluate(
-          ({ state, selector }) => {
-            const wrapper = document.querySelector(`[data-demo-state="${state}"]`)!;
-            const panel = wrapper.closest(".preview-panel--demo")!.getBoundingClientRect();
-            const section = wrapper.querySelector(selector)!;
-            const content = [...section.firstElementChild!.children].map((el) =>
-              el.getBoundingClientRect(),
-            );
-            const top = Math.min(...content.map((r) => r.top));
-            const bottom = Math.max(...content.map((r) => r.bottom));
-            const left = Math.min(...content.map((r) => r.left));
-            const right = Math.max(...content.map((r) => r.right));
-            return {
-              above: top - panel.top,
-              below: panel.bottom - bottom,
-              before: left - panel.left,
-              after: panel.right - right,
-            };
-          },
-          { state, selector: BLOCK },
-        );
-        expect(Math.abs(gaps.above - gaps.below), `${scheme} ${state}: vertical`).toBeLessThan(2);
-        expect(Math.abs(gaps.before - gaps.after), `${scheme} ${state}: horizontal`).toBeLessThan(
-          2,
-        );
-      }
     });
 
     test("clears AA contrast on every text it paints", async ({ page }) => {

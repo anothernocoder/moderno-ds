@@ -129,3 +129,18 @@ test.describe("built docs", () => {
     expect(published.filter((path) => basename(path) === "item.json")).toEqual([]);
   });
 });
+
+// The contrast suites run in both schemes, and would measure light twice if the
+// page stopped following the reader's scheme.
+for (const scheme of ["light", "dark"] as const) {
+  test.describe(`built docs — ${scheme}`, () => {
+    test.use({ colorScheme: scheme });
+
+    test("follows the reader's colour scheme", async ({ page }) => {
+      await page.goto(previewPages()[0]!.path);
+      expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(
+        scheme === "dark",
+      );
+    });
+  });
+}

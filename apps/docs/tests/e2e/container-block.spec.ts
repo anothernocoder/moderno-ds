@@ -1,6 +1,6 @@
 /**
  * The container block, checked on the built docs page at the three widths of
- * the responsive policy (375 / 768 / 1280) in both colour schemes. It asserts
+ * the responsive policy (375 / 768 / 1280). It asserts
  * text and computed styles, never pixels (see `playwright.config.ts`).
  *
  * Three claims:
@@ -148,72 +148,71 @@ async function textRatios(page: Page, state: "default" | "content"): Promise<num
   }, state);
 }
 
+// Geometry and logic, which no colour changes: one pass is enough.
+test.describe("container — either scheme", () => {
+  for (const width of WIDTHS) {
+    test(`sizes and pads itself from its container at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1200 });
+      await page.goto(PAGE, { waitUntil: "networkidle" });
+      await page.evaluate(() => document.fonts.ready.then(() => true));
+
+      const widths: number[] = [];
+      for (const state of STATES) {
+        await showState(page, state);
+        const mounted = await blockMetrics(page, state);
+        expect(mounted, `${state}: mounted copies`).toHaveLength(1);
+        const block = mounted[0]!;
+        widths.push(block.containerWidth);
+        const where = `${width}px, ${state} (${block.containerWidth}px)`;
+
+        const size = SIZES[state] ?? (state === "content" ? "md" : "lg");
+        expect(block.maxWidth, `${where}: max width`).toBe(
+          size === "full" ? "none" : block.steps[size],
+        );
+        const cap = size === "full" ? Infinity : parseFloat(block.steps[size]);
+        expect(block.contentWidth, `${where}: content width`).toBeCloseTo(
+          Math.min(block.containerWidth, cap),
+          0,
+        );
+        expect(Math.abs(block.sideRoom[0] - block.sideRoom[1]), `${where}: centred`).toBeLessThan(
+          1,
+        );
+
+        expect(block.gutter, `${where}: gutter`).toBe(
+          block.containerWidth >= CONTAINER_MD ? 8 : block.containerWidth >= CONTAINER_SM ? 6 : 4,
+        );
+        expect(block.room, `${where}: room above and below`).toBe(
+          block.containerWidth >= CONTAINER_LG ? 10 : 6,
+        );
+        expect(block.sample, `${where}: sample content`).toBe(state !== "content");
+
+        const panel = await page.evaluate((state) => {
+          const el = document
+            .querySelector(`[data-demo-state="${state}"]`)!
+            .closest(".preview-panel--demo") as HTMLElement;
+          return { scroll: el.scrollWidth, client: el.clientWidth };
+        }, state);
+        expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
+      }
+
+      // Each step is exercised on both sides at every viewport.
+      for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
+        expect(
+          widths.some((w) => w < step),
+          `a copy under ${step}px`,
+        ).toBe(true);
+        expect(
+          widths.some((w) => w >= step),
+          `a copy over ${step}px`,
+        ).toBe(true);
+      }
+    });
+  }
+});
+
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`container — ${scheme}`, () => {
     test.use({ colorScheme: scheme });
-
-    for (const width of WIDTHS) {
-      test(`sizes and pads itself from its container at ${width}px`, async ({ page }) => {
-        await page.setViewportSize({ width, height: 1200 });
-        await page.goto(PAGE, { waitUntil: "networkidle" });
-        await page.evaluate(() => document.fonts.ready.then(() => true));
-
-        expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(
-          scheme === "dark",
-        );
-
-        const widths: number[] = [];
-        for (const state of STATES) {
-          await showState(page, state);
-          const mounted = await blockMetrics(page, state);
-          expect(mounted, `${state}: mounted copies`).toHaveLength(1);
-          const block = mounted[0]!;
-          widths.push(block.containerWidth);
-          const where = `${scheme} ${width}px, ${state} (${block.containerWidth}px)`;
-
-          const size = SIZES[state] ?? (state === "content" ? "md" : "lg");
-          expect(block.maxWidth, `${where}: max width`).toBe(
-            size === "full" ? "none" : block.steps[size],
-          );
-          const cap = size === "full" ? Infinity : parseFloat(block.steps[size]);
-          expect(block.contentWidth, `${where}: content width`).toBeCloseTo(
-            Math.min(block.containerWidth, cap),
-            0,
-          );
-          expect(Math.abs(block.sideRoom[0] - block.sideRoom[1]), `${where}: centred`).toBeLessThan(
-            1,
-          );
-
-          expect(block.gutter, `${where}: gutter`).toBe(
-            block.containerWidth >= CONTAINER_MD ? 8 : block.containerWidth >= CONTAINER_SM ? 6 : 4,
-          );
-          expect(block.room, `${where}: room above and below`).toBe(
-            block.containerWidth >= CONTAINER_LG ? 10 : 6,
-          );
-          expect(block.sample, `${where}: sample content`).toBe(state !== "content");
-
-          const panel = await page.evaluate((state) => {
-            const el = document
-              .querySelector(`[data-demo-state="${state}"]`)!
-              .closest(".preview-panel--demo") as HTMLElement;
-            return { scroll: el.scrollWidth, client: el.clientWidth };
-          }, state);
-          expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
-        }
-
-        // Each step is exercised on both sides at every viewport.
-        for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
-          expect(
-            widths.some((w) => w < step),
-            `a copy under ${step}px`,
-          ).toBe(true);
-          expect(
-            widths.some((w) => w >= step),
-            `a copy over ${step}px`,
-          ).toBe(true);
-        }
-      });
-    }
 
     test("clears AA contrast on the sample and on content it is given", async ({ page }) => {
       await page.goto(PAGE, { waitUntil: "networkidle" });

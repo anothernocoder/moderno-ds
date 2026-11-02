@@ -1,6 +1,6 @@
 /**
  * The banner block, checked on the built docs page at the three widths of the
- * responsive policy (375 / 768 / 1280) in both colour schemes. It asserts text
+ * responsive policy (375 / 768 / 1280). It asserts text
  * and computed styles; no screenshot baseline is committed.
  *
  * Five claims:
@@ -241,98 +241,97 @@ function defaultButton(page: Page, name: string): Locator {
     .getByRole("button", { name, exact: true });
 }
 
+// Geometry and logic, which no colour changes: one pass is enough.
+test.describe("banner — either scheme", () => {
+  for (const width of WIDTHS) {
+    test(`lays itself out from its container at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1200 });
+      await page.goto(PAGE, { waitUntil: "networkidle" });
+      await page.evaluate(() => document.fonts.ready.then(() => true));
+
+      const blocks: Array<BlockMetrics & { state: State }> = [];
+      for (const state of STATES) {
+        await showState(page, state);
+        const mounted = await blockMetrics(page, state);
+        expect(mounted, `${state}: mounted copies`).toHaveLength(1);
+        const block = mounted[0]!;
+        blocks.push({ ...block, state });
+        const where = `${width}px, ${state} (${block.containerWidth}px)`;
+
+        if (block.copy) {
+          expect(block.copy, `${where}: copy`).toEqual({
+            badge: BADGE,
+            title: TITLE,
+            message: MESSAGE,
+          });
+          expect(block.action, `${where}: action`).toBe(ACTION);
+          expect(block.dismissible, `${where}: dismiss`).toBe(true);
+
+          expect(block.actionBesideText, `${where}: action beside the message`).toBe(
+            block.containerWidth >= CONTAINER_SM,
+          );
+          expect(block.oneLine, `${where}: badge, title and message on one line`).toBe(
+            block.containerWidth >= CONTAINER_MD,
+          );
+          expect(block.centred, `${where}: centred in the strip`).toBe(
+            block.containerWidth >= CONTAINER_LG,
+          );
+        }
+
+        // The 50rem frame scrolls inside itself; the panel holding the demo
+        // never pushes the page sideways.
+        const panel = await page.evaluate((state) => {
+          const el = document
+            .querySelector(`[data-demo-state="${state}"]`)!
+            .closest(".preview-panel--demo") as HTMLElement;
+          return { scroll: el.scrollWidth, client: el.clientWidth };
+        }, state);
+        expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
+      }
+
+      const strips = blocks.filter((block) => block.copy !== null);
+      expect(
+        strips.map((block) => block.state),
+        `${width}px: copies rendering the strip`,
+      ).toEqual(["default", "narrow", "compact", "panel", "wide", "disabled"]);
+
+      const empty = blocks.find((block) => block.state === "empty")!;
+      expect(empty.height, "the empty render takes no space").toBe(0);
+      expect(empty.skeletonStrips + Number(empty.failedLoad), "the empty render").toBe(0);
+
+      expect(
+        blocks.filter((block) => block.skeletonStrips === 1).map((block) => block.state),
+        "the loading render",
+      ).toEqual(["loading"]);
+      expect(
+        blocks.filter((block) => block.failedLoad).map((block) => block.state),
+        "the failed-load render",
+      ).toEqual(["error"]);
+      expect(
+        strips.filter((block) => block.allButtonsInert).map((block) => block.state),
+        "the disabled render",
+      ).toEqual(["disabled"]);
+
+      // Each step is exercised on both sides at every viewport, so a step that
+      // silently stopped firing cannot pass this file.
+      const containerWidths = strips.map((b) => b.containerWidth);
+      for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
+        expect(
+          containerWidths.some((w) => w < step),
+          `a copy under ${step}px`,
+        ).toBe(true);
+        expect(
+          containerWidths.some((w) => w >= step),
+          `a copy over ${step}px`,
+        ).toBe(true);
+      }
+    });
+  }
+});
+
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`banner — ${scheme}`, () => {
     test.use({ colorScheme: scheme });
-
-    for (const width of WIDTHS) {
-      test(`lays itself out from its container at ${width}px`, async ({ page }) => {
-        await page.setViewportSize({ width, height: 1200 });
-        await page.goto(PAGE, { waitUntil: "networkidle" });
-        await page.evaluate(() => document.fonts.ready.then(() => true));
-
-        expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(
-          scheme === "dark",
-        );
-
-        const blocks: Array<BlockMetrics & { state: State }> = [];
-        for (const state of STATES) {
-          await showState(page, state);
-          const mounted = await blockMetrics(page, state);
-          expect(mounted, `${state}: mounted copies`).toHaveLength(1);
-          const block = mounted[0]!;
-          blocks.push({ ...block, state });
-          const where = `${scheme} ${width}px, ${state} (${block.containerWidth}px)`;
-
-          if (block.copy) {
-            expect(block.copy, `${where}: copy`).toEqual({
-              badge: BADGE,
-              title: TITLE,
-              message: MESSAGE,
-            });
-            expect(block.action, `${where}: action`).toBe(ACTION);
-            expect(block.dismissible, `${where}: dismiss`).toBe(true);
-
-            expect(block.actionBesideText, `${where}: action beside the message`).toBe(
-              block.containerWidth >= CONTAINER_SM,
-            );
-            expect(block.oneLine, `${where}: badge, title and message on one line`).toBe(
-              block.containerWidth >= CONTAINER_MD,
-            );
-            expect(block.centred, `${where}: centred in the strip`).toBe(
-              block.containerWidth >= CONTAINER_LG,
-            );
-          }
-
-          // The 50rem frame scrolls inside itself; the panel holding the demo
-          // never pushes the page sideways.
-          const panel = await page.evaluate((state) => {
-            const el = document
-              .querySelector(`[data-demo-state="${state}"]`)!
-              .closest(".preview-panel--demo") as HTMLElement;
-            return { scroll: el.scrollWidth, client: el.clientWidth };
-          }, state);
-          expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
-        }
-
-        const strips = blocks.filter((block) => block.copy !== null);
-        expect(
-          strips.map((block) => block.state),
-          `${scheme} ${width}px: copies rendering the strip`,
-        ).toEqual(["default", "narrow", "compact", "panel", "wide", "disabled"]);
-
-        const empty = blocks.find((block) => block.state === "empty")!;
-        expect(empty.height, "the empty render takes no space").toBe(0);
-        expect(empty.skeletonStrips + Number(empty.failedLoad), "the empty render").toBe(0);
-
-        expect(
-          blocks.filter((block) => block.skeletonStrips === 1).map((block) => block.state),
-          "the loading render",
-        ).toEqual(["loading"]);
-        expect(
-          blocks.filter((block) => block.failedLoad).map((block) => block.state),
-          "the failed-load render",
-        ).toEqual(["error"]);
-        expect(
-          strips.filter((block) => block.allButtonsInert).map((block) => block.state),
-          "the disabled render",
-        ).toEqual(["disabled"]);
-
-        // Each step is exercised on both sides at every viewport, so a step that
-        // silently stopped firing cannot pass this file.
-        const containerWidths = strips.map((b) => b.containerWidth);
-        for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
-          expect(
-            containerWidths.some((w) => w < step),
-            `a copy under ${step}px`,
-          ).toBe(true);
-          expect(
-            containerWidths.some((w) => w >= step),
-            `a copy over ${step}px`,
-          ).toBe(true);
-        }
-      });
-    }
 
     test("clears AA contrast on every text it paints", async ({ page }) => {
       await page.goto(PAGE, { waitUntil: "networkidle" });

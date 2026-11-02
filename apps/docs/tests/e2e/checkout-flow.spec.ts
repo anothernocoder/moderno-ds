@@ -1,8 +1,7 @@
 /**
  * The checkout flow, checked on the built docs page: walked end to end with
  * the buttons and links a reader can see, stepped back through, and measured
- * at the three widths of the responsive policy (375 / 768 / 1280) in both
- * colour schemes and the three site themes.
+ * at the three widths of the responsive policy (375 / 768 / 1280) and the three site themes.
  *
  * 1. **The journey.** cart → shipping → payment → review → confirmation →
  *    back to an empty cart. The page prints the assembly's callbacks, so the
@@ -326,60 +325,60 @@ test.describe("checkout flow", () => {
     await expect(shipping.locator("> div").first()).toHaveClass(/moderno-screen-shipping/);
   });
 
+  // Geometry and logic, which no colour changes: one pass is enough.
+  test.describe("either scheme", () => {
+    for (const width of WIDTHS) {
+      test(`lays the screen out from its container at ${width}px`, async ({ page }) => {
+        await page.setViewportSize({ width, height: 1200 });
+        await page.goto(PAGE, { waitUntil: "networkidle" });
+        await page.evaluate(() => document.fonts.ready.then(() => true));
+
+        await hydrated(page);
+
+        const mounted: FlowMetrics[] = [];
+        for (const tab of TABS) {
+          await showTab(page, tab);
+          const copies = await flowMetrics(page);
+          expect(copies, `${width}px, ${tab}: mounted copies`).toHaveLength(1);
+          mounted.push(copies[0]!);
+        }
+
+        const widths = mounted.map((m) => m.containerWidth);
+        expect(
+          widths.some((w) => w < CONTAINER_SM),
+          `${width}px: a copy below @sm`,
+        ).toBe(true);
+        expect(
+          widths.some((w) => w >= CONTAINER_MD),
+          `${width}px: a copy at @md+`,
+        ).toBe(true);
+
+        for (const [index, metrics] of mounted.entries()) {
+          const where = `${width}px, ${TABS[index]} (${metrics.containerWidth}px)`;
+          expect(metrics.mastheadDisplay, `${where}: masthead`).toBe(
+            metrics.containerWidth >= CONTAINER_SM ? "flex" : "grid",
+          );
+          expect(metrics.footerDisplay, `${where}: footer`).toBe(
+            metrics.containerWidth >= CONTAINER_MD ? "flex" : "grid",
+          );
+          expect(metrics.rootHeight, `${where}: root height`).toBeGreaterThanOrEqual(
+            metrics.frameHeight,
+          );
+          expect(metrics.headingLevels[0], `${where}: first heading`).toBe(1);
+          for (const [i, level] of metrics.headingLevels.entries()) {
+            if (i === 0) continue;
+            expect(level, `${where}: heading ${i + 1}`).toBeLessThanOrEqual(
+              metrics.headingLevels[i - 1]! + 1,
+            );
+          }
+        }
+      });
+    }
+  });
+
   for (const scheme of ["light", "dark"] as const) {
     test.describe(`${scheme}`, () => {
       test.use({ colorScheme: scheme });
-
-      for (const width of WIDTHS) {
-        test(`lays the screen out from its container at ${width}px`, async ({ page }) => {
-          await page.setViewportSize({ width, height: 1200 });
-          await page.goto(PAGE, { waitUntil: "networkidle" });
-          await page.evaluate(() => document.fonts.ready.then(() => true));
-          expect(
-            await page.evaluate(() => document.documentElement.classList.contains("dark")),
-          ).toBe(scheme === "dark");
-
-          await hydrated(page);
-
-          const mounted: FlowMetrics[] = [];
-          for (const tab of TABS) {
-            await showTab(page, tab);
-            const copies = await flowMetrics(page);
-            expect(copies, `${scheme} ${width}px, ${tab}: mounted copies`).toHaveLength(1);
-            mounted.push(copies[0]!);
-          }
-
-          const widths = mounted.map((m) => m.containerWidth);
-          expect(
-            widths.some((w) => w < CONTAINER_SM),
-            `${width}px: a copy below @sm`,
-          ).toBe(true);
-          expect(
-            widths.some((w) => w >= CONTAINER_MD),
-            `${width}px: a copy at @md+`,
-          ).toBe(true);
-
-          for (const [index, metrics] of mounted.entries()) {
-            const where = `${scheme} ${width}px, ${TABS[index]} (${metrics.containerWidth}px)`;
-            expect(metrics.mastheadDisplay, `${where}: masthead`).toBe(
-              metrics.containerWidth >= CONTAINER_SM ? "flex" : "grid",
-            );
-            expect(metrics.footerDisplay, `${where}: footer`).toBe(
-              metrics.containerWidth >= CONTAINER_MD ? "flex" : "grid",
-            );
-            expect(metrics.rootHeight, `${where}: root height`).toBeGreaterThanOrEqual(
-              metrics.frameHeight,
-            );
-            expect(metrics.headingLevels[0], `${where}: first heading`).toBe(1);
-            for (const [i, level] of metrics.headingLevels.entries()) {
-              if (i === 0) continue;
-              expect(level, `${where}: heading ${i + 1}`).toBeLessThanOrEqual(
-                metrics.headingLevels[i - 1]! + 1,
-              );
-            }
-          }
-        });
-      }
 
       for (const theme of THEMES) {
         test(`clears AA contrast on every text in ${theme.name}`, async ({ page }) => {

@@ -1,6 +1,6 @@
 /**
  * The slide-over block, checked on the built docs page at the three widths of
- * the responsive policy (375 / 768 / 1280) in both colour schemes. It asserts
+ * the responsive policy (375 / 768 / 1280). It asserts
  * text and computed styles; no screenshot baseline is committed.
  *
  * Seven claims:
@@ -300,120 +300,149 @@ async function drawerMetrics(drawer: Locator): Promise<DrawerMetrics> {
   });
 }
 
+// Geometry and logic, which no colour changes: one pass is enough.
+test.describe("slide-over — either scheme", () => {
+  for (const width of WIDTHS) {
+    test(`lays itself out from its container at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1200 });
+      await page.goto(PAGE, { waitUntil: "networkidle" });
+      await page.evaluate(() => document.fonts.ready.then(() => true));
+
+      const blocks: Array<BlockMetrics & { state: State }> = [];
+      for (const state of STATES) {
+        await showState(page, state);
+        const mounted = await blockMetrics(page, state);
+        expect(mounted, `${state}: mounted copies`).toHaveLength(1);
+        const block = mounted[0]!;
+        blocks.push({ ...block, state });
+        const where = `${width}px, ${state} (${block.containerWidth}px)`;
+        const sm = block.containerWidth >= CONTAINER_SM;
+        const lg = block.containerWidth >= CONTAINER_LG;
+        const empty = state === "empty";
+
+        expect(block.heading, `${where}: heading`).toBe(empty ? EMPTY_NAME : NAME);
+        expect(block.serifHeading, `${where}: serif heading`).toBe(true);
+        expect(block.email, `${where}: email`).toBe(empty ? EMPTY_EMAIL : EMAIL);
+        expect(block.terms, `${where}: terms`).toEqual(["Role", "Notes"]);
+        expect(block.values, `${where}: values`).toEqual(
+          empty ? [NOT_ADDED, NOT_ADDED] : [ROLE, NOTES],
+        );
+        expect(block.trigger, `${where}: trigger`).toBe(TRIGGER);
+        expect(block.opensDialog, `${where}: trigger opens a dialog`).toBe(true);
+        expect(block.triggerDisabled, `${where}: disabled trigger`).toBe(state === "disabled");
+        expect(block.triggerFillsRow, `${where}: trigger fills its row`).toBe(!sm);
+        expect(block.termsBesideValues, `${where}: terms beside values`).toBe(sm);
+        expect(block.panelPadding, `${where}: panel padding`).toBe(sm ? 32 : 24);
+        expect(block.triggerBesideName, `${where}: trigger beside the name`).toBe(lg);
+        expect(block.paddingTop, `${where}: room above`).toBe(lg ? 64 : 48);
+        expect(block.offCentre, `${where}: centred`).toBeLessThan(1);
+
+        // The 50rem frame scrolls inside itself; the panel holding the demo
+        // never pushes the page sideways.
+        const panel = await page.evaluate((state) => {
+          const el = document
+            .querySelector(`[data-demo-state="${state}"]`)!
+            .closest(".preview-panel--demo") as HTMLElement;
+          return { scroll: el.scrollWidth, client: el.clientWidth };
+        }, state);
+        expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
+      }
+
+      // The heading steps up at `--container-md`: one size below it, one
+      // larger size from it on.
+      const below = new Set(
+        blocks.filter((b) => b.containerWidth < CONTAINER_MD).map((b) => b.headingSize),
+      );
+      const above = new Set(
+        blocks.filter((b) => b.containerWidth >= CONTAINER_MD).map((b) => b.headingSize),
+      );
+      expect(below.size, "one heading size below @md").toBe(1);
+      expect(above.size, "one heading size from @md").toBe(1);
+      expect([...above][0]!, "the heading steps up at @md").toBeGreaterThan([...below][0]!);
+
+      // Each step is exercised on both sides at every viewport, so a step that
+      // silently stopped firing cannot pass this file.
+      const containerWidths = blocks.map((b) => b.containerWidth);
+      for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
+        expect(
+          containerWidths.some((w) => w < step),
+          `a copy under ${step}px`,
+        ).toBe(true);
+        expect(
+          containerWidths.some((w) => w >= step),
+          `a copy over ${step}px`,
+        ).toBe(true);
+      }
+
+      // The drawer is the Drawer primitive at its default placement: pinned
+      // to the right edge, full height, as wide as the viewport up to
+      // `--container-sm`, with the buttons at its foot, save last.
+      const drawer = await openDrawer(page, "default");
+      await expect(drawer).toHaveAttribute("data-placement", "right");
+      await expect
+        .poll(() => drawer.evaluate((el) => el.getBoundingClientRect().right))
+        .toBeCloseTo(width, 0);
+      const layout = await drawer.evaluate((content) => {
+        const rect = content.getBoundingClientRect();
+        const style = getComputedStyle(content);
+        const cancel = content
+          .querySelector('button[type="button"][data-scope="button"]')!
+          .getBoundingClientRect();
+        const save = content.querySelector('button[type="submit"]')!.getBoundingClientRect();
+        return {
+          width: rect.width,
+          top: rect.top,
+          height: rect.height,
+          viewport: window.innerHeight,
+          footGap: rect.bottom - parseFloat(style.paddingBlockEnd) - save.bottom,
+          buttonsInRow: Math.abs(cancel.top - save.top) < 1,
+          saveLast: save.left >= cancel.right,
+        };
+      });
+      const where = `${width}px, drawer`;
+      expect(layout.width, `${where}: width`).toBeCloseTo(Math.min(width, CONTAINER_SM), 0);
+      expect(layout.top, `${where}: top`).toBeCloseTo(0, 0);
+      expect(layout.height, `${where}: full height`).toBeCloseTo(layout.viewport, 0);
+      expect(Math.abs(layout.footGap), `${where}: buttons at its foot`).toBeLessThan(1);
+      expect(layout.buttonsInRow, `${where}: buttons in a row`).toBe(true);
+      expect(layout.saveLast, `${where}: save last`).toBe(true);
+    });
+  }
+
+  test("sits in the middle of its preview", async ({ page }) => {
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    for (const state of ["default", "empty", "loading", "error", "disabled"] as const) {
+      await showState(page, state);
+      const gaps = await page.evaluate(
+        ({ state, selector }) => {
+          const wrapper = document.querySelector(`[data-demo-state="${state}"]`)!;
+          const panel = wrapper.closest(".preview-panel--demo")!.getBoundingClientRect();
+          const block = wrapper.querySelector(selector)!;
+          const content = [...block.firstElementChild!.children].map((el) =>
+            el.getBoundingClientRect(),
+          );
+          const top = Math.min(...content.map((r) => r.top));
+          const bottom = Math.max(...content.map((r) => r.bottom));
+          const left = Math.min(...content.map((r) => r.left));
+          const right = Math.max(...content.map((r) => r.right));
+          return {
+            above: top - panel.top,
+            below: panel.bottom - bottom,
+            before: left - panel.left,
+            after: panel.right - right,
+          };
+        },
+        { state, selector: BLOCK },
+      );
+      expect(Math.abs(gaps.above - gaps.below), `${state}: vertical`).toBeLessThan(2);
+      expect(Math.abs(gaps.before - gaps.after), `${state}: horizontal`).toBeLessThan(2);
+    }
+  });
+});
+
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`slide-over — ${scheme}`, () => {
     test.use({ colorScheme: scheme });
-
-    for (const width of WIDTHS) {
-      test(`lays itself out from its container at ${width}px`, async ({ page }) => {
-        await page.setViewportSize({ width, height: 1200 });
-        await page.goto(PAGE, { waitUntil: "networkidle" });
-        await page.evaluate(() => document.fonts.ready.then(() => true));
-
-        expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(
-          scheme === "dark",
-        );
-
-        const blocks: Array<BlockMetrics & { state: State }> = [];
-        for (const state of STATES) {
-          await showState(page, state);
-          const mounted = await blockMetrics(page, state);
-          expect(mounted, `${state}: mounted copies`).toHaveLength(1);
-          const block = mounted[0]!;
-          blocks.push({ ...block, state });
-          const where = `${scheme} ${width}px, ${state} (${block.containerWidth}px)`;
-          const sm = block.containerWidth >= CONTAINER_SM;
-          const lg = block.containerWidth >= CONTAINER_LG;
-          const empty = state === "empty";
-
-          expect(block.heading, `${where}: heading`).toBe(empty ? EMPTY_NAME : NAME);
-          expect(block.serifHeading, `${where}: serif heading`).toBe(true);
-          expect(block.email, `${where}: email`).toBe(empty ? EMPTY_EMAIL : EMAIL);
-          expect(block.terms, `${where}: terms`).toEqual(["Role", "Notes"]);
-          expect(block.values, `${where}: values`).toEqual(
-            empty ? [NOT_ADDED, NOT_ADDED] : [ROLE, NOTES],
-          );
-          expect(block.trigger, `${where}: trigger`).toBe(TRIGGER);
-          expect(block.opensDialog, `${where}: trigger opens a dialog`).toBe(true);
-          expect(block.triggerDisabled, `${where}: disabled trigger`).toBe(state === "disabled");
-          expect(block.triggerFillsRow, `${where}: trigger fills its row`).toBe(!sm);
-          expect(block.termsBesideValues, `${where}: terms beside values`).toBe(sm);
-          expect(block.panelPadding, `${where}: panel padding`).toBe(sm ? 32 : 24);
-          expect(block.triggerBesideName, `${where}: trigger beside the name`).toBe(lg);
-          expect(block.paddingTop, `${where}: room above`).toBe(lg ? 64 : 48);
-          expect(block.offCentre, `${where}: centred`).toBeLessThan(1);
-
-          // The 50rem frame scrolls inside itself; the panel holding the demo
-          // never pushes the page sideways.
-          const panel = await page.evaluate((state) => {
-            const el = document
-              .querySelector(`[data-demo-state="${state}"]`)!
-              .closest(".preview-panel--demo") as HTMLElement;
-            return { scroll: el.scrollWidth, client: el.clientWidth };
-          }, state);
-          expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
-        }
-
-        // The heading steps up at `--container-md`: one size below it, one
-        // larger size from it on.
-        const below = new Set(
-          blocks.filter((b) => b.containerWidth < CONTAINER_MD).map((b) => b.headingSize),
-        );
-        const above = new Set(
-          blocks.filter((b) => b.containerWidth >= CONTAINER_MD).map((b) => b.headingSize),
-        );
-        expect(below.size, "one heading size below @md").toBe(1);
-        expect(above.size, "one heading size from @md").toBe(1);
-        expect([...above][0]!, "the heading steps up at @md").toBeGreaterThan([...below][0]!);
-
-        // Each step is exercised on both sides at every viewport, so a step that
-        // silently stopped firing cannot pass this file.
-        const containerWidths = blocks.map((b) => b.containerWidth);
-        for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
-          expect(
-            containerWidths.some((w) => w < step),
-            `a copy under ${step}px`,
-          ).toBe(true);
-          expect(
-            containerWidths.some((w) => w >= step),
-            `a copy over ${step}px`,
-          ).toBe(true);
-        }
-
-        // The drawer is the Drawer primitive at its default placement: pinned
-        // to the right edge, full height, as wide as the viewport up to
-        // `--container-sm`, with the buttons at its foot, save last.
-        const drawer = await openDrawer(page, "default");
-        await expect(drawer).toHaveAttribute("data-placement", "right");
-        await expect
-          .poll(() => drawer.evaluate((el) => el.getBoundingClientRect().right))
-          .toBeCloseTo(width, 0);
-        const layout = await drawer.evaluate((content) => {
-          const rect = content.getBoundingClientRect();
-          const style = getComputedStyle(content);
-          const cancel = content
-            .querySelector('button[type="button"][data-scope="button"]')!
-            .getBoundingClientRect();
-          const save = content.querySelector('button[type="submit"]')!.getBoundingClientRect();
-          return {
-            width: rect.width,
-            top: rect.top,
-            height: rect.height,
-            viewport: window.innerHeight,
-            footGap: rect.bottom - parseFloat(style.paddingBlockEnd) - save.bottom,
-            buttonsInRow: Math.abs(cancel.top - save.top) < 1,
-            saveLast: save.left >= cancel.right,
-          };
-        });
-        const where = `${scheme} ${width}px, drawer`;
-        expect(layout.width, `${where}: width`).toBeCloseTo(Math.min(width, CONTAINER_SM), 0);
-        expect(layout.top, `${where}: top`).toBeCloseTo(0, 0);
-        expect(layout.height, `${where}: full height`).toBeCloseTo(layout.viewport, 0);
-        expect(Math.abs(layout.footGap), `${where}: buttons at its foot`).toBeLessThan(1);
-        expect(layout.buttonsInRow, `${where}: buttons in a row`).toBe(true);
-        expect(layout.saveLast, `${where}: save last`).toBe(true);
-      });
-    }
 
     test("renders each state inside its drawer", async ({ page }) => {
       await page.goto(PAGE, { waitUntil: "networkidle" });
@@ -468,38 +497,6 @@ for (const scheme of ["light", "dark"] as const) {
       await expect(trigger(page, "disabled")).toBeDisabled();
       await trigger(page, "disabled").click({ force: true });
       await expect(page.getByRole("dialog")).toHaveCount(0);
-    });
-
-    test("sits in the middle of its preview", async ({ page }) => {
-      await page.goto(PAGE, { waitUntil: "networkidle" });
-      for (const state of ["default", "empty", "loading", "error", "disabled"] as const) {
-        await showState(page, state);
-        const gaps = await page.evaluate(
-          ({ state, selector }) => {
-            const wrapper = document.querySelector(`[data-demo-state="${state}"]`)!;
-            const panel = wrapper.closest(".preview-panel--demo")!.getBoundingClientRect();
-            const block = wrapper.querySelector(selector)!;
-            const content = [...block.firstElementChild!.children].map((el) =>
-              el.getBoundingClientRect(),
-            );
-            const top = Math.min(...content.map((r) => r.top));
-            const bottom = Math.max(...content.map((r) => r.bottom));
-            const left = Math.min(...content.map((r) => r.left));
-            const right = Math.max(...content.map((r) => r.right));
-            return {
-              above: top - panel.top,
-              below: panel.bottom - bottom,
-              before: left - panel.left,
-              after: panel.right - right,
-            };
-          },
-          { state, selector: BLOCK },
-        );
-        expect(Math.abs(gaps.above - gaps.below), `${scheme} ${state}: vertical`).toBeLessThan(2);
-        expect(Math.abs(gaps.before - gaps.after), `${scheme} ${state}: horizontal`).toBeLessThan(
-          2,
-        );
-      }
     });
 
     test("clears AA contrast on every text it paints", async ({ page }) => {

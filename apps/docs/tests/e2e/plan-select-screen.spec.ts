@@ -203,81 +203,80 @@ async function textRatios(page: Page, tab: Tab): Promise<Record<string, number>>
   );
 }
 
+// Geometry and logic, which no colour changes: one pass is enough.
+test.describe("plan-select — either scheme", () => {
+  for (const width of WIDTHS) {
+    test(`lays itself out from its container at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1200 });
+      await page.goto(PAGE, { waitUntil: "networkidle" });
+      await page.evaluate(() => document.fonts.ready.then(() => true));
+      await hydrated(page);
+
+      const screens: ScreenMetrics[] = [];
+      for (const tab of TABS) {
+        await showTab(page, tab);
+        const mounted = await screenMetrics(page, tab);
+        expect(mounted, `${width}px, ${tab}: mounted copies`).toHaveLength(1);
+        screens.push(mounted[0]!);
+      }
+
+      const widths = screens.map((s) => s.containerWidth);
+      expect(
+        widths.some((w) => w < CONTAINER_SM),
+        `${width}px: a copy below @sm`,
+      ).toBe(true);
+      expect(
+        widths.some((w) => w >= CONTAINER_MD),
+        `${width}px: a copy at or above @md`,
+      ).toBe(true);
+
+      for (const [index, screen] of screens.entries()) {
+        const tab = TABS[index]!;
+        const where = `${width}px, ${tab} (${screen.containerWidth}px)`;
+        expect(screen.mastheadDisplay, `${where}: masthead`).toBe(
+          screen.containerWidth >= CONTAINER_SM ? "flex" : "grid",
+        );
+        expect(screen.footerDisplay, `${where}: footer`).toBe(
+          screen.containerWidth >= CONTAINER_MD ? "flex" : "grid",
+        );
+        expect(screen.rootHeight, `${where}: root height`).toBeGreaterThanOrEqual(
+          screen.frameHeight,
+        );
+
+        // The plans are only drawn by the width tabs; the block reads its own
+        // container, which is the screen's width less its padding.
+        if (WIDTH_TABS.includes(tab)) {
+          expect(screen.plansFlow, `${where}: plans`).toBe(
+            screen.containerWidth >= CONTAINER_MD + 48 ? "column" : "row",
+          );
+        } else {
+          expect(screen.plansFlow, `${where}: no plan list`).toBeNull();
+        }
+
+        expect(screen.headingLevels[0], `${where}: first heading`).toBe(1);
+        expect(
+          screen.headingLevels.filter((level) => level === 1),
+          `${where}: one h1`,
+        ).toHaveLength(1);
+        for (const [i, level] of screen.headingLevels.entries()) {
+          if (i === 0) continue;
+          expect(
+            level,
+            `${where}: heading ${i + 1} of ${screen.headingLevels.join("/")}`,
+          ).toBeLessThanOrEqual(screen.headingLevels[i - 1]! + 1);
+        }
+      }
+
+      // The phone frame stacks the plans; the tablet frame sets them side by side.
+      expect(screens[0]!.plansFlow, `${width}px: phone plans`).toBe("row");
+      expect(screens[1]!.plansFlow, `${width}px: tablet plans`).toBe("column");
+    });
+  }
+});
+
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`plan-select — ${scheme}`, () => {
     test.use({ colorScheme: scheme });
-
-    for (const width of WIDTHS) {
-      test(`lays itself out from its container at ${width}px`, async ({ page }) => {
-        await page.setViewportSize({ width, height: 1200 });
-        await page.goto(PAGE, { waitUntil: "networkidle" });
-        await page.evaluate(() => document.fonts.ready.then(() => true));
-        await hydrated(page);
-
-        expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(
-          scheme === "dark",
-        );
-
-        const screens: ScreenMetrics[] = [];
-        for (const tab of TABS) {
-          await showTab(page, tab);
-          const mounted = await screenMetrics(page, tab);
-          expect(mounted, `${scheme} ${width}px, ${tab}: mounted copies`).toHaveLength(1);
-          screens.push(mounted[0]!);
-        }
-
-        const widths = screens.map((s) => s.containerWidth);
-        expect(
-          widths.some((w) => w < CONTAINER_SM),
-          `${width}px: a copy below @sm`,
-        ).toBe(true);
-        expect(
-          widths.some((w) => w >= CONTAINER_MD),
-          `${width}px: a copy at or above @md`,
-        ).toBe(true);
-
-        for (const [index, screen] of screens.entries()) {
-          const tab = TABS[index]!;
-          const where = `${scheme} ${width}px, ${tab} (${screen.containerWidth}px)`;
-          expect(screen.mastheadDisplay, `${where}: masthead`).toBe(
-            screen.containerWidth >= CONTAINER_SM ? "flex" : "grid",
-          );
-          expect(screen.footerDisplay, `${where}: footer`).toBe(
-            screen.containerWidth >= CONTAINER_MD ? "flex" : "grid",
-          );
-          expect(screen.rootHeight, `${where}: root height`).toBeGreaterThanOrEqual(
-            screen.frameHeight,
-          );
-
-          // The plans are only drawn by the width tabs; the block reads its own
-          // container, which is the screen's width less its padding.
-          if (WIDTH_TABS.includes(tab)) {
-            expect(screen.plansFlow, `${where}: plans`).toBe(
-              screen.containerWidth >= CONTAINER_MD + 48 ? "column" : "row",
-            );
-          } else {
-            expect(screen.plansFlow, `${where}: no plan list`).toBeNull();
-          }
-
-          expect(screen.headingLevels[0], `${where}: first heading`).toBe(1);
-          expect(
-            screen.headingLevels.filter((level) => level === 1),
-            `${where}: one h1`,
-          ).toHaveLength(1);
-          for (const [i, level] of screen.headingLevels.entries()) {
-            if (i === 0) continue;
-            expect(
-              level,
-              `${where}: heading ${i + 1} of ${screen.headingLevels.join("/")}`,
-            ).toBeLessThanOrEqual(screen.headingLevels[i - 1]! + 1);
-          }
-        }
-
-        // The phone frame stacks the plans; the tablet frame sets them side by side.
-        expect(screens[0]!.plansFlow, `${width}px: phone plans`).toBe("row");
-        expect(screens[1]!.plansFlow, `${width}px: tablet plans`).toBe("column");
-      });
-    }
 
     for (const theme of THEMES) {
       test(`clears AA contrast on every text it paints in ${theme.id}`, async ({ page }) => {

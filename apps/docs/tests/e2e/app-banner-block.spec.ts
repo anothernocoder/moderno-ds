@@ -1,6 +1,6 @@
 /**
  * The app-banner block, checked on the built docs page at the three widths of
- * the responsive policy (375 / 768 / 1280) in both colour schemes. It asserts
+ * the responsive policy (375 / 768 / 1280). It asserts
  * text and computed styles; no screenshot baseline is committed.
  *
  * Five claims:
@@ -251,96 +251,95 @@ function defaultButton(page: Page, name: string): Locator {
     .getByRole("button", { name, exact: true });
 }
 
+// Geometry and logic, which no colour changes: one pass is enough.
+test.describe("app-banner — either scheme", () => {
+  for (const width of WIDTHS) {
+    test(`lays itself out from its container at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1200 });
+      await page.goto(PAGE, { waitUntil: "networkidle" });
+      await page.evaluate(() => document.fonts.ready.then(() => true));
+
+      const blocks: Array<BlockMetrics & { state: State }> = [];
+      for (const state of STATES) {
+        await showState(page, state);
+        const mounted = await blockMetrics(page, state);
+        expect(mounted, `${state}: mounted copies`).toHaveLength(1);
+        const block = mounted[0]!;
+        blocks.push({ ...block, state });
+        const where = `${width}px, ${state} (${block.containerWidth}px)`;
+
+        if (block.titles.length > 0) {
+          expect(block.titles, `${where}: titles`).toEqual(TITLES);
+          expect(block.variants, `${where}: banner tints`).toEqual(VARIANTS);
+          expect(block.actions, `${where}: actions`).toEqual(ACTIONS);
+          expect(block.actionVariants, `${where}: action variants`).toEqual(ACTION_VARIANTS);
+          expect(block.dismissible, `${where}: dismissible banners`).toEqual(DISMISSIBLE);
+
+          expect(block.actionsBesideText, `${where}: actions beside the message`).toBe(
+            block.containerWidth >= CONTAINER_SM,
+          );
+          expect(block.descriptionInline, `${where}: title and description on one line`).toEqual(
+            TITLES.map(() => block.containerWidth >= CONTAINER_MD),
+          );
+          expect(block.dismissLabels, `${where}: dismiss labels`).toEqual(
+            DISMISSIBLE.map(() => block.containerWidth >= CONTAINER_LG),
+          );
+        }
+
+        // The 50rem frame scrolls inside itself; the panel holding the demo
+        // never pushes the page sideways.
+        const panel = await page.evaluate((state) => {
+          const el = document
+            .querySelector(`[data-demo-state="${state}"]`)!
+            .closest(".preview-panel--demo") as HTMLElement;
+          return { scroll: el.scrollWidth, client: el.clientWidth };
+        }, state);
+        expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
+      }
+
+      const lists = blocks.filter((block) => block.titles.length > 0);
+      expect(
+        lists.map((block) => block.state),
+        `${width}px: copies rendering banners`,
+      ).toEqual(["default", "narrow", "compact", "panel", "wide", "disabled"]);
+
+      const empty = blocks.find((block) => block.state === "empty")!;
+      expect(empty.height, "the empty render takes no space").toBe(0);
+      expect(empty.skeletonBanners + Number(empty.failedLoad), "the empty render").toBe(0);
+
+      expect(
+        blocks.filter((block) => block.skeletonBanners === 1).map((block) => block.state),
+        "the loading render",
+      ).toEqual(["loading"]);
+      expect(
+        blocks.filter((block) => block.failedLoad).map((block) => block.state),
+        "the failed-load render",
+      ).toEqual(["error"]);
+      expect(
+        lists.filter((block) => block.allButtonsInert).map((block) => block.state),
+        "the disabled render",
+      ).toEqual(["disabled"]);
+
+      // Each step is exercised on both sides at every viewport, so a step that
+      // silently stopped firing cannot pass this file.
+      const containerWidths = lists.map((b) => b.containerWidth);
+      for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
+        expect(
+          containerWidths.some((w) => w < step),
+          `a copy under ${step}px`,
+        ).toBe(true);
+        expect(
+          containerWidths.some((w) => w >= step),
+          `a copy over ${step}px`,
+        ).toBe(true);
+      }
+    });
+  }
+});
+
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`app-banner — ${scheme}`, () => {
     test.use({ colorScheme: scheme });
-
-    for (const width of WIDTHS) {
-      test(`lays itself out from its container at ${width}px`, async ({ page }) => {
-        await page.setViewportSize({ width, height: 1200 });
-        await page.goto(PAGE, { waitUntil: "networkidle" });
-        await page.evaluate(() => document.fonts.ready.then(() => true));
-
-        expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(
-          scheme === "dark",
-        );
-
-        const blocks: Array<BlockMetrics & { state: State }> = [];
-        for (const state of STATES) {
-          await showState(page, state);
-          const mounted = await blockMetrics(page, state);
-          expect(mounted, `${state}: mounted copies`).toHaveLength(1);
-          const block = mounted[0]!;
-          blocks.push({ ...block, state });
-          const where = `${scheme} ${width}px, ${state} (${block.containerWidth}px)`;
-
-          if (block.titles.length > 0) {
-            expect(block.titles, `${where}: titles`).toEqual(TITLES);
-            expect(block.variants, `${where}: banner tints`).toEqual(VARIANTS);
-            expect(block.actions, `${where}: actions`).toEqual(ACTIONS);
-            expect(block.actionVariants, `${where}: action variants`).toEqual(ACTION_VARIANTS);
-            expect(block.dismissible, `${where}: dismissible banners`).toEqual(DISMISSIBLE);
-
-            expect(block.actionsBesideText, `${where}: actions beside the message`).toBe(
-              block.containerWidth >= CONTAINER_SM,
-            );
-            expect(block.descriptionInline, `${where}: title and description on one line`).toEqual(
-              TITLES.map(() => block.containerWidth >= CONTAINER_MD),
-            );
-            expect(block.dismissLabels, `${where}: dismiss labels`).toEqual(
-              DISMISSIBLE.map(() => block.containerWidth >= CONTAINER_LG),
-            );
-          }
-
-          // The 50rem frame scrolls inside itself; the panel holding the demo
-          // never pushes the page sideways.
-          const panel = await page.evaluate((state) => {
-            const el = document
-              .querySelector(`[data-demo-state="${state}"]`)!
-              .closest(".preview-panel--demo") as HTMLElement;
-            return { scroll: el.scrollWidth, client: el.clientWidth };
-          }, state);
-          expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
-        }
-
-        const lists = blocks.filter((block) => block.titles.length > 0);
-        expect(
-          lists.map((block) => block.state),
-          `${scheme} ${width}px: copies rendering banners`,
-        ).toEqual(["default", "narrow", "compact", "panel", "wide", "disabled"]);
-
-        const empty = blocks.find((block) => block.state === "empty")!;
-        expect(empty.height, "the empty render takes no space").toBe(0);
-        expect(empty.skeletonBanners + Number(empty.failedLoad), "the empty render").toBe(0);
-
-        expect(
-          blocks.filter((block) => block.skeletonBanners === 1).map((block) => block.state),
-          "the loading render",
-        ).toEqual(["loading"]);
-        expect(
-          blocks.filter((block) => block.failedLoad).map((block) => block.state),
-          "the failed-load render",
-        ).toEqual(["error"]);
-        expect(
-          lists.filter((block) => block.allButtonsInert).map((block) => block.state),
-          "the disabled render",
-        ).toEqual(["disabled"]);
-
-        // Each step is exercised on both sides at every viewport, so a step that
-        // silently stopped firing cannot pass this file.
-        const containerWidths = lists.map((b) => b.containerWidth);
-        for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
-          expect(
-            containerWidths.some((w) => w < step),
-            `a copy under ${step}px`,
-          ).toBe(true);
-          expect(
-            containerWidths.some((w) => w >= step),
-            `a copy over ${step}px`,
-          ).toBe(true);
-        }
-      });
-    }
 
     test("clears AA contrast on every text it paints", async ({ page }) => {
       await page.goto(PAGE, { waitUntil: "networkidle" });

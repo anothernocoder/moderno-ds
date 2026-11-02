@@ -1,6 +1,6 @@
 /**
  * The project-grid block, checked on the built docs page at the three widths
- * of the responsive policy (375 / 768 / 1280) in both colour schemes. It
+ * of the responsive policy (375 / 768 / 1280). It
  * asserts text and computed styles; no screenshot baseline is committed.
  *
  * Four claims:
@@ -400,158 +400,189 @@ async function contrastRatios(
   );
 }
 
+// Geometry and logic, which no colour changes: one pass is enough.
+test.describe("project-grid — either scheme", () => {
+  for (const width of WIDTHS) {
+    test(`lays itself out from its container at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1200 });
+      await page.goto(PAGE, { waitUntil: "networkidle" });
+      await page.evaluate(() => document.fonts.ready.then(() => true));
+
+      const blocks: Array<BlockMetrics & { state: State }> = [];
+      for (const state of STATES) {
+        await showState(page, state);
+        const mounted = await blockMetrics(page, state);
+        expect(mounted, `${state}: mounted copies`).toHaveLength(1);
+        const block = mounted[0]!;
+        blocks.push({ ...block, state });
+        const where = `${width}px, ${state} (${block.containerWidth}px)`;
+
+        expect(block.paddingTop, `${where}: room above`).toBe(
+          block.containerWidth >= CONTAINER_LG ? 64 : 48,
+        );
+        expect(block.offCentre, `${where}: centred`).toBeLessThan(1);
+        expect(block.alert, `${where}: error announced`).toBe(state === "error");
+        expect(block.heading, `${where}: heading`).toBe(HEADING);
+        expect(block.serifHeading, `${where}: serif heading`).toBe(true);
+        expect(block.allProjectsPlacement, `${where}: the link to every project`).toBe(
+          block.containerWidth >= CONTAINER_SM ? "beside" : "below",
+        );
+
+        if (state === "loading") {
+          expect(block.placeholders, `${where}: placeholder cards`).toBe(3);
+          expect(block.projects, `${where}: no projects while loading`).toBe(0);
+          expect(block.buttons, `${where}: no buttons while loading`).toEqual([]);
+        } else if (state === "empty") {
+          expect(block.empty, `${where}: empty message`).toBe(EMPTY);
+          expect(block.projects, `${where}: no projects`).toBe(0);
+          expect(block.buttons, `${where}: no buttons`).toEqual([]);
+        } else if (state === "error") {
+          expect(block.projects, `${where}: no projects`).toBe(0);
+          expect(block.buttons, `${where}: retry only`).toEqual(["Try again"]);
+          expect(block.buttonVariants, `${where}: retry variant`).toEqual(["outline"]);
+        } else {
+          const columns =
+            block.containerWidth >= CONTAINER_LG ? 3 : block.containerWidth >= CONTAINER_MD ? 2 : 1;
+          const gap = block.containerWidth >= CONTAINER_LG ? 32 : 24;
+          expect(block.columns, `${where}: columns`).toBe(columns);
+          expect(block.columnGap, `${where}: gap between columns`).toBe(gap);
+          expect(block.rowGap, `${where}: gap between rows`).toBe(gap);
+          expect(block.rowsEven, `${where}: cards in a row share a height`).toBe(true);
+          expect(block.projects, `${where}: one card per project`).toBe(TITLES.length);
+          expect(block.composed, `${where}: a Card with Badges per project`).toBe(true);
+          expect(block.coversWide, `${where}: 16:9 covers`).toBe(true);
+          expect(block.coverNames, `${where}: the client on each cover`).toEqual(CLIENTS);
+          expect(block.coverNamesDecorative, `${where}: cover names serif and hidden`).toBe(true);
+          expect(block.titles, `${where}: titles`).toEqual(TITLES);
+          expect(block.clients, `${where}: clients`).toEqual(CLIENTS);
+          expect(block.years, `${where}: machine years`).toEqual(YEARS);
+          expect(block.yearLabels, `${where}: years`).toEqual(YEARS);
+          expect(block.summaries, `${where}: a summary per project`).toBe(TITLES.length);
+          expect(block.tags, `${where}: tags`).toEqual(TAGS);
+          expect(block.titleLinks, `${where}: title links`).toEqual(LINKED);
+          expect(block.empty, `${where}: no empty message`).toBeNull();
+          expect(block.buttons, `${where}: no buttons`).toEqual([]);
+        }
+
+        // The 50rem frame scrolls inside itself; the panel holding the demo
+        // never pushes the page sideways.
+        const panel = await page.evaluate((state) => {
+          const el = document
+            .querySelector(`[data-demo-state="${state}"]`)!
+            .closest(".preview-panel--demo") as HTMLElement;
+          return { scroll: el.scrollWidth, client: el.clientWidth };
+        }, state);
+        expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
+      }
+
+      expect(
+        blocks.filter((block) => block.allLinksInert).map((block) => block.state),
+        "the disabled render",
+      ).toEqual(["disabled"]);
+      expect(
+        blocks.filter((block) => block.allLinksLive).map((block) => block.state),
+        "every other render",
+      ).toEqual(["default", "narrow", "compact", "panel", "wide", "empty", "loading", "error"]);
+
+      // The heading is one size below `@md` and one larger size from it on.
+      const below = new Set(
+        blocks.filter((b) => b.containerWidth < CONTAINER_MD).map((b) => b.headingSize),
+      );
+      const above = new Set(
+        blocks.filter((b) => b.containerWidth >= CONTAINER_MD).map((b) => b.headingSize),
+      );
+      expect(below.size, "one heading size below @md").toBe(1);
+      expect(above.size, "one heading size from @md").toBe(1);
+      expect([...above][0]!, "the heading steps up at @md").toBeGreaterThan([...below][0]!);
+
+      // Each step is exercised on both sides at every viewport, so a step that
+      // silently stopped firing cannot pass this file.
+      const containerWidths = blocks.filter((b) => b.projects > 0).map((b) => b.containerWidth);
+      for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
+        expect(
+          containerWidths.some((w) => w < step),
+          `a copy under ${step}px`,
+        ).toBe(true);
+        expect(
+          containerWidths.some((w) => w >= step),
+          `a copy over ${step}px`,
+        ).toBe(true);
+      }
+    });
+  }
+
+  test("sits in the middle of its preview", async ({ page }) => {
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    for (const state of ["default", "empty", "loading", "error", "disabled"] as const) {
+      await showState(page, state);
+      const gaps = await page.evaluate(
+        ({ state, selector }) => {
+          const wrapper = document.querySelector(`[data-demo-state="${state}"]`)!;
+          const panel = wrapper.closest(".preview-panel--demo")!.getBoundingClientRect();
+          const block = wrapper.querySelector(selector)!;
+          const content = [...block.firstElementChild!.children]
+            .filter((el) => !el.classList.contains("sr-only"))
+            .map((el) => el.getBoundingClientRect());
+          const top = Math.min(...content.map((r) => r.top));
+          const bottom = Math.max(...content.map((r) => r.bottom));
+          const left = Math.min(...content.map((r) => r.left));
+          const right = Math.max(...content.map((r) => r.right));
+          return {
+            above: top - panel.top,
+            below: panel.bottom - bottom,
+            before: left - panel.left,
+            after: panel.right - right,
+          };
+        },
+        { state, selector: BLOCK },
+      );
+      expect(Math.abs(gaps.above - gaps.below), `${state}: vertical`).toBeLessThan(2);
+      expect(Math.abs(gaps.before - gaps.after), `${state}: horizontal`).toBeLessThan(2);
+    }
+  });
+
+  test("keeps disabled links out of reach", async ({ page }) => {
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await showState(page, "disabled");
+    const block = page.locator(`[data-demo-state="disabled"] ${BLOCK}`);
+    for (const name of [LINKED[0]!, ALL_PROJECTS]) {
+      const link = block.getByRole("link", { name });
+      await expect(link).toHaveAttribute("aria-disabled", "true");
+      await expect(link).not.toHaveAttribute("href");
+
+      // A link with no href takes no focus, so the keyboard skips it.
+      await link.evaluate((el) => (el as HTMLElement).focus());
+      await expect(link).not.toBeFocused();
+
+      // No underline on hover, and the not-allowed cursor of an inert control.
+      await link.hover();
+      const style = await link.evaluate((el) => ({
+        decoration: getComputedStyle(el).textDecorationLine,
+        cursor: getComputedStyle(el).cursor,
+      }));
+      expect(style.decoration, `${name}: no hover underline`).toBe("none");
+      expect(style.cursor, `${name}: not-allowed cursor`).toBe("not-allowed");
+    }
+  });
+
+  test("treats an empty error string as no error", async ({ page }) => {
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await showState(page, "error");
+    const block = page.locator(`[data-demo-state="error"] ${BLOCK}`);
+
+    // The demo's retry clears its message to "", the way a consumer holding
+    // the error as a string does once the load succeeds.
+    await block.getByRole("button", { name: "Try again" }).click();
+
+    await expect(block.locator('[data-scope="alert"]')).toHaveCount(0);
+    await expect(block.locator("h3")).toHaveCount(TITLES.length);
+    await expect(block.locator("h3 a")).toHaveCount(LINKED.length);
+  });
+});
+
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`project-grid — ${scheme}`, () => {
     test.use({ colorScheme: scheme });
-
-    for (const width of WIDTHS) {
-      test(`lays itself out from its container at ${width}px`, async ({ page }) => {
-        await page.setViewportSize({ width, height: 1200 });
-        await page.goto(PAGE, { waitUntil: "networkidle" });
-        await page.evaluate(() => document.fonts.ready.then(() => true));
-
-        expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(
-          scheme === "dark",
-        );
-
-        const blocks: Array<BlockMetrics & { state: State }> = [];
-        for (const state of STATES) {
-          await showState(page, state);
-          const mounted = await blockMetrics(page, state);
-          expect(mounted, `${state}: mounted copies`).toHaveLength(1);
-          const block = mounted[0]!;
-          blocks.push({ ...block, state });
-          const where = `${scheme} ${width}px, ${state} (${block.containerWidth}px)`;
-
-          expect(block.paddingTop, `${where}: room above`).toBe(
-            block.containerWidth >= CONTAINER_LG ? 64 : 48,
-          );
-          expect(block.offCentre, `${where}: centred`).toBeLessThan(1);
-          expect(block.alert, `${where}: error announced`).toBe(state === "error");
-          expect(block.heading, `${where}: heading`).toBe(HEADING);
-          expect(block.serifHeading, `${where}: serif heading`).toBe(true);
-          expect(block.allProjectsPlacement, `${where}: the link to every project`).toBe(
-            block.containerWidth >= CONTAINER_SM ? "beside" : "below",
-          );
-
-          if (state === "loading") {
-            expect(block.placeholders, `${where}: placeholder cards`).toBe(3);
-            expect(block.projects, `${where}: no projects while loading`).toBe(0);
-            expect(block.buttons, `${where}: no buttons while loading`).toEqual([]);
-          } else if (state === "empty") {
-            expect(block.empty, `${where}: empty message`).toBe(EMPTY);
-            expect(block.projects, `${where}: no projects`).toBe(0);
-            expect(block.buttons, `${where}: no buttons`).toEqual([]);
-          } else if (state === "error") {
-            expect(block.projects, `${where}: no projects`).toBe(0);
-            expect(block.buttons, `${where}: retry only`).toEqual(["Try again"]);
-            expect(block.buttonVariants, `${where}: retry variant`).toEqual(["outline"]);
-          } else {
-            const columns =
-              block.containerWidth >= CONTAINER_LG
-                ? 3
-                : block.containerWidth >= CONTAINER_MD
-                  ? 2
-                  : 1;
-            const gap = block.containerWidth >= CONTAINER_LG ? 32 : 24;
-            expect(block.columns, `${where}: columns`).toBe(columns);
-            expect(block.columnGap, `${where}: gap between columns`).toBe(gap);
-            expect(block.rowGap, `${where}: gap between rows`).toBe(gap);
-            expect(block.rowsEven, `${where}: cards in a row share a height`).toBe(true);
-            expect(block.projects, `${where}: one card per project`).toBe(TITLES.length);
-            expect(block.composed, `${where}: a Card with Badges per project`).toBe(true);
-            expect(block.coversWide, `${where}: 16:9 covers`).toBe(true);
-            expect(block.coverNames, `${where}: the client on each cover`).toEqual(CLIENTS);
-            expect(block.coverNamesDecorative, `${where}: cover names serif and hidden`).toBe(true);
-            expect(block.titles, `${where}: titles`).toEqual(TITLES);
-            expect(block.clients, `${where}: clients`).toEqual(CLIENTS);
-            expect(block.years, `${where}: machine years`).toEqual(YEARS);
-            expect(block.yearLabels, `${where}: years`).toEqual(YEARS);
-            expect(block.summaries, `${where}: a summary per project`).toBe(TITLES.length);
-            expect(block.tags, `${where}: tags`).toEqual(TAGS);
-            expect(block.titleLinks, `${where}: title links`).toEqual(LINKED);
-            expect(block.empty, `${where}: no empty message`).toBeNull();
-            expect(block.buttons, `${where}: no buttons`).toEqual([]);
-          }
-
-          // The 50rem frame scrolls inside itself; the panel holding the demo
-          // never pushes the page sideways.
-          const panel = await page.evaluate((state) => {
-            const el = document
-              .querySelector(`[data-demo-state="${state}"]`)!
-              .closest(".preview-panel--demo") as HTMLElement;
-            return { scroll: el.scrollWidth, client: el.clientWidth };
-          }, state);
-          expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
-        }
-
-        expect(
-          blocks.filter((block) => block.allLinksInert).map((block) => block.state),
-          "the disabled render",
-        ).toEqual(["disabled"]);
-        expect(
-          blocks.filter((block) => block.allLinksLive).map((block) => block.state),
-          "every other render",
-        ).toEqual(["default", "narrow", "compact", "panel", "wide", "empty", "loading", "error"]);
-
-        // The heading is one size below `@md` and one larger size from it on.
-        const below = new Set(
-          blocks.filter((b) => b.containerWidth < CONTAINER_MD).map((b) => b.headingSize),
-        );
-        const above = new Set(
-          blocks.filter((b) => b.containerWidth >= CONTAINER_MD).map((b) => b.headingSize),
-        );
-        expect(below.size, "one heading size below @md").toBe(1);
-        expect(above.size, "one heading size from @md").toBe(1);
-        expect([...above][0]!, "the heading steps up at @md").toBeGreaterThan([...below][0]!);
-
-        // Each step is exercised on both sides at every viewport, so a step that
-        // silently stopped firing cannot pass this file.
-        const containerWidths = blocks.filter((b) => b.projects > 0).map((b) => b.containerWidth);
-        for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
-          expect(
-            containerWidths.some((w) => w < step),
-            `a copy under ${step}px`,
-          ).toBe(true);
-          expect(
-            containerWidths.some((w) => w >= step),
-            `a copy over ${step}px`,
-          ).toBe(true);
-        }
-      });
-    }
-
-    test("sits in the middle of its preview", async ({ page }) => {
-      await page.goto(PAGE, { waitUntil: "networkidle" });
-      for (const state of ["default", "empty", "loading", "error", "disabled"] as const) {
-        await showState(page, state);
-        const gaps = await page.evaluate(
-          ({ state, selector }) => {
-            const wrapper = document.querySelector(`[data-demo-state="${state}"]`)!;
-            const panel = wrapper.closest(".preview-panel--demo")!.getBoundingClientRect();
-            const block = wrapper.querySelector(selector)!;
-            const content = [...block.firstElementChild!.children]
-              .filter((el) => !el.classList.contains("sr-only"))
-              .map((el) => el.getBoundingClientRect());
-            const top = Math.min(...content.map((r) => r.top));
-            const bottom = Math.max(...content.map((r) => r.bottom));
-            const left = Math.min(...content.map((r) => r.left));
-            const right = Math.max(...content.map((r) => r.right));
-            return {
-              above: top - panel.top,
-              below: panel.bottom - bottom,
-              before: left - panel.left,
-              after: panel.right - right,
-            };
-          },
-          { state, selector: BLOCK },
-        );
-        expect(Math.abs(gaps.above - gaps.below), `${scheme} ${state}: vertical`).toBeLessThan(2);
-        expect(Math.abs(gaps.before - gaps.after), `${scheme} ${state}: horizontal`).toBeLessThan(
-          2,
-        );
-      }
-    });
 
     test("clears AA contrast on every text it paints", async ({ page }) => {
       await page.goto(PAGE, { waitUntil: "networkidle" });
@@ -611,30 +642,6 @@ for (const scheme of ["light", "dark"] as const) {
       expect(outline.style, `${scheme}: focus ring`).not.toBe("none");
     });
 
-    test("keeps disabled links out of reach", async ({ page }) => {
-      await page.goto(PAGE, { waitUntil: "networkidle" });
-      await showState(page, "disabled");
-      const block = page.locator(`[data-demo-state="disabled"] ${BLOCK}`);
-      for (const name of [LINKED[0]!, ALL_PROJECTS]) {
-        const link = block.getByRole("link", { name });
-        await expect(link).toHaveAttribute("aria-disabled", "true");
-        await expect(link).not.toHaveAttribute("href");
-
-        // A link with no href takes no focus, so the keyboard skips it.
-        await link.evaluate((el) => (el as HTMLElement).focus());
-        await expect(link).not.toBeFocused();
-
-        // No underline on hover, and the not-allowed cursor of an inert control.
-        await link.hover();
-        const style = await link.evaluate((el) => ({
-          decoration: getComputedStyle(el).textDecorationLine,
-          cursor: getComputedStyle(el).cursor,
-        }));
-        expect(style.decoration, `${scheme} ${name}: no hover underline`).toBe("none");
-        expect(style.cursor, `${scheme} ${name}: not-allowed cursor`).toBe("not-allowed");
-      }
-    });
-
     test("announces the loading cards once and the failed load as an alert", async ({ page }) => {
       await page.goto(PAGE, { waitUntil: "networkidle" });
       await showState(page, "loading");
@@ -668,20 +675,6 @@ for (const scheme of ["light", "dark"] as const) {
       const block = page.locator(`[data-demo-state="default"] ${BLOCK}`);
       await expect(block.getByRole("heading", { level: 2 })).toHaveText(HEADING);
       await expect(block.getByRole("heading", { level: 3 })).toHaveText(TITLES);
-    });
-
-    test("treats an empty error string as no error", async ({ page }) => {
-      await page.goto(PAGE, { waitUntil: "networkidle" });
-      await showState(page, "error");
-      const block = page.locator(`[data-demo-state="error"] ${BLOCK}`);
-
-      // The demo's retry clears its message to "", the way a consumer holding
-      // the error as a string does once the load succeeds.
-      await block.getByRole("button", { name: "Try again" }).click();
-
-      await expect(block.locator('[data-scope="alert"]')).toHaveCount(0);
-      await expect(block.locator("h3")).toHaveCount(TITLES.length);
-      await expect(block.locator("h3 a")).toHaveCount(LINKED.length);
     });
   });
 }

@@ -1,6 +1,6 @@
 /**
  * The store-nav block, checked on the built docs page at the three widths of
- * the responsive policy (375 / 768 / 1280) in both colour schemes. It asserts
+ * the responsive policy (375 / 768 / 1280). It asserts
  * text and computed styles; no screenshot baseline is committed.
  *
  * Six claims:
@@ -319,117 +319,153 @@ async function contrastRatios(
   );
 }
 
+// Geometry and logic, which no colour changes: one pass is enough.
+test.describe("store-nav — either scheme", () => {
+  for (const width of WIDTHS) {
+    test(`lays itself out from its container at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1200 });
+      await page.goto(PAGE, { waitUntil: "networkidle" });
+      await page.evaluate(() => document.fonts.ready.then(() => true));
+
+      const widths: number[] = [];
+      for (const state of STATES) {
+        await showState(page, state);
+        const mounted = await blockMetrics(page, state);
+        expect(mounted, `${state}: mounted copies`).toHaveLength(1);
+        const block = mounted[0]!;
+        const w = block.containerWidth;
+        widths.push(w);
+        const where = `${width}px, ${state} (${w}px)`;
+
+        if (!FRAMED.includes(state)) {
+          expect(block.offCentre.x, `${where}: centred across`).toBeLessThan(2);
+          expect(block.offCentre.y, `${where}: centred down`).toBeLessThan(2);
+        }
+        expect(block.brand, `${where}: brand`).toBe(BRAND);
+        expect(block.brandHref, `${where}: brand links home`).toBe(HOME);
+        expect(block.brandSerif, `${where}: serif brand`).toBe(true);
+        expect(block.barPadding, `${where}: room at the ends of the bar`).toBe(
+          w >= CONTAINER_LG ? PADDING_LG : w >= CONTAINER_SM ? PADDING_SM : PADDING_BASE,
+        );
+
+        const collapsible = WITH_NAV.includes(state) || state === "loading";
+        // The categories sit in the bar from @md; below it they are in the Drawer.
+        expect(block.hasNav, `${where}: categories`).toBe(WITH_NAV.includes(state));
+        if (block.hasNav) {
+          expect(block.navShown, `${where}: categories in the bar`).toBe(w >= CONTAINER_MD);
+          expect(block.navItems, `${where}: categories`).toEqual(
+            state === "disabled" ? [...CATEGORIES, "Sale"] : CATEGORIES,
+          );
+          expect(block.currentLinks, `${where}: current category`).toEqual(["Bags"]);
+          expect(block.disabledLinks, `${where}: disabled links`).toEqual(
+            state === "disabled" ? ["Sale"] : [],
+          );
+        }
+        expect(block.hasMenuButton, `${where}: Menu button`).toBe(collapsible);
+        if (collapsible) {
+          expect(block.menuButtonShown, `${where}: Menu button shown`).toBe(w < CONTAINER_MD);
+          if (w < CONTAINER_MD) {
+            expect(block.menuButtonInBar, `${where}: Menu beside the brand`).toBe(true);
+          }
+        }
+
+        // The search and the cart share a row under the brand until @lg,
+        // where they join it; the search always keeps room to type.
+        expect(block.searchInBar, `${where}: search in the bar`).toBe(w >= CONTAINER_LG);
+        expect(block.cartInBar, `${where}: cart in the bar`).toBe(w >= CONTAINER_LG);
+        expect(block.searchWidth, `${where}: search width`).toBeGreaterThanOrEqual(SEARCH_MIN);
+        expect(
+          Math.abs(block.groupMinWidth - (SEARCH_MIN + GROUP_GAP + block.cartWidth)),
+          `${where}: the search and the cart wrap at the search's floor`,
+        ).toBeLessThan(1);
+        expect(block.cartName, `${where}: cart`).toBe(state === "empty" ? EMPTY_CART : CART);
+
+        expect(block.placeholders, `${where}: placeholders`).toBe(state === "loading" ? 3 : 0);
+        if (state === "loading") {
+          expect(block.placeholdersShown, `${where}: placeholders in the bar`).toBe(
+            w >= CONTAINER_MD,
+          );
+        }
+        expect(block.alert, `${where}: error announced`).toBe(state === "error");
+
+        // The 50rem frame scrolls inside itself; the panel holding the demo
+        // never pushes the page sideways.
+        const panel = await page.evaluate((state) => {
+          const el = document
+            .querySelector(`[data-demo-state="${state}"]`)!
+            .closest(".preview-panel--demo") as HTMLElement;
+          return { scroll: el.scrollWidth, client: el.clientWidth };
+        }, state);
+        expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
+
+        // The bar never overflows its own container.
+        const bar = await page.evaluate(
+          ({ state, selector }) => {
+            const el = document.querySelector(`[data-demo-state="${state}"] ${selector}`)!
+              .firstElementChild as HTMLElement;
+            return { scroll: el.scrollWidth, client: el.clientWidth };
+          },
+          { state, selector: BLOCK },
+        );
+        expect(bar.scroll, `${where}: bar overflow`).toBeLessThanOrEqual(bar.client);
+      }
+
+      // Each step is exercised on both sides at every viewport, so a step that
+      // silently stopped firing cannot pass this file.
+      for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
+        expect(
+          widths.some((w) => w < step),
+          `a copy under ${step}px`,
+        ).toBe(true);
+        expect(
+          widths.some((w) => w >= step),
+          `a copy over ${step}px`,
+        ).toBe(true);
+      }
+    });
+  }
+
+  test("keeps a disabled link out of reach", async ({ page }) => {
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await showState(page, "disabled");
+    const block = page.locator(`[data-demo-state="disabled"] ${BLOCK}`);
+    const link = block.locator("nav a", { hasText: "Sale" });
+    await expect(link).toHaveAttribute("aria-disabled", "true");
+    // Screen readers still hear a link, marked unavailable, not plain text.
+    await expect(block.getByRole("link", { name: "Sale", disabled: true })).toHaveCount(1);
+    await link.evaluate((el) => (el as HTMLElement).focus());
+    await expect(link).not.toBeFocused();
+
+    // Tab skips it: from Bags straight to the search.
+    await block.getByRole("link", { name: "Bags" }).focus();
+    await page.keyboard.press("Tab");
+    await expect(block.getByRole("combobox", { name: SEARCH })).toBeFocused();
+
+    // Under a category, a disabled link is a disabled Menu item with nowhere to go.
+    await block.getByRole("button", { name: "Workspace", exact: true }).click();
+    const lamps = page.getByRole("menu").getByRole("menuitem", { name: "Lamps" });
+    await expect(lamps).toHaveAttribute("aria-disabled", "true");
+    await expect(lamps).not.toHaveAttribute("href");
+    await page.keyboard.press("Escape");
+  });
+
+  test("treats an empty error string as no error", async ({ page }) => {
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await showState(page, "error");
+    const block = page.locator(`[data-demo-state="error"] ${BLOCK}`);
+
+    // The demo's retry clears its message to "", the way a consumer holding
+    // the error as a string does once the load succeeds.
+    await block.getByRole("button", { name: "Try again" }).click();
+
+    await expect(block.locator('[data-scope="alert"]')).toHaveCount(0);
+    await expect(block.getByRole("navigation", { name: "Categories" })).toHaveCount(1);
+  });
+});
+
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`store-nav — ${scheme}`, () => {
     test.use({ colorScheme: scheme });
-
-    for (const width of WIDTHS) {
-      test(`lays itself out from its container at ${width}px`, async ({ page }) => {
-        await page.setViewportSize({ width, height: 1200 });
-        await page.goto(PAGE, { waitUntil: "networkidle" });
-        await page.evaluate(() => document.fonts.ready.then(() => true));
-
-        expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(
-          scheme === "dark",
-        );
-
-        const widths: number[] = [];
-        for (const state of STATES) {
-          await showState(page, state);
-          const mounted = await blockMetrics(page, state);
-          expect(mounted, `${state}: mounted copies`).toHaveLength(1);
-          const block = mounted[0]!;
-          const w = block.containerWidth;
-          widths.push(w);
-          const where = `${scheme} ${width}px, ${state} (${w}px)`;
-
-          if (!FRAMED.includes(state)) {
-            expect(block.offCentre.x, `${where}: centred across`).toBeLessThan(2);
-            expect(block.offCentre.y, `${where}: centred down`).toBeLessThan(2);
-          }
-          expect(block.brand, `${where}: brand`).toBe(BRAND);
-          expect(block.brandHref, `${where}: brand links home`).toBe(HOME);
-          expect(block.brandSerif, `${where}: serif brand`).toBe(true);
-          expect(block.barPadding, `${where}: room at the ends of the bar`).toBe(
-            w >= CONTAINER_LG ? PADDING_LG : w >= CONTAINER_SM ? PADDING_SM : PADDING_BASE,
-          );
-
-          const collapsible = WITH_NAV.includes(state) || state === "loading";
-          // The categories sit in the bar from @md; below it they are in the Drawer.
-          expect(block.hasNav, `${where}: categories`).toBe(WITH_NAV.includes(state));
-          if (block.hasNav) {
-            expect(block.navShown, `${where}: categories in the bar`).toBe(w >= CONTAINER_MD);
-            expect(block.navItems, `${where}: categories`).toEqual(
-              state === "disabled" ? [...CATEGORIES, "Sale"] : CATEGORIES,
-            );
-            expect(block.currentLinks, `${where}: current category`).toEqual(["Bags"]);
-            expect(block.disabledLinks, `${where}: disabled links`).toEqual(
-              state === "disabled" ? ["Sale"] : [],
-            );
-          }
-          expect(block.hasMenuButton, `${where}: Menu button`).toBe(collapsible);
-          if (collapsible) {
-            expect(block.menuButtonShown, `${where}: Menu button shown`).toBe(w < CONTAINER_MD);
-            if (w < CONTAINER_MD) {
-              expect(block.menuButtonInBar, `${where}: Menu beside the brand`).toBe(true);
-            }
-          }
-
-          // The search and the cart share a row under the brand until @lg,
-          // where they join it; the search always keeps room to type.
-          expect(block.searchInBar, `${where}: search in the bar`).toBe(w >= CONTAINER_LG);
-          expect(block.cartInBar, `${where}: cart in the bar`).toBe(w >= CONTAINER_LG);
-          expect(block.searchWidth, `${where}: search width`).toBeGreaterThanOrEqual(SEARCH_MIN);
-          expect(
-            Math.abs(block.groupMinWidth - (SEARCH_MIN + GROUP_GAP + block.cartWidth)),
-            `${where}: the search and the cart wrap at the search's floor`,
-          ).toBeLessThan(1);
-          expect(block.cartName, `${where}: cart`).toBe(state === "empty" ? EMPTY_CART : CART);
-
-          expect(block.placeholders, `${where}: placeholders`).toBe(state === "loading" ? 3 : 0);
-          if (state === "loading") {
-            expect(block.placeholdersShown, `${where}: placeholders in the bar`).toBe(
-              w >= CONTAINER_MD,
-            );
-          }
-          expect(block.alert, `${where}: error announced`).toBe(state === "error");
-
-          // The 50rem frame scrolls inside itself; the panel holding the demo
-          // never pushes the page sideways.
-          const panel = await page.evaluate((state) => {
-            const el = document
-              .querySelector(`[data-demo-state="${state}"]`)!
-              .closest(".preview-panel--demo") as HTMLElement;
-            return { scroll: el.scrollWidth, client: el.clientWidth };
-          }, state);
-          expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
-
-          // The bar never overflows its own container.
-          const bar = await page.evaluate(
-            ({ state, selector }) => {
-              const el = document.querySelector(`[data-demo-state="${state}"] ${selector}`)!
-                .firstElementChild as HTMLElement;
-              return { scroll: el.scrollWidth, client: el.clientWidth };
-            },
-            { state, selector: BLOCK },
-          );
-          expect(bar.scroll, `${where}: bar overflow`).toBeLessThanOrEqual(bar.client);
-        }
-
-        // Each step is exercised on both sides at every viewport, so a step that
-        // silently stopped firing cannot pass this file.
-        for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
-          expect(
-            widths.some((w) => w < step),
-            `a copy under ${step}px`,
-          ).toBe(true);
-          expect(
-            widths.some((w) => w >= step),
-            `a copy over ${step}px`,
-          ).toBe(true);
-        }
-      });
-    }
 
     test("opens the categories in a right Drawer on a narrow container", async ({ page }) => {
       await page.goto(PAGE, { waitUntil: "networkidle" });
@@ -692,30 +728,6 @@ for (const scheme of ["light", "dark"] as const) {
       await expect(block.getByRole("button", { name: CART, exact: true })).toBeFocused();
     });
 
-    test("keeps a disabled link out of reach", async ({ page }) => {
-      await page.goto(PAGE, { waitUntil: "networkidle" });
-      await showState(page, "disabled");
-      const block = page.locator(`[data-demo-state="disabled"] ${BLOCK}`);
-      const link = block.locator("nav a", { hasText: "Sale" });
-      await expect(link).toHaveAttribute("aria-disabled", "true");
-      // Screen readers still hear a link, marked unavailable, not plain text.
-      await expect(block.getByRole("link", { name: "Sale", disabled: true })).toHaveCount(1);
-      await link.evaluate((el) => (el as HTMLElement).focus());
-      await expect(link).not.toBeFocused();
-
-      // Tab skips it: from Bags straight to the search.
-      await block.getByRole("link", { name: "Bags" }).focus();
-      await page.keyboard.press("Tab");
-      await expect(block.getByRole("combobox", { name: SEARCH })).toBeFocused();
-
-      // Under a category, a disabled link is a disabled Menu item with nowhere to go.
-      await block.getByRole("button", { name: "Workspace", exact: true }).click();
-      const lamps = page.getByRole("menu").getByRole("menuitem", { name: "Lamps" });
-      await expect(lamps).toHaveAttribute("aria-disabled", "true");
-      await expect(lamps).not.toHaveAttribute("href");
-      await page.keyboard.press("Escape");
-    });
-
     test("announces the loading categories once and the failed load as an alert", async ({
       page,
     }) => {
@@ -730,19 +742,6 @@ for (const scheme of ["light", "dark"] as const) {
       const alert = page.locator(`[data-demo-state="error"] ${BLOCK} [role="alert"]`);
       await expect(alert).toContainText(ERROR);
       await expect(alert.getByRole("button", { name: "Try again" })).toBeVisible();
-    });
-
-    test("treats an empty error string as no error", async ({ page }) => {
-      await page.goto(PAGE, { waitUntil: "networkidle" });
-      await showState(page, "error");
-      const block = page.locator(`[data-demo-state="error"] ${BLOCK}`);
-
-      // The demo's retry clears its message to "", the way a consumer holding
-      // the error as a string does once the load succeeds.
-      await block.getByRole("button", { name: "Try again" }).click();
-
-      await expect(block.locator('[data-scope="alert"]')).toHaveCount(0);
-      await expect(block.getByRole("navigation", { name: "Categories" })).toHaveCount(1);
     });
   });
 }

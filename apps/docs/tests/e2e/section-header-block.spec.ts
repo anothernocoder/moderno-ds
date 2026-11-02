@@ -1,6 +1,6 @@
 /**
  * The section-header block, checked on the built docs page at the three widths
- * of the responsive policy (375 / 768 / 1280) in both colour schemes. It
+ * of the responsive policy (375 / 768 / 1280). It
  * asserts text and computed styles; CI adds the screenshots to the PR body.
  *
  * Four claims:
@@ -296,151 +296,148 @@ async function textRatios(
   );
 }
 
+// Geometry and logic, which no colour changes: one pass is enough.
+test.describe("section-header — either scheme", () => {
+  for (const width of WIDTHS) {
+    test(`lays itself out from its container at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1200 });
+      await page.goto(PAGE, { waitUntil: "networkidle" });
+      await page.evaluate(() => document.fonts.ready.then(() => true));
+
+      const copies: Record<string, BlockMetrics> = {};
+      for (const state of STATES) {
+        await showState(page, state);
+        const mounted = await blockMetrics(page, state);
+        expect(mounted, `${state}: mounted copies`).toHaveLength(1);
+        const block = mounted[0]!;
+        copies[state] = block;
+        const w = block.containerWidth;
+        const where = `${width}px, ${state} (${w}px)`;
+
+        expect(block.rowDisplay, `${where}: heading row`).toBe(w >= CONTAINER_SM ? "flex" : "grid");
+        if (block.headingStep !== null) {
+          expect(block.headingStep, `${where}: heading size`).toBe(
+            expectedHeadingStep(block.variant, w),
+          );
+        }
+        if (block.descriptionStep !== null) {
+          expect(block.descriptionStep, `${where}: description size`).toBe(
+            w >= CONTAINER_LG ? "body" : "ui-md",
+          );
+        }
+        if (block.crumbs > 0) {
+          expect(block.crumbsShown, `${where}: crumbs shown`).toBe(
+            w >= CONTAINER_SM ? block.crumbs : 1,
+          );
+        }
+
+        const panel = await page.evaluate((state) => {
+          const el = document
+            .querySelector(`[data-demo-state="${state}"]`)!
+            .closest(".preview-panel--demo") as HTMLElement;
+          return { scroll: el.scrollWidth, client: el.clientWidth };
+        }, state);
+        expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
+      }
+
+      // The page header: an h1 under a three-crumb trail that ends on the
+      // current page, with a success status and two facts after it.
+      for (const state of ["default", "narrow", "panel", "wide", "disabled"] as const) {
+        const block = copies[state]!;
+        expect(block.variant, `${state}: variant`).toBe("page");
+        expect(block.headingTag, `${state}: rank`).toBe("h1");
+        expect(block.crumbs, `${state}: crumbs`).toBe(3);
+        expect(block.currentCrumb, `${state}: current crumb`).toBe("Q3 redesign");
+        expect(block.status, `${state}: status`).toBe("success");
+        expect(block.meta, `${state}: meta`).toEqual(["Due Oct 14", "Owned by Ada Lovelace"]);
+        expect(block.rule || block.inCard, `${state}: no frame of its own`).toBe(false);
+        expect(block.rootTag, `${state}: root`).toBe("header");
+      }
+      expect(copies.default!.actions).toEqual([
+        { label: "Share", disabled: false },
+        { label: "New task", disabled: false },
+      ]);
+
+      // The section header sits on a rule; the card header sits in a card.
+      const section = copies.section!;
+      expect([section.variant, section.headingTag, section.rule, section.inCard]).toEqual([
+        "section",
+        "h2",
+        true,
+        false,
+      ]);
+      expect(section.count).toBe("12");
+      expect(section.crumbs + section.meta.length, "no page-only parts").toBe(0);
+      expect(section.actions.every((action) => !action.disabled)).toBe(true);
+      const card = copies.card!;
+      expect([card.variant, card.headingTag, card.rule, card.inCard]).toEqual([
+        "card",
+        "h3",
+        false,
+        true,
+      ]);
+      expect(card.count).toBe("8");
+      // The card's body sits in the same card, under its header; the root is
+      // no <header>, since it holds more than the header.
+      expect(section.rootTag).toBe("header");
+      expect(card.rootTag).toBe("div");
+      expect(card.cardBody).toEqual([
+        "Ada Lovelace Owner",
+        "Grace Hopper Editor",
+        "Alan Turing Viewer",
+      ]);
+
+      // Empty: the count reads 0, the outline action (it works on items) is
+      // disabled, and the primary one stays usable — it adds the first item.
+      const empty = copies.empty!;
+      expect(empty.count).toBe("0");
+      expect(empty.actions).toEqual([
+        { label: "Export", disabled: true },
+        { label: "New task", disabled: false },
+      ]);
+
+      // Loading: three placeholders in a busy region, no heading, no status.
+      const loading = copies.loading!;
+      expect(loading.headingTag).toBeNull();
+      expect(loading.busyPlaceholders).toBe(3);
+      expect(loading.status).toBeNull();
+      expect(loading.actions.every((action) => action.disabled)).toBe(true);
+
+      // Error: the heading stays, the status line goes, and the alert's retry
+      // is the one usable control.
+      const error = copies.error!;
+      expect(error.headingTag).toBe("h1");
+      expect(error.status).toBeNull();
+      expect(error.alert).toBe("error");
+      expect(error.retryEnabled).toBe(true);
+      expect(error.actions.every((action) => action.disabled)).toBe(true);
+
+      // Disabled: every button inert, nothing else missing.
+      const disabled = copies.disabled!;
+      expect(disabled.actions).toHaveLength(2);
+      expect(disabled.actions.every((action) => action.disabled)).toBe(true);
+
+      // Each step is exercised on both sides at every viewport.
+      const widths = Object.values(copies)
+        .filter((block) => block.variant === "page")
+        .map((block) => block.containerWidth);
+      for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
+        expect(
+          widths.some((w) => w < step),
+          `a copy under ${step}px`,
+        ).toBe(true);
+        expect(
+          widths.some((w) => w >= step),
+          `a copy over ${step}px`,
+        ).toBe(true);
+      }
+    });
+  }
+});
+
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`section-header — ${scheme}`, () => {
     test.use({ colorScheme: scheme });
-
-    for (const width of WIDTHS) {
-      test(`lays itself out from its container at ${width}px`, async ({ page }) => {
-        await page.setViewportSize({ width, height: 1200 });
-        await page.goto(PAGE, { waitUntil: "networkidle" });
-        await page.evaluate(() => document.fonts.ready.then(() => true));
-
-        expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(
-          scheme === "dark",
-        );
-
-        const copies: Record<string, BlockMetrics> = {};
-        for (const state of STATES) {
-          await showState(page, state);
-          const mounted = await blockMetrics(page, state);
-          expect(mounted, `${state}: mounted copies`).toHaveLength(1);
-          const block = mounted[0]!;
-          copies[state] = block;
-          const w = block.containerWidth;
-          const where = `${scheme} ${width}px, ${state} (${w}px)`;
-
-          expect(block.rowDisplay, `${where}: heading row`).toBe(
-            w >= CONTAINER_SM ? "flex" : "grid",
-          );
-          if (block.headingStep !== null) {
-            expect(block.headingStep, `${where}: heading size`).toBe(
-              expectedHeadingStep(block.variant, w),
-            );
-          }
-          if (block.descriptionStep !== null) {
-            expect(block.descriptionStep, `${where}: description size`).toBe(
-              w >= CONTAINER_LG ? "body" : "ui-md",
-            );
-          }
-          if (block.crumbs > 0) {
-            expect(block.crumbsShown, `${where}: crumbs shown`).toBe(
-              w >= CONTAINER_SM ? block.crumbs : 1,
-            );
-          }
-
-          const panel = await page.evaluate((state) => {
-            const el = document
-              .querySelector(`[data-demo-state="${state}"]`)!
-              .closest(".preview-panel--demo") as HTMLElement;
-            return { scroll: el.scrollWidth, client: el.clientWidth };
-          }, state);
-          expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
-        }
-
-        // The page header: an h1 under a three-crumb trail that ends on the
-        // current page, with a success status and two facts after it.
-        for (const state of ["default", "narrow", "panel", "wide", "disabled"] as const) {
-          const block = copies[state]!;
-          expect(block.variant, `${state}: variant`).toBe("page");
-          expect(block.headingTag, `${state}: rank`).toBe("h1");
-          expect(block.crumbs, `${state}: crumbs`).toBe(3);
-          expect(block.currentCrumb, `${state}: current crumb`).toBe("Q3 redesign");
-          expect(block.status, `${state}: status`).toBe("success");
-          expect(block.meta, `${state}: meta`).toEqual(["Due Oct 14", "Owned by Ada Lovelace"]);
-          expect(block.rule || block.inCard, `${state}: no frame of its own`).toBe(false);
-          expect(block.rootTag, `${state}: root`).toBe("header");
-        }
-        expect(copies.default!.actions).toEqual([
-          { label: "Share", disabled: false },
-          { label: "New task", disabled: false },
-        ]);
-
-        // The section header sits on a rule; the card header sits in a card.
-        const section = copies.section!;
-        expect([section.variant, section.headingTag, section.rule, section.inCard]).toEqual([
-          "section",
-          "h2",
-          true,
-          false,
-        ]);
-        expect(section.count).toBe("12");
-        expect(section.crumbs + section.meta.length, "no page-only parts").toBe(0);
-        expect(section.actions.every((action) => !action.disabled)).toBe(true);
-        const card = copies.card!;
-        expect([card.variant, card.headingTag, card.rule, card.inCard]).toEqual([
-          "card",
-          "h3",
-          false,
-          true,
-        ]);
-        expect(card.count).toBe("8");
-        // The card's body sits in the same card, under its header; the root is
-        // no <header>, since it holds more than the header.
-        expect(section.rootTag).toBe("header");
-        expect(card.rootTag).toBe("div");
-        expect(card.cardBody).toEqual([
-          "Ada Lovelace Owner",
-          "Grace Hopper Editor",
-          "Alan Turing Viewer",
-        ]);
-
-        // Empty: the count reads 0, the outline action (it works on items) is
-        // disabled, and the primary one stays usable — it adds the first item.
-        const empty = copies.empty!;
-        expect(empty.count).toBe("0");
-        expect(empty.actions).toEqual([
-          { label: "Export", disabled: true },
-          { label: "New task", disabled: false },
-        ]);
-
-        // Loading: three placeholders in a busy region, no heading, no status.
-        const loading = copies.loading!;
-        expect(loading.headingTag).toBeNull();
-        expect(loading.busyPlaceholders).toBe(3);
-        expect(loading.status).toBeNull();
-        expect(loading.actions.every((action) => action.disabled)).toBe(true);
-
-        // Error: the heading stays, the status line goes, and the alert's retry
-        // is the one usable control.
-        const error = copies.error!;
-        expect(error.headingTag).toBe("h1");
-        expect(error.status).toBeNull();
-        expect(error.alert).toBe("error");
-        expect(error.retryEnabled).toBe(true);
-        expect(error.actions.every((action) => action.disabled)).toBe(true);
-
-        // Disabled: every button inert, nothing else missing.
-        const disabled = copies.disabled!;
-        expect(disabled.actions).toHaveLength(2);
-        expect(disabled.actions.every((action) => action.disabled)).toBe(true);
-
-        // Each step is exercised on both sides at every viewport.
-        const widths = Object.values(copies)
-          .filter((block) => block.variant === "page")
-          .map((block) => block.containerWidth);
-        for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
-          expect(
-            widths.some((w) => w < step),
-            `a copy under ${step}px`,
-          ).toBe(true);
-          expect(
-            widths.some((w) => w >= step),
-            `a copy over ${step}px`,
-          ).toBe(true);
-        }
-      });
-    }
 
     test("clears AA contrast on every text it paints", async ({ page }) => {
       await page.goto(PAGE, { waitUntil: "networkidle" });

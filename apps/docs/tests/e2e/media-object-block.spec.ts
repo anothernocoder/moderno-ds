@@ -1,6 +1,6 @@
 /**
  * The media-object block, checked on the built docs page at the three widths
- * of the responsive policy (375 / 768 / 1280) in both colour schemes. It
+ * of the responsive policy (375 / 768 / 1280). It
  * asserts text and computed styles; no screenshot baseline is committed.
  *
  * Four claims:
@@ -246,104 +246,103 @@ async function textRatios(
   );
 }
 
+// Geometry and logic, which no colour changes: one pass is enough.
+test.describe("media-object — either scheme", () => {
+  for (const width of WIDTHS) {
+    test(`lays itself out from its container at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1200 });
+      await page.goto(PAGE, { waitUntil: "networkidle" });
+      await page.evaluate(() => document.fonts.ready.then(() => true));
+
+      const blocks: (BlockMetrics & { state: State })[] = [];
+      for (const state of STATES) {
+        await showState(page, state);
+        const mounted = await blockMetrics(page, state);
+        expect(mounted, `${state}: mounted copies`).toHaveLength(1);
+        const block = { ...mounted[0]!, state };
+        blocks.push(block);
+        const where = `${width}px, ${state} (${block.containerWidth}px)`;
+
+        if (state === "loading") {
+          expect(block.heading, `${where}: no heading while loading`).toBeNull();
+          expect(block.busyPlaceholders, `${where}: placeholders`).toBe(4);
+        } else {
+          const expected: Placement =
+            block.containerWidth < CONTAINER_SM ? "over" : state === "end" ? "end" : "start";
+          expect(block.placement, `${where}: avatar placement`).toBe(expected);
+          expect(block.largeHeading, `${where}: heading size`).toBe(
+            block.containerWidth >= CONTAINER_MD,
+          );
+          expect(block.metaBesideHeading, `${where}: meta beside heading`).toBe(
+            block.containerWidth >= CONTAINER_LG,
+          );
+          expect(block.heading, `${where}: heading`).toBe(
+            state === "end" ? END_HEADING : SAMPLE_HEADING,
+          );
+          if (block.largeBody !== null) {
+            expect(block.largeBody, `${where}: body size`).toBe(
+              block.containerWidth >= CONTAINER_MD,
+            );
+          }
+        }
+
+        // The 50rem frame scrolls inside itself; the panel holding the demo
+        // never pushes the page sideways.
+        const panel = await page.evaluate((state) => {
+          const el = document
+            .querySelector(`[data-demo-state="${state}"]`)!
+            .closest(".preview-panel--demo") as HTMLElement;
+          return { scroll: el.scrollWidth, client: el.clientWidth };
+        }, state);
+        expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
+      }
+
+      const byState = (state: State) => blocks.find((block) => block.state === state)!;
+      for (const state of ["default", "narrow", "compact", "panel", "wide"] as const) {
+        expect(byState(state).action, `${state}: the action`).toBe("Reply");
+        expect(byState(state).largeBody, `${state}: a body renders`).not.toBeNull();
+        expect(byState(state).allButtonsInert, `${state}: the action is live`).toBe(false);
+      }
+      expect(byState("end").action, "end: its own action").toBe("Open thread");
+      expect(
+        blocks.filter((block) => block.emptyMessage).map((block) => block.state),
+        "the empty render",
+      ).toEqual(["empty"]);
+      expect(byState("empty").action, "empty: the action stays").toBe("Reply");
+      expect(
+        blocks.filter((block) => block.busyPlaceholders > 0).map((block) => block.state),
+        "the loading render",
+      ).toEqual(["loading"]);
+      expect(
+        blocks.filter((block) => block.failedLoad).map((block) => block.state),
+        "the failed-load render",
+      ).toEqual(["error"]);
+      expect(byState("error").action, "error: the alert replaces the action").toBeNull();
+      expect(
+        blocks.filter((block) => block.allButtonsInert).map((block) => block.state),
+        "the disabled render",
+      ).toEqual(["disabled"]);
+
+      // Each step is exercised on both sides at every viewport, so a step that
+      // silently stopped firing cannot pass this file.
+      const containerWidths = blocks.map((b) => b.containerWidth);
+      for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
+        expect(
+          containerWidths.some((w) => w < step),
+          `a copy under ${step}px`,
+        ).toBe(true);
+        expect(
+          containerWidths.some((w) => w >= step),
+          `a copy over ${step}px`,
+        ).toBe(true);
+      }
+    });
+  }
+});
+
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`media-object — ${scheme}`, () => {
     test.use({ colorScheme: scheme });
-
-    for (const width of WIDTHS) {
-      test(`lays itself out from its container at ${width}px`, async ({ page }) => {
-        await page.setViewportSize({ width, height: 1200 });
-        await page.goto(PAGE, { waitUntil: "networkidle" });
-        await page.evaluate(() => document.fonts.ready.then(() => true));
-
-        expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(
-          scheme === "dark",
-        );
-
-        const blocks: (BlockMetrics & { state: State })[] = [];
-        for (const state of STATES) {
-          await showState(page, state);
-          const mounted = await blockMetrics(page, state);
-          expect(mounted, `${state}: mounted copies`).toHaveLength(1);
-          const block = { ...mounted[0]!, state };
-          blocks.push(block);
-          const where = `${scheme} ${width}px, ${state} (${block.containerWidth}px)`;
-
-          if (state === "loading") {
-            expect(block.heading, `${where}: no heading while loading`).toBeNull();
-            expect(block.busyPlaceholders, `${where}: placeholders`).toBe(4);
-          } else {
-            const expected: Placement =
-              block.containerWidth < CONTAINER_SM ? "over" : state === "end" ? "end" : "start";
-            expect(block.placement, `${where}: avatar placement`).toBe(expected);
-            expect(block.largeHeading, `${where}: heading size`).toBe(
-              block.containerWidth >= CONTAINER_MD,
-            );
-            expect(block.metaBesideHeading, `${where}: meta beside heading`).toBe(
-              block.containerWidth >= CONTAINER_LG,
-            );
-            expect(block.heading, `${where}: heading`).toBe(
-              state === "end" ? END_HEADING : SAMPLE_HEADING,
-            );
-            if (block.largeBody !== null) {
-              expect(block.largeBody, `${where}: body size`).toBe(
-                block.containerWidth >= CONTAINER_MD,
-              );
-            }
-          }
-
-          // The 50rem frame scrolls inside itself; the panel holding the demo
-          // never pushes the page sideways.
-          const panel = await page.evaluate((state) => {
-            const el = document
-              .querySelector(`[data-demo-state="${state}"]`)!
-              .closest(".preview-panel--demo") as HTMLElement;
-            return { scroll: el.scrollWidth, client: el.clientWidth };
-          }, state);
-          expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
-        }
-
-        const byState = (state: State) => blocks.find((block) => block.state === state)!;
-        for (const state of ["default", "narrow", "compact", "panel", "wide"] as const) {
-          expect(byState(state).action, `${state}: the action`).toBe("Reply");
-          expect(byState(state).largeBody, `${state}: a body renders`).not.toBeNull();
-          expect(byState(state).allButtonsInert, `${state}: the action is live`).toBe(false);
-        }
-        expect(byState("end").action, "end: its own action").toBe("Open thread");
-        expect(
-          blocks.filter((block) => block.emptyMessage).map((block) => block.state),
-          "the empty render",
-        ).toEqual(["empty"]);
-        expect(byState("empty").action, "empty: the action stays").toBe("Reply");
-        expect(
-          blocks.filter((block) => block.busyPlaceholders > 0).map((block) => block.state),
-          "the loading render",
-        ).toEqual(["loading"]);
-        expect(
-          blocks.filter((block) => block.failedLoad).map((block) => block.state),
-          "the failed-load render",
-        ).toEqual(["error"]);
-        expect(byState("error").action, "error: the alert replaces the action").toBeNull();
-        expect(
-          blocks.filter((block) => block.allButtonsInert).map((block) => block.state),
-          "the disabled render",
-        ).toEqual(["disabled"]);
-
-        // Each step is exercised on both sides at every viewport, so a step that
-        // silently stopped firing cannot pass this file.
-        const containerWidths = blocks.map((b) => b.containerWidth);
-        for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
-          expect(
-            containerWidths.some((w) => w < step),
-            `a copy under ${step}px`,
-          ).toBe(true);
-          expect(
-            containerWidths.some((w) => w >= step),
-            `a copy over ${step}px`,
-          ).toBe(true);
-        }
-      });
-    }
 
     test("clears AA contrast on every text it paints", async ({ page }) => {
       await page.goto(PAGE, { waitUntil: "networkidle" });

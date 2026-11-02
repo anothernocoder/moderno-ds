@@ -1,6 +1,6 @@
 /**
  * The checkout-form block, checked on the built docs page at the three widths
- * of the responsive policy (375 / 768 / 1280) in both colour schemes. It
+ * of the responsive policy (375 / 768 / 1280). It
  * asserts text and computed styles; no screenshot baseline is committed.
  *
  * Four claims:
@@ -358,182 +358,168 @@ async function contrastRatios(
   );
 }
 
+// Geometry and logic, which no colour changes: one pass is enough.
+test.describe("checkout-form — either scheme", () => {
+  for (const width of WIDTHS) {
+    test(`lays itself out from its container at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1200 });
+      await page.goto(PAGE, { waitUntil: "networkidle" });
+      await page.evaluate(() => document.fonts.ready.then(() => true));
+
+      const blocks: Array<BlockMetrics & { state: State }> = [];
+      for (const state of STATES) {
+        await showState(page, state);
+        const mounted = await blockMetrics(page, state);
+        expect(mounted, `${state}: mounted copies`).toHaveLength(1);
+        const block = mounted[0]!;
+        blocks.push({ ...block, state });
+        const where = `${width}px, ${state} (${block.containerWidth}px)`;
+        const payment = state === "payment";
+        const copy = payment ? PAYMENT : SHIPPING;
+        const groups = state === "empty" ? SHIPPING.groups.slice(0, 2) : copy.groups;
+
+        expect(block.heading, `${where}: heading`).toBe(copy.heading);
+        expect(block.headingTag, `${where}: heading level`).toBe("h2");
+        expect(block.serifHeading, `${where}: serif heading`).toBe(true);
+        expect(block.paddingTop, `${where}: room above`).toBe(
+          block.containerWidth >= CONTAINER_LG ? 64 : 48,
+        );
+        expect(block.offCentre, `${where}: centred`).toBeLessThan(1);
+
+        expect(block.groups, `${where}: groups`).toEqual(groups);
+        expect(block.groupColumns, `${where}: titles beside fields`).toEqual(
+          groups.map(() => (block.containerWidth >= CONTAINER_LG ? 3 : 1)),
+        );
+        expect(block.fieldColumns, `${where}: fields paired off`).toEqual(
+          (payment ? [0] : [0, 0]).map(() => (block.containerWidth >= CONTAINER_SM ? 2 : 1)),
+        );
+        expect(block.fields, `${where}: fields`).toEqual(copy.fields);
+        expect(block.fieldLabels, `${where}: field labels`).toEqual(copy.labels);
+
+        if (groups.includes("Delivery method")) {
+          expect(
+            block.options.map(({ value, text }) => ({ value, text })),
+            `${where}: delivery options`,
+          ).toEqual(OPTIONS);
+          expect(
+            block.options.map((option) => option.checked),
+            `${where}: first option picked`,
+          ).toEqual([true, false]);
+          expect(block.optionColumns, `${where}: options side by side`).toBe(
+            block.containerWidth >= CONTAINER_MD ? 2 : 1,
+          );
+        } else {
+          expect(block.options, `${where}: no delivery options`).toEqual([]);
+        }
+
+        const inert = state === "loading" || state === "disabled";
+        expect(block.saveCard, `${where}: save switch`).toEqual(
+          payment ? { label: SAVE_CARD, disabled: false } : null,
+        );
+        expect(block.disabledFields, `${where}: disabled fields`).toEqual(inert ? copy.fields : []);
+        expect(
+          block.options.every((option) => option.disabled === inert),
+          `${where}: disabled radios`,
+        ).toBe(true);
+        expect(block.back, `${where}: back button`).toEqual({
+          label: copy.back,
+          disabled: inert,
+        });
+        expect(block.submit, `${where}: submit button`).toEqual({
+          label: state === "loading" ? SHIPPING.busy : copy.submit,
+          disabled: inert,
+          busy: state === "loading",
+        });
+        expect(block.actionsDirection, `${where}: buttons share a row`).toBe(
+          block.containerWidth >= CONTAINER_SM ? "row" : "column-reverse",
+        );
+        expect(block.buttonsFillRow, `${where}: full-width buttons`).toBe(
+          block.containerWidth < CONTAINER_SM,
+        );
+
+        if (state === "error") {
+          expect(block.alerts, `${where}: error alert`).toEqual([{ role: "alert", title: ERROR }]);
+          expect(block.invalidFields, `${where}: invalid field`).toEqual(["postalCode"]);
+          expect(block.fieldErrors, `${where}: field error`).toEqual([POSTAL_ERROR]);
+        } else {
+          expect(block.alerts, `${where}: no alert`).toEqual([]);
+          expect(block.invalidFields, `${where}: no invalid field`).toEqual([]);
+          expect(block.fieldErrors, `${where}: no field error`).toEqual([]);
+        }
+
+        // The 50rem frame scrolls inside itself; the panel holding the demo
+        // never pushes the page sideways.
+        const panel = await page.evaluate((state) => {
+          const el = document
+            .querySelector(`[data-demo-state="${state}"]`)!
+            .closest(".preview-panel--demo") as HTMLElement;
+          return { scroll: el.scrollWidth, client: el.clientWidth };
+        }, state);
+        expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
+      }
+
+      // The heading steps up at `--container-md`: one size below it, one
+      // larger size from it on.
+      const below = new Set(
+        blocks.filter((b) => b.containerWidth < CONTAINER_MD).map((b) => b.headingSize),
+      );
+      const above = new Set(
+        blocks.filter((b) => b.containerWidth >= CONTAINER_MD).map((b) => b.headingSize),
+      );
+      expect(below.size, "one heading size below @md").toBe(1);
+      expect(above.size, "one heading size from @md").toBe(1);
+      expect([...above][0]!, "heading steps up at @md").toBeGreaterThan([...below][0]!);
+
+      // Each step is exercised on both sides at every viewport, so a step that
+      // silently stopped firing cannot pass this file.
+      const containerWidths = blocks.map((b) => b.containerWidth);
+      for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
+        expect(
+          containerWidths.some((w) => w < step),
+          `a copy under ${step}px`,
+        ).toBe(true);
+        expect(
+          containerWidths.some((w) => w >= step),
+          `a copy over ${step}px`,
+        ).toBe(true);
+      }
+    });
+  }
+
+  test("sits in the middle of its preview", async ({ page }) => {
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    for (const state of ["default", "payment", "empty", "loading", "error", "disabled"] as const) {
+      await showState(page, state);
+      const gaps = await page.evaluate(
+        ({ state, selector }) => {
+          const wrapper = document.querySelector(`[data-demo-state="${state}"]`)!;
+          const panel = wrapper.closest(".preview-panel--demo")!.getBoundingClientRect();
+          const block = wrapper.querySelector(selector)!;
+          const content = [...block.firstElementChild!.children].map((el) =>
+            el.getBoundingClientRect(),
+          );
+          const top = Math.min(...content.map((r) => r.top));
+          const bottom = Math.max(...content.map((r) => r.bottom));
+          const left = Math.min(...content.map((r) => r.left));
+          const right = Math.max(...content.map((r) => r.right));
+          return {
+            above: top - panel.top,
+            below: panel.bottom - bottom,
+            before: left - panel.left,
+            after: panel.right - right,
+          };
+        },
+        { state, selector: BLOCK },
+      );
+      expect(Math.abs(gaps.above - gaps.below), `${state}: vertical`).toBeLessThan(2);
+      expect(Math.abs(gaps.before - gaps.after), `${state}: horizontal`).toBeLessThan(2);
+    }
+  });
+});
+
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`checkout-form — ${scheme}`, () => {
     test.use({ colorScheme: scheme });
-
-    for (const width of WIDTHS) {
-      test(`lays itself out from its container at ${width}px`, async ({ page }) => {
-        await page.setViewportSize({ width, height: 1200 });
-        await page.goto(PAGE, { waitUntil: "networkidle" });
-        await page.evaluate(() => document.fonts.ready.then(() => true));
-
-        expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(
-          scheme === "dark",
-        );
-
-        const blocks: Array<BlockMetrics & { state: State }> = [];
-        for (const state of STATES) {
-          await showState(page, state);
-          const mounted = await blockMetrics(page, state);
-          expect(mounted, `${state}: mounted copies`).toHaveLength(1);
-          const block = mounted[0]!;
-          blocks.push({ ...block, state });
-          const where = `${scheme} ${width}px, ${state} (${block.containerWidth}px)`;
-          const payment = state === "payment";
-          const copy = payment ? PAYMENT : SHIPPING;
-          const groups = state === "empty" ? SHIPPING.groups.slice(0, 2) : copy.groups;
-
-          expect(block.heading, `${where}: heading`).toBe(copy.heading);
-          expect(block.headingTag, `${where}: heading level`).toBe("h2");
-          expect(block.serifHeading, `${where}: serif heading`).toBe(true);
-          expect(block.paddingTop, `${where}: room above`).toBe(
-            block.containerWidth >= CONTAINER_LG ? 64 : 48,
-          );
-          expect(block.offCentre, `${where}: centred`).toBeLessThan(1);
-
-          expect(block.groups, `${where}: groups`).toEqual(groups);
-          expect(block.groupColumns, `${where}: titles beside fields`).toEqual(
-            groups.map(() => (block.containerWidth >= CONTAINER_LG ? 3 : 1)),
-          );
-          expect(block.fieldColumns, `${where}: fields paired off`).toEqual(
-            (payment ? [0] : [0, 0]).map(() => (block.containerWidth >= CONTAINER_SM ? 2 : 1)),
-          );
-          expect(block.fields, `${where}: fields`).toEqual(copy.fields);
-          expect(block.fieldLabels, `${where}: field labels`).toEqual(copy.labels);
-
-          if (groups.includes("Delivery method")) {
-            expect(
-              block.options.map(({ value, text }) => ({ value, text })),
-              `${where}: delivery options`,
-            ).toEqual(OPTIONS);
-            expect(
-              block.options.map((option) => option.checked),
-              `${where}: first option picked`,
-            ).toEqual([true, false]);
-            expect(block.optionColumns, `${where}: options side by side`).toBe(
-              block.containerWidth >= CONTAINER_MD ? 2 : 1,
-            );
-          } else {
-            expect(block.options, `${where}: no delivery options`).toEqual([]);
-          }
-
-          const inert = state === "loading" || state === "disabled";
-          expect(block.saveCard, `${where}: save switch`).toEqual(
-            payment ? { label: SAVE_CARD, disabled: false } : null,
-          );
-          expect(block.disabledFields, `${where}: disabled fields`).toEqual(
-            inert ? copy.fields : [],
-          );
-          expect(
-            block.options.every((option) => option.disabled === inert),
-            `${where}: disabled radios`,
-          ).toBe(true);
-          expect(block.back, `${where}: back button`).toEqual({
-            label: copy.back,
-            disabled: inert,
-          });
-          expect(block.submit, `${where}: submit button`).toEqual({
-            label: state === "loading" ? SHIPPING.busy : copy.submit,
-            disabled: inert,
-            busy: state === "loading",
-          });
-          expect(block.actionsDirection, `${where}: buttons share a row`).toBe(
-            block.containerWidth >= CONTAINER_SM ? "row" : "column-reverse",
-          );
-          expect(block.buttonsFillRow, `${where}: full-width buttons`).toBe(
-            block.containerWidth < CONTAINER_SM,
-          );
-
-          if (state === "error") {
-            expect(block.alerts, `${where}: error alert`).toEqual([
-              { role: "alert", title: ERROR },
-            ]);
-            expect(block.invalidFields, `${where}: invalid field`).toEqual(["postalCode"]);
-            expect(block.fieldErrors, `${where}: field error`).toEqual([POSTAL_ERROR]);
-          } else {
-            expect(block.alerts, `${where}: no alert`).toEqual([]);
-            expect(block.invalidFields, `${where}: no invalid field`).toEqual([]);
-            expect(block.fieldErrors, `${where}: no field error`).toEqual([]);
-          }
-
-          // The 50rem frame scrolls inside itself; the panel holding the demo
-          // never pushes the page sideways.
-          const panel = await page.evaluate((state) => {
-            const el = document
-              .querySelector(`[data-demo-state="${state}"]`)!
-              .closest(".preview-panel--demo") as HTMLElement;
-            return { scroll: el.scrollWidth, client: el.clientWidth };
-          }, state);
-          expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
-        }
-
-        // The heading steps up at `--container-md`: one size below it, one
-        // larger size from it on.
-        const below = new Set(
-          blocks.filter((b) => b.containerWidth < CONTAINER_MD).map((b) => b.headingSize),
-        );
-        const above = new Set(
-          blocks.filter((b) => b.containerWidth >= CONTAINER_MD).map((b) => b.headingSize),
-        );
-        expect(below.size, "one heading size below @md").toBe(1);
-        expect(above.size, "one heading size from @md").toBe(1);
-        expect([...above][0]!, "heading steps up at @md").toBeGreaterThan([...below][0]!);
-
-        // Each step is exercised on both sides at every viewport, so a step that
-        // silently stopped firing cannot pass this file.
-        const containerWidths = blocks.map((b) => b.containerWidth);
-        for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
-          expect(
-            containerWidths.some((w) => w < step),
-            `a copy under ${step}px`,
-          ).toBe(true);
-          expect(
-            containerWidths.some((w) => w >= step),
-            `a copy over ${step}px`,
-          ).toBe(true);
-        }
-      });
-    }
-
-    test("sits in the middle of its preview", async ({ page }) => {
-      await page.goto(PAGE, { waitUntil: "networkidle" });
-      for (const state of [
-        "default",
-        "payment",
-        "empty",
-        "loading",
-        "error",
-        "disabled",
-      ] as const) {
-        await showState(page, state);
-        const gaps = await page.evaluate(
-          ({ state, selector }) => {
-            const wrapper = document.querySelector(`[data-demo-state="${state}"]`)!;
-            const panel = wrapper.closest(".preview-panel--demo")!.getBoundingClientRect();
-            const block = wrapper.querySelector(selector)!;
-            const content = [...block.firstElementChild!.children].map((el) =>
-              el.getBoundingClientRect(),
-            );
-            const top = Math.min(...content.map((r) => r.top));
-            const bottom = Math.max(...content.map((r) => r.bottom));
-            const left = Math.min(...content.map((r) => r.left));
-            const right = Math.max(...content.map((r) => r.right));
-            return {
-              above: top - panel.top,
-              below: panel.bottom - bottom,
-              before: left - panel.left,
-              after: panel.right - right,
-            };
-          },
-          { state, selector: BLOCK },
-        );
-        expect(Math.abs(gaps.above - gaps.below), `${scheme} ${state}: vertical`).toBeLessThan(2);
-        expect(Math.abs(gaps.before - gaps.after), `${scheme} ${state}: horizontal`).toBeLessThan(
-          2,
-        );
-      }
-    });
 
     test("clears AA contrast on every text it paints", async ({ page }) => {
       await page.goto(PAGE, { waitUntil: "networkidle" });

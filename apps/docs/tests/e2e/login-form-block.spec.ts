@@ -1,7 +1,7 @@
 /**
  * The login-form block, checked where it is actually shown to a reader: the
  * built docs page, at the three widths of the responsive policy (375 / 768 /
- * 1280) in both colour schemes.
+ * 1280).
  *
  * This is the seam that replaces a screenshot baseline for this block. The
  * pixel baselines were dropped from this repo (see `playwright.config.ts`)
@@ -174,38 +174,37 @@ async function textRatios(page: Page, state: State): Promise<Record<string, numb
   }, state);
 }
 
+// Geometry and logic, which no colour changes: one pass is enough.
+test.describe("login-form — either scheme", () => {
+  for (const width of WIDTHS) {
+    test(`lays itself out from its container at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1200 });
+      await page.goto(PAGE, { waitUntil: "networkidle" });
+      await page.evaluate(() => document.fonts.ready.then(() => true));
+
+      for (const state of STATES) {
+        await showState(page, state);
+        const blocks = await blockMetrics(page, state);
+        // One preview, one mounted copy.
+        expect(blocks, `${state}: mounted copies`).toHaveLength(1);
+        const block = blocks[0]!;
+        const where = `${width}px, ${state} (${block.containerWidth}px)`;
+        // The @sm step is read off the block's own container, so the answer
+        // differs between the sidebar figure and the full-width ones at the
+        // same viewport — which is the whole point of ADR-0005.
+        expect(block.secondaryRowDisplay, `${where}: secondary row`).toBe(
+          block.containerWidth >= CONTAINER_SM ? "flex" : "grid",
+        );
+        // The card never grows past --container-sm, whatever room it is given.
+        expect(block.cardWidth, `${where}: card width`).toBeLessThanOrEqual(CONTAINER_SM);
+      }
+    });
+  }
+});
+
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`login-form — ${scheme}`, () => {
     test.use({ colorScheme: scheme });
-
-    for (const width of WIDTHS) {
-      test(`lays itself out from its container at ${width}px`, async ({ page }) => {
-        await page.setViewportSize({ width, height: 1200 });
-        await page.goto(PAGE, { waitUntil: "networkidle" });
-        await page.evaluate(() => document.fonts.ready.then(() => true));
-
-        expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(
-          scheme === "dark",
-        );
-
-        for (const state of STATES) {
-          await showState(page, state);
-          const blocks = await blockMetrics(page, state);
-          // One preview, one mounted copy.
-          expect(blocks, `${state}: mounted copies`).toHaveLength(1);
-          const block = blocks[0]!;
-          const where = `${scheme} ${width}px, ${state} (${block.containerWidth}px)`;
-          // The @sm step is read off the block's own container, so the answer
-          // differs between the sidebar figure and the full-width ones at the
-          // same viewport — which is the whole point of ADR-0005.
-          expect(block.secondaryRowDisplay, `${where}: secondary row`).toBe(
-            block.containerWidth >= CONTAINER_SM ? "flex" : "grid",
-          );
-          // The card never grows past --container-sm, whatever room it is given.
-          expect(block.cardWidth, `${where}: card width`).toBeLessThanOrEqual(CONTAINER_SM);
-        }
-      });
-    }
 
     test("clears AA contrast on every text it paints", async ({ page }) => {
       await page.goto(PAGE, { waitUntil: "networkidle" });
