@@ -26,9 +26,7 @@ jobs:
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
-          # Astro 7 (apps/docs) requires >=22.12; the range keeps CI on the
-          # latest 22 LTS patch rather than pinning one that ages out.
-          node-version: "^22.12"
+          node-version-file: .tool-versions
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
@@ -44,9 +42,7 @@ jobs:
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
-          # Astro 7 (apps/docs) requires >=22.12; the range keeps CI on the
-          # latest 22 LTS patch rather than pinning one that ages out.
-          node-version: "^22.12"
+          node-version-file: .tool-versions
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       # Every generated file is committed (ADR-0009): fail before the build if
@@ -76,9 +72,7 @@ jobs:
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
-          # Astro 7 (apps/docs) requires >=22.12; the range keeps CI on the
-          # latest 22 LTS patch rather than pinning one that ages out.
-          node-version: "^22.12"
+          node-version-file: .tool-versions
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       # Many suites import workspace packages through their built entries.
@@ -103,9 +97,7 @@ jobs:
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
-          # Astro 7 (apps/docs) requires >=22.12; the range keeps CI on the
-          # latest 22 LTS patch rather than pinning one that ages out.
-          node-version: "^22.12"
+          node-version-file: .tool-versions
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm theme:build
