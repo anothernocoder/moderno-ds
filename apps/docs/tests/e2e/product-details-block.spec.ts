@@ -766,6 +766,9 @@ for (const scheme of ["light", "dark"] as const) {
       await expect(block.getByRole("radio", { name: "Oat" })).toBeChecked();
       const quantity = block.getByRole("spinbutton", { name: "Quantity" });
       await block.getByRole("button", { name: /increment/i }).click();
+      // The increment writes "2" into the box a frame later; filling before
+      // then appends to it ("23") instead of replacing it.
+      await expect(quantity).toHaveValue("2");
       await quantity.fill("3");
       await add.click();
       await expect(added).toHaveText("Added: 3 × oat, 350");
