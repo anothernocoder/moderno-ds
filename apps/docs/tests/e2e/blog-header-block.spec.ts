@@ -1,6 +1,6 @@
 /**
  * The blog-header block, checked on the built docs page at the three widths of
- * the responsive policy (375 / 768 / 1280) in both colour schemes. It asserts
+ * the responsive policy (375 / 768 / 1280). It asserts
  * text and computed styles; no screenshot baseline is committed.
  *
  * Four claims:
@@ -270,141 +270,149 @@ async function contrastRatios(
   );
 }
 
+// Geometry and logic, which no colour changes: one pass is enough.
+test.describe("blog-header — either scheme", () => {
+  for (const width of WIDTHS) {
+    test(`lays itself out from its container at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1200 });
+      await page.goto(PAGE, { waitUntil: "networkidle" });
+      await page.evaluate(() => document.fonts.ready.then(() => true));
+
+      const blocks: Array<BlockMetrics & { state: State }> = [];
+      for (const state of STATES) {
+        await showState(page, state);
+        const mounted = await blockMetrics(page, state);
+        expect(mounted, `${state}: mounted copies`).toHaveLength(1);
+        const block = mounted[0]!;
+        blocks.push({ ...block, state });
+        const where = `${width}px, ${state} (${block.containerWidth}px)`;
+        const lg = block.containerWidth >= CONTAINER_LG;
+
+        expect(block.paddingTop, `${where}: room above`).toBe(lg ? 64 : 48);
+        expect(block.partGap, `${where}: room between the parts`).toBe(lg ? 40 : 32);
+        expect(block.offCentre, `${where}: centred`).toBeLessThan(1);
+        expect(block.alert, `${where}: error announced`).toBe(state === "error");
+        expect(block.kicker, `${where}: kicker`).toBe(KICKER);
+        expect(block.title, `${where}: title`).toBe(TITLE);
+        expect(block.serifTitle, `${where}: serif title`).toBe(true);
+        expect(block.titleSize, `${where}: title size`).toBe(
+          block.containerWidth >= CONTAINER_MD ? 36 : 24,
+        );
+        expect(block.descriptionSize, `${where}: description size`).toBe(
+          block.containerWidth >= CONTAINER_SM ? 16 : 14,
+        );
+
+        if (state === "loading") {
+          expect(block.placeholders, `${where}: placeholder chips`).toBe(5);
+          expect(block.chips, `${where}: no chips while loading`).toEqual([]);
+          expect(block.buttons, `${where}: no buttons while loading`).toEqual([]);
+        } else if (state === "empty") {
+          expect(block.empty, `${where}: empty message`).toBe(EMPTY);
+          expect(block.chips, `${where}: no chips`).toEqual([]);
+          expect(block.buttons, `${where}: no buttons`).toEqual([]);
+        } else if (state === "error") {
+          expect(block.chips, `${where}: no chips`).toEqual([]);
+          expect(block.buttons, `${where}: retry only`).toEqual(["Try again"]);
+          expect(block.buttonVariants, `${where}: retry variant`).toEqual(["outline"]);
+        } else {
+          expect(block.namedNav, `${where}: a named nav`).toBe(true);
+          expect(block.chips, `${where}: one chip per category`).toEqual(CATEGORIES);
+          expect(block.current, `${where}: the current category`).toEqual([CURRENT]);
+          expect(block.chipVariants, `${where}: chip variants`).toEqual(
+            CATEGORIES.map((label) =>
+              label === CURRENT ? "solid" : state === "disabled" ? "muted" : "outline",
+            ),
+          );
+          expect(block.chipGap, `${where}: gap between chips`).toBe(
+            block.containerWidth >= CONTAINER_MD ? 12 : 8,
+          );
+          expect(block.empty, `${where}: no empty message`).toBeNull();
+          expect(block.buttons, `${where}: no buttons`).toEqual([]);
+        }
+
+        // The 50rem frame scrolls inside itself; the panel holding the demo
+        // never pushes the page sideways.
+        const panel = await page.evaluate((state) => {
+          const el = document
+            .querySelector(`[data-demo-state="${state}"]`)!
+            .closest(".preview-panel--demo") as HTMLElement;
+          return { scroll: el.scrollWidth, client: el.clientWidth };
+        }, state);
+        expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
+      }
+
+      expect(
+        blocks.filter((block) => block.allLinksInert).map((block) => block.state),
+        "the disabled render",
+      ).toEqual(["disabled"]);
+      expect(
+        blocks.filter((block) => block.allLinksLive).map((block) => block.state),
+        "every other render with chips",
+      ).toEqual(["default", "narrow", "compact", "panel", "wide"]);
+
+      // Each step is exercised on both sides at every viewport, so a step that
+      // silently stopped firing cannot pass this file.
+      const containerWidths = blocks.filter((b) => b.chips.length > 0).map((b) => b.containerWidth);
+      for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
+        expect(
+          containerWidths.some((w) => w < step),
+          `a copy under ${step}px`,
+        ).toBe(true);
+        expect(
+          containerWidths.some((w) => w >= step),
+          `a copy over ${step}px`,
+        ).toBe(true);
+      }
+    });
+  }
+
+  test("sits in the middle of its preview", async ({ page }) => {
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    for (const state of ["default", "empty", "loading", "error", "disabled"] as const) {
+      await showState(page, state);
+      const gaps = await page.evaluate(
+        ({ state, selector }) => {
+          const wrapper = document.querySelector(`[data-demo-state="${state}"]`)!;
+          const panel = wrapper.closest(".preview-panel--demo")!.getBoundingClientRect();
+          const block = wrapper.querySelector(selector)!;
+          const content = [...block.firstElementChild!.children]
+            .filter((el) => !el.classList.contains("sr-only"))
+            .map((el) => el.getBoundingClientRect());
+          const top = Math.min(...content.map((r) => r.top));
+          const bottom = Math.max(...content.map((r) => r.bottom));
+          const left = Math.min(...content.map((r) => r.left));
+          const right = Math.max(...content.map((r) => r.right));
+          return {
+            above: top - panel.top,
+            below: panel.bottom - bottom,
+            before: left - panel.left,
+            after: panel.right - right,
+          };
+        },
+        { state, selector: BLOCK },
+      );
+      expect(Math.abs(gaps.above - gaps.below), `${state}: vertical`).toBeLessThan(2);
+      expect(Math.abs(gaps.before - gaps.after), `${state}: horizontal`).toBeLessThan(2);
+    }
+  });
+
+  test("treats an empty error string as no error", async ({ page }) => {
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await showState(page, "error");
+    const block = page.locator(`[data-demo-state="error"] ${BLOCK}`);
+
+    // The demo's retry clears its message to "", the way a consumer holding
+    // the error as a string does once the load succeeds.
+    await block.getByRole("button", { name: "Try again" }).click();
+
+    await expect(block.locator('[data-scope="alert"]')).toHaveCount(0);
+    await expect(block.getByRole("link")).toHaveText(CATEGORIES);
+  });
+});
+
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`blog-header — ${scheme}`, () => {
     test.use({ colorScheme: scheme });
-
-    for (const width of WIDTHS) {
-      test(`lays itself out from its container at ${width}px`, async ({ page }) => {
-        await page.setViewportSize({ width, height: 1200 });
-        await page.goto(PAGE, { waitUntil: "networkidle" });
-        await page.evaluate(() => document.fonts.ready.then(() => true));
-
-        expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(
-          scheme === "dark",
-        );
-
-        const blocks: Array<BlockMetrics & { state: State }> = [];
-        for (const state of STATES) {
-          await showState(page, state);
-          const mounted = await blockMetrics(page, state);
-          expect(mounted, `${state}: mounted copies`).toHaveLength(1);
-          const block = mounted[0]!;
-          blocks.push({ ...block, state });
-          const where = `${scheme} ${width}px, ${state} (${block.containerWidth}px)`;
-          const lg = block.containerWidth >= CONTAINER_LG;
-
-          expect(block.paddingTop, `${where}: room above`).toBe(lg ? 64 : 48);
-          expect(block.partGap, `${where}: room between the parts`).toBe(lg ? 40 : 32);
-          expect(block.offCentre, `${where}: centred`).toBeLessThan(1);
-          expect(block.alert, `${where}: error announced`).toBe(state === "error");
-          expect(block.kicker, `${where}: kicker`).toBe(KICKER);
-          expect(block.title, `${where}: title`).toBe(TITLE);
-          expect(block.serifTitle, `${where}: serif title`).toBe(true);
-          expect(block.titleSize, `${where}: title size`).toBe(
-            block.containerWidth >= CONTAINER_MD ? 36 : 24,
-          );
-          expect(block.descriptionSize, `${where}: description size`).toBe(
-            block.containerWidth >= CONTAINER_SM ? 16 : 14,
-          );
-
-          if (state === "loading") {
-            expect(block.placeholders, `${where}: placeholder chips`).toBe(5);
-            expect(block.chips, `${where}: no chips while loading`).toEqual([]);
-            expect(block.buttons, `${where}: no buttons while loading`).toEqual([]);
-          } else if (state === "empty") {
-            expect(block.empty, `${where}: empty message`).toBe(EMPTY);
-            expect(block.chips, `${where}: no chips`).toEqual([]);
-            expect(block.buttons, `${where}: no buttons`).toEqual([]);
-          } else if (state === "error") {
-            expect(block.chips, `${where}: no chips`).toEqual([]);
-            expect(block.buttons, `${where}: retry only`).toEqual(["Try again"]);
-            expect(block.buttonVariants, `${where}: retry variant`).toEqual(["outline"]);
-          } else {
-            expect(block.namedNav, `${where}: a named nav`).toBe(true);
-            expect(block.chips, `${where}: one chip per category`).toEqual(CATEGORIES);
-            expect(block.current, `${where}: the current category`).toEqual([CURRENT]);
-            expect(block.chipVariants, `${where}: chip variants`).toEqual(
-              CATEGORIES.map((label) =>
-                label === CURRENT ? "solid" : state === "disabled" ? "muted" : "outline",
-              ),
-            );
-            expect(block.chipGap, `${where}: gap between chips`).toBe(
-              block.containerWidth >= CONTAINER_MD ? 12 : 8,
-            );
-            expect(block.empty, `${where}: no empty message`).toBeNull();
-            expect(block.buttons, `${where}: no buttons`).toEqual([]);
-          }
-
-          // The 50rem frame scrolls inside itself; the panel holding the demo
-          // never pushes the page sideways.
-          const panel = await page.evaluate((state) => {
-            const el = document
-              .querySelector(`[data-demo-state="${state}"]`)!
-              .closest(".preview-panel--demo") as HTMLElement;
-            return { scroll: el.scrollWidth, client: el.clientWidth };
-          }, state);
-          expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
-        }
-
-        expect(
-          blocks.filter((block) => block.allLinksInert).map((block) => block.state),
-          "the disabled render",
-        ).toEqual(["disabled"]);
-        expect(
-          blocks.filter((block) => block.allLinksLive).map((block) => block.state),
-          "every other render with chips",
-        ).toEqual(["default", "narrow", "compact", "panel", "wide"]);
-
-        // Each step is exercised on both sides at every viewport, so a step that
-        // silently stopped firing cannot pass this file.
-        const containerWidths = blocks
-          .filter((b) => b.chips.length > 0)
-          .map((b) => b.containerWidth);
-        for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
-          expect(
-            containerWidths.some((w) => w < step),
-            `a copy under ${step}px`,
-          ).toBe(true);
-          expect(
-            containerWidths.some((w) => w >= step),
-            `a copy over ${step}px`,
-          ).toBe(true);
-        }
-      });
-    }
-
-    test("sits in the middle of its preview", async ({ page }) => {
-      await page.goto(PAGE, { waitUntil: "networkidle" });
-      for (const state of ["default", "empty", "loading", "error", "disabled"] as const) {
-        await showState(page, state);
-        const gaps = await page.evaluate(
-          ({ state, selector }) => {
-            const wrapper = document.querySelector(`[data-demo-state="${state}"]`)!;
-            const panel = wrapper.closest(".preview-panel--demo")!.getBoundingClientRect();
-            const block = wrapper.querySelector(selector)!;
-            const content = [...block.firstElementChild!.children]
-              .filter((el) => !el.classList.contains("sr-only"))
-              .map((el) => el.getBoundingClientRect());
-            const top = Math.min(...content.map((r) => r.top));
-            const bottom = Math.max(...content.map((r) => r.bottom));
-            const left = Math.min(...content.map((r) => r.left));
-            const right = Math.max(...content.map((r) => r.right));
-            return {
-              above: top - panel.top,
-              below: panel.bottom - bottom,
-              before: left - panel.left,
-              after: panel.right - right,
-            };
-          },
-          { state, selector: BLOCK },
-        );
-        expect(Math.abs(gaps.above - gaps.below), `${scheme} ${state}: vertical`).toBeLessThan(2);
-        expect(Math.abs(gaps.before - gaps.after), `${scheme} ${state}: horizontal`).toBeLessThan(
-          2,
-        );
-      }
-    });
 
     test("clears AA contrast on every text it paints", async ({ page }) => {
       await page.goto(PAGE, { waitUntil: "networkidle" });
@@ -518,19 +526,6 @@ for (const scheme of ["light", "dark"] as const) {
       const block = page.locator(`[data-demo-state="default"] ${BLOCK}`);
       await expect(block.getByRole("heading", { level: 1 })).toHaveText(TITLE);
       await expect(block.getByRole("navigation", { name: "Categories" })).toBeVisible();
-      await expect(block.getByRole("link")).toHaveText(CATEGORIES);
-    });
-
-    test("treats an empty error string as no error", async ({ page }) => {
-      await page.goto(PAGE, { waitUntil: "networkidle" });
-      await showState(page, "error");
-      const block = page.locator(`[data-demo-state="error"] ${BLOCK}`);
-
-      // The demo's retry clears its message to "", the way a consumer holding
-      // the error as a string does once the load succeeds.
-      await block.getByRole("button", { name: "Try again" }).click();
-
-      await expect(block.locator('[data-scope="alert"]')).toHaveCount(0);
       await expect(block.getByRole("link")).toHaveText(CATEGORIES);
     });
   });

@@ -1,6 +1,6 @@
 /**
  * The description-list block, checked on the built docs page at the three
- * widths of the responsive policy (375 / 768 / 1280) in both colour schemes. It
+ * widths of the responsive policy (375 / 768 / 1280). It
  * asserts text and computed styles; no screenshot baseline is committed.
  *
  * Four claims:
@@ -269,95 +269,90 @@ async function textRatios(
   );
 }
 
+// Geometry and logic, which no colour changes: one pass is enough.
+test.describe("description-list — either scheme", () => {
+  for (const width of WIDTHS) {
+    test(`lays itself out from its container at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1200 });
+      await page.goto(PAGE, { waitUntil: "networkidle" });
+      await page.evaluate(() => document.fonts.ready.then(() => true));
+
+      const blocks: BlockMetrics[] = [];
+      for (const state of STATES) {
+        await showState(page, state);
+        const mounted = await blockMetrics(page, state);
+        expect(mounted, `${state}: mounted copies`).toHaveLength(1);
+        const block = mounted[0]!;
+        blocks.push(block);
+        const where = `${width}px, ${state} (${block.containerWidth}px)`;
+
+        expect(block.divider, `${where}: divider under the header`).toBe(true);
+        if (block.rowTracks !== null) {
+          expect(block.rowTracks, `${where}: row tracks`).toBe(
+            expectedTracks(block.containerWidth),
+          );
+        }
+        if (block.termBesideValue !== null) {
+          expect(block.termBesideValue, `${where}: term beside value`).toBe(
+            block.containerWidth >= CONTAINER_MD,
+          );
+        }
+        if (block.actionValueDisplay !== null) {
+          expect(block.actionValueDisplay, `${where}: action row`).toBe(
+            block.containerWidth >= CONTAINER_SM ? "flex" : "grid",
+          );
+          expect(block.actionBesideValue, `${where}: action beside value`).toBe(
+            block.containerWidth >= CONTAINER_SM,
+          );
+        }
+        if (block.terms.length > 0) {
+          expect(block.terms, `${where}: terms`).toEqual(TERMS);
+          expect(block.badges, `${where}: status badge`).toEqual(["success"]);
+          expect(block.actions, `${where}: row actions`).toBe(3);
+        }
+
+        // The 50rem frame scrolls inside itself; the panel holding the demo
+        // never pushes the page sideways.
+        const panel = await page.evaluate((state) => {
+          const el = document
+            .querySelector(`[data-demo-state="${state}"]`)!
+            .closest(".preview-panel--demo") as HTMLElement;
+          return { scroll: el.scrollWidth, client: el.clientWidth };
+        }, state);
+        expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
+      }
+
+      const lists = blocks.filter((block) => block.terms.length > 0);
+      expect(lists.length, `${width}px: copies rendering the list`).toBe(6);
+      expect(blocks.filter((block) => block.emptyCard).length, "the empty render").toBe(1);
+      expect(blocks.filter((block) => block.skeletonRows === 4).length, "the loading render").toBe(
+        1,
+      );
+      expect(blocks.filter((block) => block.listLevelAlert).length, "the failed-load render").toBe(
+        1,
+      );
+      expect(lists.filter((block) => block.allControlsInert).length, "the disabled render").toBe(1);
+
+      // Each step is exercised on both sides at every viewport, so a step that
+      // silently stopped firing cannot pass this file.
+      const containerWidths = lists.map((b) => b.containerWidth);
+      for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
+        expect(
+          containerWidths.some((w) => w < step),
+          `a copy under ${step}px`,
+        ).toBe(true);
+        expect(
+          containerWidths.some((w) => w >= step),
+          `a copy over ${step}px`,
+        ).toBe(true);
+      }
+    });
+  }
+});
+
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`description-list — ${scheme}`, () => {
     test.use({ colorScheme: scheme });
-
-    for (const width of WIDTHS) {
-      test(`lays itself out from its container at ${width}px`, async ({ page }) => {
-        await page.setViewportSize({ width, height: 1200 });
-        await page.goto(PAGE, { waitUntil: "networkidle" });
-        await page.evaluate(() => document.fonts.ready.then(() => true));
-
-        expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(
-          scheme === "dark",
-        );
-
-        const blocks: BlockMetrics[] = [];
-        for (const state of STATES) {
-          await showState(page, state);
-          const mounted = await blockMetrics(page, state);
-          expect(mounted, `${state}: mounted copies`).toHaveLength(1);
-          const block = mounted[0]!;
-          blocks.push(block);
-          const where = `${scheme} ${width}px, ${state} (${block.containerWidth}px)`;
-
-          expect(block.divider, `${where}: divider under the header`).toBe(true);
-          if (block.rowTracks !== null) {
-            expect(block.rowTracks, `${where}: row tracks`).toBe(
-              expectedTracks(block.containerWidth),
-            );
-          }
-          if (block.termBesideValue !== null) {
-            expect(block.termBesideValue, `${where}: term beside value`).toBe(
-              block.containerWidth >= CONTAINER_MD,
-            );
-          }
-          if (block.actionValueDisplay !== null) {
-            expect(block.actionValueDisplay, `${where}: action row`).toBe(
-              block.containerWidth >= CONTAINER_SM ? "flex" : "grid",
-            );
-            expect(block.actionBesideValue, `${where}: action beside value`).toBe(
-              block.containerWidth >= CONTAINER_SM,
-            );
-          }
-          if (block.terms.length > 0) {
-            expect(block.terms, `${where}: terms`).toEqual(TERMS);
-            expect(block.badges, `${where}: status badge`).toEqual(["success"]);
-            expect(block.actions, `${where}: row actions`).toBe(3);
-          }
-
-          // The 50rem frame scrolls inside itself; the panel holding the demo
-          // never pushes the page sideways.
-          const panel = await page.evaluate((state) => {
-            const el = document
-              .querySelector(`[data-demo-state="${state}"]`)!
-              .closest(".preview-panel--demo") as HTMLElement;
-            return { scroll: el.scrollWidth, client: el.clientWidth };
-          }, state);
-          expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
-        }
-
-        const lists = blocks.filter((block) => block.terms.length > 0);
-        expect(lists.length, `${scheme} ${width}px: copies rendering the list`).toBe(6);
-        expect(blocks.filter((block) => block.emptyCard).length, "the empty render").toBe(1);
-        expect(
-          blocks.filter((block) => block.skeletonRows === 4).length,
-          "the loading render",
-        ).toBe(1);
-        expect(
-          blocks.filter((block) => block.listLevelAlert).length,
-          "the failed-load render",
-        ).toBe(1);
-        expect(lists.filter((block) => block.allControlsInert).length, "the disabled render").toBe(
-          1,
-        );
-
-        // Each step is exercised on both sides at every viewport, so a step that
-        // silently stopped firing cannot pass this file.
-        const containerWidths = lists.map((b) => b.containerWidth);
-        for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
-          expect(
-            containerWidths.some((w) => w < step),
-            `a copy under ${step}px`,
-          ).toBe(true);
-          expect(
-            containerWidths.some((w) => w >= step),
-            `a copy over ${step}px`,
-          ).toBe(true);
-        }
-      });
-    }
 
     test("clears AA contrast on every text it paints", async ({ page }) => {
       await page.goto(PAGE, { waitUntil: "networkidle" });

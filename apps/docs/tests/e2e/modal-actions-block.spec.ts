@@ -1,6 +1,6 @@
 /**
  * The modal-actions block, checked on the built docs page at the three widths
- * of the responsive policy (375 / 768 / 1280) in both colour schemes. It
+ * of the responsive policy (375 / 768 / 1280). It
  * asserts text and computed styles; no screenshot baseline is committed.
  *
  * Five claims:
@@ -255,138 +255,133 @@ async function openDialog(
   return dialog;
 }
 
+// Geometry and logic, which no colour changes: one pass is enough.
+test.describe("modal-actions — either scheme", () => {
+  for (const width of WIDTHS) {
+    test(`lays itself out from its container at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1200 });
+      await page.goto(PAGE, { waitUntil: "networkidle" });
+      await page.evaluate(() => document.fonts.ready.then(() => true));
+
+      const blocks: Array<BlockMetrics & { state: State }> = [];
+      for (const state of STATES) {
+        await showState(page, state);
+        const mounted = await blockMetrics(page, state);
+        expect(mounted, `${state}: mounted copies`).toHaveLength(1);
+        const block = mounted[0]!;
+        blocks.push({ ...block, state });
+        const where = `${width}px, ${state} (${block.containerWidth}px)`;
+
+        const sm = block.containerWidth >= CONTAINER_SM;
+        if (block.buttonBesideText !== null) {
+          expect(block.buttonBesideText, `${where}: button beside text`).toBe(sm);
+        }
+        expect(block.panelPadding, `${where}: list padding`).toBe(sm ? 24 : 16);
+        expect(block.headingBesidePanel, `${where}: heading beside list`).toBe(
+          block.containerWidth >= CONTAINER_LG,
+        );
+
+        if (block.titles.length > 0) {
+          expect(block.titles, `${where}: titles`).toEqual(TITLES);
+          expect(block.triggers, `${where}: row buttons`).toEqual(TRIGGERS);
+          expect(block.triggerVariants, `${where}: row button variants`).toEqual([
+            "outline",
+            "outline",
+            "outline",
+          ]);
+          expect(block.opensDialog, `${where}: row buttons open dialogs`).toEqual([
+            true,
+            true,
+            true,
+          ]);
+          expect(block.irreversible, `${where}: irreversible rows`).toEqual(["Delete workspace"]);
+        }
+
+        // The 50rem frame scrolls inside itself; the panel holding the demo
+        // never pushes the page sideways.
+        const panel = await page.evaluate((state) => {
+          const el = document
+            .querySelector(`[data-demo-state="${state}"]`)!
+            .closest(".preview-panel--demo") as HTMLElement;
+          return { scroll: el.scrollWidth, client: el.clientWidth };
+        }, state);
+        expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
+      }
+
+      const lists = blocks.filter((block) => block.titles.length > 0);
+      expect(lists.length, `${width}px: copies rendering rows`).toBe(6);
+      expect(blocks.filter((block) => block.emptyMessage).length, "the empty render").toBe(1);
+      expect(blocks.filter((block) => block.skeletonRows === 3).length, "the loading render").toBe(
+        1,
+      );
+      expect(blocks.filter((block) => block.panelAlert).length, "the failed-load render").toBe(1);
+      expect(
+        lists.filter((block) => block.allTriggersInert).map((block) => block.state),
+        "the disabled render",
+      ).toEqual(["disabled"]);
+
+      // The heading steps up at `--container-md`: one size below it, one
+      // larger size from it on.
+      const below = new Set(
+        blocks.filter((b) => b.containerWidth < CONTAINER_MD).map((b) => b.headingSize),
+      );
+      const above = new Set(
+        blocks.filter((b) => b.containerWidth >= CONTAINER_MD).map((b) => b.headingSize),
+      );
+      expect(below.size, "one heading size below @md").toBe(1);
+      expect(above.size, "one heading size from @md").toBe(1);
+      expect([...above][0]!, "the heading steps up at @md").toBeGreaterThan([...below][0]!);
+
+      // Each step is exercised on both sides at every viewport, so a step that
+      // silently stopped firing cannot pass this file.
+      const containerWidths = blocks.map((b) => b.containerWidth);
+      for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
+        expect(
+          containerWidths.some((w) => w < step),
+          `a copy under ${step}px`,
+        ).toBe(true);
+        expect(
+          containerWidths.some((w) => w >= step),
+          `a copy over ${step}px`,
+        ).toBe(true);
+      }
+
+      // The dialog is a container of its own: its buttons stack, confirm on
+      // top and full width, until its content box reaches `--container-sm`.
+      const dialog = await openDialog(page, "Delete", "alertdialog", "Delete this workspace?");
+      const footer = await dialog.evaluate((content) => {
+        const buttons = [...content.querySelectorAll<HTMLElement>('[data-scope="button"]')];
+        const [cancel, confirm] = buttons.map((b) => b.getBoundingClientRect());
+        const style = getComputedStyle(content);
+        const box =
+          content.clientWidth -
+          parseFloat(style.paddingInlineStart) -
+          parseFloat(style.paddingInlineEnd);
+        return {
+          labels: buttons.map((b) => b.textContent?.trim()),
+          box,
+          inRow: Math.abs(cancel!.top - confirm!.top) < 1,
+          confirmFirst: confirm!.bottom <= cancel!.top || confirm!.right <= cancel!.left,
+          confirmLast: confirm!.left >= cancel!.right,
+          fullWidth: Math.abs(confirm!.width - box) < 1 && Math.abs(cancel!.width - box) < 1,
+        };
+      });
+      expect(footer.labels, `${width}px: dialog buttons`).toEqual(["Cancel", "Delete workspace"]);
+      const row = footer.box >= CONTAINER_SM;
+      expect(footer.inRow, `${width}px: dialog buttons in a row`).toBe(row);
+      if (row) {
+        expect(footer.confirmLast, `${width}px: confirm last`).toBe(true);
+      } else {
+        expect(footer.confirmFirst, `${width}px: confirm on top`).toBe(true);
+        expect(footer.fullWidth, `${width}px: stacked full width`).toBe(true);
+      }
+    });
+  }
+});
+
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`modal-actions — ${scheme}`, () => {
     test.use({ colorScheme: scheme });
-
-    for (const width of WIDTHS) {
-      test(`lays itself out from its container at ${width}px`, async ({ page }) => {
-        await page.setViewportSize({ width, height: 1200 });
-        await page.goto(PAGE, { waitUntil: "networkidle" });
-        await page.evaluate(() => document.fonts.ready.then(() => true));
-
-        expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(
-          scheme === "dark",
-        );
-
-        const blocks: Array<BlockMetrics & { state: State }> = [];
-        for (const state of STATES) {
-          await showState(page, state);
-          const mounted = await blockMetrics(page, state);
-          expect(mounted, `${state}: mounted copies`).toHaveLength(1);
-          const block = mounted[0]!;
-          blocks.push({ ...block, state });
-          const where = `${scheme} ${width}px, ${state} (${block.containerWidth}px)`;
-
-          const sm = block.containerWidth >= CONTAINER_SM;
-          if (block.buttonBesideText !== null) {
-            expect(block.buttonBesideText, `${where}: button beside text`).toBe(sm);
-          }
-          expect(block.panelPadding, `${where}: list padding`).toBe(sm ? 24 : 16);
-          expect(block.headingBesidePanel, `${where}: heading beside list`).toBe(
-            block.containerWidth >= CONTAINER_LG,
-          );
-
-          if (block.titles.length > 0) {
-            expect(block.titles, `${where}: titles`).toEqual(TITLES);
-            expect(block.triggers, `${where}: row buttons`).toEqual(TRIGGERS);
-            expect(block.triggerVariants, `${where}: row button variants`).toEqual([
-              "outline",
-              "outline",
-              "outline",
-            ]);
-            expect(block.opensDialog, `${where}: row buttons open dialogs`).toEqual([
-              true,
-              true,
-              true,
-            ]);
-            expect(block.irreversible, `${where}: irreversible rows`).toEqual(["Delete workspace"]);
-          }
-
-          // The 50rem frame scrolls inside itself; the panel holding the demo
-          // never pushes the page sideways.
-          const panel = await page.evaluate((state) => {
-            const el = document
-              .querySelector(`[data-demo-state="${state}"]`)!
-              .closest(".preview-panel--demo") as HTMLElement;
-            return { scroll: el.scrollWidth, client: el.clientWidth };
-          }, state);
-          expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
-        }
-
-        const lists = blocks.filter((block) => block.titles.length > 0);
-        expect(lists.length, `${scheme} ${width}px: copies rendering rows`).toBe(6);
-        expect(blocks.filter((block) => block.emptyMessage).length, "the empty render").toBe(1);
-        expect(
-          blocks.filter((block) => block.skeletonRows === 3).length,
-          "the loading render",
-        ).toBe(1);
-        expect(blocks.filter((block) => block.panelAlert).length, "the failed-load render").toBe(1);
-        expect(
-          lists.filter((block) => block.allTriggersInert).map((block) => block.state),
-          "the disabled render",
-        ).toEqual(["disabled"]);
-
-        // The heading steps up at `--container-md`: one size below it, one
-        // larger size from it on.
-        const below = new Set(
-          blocks.filter((b) => b.containerWidth < CONTAINER_MD).map((b) => b.headingSize),
-        );
-        const above = new Set(
-          blocks.filter((b) => b.containerWidth >= CONTAINER_MD).map((b) => b.headingSize),
-        );
-        expect(below.size, "one heading size below @md").toBe(1);
-        expect(above.size, "one heading size from @md").toBe(1);
-        expect([...above][0]!, "the heading steps up at @md").toBeGreaterThan([...below][0]!);
-
-        // Each step is exercised on both sides at every viewport, so a step that
-        // silently stopped firing cannot pass this file.
-        const containerWidths = blocks.map((b) => b.containerWidth);
-        for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
-          expect(
-            containerWidths.some((w) => w < step),
-            `a copy under ${step}px`,
-          ).toBe(true);
-          expect(
-            containerWidths.some((w) => w >= step),
-            `a copy over ${step}px`,
-          ).toBe(true);
-        }
-
-        // The dialog is a container of its own: its buttons stack, confirm on
-        // top and full width, until its content box reaches `--container-sm`.
-        const dialog = await openDialog(page, "Delete", "alertdialog", "Delete this workspace?");
-        const footer = await dialog.evaluate((content) => {
-          const buttons = [...content.querySelectorAll<HTMLElement>('[data-scope="button"]')];
-          const [cancel, confirm] = buttons.map((b) => b.getBoundingClientRect());
-          const style = getComputedStyle(content);
-          const box =
-            content.clientWidth -
-            parseFloat(style.paddingInlineStart) -
-            parseFloat(style.paddingInlineEnd);
-          return {
-            labels: buttons.map((b) => b.textContent?.trim()),
-            box,
-            inRow: Math.abs(cancel!.top - confirm!.top) < 1,
-            confirmFirst: confirm!.bottom <= cancel!.top || confirm!.right <= cancel!.left,
-            confirmLast: confirm!.left >= cancel!.right,
-            fullWidth: Math.abs(confirm!.width - box) < 1 && Math.abs(cancel!.width - box) < 1,
-          };
-        });
-        expect(footer.labels, `${scheme} ${width}px: dialog buttons`).toEqual([
-          "Cancel",
-          "Delete workspace",
-        ]);
-        const row = footer.box >= CONTAINER_SM;
-        expect(footer.inRow, `${scheme} ${width}px: dialog buttons in a row`).toBe(row);
-        if (row) {
-          expect(footer.confirmLast, `${scheme} ${width}px: confirm last`).toBe(true);
-        } else {
-          expect(footer.confirmFirst, `${scheme} ${width}px: confirm on top`).toBe(true);
-          expect(footer.fullWidth, `${scheme} ${width}px: stacked full width`).toBe(true);
-        }
-      });
-    }
 
     test("clears AA contrast on every text it paints", async ({ page }) => {
       await page.goto(PAGE, { waitUntil: "networkidle" });

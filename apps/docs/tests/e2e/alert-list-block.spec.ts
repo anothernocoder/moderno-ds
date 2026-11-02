@@ -1,7 +1,7 @@
 /**
  * The alert-list block, checked where it is actually shown to a reader: the
  * built docs page, at the three widths of the responsive policy (375 / 768 /
- * 1280) in both colour schemes.
+ * 1280).
  *
  * This is the seam that replaces a screenshot baseline for this block. The
  * pixel baselines were dropped from this repo (see `playwright.config.ts`)
@@ -306,110 +306,108 @@ async function textRatios(
   }, state);
 }
 
+// Geometry and logic, which no colour changes: one pass is enough.
+test.describe("alert-list — either scheme", () => {
+  for (const width of WIDTHS) {
+    test(`lays itself out from its container at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1200 });
+      await page.goto(PAGE, { waitUntil: "networkidle" });
+      await page.evaluate(() => document.fonts.ready.then(() => true));
+
+      // Eight copies: four container widths (a drawer, a panel, the page
+      // column and a wide stage, one on each side of every step), then the
+      // empty, loading, error and disabled states — one mounted copy each.
+      const blocks: BlockMetrics[] = [];
+      for (const state of STATES) {
+        await showState(page, state);
+        const mounted = await blockMetrics(page, state);
+        expect(mounted, `${state}: mounted copies`).toHaveLength(1);
+        const block = mounted[0]!;
+        blocks.push(block);
+        const where = `${width}px, ${state} (${block.containerWidth}px)`;
+        // Every step is answered from the block's own container, so the
+        // answers differ between the copies at one viewport — which is the
+        // whole point of ADR-0005.
+        expect(block.headerDisplay, `${where}: header row`).toBe(
+          block.containerWidth >= CONTAINER_SM ? "flex" : "grid",
+        );
+        if (block.hasList) {
+          expect(block.dismissLabelShown, `${where}: dismiss label`).toBe(
+            block.containerWidth >= CONTAINER_MD,
+          );
+          expect(block.metaShown, `${where}: timestamp shown`).toBe(
+            block.containerWidth >= CONTAINER_SM,
+          );
+          expect(block.descriptionClamped, `${where}: description cut`).toBe(
+            block.containerWidth < CONTAINER_MD,
+          );
+          expect(block.metaBeside, `${where}: timestamp`).toBe(
+            block.containerWidth >= CONTAINER_LG,
+          );
+          // A list is a list because the statuses differ: all four ship in
+          // the sample feed, most urgent first.
+          expect(block.variants, `${where}: statuses`).toEqual([
+            "error",
+            "warning",
+            "info",
+            "success",
+          ]);
+        }
+
+        // The `@lg` frame is a stage wider than the docs column, and it scrolls
+        // inside its own frame: the panel holding the demo never does, so the
+        // page is not pushed sideways by showing the widest layout.
+        const panel = await page.evaluate((state) => {
+          const el = document
+            .querySelector(`[data-demo-state="${state}"]`)!
+            .closest(".preview-panel--demo") as HTMLElement;
+          return { scroll: el.scrollWidth, client: el.clientWidth };
+        }, state);
+        expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
+      }
+
+      // The states, each identified by what it renders rather than by its
+      // preview, so a copy that renders the wrong state cannot quietly pass.
+      const lists = blocks.filter((block) => block.hasList);
+      expect(lists.length, `${width}px: copies rendering the list`).toBe(5);
+      expect(blocks.filter((block) => block.emptyCard).length, `${width}px: the empty render`).toBe(
+        1,
+      );
+      expect(
+        blocks.filter((block) => block.busyRegion).length,
+        `${width}px: the loading render`,
+      ).toBe(1);
+      expect(
+        blocks.filter((block) => block.listLevelAlert).length,
+        `${width}px: the failed-load render`,
+      ).toBe(1);
+      // Exactly one copy is `disabled`: the four container copies and the
+      // states that render no list leave their controls live.
+      expect(
+        lists.filter((block) => block.allControlsInert).length,
+        `${width}px: the disabled render`,
+      ).toBe(1);
+
+      // Each of the three steps is exercised on both sides at every viewport,
+      // so a step that silently stopped firing cannot pass this file.
+      const widths = lists.map((b) => b.containerWidth);
+      for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
+        expect(
+          widths.some((w) => w < step),
+          `${width}px: a copy under ${step}px`,
+        ).toBe(true);
+        expect(
+          widths.some((w) => w >= step),
+          `${width}px: a copy over ${step}px`,
+        ).toBe(true);
+      }
+    });
+  }
+});
+
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`alert-list — ${scheme}`, () => {
     test.use({ colorScheme: scheme });
-
-    for (const width of WIDTHS) {
-      test(`lays itself out from its container at ${width}px`, async ({ page }) => {
-        await page.setViewportSize({ width, height: 1200 });
-        await page.goto(PAGE, { waitUntil: "networkidle" });
-        await page.evaluate(() => document.fonts.ready.then(() => true));
-
-        expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(
-          scheme === "dark",
-        );
-
-        // Eight copies: four container widths (a drawer, a panel, the page
-        // column and a wide stage, one on each side of every step), then the
-        // empty, loading, error and disabled states — one mounted copy each.
-        const blocks: BlockMetrics[] = [];
-        for (const state of STATES) {
-          await showState(page, state);
-          const mounted = await blockMetrics(page, state);
-          expect(mounted, `${state}: mounted copies`).toHaveLength(1);
-          const block = mounted[0]!;
-          blocks.push(block);
-          const where = `${scheme} ${width}px, ${state} (${block.containerWidth}px)`;
-          // Every step is answered from the block's own container, so the
-          // answers differ between the copies at one viewport — which is the
-          // whole point of ADR-0005.
-          expect(block.headerDisplay, `${where}: header row`).toBe(
-            block.containerWidth >= CONTAINER_SM ? "flex" : "grid",
-          );
-          if (block.hasList) {
-            expect(block.dismissLabelShown, `${where}: dismiss label`).toBe(
-              block.containerWidth >= CONTAINER_MD,
-            );
-            expect(block.metaShown, `${where}: timestamp shown`).toBe(
-              block.containerWidth >= CONTAINER_SM,
-            );
-            expect(block.descriptionClamped, `${where}: description cut`).toBe(
-              block.containerWidth < CONTAINER_MD,
-            );
-            expect(block.metaBeside, `${where}: timestamp`).toBe(
-              block.containerWidth >= CONTAINER_LG,
-            );
-            // A list is a list because the statuses differ: all four ship in
-            // the sample feed, most urgent first.
-            expect(block.variants, `${where}: statuses`).toEqual([
-              "error",
-              "warning",
-              "info",
-              "success",
-            ]);
-          }
-
-          // The `@lg` frame is a stage wider than the docs column, and it scrolls
-          // inside its own frame: the panel holding the demo never does, so the
-          // page is not pushed sideways by showing the widest layout.
-          const panel = await page.evaluate((state) => {
-            const el = document
-              .querySelector(`[data-demo-state="${state}"]`)!
-              .closest(".preview-panel--demo") as HTMLElement;
-            return { scroll: el.scrollWidth, client: el.clientWidth };
-          }, state);
-          expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
-        }
-
-        // The states, each identified by what it renders rather than by its
-        // preview, so a copy that renders the wrong state cannot quietly pass.
-        const lists = blocks.filter((block) => block.hasList);
-        expect(lists.length, `${scheme} ${width}px: copies rendering the list`).toBe(5);
-        expect(
-          blocks.filter((block) => block.emptyCard).length,
-          `${scheme} ${width}px: the empty render`,
-        ).toBe(1);
-        expect(
-          blocks.filter((block) => block.busyRegion).length,
-          `${scheme} ${width}px: the loading render`,
-        ).toBe(1);
-        expect(
-          blocks.filter((block) => block.listLevelAlert).length,
-          `${scheme} ${width}px: the failed-load render`,
-        ).toBe(1);
-        // Exactly one copy is `disabled`: the four container copies and the
-        // states that render no list leave their controls live.
-        expect(
-          lists.filter((block) => block.allControlsInert).length,
-          `${scheme} ${width}px: the disabled render`,
-        ).toBe(1);
-
-        // Each of the three steps is exercised on both sides at every viewport,
-        // so a step that silently stopped firing cannot pass this file.
-        const widths = lists.map((b) => b.containerWidth);
-        for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
-          expect(
-            widths.some((w) => w < step),
-            `${scheme} ${width}px: a copy under ${step}px`,
-          ).toBe(true);
-          expect(
-            widths.some((w) => w >= step),
-            `${scheme} ${width}px: a copy over ${step}px`,
-          ).toBe(true);
-        }
-      });
-    }
 
     test("clears AA contrast on every text it paints", async ({ page }) => {
       await page.goto(PAGE, { waitUntil: "networkidle" });

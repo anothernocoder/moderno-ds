@@ -204,53 +204,56 @@ test.describe("timeline — what it renders", () => {
   });
 });
 
+// Geometry and logic, which no colour changes: one pass is enough.
+test.describe("timeline — either scheme", () => {
+  for (const width of WIDTHS) {
+    test(`lays itself out from its container at ${width}px`, async ({ page }) => {
+      await openPage(page, width);
+      for (const state of STATES) {
+        const copy = await show(page, state);
+        const m = await layout(copy);
+        const where = `${width}px, ${state} (${m.containerWidth}px)`;
+
+        const label = m.containerWidth >= CONTAINER_SM ? LABEL_WIDE : LABEL_NARROW;
+        for (const cell of m.labels) expect(cell, `${where}: label column`).toBeCloseTo(label, 0);
+        // Ruler and tracks share one time area: same left edge, same width.
+        for (const [i, w] of m.timeWidths.entries()) {
+          expect(w, `${where}: time area ${i}`).toBeCloseTo(m.timeWidths[0]!, 0);
+          expect(m.timeLefts[i], `${where}: time area ${i} left`).toBeCloseTo(m.timeLefts[0]!, 0);
+        }
+        expect(m.timeWidths[0], `${where}: the time area takes the rest`).toBeGreaterThan(
+          m.containerWidth - label - 64,
+        );
+
+        const expectedMarks =
+          m.containerWidth >= CONTAINER_MD ? m.marks : m.marks.filter((_, i) => i % 2 === 0);
+        expect(m.visibleMarks, `${where}: visible marks`).toEqual(expectedMarks);
+
+        expect(Math.abs(m.lineX - m.playheadX), `${where}: line under the playhead`).toBeLessThan(
+          1.5,
+        );
+        expect(m.lineTop, `${where}: line reaches the first track`).toBeLessThanOrEqual(
+          m.firstTrackTop,
+        );
+        expect(m.lineBottom, `${where}: line crosses the last track`).toBeGreaterThanOrEqual(
+          m.lastTrackBottom - 0.5,
+        );
+        expect(m.overflow, `${where}: no sideways scroll`).toBeLessThanOrEqual(0);
+        expect(m.centred, `${where}: centred`).toBeLessThan(1);
+
+        const panel = await copy.evaluate((section) => {
+          const el = section.closest(".preview-panel--demo") as HTMLElement;
+          return { scroll: el.scrollWidth, client: el.clientWidth };
+        });
+        expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
+      }
+    });
+  }
+});
+
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`timeline — ${scheme}`, () => {
     test.use({ colorScheme: scheme });
-
-    for (const width of WIDTHS) {
-      test(`lays itself out from its container at ${width}px`, async ({ page }) => {
-        await openPage(page, width);
-        for (const state of STATES) {
-          const copy = await show(page, state);
-          const m = await layout(copy);
-          const where = `${scheme} ${width}px, ${state} (${m.containerWidth}px)`;
-
-          const label = m.containerWidth >= CONTAINER_SM ? LABEL_WIDE : LABEL_NARROW;
-          for (const cell of m.labels) expect(cell, `${where}: label column`).toBeCloseTo(label, 0);
-          // Ruler and tracks share one time area: same left edge, same width.
-          for (const [i, w] of m.timeWidths.entries()) {
-            expect(w, `${where}: time area ${i}`).toBeCloseTo(m.timeWidths[0]!, 0);
-            expect(m.timeLefts[i], `${where}: time area ${i} left`).toBeCloseTo(m.timeLefts[0]!, 0);
-          }
-          expect(m.timeWidths[0], `${where}: the time area takes the rest`).toBeGreaterThan(
-            m.containerWidth - label - 64,
-          );
-
-          const expectedMarks =
-            m.containerWidth >= CONTAINER_MD ? m.marks : m.marks.filter((_, i) => i % 2 === 0);
-          expect(m.visibleMarks, `${where}: visible marks`).toEqual(expectedMarks);
-
-          expect(Math.abs(m.lineX - m.playheadX), `${where}: line under the playhead`).toBeLessThan(
-            1.5,
-          );
-          expect(m.lineTop, `${where}: line reaches the first track`).toBeLessThanOrEqual(
-            m.firstTrackTop,
-          );
-          expect(m.lineBottom, `${where}: line crosses the last track`).toBeGreaterThanOrEqual(
-            m.lastTrackBottom - 0.5,
-          );
-          expect(m.overflow, `${where}: no sideways scroll`).toBeLessThanOrEqual(0);
-          expect(m.centred, `${where}: centred`).toBeLessThan(1);
-
-          const panel = await copy.evaluate((section) => {
-            const el = section.closest(".preview-panel--demo") as HTMLElement;
-            return { scroll: el.scrollWidth, client: el.clientWidth };
-          });
-          expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
-        }
-      });
-    }
   });
 }
 

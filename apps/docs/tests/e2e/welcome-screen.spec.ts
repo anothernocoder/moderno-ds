@@ -1,6 +1,6 @@
 /**
  * The welcome screen, checked on the built docs page at the three widths of the
- * responsive policy (375 / 768 / 1280) in both colour schemes. It asserts text
+ * responsive policy (375 / 768 / 1280). It asserts text
  * and computed styles; no screenshot baseline is committed.
  *
  * Four claims:
@@ -216,74 +216,73 @@ async function textRatios(page: Page, tab: Tab): Promise<Record<string, number>>
   );
 }
 
+// Geometry and logic, which no colour changes: one pass is enough.
+test.describe("welcome — either scheme", () => {
+  for (const width of WIDTHS) {
+    test(`lays itself out from its container at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1200 });
+      await page.goto(PAGE, { waitUntil: "networkidle" });
+      await page.evaluate(() => document.fonts.ready.then(() => true));
+      await hydrated(page);
+
+      const widths: number[] = [];
+      for (const tab of TABS) {
+        await showTab(page, tab);
+        const mounted = await screenMetrics(page, tab);
+        expect(mounted, `${width}px, ${tab}: mounted copies`).toHaveLength(1);
+        const screen = mounted[0]!;
+        widths.push(screen.containerWidth);
+        const where = `${width}px, ${tab} (${screen.containerWidth}px)`;
+
+        expect(screen.mastheadDisplay, `${where}: masthead`).toBe(
+          screen.containerWidth >= CONTAINER_SM ? "flex" : "grid",
+        );
+        expect(screen.footerDisplay, `${where}: footer`).toBe(
+          screen.containerWidth >= CONTAINER_MD ? "flex" : "grid",
+        );
+        expect(screen.rootHeight, `${where}: fills its window`).toBeGreaterThanOrEqual(
+          screen.frameHeight,
+        );
+        expect(screen.offCentreX, `${where}: hero centred across`).toBeLessThan(1);
+        expect(screen.offCentreY, `${where}: hero centred down`).toBeLessThan(1);
+        expect(screen.alert, `${where}: error announced`).toBe(tab === "error");
+
+        if (tab === "loading") {
+          expect(screen.title, `${where}: no title while loading`).toBeNull();
+          expect(screen.placeholders, `${where}: placeholders`).toBeGreaterThan(0);
+          expect(screen.buttons, `${where}: no buttons while loading`).toEqual([]);
+          continue;
+        }
+
+        // A screen is the whole route: its first heading is the page's h1.
+        expect(screen.headingLevels, `${where}: headings`).toEqual([1]);
+        if (tab === "named") {
+          expect(screen.title, `${where}: greets by name`).toBe("Welcome, Ana");
+          expect(screen.buttons, `${where}: buttons`).toEqual(ACTIONS);
+        } else if (tab === "error") {
+          expect(screen.title, `${where}: title stays`).toBe(TITLE);
+          expect(screen.buttons, `${where}: retry only`).toEqual(["Try again"]);
+        } else {
+          expect(screen.title, `${where}: title`).toBe(TITLE);
+          expect(screen.buttons, `${where}: buttons`).toEqual(ACTIONS);
+        }
+      }
+
+      expect(
+        widths.some((w) => w < CONTAINER_SM),
+        `${width}px: a copy below @sm`,
+      ).toBe(true);
+      expect(
+        widths.some((w) => w >= CONTAINER_MD),
+        `${width}px: a copy at or above @md`,
+      ).toBe(true);
+    });
+  }
+});
+
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`welcome — ${scheme}`, () => {
     test.use({ colorScheme: scheme });
-
-    for (const width of WIDTHS) {
-      test(`lays itself out from its container at ${width}px`, async ({ page }) => {
-        await page.setViewportSize({ width, height: 1200 });
-        await page.goto(PAGE, { waitUntil: "networkidle" });
-        await page.evaluate(() => document.fonts.ready.then(() => true));
-        await hydrated(page);
-
-        expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(
-          scheme === "dark",
-        );
-
-        const widths: number[] = [];
-        for (const tab of TABS) {
-          await showTab(page, tab);
-          const mounted = await screenMetrics(page, tab);
-          expect(mounted, `${scheme} ${width}px, ${tab}: mounted copies`).toHaveLength(1);
-          const screen = mounted[0]!;
-          widths.push(screen.containerWidth);
-          const where = `${scheme} ${width}px, ${tab} (${screen.containerWidth}px)`;
-
-          expect(screen.mastheadDisplay, `${where}: masthead`).toBe(
-            screen.containerWidth >= CONTAINER_SM ? "flex" : "grid",
-          );
-          expect(screen.footerDisplay, `${where}: footer`).toBe(
-            screen.containerWidth >= CONTAINER_MD ? "flex" : "grid",
-          );
-          expect(screen.rootHeight, `${where}: fills its window`).toBeGreaterThanOrEqual(
-            screen.frameHeight,
-          );
-          expect(screen.offCentreX, `${where}: hero centred across`).toBeLessThan(1);
-          expect(screen.offCentreY, `${where}: hero centred down`).toBeLessThan(1);
-          expect(screen.alert, `${where}: error announced`).toBe(tab === "error");
-
-          if (tab === "loading") {
-            expect(screen.title, `${where}: no title while loading`).toBeNull();
-            expect(screen.placeholders, `${where}: placeholders`).toBeGreaterThan(0);
-            expect(screen.buttons, `${where}: no buttons while loading`).toEqual([]);
-            continue;
-          }
-
-          // A screen is the whole route: its first heading is the page's h1.
-          expect(screen.headingLevels, `${where}: headings`).toEqual([1]);
-          if (tab === "named") {
-            expect(screen.title, `${where}: greets by name`).toBe("Welcome, Ana");
-            expect(screen.buttons, `${where}: buttons`).toEqual(ACTIONS);
-          } else if (tab === "error") {
-            expect(screen.title, `${where}: title stays`).toBe(TITLE);
-            expect(screen.buttons, `${where}: retry only`).toEqual(["Try again"]);
-          } else {
-            expect(screen.title, `${where}: title`).toBe(TITLE);
-            expect(screen.buttons, `${where}: buttons`).toEqual(ACTIONS);
-          }
-        }
-
-        expect(
-          widths.some((w) => w < CONTAINER_SM),
-          `${scheme} ${width}px: a copy below @sm`,
-        ).toBe(true);
-        expect(
-          widths.some((w) => w >= CONTAINER_MD),
-          `${scheme} ${width}px: a copy at or above @md`,
-        ).toBe(true);
-      });
-    }
 
     for (const theme of THEMES) {
       test(`clears AA contrast on every text it paints in ${theme.name}`, async ({ page }) => {

@@ -1,6 +1,6 @@
 /**
  * The table block, checked on the built docs page at the three widths of the
- * responsive policy (375 / 768 / 1280) in both colour schemes. It asserts text
+ * responsive policy (375 / 768 / 1280). It asserts text
  * and computed styles; no screenshot baseline is committed.
  *
  * Five claims:
@@ -380,191 +380,200 @@ async function contrastRatios(
   );
 }
 
+// Geometry and logic, which no colour changes: one pass is enough.
+test.describe("table — either scheme", () => {
+  for (const width of WIDTHS) {
+    test(`lays itself out from its container at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1200 });
+      await page.goto(PAGE, { waitUntil: "networkidle" });
+      await page.evaluate(() => document.fonts.ready.then(() => true));
+
+      const blocks: Array<BlockMetrics & { state: State }> = [];
+      for (const state of STATES) {
+        await showState(page, state);
+        const mounted = await blockMetrics(page, state);
+        expect(mounted, `${state}: mounted copies`).toHaveLength(1);
+        const block = mounted[0]!;
+        blocks.push({ ...block, state });
+        const where = `${width}px, ${state} (${block.containerWidth}px)`;
+        const lg = block.containerWidth >= CONTAINER_LG;
+
+        expect(block.paddingTop, `${where}: room above`).toBe(lg ? 64 : 48);
+        expect(block.offCentre, `${where}: centred`).toBeLessThan(1);
+        expect(block.blockOverflows, `${where}: the block never overflows`).toBe(false);
+        expect(block.alert, `${where}: error announced`).toBe(state === "error");
+        expect(block.heading, `${where}: heading`).toBe(HEADING);
+        expect(block.serifHeading, `${where}: serif heading`).toBe(true);
+
+        if (state === "loading") {
+          expect(block.placeholders, `${where}: a placeholder per row on a page`).toBe(5);
+          expect(block.numbers, `${where}: no rows while loading`).toEqual([]);
+          expect(block.count, `${where}: no count while loading`).toBeNull();
+          expect(block.pageButtons, `${where}: no page row`).toBe(0);
+        } else if (state === "empty") {
+          expect(block.empty, `${where}: empty message`).toBe(EMPTY);
+          expect(block.numbers, `${where}: no rows`).toEqual([]);
+          expect(block.count, `${where}: no count`).toBeNull();
+          expect(block.pageButtons, `${where}: no page row`).toBe(0);
+        } else if (state === "error") {
+          expect(block.numbers, `${where}: no rows`).toEqual([]);
+          expect(block.count, `${where}: no count`).toBeNull();
+          expect(block.retry, `${where}: retry`).toEqual(["Try again"]);
+          expect(block.pageButtons, `${where}: no page row`).toBe(0);
+        } else {
+          const rows = ONE_PAGE.includes(state) ? 3 : 5;
+          expect(block.count, `${where}: invoice count`).toBe(
+            rows === 3 ? "3 invoices" : "12 invoices",
+          );
+          expect(block.headers, `${where}: column headers`).toEqual([
+            "Select every invoice on this page",
+            "Invoice",
+            "Customer",
+            ...(lg ? ["Issued"] : []),
+            "Status",
+            "Amount",
+            "Actions",
+          ]);
+          expect(block.sortButtons, `${where}: sortable headers`).toEqual([
+            "Invoice",
+            "Customer",
+            "Amount",
+          ]);
+          expect(block.numbers, `${where}: numbers`).toEqual(NUMBERS.slice(0, rows));
+          expect(block.customers, `${where}: customers`).toEqual(CUSTOMERS.slice(0, rows));
+          expect(block.emails, `${where}: emails`).toEqual(lg ? EMAILS.slice(0, rows) : []);
+          expect(block.issued, `${where}: issued`).toEqual(lg ? ISSUED.slice(0, rows) : []);
+          expect(block.statuses, `${where}: statuses`).toEqual(STATUSES.slice(0, rows));
+          expect(block.statusVariants, `${where}: status colours`).toEqual(VARIANTS.slice(0, rows));
+          expect(block.amounts, `${where}: amounts`).toEqual(
+            state === "dollars" ? DOLLARS : EUROS.slice(0, rows),
+          );
+          expect(block.menuTriggers, `${where}: row menus`).toEqual(
+            NUMBERS.slice(0, rows).map((n) => `Actions for ${n}`),
+          );
+          expect(block.checkboxes, `${where}: checkboxes`).toEqual([
+            "Select every invoice on this page",
+            ...NUMBERS.slice(0, rows).map((n) => `Select ${n}`),
+          ]);
+          const off = state === "disabled";
+          expect(block.disabledCheckboxes, `${where}: checkboxes off`).toBe(off ? rows + 1 : 0);
+          expect(block.disabledSortButtons, `${where}: sort buttons off`).toBe(off ? 3 : 0);
+          expect(block.disabledMenuTriggers, `${where}: menus off`).toBe(off ? rows : 0);
+          expect(block.tableFillsFrame, `${where}: the table fills its frame`).toBe(true);
+          if (block.containerWidth < CONTAINER_SM) {
+            expect(block.scrolls, `${where}: the table scrolls in its frame`).toBe(true);
+          }
+          if (lg) expect(block.scrolls, `${where}: the table fits`).toBe(false);
+          if (rows === 3) {
+            expect(block.pageButtons, `${where}: no page row for one page`).toBe(0);
+          } else {
+            expect(block.pages, `${where}: pages`).toEqual(PAGES);
+            expect(block.currentPage, `${where}: current page`).toBe("1");
+            expect(block.pagePlacement, `${where}: page row placement`).toBe(
+              block.containerWidth >= CONTAINER_SM ? "end" : "centre",
+            );
+            // Previous is off on the first page; disabled turns off every button.
+            expect(block.disabledPageButtons, `${where}: page buttons off`).toBe(
+              off ? block.pageButtons : 1,
+            );
+          }
+        }
+        // The 50rem frame scrolls inside itself; the panel holding the demo
+        // never pushes the page sideways.
+        const panel = await page.evaluate((state) => {
+          const el = document
+            .querySelector(`[data-demo-state="${state}"]`)!
+            .closest(".preview-panel--demo") as HTMLElement;
+          return { scroll: el.scrollWidth, client: el.clientWidth };
+        }, state);
+        expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
+      }
+
+      // The heading is one size below `@md` and one larger size from it on.
+      const below = new Set(
+        blocks.filter((b) => b.containerWidth < CONTAINER_MD).map((b) => b.headingSize),
+      );
+      const above = new Set(
+        blocks.filter((b) => b.containerWidth >= CONTAINER_MD).map((b) => b.headingSize),
+      );
+      expect(below.size, "one heading size below @md").toBe(1);
+      expect(above.size, "one heading size from @md").toBe(1);
+      expect([...above][0]!, "the heading steps up at @md").toBeGreaterThan([...below][0]!);
+
+      // Each step is exercised on both sides at every viewport, so a step that
+      // silently stopped firing cannot pass this file.
+      const containerWidths = blocks
+        .filter((b) => b.numbers.length > 0)
+        .map((b) => b.containerWidth);
+      for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
+        expect(
+          containerWidths.some((w) => w < step),
+          `a copy under ${step}px`,
+        ).toBe(true);
+        expect(
+          containerWidths.some((w) => w >= step),
+          `a copy over ${step}px`,
+        ).toBe(true);
+      }
+    });
+  }
+
+  test("sits in the middle of its preview", async ({ page }) => {
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    for (const state of [
+      "default",
+      "one-page",
+      "dollars",
+      "empty",
+      "loading",
+      "error",
+      "disabled",
+    ] as const) {
+      await showState(page, state);
+      const gaps = await page.evaluate(
+        ({ state, selector }) => {
+          const wrapper = document.querySelector(`[data-demo-state="${state}"]`)!;
+          const panel = wrapper.closest(".preview-panel--demo")!.getBoundingClientRect();
+          const block = wrapper.querySelector(selector)!;
+          const content = [...block.firstElementChild!.children]
+            .filter((el) => !el.classList.contains("sr-only"))
+            .map((el) => el.getBoundingClientRect());
+          const top = Math.min(...content.map((r) => r.top));
+          const bottom = Math.max(...content.map((r) => r.bottom));
+          const left = Math.min(...content.map((r) => r.left));
+          const right = Math.max(...content.map((r) => r.right));
+          return {
+            above: top - panel.top,
+            below: panel.bottom - bottom,
+            before: left - panel.left,
+            after: panel.right - right,
+          };
+        },
+        { state, selector: BLOCK },
+      );
+      expect(Math.abs(gaps.above - gaps.below), `${state}: vertical`).toBeLessThan(2);
+      expect(Math.abs(gaps.before - gaps.after), `${state}: horizontal`).toBeLessThan(2);
+    }
+  });
+
+  test("treats an empty error string as no error", async ({ page }) => {
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await showState(page, "error");
+    const block = blockIn(page, "error");
+
+    // The demo's retry clears its message to "", the way a consumer holding
+    // the error as a string does once the load succeeds.
+    await block.getByRole("button", { name: "Try again" }).click();
+
+    await expect(block.locator('[data-scope="alert"]')).toHaveCount(0);
+    await expect(block.getByRole("rowheader")).toHaveText(NUMBERS);
+    await expect(block.locator("nav")).toHaveCount(1);
+  });
+});
+
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`table — ${scheme}`, () => {
     test.use({ colorScheme: scheme });
-
-    for (const width of WIDTHS) {
-      test(`lays itself out from its container at ${width}px`, async ({ page }) => {
-        await page.setViewportSize({ width, height: 1200 });
-        await page.goto(PAGE, { waitUntil: "networkidle" });
-        await page.evaluate(() => document.fonts.ready.then(() => true));
-
-        expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(
-          scheme === "dark",
-        );
-
-        const blocks: Array<BlockMetrics & { state: State }> = [];
-        for (const state of STATES) {
-          await showState(page, state);
-          const mounted = await blockMetrics(page, state);
-          expect(mounted, `${state}: mounted copies`).toHaveLength(1);
-          const block = mounted[0]!;
-          blocks.push({ ...block, state });
-          const where = `${scheme} ${width}px, ${state} (${block.containerWidth}px)`;
-          const lg = block.containerWidth >= CONTAINER_LG;
-
-          expect(block.paddingTop, `${where}: room above`).toBe(lg ? 64 : 48);
-          expect(block.offCentre, `${where}: centred`).toBeLessThan(1);
-          expect(block.blockOverflows, `${where}: the block never overflows`).toBe(false);
-          expect(block.alert, `${where}: error announced`).toBe(state === "error");
-          expect(block.heading, `${where}: heading`).toBe(HEADING);
-          expect(block.serifHeading, `${where}: serif heading`).toBe(true);
-
-          if (state === "loading") {
-            expect(block.placeholders, `${where}: a placeholder per row on a page`).toBe(5);
-            expect(block.numbers, `${where}: no rows while loading`).toEqual([]);
-            expect(block.count, `${where}: no count while loading`).toBeNull();
-            expect(block.pageButtons, `${where}: no page row`).toBe(0);
-          } else if (state === "empty") {
-            expect(block.empty, `${where}: empty message`).toBe(EMPTY);
-            expect(block.numbers, `${where}: no rows`).toEqual([]);
-            expect(block.count, `${where}: no count`).toBeNull();
-            expect(block.pageButtons, `${where}: no page row`).toBe(0);
-          } else if (state === "error") {
-            expect(block.numbers, `${where}: no rows`).toEqual([]);
-            expect(block.count, `${where}: no count`).toBeNull();
-            expect(block.retry, `${where}: retry`).toEqual(["Try again"]);
-            expect(block.pageButtons, `${where}: no page row`).toBe(0);
-          } else {
-            const rows = ONE_PAGE.includes(state) ? 3 : 5;
-            expect(block.count, `${where}: invoice count`).toBe(
-              rows === 3 ? "3 invoices" : "12 invoices",
-            );
-            expect(block.headers, `${where}: column headers`).toEqual([
-              "Select every invoice on this page",
-              "Invoice",
-              "Customer",
-              ...(lg ? ["Issued"] : []),
-              "Status",
-              "Amount",
-              "Actions",
-            ]);
-            expect(block.sortButtons, `${where}: sortable headers`).toEqual([
-              "Invoice",
-              "Customer",
-              "Amount",
-            ]);
-            expect(block.numbers, `${where}: numbers`).toEqual(NUMBERS.slice(0, rows));
-            expect(block.customers, `${where}: customers`).toEqual(CUSTOMERS.slice(0, rows));
-            expect(block.emails, `${where}: emails`).toEqual(lg ? EMAILS.slice(0, rows) : []);
-            expect(block.issued, `${where}: issued`).toEqual(lg ? ISSUED.slice(0, rows) : []);
-            expect(block.statuses, `${where}: statuses`).toEqual(STATUSES.slice(0, rows));
-            expect(block.statusVariants, `${where}: status colours`).toEqual(
-              VARIANTS.slice(0, rows),
-            );
-            expect(block.amounts, `${where}: amounts`).toEqual(
-              state === "dollars" ? DOLLARS : EUROS.slice(0, rows),
-            );
-            expect(block.menuTriggers, `${where}: row menus`).toEqual(
-              NUMBERS.slice(0, rows).map((n) => `Actions for ${n}`),
-            );
-            expect(block.checkboxes, `${where}: checkboxes`).toEqual([
-              "Select every invoice on this page",
-              ...NUMBERS.slice(0, rows).map((n) => `Select ${n}`),
-            ]);
-            const off = state === "disabled";
-            expect(block.disabledCheckboxes, `${where}: checkboxes off`).toBe(off ? rows + 1 : 0);
-            expect(block.disabledSortButtons, `${where}: sort buttons off`).toBe(off ? 3 : 0);
-            expect(block.disabledMenuTriggers, `${where}: menus off`).toBe(off ? rows : 0);
-            expect(block.tableFillsFrame, `${where}: the table fills its frame`).toBe(true);
-            if (block.containerWidth < CONTAINER_SM) {
-              expect(block.scrolls, `${where}: the table scrolls in its frame`).toBe(true);
-            }
-            if (lg) expect(block.scrolls, `${where}: the table fits`).toBe(false);
-            if (rows === 3) {
-              expect(block.pageButtons, `${where}: no page row for one page`).toBe(0);
-            } else {
-              expect(block.pages, `${where}: pages`).toEqual(PAGES);
-              expect(block.currentPage, `${where}: current page`).toBe("1");
-              expect(block.pagePlacement, `${where}: page row placement`).toBe(
-                block.containerWidth >= CONTAINER_SM ? "end" : "centre",
-              );
-              // Previous is off on the first page; disabled turns off every button.
-              expect(block.disabledPageButtons, `${where}: page buttons off`).toBe(
-                off ? block.pageButtons : 1,
-              );
-            }
-          }
-          // The 50rem frame scrolls inside itself; the panel holding the demo
-          // never pushes the page sideways.
-          const panel = await page.evaluate((state) => {
-            const el = document
-              .querySelector(`[data-demo-state="${state}"]`)!
-              .closest(".preview-panel--demo") as HTMLElement;
-            return { scroll: el.scrollWidth, client: el.clientWidth };
-          }, state);
-          expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
-        }
-
-        // The heading is one size below `@md` and one larger size from it on.
-        const below = new Set(
-          blocks.filter((b) => b.containerWidth < CONTAINER_MD).map((b) => b.headingSize),
-        );
-        const above = new Set(
-          blocks.filter((b) => b.containerWidth >= CONTAINER_MD).map((b) => b.headingSize),
-        );
-        expect(below.size, "one heading size below @md").toBe(1);
-        expect(above.size, "one heading size from @md").toBe(1);
-        expect([...above][0]!, "the heading steps up at @md").toBeGreaterThan([...below][0]!);
-
-        // Each step is exercised on both sides at every viewport, so a step that
-        // silently stopped firing cannot pass this file.
-        const containerWidths = blocks
-          .filter((b) => b.numbers.length > 0)
-          .map((b) => b.containerWidth);
-        for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
-          expect(
-            containerWidths.some((w) => w < step),
-            `a copy under ${step}px`,
-          ).toBe(true);
-          expect(
-            containerWidths.some((w) => w >= step),
-            `a copy over ${step}px`,
-          ).toBe(true);
-        }
-      });
-    }
-
-    test("sits in the middle of its preview", async ({ page }) => {
-      await page.goto(PAGE, { waitUntil: "networkidle" });
-      for (const state of [
-        "default",
-        "one-page",
-        "dollars",
-        "empty",
-        "loading",
-        "error",
-        "disabled",
-      ] as const) {
-        await showState(page, state);
-        const gaps = await page.evaluate(
-          ({ state, selector }) => {
-            const wrapper = document.querySelector(`[data-demo-state="${state}"]`)!;
-            const panel = wrapper.closest(".preview-panel--demo")!.getBoundingClientRect();
-            const block = wrapper.querySelector(selector)!;
-            const content = [...block.firstElementChild!.children]
-              .filter((el) => !el.classList.contains("sr-only"))
-              .map((el) => el.getBoundingClientRect());
-            const top = Math.min(...content.map((r) => r.top));
-            const bottom = Math.max(...content.map((r) => r.bottom));
-            const left = Math.min(...content.map((r) => r.left));
-            const right = Math.max(...content.map((r) => r.right));
-            return {
-              above: top - panel.top,
-              below: panel.bottom - bottom,
-              before: left - panel.left,
-              after: panel.right - right,
-            };
-          },
-          { state, selector: BLOCK },
-        );
-        expect(Math.abs(gaps.above - gaps.below), `${scheme} ${state}: vertical`).toBeLessThan(2);
-        expect(Math.abs(gaps.before - gaps.after), `${scheme} ${state}: horizontal`).toBeLessThan(
-          2,
-        );
-      }
-    });
 
     test("clears AA contrast on every text it paints", async ({ page }) => {
       await page.goto(PAGE, { waitUntil: "networkidle" });
@@ -844,20 +853,6 @@ for (const scheme of ["light", "dark"] as const) {
       await expect(block.getByRole("region", { name: HEADING })).toHaveCount(1);
       await expect(block.getByRole("rowheader")).toHaveText(NUMBERS);
       await expect(block.getByRole("navigation")).toHaveCount(1);
-    });
-
-    test("treats an empty error string as no error", async ({ page }) => {
-      await page.goto(PAGE, { waitUntil: "networkidle" });
-      await showState(page, "error");
-      const block = blockIn(page, "error");
-
-      // The demo's retry clears its message to "", the way a consumer holding
-      // the error as a string does once the load succeeds.
-      await block.getByRole("button", { name: "Try again" }).click();
-
-      await expect(block.locator('[data-scope="alert"]')).toHaveCount(0);
-      await expect(block.getByRole("rowheader")).toHaveText(NUMBERS);
-      await expect(block.locator("nav")).toHaveCount(1);
     });
   });
 }

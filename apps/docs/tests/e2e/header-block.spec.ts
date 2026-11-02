@@ -1,6 +1,6 @@
 /**
  * The header block, checked on the built docs page at the three widths of the
- * responsive policy (375 / 768 / 1280) in both colour schemes. It asserts text
+ * responsive policy (375 / 768 / 1280). It asserts text
  * and computed styles; no screenshot baseline is committed.
  *
  * Five claims:
@@ -263,106 +263,142 @@ async function contrastRatios(
   );
 }
 
+// Geometry and logic, which no colour changes: one pass is enough.
+test.describe("header — either scheme", () => {
+  for (const width of WIDTHS) {
+    test(`lays itself out from its container at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1200 });
+      await page.goto(PAGE, { waitUntil: "networkidle" });
+      await page.evaluate(() => document.fonts.ready.then(() => true));
+
+      const widths: number[] = [];
+      for (const state of STATES) {
+        await showState(page, state);
+        const mounted = await blockMetrics(page, state);
+        expect(mounted, `${state}: mounted copies`).toHaveLength(1);
+        const block = mounted[0]!;
+        const w = block.containerWidth;
+        widths.push(w);
+        const where = `${width}px, ${state} (${w}px)`;
+
+        if (!FRAMED.includes(state)) {
+          expect(block.offCentre.x, `${where}: centred across`).toBeLessThan(2);
+          expect(block.offCentre.y, `${where}: centred down`).toBeLessThan(2);
+        }
+        expect(block.brand, `${where}: brand`).toBe(BRAND);
+        expect(block.brandHref, `${where}: brand links home`).toBe(HOME);
+        expect(block.brandSerif, `${where}: serif brand`).toBe(true);
+        expect(block.barPadding, `${where}: room at the ends of the bar`).toBe(
+          w >= CONTAINER_LG ? PADDING_LG : w >= CONTAINER_SM ? PADDING_SM : PADDING_BASE,
+        );
+
+        const collapsible = WITH_NAV.includes(state) || state === "loading";
+        // The links sit in the bar from @md; below it they are in the Drawer.
+        expect(block.hasNav, `${where}: navigation`).toBe(WITH_NAV.includes(state));
+        if (block.hasNav) {
+          expect(block.navShown, `${where}: links in the bar`).toBe(w >= CONTAINER_MD);
+          expect(block.navItems, `${where}: links`).toEqual(NAV_ITEMS);
+          expect(block.currentLinks, `${where}: current page`).toEqual(["Pricing"]);
+          expect(block.disabledLinks, `${where}: disabled links`).toEqual(
+            state === "disabled" ? ["Customers"] : [],
+          );
+        }
+        expect(block.hasMenuButton, `${where}: Menu button`).toBe(collapsible);
+        if (collapsible) {
+          expect(block.menuButtonShown, `${where}: Menu button shown`).toBe(w < CONTAINER_MD);
+        }
+        // The call to action joins the bar from @sm; with nothing to fold
+        // away, it is in the bar at every width.
+        expect(block.actionShown, `${where}: call to action`).toBe(
+          !collapsible || w >= CONTAINER_SM,
+        );
+
+        expect(block.placeholders, `${where}: placeholders`).toBe(state === "loading" ? 3 : 0);
+        if (state === "loading") {
+          expect(block.placeholdersShown, `${where}: placeholders in the bar`).toBe(
+            w >= CONTAINER_MD,
+          );
+        }
+        expect(block.alert, `${where}: error announced`).toBe(state === "error");
+
+        // The 50rem frame scrolls inside itself; the panel holding the demo
+        // never pushes the page sideways.
+        const panel = await page.evaluate((state) => {
+          const el = document
+            .querySelector(`[data-demo-state="${state}"]`)!
+            .closest(".preview-panel--demo") as HTMLElement;
+          return { scroll: el.scrollWidth, client: el.clientWidth };
+        }, state);
+        expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
+
+        // The bar never overflows its own container.
+        const bar = await page.evaluate(
+          ({ state, selector }) => {
+            const el = document.querySelector(`[data-demo-state="${state}"] ${selector}`)!
+              .firstElementChild as HTMLElement;
+            return { scroll: el.scrollWidth, client: el.clientWidth };
+          },
+          { state, selector: BLOCK },
+        );
+        expect(bar.scroll, `${where}: bar overflow`).toBeLessThanOrEqual(bar.client);
+      }
+
+      // Each step is exercised on both sides at every viewport, so a step that
+      // silently stopped firing cannot pass this file.
+      for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
+        expect(
+          widths.some((w) => w < step),
+          `a copy under ${step}px`,
+        ).toBe(true);
+        expect(
+          widths.some((w) => w >= step),
+          `a copy over ${step}px`,
+        ).toBe(true);
+      }
+    });
+  }
+
+  test("keeps a disabled link out of reach", async ({ page }) => {
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await showState(page, "disabled");
+    const block = page.locator(`[data-demo-state="disabled"] ${BLOCK}`);
+    const link = block.locator("nav a", { hasText: "Customers" });
+    await expect(link).toHaveAttribute("aria-disabled", "true");
+    // Screen readers still hear a link, marked unavailable, not plain text.
+    await expect(block.getByRole("link", { name: "Customers", disabled: true })).toHaveCount(1);
+    await link.evaluate((el) => (el as HTMLElement).focus());
+    await expect(link).not.toBeFocused();
+
+    // Tab skips it: from Pricing straight to the call to action.
+    await block.getByRole("link", { name: "Pricing" }).focus();
+    await page.keyboard.press("Tab");
+    await expect(block.getByRole("button", { name: ACTION })).toBeFocused();
+
+    // In a group, a disabled link is a disabled Menu item with nowhere to go.
+    await block.getByRole("button", { name: "Product", exact: true }).click();
+    const receipts = page.getByRole("menu").getByRole("menuitem", { name: "Receipts" });
+    await expect(receipts).toHaveAttribute("aria-disabled", "true");
+    await expect(receipts).not.toHaveAttribute("href");
+    await page.keyboard.press("Escape");
+  });
+
+  test("treats an empty error string as no error", async ({ page }) => {
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await showState(page, "error");
+    const block = page.locator(`[data-demo-state="error"] ${BLOCK}`);
+
+    // The demo's retry clears its message to "", the way a consumer holding
+    // the error as a string does once the load succeeds.
+    await block.getByRole("button", { name: "Try again" }).click();
+
+    await expect(block.locator('[data-scope="alert"]')).toHaveCount(0);
+    await expect(block.getByRole("navigation", { name: "Main" })).toHaveCount(1);
+  });
+});
+
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`header — ${scheme}`, () => {
     test.use({ colorScheme: scheme });
-
-    for (const width of WIDTHS) {
-      test(`lays itself out from its container at ${width}px`, async ({ page }) => {
-        await page.setViewportSize({ width, height: 1200 });
-        await page.goto(PAGE, { waitUntil: "networkidle" });
-        await page.evaluate(() => document.fonts.ready.then(() => true));
-
-        expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(
-          scheme === "dark",
-        );
-
-        const widths: number[] = [];
-        for (const state of STATES) {
-          await showState(page, state);
-          const mounted = await blockMetrics(page, state);
-          expect(mounted, `${state}: mounted copies`).toHaveLength(1);
-          const block = mounted[0]!;
-          const w = block.containerWidth;
-          widths.push(w);
-          const where = `${scheme} ${width}px, ${state} (${w}px)`;
-
-          if (!FRAMED.includes(state)) {
-            expect(block.offCentre.x, `${where}: centred across`).toBeLessThan(2);
-            expect(block.offCentre.y, `${where}: centred down`).toBeLessThan(2);
-          }
-          expect(block.brand, `${where}: brand`).toBe(BRAND);
-          expect(block.brandHref, `${where}: brand links home`).toBe(HOME);
-          expect(block.brandSerif, `${where}: serif brand`).toBe(true);
-          expect(block.barPadding, `${where}: room at the ends of the bar`).toBe(
-            w >= CONTAINER_LG ? PADDING_LG : w >= CONTAINER_SM ? PADDING_SM : PADDING_BASE,
-          );
-
-          const collapsible = WITH_NAV.includes(state) || state === "loading";
-          // The links sit in the bar from @md; below it they are in the Drawer.
-          expect(block.hasNav, `${where}: navigation`).toBe(WITH_NAV.includes(state));
-          if (block.hasNav) {
-            expect(block.navShown, `${where}: links in the bar`).toBe(w >= CONTAINER_MD);
-            expect(block.navItems, `${where}: links`).toEqual(NAV_ITEMS);
-            expect(block.currentLinks, `${where}: current page`).toEqual(["Pricing"]);
-            expect(block.disabledLinks, `${where}: disabled links`).toEqual(
-              state === "disabled" ? ["Customers"] : [],
-            );
-          }
-          expect(block.hasMenuButton, `${where}: Menu button`).toBe(collapsible);
-          if (collapsible) {
-            expect(block.menuButtonShown, `${where}: Menu button shown`).toBe(w < CONTAINER_MD);
-          }
-          // The call to action joins the bar from @sm; with nothing to fold
-          // away, it is in the bar at every width.
-          expect(block.actionShown, `${where}: call to action`).toBe(
-            !collapsible || w >= CONTAINER_SM,
-          );
-
-          expect(block.placeholders, `${where}: placeholders`).toBe(state === "loading" ? 3 : 0);
-          if (state === "loading") {
-            expect(block.placeholdersShown, `${where}: placeholders in the bar`).toBe(
-              w >= CONTAINER_MD,
-            );
-          }
-          expect(block.alert, `${where}: error announced`).toBe(state === "error");
-
-          // The 50rem frame scrolls inside itself; the panel holding the demo
-          // never pushes the page sideways.
-          const panel = await page.evaluate((state) => {
-            const el = document
-              .querySelector(`[data-demo-state="${state}"]`)!
-              .closest(".preview-panel--demo") as HTMLElement;
-            return { scroll: el.scrollWidth, client: el.clientWidth };
-          }, state);
-          expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
-
-          // The bar never overflows its own container.
-          const bar = await page.evaluate(
-            ({ state, selector }) => {
-              const el = document.querySelector(`[data-demo-state="${state}"] ${selector}`)!
-                .firstElementChild as HTMLElement;
-              return { scroll: el.scrollWidth, client: el.clientWidth };
-            },
-            { state, selector: BLOCK },
-          );
-          expect(bar.scroll, `${where}: bar overflow`).toBeLessThanOrEqual(bar.client);
-        }
-
-        // Each step is exercised on both sides at every viewport, so a step that
-        // silently stopped firing cannot pass this file.
-        for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
-          expect(
-            widths.some((w) => w < step),
-            `a copy under ${step}px`,
-          ).toBe(true);
-          expect(
-            widths.some((w) => w >= step),
-            `a copy over ${step}px`,
-          ).toBe(true);
-        }
-      });
-    }
 
     test("opens the navigation in a right Drawer on a narrow container", async ({ page }) => {
       await page.goto(PAGE, { waitUntil: "networkidle" });
@@ -540,30 +576,6 @@ for (const scheme of ["light", "dark"] as const) {
       await expect(block.getByRole("button", { name: ACTION })).toBeFocused();
     });
 
-    test("keeps a disabled link out of reach", async ({ page }) => {
-      await page.goto(PAGE, { waitUntil: "networkidle" });
-      await showState(page, "disabled");
-      const block = page.locator(`[data-demo-state="disabled"] ${BLOCK}`);
-      const link = block.locator("nav a", { hasText: "Customers" });
-      await expect(link).toHaveAttribute("aria-disabled", "true");
-      // Screen readers still hear a link, marked unavailable, not plain text.
-      await expect(block.getByRole("link", { name: "Customers", disabled: true })).toHaveCount(1);
-      await link.evaluate((el) => (el as HTMLElement).focus());
-      await expect(link).not.toBeFocused();
-
-      // Tab skips it: from Pricing straight to the call to action.
-      await block.getByRole("link", { name: "Pricing" }).focus();
-      await page.keyboard.press("Tab");
-      await expect(block.getByRole("button", { name: ACTION })).toBeFocused();
-
-      // In a group, a disabled link is a disabled Menu item with nowhere to go.
-      await block.getByRole("button", { name: "Product", exact: true }).click();
-      const receipts = page.getByRole("menu").getByRole("menuitem", { name: "Receipts" });
-      await expect(receipts).toHaveAttribute("aria-disabled", "true");
-      await expect(receipts).not.toHaveAttribute("href");
-      await page.keyboard.press("Escape");
-    });
-
     test("announces the loading links once and the failed load as an alert", async ({ page }) => {
       await page.goto(PAGE, { waitUntil: "networkidle" });
       await showState(page, "loading");
@@ -576,19 +588,6 @@ for (const scheme of ["light", "dark"] as const) {
       const alert = page.locator(`[data-demo-state="error"] ${BLOCK} [role="alert"]`);
       await expect(alert).toContainText(ERROR);
       await expect(alert.getByRole("button", { name: "Try again" })).toBeVisible();
-    });
-
-    test("treats an empty error string as no error", async ({ page }) => {
-      await page.goto(PAGE, { waitUntil: "networkidle" });
-      await showState(page, "error");
-      const block = page.locator(`[data-demo-state="error"] ${BLOCK}`);
-
-      // The demo's retry clears its message to "", the way a consumer holding
-      // the error as a string does once the load succeeds.
-      await block.getByRole("button", { name: "Try again" }).click();
-
-      await expect(block.locator('[data-scope="alert"]')).toHaveCount(0);
-      await expect(block.getByRole("navigation", { name: "Main" })).toHaveCount(1);
     });
   });
 }

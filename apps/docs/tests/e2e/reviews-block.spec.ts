@@ -1,6 +1,6 @@
 /**
  * The reviews block, checked on the built docs page at the three widths of the
- * responsive policy (375 / 768 / 1280) in both colour schemes. It asserts text
+ * responsive policy (375 / 768 / 1280). It asserts text
  * and computed styles; no screenshot baseline is committed.
  *
  * Four claims:
@@ -362,165 +362,178 @@ async function contrastRatios(
   );
 }
 
+// Geometry and logic, which no colour changes: one pass is enough.
+test.describe("reviews — either scheme", () => {
+  for (const width of WIDTHS) {
+    test(`lays itself out from its container at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1200 });
+      await page.goto(PAGE, { waitUntil: "networkidle" });
+      await page.evaluate(() => document.fonts.ready.then(() => true));
+
+      const blocks: Array<BlockMetrics & { state: State }> = [];
+      for (const state of STATES) {
+        await showState(page, state);
+        const mounted = await blockMetrics(page, state);
+        expect(mounted, `${state}: mounted copies`).toHaveLength(1);
+        const block = mounted[0]!;
+        blocks.push({ ...block, state });
+        const where = `${width}px, ${state} (${block.containerWidth}px)`;
+        const wide = block.containerWidth >= CONTAINER_LG;
+
+        expect(block.paddingTop, `${where}: room above`).toBe(wide ? 64 : 48);
+        expect(block.columns, `${where}: columns`).toBe(wide ? 3 : 1);
+        expect(block.columnGap, `${where}: gap between columns`).toBe(wide ? 48 : 40);
+        expect(block.reviewsSpan, `${where}: reviews reach the end`).toBe(true);
+        expect(block.offCentre, `${where}: centred`).toBeLessThan(1);
+        expect(block.alert, `${where}: error announced`).toBe(state === "error");
+        expect(block.heading, `${where}: heading`).toBe(HEADING);
+        expect(block.serifHeading, `${where}: serif heading`).toBe(true);
+        expect(block.buttons[0], `${where}: write a review`).toBe(WRITE);
+        expect(block.buttonVariants, `${where}: outline buttons`).toEqual(
+          block.buttons.map(() => "outline"),
+        );
+        expect(block.disabledButtons, `${where}: disabled buttons`).toEqual(
+          state === "disabled" ? [WRITE] : [],
+        );
+
+        if (state === "loading") {
+          expect(block.placeholderCards, `${where}: placeholder cards`).toBe(3);
+          expect(block.summaryPlaceholdersHidden, `${where}: hidden summary`).toBe(true);
+          expect(block.barLabels, `${where}: no bars while loading`).toEqual([]);
+          expect(block.cards, `${where}: no reviews while loading`).toBe(0);
+          expect(block.buttons, `${where}: write only`).toEqual([WRITE]);
+        } else if (state === "empty") {
+          expect(block.empty, `${where}: empty message`).toBe(EMPTY);
+          expect(block.average, `${where}: no average`).toBeNull();
+          expect(block.barLabels, `${where}: no bars`).toEqual([]);
+          expect(block.cards, `${where}: no reviews`).toBe(0);
+          expect(block.buttons, `${where}: write only`).toEqual([WRITE]);
+        } else if (state === "error") {
+          expect(block.average, `${where}: no average`).toBeNull();
+          expect(block.barLabels, `${where}: no bars`).toEqual([]);
+          expect(block.cards, `${where}: no reviews`).toBe(0);
+          expect(block.buttons, `${where}: write and retry`).toEqual([WRITE, "Try again"]);
+        } else {
+          const sideBySide = block.containerWidth >= CONTAINER_MD && !wide;
+          expect(block.summaryColumns, `${where}: average beside bars`).toBe(sideBySide ? 2 : 1);
+          expect(block.average, `${where}: average`).toBe(AVERAGE);
+          expect(block.summaryFilled, `${where}: summary stars`).toBe(SUMMARY_FILLED);
+          expect(block.basedOn, `${where}: review count`).toBe(BASED_ON);
+          expect(block.barLabels, `${where}: bar labels`).toEqual(BAR_LABELS);
+          expect(block.barValues, `${where}: bar values`).toEqual(BAR_VALUES);
+          expect(block.barNames, `${where}: bar names`).toEqual(BAR_LABELS);
+          expect(block.barNow, `${where}: bar values read out`).toEqual(
+            BAR_VALUES.map((value) => value.replace("%", "")),
+          );
+          expect(block.barsFilled, `${where}: bars filled to their share`).toBe(true);
+          expect(block.cards, `${where}: one card per review`).toBe(AUTHORS.length);
+          expect(block.authors, `${where}: authors`).toEqual(AUTHORS);
+          expect(block.initials, `${where}: avatar initials`).toEqual(INITIALS);
+          expect(block.dates, `${where}: dates`).toEqual(DATES);
+          expect(block.ratings, `${where}: ratings read out`).toEqual(RATINGS);
+          expect(block.filled, `${where}: filled stars`).toEqual(FILLED);
+          expect(block.badges, `${where}: verified badges`).toEqual(VERIFIED);
+          expect(block.textSizes, `${where}: one text size`).toHaveLength(1);
+          expect(block.empty, `${where}: no empty message`).toBeNull();
+          expect(block.buttons, `${where}: write only`).toEqual([WRITE]);
+        }
+
+        // The 50rem frame scrolls inside itself; the panel holding the demo
+        // never pushes the page sideways.
+        const panel = await page.evaluate((state) => {
+          const el = document
+            .querySelector(`[data-demo-state="${state}"]`)!
+            .closest(".preview-panel--demo") as HTMLElement;
+          return { scroll: el.scrollWidth, client: el.clientWidth };
+        }, state);
+        expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
+      }
+
+      // A step is one size below it and one larger size from it on.
+      function stepsUp(sizes: Array<[number, number | null]>, step: number, what: string) {
+        const below = new Set(sizes.filter(([w]) => w < step).map(([, s]) => s));
+        const above = new Set(sizes.filter(([w]) => w >= step).map(([, s]) => s));
+        expect(below.size, `one ${what} size below ${step}px`).toBe(1);
+        expect(above.size, `one ${what} size from ${step}px`).toBe(1);
+        expect([...above][0]!, `${what} steps up at ${step}px`).toBeGreaterThan([...below][0]!);
+      }
+      stepsUp(
+        blocks.map((b) => [b.containerWidth, b.headingSize]),
+        CONTAINER_MD,
+        "heading",
+      );
+      stepsUp(
+        blocks.filter((b) => b.cards > 0).map((b) => [b.containerWidth, b.textSizes[0]!]),
+        CONTAINER_SM,
+        "review text",
+      );
+
+      // Each step is exercised on both sides at every viewport, so a step that
+      // silently stopped firing cannot pass this file.
+      const containerWidths = blocks.filter((b) => b.cards > 0).map((b) => b.containerWidth);
+      for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
+        expect(
+          containerWidths.some((w) => w < step),
+          `a copy under ${step}px`,
+        ).toBe(true);
+        expect(
+          containerWidths.some((w) => w >= step),
+          `a copy over ${step}px`,
+        ).toBe(true);
+      }
+    });
+  }
+
+  test("sits in the middle of its preview", async ({ page }) => {
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    for (const state of ["default", "empty", "loading", "error", "disabled"] as const) {
+      await showState(page, state);
+      const gaps = await page.evaluate(
+        ({ state, selector }) => {
+          const wrapper = document.querySelector(`[data-demo-state="${state}"]`)!;
+          const panel = wrapper.closest(".preview-panel--demo")!.getBoundingClientRect();
+          const block = wrapper.querySelector(selector)!;
+          const content = [...block.firstElementChild!.children].map((el) =>
+            el.getBoundingClientRect(),
+          );
+          const top = Math.min(...content.map((r) => r.top));
+          const bottom = Math.max(...content.map((r) => r.bottom));
+          const left = Math.min(...content.map((r) => r.left));
+          const right = Math.max(...content.map((r) => r.right));
+          return {
+            above: top - panel.top,
+            below: panel.bottom - bottom,
+            before: left - panel.left,
+            after: panel.right - right,
+          };
+        },
+        { state, selector: BLOCK },
+      );
+      expect(Math.abs(gaps.above - gaps.below), `${state}: vertical`).toBeLessThan(2);
+      expect(Math.abs(gaps.before - gaps.after), `${state}: horizontal`).toBeLessThan(2);
+    }
+  });
+
+  test("treats an empty error string as no error", async ({ page }) => {
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await showState(page, "error");
+    const block = page.locator(`[data-demo-state="error"] ${BLOCK}`);
+
+    // The demo's retry clears its message to "", the way a consumer holding
+    // the error as a string does once the load succeeds.
+    await block.getByRole("button", { name: "Try again" }).click();
+
+    await expect(block.locator('[data-scope="alert"]')).toHaveCount(0);
+    await expect(block.locator("ul > li > [data-scope='card'][data-part='root']")).toHaveCount(
+      AUTHORS.length,
+    );
+    await expect(block.getByRole("progressbar")).toHaveCount(BAR_LABELS.length);
+  });
+});
+
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`reviews — ${scheme}`, () => {
     test.use({ colorScheme: scheme });
-
-    for (const width of WIDTHS) {
-      test(`lays itself out from its container at ${width}px`, async ({ page }) => {
-        await page.setViewportSize({ width, height: 1200 });
-        await page.goto(PAGE, { waitUntil: "networkidle" });
-        await page.evaluate(() => document.fonts.ready.then(() => true));
-
-        expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(
-          scheme === "dark",
-        );
-
-        const blocks: Array<BlockMetrics & { state: State }> = [];
-        for (const state of STATES) {
-          await showState(page, state);
-          const mounted = await blockMetrics(page, state);
-          expect(mounted, `${state}: mounted copies`).toHaveLength(1);
-          const block = mounted[0]!;
-          blocks.push({ ...block, state });
-          const where = `${scheme} ${width}px, ${state} (${block.containerWidth}px)`;
-          const wide = block.containerWidth >= CONTAINER_LG;
-
-          expect(block.paddingTop, `${where}: room above`).toBe(wide ? 64 : 48);
-          expect(block.columns, `${where}: columns`).toBe(wide ? 3 : 1);
-          expect(block.columnGap, `${where}: gap between columns`).toBe(wide ? 48 : 40);
-          expect(block.reviewsSpan, `${where}: reviews reach the end`).toBe(true);
-          expect(block.offCentre, `${where}: centred`).toBeLessThan(1);
-          expect(block.alert, `${where}: error announced`).toBe(state === "error");
-          expect(block.heading, `${where}: heading`).toBe(HEADING);
-          expect(block.serifHeading, `${where}: serif heading`).toBe(true);
-          expect(block.buttons[0], `${where}: write a review`).toBe(WRITE);
-          expect(block.buttonVariants, `${where}: outline buttons`).toEqual(
-            block.buttons.map(() => "outline"),
-          );
-          expect(block.disabledButtons, `${where}: disabled buttons`).toEqual(
-            state === "disabled" ? [WRITE] : [],
-          );
-
-          if (state === "loading") {
-            expect(block.placeholderCards, `${where}: placeholder cards`).toBe(3);
-            expect(block.summaryPlaceholdersHidden, `${where}: hidden summary`).toBe(true);
-            expect(block.barLabels, `${where}: no bars while loading`).toEqual([]);
-            expect(block.cards, `${where}: no reviews while loading`).toBe(0);
-            expect(block.buttons, `${where}: write only`).toEqual([WRITE]);
-          } else if (state === "empty") {
-            expect(block.empty, `${where}: empty message`).toBe(EMPTY);
-            expect(block.average, `${where}: no average`).toBeNull();
-            expect(block.barLabels, `${where}: no bars`).toEqual([]);
-            expect(block.cards, `${where}: no reviews`).toBe(0);
-            expect(block.buttons, `${where}: write only`).toEqual([WRITE]);
-          } else if (state === "error") {
-            expect(block.average, `${where}: no average`).toBeNull();
-            expect(block.barLabels, `${where}: no bars`).toEqual([]);
-            expect(block.cards, `${where}: no reviews`).toBe(0);
-            expect(block.buttons, `${where}: write and retry`).toEqual([WRITE, "Try again"]);
-          } else {
-            const sideBySide = block.containerWidth >= CONTAINER_MD && !wide;
-            expect(block.summaryColumns, `${where}: average beside bars`).toBe(sideBySide ? 2 : 1);
-            expect(block.average, `${where}: average`).toBe(AVERAGE);
-            expect(block.summaryFilled, `${where}: summary stars`).toBe(SUMMARY_FILLED);
-            expect(block.basedOn, `${where}: review count`).toBe(BASED_ON);
-            expect(block.barLabels, `${where}: bar labels`).toEqual(BAR_LABELS);
-            expect(block.barValues, `${where}: bar values`).toEqual(BAR_VALUES);
-            expect(block.barNames, `${where}: bar names`).toEqual(BAR_LABELS);
-            expect(block.barNow, `${where}: bar values read out`).toEqual(
-              BAR_VALUES.map((value) => value.replace("%", "")),
-            );
-            expect(block.barsFilled, `${where}: bars filled to their share`).toBe(true);
-            expect(block.cards, `${where}: one card per review`).toBe(AUTHORS.length);
-            expect(block.authors, `${where}: authors`).toEqual(AUTHORS);
-            expect(block.initials, `${where}: avatar initials`).toEqual(INITIALS);
-            expect(block.dates, `${where}: dates`).toEqual(DATES);
-            expect(block.ratings, `${where}: ratings read out`).toEqual(RATINGS);
-            expect(block.filled, `${where}: filled stars`).toEqual(FILLED);
-            expect(block.badges, `${where}: verified badges`).toEqual(VERIFIED);
-            expect(block.textSizes, `${where}: one text size`).toHaveLength(1);
-            expect(block.empty, `${where}: no empty message`).toBeNull();
-            expect(block.buttons, `${where}: write only`).toEqual([WRITE]);
-          }
-
-          // The 50rem frame scrolls inside itself; the panel holding the demo
-          // never pushes the page sideways.
-          const panel = await page.evaluate((state) => {
-            const el = document
-              .querySelector(`[data-demo-state="${state}"]`)!
-              .closest(".preview-panel--demo") as HTMLElement;
-            return { scroll: el.scrollWidth, client: el.clientWidth };
-          }, state);
-          expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
-        }
-
-        // A step is one size below it and one larger size from it on.
-        function stepsUp(sizes: Array<[number, number | null]>, step: number, what: string) {
-          const below = new Set(sizes.filter(([w]) => w < step).map(([, s]) => s));
-          const above = new Set(sizes.filter(([w]) => w >= step).map(([, s]) => s));
-          expect(below.size, `one ${what} size below ${step}px`).toBe(1);
-          expect(above.size, `one ${what} size from ${step}px`).toBe(1);
-          expect([...above][0]!, `${what} steps up at ${step}px`).toBeGreaterThan([...below][0]!);
-        }
-        stepsUp(
-          blocks.map((b) => [b.containerWidth, b.headingSize]),
-          CONTAINER_MD,
-          "heading",
-        );
-        stepsUp(
-          blocks.filter((b) => b.cards > 0).map((b) => [b.containerWidth, b.textSizes[0]!]),
-          CONTAINER_SM,
-          "review text",
-        );
-
-        // Each step is exercised on both sides at every viewport, so a step that
-        // silently stopped firing cannot pass this file.
-        const containerWidths = blocks.filter((b) => b.cards > 0).map((b) => b.containerWidth);
-        for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
-          expect(
-            containerWidths.some((w) => w < step),
-            `a copy under ${step}px`,
-          ).toBe(true);
-          expect(
-            containerWidths.some((w) => w >= step),
-            `a copy over ${step}px`,
-          ).toBe(true);
-        }
-      });
-    }
-
-    test("sits in the middle of its preview", async ({ page }) => {
-      await page.goto(PAGE, { waitUntil: "networkidle" });
-      for (const state of ["default", "empty", "loading", "error", "disabled"] as const) {
-        await showState(page, state);
-        const gaps = await page.evaluate(
-          ({ state, selector }) => {
-            const wrapper = document.querySelector(`[data-demo-state="${state}"]`)!;
-            const panel = wrapper.closest(".preview-panel--demo")!.getBoundingClientRect();
-            const block = wrapper.querySelector(selector)!;
-            const content = [...block.firstElementChild!.children].map((el) =>
-              el.getBoundingClientRect(),
-            );
-            const top = Math.min(...content.map((r) => r.top));
-            const bottom = Math.max(...content.map((r) => r.bottom));
-            const left = Math.min(...content.map((r) => r.left));
-            const right = Math.max(...content.map((r) => r.right));
-            return {
-              above: top - panel.top,
-              below: panel.bottom - bottom,
-              before: left - panel.left,
-              after: panel.right - right,
-            };
-          },
-          { state, selector: BLOCK },
-        );
-        expect(Math.abs(gaps.above - gaps.below), `${scheme} ${state}: vertical`).toBeLessThan(2);
-        expect(Math.abs(gaps.before - gaps.after), `${scheme} ${state}: horizontal`).toBeLessThan(
-          2,
-        );
-      }
-    });
 
     test("clears AA contrast on every text it paints", async ({ page }) => {
       await page.goto(PAGE, { waitUntil: "networkidle" });
@@ -634,22 +647,6 @@ for (const scheme of ["light", "dark"] as const) {
       const alert = page.locator(`[data-demo-state="error"] ${BLOCK} [role="alert"]`);
       await expect(alert).toContainText(ERROR);
       await expect(alert.getByRole("button", { name: "Try again" })).toBeVisible();
-    });
-
-    test("treats an empty error string as no error", async ({ page }) => {
-      await page.goto(PAGE, { waitUntil: "networkidle" });
-      await showState(page, "error");
-      const block = page.locator(`[data-demo-state="error"] ${BLOCK}`);
-
-      // The demo's retry clears its message to "", the way a consumer holding
-      // the error as a string does once the load succeeds.
-      await block.getByRole("button", { name: "Try again" }).click();
-
-      await expect(block.locator('[data-scope="alert"]')).toHaveCount(0);
-      await expect(block.locator("ul > li > [data-scope='card'][data-part='root']")).toHaveCount(
-        AUTHORS.length,
-      );
-      await expect(block.getByRole("progressbar")).toHaveCount(BAR_LABELS.length);
     });
   });
 }

@@ -1,7 +1,6 @@
 /**
  * The sign-up screen, checked where it is actually shown to a reader: the built
- * docs page, at the three widths of the responsive policy (375 / 768 / 1280) in
- * both colour schemes.
+ * docs page, at the three widths of the responsive policy (375 / 768 / 1280).
  *
  * This is the seam that replaces a screenshot baseline for this screen. The
  * pixel baselines were dropped from this repo (see `playwright.config.ts`)
@@ -223,91 +222,90 @@ async function contrastRatios(page: Page): Promise<Record<string, number>> {
   });
 }
 
+// Geometry and logic, which no colour changes: one pass is enough.
+test.describe("sign-up — either scheme", () => {
+  for (const width of WIDTHS) {
+    test(`lays itself out from its container at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1200 });
+      await page.goto(PAGE, { waitUntil: "networkidle" });
+      await page.evaluate(() => document.fonts.ready.then(() => true));
+      await hydrated(page);
+
+      // One tab, one mounted copy: walk the tabs in order, so `screens[i]` is
+      // the copy `TABS[i]` mounted.
+      const screens: ScreenMetrics[] = [];
+      for (const tab of TABS) {
+        await showTab(page, tab);
+        const mounted = await screenMetrics(page, tab);
+        expect(mounted, `${width}px, ${tab}: mounted copies`).toHaveLength(1);
+        screens.push(mounted[0]!);
+      }
+
+      // The three frame widths are fixed by the demo, so at every viewport its
+      // width tabs hold one copy in each band of the screen's three steps.
+      const widths = screens.map((s) => s.containerWidth);
+      expect(
+        widths.some((w) => w < CONTAINER_SM),
+        `${width}px: a copy below @sm`,
+      ).toBe(true);
+      expect(
+        widths.some((w) => w >= CONTAINER_LG),
+        `${width}px: a copy at or above @lg`,
+      ).toBe(true);
+
+      for (const [index, screen] of screens.entries()) {
+        const where = `${width}px, ${TABS[index]} (${screen.containerWidth}px)`;
+        expect(screen.mastheadDisplay, `${where}: masthead`).toBe(
+          screen.containerWidth >= CONTAINER_SM ? "flex" : "grid",
+        );
+        expect(screen.footerDisplay, `${where}: footer`).toBe(
+          screen.containerWidth >= CONTAINER_MD ? "flex" : "grid",
+        );
+        expect(screen.contentColumns, `${where}: content columns`).toBe(
+          screen.containerWidth >= CONTAINER_LG ? 2 : 1,
+        );
+        // Full-viewport is a height: the screen fills the window it is given.
+        // On this page each frame stands in for that window (the demo says so
+        // and overrides `min-h-dvh` to the frame's own height); what is being
+        // held here is that the screen still fills it, top to bottom.
+        expect(screen.rootHeight, `${where}: root height`).toBeGreaterThanOrEqual(
+          screen.frameHeight,
+        );
+        // The card is mounted in its account-creation mode at every width:
+        // the name field and the consent box are what a sign-up asks for that
+        // a sign-in does not, and remember-me is what it must not carry.
+        expect(screen.fieldNames, `${where}: fields`).toEqual([
+          "fullName",
+          "email",
+          "password",
+          "terms",
+        ]);
+        expect(screen.consentRequired, `${where}: consent required`).toBe(true);
+        // A screen is the whole route, so it has a top-level heading and the
+        // headings under it descend one rank at a time. The card's title is
+        // that `h1` (it is what the page is *called*), which is why the block
+        // takes `titleLevel` rather than the screen printing a second one.
+        expect(screen.headingLevels[0], `${where}: first heading`).toBe(1);
+        for (const [i, level] of screen.headingLevels.entries()) {
+          if (i === 0) continue;
+          expect(
+            level,
+            `${where}: heading ${i + 1} of ${screen.headingLevels.join("/")}`,
+          ).toBeLessThanOrEqual(screen.headingLevels[i - 1]! + 1);
+        }
+      }
+
+      // The last tab is the empty one: an invite-only sign-up has nothing to
+      // sell, so the aside is not rendered at all rather than left blank.
+      expect(screens.slice(0, -1).every((s) => s.hasHighlights)).toBe(true);
+      expect(screens.at(-1)!.hasHighlights).toBe(false);
+    });
+  }
+});
+
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`sign-up — ${scheme}`, () => {
     test.use({ colorScheme: scheme });
-
-    for (const width of WIDTHS) {
-      test(`lays itself out from its container at ${width}px`, async ({ page }) => {
-        await page.setViewportSize({ width, height: 1200 });
-        await page.goto(PAGE, { waitUntil: "networkidle" });
-        await page.evaluate(() => document.fonts.ready.then(() => true));
-        await hydrated(page);
-
-        expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(
-          scheme === "dark",
-        );
-
-        // One tab, one mounted copy: walk the tabs in order, so `screens[i]` is
-        // the copy `TABS[i]` mounted.
-        const screens: ScreenMetrics[] = [];
-        for (const tab of TABS) {
-          await showTab(page, tab);
-          const mounted = await screenMetrics(page, tab);
-          expect(mounted, `${scheme} ${width}px, ${tab}: mounted copies`).toHaveLength(1);
-          screens.push(mounted[0]!);
-        }
-
-        // The three frame widths are fixed by the demo, so at every viewport its
-        // width tabs hold one copy in each band of the screen's three steps.
-        const widths = screens.map((s) => s.containerWidth);
-        expect(
-          widths.some((w) => w < CONTAINER_SM),
-          `${scheme} ${width}px: a copy below @sm`,
-        ).toBe(true);
-        expect(
-          widths.some((w) => w >= CONTAINER_LG),
-          `${scheme} ${width}px: a copy at or above @lg`,
-        ).toBe(true);
-
-        for (const [index, screen] of screens.entries()) {
-          const where = `${scheme} ${width}px, ${TABS[index]} (${screen.containerWidth}px)`;
-          expect(screen.mastheadDisplay, `${where}: masthead`).toBe(
-            screen.containerWidth >= CONTAINER_SM ? "flex" : "grid",
-          );
-          expect(screen.footerDisplay, `${where}: footer`).toBe(
-            screen.containerWidth >= CONTAINER_MD ? "flex" : "grid",
-          );
-          expect(screen.contentColumns, `${where}: content columns`).toBe(
-            screen.containerWidth >= CONTAINER_LG ? 2 : 1,
-          );
-          // Full-viewport is a height: the screen fills the window it is given.
-          // On this page each frame stands in for that window (the demo says so
-          // and overrides `min-h-dvh` to the frame's own height); what is being
-          // held here is that the screen still fills it, top to bottom.
-          expect(screen.rootHeight, `${where}: root height`).toBeGreaterThanOrEqual(
-            screen.frameHeight,
-          );
-          // The card is mounted in its account-creation mode at every width:
-          // the name field and the consent box are what a sign-up asks for that
-          // a sign-in does not, and remember-me is what it must not carry.
-          expect(screen.fieldNames, `${where}: fields`).toEqual([
-            "fullName",
-            "email",
-            "password",
-            "terms",
-          ]);
-          expect(screen.consentRequired, `${where}: consent required`).toBe(true);
-          // A screen is the whole route, so it has a top-level heading and the
-          // headings under it descend one rank at a time. The card's title is
-          // that `h1` (it is what the page is *called*), which is why the block
-          // takes `titleLevel` rather than the screen printing a second one.
-          expect(screen.headingLevels[0], `${where}: first heading`).toBe(1);
-          for (const [i, level] of screen.headingLevels.entries()) {
-            if (i === 0) continue;
-            expect(
-              level,
-              `${where}: heading ${i + 1} of ${screen.headingLevels.join("/")}`,
-            ).toBeLessThanOrEqual(screen.headingLevels[i - 1]! + 1);
-          }
-        }
-
-        // The last tab is the empty one: an invite-only sign-up has nothing to
-        // sell, so the aside is not rendered at all rather than left blank.
-        expect(screens.slice(0, -1).every((s) => s.hasHighlights)).toBe(true);
-        expect(screens.at(-1)!.hasHighlights).toBe(false);
-      });
-    }
 
     test("clears AA contrast on every text it paints", async ({ page }) => {
       await page.goto(PAGE, { waitUntil: "networkidle" });

@@ -1,6 +1,6 @@
 /**
  * The action-panel block, checked on the built docs page at the three widths
- * of the responsive policy (375 / 768 / 1280) in both colour schemes. It
+ * of the responsive policy (375 / 768 / 1280). It
  * asserts text and computed styles; no screenshot baseline is committed.
  *
  * Four claims:
@@ -269,107 +269,105 @@ async function textRatios(
   );
 }
 
+// Geometry and logic, which no colour changes: one pass is enough.
+test.describe("action-panel — either scheme", () => {
+  for (const width of WIDTHS) {
+    test(`lays itself out from its container at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1200 });
+      await page.goto(PAGE, { waitUntil: "networkidle" });
+      await page.evaluate(() => document.fonts.ready.then(() => true));
+
+      const blocks: Array<BlockMetrics & { state: State }> = [];
+      for (const state of STATES) {
+        await showState(page, state);
+        const mounted = await blockMetrics(page, state);
+        expect(mounted, `${state}: mounted copies`).toHaveLength(1);
+        const block = mounted[0]!;
+        blocks.push({ ...block, state });
+        const where = `${width}px, ${state} (${block.containerWidth}px)`;
+
+        const sm = block.containerWidth >= CONTAINER_SM;
+        if (block.controlBesideText !== null) {
+          expect(block.controlBesideText, `${where}: control beside text`).toBe(sm);
+        }
+        expect(block.panelPadding, `${where}: panel padding`).toBe(sm ? 24 : 16);
+        expect(block.headingBesidePanel, `${where}: heading beside panel`).toBe(
+          block.containerWidth >= CONTAINER_LG,
+        );
+        expect(block.destructiveTone, `${where}: destructive tone`).toBe(state === "destructive");
+
+        if (state === "destructive") {
+          expect(block.titles, `${where}: danger rows`).toEqual(DANGER_TITLES);
+          expect(block.buttonVariants, `${where}: danger buttons`).toEqual([
+            "destructive",
+            "destructive",
+          ]);
+          expect(block.switchStates, `${where}: no switches`).toEqual([]);
+        } else if (block.titles.length > 0) {
+          expect(block.titles, `${where}: titles`).toEqual(TITLES);
+          expect(block.switchStates, `${where}: switches`).toEqual([
+            "checked",
+            "checked",
+            "unchecked",
+          ]);
+          expect(block.buttonVariants, `${where}: row button`).toEqual(["outline"]);
+        }
+
+        // The 50rem frame scrolls inside itself; the panel holding the demo
+        // never pushes the page sideways.
+        const panel = await page.evaluate((state) => {
+          const el = document
+            .querySelector(`[data-demo-state="${state}"]`)!
+            .closest(".preview-panel--demo") as HTMLElement;
+          return { scroll: el.scrollWidth, client: el.clientWidth };
+        }, state);
+        expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
+      }
+
+      const lists = blocks.filter((block) => block.titles.length > 0);
+      expect(lists.length, `${width}px: copies rendering rows`).toBe(7);
+      expect(blocks.filter((block) => block.emptyMessage).length, "the empty render").toBe(1);
+      expect(blocks.filter((block) => block.skeletonRows === 3).length, "the loading render").toBe(
+        1,
+      );
+      expect(blocks.filter((block) => block.panelAlert).length, "the failed-load render").toBe(1);
+      expect(
+        lists.filter((block) => block.allControlsInert).map((block) => block.state),
+        "the disabled render",
+      ).toEqual(["disabled"]);
+
+      // The heading steps up at `--container-md`: one size below it, one
+      // larger size from it on.
+      const below = new Set(
+        blocks.filter((b) => b.containerWidth < CONTAINER_MD).map((b) => b.headingSize),
+      );
+      const above = new Set(
+        blocks.filter((b) => b.containerWidth >= CONTAINER_MD).map((b) => b.headingSize),
+      );
+      expect(below.size, "one heading size below @md").toBe(1);
+      expect(above.size, "one heading size from @md").toBe(1);
+      expect([...above][0]!, "the heading steps up at @md").toBeGreaterThan([...below][0]!);
+
+      // Each step is exercised on both sides at every viewport, so a step that
+      // silently stopped firing cannot pass this file.
+      const containerWidths = blocks.map((b) => b.containerWidth);
+      for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
+        expect(
+          containerWidths.some((w) => w < step),
+          `a copy under ${step}px`,
+        ).toBe(true);
+        expect(
+          containerWidths.some((w) => w >= step),
+          `a copy over ${step}px`,
+        ).toBe(true);
+      }
+    });
+  }
+});
+
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`action-panel — ${scheme}`, () => {
     test.use({ colorScheme: scheme });
-
-    for (const width of WIDTHS) {
-      test(`lays itself out from its container at ${width}px`, async ({ page }) => {
-        await page.setViewportSize({ width, height: 1200 });
-        await page.goto(PAGE, { waitUntil: "networkidle" });
-        await page.evaluate(() => document.fonts.ready.then(() => true));
-
-        expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(
-          scheme === "dark",
-        );
-
-        const blocks: Array<BlockMetrics & { state: State }> = [];
-        for (const state of STATES) {
-          await showState(page, state);
-          const mounted = await blockMetrics(page, state);
-          expect(mounted, `${state}: mounted copies`).toHaveLength(1);
-          const block = mounted[0]!;
-          blocks.push({ ...block, state });
-          const where = `${scheme} ${width}px, ${state} (${block.containerWidth}px)`;
-
-          const sm = block.containerWidth >= CONTAINER_SM;
-          if (block.controlBesideText !== null) {
-            expect(block.controlBesideText, `${where}: control beside text`).toBe(sm);
-          }
-          expect(block.panelPadding, `${where}: panel padding`).toBe(sm ? 24 : 16);
-          expect(block.headingBesidePanel, `${where}: heading beside panel`).toBe(
-            block.containerWidth >= CONTAINER_LG,
-          );
-          expect(block.destructiveTone, `${where}: destructive tone`).toBe(state === "destructive");
-
-          if (state === "destructive") {
-            expect(block.titles, `${where}: danger rows`).toEqual(DANGER_TITLES);
-            expect(block.buttonVariants, `${where}: danger buttons`).toEqual([
-              "destructive",
-              "destructive",
-            ]);
-            expect(block.switchStates, `${where}: no switches`).toEqual([]);
-          } else if (block.titles.length > 0) {
-            expect(block.titles, `${where}: titles`).toEqual(TITLES);
-            expect(block.switchStates, `${where}: switches`).toEqual([
-              "checked",
-              "checked",
-              "unchecked",
-            ]);
-            expect(block.buttonVariants, `${where}: row button`).toEqual(["outline"]);
-          }
-
-          // The 50rem frame scrolls inside itself; the panel holding the demo
-          // never pushes the page sideways.
-          const panel = await page.evaluate((state) => {
-            const el = document
-              .querySelector(`[data-demo-state="${state}"]`)!
-              .closest(".preview-panel--demo") as HTMLElement;
-            return { scroll: el.scrollWidth, client: el.clientWidth };
-          }, state);
-          expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
-        }
-
-        const lists = blocks.filter((block) => block.titles.length > 0);
-        expect(lists.length, `${scheme} ${width}px: copies rendering rows`).toBe(7);
-        expect(blocks.filter((block) => block.emptyMessage).length, "the empty render").toBe(1);
-        expect(
-          blocks.filter((block) => block.skeletonRows === 3).length,
-          "the loading render",
-        ).toBe(1);
-        expect(blocks.filter((block) => block.panelAlert).length, "the failed-load render").toBe(1);
-        expect(
-          lists.filter((block) => block.allControlsInert).map((block) => block.state),
-          "the disabled render",
-        ).toEqual(["disabled"]);
-
-        // The heading steps up at `--container-md`: one size below it, one
-        // larger size from it on.
-        const below = new Set(
-          blocks.filter((b) => b.containerWidth < CONTAINER_MD).map((b) => b.headingSize),
-        );
-        const above = new Set(
-          blocks.filter((b) => b.containerWidth >= CONTAINER_MD).map((b) => b.headingSize),
-        );
-        expect(below.size, "one heading size below @md").toBe(1);
-        expect(above.size, "one heading size from @md").toBe(1);
-        expect([...above][0]!, "the heading steps up at @md").toBeGreaterThan([...below][0]!);
-
-        // Each step is exercised on both sides at every viewport, so a step that
-        // silently stopped firing cannot pass this file.
-        const containerWidths = blocks.map((b) => b.containerWidth);
-        for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
-          expect(
-            containerWidths.some((w) => w < step),
-            `a copy under ${step}px`,
-          ).toBe(true);
-          expect(
-            containerWidths.some((w) => w >= step),
-            `a copy over ${step}px`,
-          ).toBe(true);
-        }
-      });
-    }
 
     test("clears AA contrast on every text it paints", async ({ page }) => {
       await page.goto(PAGE, { waitUntil: "networkidle" });

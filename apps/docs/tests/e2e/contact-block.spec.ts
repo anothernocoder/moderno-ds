@@ -1,6 +1,6 @@
 /**
  * The contact block, checked on the built docs page at the three widths of the
- * responsive policy (375 / 768 / 1280) in both colour schemes. It asserts text
+ * responsive policy (375 / 768 / 1280). It asserts text
  * and computed styles; no screenshot baseline is committed.
  *
  * Four claims:
@@ -315,157 +315,152 @@ async function contrastRatios(
   );
 }
 
+// Geometry and logic, which no colour changes: one pass is enough.
+test.describe("contact — either scheme", () => {
+  for (const width of WIDTHS) {
+    test(`lays itself out from its container at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1200 });
+      await page.goto(PAGE, { waitUntil: "networkidle" });
+      await page.evaluate(() => document.fonts.ready.then(() => true));
+
+      const blocks: Array<BlockMetrics & { state: State }> = [];
+      for (const state of STATES) {
+        await showState(page, state);
+        const mounted = await blockMetrics(page, state);
+        expect(mounted, `${state}: mounted copies`).toHaveLength(1);
+        const block = mounted[0]!;
+        blocks.push({ ...block, state });
+        const where = `${width}px, ${state} (${block.containerWidth}px)`;
+        const hasChannels = state !== "empty";
+        const hasForm = state !== "sent";
+
+        expect(block.heading, `${where}: heading`).toBe(HEADING);
+        expect(block.serifHeading, `${where}: serif heading`).toBe(true);
+        expect(block.paddingTop, `${where}: room above`).toBe(
+          block.containerWidth >= CONTAINER_LG ? 64 : 48,
+        );
+        expect(block.bodyColumns, `${where}: channels beside the form`).toBe(
+          hasChannels && block.containerWidth >= CONTAINER_LG ? 2 : 1,
+        );
+        expect(block.offCentre, `${where}: centred`).toBeLessThan(1);
+
+        if (hasChannels) {
+          expect(block.labels, `${where}: channel labels`).toEqual(LABELS);
+          expect(block.values, `${where}: channel values`).toEqual(VALUES);
+          expect(block.hrefs, `${where}: channel links`).toEqual(HREFS);
+          expect(block.icons, `${where}: one hidden icon per channel`).toBe(LABELS.length);
+        } else {
+          expect(block.labels, `${where}: no channels`).toEqual([]);
+        }
+
+        if (!hasForm) {
+          expect(block.fields, `${where}: no form once sent`).toEqual([]);
+          expect(block.alerts, `${where}: sent alert`).toEqual([{ role: "status", title: SENT }]);
+          continue;
+        }
+
+        expect(block.fields, `${where}: fields`).toEqual(FIELDS);
+        expect(block.fieldLabels, `${where}: field labels`).toEqual(FIELD_LABELS);
+        expect(block.note, `${where}: reply note`).toBe(NOTE);
+        expect(block.fieldColumns, `${where}: name and email side by side`).toBe(
+          block.containerWidth >= CONTAINER_MD ? 2 : 1,
+        );
+        expect(block.actionsDisplay, `${where}: note beside the button`).toBe(
+          block.containerWidth >= CONTAINER_SM ? "flex" : "grid",
+        );
+        expect(block.buttonFillsRow, `${where}: full-width button`).toBe(
+          block.containerWidth < CONTAINER_SM,
+        );
+
+        const inert = state === "loading" || state === "disabled";
+        expect(block.disabledFields, `${where}: disabled fields`).toEqual(inert ? FIELDS : []);
+        expect(block.buttonDisabled, `${where}: disabled button`).toBe(inert);
+        expect(block.buttonBusy, `${where}: busy button`).toBe(state === "loading");
+        expect(block.button, `${where}: button label`).toBe(state === "loading" ? SENDING : SEND);
+
+        if (state === "error") {
+          expect(block.alerts, `${where}: error alert`).toEqual([{ role: "alert", title: ERROR }]);
+          expect(block.invalidFields, `${where}: invalid field`).toEqual(["email"]);
+          expect(block.fieldErrors, `${where}: field error`).toEqual([EMAIL_ERROR]);
+        } else {
+          expect(block.alerts, `${where}: no alert`).toEqual([]);
+          expect(block.invalidFields, `${where}: no invalid field`).toEqual([]);
+          expect(block.fieldErrors, `${where}: no field error`).toEqual([]);
+        }
+
+        // The 50rem frame scrolls inside itself; the panel holding the demo
+        // never pushes the page sideways.
+        const panel = await page.evaluate((state) => {
+          const el = document
+            .querySelector(`[data-demo-state="${state}"]`)!
+            .closest(".preview-panel--demo") as HTMLElement;
+          return { scroll: el.scrollWidth, client: el.clientWidth };
+        }, state);
+        expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
+      }
+
+      // The heading steps up at `--container-md`: one size below it, one
+      // larger size from it on.
+      const below = new Set(
+        blocks.filter((b) => b.containerWidth < CONTAINER_MD).map((b) => b.headingSize),
+      );
+      const above = new Set(
+        blocks.filter((b) => b.containerWidth >= CONTAINER_MD).map((b) => b.headingSize),
+      );
+      expect(below.size, "one heading size below @md").toBe(1);
+      expect(above.size, "one heading size from @md").toBe(1);
+      expect([...above][0]!, "heading steps up at @md").toBeGreaterThan([...below][0]!);
+
+      // Each step is exercised on both sides at every viewport, so a step that
+      // silently stopped firing cannot pass this file.
+      const containerWidths = blocks.map((b) => b.containerWidth);
+      for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
+        expect(
+          containerWidths.some((w) => w < step),
+          `a copy under ${step}px`,
+        ).toBe(true);
+        expect(
+          containerWidths.some((w) => w >= step),
+          `a copy over ${step}px`,
+        ).toBe(true);
+      }
+    });
+  }
+
+  test("sits in the middle of its preview", async ({ page }) => {
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    for (const state of ["default", "empty", "loading", "error", "disabled", "sent"] as const) {
+      await showState(page, state);
+      const gaps = await page.evaluate(
+        ({ state, selector }) => {
+          const wrapper = document.querySelector(`[data-demo-state="${state}"]`)!;
+          const panel = wrapper.closest(".preview-panel--demo")!.getBoundingClientRect();
+          const block = wrapper.querySelector(selector)!;
+          const content = [...block.firstElementChild!.children].map((el) =>
+            el.getBoundingClientRect(),
+          );
+          const top = Math.min(...content.map((r) => r.top));
+          const bottom = Math.max(...content.map((r) => r.bottom));
+          const left = Math.min(...content.map((r) => r.left));
+          const right = Math.max(...content.map((r) => r.right));
+          return {
+            above: top - panel.top,
+            below: panel.bottom - bottom,
+            before: left - panel.left,
+            after: panel.right - right,
+          };
+        },
+        { state, selector: BLOCK },
+      );
+      expect(Math.abs(gaps.above - gaps.below), `${state}: vertical`).toBeLessThan(2);
+      expect(Math.abs(gaps.before - gaps.after), `${state}: horizontal`).toBeLessThan(2);
+    }
+  });
+});
+
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`contact — ${scheme}`, () => {
     test.use({ colorScheme: scheme });
-
-    for (const width of WIDTHS) {
-      test(`lays itself out from its container at ${width}px`, async ({ page }) => {
-        await page.setViewportSize({ width, height: 1200 });
-        await page.goto(PAGE, { waitUntil: "networkidle" });
-        await page.evaluate(() => document.fonts.ready.then(() => true));
-
-        expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(
-          scheme === "dark",
-        );
-
-        const blocks: Array<BlockMetrics & { state: State }> = [];
-        for (const state of STATES) {
-          await showState(page, state);
-          const mounted = await blockMetrics(page, state);
-          expect(mounted, `${state}: mounted copies`).toHaveLength(1);
-          const block = mounted[0]!;
-          blocks.push({ ...block, state });
-          const where = `${scheme} ${width}px, ${state} (${block.containerWidth}px)`;
-          const hasChannels = state !== "empty";
-          const hasForm = state !== "sent";
-
-          expect(block.heading, `${where}: heading`).toBe(HEADING);
-          expect(block.serifHeading, `${where}: serif heading`).toBe(true);
-          expect(block.paddingTop, `${where}: room above`).toBe(
-            block.containerWidth >= CONTAINER_LG ? 64 : 48,
-          );
-          expect(block.bodyColumns, `${where}: channels beside the form`).toBe(
-            hasChannels && block.containerWidth >= CONTAINER_LG ? 2 : 1,
-          );
-          expect(block.offCentre, `${where}: centred`).toBeLessThan(1);
-
-          if (hasChannels) {
-            expect(block.labels, `${where}: channel labels`).toEqual(LABELS);
-            expect(block.values, `${where}: channel values`).toEqual(VALUES);
-            expect(block.hrefs, `${where}: channel links`).toEqual(HREFS);
-            expect(block.icons, `${where}: one hidden icon per channel`).toBe(LABELS.length);
-          } else {
-            expect(block.labels, `${where}: no channels`).toEqual([]);
-          }
-
-          if (!hasForm) {
-            expect(block.fields, `${where}: no form once sent`).toEqual([]);
-            expect(block.alerts, `${where}: sent alert`).toEqual([{ role: "status", title: SENT }]);
-            continue;
-          }
-
-          expect(block.fields, `${where}: fields`).toEqual(FIELDS);
-          expect(block.fieldLabels, `${where}: field labels`).toEqual(FIELD_LABELS);
-          expect(block.note, `${where}: reply note`).toBe(NOTE);
-          expect(block.fieldColumns, `${where}: name and email side by side`).toBe(
-            block.containerWidth >= CONTAINER_MD ? 2 : 1,
-          );
-          expect(block.actionsDisplay, `${where}: note beside the button`).toBe(
-            block.containerWidth >= CONTAINER_SM ? "flex" : "grid",
-          );
-          expect(block.buttonFillsRow, `${where}: full-width button`).toBe(
-            block.containerWidth < CONTAINER_SM,
-          );
-
-          const inert = state === "loading" || state === "disabled";
-          expect(block.disabledFields, `${where}: disabled fields`).toEqual(inert ? FIELDS : []);
-          expect(block.buttonDisabled, `${where}: disabled button`).toBe(inert);
-          expect(block.buttonBusy, `${where}: busy button`).toBe(state === "loading");
-          expect(block.button, `${where}: button label`).toBe(state === "loading" ? SENDING : SEND);
-
-          if (state === "error") {
-            expect(block.alerts, `${where}: error alert`).toEqual([
-              { role: "alert", title: ERROR },
-            ]);
-            expect(block.invalidFields, `${where}: invalid field`).toEqual(["email"]);
-            expect(block.fieldErrors, `${where}: field error`).toEqual([EMAIL_ERROR]);
-          } else {
-            expect(block.alerts, `${where}: no alert`).toEqual([]);
-            expect(block.invalidFields, `${where}: no invalid field`).toEqual([]);
-            expect(block.fieldErrors, `${where}: no field error`).toEqual([]);
-          }
-
-          // The 50rem frame scrolls inside itself; the panel holding the demo
-          // never pushes the page sideways.
-          const panel = await page.evaluate((state) => {
-            const el = document
-              .querySelector(`[data-demo-state="${state}"]`)!
-              .closest(".preview-panel--demo") as HTMLElement;
-            return { scroll: el.scrollWidth, client: el.clientWidth };
-          }, state);
-          expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
-        }
-
-        // The heading steps up at `--container-md`: one size below it, one
-        // larger size from it on.
-        const below = new Set(
-          blocks.filter((b) => b.containerWidth < CONTAINER_MD).map((b) => b.headingSize),
-        );
-        const above = new Set(
-          blocks.filter((b) => b.containerWidth >= CONTAINER_MD).map((b) => b.headingSize),
-        );
-        expect(below.size, "one heading size below @md").toBe(1);
-        expect(above.size, "one heading size from @md").toBe(1);
-        expect([...above][0]!, "heading steps up at @md").toBeGreaterThan([...below][0]!);
-
-        // Each step is exercised on both sides at every viewport, so a step that
-        // silently stopped firing cannot pass this file.
-        const containerWidths = blocks.map((b) => b.containerWidth);
-        for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
-          expect(
-            containerWidths.some((w) => w < step),
-            `a copy under ${step}px`,
-          ).toBe(true);
-          expect(
-            containerWidths.some((w) => w >= step),
-            `a copy over ${step}px`,
-          ).toBe(true);
-        }
-      });
-    }
-
-    test("sits in the middle of its preview", async ({ page }) => {
-      await page.goto(PAGE, { waitUntil: "networkidle" });
-      for (const state of ["default", "empty", "loading", "error", "disabled", "sent"] as const) {
-        await showState(page, state);
-        const gaps = await page.evaluate(
-          ({ state, selector }) => {
-            const wrapper = document.querySelector(`[data-demo-state="${state}"]`)!;
-            const panel = wrapper.closest(".preview-panel--demo")!.getBoundingClientRect();
-            const block = wrapper.querySelector(selector)!;
-            const content = [...block.firstElementChild!.children].map((el) =>
-              el.getBoundingClientRect(),
-            );
-            const top = Math.min(...content.map((r) => r.top));
-            const bottom = Math.max(...content.map((r) => r.bottom));
-            const left = Math.min(...content.map((r) => r.left));
-            const right = Math.max(...content.map((r) => r.right));
-            return {
-              above: top - panel.top,
-              below: panel.bottom - bottom,
-              before: left - panel.left,
-              after: panel.right - right,
-            };
-          },
-          { state, selector: BLOCK },
-        );
-        expect(Math.abs(gaps.above - gaps.below), `${scheme} ${state}: vertical`).toBeLessThan(2);
-        expect(Math.abs(gaps.before - gaps.after), `${scheme} ${state}: horizontal`).toBeLessThan(
-          2,
-        );
-      }
-    });
 
     test("clears AA contrast on every text it paints", async ({ page }) => {
       await page.goto(PAGE, { waitUntil: "networkidle" });

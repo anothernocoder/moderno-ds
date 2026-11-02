@@ -1,6 +1,6 @@
 /**
  * The stat-row block, checked on the built docs page at the three widths of
- * the responsive policy (375 / 768 / 1280) in both colour schemes. It asserts
+ * the responsive policy (375 / 768 / 1280). It asserts
  * text and computed styles, never pixels (see `playwright.config.ts`).
  *
  * Three claims:
@@ -232,90 +232,83 @@ async function textRatios(
   }, state);
 }
 
+// Geometry and logic, which no colour changes: one pass is enough.
+test.describe("stat-row — either scheme", () => {
+  for (const width of WIDTHS) {
+    test(`lays itself out from its container at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1200 });
+      await page.goto(PAGE, { waitUntil: "networkidle" });
+      await page.evaluate(() => document.fonts.ready.then(() => true));
+
+      const blocks: BlockMetrics[] = [];
+      for (const state of STATES) {
+        await showState(page, state);
+        const mounted = await blockMetrics(page, state);
+        expect(mounted, `${state}: mounted copies`).toHaveLength(1);
+        const block = mounted[0]!;
+        blocks.push(block);
+        const where = `${width}px, ${state} (${block.containerWidth}px)`;
+
+        expect(block.headerDisplay, `${where}: header row`).toBe(
+          block.containerWidth >= CONTAINER_SM ? "flex" : "grid",
+        );
+        if (block.perRow !== null) {
+          const expected =
+            block.containerWidth >= CONTAINER_LG ? 4 : block.containerWidth >= CONTAINER_SM ? 2 : 1;
+          expect(block.perRow, `${where}: stats a row`).toBe(expected);
+        }
+        if (block.largeValues !== null) {
+          expect(block.largeValues, `${where}: value size`).toBe(
+            block.containerWidth >= CONTAINER_MD,
+          );
+          // The tint follows what the change means, not its sign: the
+          // sample's churn fell and that is good news.
+          expect(block.tones, `${where}: tones`).toEqual([
+            "success",
+            "success",
+            "success",
+            "error",
+          ]);
+        }
+
+        const panel = await page.evaluate((state) => {
+          const el = document
+            .querySelector(`[data-demo-state="${state}"]`)!
+            .closest(".preview-panel--demo") as HTMLElement;
+          return { scroll: el.scrollWidth, client: el.clientWidth };
+        }, state);
+        expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
+      }
+
+      const lists = blocks.filter((block) => block.tones.length > 0);
+      expect(lists.length, `${width}px: copies rendering the stats`).toBe(5);
+      expect(blocks.filter((block) => block.emptyCard).length, "the empty render").toBe(1);
+      expect(
+        blocks.filter((block) => block.busyPlaceholders === 12).length,
+        "the loading render: four placeholder cards of three lines",
+      ).toBe(1);
+      expect(blocks.filter((block) => block.failedLoad).length, "the failed-load render").toBe(1);
+      expect(lists.filter((block) => block.allButtonsInert).length, "the disabled render").toBe(1);
+
+      // Each step is exercised on both sides at every viewport.
+      const widths = lists.map((block) => block.containerWidth);
+      for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
+        expect(
+          widths.some((w) => w < step),
+          `a copy under ${step}px`,
+        ).toBe(true);
+        expect(
+          widths.some((w) => w >= step),
+          `a copy over ${step}px`,
+        ).toBe(true);
+      }
+    });
+  }
+});
+
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`stat-row — ${scheme}`, () => {
     test.use({ colorScheme: scheme });
-
-    for (const width of WIDTHS) {
-      test(`lays itself out from its container at ${width}px`, async ({ page }) => {
-        await page.setViewportSize({ width, height: 1200 });
-        await page.goto(PAGE, { waitUntil: "networkidle" });
-        await page.evaluate(() => document.fonts.ready.then(() => true));
-
-        expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(
-          scheme === "dark",
-        );
-
-        const blocks: BlockMetrics[] = [];
-        for (const state of STATES) {
-          await showState(page, state);
-          const mounted = await blockMetrics(page, state);
-          expect(mounted, `${state}: mounted copies`).toHaveLength(1);
-          const block = mounted[0]!;
-          blocks.push(block);
-          const where = `${scheme} ${width}px, ${state} (${block.containerWidth}px)`;
-
-          expect(block.headerDisplay, `${where}: header row`).toBe(
-            block.containerWidth >= CONTAINER_SM ? "flex" : "grid",
-          );
-          if (block.perRow !== null) {
-            const expected =
-              block.containerWidth >= CONTAINER_LG
-                ? 4
-                : block.containerWidth >= CONTAINER_SM
-                  ? 2
-                  : 1;
-            expect(block.perRow, `${where}: stats a row`).toBe(expected);
-          }
-          if (block.largeValues !== null) {
-            expect(block.largeValues, `${where}: value size`).toBe(
-              block.containerWidth >= CONTAINER_MD,
-            );
-            // The tint follows what the change means, not its sign: the
-            // sample's churn fell and that is good news.
-            expect(block.tones, `${where}: tones`).toEqual([
-              "success",
-              "success",
-              "success",
-              "error",
-            ]);
-          }
-
-          const panel = await page.evaluate((state) => {
-            const el = document
-              .querySelector(`[data-demo-state="${state}"]`)!
-              .closest(".preview-panel--demo") as HTMLElement;
-            return { scroll: el.scrollWidth, client: el.clientWidth };
-          }, state);
-          expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
-        }
-
-        const lists = blocks.filter((block) => block.tones.length > 0);
-        expect(lists.length, `${scheme} ${width}px: copies rendering the stats`).toBe(5);
-        expect(blocks.filter((block) => block.emptyCard).length, "the empty render").toBe(1);
-        expect(
-          blocks.filter((block) => block.busyPlaceholders === 12).length,
-          "the loading render: four placeholder cards of three lines",
-        ).toBe(1);
-        expect(blocks.filter((block) => block.failedLoad).length, "the failed-load render").toBe(1);
-        expect(lists.filter((block) => block.allButtonsInert).length, "the disabled render").toBe(
-          1,
-        );
-
-        // Each step is exercised on both sides at every viewport.
-        const widths = lists.map((block) => block.containerWidth);
-        for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
-          expect(
-            widths.some((w) => w < step),
-            `a copy under ${step}px`,
-          ).toBe(true);
-          expect(
-            widths.some((w) => w >= step),
-            `a copy over ${step}px`,
-          ).toBe(true);
-        }
-      });
-    }
 
     test("clears AA contrast on every text it paints", async ({ page }) => {
       await page.goto(PAGE, { waitUntil: "networkidle" });

@@ -1,6 +1,6 @@
 /**
  * The share-invite block, checked on the built docs page at the three widths
- * of the responsive policy (375 / 768 / 1280) in both colour schemes. It
+ * of the responsive policy (375 / 768 / 1280). It
  * asserts text and computed styles, never pixels (see `playwright.config.ts`).
  *
  * Five claims:
@@ -272,100 +272,88 @@ async function textRatios(
   );
 }
 
+// Geometry and logic, which no colour changes: one pass is enough.
+test.describe("share-invite — either scheme", () => {
+  for (const width of WIDTHS) {
+    test(`lays itself out from its container at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1200 });
+      await page.goto(PAGE, { waitUntil: "networkidle" });
+      await page.evaluate(() => document.fonts.ready.then(() => true));
+
+      const blocks: (BlockMetrics & { state: State })[] = [];
+      for (const state of STATES) {
+        await showState(page, state);
+        const mounted = await blockMetrics(page, state);
+        expect(mounted, `${state}: mounted copies`).toHaveLength(1);
+        const block = mounted[0]!;
+        blocks.push({ ...block, state });
+        const where = `${width}px, ${state} (${block.containerWidth}px)`;
+        const sm = block.containerWidth >= CONTAINER_SM;
+        const md = block.containerWidth >= CONTAINER_MD;
+        const lg = block.containerWidth >= CONTAINER_LG;
+
+        expect(block.title, `${where}: title`).toBe("Share this project");
+        if (block.offCentre !== null) {
+          expect(block.offCentre, `${where}: centred`).toBeLessThan(1);
+        }
+
+        if (SETTINGS.includes(state)) {
+          expect(block.paneColumns, `${where}: panes`).toBe(lg ? 2 : 1);
+          expect(block.inviteDisplay, `${where}: invite field beside its button`).toBe(
+            sm ? "flex" : "grid",
+          );
+          expect(block.linkDisplay, `${where}: link beside its button`).toBe(sm ? "flex" : "grid");
+          expect(block.channelColumns, `${where}: channels a row`).toBe(sm && !lg ? 4 : 2);
+          expect(block.link, `${where}: link`).toBe("https://example.com/share/q3-planning");
+          expect(block.channels, `${where}: channels`).toEqual(["Email", "Slack", "LinkedIn", "X"]);
+          if (state !== "empty") {
+            expect(block.peopleColumns, `${where}: people columns`).toBe(md && !lg ? 2 : 1);
+            expect(block.people, `${where}: people`).toEqual(["Ana Ruiz", "Leo Park", "Mia Chen"]);
+            expect(block.roles, `${where}: roles`).toEqual(["Owner", "Can edit", "Can view"]);
+          }
+        }
+
+        const panel = await page.evaluate((state) => {
+          const el = document
+            .querySelector(`[data-demo-state="${state}"]`)!
+            .closest(".preview-panel--demo") as HTMLElement;
+          return { scroll: el.scrollWidth, client: el.clientWidth };
+        }, state);
+        expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
+      }
+
+      const byState = (state: State) => blocks.find((block) => block.state === state)!;
+      expect(byState("empty").emptyMessage, "the empty render").toBe(true);
+      expect(byState("empty").peopleColumns, "no list when empty").toBeNull();
+      expect(
+        byState("loading").busyPlaceholders,
+        "the loading render: field, people and link placeholders",
+      ).toBe(13);
+      expect(byState("error").failedLoad, "the failed-load render").toBe(true);
+      expect(byState("disabled").allControlsInert, "the disabled render").toBe(true);
+      expect(byState("default").anyControlInert, "the default render").toBe(false);
+
+      // Each step is exercised on both sides at every viewport.
+      const widths = blocks
+        .filter((block) => SETTINGS.includes(block.state))
+        .map((block) => block.containerWidth);
+      for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
+        expect(
+          widths.some((w) => w < step),
+          `a copy under ${step}px`,
+        ).toBe(true);
+        expect(
+          widths.some((w) => w >= step),
+          `a copy over ${step}px`,
+        ).toBe(true);
+      }
+    });
+  }
+});
+
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`share-invite — ${scheme}`, () => {
     test.use({ colorScheme: scheme });
-
-    for (const width of WIDTHS) {
-      test(`lays itself out from its container at ${width}px`, async ({ page }) => {
-        await page.setViewportSize({ width, height: 1200 });
-        await page.goto(PAGE, { waitUntil: "networkidle" });
-        await page.evaluate(() => document.fonts.ready.then(() => true));
-
-        expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(
-          scheme === "dark",
-        );
-
-        const blocks: (BlockMetrics & { state: State })[] = [];
-        for (const state of STATES) {
-          await showState(page, state);
-          const mounted = await blockMetrics(page, state);
-          expect(mounted, `${state}: mounted copies`).toHaveLength(1);
-          const block = mounted[0]!;
-          blocks.push({ ...block, state });
-          const where = `${scheme} ${width}px, ${state} (${block.containerWidth}px)`;
-          const sm = block.containerWidth >= CONTAINER_SM;
-          const md = block.containerWidth >= CONTAINER_MD;
-          const lg = block.containerWidth >= CONTAINER_LG;
-
-          expect(block.title, `${where}: title`).toBe("Share this project");
-          if (block.offCentre !== null) {
-            expect(block.offCentre, `${where}: centred`).toBeLessThan(1);
-          }
-
-          if (SETTINGS.includes(state)) {
-            expect(block.paneColumns, `${where}: panes`).toBe(lg ? 2 : 1);
-            expect(block.inviteDisplay, `${where}: invite field beside its button`).toBe(
-              sm ? "flex" : "grid",
-            );
-            expect(block.linkDisplay, `${where}: link beside its button`).toBe(
-              sm ? "flex" : "grid",
-            );
-            expect(block.channelColumns, `${where}: channels a row`).toBe(sm && !lg ? 4 : 2);
-            expect(block.link, `${where}: link`).toBe("https://example.com/share/q3-planning");
-            expect(block.channels, `${where}: channels`).toEqual([
-              "Email",
-              "Slack",
-              "LinkedIn",
-              "X",
-            ]);
-            if (state !== "empty") {
-              expect(block.peopleColumns, `${where}: people columns`).toBe(md && !lg ? 2 : 1);
-              expect(block.people, `${where}: people`).toEqual([
-                "Ana Ruiz",
-                "Leo Park",
-                "Mia Chen",
-              ]);
-              expect(block.roles, `${where}: roles`).toEqual(["Owner", "Can edit", "Can view"]);
-            }
-          }
-
-          const panel = await page.evaluate((state) => {
-            const el = document
-              .querySelector(`[data-demo-state="${state}"]`)!
-              .closest(".preview-panel--demo") as HTMLElement;
-            return { scroll: el.scrollWidth, client: el.clientWidth };
-          }, state);
-          expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
-        }
-
-        const byState = (state: State) => blocks.find((block) => block.state === state)!;
-        expect(byState("empty").emptyMessage, "the empty render").toBe(true);
-        expect(byState("empty").peopleColumns, "no list when empty").toBeNull();
-        expect(
-          byState("loading").busyPlaceholders,
-          "the loading render: field, people and link placeholders",
-        ).toBe(13);
-        expect(byState("error").failedLoad, "the failed-load render").toBe(true);
-        expect(byState("disabled").allControlsInert, "the disabled render").toBe(true);
-        expect(byState("default").anyControlInert, "the default render").toBe(false);
-
-        // Each step is exercised on both sides at every viewport.
-        const widths = blocks
-          .filter((block) => SETTINGS.includes(block.state))
-          .map((block) => block.containerWidth);
-        for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
-          expect(
-            widths.some((w) => w < step),
-            `a copy under ${step}px`,
-          ).toBe(true);
-          expect(
-            widths.some((w) => w >= step),
-            `a copy over ${step}px`,
-          ).toBe(true);
-        }
-      });
-    }
 
     test("checks the address before it invites, then reports the invite in a toast", async ({
       page,

@@ -1,6 +1,6 @@
 /**
  * The status-monitoring block, checked on the built docs page at the three
- * widths of the responsive policy (375 / 768 / 1280) in both colour schemes. It
+ * widths of the responsive policy (375 / 768 / 1280). It
  * asserts text and computed styles; no screenshot baseline is committed.
  *
  * Four claims:
@@ -311,98 +311,97 @@ async function textRatios(
   );
 }
 
+// Geometry and logic, which no colour changes: one pass is enough.
+test.describe("status-monitoring — either scheme", () => {
+  for (const width of WIDTHS) {
+    test(`lays itself out from its container at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1200 });
+      await page.goto(PAGE, { waitUntil: "networkidle" });
+      await page.evaluate(() => document.fonts.ready.then(() => true));
+
+      const blocks: (BlockMetrics & { state: State })[] = [];
+      for (const state of STATES) {
+        await showState(page, state);
+        const mounted = await blockMetrics(page, state);
+        expect(mounted, `${state}: mounted copies`).toHaveLength(1);
+        const block = mounted[0]!;
+        blocks.push({ ...block, state });
+        const where = `${width}px, ${state} (${block.containerWidth}px)`;
+        const overSm = block.containerWidth >= CONTAINER_SM;
+        const overMd = block.containerWidth >= CONTAINER_MD;
+        const overLg = block.containerWidth >= CONTAINER_LG;
+
+        expect(block.headerDisplay, `${where}: header row`).toBe(overSm ? "flex" : "grid");
+        expect(block.largeHeading, `${where}: heading size`).toBe(overMd);
+        for (const display of block.serviceRowDisplays) {
+          expect(display, `${where}: name and status row`).toBe(overSm ? "flex" : "grid");
+        }
+        if (block.perRow !== null) {
+          expect(block.perRow, `${where}: services a row`).toBe(overLg ? 2 : 1);
+        }
+        if (block.barHeightRem !== null) {
+          expect(block.barHeightRem, `${where}: bar height`).toBe(overMd ? 2 : 1.5);
+          expect(block.barsPainted, `${where}: bars painted from the status slots`).toBe(true);
+        }
+
+        const panel = await page.evaluate((state) => {
+          const el = document
+            .querySelector(`[data-demo-state="${state}"]`)!
+            .closest(".preview-panel--demo") as HTMLElement;
+          return { scroll: el.scrollWidth, client: el.clientWidth };
+        }, state);
+        expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
+      }
+
+      // The sample: the worst status wins the badge, one tone and 30 bars a service.
+      const withServices = blocks.filter(
+        (block) => block.state !== "outage" && block.services.length > 0,
+      );
+      expect(withServices.length, `${width}px: copies rendering the sample`).toBe(6);
+      for (const block of withServices) {
+        expect(block.badge).toEqual({ variant: "warning", text: "Degraded performance" });
+        expect(block.services).toEqual(
+          SAMPLE_SERVICES.map(({ name, tone }) => ({ name, tone, bars: 30 })),
+        );
+      }
+
+      const outage = blocks.find((block) => block.state === "outage")!;
+      expect(outage.badge, "an outage wins the badge").toEqual({
+        variant: "error",
+        text: "Service outage",
+      });
+      expect(outage.services.map((service) => service.tone)).toEqual(["error", "success"]);
+
+      const byState = (state: State) => blocks.find((block) => block.state === state)!;
+      expect(byState("empty").emptyCard, "the empty render").toBe(true);
+      expect(byState("empty").badge, "no badge without services").toBeNull();
+      expect(
+        byState("loading").busyPlaceholders,
+        "the loading render: four placeholder cards of three shapes",
+      ).toBe(12);
+      expect(byState("error").failedLoad, "the failed-load render").toBe(true);
+      expect(byState("disabled").allButtonsInert, "the disabled render").toBe(true);
+      expect(byState("default").allButtonsInert, "the default render is live").toBe(false);
+
+      // Each step is exercised on both sides at every viewport.
+      const widths = withServices.map((block) => block.containerWidth);
+      for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
+        expect(
+          widths.some((w) => w < step),
+          `a copy under ${step}px`,
+        ).toBe(true);
+        expect(
+          widths.some((w) => w >= step),
+          `a copy over ${step}px`,
+        ).toBe(true);
+      }
+    });
+  }
+});
+
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`status-monitoring — ${scheme}`, () => {
     test.use({ colorScheme: scheme });
-
-    for (const width of WIDTHS) {
-      test(`lays itself out from its container at ${width}px`, async ({ page }) => {
-        await page.setViewportSize({ width, height: 1200 });
-        await page.goto(PAGE, { waitUntil: "networkidle" });
-        await page.evaluate(() => document.fonts.ready.then(() => true));
-
-        expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(
-          scheme === "dark",
-        );
-
-        const blocks: (BlockMetrics & { state: State })[] = [];
-        for (const state of STATES) {
-          await showState(page, state);
-          const mounted = await blockMetrics(page, state);
-          expect(mounted, `${state}: mounted copies`).toHaveLength(1);
-          const block = mounted[0]!;
-          blocks.push({ ...block, state });
-          const where = `${scheme} ${width}px, ${state} (${block.containerWidth}px)`;
-          const overSm = block.containerWidth >= CONTAINER_SM;
-          const overMd = block.containerWidth >= CONTAINER_MD;
-          const overLg = block.containerWidth >= CONTAINER_LG;
-
-          expect(block.headerDisplay, `${where}: header row`).toBe(overSm ? "flex" : "grid");
-          expect(block.largeHeading, `${where}: heading size`).toBe(overMd);
-          for (const display of block.serviceRowDisplays) {
-            expect(display, `${where}: name and status row`).toBe(overSm ? "flex" : "grid");
-          }
-          if (block.perRow !== null) {
-            expect(block.perRow, `${where}: services a row`).toBe(overLg ? 2 : 1);
-          }
-          if (block.barHeightRem !== null) {
-            expect(block.barHeightRem, `${where}: bar height`).toBe(overMd ? 2 : 1.5);
-            expect(block.barsPainted, `${where}: bars painted from the status slots`).toBe(true);
-          }
-
-          const panel = await page.evaluate((state) => {
-            const el = document
-              .querySelector(`[data-demo-state="${state}"]`)!
-              .closest(".preview-panel--demo") as HTMLElement;
-            return { scroll: el.scrollWidth, client: el.clientWidth };
-          }, state);
-          expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
-        }
-
-        // The sample: the worst status wins the badge, one tone and 30 bars a service.
-        const withServices = blocks.filter(
-          (block) => block.state !== "outage" && block.services.length > 0,
-        );
-        expect(withServices.length, `${scheme} ${width}px: copies rendering the sample`).toBe(6);
-        for (const block of withServices) {
-          expect(block.badge).toEqual({ variant: "warning", text: "Degraded performance" });
-          expect(block.services).toEqual(
-            SAMPLE_SERVICES.map(({ name, tone }) => ({ name, tone, bars: 30 })),
-          );
-        }
-
-        const outage = blocks.find((block) => block.state === "outage")!;
-        expect(outage.badge, "an outage wins the badge").toEqual({
-          variant: "error",
-          text: "Service outage",
-        });
-        expect(outage.services.map((service) => service.tone)).toEqual(["error", "success"]);
-
-        const byState = (state: State) => blocks.find((block) => block.state === state)!;
-        expect(byState("empty").emptyCard, "the empty render").toBe(true);
-        expect(byState("empty").badge, "no badge without services").toBeNull();
-        expect(
-          byState("loading").busyPlaceholders,
-          "the loading render: four placeholder cards of three shapes",
-        ).toBe(12);
-        expect(byState("error").failedLoad, "the failed-load render").toBe(true);
-        expect(byState("disabled").allButtonsInert, "the disabled render").toBe(true);
-        expect(byState("default").allButtonsInert, "the default render is live").toBe(false);
-
-        // Each step is exercised on both sides at every viewport.
-        const widths = withServices.map((block) => block.containerWidth);
-        for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
-          expect(
-            widths.some((w) => w < step),
-            `a copy under ${step}px`,
-          ).toBe(true);
-          expect(
-            widths.some((w) => w >= step),
-            `a copy over ${step}px`,
-          ).toBe(true);
-        }
-      });
-    }
 
     test("clears AA contrast on every text it paints", async ({ page }) => {
       await page.goto(PAGE, { waitUntil: "networkidle" });

@@ -1,6 +1,6 @@
 /**
  * The grid-list block, checked on the built docs page at the three widths of
- * the responsive policy (375 / 768 / 1280) in both colour schemes. It asserts
+ * the responsive policy (375 / 768 / 1280). It asserts
  * text and computed styles; no screenshot baseline is committed.
  *
  * Three claims:
@@ -240,89 +240,84 @@ async function textRatios(
   );
 }
 
+// Geometry and logic, which no colour changes: one pass is enough.
+test.describe("grid-list — either scheme", () => {
+  for (const width of WIDTHS) {
+    test(`lays itself out from its container at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1200 });
+      await page.goto(PAGE, { waitUntil: "networkidle" });
+      await page.evaluate(() => document.fonts.ready.then(() => true));
+
+      const blocks: BlockMetrics[] = [];
+      for (const state of STATES) {
+        await showState(page, state);
+        const mounted = await blockMetrics(page, state);
+        expect(mounted, `${state}: mounted copies`).toHaveLength(1);
+        const block = mounted[0]!;
+        blocks.push(block);
+        const where = `${width}px, ${state} (${block.containerWidth}px)`;
+
+        expect(block.headerDisplay, `${where}: header row`).toBe(
+          block.containerWidth >= CONTAINER_SM ? "flex" : "grid",
+        );
+        if (block.columns !== null) {
+          expect(block.columns, `${where}: columns`).toBe(expectedColumns(block.containerWidth));
+        }
+        if (block.cards > 0) {
+          // All five badge variants ship in the sample set.
+          expect(block.badges, `${where}: badges`).toEqual([
+            "info",
+            "error",
+            "warning",
+            "success",
+            "neutral",
+            "info",
+          ]);
+        }
+
+        // The 50rem frame scrolls inside itself; the panel holding the demo
+        // never pushes the page sideways.
+        const panel = await page.evaluate((state) => {
+          const el = document
+            .querySelector(`[data-demo-state="${state}"]`)!
+            .closest(".preview-panel--demo") as HTMLElement;
+          return { scroll: el.scrollWidth, client: el.clientWidth };
+        }, state);
+        expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
+      }
+
+      const grids = blocks.filter((block) => block.cards > 0);
+      expect(grids.length, `${width}px: copies rendering the grid`).toBe(5);
+      for (const grid of grids) expect(grid.cards).toBe(6);
+      expect(blocks.filter((block) => block.emptyCard).length, "the empty render").toBe(1);
+      expect(blocks.filter((block) => block.skeletonCards === 3).length, "the loading render").toBe(
+        1,
+      );
+      expect(blocks.filter((block) => block.gridLevelAlert).length, "the failed-load render").toBe(
+        1,
+      );
+      expect(grids.filter((block) => block.allControlsInert).length, "the disabled render").toBe(1);
+
+      // Each step is exercised on both sides at every viewport, so a step that
+      // silently stopped firing cannot pass this file.
+      const containerWidths = grids.map((b) => b.containerWidth);
+      for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
+        expect(
+          containerWidths.some((w) => w < step),
+          `a copy under ${step}px`,
+        ).toBe(true);
+        expect(
+          containerWidths.some((w) => w >= step),
+          `a copy over ${step}px`,
+        ).toBe(true);
+      }
+    });
+  }
+});
+
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`grid-list — ${scheme}`, () => {
     test.use({ colorScheme: scheme });
-
-    for (const width of WIDTHS) {
-      test(`lays itself out from its container at ${width}px`, async ({ page }) => {
-        await page.setViewportSize({ width, height: 1200 });
-        await page.goto(PAGE, { waitUntil: "networkidle" });
-        await page.evaluate(() => document.fonts.ready.then(() => true));
-
-        expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(
-          scheme === "dark",
-        );
-
-        const blocks: BlockMetrics[] = [];
-        for (const state of STATES) {
-          await showState(page, state);
-          const mounted = await blockMetrics(page, state);
-          expect(mounted, `${state}: mounted copies`).toHaveLength(1);
-          const block = mounted[0]!;
-          blocks.push(block);
-          const where = `${scheme} ${width}px, ${state} (${block.containerWidth}px)`;
-
-          expect(block.headerDisplay, `${where}: header row`).toBe(
-            block.containerWidth >= CONTAINER_SM ? "flex" : "grid",
-          );
-          if (block.columns !== null) {
-            expect(block.columns, `${where}: columns`).toBe(expectedColumns(block.containerWidth));
-          }
-          if (block.cards > 0) {
-            // All five badge variants ship in the sample set.
-            expect(block.badges, `${where}: badges`).toEqual([
-              "info",
-              "error",
-              "warning",
-              "success",
-              "neutral",
-              "info",
-            ]);
-          }
-
-          // The 50rem frame scrolls inside itself; the panel holding the demo
-          // never pushes the page sideways.
-          const panel = await page.evaluate((state) => {
-            const el = document
-              .querySelector(`[data-demo-state="${state}"]`)!
-              .closest(".preview-panel--demo") as HTMLElement;
-            return { scroll: el.scrollWidth, client: el.clientWidth };
-          }, state);
-          expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
-        }
-
-        const grids = blocks.filter((block) => block.cards > 0);
-        expect(grids.length, `${scheme} ${width}px: copies rendering the grid`).toBe(5);
-        for (const grid of grids) expect(grid.cards).toBe(6);
-        expect(blocks.filter((block) => block.emptyCard).length, "the empty render").toBe(1);
-        expect(
-          blocks.filter((block) => block.skeletonCards === 3).length,
-          "the loading render",
-        ).toBe(1);
-        expect(
-          blocks.filter((block) => block.gridLevelAlert).length,
-          "the failed-load render",
-        ).toBe(1);
-        expect(grids.filter((block) => block.allControlsInert).length, "the disabled render").toBe(
-          1,
-        );
-
-        // Each step is exercised on both sides at every viewport, so a step that
-        // silently stopped firing cannot pass this file.
-        const containerWidths = grids.map((b) => b.containerWidth);
-        for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
-          expect(
-            containerWidths.some((w) => w < step),
-            `a copy under ${step}px`,
-          ).toBe(true);
-          expect(
-            containerWidths.some((w) => w >= step),
-            `a copy over ${step}px`,
-          ).toBe(true);
-        }
-      });
-    }
 
     test("clears AA contrast on every text it paints", async ({ page }) => {
       await page.goto(PAGE, { waitUntil: "networkidle" });

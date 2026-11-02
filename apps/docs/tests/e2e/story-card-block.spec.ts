@@ -1,6 +1,6 @@
 /**
  * The story-card block, checked on the built docs page at the three widths of
- * the responsive policy (375 / 768 / 1280) in both colour schemes. It asserts
+ * the responsive policy (375 / 768 / 1280). It asserts
  * text and computed styles; no screenshot baseline is committed.
  *
  * Four claims:
@@ -355,198 +355,198 @@ async function contrastRatios(
   );
 }
 
+// Geometry and logic, which no colour changes: one pass is enough.
+test.describe("story-card — either scheme", () => {
+  for (const width of WIDTHS) {
+    test(`lays itself out from its container at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1200 });
+      await page.goto(PAGE, { waitUntil: "networkidle" });
+      await page.evaluate(() => document.fonts.ready.then(() => true));
+
+      const blocks: Array<BlockMetrics & { state: State }> = [];
+      for (const state of STATES) {
+        await showState(page, state);
+        const mounted = await blockMetrics(page, state);
+        expect(mounted, `${state}: mounted copies`).toHaveLength(1);
+        const block = mounted[0]!;
+        blocks.push({ ...block, state });
+        const w = block.containerWidth;
+        const where = `${width}px, ${state} (${w}px)`;
+
+        expect(block.offCentre, `${where}: centred`).toBeLessThan(1);
+        expect(block.alert, `${where}: error announced`).toBe(state === "error");
+
+        // Room above and below the card only from `@lg`, the same on both sides.
+        expect(block.roomAbove, `${where}: room above and below`).toBe(block.roomBelow);
+        if (w >= CONTAINER_LG) {
+          expect(block.roomAbove, `${where}: room from @lg`).toBeGreaterThan(0);
+        } else {
+          expect(block.roomAbove, `${where}: no room below @lg`).toBe(0);
+        }
+
+        if (state !== "error") {
+          // The story's frame keeps 9:16 in every state, and fills its
+          // container up to --container-md.
+          expect(block.frameRatio, `${where}: 9:16`).toBeCloseTo(16 / 9, 2);
+          expect(block.frameWidth, `${where}: frame width`).toBeCloseTo(
+            Math.min(w, CONTAINER_MD),
+            0,
+          );
+        }
+
+        if (state === "loading") {
+          expect(block.placeholders, `${where}: one placeholder card`).toBe(1);
+          expect(block.card, `${where}: no story while loading`).toBe(false);
+          expect(block.buttons, `${where}: no buttons while loading`).toEqual([]);
+        } else if (state === "empty") {
+          expect(block.empty, `${where}: empty message`).toBe(EMPTY);
+          expect(block.card, `${where}: no card`).toBe(false);
+          expect(block.buttons, `${where}: no buttons`).toEqual([]);
+        } else if (state === "error") {
+          expect(block.card, `${where}: no card`).toBe(false);
+          expect(block.buttons, `${where}: retry only`).toEqual(["Try again"]);
+          expect(block.buttonVariants, `${where}: retry variant`).toEqual(["outline"]);
+        } else {
+          expect(block.card, `${where}: a Card with the story`).toBe(true);
+          expect(block.contentFits, `${where}: nothing cut off`).toBe(true);
+          expect(block.brand, `${where}: brand`).toBe(BRAND);
+          expect(block.initials, `${where}: brand initials`).toBe(INITIALS);
+          expect(block.avatarShape, `${where}: square logo`).toBe("square");
+          expect(block.badge, `${where}: badge`).toBe(BADGE);
+          expect(block.badgeVariant, `${where}: badge variant`).toBe("outline");
+          expect(block.kicker, `${where}: kicker`).toBe(KICKER);
+          expect(block.title, `${where}: title`).toBe(TITLE);
+          expect(block.titleSerif, `${where}: title in the display face`).toBe(true);
+          expect(block.detail, `${where}: detail`).toBe(DETAIL);
+          expect(block.buttons, `${where}: the action, named for the story`).toEqual([
+            `${ACTION}: ${TITLE}`,
+          ]);
+          expect(block.buttonVariants, `${where}: action variant`).toEqual(["primary"]);
+          expect(block.buttonsDisabled, `${where}: action enabled`).toEqual([state === "disabled"]);
+          expect(block.actionShare, `${where}: full-width action`).toBeCloseTo(1, 2);
+          expect(block.textLow, `${where}: text in the card's lower half`).toBe(true);
+          expect(block.empty, `${where}: no empty message`).toBeNull();
+
+          if (WITH_IMAGE.includes(state)) {
+            expect(block.imageAlt, `${where}: image alt`).toBe(ALT);
+            expect(block.imageLoaded, `${where}: image loaded`).toBe(true);
+            expect(block.imageFills, `${where}: image covers its area`).toBe(true);
+            expect(block.mediaMuted, `${where}: muted image area`).toBe(true);
+            expect(block.imageBetween, `${where}: image between brand and text`).toBe(true);
+          } else {
+            expect(block.imageAlt, `${where}: no image`).toBeNull();
+          }
+        }
+
+        // The 50rem frame scrolls inside itself; the panel holding the demo
+        // never pushes the page sideways.
+        const panel = await page.evaluate((state) => {
+          const el = document
+            .querySelector(`[data-demo-state="${state}"]`)!
+            .closest(".preview-panel--demo") as HTMLElement;
+          return { scroll: el.scrollWidth, client: el.clientWidth };
+        }, state);
+        expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
+      }
+
+      const shown = blocks.filter((b) => b.card);
+      const sizesOf = (from: number, to: number, pick: (b: BlockMetrics) => number | null) =>
+        new Set(
+          shown
+            .filter((b) => b.containerWidth >= from && b.containerWidth < to)
+            .map((b) => pick(b)),
+        );
+      const stepsUp = (what: string, step: number, pick: (b: BlockMetrics) => number | null) => {
+        const below = sizesOf(0, step, pick);
+        const above = sizesOf(step, Infinity, pick);
+        expect(below.size, `one ${what} below ${step}px`).toBe(1);
+        expect(above.size, `one ${what} from ${step}px`).toBe(1);
+        expect([...above][0]!, `the ${what} steps up at ${step}px`).toBeGreaterThan([...below][0]!);
+      };
+
+      // The title and the detail step up at `@sm`; the kicker at `@md`.
+      stepsUp("title size", CONTAINER_SM, (b) => b.titleSize);
+      stepsUp("detail size", CONTAINER_SM, (b) => b.detailSize);
+      stepsUp("kicker size", CONTAINER_MD, (b) => b.kickerSize);
+
+      // The card's padding grows at `@sm` and again at `@md`: one padding per
+      // band, larger in each wider band. A narrow viewport caps the 30rem
+      // frame below `@sm`, so a band with no copy in it is skipped there.
+      const paddings = [
+        [0, CONTAINER_SM],
+        [CONTAINER_SM, CONTAINER_MD],
+        [CONTAINER_MD, Infinity],
+      ]
+        .map(([from, to]) => sizesOf(from!, to!, (b) => b.cardPadding))
+        .filter((band) => band.size > 0);
+      expect(paddings.length, "copies in at least two padding bands").toBeGreaterThanOrEqual(2);
+      for (const [i, band] of paddings.entries()) {
+        expect(band.size, "one padding per band").toBe(1);
+        if (i > 0) {
+          expect([...band][0]!, "more padding in a wider band").toBeGreaterThan(
+            [...paddings[i - 1]!][0]!,
+          );
+        }
+      }
+
+      // Each step is exercised on both sides at every viewport, so a step that
+      // silently stopped firing cannot pass this file.
+      const containerWidths = shown.map((b) => b.containerWidth);
+      for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
+        expect(
+          containerWidths.some((w) => w < step),
+          `a copy under ${step}px`,
+        ).toBe(true);
+        expect(
+          containerWidths.some((w) => w >= step),
+          `a copy over ${step}px`,
+        ).toBe(true);
+      }
+    });
+  }
+
+  test("sits in the middle of its preview", async ({ page }) => {
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    for (const state of ["default", "no-image", "empty", "loading", "error", "disabled"] as const) {
+      await showState(page, state);
+      const gaps = await page.evaluate(
+        ({ state, selector }) => {
+          const wrapper = document.querySelector(`[data-demo-state="${state}"]`)!;
+          const panel = wrapper.closest(".preview-panel--demo")!.getBoundingClientRect();
+          const block = wrapper.querySelector(selector)!;
+          const content = block.firstElementChild!.firstElementChild!.getBoundingClientRect();
+          return {
+            above: content.top - panel.top,
+            below: panel.bottom - content.bottom,
+            before: content.left - panel.left,
+            after: panel.right - content.right,
+          };
+        },
+        { state, selector: BLOCK },
+      );
+      expect(Math.abs(gaps.above - gaps.below), `${state}: vertical`).toBeLessThan(2);
+      expect(Math.abs(gaps.before - gaps.after), `${state}: horizontal`).toBeLessThan(2);
+    }
+  });
+
+  test("treats an empty error string as no error", async ({ page }) => {
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await showState(page, "error");
+    const block = page.locator(`[data-demo-state="error"] ${BLOCK}`);
+
+    // The demo's retry clears its message to "", the way a consumer holding
+    // the error as a string does once the load succeeds.
+    await block.getByRole("button", { name: "Try again" }).click();
+
+    await expect(block.locator('[data-scope="alert"]')).toHaveCount(0);
+    await expect(block.getByRole("heading", { level: 3 })).toHaveText(TITLE);
+    await expect(block.getByRole("button", { name: `${ACTION}: ${TITLE}` })).toBeEnabled();
+  });
+});
+
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`story-card — ${scheme}`, () => {
     test.use({ colorScheme: scheme });
-
-    for (const width of WIDTHS) {
-      test(`lays itself out from its container at ${width}px`, async ({ page }) => {
-        await page.setViewportSize({ width, height: 1200 });
-        await page.goto(PAGE, { waitUntil: "networkidle" });
-        await page.evaluate(() => document.fonts.ready.then(() => true));
-
-        expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(
-          scheme === "dark",
-        );
-
-        const blocks: Array<BlockMetrics & { state: State }> = [];
-        for (const state of STATES) {
-          await showState(page, state);
-          const mounted = await blockMetrics(page, state);
-          expect(mounted, `${state}: mounted copies`).toHaveLength(1);
-          const block = mounted[0]!;
-          blocks.push({ ...block, state });
-          const w = block.containerWidth;
-          const where = `${scheme} ${width}px, ${state} (${w}px)`;
-
-          expect(block.offCentre, `${where}: centred`).toBeLessThan(1);
-          expect(block.alert, `${where}: error announced`).toBe(state === "error");
-
-          // Room above and below the card only from `@lg`, the same on both sides.
-          expect(block.roomAbove, `${where}: room above and below`).toBe(block.roomBelow);
-          if (w >= CONTAINER_LG) {
-            expect(block.roomAbove, `${where}: room from @lg`).toBeGreaterThan(0);
-          } else {
-            expect(block.roomAbove, `${where}: no room below @lg`).toBe(0);
-          }
-
-          if (state !== "error") {
-            // The story's frame keeps 9:16 in every state, and fills its
-            // container up to --container-md.
-            expect(block.frameRatio, `${where}: 9:16`).toBeCloseTo(16 / 9, 2);
-            expect(block.frameWidth, `${where}: frame width`).toBeCloseTo(
-              Math.min(w, CONTAINER_MD),
-              0,
-            );
-          }
-
-          if (state === "loading") {
-            expect(block.placeholders, `${where}: one placeholder card`).toBe(1);
-            expect(block.card, `${where}: no story while loading`).toBe(false);
-            expect(block.buttons, `${where}: no buttons while loading`).toEqual([]);
-          } else if (state === "empty") {
-            expect(block.empty, `${where}: empty message`).toBe(EMPTY);
-            expect(block.card, `${where}: no card`).toBe(false);
-            expect(block.buttons, `${where}: no buttons`).toEqual([]);
-          } else if (state === "error") {
-            expect(block.card, `${where}: no card`).toBe(false);
-            expect(block.buttons, `${where}: retry only`).toEqual(["Try again"]);
-            expect(block.buttonVariants, `${where}: retry variant`).toEqual(["outline"]);
-          } else {
-            expect(block.card, `${where}: a Card with the story`).toBe(true);
-            expect(block.contentFits, `${where}: nothing cut off`).toBe(true);
-            expect(block.brand, `${where}: brand`).toBe(BRAND);
-            expect(block.initials, `${where}: brand initials`).toBe(INITIALS);
-            expect(block.avatarShape, `${where}: square logo`).toBe("square");
-            expect(block.badge, `${where}: badge`).toBe(BADGE);
-            expect(block.badgeVariant, `${where}: badge variant`).toBe("outline");
-            expect(block.kicker, `${where}: kicker`).toBe(KICKER);
-            expect(block.title, `${where}: title`).toBe(TITLE);
-            expect(block.titleSerif, `${where}: title in the display face`).toBe(true);
-            expect(block.detail, `${where}: detail`).toBe(DETAIL);
-            expect(block.buttons, `${where}: the action, named for the story`).toEqual([
-              `${ACTION}: ${TITLE}`,
-            ]);
-            expect(block.buttonVariants, `${where}: action variant`).toEqual(["primary"]);
-            expect(block.buttonsDisabled, `${where}: action enabled`).toEqual([
-              state === "disabled",
-            ]);
-            expect(block.actionShare, `${where}: full-width action`).toBeCloseTo(1, 2);
-            expect(block.textLow, `${where}: text in the card's lower half`).toBe(true);
-            expect(block.empty, `${where}: no empty message`).toBeNull();
-
-            if (WITH_IMAGE.includes(state)) {
-              expect(block.imageAlt, `${where}: image alt`).toBe(ALT);
-              expect(block.imageLoaded, `${where}: image loaded`).toBe(true);
-              expect(block.imageFills, `${where}: image covers its area`).toBe(true);
-              expect(block.mediaMuted, `${where}: muted image area`).toBe(true);
-              expect(block.imageBetween, `${where}: image between brand and text`).toBe(true);
-            } else {
-              expect(block.imageAlt, `${where}: no image`).toBeNull();
-            }
-          }
-
-          // The 50rem frame scrolls inside itself; the panel holding the demo
-          // never pushes the page sideways.
-          const panel = await page.evaluate((state) => {
-            const el = document
-              .querySelector(`[data-demo-state="${state}"]`)!
-              .closest(".preview-panel--demo") as HTMLElement;
-            return { scroll: el.scrollWidth, client: el.clientWidth };
-          }, state);
-          expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
-        }
-
-        const shown = blocks.filter((b) => b.card);
-        const sizesOf = (from: number, to: number, pick: (b: BlockMetrics) => number | null) =>
-          new Set(
-            shown
-              .filter((b) => b.containerWidth >= from && b.containerWidth < to)
-              .map((b) => pick(b)),
-          );
-        const stepsUp = (what: string, step: number, pick: (b: BlockMetrics) => number | null) => {
-          const below = sizesOf(0, step, pick);
-          const above = sizesOf(step, Infinity, pick);
-          expect(below.size, `one ${what} below ${step}px`).toBe(1);
-          expect(above.size, `one ${what} from ${step}px`).toBe(1);
-          expect([...above][0]!, `the ${what} steps up at ${step}px`).toBeGreaterThan(
-            [...below][0]!,
-          );
-        };
-
-        // The title and the detail step up at `@sm`; the kicker at `@md`.
-        stepsUp("title size", CONTAINER_SM, (b) => b.titleSize);
-        stepsUp("detail size", CONTAINER_SM, (b) => b.detailSize);
-        stepsUp("kicker size", CONTAINER_MD, (b) => b.kickerSize);
-
-        // The card's padding grows at `@sm` and again at `@md`: one padding per
-        // band, larger in each wider band. A narrow viewport caps the 30rem
-        // frame below `@sm`, so a band with no copy in it is skipped there.
-        const paddings = [
-          [0, CONTAINER_SM],
-          [CONTAINER_SM, CONTAINER_MD],
-          [CONTAINER_MD, Infinity],
-        ]
-          .map(([from, to]) => sizesOf(from!, to!, (b) => b.cardPadding))
-          .filter((band) => band.size > 0);
-        expect(paddings.length, "copies in at least two padding bands").toBeGreaterThanOrEqual(2);
-        for (const [i, band] of paddings.entries()) {
-          expect(band.size, "one padding per band").toBe(1);
-          if (i > 0) {
-            expect([...band][0]!, "more padding in a wider band").toBeGreaterThan(
-              [...paddings[i - 1]!][0]!,
-            );
-          }
-        }
-
-        // Each step is exercised on both sides at every viewport, so a step that
-        // silently stopped firing cannot pass this file.
-        const containerWidths = shown.map((b) => b.containerWidth);
-        for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
-          expect(
-            containerWidths.some((w) => w < step),
-            `a copy under ${step}px`,
-          ).toBe(true);
-          expect(
-            containerWidths.some((w) => w >= step),
-            `a copy over ${step}px`,
-          ).toBe(true);
-        }
-      });
-    }
-
-    test("sits in the middle of its preview", async ({ page }) => {
-      await page.goto(PAGE, { waitUntil: "networkidle" });
-      for (const state of [
-        "default",
-        "no-image",
-        "empty",
-        "loading",
-        "error",
-        "disabled",
-      ] as const) {
-        await showState(page, state);
-        const gaps = await page.evaluate(
-          ({ state, selector }) => {
-            const wrapper = document.querySelector(`[data-demo-state="${state}"]`)!;
-            const panel = wrapper.closest(".preview-panel--demo")!.getBoundingClientRect();
-            const block = wrapper.querySelector(selector)!;
-            const content = block.firstElementChild!.firstElementChild!.getBoundingClientRect();
-            return {
-              above: content.top - panel.top,
-              below: panel.bottom - content.bottom,
-              before: content.left - panel.left,
-              after: panel.right - content.right,
-            };
-          },
-          { state, selector: BLOCK },
-        );
-        expect(Math.abs(gaps.above - gaps.below), `${scheme} ${state}: vertical`).toBeLessThan(2);
-        expect(Math.abs(gaps.before - gaps.after), `${scheme} ${state}: horizontal`).toBeLessThan(
-          2,
-        );
-      }
-    });
 
     test("clears AA contrast on every text it paints", async ({ page }) => {
       await page.goto(PAGE, { waitUntil: "networkidle" });
@@ -641,20 +641,6 @@ for (const scheme of ["light", "dark"] as const) {
       const block = page.locator(`[data-demo-state="default"] ${BLOCK}`);
       await expect(block.getByRole("heading", { level: 3 })).toHaveText(TITLE);
       await expect(block.getByRole("img", { name: ALT })).toBeVisible();
-    });
-
-    test("treats an empty error string as no error", async ({ page }) => {
-      await page.goto(PAGE, { waitUntil: "networkidle" });
-      await showState(page, "error");
-      const block = page.locator(`[data-demo-state="error"] ${BLOCK}`);
-
-      // The demo's retry clears its message to "", the way a consumer holding
-      // the error as a string does once the load succeeds.
-      await block.getByRole("button", { name: "Try again" }).click();
-
-      await expect(block.locator('[data-scope="alert"]')).toHaveCount(0);
-      await expect(block.getByRole("heading", { level: 3 })).toHaveText(TITLE);
-      await expect(block.getByRole("button", { name: `${ACTION}: ${TITLE}` })).toBeEnabled();
     });
   });
 }

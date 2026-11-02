@@ -1,6 +1,6 @@
 /**
  * The list-container block, checked on the built docs page at the three widths
- * of the responsive policy (375 / 768 / 1280) in both colour schemes. It
+ * of the responsive policy (375 / 768 / 1280). It
  * asserts text and computed styles, never pixels (see `playwright.config.ts`).
  *
  * Four claims:
@@ -248,93 +248,90 @@ async function textRatios(
   }, state);
 }
 
+// Geometry and logic, which no colour changes: one pass is enough.
+test.describe("list-container — either scheme", () => {
+  for (const width of WIDTHS) {
+    test(`lays itself out from its container at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1200 });
+      await page.goto(PAGE, { waitUntil: "networkidle" });
+      await page.evaluate(() => document.fonts.ready.then(() => true));
+
+      const blocks: BlockMetrics[] = [];
+      for (const state of STATES) {
+        await showState(page, state);
+        const mounted = await blockMetrics(page, state);
+        expect(mounted, `${state}: mounted copies`).toHaveLength(1);
+        const block = mounted[0]!;
+        blocks.push(block);
+        const where = `${width}px, ${state} (${block.containerWidth}px)`;
+
+        expect(block.largeHeading, `${where}: heading size`).toBe(
+          block.containerWidth >= CONTAINER_MD,
+        );
+        if (block.placement !== null) {
+          const expected: Placement =
+            block.containerWidth >= CONTAINER_MD
+              ? "inline"
+              : block.containerWidth >= CONTAINER_SM
+                ? "stacked"
+                : "under";
+          expect(block.placement, `${where}: status and time`).toBe(expected);
+          expect(block.alignedTimes, `${where}: time column`).toBe(
+            block.containerWidth >= CONTAINER_LG,
+          );
+          expect(block.statuses, `${where}: statuses`).toEqual([
+            "info",
+            "warning",
+            "success",
+            "error",
+            "success",
+            "info",
+          ]);
+          expect(block.count, `${where}: footer count`).toBe("6 tasks");
+        }
+
+        const panel = await page.evaluate((state) => {
+          const el = document
+            .querySelector(`[data-demo-state="${state}"]`)!
+            .closest(".preview-panel--demo") as HTMLElement;
+          return { scroll: el.scrollWidth, client: el.clientWidth };
+        }, state);
+        expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
+      }
+
+      const lists = blocks.filter((block) => block.statuses.length > 0);
+      expect(lists.length, `${width}px: copies rendering the rows`).toBe(5);
+      expect(blocks.filter((block) => block.emptyMessage).length, "the empty render").toBe(1);
+      expect(
+        blocks.filter((block) => block.busyPlaceholders === 12).length,
+        "the loading render: four placeholder rows of three skeletons",
+      ).toBe(1);
+      expect(blocks.filter((block) => block.failedLoad).length, "the failed-load render").toBe(1);
+      expect(lists.filter((block) => block.allButtonsInert).length, "the disabled render").toBe(1);
+      // With nothing to list, the footer has no count and its action is inert.
+      const empty = blocks.find((block) => block.emptyMessage)!;
+      expect(empty.count, "the empty footer's count").toBeNull();
+      expect(empty.allButtonsInert, "the empty footer's action").toBe(true);
+
+      // Each step is exercised on both sides at every viewport.
+      const widths = lists.map((block) => block.containerWidth);
+      for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
+        expect(
+          widths.some((w) => w < step),
+          `a copy under ${step}px`,
+        ).toBe(true);
+        expect(
+          widths.some((w) => w >= step),
+          `a copy over ${step}px`,
+        ).toBe(true);
+      }
+    });
+  }
+});
+
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`list-container — ${scheme}`, () => {
     test.use({ colorScheme: scheme });
-
-    for (const width of WIDTHS) {
-      test(`lays itself out from its container at ${width}px`, async ({ page }) => {
-        await page.setViewportSize({ width, height: 1200 });
-        await page.goto(PAGE, { waitUntil: "networkidle" });
-        await page.evaluate(() => document.fonts.ready.then(() => true));
-
-        expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(
-          scheme === "dark",
-        );
-
-        const blocks: BlockMetrics[] = [];
-        for (const state of STATES) {
-          await showState(page, state);
-          const mounted = await blockMetrics(page, state);
-          expect(mounted, `${state}: mounted copies`).toHaveLength(1);
-          const block = mounted[0]!;
-          blocks.push(block);
-          const where = `${scheme} ${width}px, ${state} (${block.containerWidth}px)`;
-
-          expect(block.largeHeading, `${where}: heading size`).toBe(
-            block.containerWidth >= CONTAINER_MD,
-          );
-          if (block.placement !== null) {
-            const expected: Placement =
-              block.containerWidth >= CONTAINER_MD
-                ? "inline"
-                : block.containerWidth >= CONTAINER_SM
-                  ? "stacked"
-                  : "under";
-            expect(block.placement, `${where}: status and time`).toBe(expected);
-            expect(block.alignedTimes, `${where}: time column`).toBe(
-              block.containerWidth >= CONTAINER_LG,
-            );
-            expect(block.statuses, `${where}: statuses`).toEqual([
-              "info",
-              "warning",
-              "success",
-              "error",
-              "success",
-              "info",
-            ]);
-            expect(block.count, `${where}: footer count`).toBe("6 tasks");
-          }
-
-          const panel = await page.evaluate((state) => {
-            const el = document
-              .querySelector(`[data-demo-state="${state}"]`)!
-              .closest(".preview-panel--demo") as HTMLElement;
-            return { scroll: el.scrollWidth, client: el.clientWidth };
-          }, state);
-          expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
-        }
-
-        const lists = blocks.filter((block) => block.statuses.length > 0);
-        expect(lists.length, `${scheme} ${width}px: copies rendering the rows`).toBe(5);
-        expect(blocks.filter((block) => block.emptyMessage).length, "the empty render").toBe(1);
-        expect(
-          blocks.filter((block) => block.busyPlaceholders === 12).length,
-          "the loading render: four placeholder rows of three skeletons",
-        ).toBe(1);
-        expect(blocks.filter((block) => block.failedLoad).length, "the failed-load render").toBe(1);
-        expect(lists.filter((block) => block.allButtonsInert).length, "the disabled render").toBe(
-          1,
-        );
-        // With nothing to list, the footer has no count and its action is inert.
-        const empty = blocks.find((block) => block.emptyMessage)!;
-        expect(empty.count, "the empty footer's count").toBeNull();
-        expect(empty.allButtonsInert, "the empty footer's action").toBe(true);
-
-        // Each step is exercised on both sides at every viewport.
-        const widths = lists.map((block) => block.containerWidth);
-        for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
-          expect(
-            widths.some((w) => w < step),
-            `a copy under ${step}px`,
-          ).toBe(true);
-          expect(
-            widths.some((w) => w >= step),
-            `a copy over ${step}px`,
-          ).toBe(true);
-        }
-      });
-    }
 
     test("scrolls only its body, which is labelled and focusable", async ({ page }) => {
       await page.goto(PAGE, { waitUntil: "networkidle" });

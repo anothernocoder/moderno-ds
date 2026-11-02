@@ -1,6 +1,6 @@
 /**
  * The app-shell block, checked on the built docs page at the three widths of
- * the responsive policy (375 / 768 / 1280) in both colour schemes. It asserts
+ * the responsive policy (375 / 768 / 1280). It asserts
  * text and computed styles; no screenshot baseline is committed.
  *
  * Five claims:
@@ -283,96 +283,127 @@ async function contrastRatios(
   );
 }
 
+// Geometry and logic, which no colour changes: one pass is enough.
+test.describe("app-shell — either scheme", () => {
+  for (const width of WIDTHS) {
+    test(`lays itself out from its container at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1200 });
+      await page.goto(PAGE, { waitUntil: "networkidle" });
+      await page.evaluate(() => document.fonts.ready.then(() => true));
+
+      const widths: number[] = [];
+      for (const state of STATES) {
+        await showState(page, state);
+        const mounted = await blockMetrics(page, state);
+        expect(mounted, `${state}: mounted copies`).toHaveLength(1);
+        const block = mounted[0]!;
+        const w = block.containerWidth;
+        widths.push(w);
+        const where = `${width}px, ${state} (${w}px)`;
+
+        if (!FRAMED.includes(state)) {
+          expect(block.offCentre.x, `${where}: centred across`).toBeLessThan(2);
+          expect(block.offCentre.y, `${where}: centred down`).toBeLessThan(2);
+        }
+        expect(block.brand, `${where}: brand`).toBe(BRAND);
+        expect(block.heading, `${where}: heading`).toBe(HEADING);
+        expect(block.headingSerif, `${where}: serif heading`).toBe(true);
+        expect(block.links, `${where}: links`).toEqual(
+          state === "disabled" ? LINKS_WITH_DISABLED : LINKS,
+        );
+        expect(block.currentLinks, `${where}: current page`).toEqual(["Overview"]);
+        expect(block.disabledLinks, `${where}: disabled links`).toEqual(
+          state === "disabled" ? ["Reports"] : [],
+        );
+
+        // Below @md the Drawer holds the links; from @md the sidebar does.
+        expect(block.sidebarShown, `${where}: sidebar`).toBe(w >= CONTAINER_MD);
+        expect(block.menuButtonShown, `${where}: Menu button`).toBe(w < CONTAINER_MD);
+        if (w >= CONTAINER_MD) {
+          expect(block.sidebarWidth, `${where}: sidebar width`).toBe(
+            w >= CONTAINER_LG ? SIDEBAR_LG : SIDEBAR_MD,
+          );
+        }
+
+        // The account trigger always carries the full name; it shows the
+        // initials below @sm and the name from it.
+        expect(block.triggerName, `${where}: trigger name`).toBe(USER);
+        expect(block.triggerText, `${where}: trigger text`).toBe(
+          w >= CONTAINER_SM ? USER : INITIALS,
+        );
+        expect(block.contentPadding, `${where}: room around the content`).toBe(
+          w >= CONTAINER_LG ? PADDING_LG : w >= CONTAINER_SM ? PADDING_SM : PADDING_BASE,
+        );
+
+        expect(block.alert, `${where}: error announced`).toBe(state === "error");
+        expect(block.placeholders, `${where}: placeholders`).toBe(state === "loading" ? 3 : 0);
+        expect(block.empty, `${where}: empty message`).toEqual(state === "empty" ? EMPTY : []);
+        expect(block.stats, `${where}: the page`).toEqual(
+          ["empty", "loading", "error"].includes(state) ? [] : STATS,
+        );
+
+        // The 50rem frame scrolls inside itself; the panel holding the demo
+        // never pushes the page sideways.
+        const panel = await page.evaluate((state) => {
+          const el = document
+            .querySelector(`[data-demo-state="${state}"]`)!
+            .closest(".preview-panel--demo") as HTMLElement;
+          return { scroll: el.scrollWidth, client: el.clientWidth };
+        }, state);
+        expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
+      }
+
+      // Each step is exercised on both sides at every viewport, so a step that
+      // silently stopped firing cannot pass this file.
+      for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
+        expect(
+          widths.some((w) => w < step),
+          `a copy under ${step}px`,
+        ).toBe(true);
+        expect(
+          widths.some((w) => w >= step),
+          `a copy over ${step}px`,
+        ).toBe(true);
+      }
+    });
+  }
+
+  test("keeps a disabled link out of reach", async ({ page }) => {
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await showState(page, "disabled");
+    const block = page.locator(`[data-demo-state="disabled"] ${BLOCK}`);
+    const link = block.locator("nav a", { hasText: "Reports" });
+    await expect(link).toHaveAttribute("aria-disabled", "true");
+    // Screen readers still hear a link, marked unavailable, not plain text.
+    await expect(block.getByRole("link", { name: "Reports", disabled: true })).toHaveCount(1);
+    await link.evaluate((el) => (el as HTMLElement).focus());
+    await expect(link).not.toBeFocused();
+
+    // Tab skips it: from Customers straight to Settings.
+    await block.getByRole("link", { name: "Customers" }).focus();
+    await page.keyboard.press("Tab");
+    await expect(block.getByRole("link", { name: "Settings" })).toBeFocused();
+  });
+
+  test("treats an empty error string as no error", async ({ page }) => {
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await showState(page, "error");
+    const block = page.locator(`[data-demo-state="error"] ${BLOCK}`);
+
+    // The demo's retry clears its message to "", the way a consumer holding
+    // the error as a string does once the load succeeds.
+    await block.getByRole("button", { name: "Try again" }).click();
+
+    await expect(block.locator('[data-scope="alert"]')).toHaveCount(0);
+    await expect(block.locator('main [data-scope="card"][data-part="root"]')).toHaveCount(
+      STATS.length,
+    );
+  });
+});
+
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`app-shell — ${scheme}`, () => {
     test.use({ colorScheme: scheme });
-
-    for (const width of WIDTHS) {
-      test(`lays itself out from its container at ${width}px`, async ({ page }) => {
-        await page.setViewportSize({ width, height: 1200 });
-        await page.goto(PAGE, { waitUntil: "networkidle" });
-        await page.evaluate(() => document.fonts.ready.then(() => true));
-
-        expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(
-          scheme === "dark",
-        );
-
-        const widths: number[] = [];
-        for (const state of STATES) {
-          await showState(page, state);
-          const mounted = await blockMetrics(page, state);
-          expect(mounted, `${state}: mounted copies`).toHaveLength(1);
-          const block = mounted[0]!;
-          const w = block.containerWidth;
-          widths.push(w);
-          const where = `${scheme} ${width}px, ${state} (${w}px)`;
-
-          if (!FRAMED.includes(state)) {
-            expect(block.offCentre.x, `${where}: centred across`).toBeLessThan(2);
-            expect(block.offCentre.y, `${where}: centred down`).toBeLessThan(2);
-          }
-          expect(block.brand, `${where}: brand`).toBe(BRAND);
-          expect(block.heading, `${where}: heading`).toBe(HEADING);
-          expect(block.headingSerif, `${where}: serif heading`).toBe(true);
-          expect(block.links, `${where}: links`).toEqual(
-            state === "disabled" ? LINKS_WITH_DISABLED : LINKS,
-          );
-          expect(block.currentLinks, `${where}: current page`).toEqual(["Overview"]);
-          expect(block.disabledLinks, `${where}: disabled links`).toEqual(
-            state === "disabled" ? ["Reports"] : [],
-          );
-
-          // Below @md the Drawer holds the links; from @md the sidebar does.
-          expect(block.sidebarShown, `${where}: sidebar`).toBe(w >= CONTAINER_MD);
-          expect(block.menuButtonShown, `${where}: Menu button`).toBe(w < CONTAINER_MD);
-          if (w >= CONTAINER_MD) {
-            expect(block.sidebarWidth, `${where}: sidebar width`).toBe(
-              w >= CONTAINER_LG ? SIDEBAR_LG : SIDEBAR_MD,
-            );
-          }
-
-          // The account trigger always carries the full name; it shows the
-          // initials below @sm and the name from it.
-          expect(block.triggerName, `${where}: trigger name`).toBe(USER);
-          expect(block.triggerText, `${where}: trigger text`).toBe(
-            w >= CONTAINER_SM ? USER : INITIALS,
-          );
-          expect(block.contentPadding, `${where}: room around the content`).toBe(
-            w >= CONTAINER_LG ? PADDING_LG : w >= CONTAINER_SM ? PADDING_SM : PADDING_BASE,
-          );
-
-          expect(block.alert, `${where}: error announced`).toBe(state === "error");
-          expect(block.placeholders, `${where}: placeholders`).toBe(state === "loading" ? 3 : 0);
-          expect(block.empty, `${where}: empty message`).toEqual(state === "empty" ? EMPTY : []);
-          expect(block.stats, `${where}: the page`).toEqual(
-            ["empty", "loading", "error"].includes(state) ? [] : STATS,
-          );
-
-          // The 50rem frame scrolls inside itself; the panel holding the demo
-          // never pushes the page sideways.
-          const panel = await page.evaluate((state) => {
-            const el = document
-              .querySelector(`[data-demo-state="${state}"]`)!
-              .closest(".preview-panel--demo") as HTMLElement;
-            return { scroll: el.scrollWidth, client: el.clientWidth };
-          }, state);
-          expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
-        }
-
-        // Each step is exercised on both sides at every viewport, so a step that
-        // silently stopped firing cannot pass this file.
-        for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
-          expect(
-            widths.some((w) => w < step),
-            `a copy under ${step}px`,
-          ).toBe(true);
-          expect(
-            widths.some((w) => w >= step),
-            `a copy over ${step}px`,
-          ).toBe(true);
-        }
-      });
-    }
 
     test("opens the navigation in a left Drawer on a narrow container", async ({ page }) => {
       await page.goto(PAGE, { waitUntil: "networkidle" });
@@ -528,23 +559,6 @@ for (const scheme of ["light", "dark"] as const) {
       await expect(block.getByRole("link", { name: "Transactions" })).toBeFocused();
     });
 
-    test("keeps a disabled link out of reach", async ({ page }) => {
-      await page.goto(PAGE, { waitUntil: "networkidle" });
-      await showState(page, "disabled");
-      const block = page.locator(`[data-demo-state="disabled"] ${BLOCK}`);
-      const link = block.locator("nav a", { hasText: "Reports" });
-      await expect(link).toHaveAttribute("aria-disabled", "true");
-      // Screen readers still hear a link, marked unavailable, not plain text.
-      await expect(block.getByRole("link", { name: "Reports", disabled: true })).toHaveCount(1);
-      await link.evaluate((el) => (el as HTMLElement).focus());
-      await expect(link).not.toBeFocused();
-
-      // Tab skips it: from Customers straight to Settings.
-      await block.getByRole("link", { name: "Customers" }).focus();
-      await page.keyboard.press("Tab");
-      await expect(block.getByRole("link", { name: "Settings" })).toBeFocused();
-    });
-
     test("announces the loading page once and the failed load as an alert", async ({ page }) => {
       await page.goto(PAGE, { waitUntil: "networkidle" });
       await showState(page, "loading");
@@ -565,21 +579,6 @@ for (const scheme of ["light", "dark"] as const) {
       await expect(block.getByRole("heading", { level: 1 })).toHaveText(HEADING);
       await expect(block.getByRole("navigation", { name: "Main" })).toHaveCount(1);
       await expect(block.getByRole("main")).toHaveCount(1);
-    });
-
-    test("treats an empty error string as no error", async ({ page }) => {
-      await page.goto(PAGE, { waitUntil: "networkidle" });
-      await showState(page, "error");
-      const block = page.locator(`[data-demo-state="error"] ${BLOCK}`);
-
-      // The demo's retry clears its message to "", the way a consumer holding
-      // the error as a string does once the load succeeds.
-      await block.getByRole("button", { name: "Try again" }).click();
-
-      await expect(block.locator('[data-scope="alert"]')).toHaveCount(0);
-      await expect(block.locator('main [data-scope="card"][data-part="root"]')).toHaveCount(
-        STATS.length,
-      );
     });
   });
 }

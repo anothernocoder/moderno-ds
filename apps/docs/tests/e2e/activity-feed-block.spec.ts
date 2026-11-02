@@ -1,6 +1,6 @@
 /**
  * The activity-feed block, checked on the built docs page at the three widths
- * of the responsive policy (375 / 768 / 1280) in both colour schemes. It
+ * of the responsive policy (375 / 768 / 1280). It
  * asserts text and computed styles; CI adds the screenshots to the PR body.
  *
  * Four claims:
@@ -250,78 +250,77 @@ async function textRatios(
   );
 }
 
+// Geometry and logic, which no colour changes: one pass is enough.
+test.describe("activity-feed — either scheme", () => {
+  for (const width of WIDTHS) {
+    test(`lays itself out from its container at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1200 });
+      await page.goto(PAGE, { waitUntil: "networkidle" });
+      await page.evaluate(() => document.fonts.ready.then(() => true));
+
+      const blocks: BlockMetrics[] = [];
+      for (const state of STATES) {
+        await showState(page, state);
+        const mounted = await blockMetrics(page, state);
+        expect(mounted, `${state}: mounted copies`).toHaveLength(1);
+        const block = mounted[0]!;
+        blocks.push(block);
+        const where = `${width}px, ${state} (${block.containerWidth}px)`;
+
+        expect(block.headerDisplay, `${where}: header row`).toBe(
+          block.containerWidth >= CONTAINER_SM ? "flex" : "grid",
+        );
+        if (block.rows > 0) {
+          expect(block.rows, `${where}: events`).toBe(4);
+          expect(block.avatars, `${where}: avatars`).toBe(4);
+          // The rail joins each avatar to the next, so the last row draws none.
+          expect(block.visibleRails, `${where}: rails`).toBe(3);
+          expect(block.commentClamped, `${where}: comment cut`).toBe(
+            block.containerWidth < CONTAINER_SM,
+          );
+          expect(block.timePlacement, `${where}: timestamp`).toBe(
+            expectedPlacement(block.containerWidth),
+          );
+        }
+
+        // The `@lg` frame is wider than the docs column and scrolls inside
+        // its own frame; the panel holding the demo never does.
+        const panel = await page.evaluate((state) => {
+          const el = document
+            .querySelector(`[data-demo-state="${state}"]`)!
+            .closest(".preview-panel--demo") as HTMLElement;
+          return { scroll: el.scrollWidth, client: el.clientWidth };
+        }, state);
+        expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
+      }
+
+      const lists = blocks.filter((block) => block.rows > 0);
+      expect(lists.length, `${width}px: copies rendering the timeline`).toBe(5);
+      expect(blocks.filter((b) => b.emptyCard).length, "the empty render").toBe(1);
+      expect(blocks.filter((b) => b.busyRegion).length, "the loading render").toBe(1);
+      expect(blocks.filter((b) => b.failedAlert).length, "the failed-load render").toBe(1);
+      expect(lists.filter((b) => b.allControlsInert).length, "the disabled render").toBe(1);
+
+      // Each step is exercised on both sides at every viewport, so a step
+      // that silently stopped firing cannot pass this file.
+      const widths = lists.map((b) => b.containerWidth);
+      for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
+        expect(
+          widths.some((w) => w < step),
+          `a copy under ${step}px`,
+        ).toBe(true);
+        expect(
+          widths.some((w) => w >= step),
+          `a copy over ${step}px`,
+        ).toBe(true);
+      }
+    });
+  }
+});
+
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`activity-feed — ${scheme}`, () => {
     test.use({ colorScheme: scheme });
-
-    for (const width of WIDTHS) {
-      test(`lays itself out from its container at ${width}px`, async ({ page }) => {
-        await page.setViewportSize({ width, height: 1200 });
-        await page.goto(PAGE, { waitUntil: "networkidle" });
-        await page.evaluate(() => document.fonts.ready.then(() => true));
-
-        expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(
-          scheme === "dark",
-        );
-
-        const blocks: BlockMetrics[] = [];
-        for (const state of STATES) {
-          await showState(page, state);
-          const mounted = await blockMetrics(page, state);
-          expect(mounted, `${state}: mounted copies`).toHaveLength(1);
-          const block = mounted[0]!;
-          blocks.push(block);
-          const where = `${scheme} ${width}px, ${state} (${block.containerWidth}px)`;
-
-          expect(block.headerDisplay, `${where}: header row`).toBe(
-            block.containerWidth >= CONTAINER_SM ? "flex" : "grid",
-          );
-          if (block.rows > 0) {
-            expect(block.rows, `${where}: events`).toBe(4);
-            expect(block.avatars, `${where}: avatars`).toBe(4);
-            // The rail joins each avatar to the next, so the last row draws none.
-            expect(block.visibleRails, `${where}: rails`).toBe(3);
-            expect(block.commentClamped, `${where}: comment cut`).toBe(
-              block.containerWidth < CONTAINER_SM,
-            );
-            expect(block.timePlacement, `${where}: timestamp`).toBe(
-              expectedPlacement(block.containerWidth),
-            );
-          }
-
-          // The `@lg` frame is wider than the docs column and scrolls inside
-          // its own frame; the panel holding the demo never does.
-          const panel = await page.evaluate((state) => {
-            const el = document
-              .querySelector(`[data-demo-state="${state}"]`)!
-              .closest(".preview-panel--demo") as HTMLElement;
-            return { scroll: el.scrollWidth, client: el.clientWidth };
-          }, state);
-          expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
-        }
-
-        const lists = blocks.filter((block) => block.rows > 0);
-        expect(lists.length, `${scheme} ${width}px: copies rendering the timeline`).toBe(5);
-        expect(blocks.filter((b) => b.emptyCard).length, "the empty render").toBe(1);
-        expect(blocks.filter((b) => b.busyRegion).length, "the loading render").toBe(1);
-        expect(blocks.filter((b) => b.failedAlert).length, "the failed-load render").toBe(1);
-        expect(lists.filter((b) => b.allControlsInert).length, "the disabled render").toBe(1);
-
-        // Each step is exercised on both sides at every viewport, so a step
-        // that silently stopped firing cannot pass this file.
-        const widths = lists.map((b) => b.containerWidth);
-        for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
-          expect(
-            widths.some((w) => w < step),
-            `a copy under ${step}px`,
-          ).toBe(true);
-          expect(
-            widths.some((w) => w >= step),
-            `a copy over ${step}px`,
-          ).toBe(true);
-        }
-      });
-    }
 
     test("clears AA contrast on every text it paints", async ({ page }) => {
       await page.goto(PAGE, { waitUntil: "networkidle" });

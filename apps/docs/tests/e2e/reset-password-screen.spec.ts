@@ -1,7 +1,7 @@
 /**
  * The reset-password screen, checked where it is actually shown to a reader:
  * the built docs page, at the three widths of the responsive policy
- * (375 / 768 / 1280) in both colour schemes.
+ * (375 / 768 / 1280).
  *
  * This is the seam that replaces a screenshot baseline for this screen. The
  * pixel baselines were dropped from this repo (see `playwright.config.ts`)
@@ -280,101 +280,100 @@ async function contrastRatios(page: Page): Promise<Record<string, number>> {
   });
 }
 
+// Geometry and logic, which no colour changes: one pass is enough.
+test.describe("reset-password — either scheme", () => {
+  for (const width of WIDTHS) {
+    test(`lays itself out from its container at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1200 });
+      await page.goto(PAGE, { waitUntil: "networkidle" });
+      await page.evaluate(() => document.fonts.ready.then(() => true));
+      await hydrated(page);
+
+      // One tab, one mounted copy: walk the tabs in order, so `screens[i]` is
+      // the copy `TABS[i]` mounted.
+      const screens: ScreenMetrics[] = [];
+      for (const tab of TABS) {
+        await showTab(page, tab);
+        const mounted = await screenMetrics(page, tab);
+        expect(mounted, `${width}px, ${tab}: mounted copies`).toHaveLength(1);
+        screens.push(mounted[0]!);
+      }
+
+      // The three frame widths are fixed by the demo, so at every viewport its
+      // width tabs hold a copy below `@sm` and copies at or above `@md`.
+      const widths = screens.map((s) => s.containerWidth);
+      expect(
+        widths.some((w) => w < CONTAINER_SM),
+        `${width}px: a copy below @sm`,
+      ).toBe(true);
+      expect(
+        widths.some((w) => w >= CONTAINER_MD),
+        `${width}px: a copy at or above @md`,
+      ).toBe(true);
+
+      for (const [index, screen] of screens.entries()) {
+        const where = `${width}px, ${TABS[index]} (${screen.containerWidth}px)`;
+        expect(screen.mastheadDisplay, `${where}: masthead`).toBe(
+          screen.containerWidth >= CONTAINER_SM ? "flex" : "grid",
+        );
+        expect(screen.footerDisplay, `${where}: footer`).toBe(
+          screen.containerWidth >= CONTAINER_MD ? "flex" : "grid",
+        );
+        // Full-viewport is a height: the screen fills the window it is given.
+        // On this page each frame stands in for that window (the demo says so
+        // and overrides `min-h-dvh` to the frame's own height); what is being
+        // held here is that the screen still fills it, top to bottom.
+        expect(screen.rootHeight, `${where}: root height`).toBeGreaterThanOrEqual(
+          screen.frameHeight,
+        );
+        // A new password, twice, plus the token out of the link — and never a
+        // `current-password` field, because whoever is here has no current
+        // password to give.
+        expect(screen.fieldNames, `${where}: fields`).toEqual([
+          "token",
+          "password",
+          "confirmPassword",
+        ]);
+        expect(screen.tokenInputType, `${where}: token control`).toBe("hidden");
+        // The rules are the field's own helper text, so they are announced on
+        // focus and each row that flips is announced on its own.
+        expect(screen.rulesDescribePassword, `${where}: rules describe the input`).toBe(true);
+        expect(screen.rulesRole, `${where}: rules role`).toBe("list");
+        expect(screen.rulesLive, `${where}: rules live region`).toBe("polite");
+        expect(screen.ruleTexts.length, `${where}: rule rows`).toBe(3);
+        // Never colour alone: every row says in words where it stands.
+        for (const text of screen.ruleTexts) {
+          expect(text, `${where}: rule status in words`).toMatch(/— (met|not met yet)$/);
+        }
+        // A screen is the whole route, so it has a top-level heading and the
+        // headings under it descend one rank at a time. The card's title is
+        // that `h1` (it is what the page is *called*), which is why the block
+        // takes `titleLevel` rather than the screen printing a second one.
+        expect(screen.headingLevels[0], `${where}: first heading`).toBe(1);
+        for (const [i, level] of screen.headingLevels.entries()) {
+          if (i === 0) continue;
+          expect(
+            level,
+            `${where}: heading ${i + 1} of ${screen.headingLevels.join("/")}`,
+          ).toBeLessThanOrEqual(screen.headingLevels[i - 1]! + 1);
+        }
+      }
+
+      // `met` is the page's answer, not the card's: only the copy that was
+      // handed ticked rules shows any, and it shows exactly the two it was
+      // given. Every other copy renders the block's own unticked default.
+      for (const [index, screen] of screens.entries()) {
+        expect(screen.rulesMet, `${width}px, ${TABS[index]}: rules met`).toBe(
+          index === RULES_MET_COPY ? 2 : 0,
+        );
+      }
+    });
+  }
+});
+
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`reset-password — ${scheme}`, () => {
     test.use({ colorScheme: scheme });
-
-    for (const width of WIDTHS) {
-      test(`lays itself out from its container at ${width}px`, async ({ page }) => {
-        await page.setViewportSize({ width, height: 1200 });
-        await page.goto(PAGE, { waitUntil: "networkidle" });
-        await page.evaluate(() => document.fonts.ready.then(() => true));
-        await hydrated(page);
-
-        expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(
-          scheme === "dark",
-        );
-
-        // One tab, one mounted copy: walk the tabs in order, so `screens[i]` is
-        // the copy `TABS[i]` mounted.
-        const screens: ScreenMetrics[] = [];
-        for (const tab of TABS) {
-          await showTab(page, tab);
-          const mounted = await screenMetrics(page, tab);
-          expect(mounted, `${scheme} ${width}px, ${tab}: mounted copies`).toHaveLength(1);
-          screens.push(mounted[0]!);
-        }
-
-        // The three frame widths are fixed by the demo, so at every viewport its
-        // width tabs hold a copy below `@sm` and copies at or above `@md`.
-        const widths = screens.map((s) => s.containerWidth);
-        expect(
-          widths.some((w) => w < CONTAINER_SM),
-          `${scheme} ${width}px: a copy below @sm`,
-        ).toBe(true);
-        expect(
-          widths.some((w) => w >= CONTAINER_MD),
-          `${scheme} ${width}px: a copy at or above @md`,
-        ).toBe(true);
-
-        for (const [index, screen] of screens.entries()) {
-          const where = `${scheme} ${width}px, ${TABS[index]} (${screen.containerWidth}px)`;
-          expect(screen.mastheadDisplay, `${where}: masthead`).toBe(
-            screen.containerWidth >= CONTAINER_SM ? "flex" : "grid",
-          );
-          expect(screen.footerDisplay, `${where}: footer`).toBe(
-            screen.containerWidth >= CONTAINER_MD ? "flex" : "grid",
-          );
-          // Full-viewport is a height: the screen fills the window it is given.
-          // On this page each frame stands in for that window (the demo says so
-          // and overrides `min-h-dvh` to the frame's own height); what is being
-          // held here is that the screen still fills it, top to bottom.
-          expect(screen.rootHeight, `${where}: root height`).toBeGreaterThanOrEqual(
-            screen.frameHeight,
-          );
-          // A new password, twice, plus the token out of the link — and never a
-          // `current-password` field, because whoever is here has no current
-          // password to give.
-          expect(screen.fieldNames, `${where}: fields`).toEqual([
-            "token",
-            "password",
-            "confirmPassword",
-          ]);
-          expect(screen.tokenInputType, `${where}: token control`).toBe("hidden");
-          // The rules are the field's own helper text, so they are announced on
-          // focus and each row that flips is announced on its own.
-          expect(screen.rulesDescribePassword, `${where}: rules describe the input`).toBe(true);
-          expect(screen.rulesRole, `${where}: rules role`).toBe("list");
-          expect(screen.rulesLive, `${where}: rules live region`).toBe("polite");
-          expect(screen.ruleTexts.length, `${where}: rule rows`).toBe(3);
-          // Never colour alone: every row says in words where it stands.
-          for (const text of screen.ruleTexts) {
-            expect(text, `${where}: rule status in words`).toMatch(/— (met|not met yet)$/);
-          }
-          // A screen is the whole route, so it has a top-level heading and the
-          // headings under it descend one rank at a time. The card's title is
-          // that `h1` (it is what the page is *called*), which is why the block
-          // takes `titleLevel` rather than the screen printing a second one.
-          expect(screen.headingLevels[0], `${where}: first heading`).toBe(1);
-          for (const [i, level] of screen.headingLevels.entries()) {
-            if (i === 0) continue;
-            expect(
-              level,
-              `${where}: heading ${i + 1} of ${screen.headingLevels.join("/")}`,
-            ).toBeLessThanOrEqual(screen.headingLevels[i - 1]! + 1);
-          }
-        }
-
-        // `met` is the page's answer, not the card's: only the copy that was
-        // handed ticked rules shows any, and it shows exactly the two it was
-        // given. Every other copy renders the block's own unticked default.
-        for (const [index, screen] of screens.entries()) {
-          expect(screen.rulesMet, `${scheme} ${width}px, ${TABS[index]}: rules met`).toBe(
-            index === RULES_MET_COPY ? 2 : 0,
-          );
-        }
-      });
-    }
 
     test("clears AA contrast on every text it paints", async ({ page }) => {
       await page.goto(PAGE, { waitUntil: "networkidle" });

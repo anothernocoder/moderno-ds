@@ -1,7 +1,6 @@
 /**
  * The verify screen, checked where it is actually shown to a reader: the built
- * docs page, at the three widths of the responsive policy (375 / 768 / 1280) in
- * both colour schemes.
+ * docs page, at the three widths of the responsive policy (375 / 768 / 1280).
  *
  * This is the seam that replaces a screenshot baseline for this screen. The
  * pixel baselines were dropped from this repo (see `playwright.config.ts`)
@@ -312,126 +311,125 @@ async function contrastRatios(page: Page): Promise<Record<string, number>> {
   });
 }
 
+// Geometry and logic, which no colour changes: one pass is enough.
+test.describe("verify — either scheme", () => {
+  for (const width of WIDTHS) {
+    test(`lays itself out from its container at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1200 });
+      await page.goto(PAGE, { waitUntil: "networkidle" });
+      await page.evaluate(() => document.fonts.ready.then(() => true));
+      await hydrated(page);
+
+      // One tab, one mounted copy: walk the tabs in order, so `screens[i]` is
+      // the copy `TABS[i]` mounted.
+      const screens: ScreenMetrics[] = [];
+      for (const tab of TABS) {
+        await showTab(page, tab);
+        const mounted = await screenMetrics(page, tab);
+        expect(mounted, `${width}px, ${tab}: mounted copies`).toHaveLength(1);
+        screens.push(mounted[0]!);
+      }
+
+      // The three frame widths are fixed by the demo, so at every viewport its
+      // width tabs hold one copy below the first step and one past the last.
+      const widths = screens.map((s) => s.containerWidth);
+      expect(
+        widths.some((w) => w < CONTAINER_SM),
+        `${width}px: a copy below @sm`,
+      ).toBe(true);
+      expect(
+        widths.some((w) => w >= CONTAINER_MD),
+        `${width}px: a copy at or above @md`,
+      ).toBe(true);
+
+      for (const [index, screen] of screens.entries()) {
+        const where = `${width}px, ${TABS[index]} (${screen.containerWidth}px)`;
+        expect(screen.mastheadDisplay, `${where}: masthead`).toBe(
+          screen.containerWidth >= CONTAINER_SM ? "flex" : "grid",
+        );
+        expect(screen.footerDisplay, `${where}: footer`).toBe(
+          screen.containerWidth >= CONTAINER_MD ? "flex" : "grid",
+        );
+        // The card is the only thing in the middle, centred in it both ways.
+        expect(screen.cardOffCentreX, `${where}: card centred across`).toBeLessThanOrEqual(1);
+        expect(screen.cardOffCentreY, `${where}: card centred down`).toBeLessThanOrEqual(1);
+        // Full-viewport is a height: the screen fills the window it is given.
+        // On this page each frame stands in for that window (the demo says so
+        // and overrides `min-h-dvh` to the frame's own height); what is being
+        // held here is that the screen still fills it, top to bottom.
+        expect(screen.rootHeight, `${where}: root height`).toBeGreaterThanOrEqual(
+          screen.frameHeight,
+        );
+        // The code and the address it was sent to — and no password of either
+        // kind, because whoever is here has already chosen one.
+        expect(screen.fieldNames, `${where}: fields`).toEqual(["email", "code"]);
+        expect(screen.emailInputType, `${where}: address control`).toBe("hidden");
+        expect(screen.codeInputHidden, `${where}: code control`).toBe(true);
+        // One cell per digit, each asking the platform for the one-time code
+        // and saying which of how many it is; none of them is named, because
+        // the whole code is one value under one name.
+        expect(screen.cellCount, `${where}: cells`).toBe(6);
+        expect(screen.cellAutocomplete, `${where}: cell autocomplete`).toEqual(
+          Array.from({ length: 6 }, () => "one-time-code"),
+        );
+        expect(screen.cellsLabelled, `${where}: cells labelled`).toBe(true);
+        expect(screen.cellsUnnamed, `${where}: cells unnamed`).toBe(true);
+        // Two submits: the check first — so Enter still verifies — then the
+        // resend, which is only tellable apart by the name it posts under.
+        expect(screen.submits.length, `${where}: submits`).toBe(2);
+        expect(screen.submits[0]!.name, `${where}: the check posts no intent`).toBe("");
+        expect(screen.submits[1]!.name, `${where}: the resend's name`).toBe("intent");
+        expect(screen.submits[1]!.value, `${where}: the resend's value`).toBe("resend");
+        // …and `intent` is a button, never a field: a hidden input of that
+        // name would post on *both* submits and the branch would misread the
+        // check as a resend.
+        expect(screen.fieldNames.includes("intent"), `${where}: no field is named intent`).toBe(
+          false,
+        );
+        // A screen is the whole route, so it has a top-level heading and the
+        // headings under it descend one rank at a time. The card's title is
+        // that `h1` (it is what the page is *called*), which is why the block
+        // takes `titleLevel` rather than the screen printing a second one.
+        expect(screen.headingLevels[0], `${where}: first heading`).toBe(1);
+        for (const [i, level] of screen.headingLevels.entries()) {
+          if (i === 0) continue;
+          expect(
+            level,
+            `${where}: heading ${i + 1} of ${screen.headingLevels.join("/")}`,
+          ).toBeLessThanOrEqual(screen.headingLevels[i - 1]! + 1);
+        }
+      }
+
+      // A rejected code is the page's answer, not the card's: only the copy
+      // handed one shows it, and it shows it twice over — every cell marked
+      // invalid *and* a reason said in words, because a state carried by a
+      // border colour alone has not been said to everyone.
+      for (const [index, screen] of screens.entries()) {
+        const where = `${width}px, ${TABS[index]}`;
+        expect(screen.cellsInvalid, `${where}: cells invalid`).toBe(index === REJECTED_COPY);
+        expect(screen.codeAlert.length > 0, `${where}: code alert`).toBe(index === REJECTED_COPY);
+      }
+
+      // …and so is the countdown: the copy still waiting says how long in the
+      // resend's own label and disables it, rather than leaving a button that
+      // looks pressable and quietly does nothing.
+      for (const [index, screen] of screens.entries()) {
+        const where = `${width}px, ${TABS[index]}`;
+        const resend = screen.submits[1]!;
+        if (index === COUNTING_DOWN_COPY) {
+          expect(resend.disabled, `${where}: resend locked`).toBe(true);
+          expect(resend.text, `${where}: resend says how long`).toMatch(/\d+s$/);
+        } else {
+          expect(resend.text, `${where}: resend offers a new code`).toBe("Send a new code");
+        }
+      }
+    });
+  }
+});
+
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`verify — ${scheme}`, () => {
     test.use({ colorScheme: scheme });
-
-    for (const width of WIDTHS) {
-      test(`lays itself out from its container at ${width}px`, async ({ page }) => {
-        await page.setViewportSize({ width, height: 1200 });
-        await page.goto(PAGE, { waitUntil: "networkidle" });
-        await page.evaluate(() => document.fonts.ready.then(() => true));
-        await hydrated(page);
-
-        expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(
-          scheme === "dark",
-        );
-
-        // One tab, one mounted copy: walk the tabs in order, so `screens[i]` is
-        // the copy `TABS[i]` mounted.
-        const screens: ScreenMetrics[] = [];
-        for (const tab of TABS) {
-          await showTab(page, tab);
-          const mounted = await screenMetrics(page, tab);
-          expect(mounted, `${scheme} ${width}px, ${tab}: mounted copies`).toHaveLength(1);
-          screens.push(mounted[0]!);
-        }
-
-        // The three frame widths are fixed by the demo, so at every viewport its
-        // width tabs hold one copy below the first step and one past the last.
-        const widths = screens.map((s) => s.containerWidth);
-        expect(
-          widths.some((w) => w < CONTAINER_SM),
-          `${scheme} ${width}px: a copy below @sm`,
-        ).toBe(true);
-        expect(
-          widths.some((w) => w >= CONTAINER_MD),
-          `${scheme} ${width}px: a copy at or above @md`,
-        ).toBe(true);
-
-        for (const [index, screen] of screens.entries()) {
-          const where = `${scheme} ${width}px, ${TABS[index]} (${screen.containerWidth}px)`;
-          expect(screen.mastheadDisplay, `${where}: masthead`).toBe(
-            screen.containerWidth >= CONTAINER_SM ? "flex" : "grid",
-          );
-          expect(screen.footerDisplay, `${where}: footer`).toBe(
-            screen.containerWidth >= CONTAINER_MD ? "flex" : "grid",
-          );
-          // The card is the only thing in the middle, centred in it both ways.
-          expect(screen.cardOffCentreX, `${where}: card centred across`).toBeLessThanOrEqual(1);
-          expect(screen.cardOffCentreY, `${where}: card centred down`).toBeLessThanOrEqual(1);
-          // Full-viewport is a height: the screen fills the window it is given.
-          // On this page each frame stands in for that window (the demo says so
-          // and overrides `min-h-dvh` to the frame's own height); what is being
-          // held here is that the screen still fills it, top to bottom.
-          expect(screen.rootHeight, `${where}: root height`).toBeGreaterThanOrEqual(
-            screen.frameHeight,
-          );
-          // The code and the address it was sent to — and no password of either
-          // kind, because whoever is here has already chosen one.
-          expect(screen.fieldNames, `${where}: fields`).toEqual(["email", "code"]);
-          expect(screen.emailInputType, `${where}: address control`).toBe("hidden");
-          expect(screen.codeInputHidden, `${where}: code control`).toBe(true);
-          // One cell per digit, each asking the platform for the one-time code
-          // and saying which of how many it is; none of them is named, because
-          // the whole code is one value under one name.
-          expect(screen.cellCount, `${where}: cells`).toBe(6);
-          expect(screen.cellAutocomplete, `${where}: cell autocomplete`).toEqual(
-            Array.from({ length: 6 }, () => "one-time-code"),
-          );
-          expect(screen.cellsLabelled, `${where}: cells labelled`).toBe(true);
-          expect(screen.cellsUnnamed, `${where}: cells unnamed`).toBe(true);
-          // Two submits: the check first — so Enter still verifies — then the
-          // resend, which is only tellable apart by the name it posts under.
-          expect(screen.submits.length, `${where}: submits`).toBe(2);
-          expect(screen.submits[0]!.name, `${where}: the check posts no intent`).toBe("");
-          expect(screen.submits[1]!.name, `${where}: the resend's name`).toBe("intent");
-          expect(screen.submits[1]!.value, `${where}: the resend's value`).toBe("resend");
-          // …and `intent` is a button, never a field: a hidden input of that
-          // name would post on *both* submits and the branch would misread the
-          // check as a resend.
-          expect(screen.fieldNames.includes("intent"), `${where}: no field is named intent`).toBe(
-            false,
-          );
-          // A screen is the whole route, so it has a top-level heading and the
-          // headings under it descend one rank at a time. The card's title is
-          // that `h1` (it is what the page is *called*), which is why the block
-          // takes `titleLevel` rather than the screen printing a second one.
-          expect(screen.headingLevels[0], `${where}: first heading`).toBe(1);
-          for (const [i, level] of screen.headingLevels.entries()) {
-            if (i === 0) continue;
-            expect(
-              level,
-              `${where}: heading ${i + 1} of ${screen.headingLevels.join("/")}`,
-            ).toBeLessThanOrEqual(screen.headingLevels[i - 1]! + 1);
-          }
-        }
-
-        // A rejected code is the page's answer, not the card's: only the copy
-        // handed one shows it, and it shows it twice over — every cell marked
-        // invalid *and* a reason said in words, because a state carried by a
-        // border colour alone has not been said to everyone.
-        for (const [index, screen] of screens.entries()) {
-          const where = `${scheme} ${width}px, ${TABS[index]}`;
-          expect(screen.cellsInvalid, `${where}: cells invalid`).toBe(index === REJECTED_COPY);
-          expect(screen.codeAlert.length > 0, `${where}: code alert`).toBe(index === REJECTED_COPY);
-        }
-
-        // …and so is the countdown: the copy still waiting says how long in the
-        // resend's own label and disables it, rather than leaving a button that
-        // looks pressable and quietly does nothing.
-        for (const [index, screen] of screens.entries()) {
-          const where = `${scheme} ${width}px, ${TABS[index]}`;
-          const resend = screen.submits[1]!;
-          if (index === COUNTING_DOWN_COPY) {
-            expect(resend.disabled, `${where}: resend locked`).toBe(true);
-            expect(resend.text, `${where}: resend says how long`).toMatch(/\d+s$/);
-          } else {
-            expect(resend.text, `${where}: resend offers a new code`).toBe("Send a new code");
-          }
-        }
-      });
-    }
 
     test("clears AA contrast on every text it paints", async ({ page }) => {
       await page.goto(PAGE, { waitUntil: "networkidle" });

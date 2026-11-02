@@ -1,6 +1,6 @@
 /**
  * The portfolio header block, checked on the built docs page at the three
- * widths of the responsive policy (375 / 768 / 1280) in both colour schemes. It
+ * widths of the responsive policy (375 / 768 / 1280). It
  * asserts text and computed styles; no screenshot baseline is committed.
  *
  * Four claims:
@@ -289,161 +289,202 @@ async function contrastRatios(
   );
 }
 
+// Geometry and logic, which no colour changes: one pass is enough.
+test.describe("portfolio header — either scheme", () => {
+  for (const width of WIDTHS) {
+    test(`lays itself out from its container at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1200 });
+      await page.goto(PAGE, { waitUntil: "networkidle" });
+      await page.evaluate(() => document.fonts.ready.then(() => true));
+
+      const blocks: Array<BlockMetrics & { state: State }> = [];
+      for (const state of STATES) {
+        await showState(page, state);
+        const mounted = await blockMetrics(page, state);
+        expect(mounted, `${state}: mounted copies`).toHaveLength(1);
+        const block = mounted[0]!;
+        blocks.push({ ...block, state });
+        const where = `${width}px, ${state} (${block.containerWidth}px)`;
+        const wide = block.containerWidth >= CONTAINER_LG;
+
+        expect(block.paddingTop, `${where}: room above`).toBe(wide ? 80 : 48);
+        expect(block.offCentre, `${where}: centred`).toBeLessThan(1);
+        expect(block.alert, `${where}: error announced`).toBe(state === "error");
+
+        if (state === "loading") {
+          expect(block.placeholders, `${where}: placeholders`).toBe(9);
+          expect(block.name, `${where}: no name while loading`).toBeNull();
+          expect(block.buttons, `${where}: no buttons while loading`).toEqual([]);
+        } else if (state === "error") {
+          expect(block.name, `${where}: no name`).toBeNull();
+          expect(block.buttons, `${where}: retry only`).toEqual(["Try again"]);
+          expect(block.buttonVariants, `${where}: retry variant`).toEqual(["outline"]);
+        } else if (state === "empty") {
+          expect(block.name, `${where}: name`).toBe(NAME);
+          expect(block.role, `${where}: no role`).toBeNull();
+          expect(block.bio, `${where}: no bio`).toBeNull();
+          expect(block.availability, `${where}: no availability`).toBeNull();
+          expect(block.initials, `${where}: no avatar`).toBeNull();
+          expect(block.links, `${where}: no links`).toEqual([]);
+          expect(block.nav, `${where}: no nav`).toBeNull();
+          expect(block.gap, `${where}: gap between parts`).toBe(wide ? 32 : 24);
+        } else {
+          expect(block.name, `${where}: name`).toBe(NAME);
+          expect(block.serifName, `${where}: serif name`).toBe(true);
+          expect(block.role, `${where}: role`).toBe(ROLE);
+          expect(block.bio, `${where}: bio`).toBe(BIO);
+          expect(block.availability, `${where}: availability`).toBe(AVAILABILITY);
+          expect(block.availabilityVariant, `${where}: availability status`).toBe("success");
+          expect(block.initials, `${where}: avatar initials`).toBe(INITIALS);
+          expect(block.avatarSize, `${where}: lg avatar`).toBe(48);
+          expect(block.links, `${where}: links`).toEqual(LINKS);
+          expect(block.nav, `${where}: named nav`).toBe("Links");
+          expect(block.linkState, `${where}: links`).toBe(state === "disabled" ? "inert" : "live");
+          expect(block.buttons, `${where}: no buttons`).toEqual([]);
+          expect(block.gap, `${where}: gap between parts`).toBe(wide ? 32 : 24);
+          expect(block.avatarPlacement, `${where}: avatar`).toBe(
+            block.containerWidth >= CONTAINER_MD ? "beside" : "above",
+          );
+        }
+
+        // The 50rem frame scrolls inside itself; the panel holding the demo
+        // never pushes the page sideways.
+        const panel = await page.evaluate((state) => {
+          const el = document
+            .querySelector(`[data-demo-state="${state}"]`)!
+            .closest(".preview-panel--demo") as HTMLElement;
+          return { scroll: el.scrollWidth, client: el.clientWidth };
+        }, state);
+        expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
+      }
+
+      const withName = blocks.filter((b) => b.name !== null);
+
+      // The name is one size below `@md` and one larger size from it on.
+      const nameBelow = new Set(
+        withName.filter((b) => b.containerWidth < CONTAINER_MD).map((b) => b.nameSize),
+      );
+      const nameAbove = new Set(
+        withName.filter((b) => b.containerWidth >= CONTAINER_MD).map((b) => b.nameSize),
+      );
+      expect(nameBelow.size, "one name size below @md").toBe(1);
+      expect(nameAbove.size, "one name size from @md").toBe(1);
+      expect([...nameAbove][0]!, "the name steps up at @md").toBeGreaterThan([...nameBelow][0]!);
+
+      // The bio is one size below `@sm` and one larger size from it on.
+      const withBio = blocks.filter((b) => b.bio !== null);
+      const bioBelow = new Set(
+        withBio.filter((b) => b.containerWidth < CONTAINER_SM).map((b) => b.bioSize),
+      );
+      const bioAbove = new Set(
+        withBio.filter((b) => b.containerWidth >= CONTAINER_SM).map((b) => b.bioSize),
+      );
+      expect(bioBelow.size, "one bio size below @sm").toBe(1);
+      expect(bioAbove.size, "one bio size from @sm").toBe(1);
+      expect([...bioAbove][0]!, "the bio steps up at @sm").toBeGreaterThan([...bioBelow][0]!);
+
+      // The role steps up with the bio and matches its size at every step, so
+      // it never reads smaller than the text under it.
+      for (const b of withBio) {
+        expect(b.roleSize, `${b.state}: role size`).toBe(b.bioSize);
+      }
+
+      // Each step is exercised on both sides at every viewport, so a step that
+      // silently stopped firing cannot pass this file.
+      const containerWidths = withBio.map((b) => b.containerWidth);
+      for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
+        expect(
+          containerWidths.some((w) => w < step),
+          `a copy under ${step}px`,
+        ).toBe(true);
+        expect(
+          containerWidths.some((w) => w >= step),
+          `a copy over ${step}px`,
+        ).toBe(true);
+      }
+    });
+  }
+
+  test("sits in the middle of its preview", async ({ page }) => {
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    for (const state of ["default", "empty", "loading", "error", "disabled"] as const) {
+      await showState(page, state);
+      const gaps = await page.evaluate(
+        ({ state, selector }) => {
+          const wrapper = document.querySelector(`[data-demo-state="${state}"]`)!;
+          const panel = wrapper.closest(".preview-panel--demo")!.getBoundingClientRect();
+          const block = wrapper.querySelector(selector)!;
+          const content = [...block.firstElementChild!.children]
+            .filter((el) => !el.classList.contains("sr-only"))
+            .map((el) => el.getBoundingClientRect());
+          const top = Math.min(...content.map((r) => r.top));
+          const bottom = Math.max(...content.map((r) => r.bottom));
+          const left = Math.min(...content.map((r) => r.left));
+          const right = Math.max(...content.map((r) => r.right));
+          return {
+            above: top - panel.top,
+            below: panel.bottom - bottom,
+            before: left - panel.left,
+            after: panel.right - right,
+          };
+        },
+        { state, selector: BLOCK },
+      );
+      expect(Math.abs(gaps.above - gaps.below), `${state}: vertical`).toBeLessThan(2);
+      expect(Math.abs(gaps.before - gaps.after), `${state}: horizontal`).toBeLessThan(2);
+    }
+  });
+
+  test("keeps disabled links out of reach", async ({ page }) => {
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await showState(page, "disabled");
+    const links = page
+      .locator(`[data-demo-state="disabled"] ${BLOCK}`)
+      .getByRole("navigation", { name: "Links" })
+      .getByRole("link");
+    await expect(links).toHaveCount(LINKS.length);
+
+    for (const label of LINKS) {
+      const link = links.filter({ hasText: label });
+      await expect(link).toHaveAttribute("aria-disabled", "true");
+      await expect(link).not.toHaveAttribute("href");
+
+      // A link with no href takes no focus, so the keyboard skips it.
+      await link.evaluate((el) => (el as HTMLElement).focus());
+      await expect(link).not.toBeFocused();
+    }
+
+    // No underline on hover, and the not-allowed cursor of an inert control.
+    const link = links.first();
+    await link.hover();
+    const style = await link.evaluate((el) => ({
+      decoration: getComputedStyle(el).textDecorationLine,
+      cursor: getComputedStyle(el).cursor,
+    }));
+    expect(style.decoration, `no hover underline`).toBe("none");
+    expect(style.cursor, `not-allowed cursor`).toBe("not-allowed");
+  });
+
+  test("treats an empty error string as no error", async ({ page }) => {
+    await page.goto(PAGE, { waitUntil: "networkidle" });
+    await showState(page, "error");
+    const block = page.locator(`[data-demo-state="error"] ${BLOCK}`);
+
+    // The demo's retry clears its message to "", the way a consumer holding
+    // the error as a string does once the load succeeds.
+    await block.getByRole("button", { name: "Try again" }).click();
+
+    await expect(block.locator('[data-scope="alert"]')).toHaveCount(0);
+    await expect(block.getByRole("heading", { level: 1 })).toHaveText(NAME);
+    await expect(block.getByRole("navigation", { name: "Links" }).getByRole("link")).toHaveCount(
+      LINKS.length,
+    );
+  });
+});
+
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`portfolio header — ${scheme}`, () => {
     test.use({ colorScheme: scheme });
-
-    for (const width of WIDTHS) {
-      test(`lays itself out from its container at ${width}px`, async ({ page }) => {
-        await page.setViewportSize({ width, height: 1200 });
-        await page.goto(PAGE, { waitUntil: "networkidle" });
-        await page.evaluate(() => document.fonts.ready.then(() => true));
-
-        expect(await page.evaluate(() => document.documentElement.classList.contains("dark"))).toBe(
-          scheme === "dark",
-        );
-
-        const blocks: Array<BlockMetrics & { state: State }> = [];
-        for (const state of STATES) {
-          await showState(page, state);
-          const mounted = await blockMetrics(page, state);
-          expect(mounted, `${state}: mounted copies`).toHaveLength(1);
-          const block = mounted[0]!;
-          blocks.push({ ...block, state });
-          const where = `${scheme} ${width}px, ${state} (${block.containerWidth}px)`;
-          const wide = block.containerWidth >= CONTAINER_LG;
-
-          expect(block.paddingTop, `${where}: room above`).toBe(wide ? 80 : 48);
-          expect(block.offCentre, `${where}: centred`).toBeLessThan(1);
-          expect(block.alert, `${where}: error announced`).toBe(state === "error");
-
-          if (state === "loading") {
-            expect(block.placeholders, `${where}: placeholders`).toBe(9);
-            expect(block.name, `${where}: no name while loading`).toBeNull();
-            expect(block.buttons, `${where}: no buttons while loading`).toEqual([]);
-          } else if (state === "error") {
-            expect(block.name, `${where}: no name`).toBeNull();
-            expect(block.buttons, `${where}: retry only`).toEqual(["Try again"]);
-            expect(block.buttonVariants, `${where}: retry variant`).toEqual(["outline"]);
-          } else if (state === "empty") {
-            expect(block.name, `${where}: name`).toBe(NAME);
-            expect(block.role, `${where}: no role`).toBeNull();
-            expect(block.bio, `${where}: no bio`).toBeNull();
-            expect(block.availability, `${where}: no availability`).toBeNull();
-            expect(block.initials, `${where}: no avatar`).toBeNull();
-            expect(block.links, `${where}: no links`).toEqual([]);
-            expect(block.nav, `${where}: no nav`).toBeNull();
-            expect(block.gap, `${where}: gap between parts`).toBe(wide ? 32 : 24);
-          } else {
-            expect(block.name, `${where}: name`).toBe(NAME);
-            expect(block.serifName, `${where}: serif name`).toBe(true);
-            expect(block.role, `${where}: role`).toBe(ROLE);
-            expect(block.bio, `${where}: bio`).toBe(BIO);
-            expect(block.availability, `${where}: availability`).toBe(AVAILABILITY);
-            expect(block.availabilityVariant, `${where}: availability status`).toBe("success");
-            expect(block.initials, `${where}: avatar initials`).toBe(INITIALS);
-            expect(block.avatarSize, `${where}: lg avatar`).toBe(48);
-            expect(block.links, `${where}: links`).toEqual(LINKS);
-            expect(block.nav, `${where}: named nav`).toBe("Links");
-            expect(block.linkState, `${where}: links`).toBe(
-              state === "disabled" ? "inert" : "live",
-            );
-            expect(block.buttons, `${where}: no buttons`).toEqual([]);
-            expect(block.gap, `${where}: gap between parts`).toBe(wide ? 32 : 24);
-            expect(block.avatarPlacement, `${where}: avatar`).toBe(
-              block.containerWidth >= CONTAINER_MD ? "beside" : "above",
-            );
-          }
-
-          // The 50rem frame scrolls inside itself; the panel holding the demo
-          // never pushes the page sideways.
-          const panel = await page.evaluate((state) => {
-            const el = document
-              .querySelector(`[data-demo-state="${state}"]`)!
-              .closest(".preview-panel--demo") as HTMLElement;
-            return { scroll: el.scrollWidth, client: el.clientWidth };
-          }, state);
-          expect(panel.scroll, `${where}: demo panel overflow`).toBeLessThanOrEqual(panel.client);
-        }
-
-        const withName = blocks.filter((b) => b.name !== null);
-
-        // The name is one size below `@md` and one larger size from it on.
-        const nameBelow = new Set(
-          withName.filter((b) => b.containerWidth < CONTAINER_MD).map((b) => b.nameSize),
-        );
-        const nameAbove = new Set(
-          withName.filter((b) => b.containerWidth >= CONTAINER_MD).map((b) => b.nameSize),
-        );
-        expect(nameBelow.size, "one name size below @md").toBe(1);
-        expect(nameAbove.size, "one name size from @md").toBe(1);
-        expect([...nameAbove][0]!, "the name steps up at @md").toBeGreaterThan([...nameBelow][0]!);
-
-        // The bio is one size below `@sm` and one larger size from it on.
-        const withBio = blocks.filter((b) => b.bio !== null);
-        const bioBelow = new Set(
-          withBio.filter((b) => b.containerWidth < CONTAINER_SM).map((b) => b.bioSize),
-        );
-        const bioAbove = new Set(
-          withBio.filter((b) => b.containerWidth >= CONTAINER_SM).map((b) => b.bioSize),
-        );
-        expect(bioBelow.size, "one bio size below @sm").toBe(1);
-        expect(bioAbove.size, "one bio size from @sm").toBe(1);
-        expect([...bioAbove][0]!, "the bio steps up at @sm").toBeGreaterThan([...bioBelow][0]!);
-
-        // The role steps up with the bio and matches its size at every step, so
-        // it never reads smaller than the text under it.
-        for (const b of withBio) {
-          expect(b.roleSize, `${b.state}: role size`).toBe(b.bioSize);
-        }
-
-        // Each step is exercised on both sides at every viewport, so a step that
-        // silently stopped firing cannot pass this file.
-        const containerWidths = withBio.map((b) => b.containerWidth);
-        for (const step of [CONTAINER_SM, CONTAINER_MD, CONTAINER_LG]) {
-          expect(
-            containerWidths.some((w) => w < step),
-            `a copy under ${step}px`,
-          ).toBe(true);
-          expect(
-            containerWidths.some((w) => w >= step),
-            `a copy over ${step}px`,
-          ).toBe(true);
-        }
-      });
-    }
-
-    test("sits in the middle of its preview", async ({ page }) => {
-      await page.goto(PAGE, { waitUntil: "networkidle" });
-      for (const state of ["default", "empty", "loading", "error", "disabled"] as const) {
-        await showState(page, state);
-        const gaps = await page.evaluate(
-          ({ state, selector }) => {
-            const wrapper = document.querySelector(`[data-demo-state="${state}"]`)!;
-            const panel = wrapper.closest(".preview-panel--demo")!.getBoundingClientRect();
-            const block = wrapper.querySelector(selector)!;
-            const content = [...block.firstElementChild!.children]
-              .filter((el) => !el.classList.contains("sr-only"))
-              .map((el) => el.getBoundingClientRect());
-            const top = Math.min(...content.map((r) => r.top));
-            const bottom = Math.max(...content.map((r) => r.bottom));
-            const left = Math.min(...content.map((r) => r.left));
-            const right = Math.max(...content.map((r) => r.right));
-            return {
-              above: top - panel.top,
-              below: panel.bottom - bottom,
-              before: left - panel.left,
-              after: panel.right - right,
-            };
-          },
-          { state, selector: BLOCK },
-        );
-        expect(Math.abs(gaps.above - gaps.below), `${scheme} ${state}: vertical`).toBeLessThan(2);
-        expect(Math.abs(gaps.before - gaps.after), `${scheme} ${state}: horizontal`).toBeLessThan(
-          2,
-        );
-      }
-    });
 
     test("fits the name-only header to its name", async ({ page }) => {
       await page.goto(PAGE, { waitUntil: "networkidle" });
@@ -519,36 +560,6 @@ for (const scheme of ["light", "dark"] as const) {
       expect(outline.style, `${scheme}: focus ring`).not.toBe("none");
     });
 
-    test("keeps disabled links out of reach", async ({ page }) => {
-      await page.goto(PAGE, { waitUntil: "networkidle" });
-      await showState(page, "disabled");
-      const links = page
-        .locator(`[data-demo-state="disabled"] ${BLOCK}`)
-        .getByRole("navigation", { name: "Links" })
-        .getByRole("link");
-      await expect(links).toHaveCount(LINKS.length);
-
-      for (const label of LINKS) {
-        const link = links.filter({ hasText: label });
-        await expect(link).toHaveAttribute("aria-disabled", "true");
-        await expect(link).not.toHaveAttribute("href");
-
-        // A link with no href takes no focus, so the keyboard skips it.
-        await link.evaluate((el) => (el as HTMLElement).focus());
-        await expect(link).not.toBeFocused();
-      }
-
-      // No underline on hover, and the not-allowed cursor of an inert control.
-      const link = links.first();
-      await link.hover();
-      const style = await link.evaluate((el) => ({
-        decoration: getComputedStyle(el).textDecorationLine,
-        cursor: getComputedStyle(el).cursor,
-      }));
-      expect(style.decoration, `${scheme}: no hover underline`).toBe("none");
-      expect(style.cursor, `${scheme}: not-allowed cursor`).toBe("not-allowed");
-    });
-
     test("announces the loading header once and the failed load as an alert", async ({ page }) => {
       await page.goto(PAGE, { waitUntil: "networkidle" });
       await showState(page, "loading");
@@ -585,22 +596,6 @@ for (const scheme of ["light", "dark"] as const) {
       await expect(block.getByRole("heading")).toHaveCount(1);
       // The block is not a page landmark: its <header> sits inside a section.
       await expect(block.getByRole("banner")).toHaveCount(0);
-    });
-
-    test("treats an empty error string as no error", async ({ page }) => {
-      await page.goto(PAGE, { waitUntil: "networkidle" });
-      await showState(page, "error");
-      const block = page.locator(`[data-demo-state="error"] ${BLOCK}`);
-
-      // The demo's retry clears its message to "", the way a consumer holding
-      // the error as a string does once the load succeeds.
-      await block.getByRole("button", { name: "Try again" }).click();
-
-      await expect(block.locator('[data-scope="alert"]')).toHaveCount(0);
-      await expect(block.getByRole("heading", { level: 1 })).toHaveText(NAME);
-      await expect(block.getByRole("navigation", { name: "Links" }).getByRole("link")).toHaveCount(
-        LINKS.length,
-      );
     });
   });
 }
