@@ -33,6 +33,21 @@ overrides:
   # GHSA-23hp-3jrh-7fpw: node-tar decompression DoS, pulled transitively by
   # @astrojs/vercel -> @vercel/nft -> @mapbox/node-pre-gyp.
   tar: ">=7.5.19"
+  # GHSA-9wv6-86v2-598j: path-to-regexp ReDoS. @vercel/routing-utils pins 6.1.0
+  # exactly, and its latest release still does.
+  "@vercel/routing-utils>path-to-regexp": "6.3.0"
+  # GHSA-mrhx-c7xc-m3w5: zod memory exhaustion. @vercel/cli-config pins 4.1.11
+  # exactly, and its latest release still does.
+  "@vercel/cli-config>zod": "4.6.7"
+  # GHSA-5gmw-xhrv-c9v3, GHSA-85c8-ppgw-ccpr: tinypool prototype pollution to
+  # RCE. Vitest 3 asks for ^1.1.1 and the fix is only in 2.x, whose API matches
+  # what Vitest 3 calls. Drop this when Vitest moves to 4, which has no tinypool.
+  vitest>tinypool: "2.1.2"
+  # GHSA-g7r4-m6w7-qqqr: esbuild. tsup 8.5 asks for ^0.27 and the fix is in 0.28.1.
+  tsup>esbuild: "0.28.2"
+  # GHSA-3g3m-2fjr-6pw4: glob keeps walking after an abort. @vercel/nft and
+  # js-beautify ask for ^13 and the fix is only in 14.
+  "glob@13": "14.0.2"
 
 onlyBuiltDependencies:
   - esbuild
