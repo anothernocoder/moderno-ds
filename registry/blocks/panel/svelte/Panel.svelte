@@ -73,7 +73,9 @@
       <Alert.Root variant="error">
         <Alert.Content>
           <Alert.Title>{error}</Alert.Title>
-          <Alert.Description>Your settings are safe; only this view failed to load.</Alert.Description>
+          <Alert.Description
+            >Your settings are safe; only this view failed to load.</Alert.Description
+          >
           <Alert.Action>
             <Button type="button" variant="outline" size="sm" {disabled} onclick={onretry}>
               Try again
@@ -101,7 +103,9 @@
       <Card.Root>
         <Card.Header class="items-center text-center">
           <Card.Title>Nothing to set up yet</Card.Title>
-          <Card.Description>Settings appear here once there is something to change.</Card.Description>
+          <Card.Description
+            >Settings appear here once there is something to change.</Card.Description
+          >
         </Card.Header>
       </Card.Root>
     {:else}

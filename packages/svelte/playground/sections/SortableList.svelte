@@ -19,11 +19,7 @@
 <section aria-label="sortable lists">
   <SortableList.Root defaultItems={slides.map((slide) => slide.value)} aria-label="Slides">
     {#each slides as slide (slide.value)}
-      <SortableList.Item
-        value={slide.value}
-        label={slide.label}
-        disabled={slide.value === "title"}
-      >
+      <SortableList.Item value={slide.value} label={slide.label} disabled={slide.value === "title"}>
         <SortableList.ItemHandle />
         <SortableList.ItemTrigger>{slide.label}</SortableList.ItemTrigger>
       </SortableList.Item>

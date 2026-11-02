@@ -61,7 +61,10 @@
   };
 
   const kindIcon: Record<AppBannerKind, string[]> = {
-    impersonation: ["M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2", "M8 7a4 4 0 1 0 8 0a4 4 0 1 0-8 0"],
+    impersonation: [
+      "M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2",
+      "M8 7a4 4 0 1 0 8 0a4 4 0 1 0-8 0",
+    ],
     trial: ["M2 12a10 10 0 1 0 20 0a10 10 0 1 0-20 0", "M12 6v6l4 2"],
     incident: [
       "m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3",
@@ -108,7 +111,9 @@
       <Alert.Icon>{@render icon(kindIcon.incident)}</Alert.Icon>
       <Alert.Content>
         <Alert.Title>{error}</Alert.Title>
-        <Alert.Description>Announcements for your workspace show here once they load.</Alert.Description>
+        <Alert.Description
+          >Announcements for your workspace show here once they load.</Alert.Description
+        >
         <Alert.Action>
           <Button type="button" variant="outline" size="sm" onclick={onretry}>Try again</Button>
         </Alert.Action>
@@ -118,7 +123,10 @@
 
   {#if loading}
     <div role="status" aria-busy="true">
-      <div aria-hidden="true" class="flex items-center gap-3 rounded-lg border border-border bg-card p-4">
+      <div
+        aria-hidden="true"
+        class="flex items-center gap-3 rounded-lg border border-border bg-card p-4"
+      >
         <Skeleton shape="circle" class="size-5 shrink-0" />
         <div class="grid flex-1 gap-2">
           <Skeleton shape="text" class="w-1/3" />
@@ -141,7 +149,9 @@
                 <div class="grid min-w-0 gap-1 @md:block">
                   <Alert.Title class="@md:inline">{banner.title}</Alert.Title>
                   {#if banner.description}
-                    <Alert.Description class="@md:ms-2 @md:inline">{banner.description}</Alert.Description>
+                    <Alert.Description class="@md:ms-2 @md:inline"
+                      >{banner.description}</Alert.Description
+                    >
                   {/if}
                 </div>
                 {#if banner.actionLabel || banner.dismissible}

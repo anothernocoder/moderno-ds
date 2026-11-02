@@ -28,9 +28,9 @@ const onInputValueChange = (details: ComboboxInputValueChangeDetails) => filter(
 <template>
   <Combobox.Root
     :collection="collection"
-    @input-value-change="onInputValueChange"
     multiple
     :default-value="['react', 'vue']"
+    @input-value-change="onInputValueChange"
   >
     <Combobox.Label>Frameworks</Combobox.Label>
     <Combobox.Control>

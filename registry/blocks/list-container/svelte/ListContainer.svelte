@@ -1,5 +1,13 @@
 <script lang="ts">
-  import { Alert, Avatar, Badge, Button, Card, Skeleton, type BadgeVariant } from "@moderno-ui/svelte";
+  import {
+    Alert,
+    Avatar,
+    Badge,
+    Button,
+    Card,
+    Skeleton,
+    type BadgeVariant,
+  } from "@moderno-ui/svelte";
 
   interface ListContainerItem {
     id: string;
@@ -117,7 +125,9 @@
           <Alert.Root variant="error">
             <Alert.Content>
               <Alert.Title>{error}</Alert.Title>
-              <Alert.Description>Your tasks are safe; only this list failed to load.</Alert.Description>
+              <Alert.Description
+                >Your tasks are safe; only this list failed to load.</Alert.Description
+              >
               <Alert.Action>
                 <Button type="button" variant="outline" size="sm" {disabled} onclick={onretry}>
                   Try again
@@ -172,10 +182,14 @@
                   class="col-start-2 mt-2 flex flex-wrap items-center gap-2 @sm:col-start-3 @sm:row-span-2 @sm:row-start-1 @sm:mt-0 @sm:flex-col @sm:items-end @sm:gap-1 @md:flex-row @md:items-center @md:gap-3"
                 >
                   {#if item.status}
-                    <Badge variant={item.statusVariant ?? "neutral"} size="sm" dot>{item.status}</Badge>
+                    <Badge variant={item.statusVariant ?? "neutral"} size="sm" dot
+                      >{item.status}</Badge
+                    >
                   {/if}
                   {#if item.meta}
-                    <span class="text-ui-xs text-muted-foreground @lg:w-24 @lg:text-right">{item.meta}</span>
+                    <span class="text-ui-xs text-muted-foreground @lg:w-24 @lg:text-right"
+                      >{item.meta}</span
+                    >
                   {/if}
                 </div>
               </li>

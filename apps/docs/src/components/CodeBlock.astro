@@ -36,15 +36,13 @@ const id = uid("code");
   <div class="code-block-body">
     <Code code={code} lang={lang} {...shikiConfig} />
   </div>
-  {
-    collapsible && (
-      <label for={id} class="code-expand">
-        <span class="code-expand-more">{t("code.expand")}</span>
-        <span class="code-expand-less">{t("code.collapse")}</span>
-        <ChevronDown aria-hidden="true" size={14} />
-      </label>
-    )
-  }
+  {collapsible && (
+    <label for={id} class="code-expand">
+      <span class="code-expand-more">{t("code.expand")}</span>
+      <span class="code-expand-less">{t("code.collapse")}</span>
+      <ChevronDown aria-hidden="true" size={14} />
+    </label>
+  )}
   <button
     type="button"
     class="code-copy"

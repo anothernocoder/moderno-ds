@@ -46,32 +46,32 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
         <a class="home-btn home-btn--primary" href={`${base}${lang}/installation`}>
           {t("home.getStarted")}
         </a>
-        <a class="home-btn" href={`${base}${lang}/theme-builder`}>{t("nav.themeBuilder")}</a>
+        <a class="home-btn" href={`${base}${lang}/theme-builder`}>
+          {t("nav.themeBuilder")}
+        </a>
       </div>
     </header>
 
-    {
-      sections.map((s) => (
-        <section class="home-section">
-          <h2>
-            {s.group}
-            <span class="home-count">{s.pages.length}</span>
-          </h2>
-          <div class="card-grid">
-            {s.pages.map((p) => (
-              <a class="card" href={`${base}${lang}/${p.slug}`}>
-                <div class="card-head">
-                  <h3>{p.title}</h3>
-                  <p>{short(blurb.get(p.slug))}</p>
-                </div>
-                <div class="card-stage">
-                  <CardArt slug={p.slug} />
-                </div>
-              </a>
-            ))}
-          </div>
-        </section>
-      ))
-    }
+    {sections.map((s) => (
+      <section class="home-section">
+        <h2>
+          {s.group}
+          <span class="home-count">{s.pages.length}</span>
+        </h2>
+        <div class="card-grid">
+          {s.pages.map((p) => (
+            <a class="card" href={`${base}${lang}/${p.slug}`}>
+              <div class="card-head">
+                <h3>{p.title}</h3>
+                <p>{short(blurb.get(p.slug))}</p>
+              </div>
+              <div class="card-stage">
+                <CardArt slug={p.slug} />
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    ))}
   </div>
 </BaseLayout>

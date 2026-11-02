@@ -146,7 +146,9 @@
         <Alert.Root variant="error">
           <Alert.Content>
             <Alert.Title>{error}</Alert.Title>
-            <Alert.Description>Nothing was changed. The people with access keep it.</Alert.Description>
+            <Alert.Description
+              >Nothing was changed. The people with access keep it.</Alert.Description
+            >
             <Alert.Action>
               <Button type="button" variant="outline" size="sm" {disabled} onclick={onretry}>
                 Try again

@@ -146,6 +146,7 @@
    * same send, is dropped.
    */
   function invite(emails: string[]) {
+    // eslint-disable-next-line svelte/prefer-svelte-reactivity -- local to this call, never rendered
     const known = new Set(friends.map((friend) => friend.email.toLowerCase()));
     const fresh = emails.filter((email) => {
       const key = email.toLowerCase();
@@ -156,7 +157,12 @@
     if (fresh.length === 0) return;
     friends = [
       ...friends,
-      ...fresh.map((email) => ({ id: email, name: email.split("@")[0]!, email, status: "Invited" })),
+      ...fresh.map((email) => ({
+        id: email,
+        name: email.split("@")[0]!,
+        email,
+        status: "Invited",
+      })),
     ];
     oninvite?.(fresh);
   }

@@ -225,7 +225,11 @@
   const selected = $derived(selectedIds.filter((id) => rows.some((row) => row.id === id)));
   const pageSelected = $derived(pageRows.filter((row) => selected.includes(row.id)).length);
   const pageChecked = $derived(
-    pageSelected === 0 ? false : pageSelected === pageRows.length ? true : ("indeterminate" as const),
+    pageSelected === 0
+      ? false
+      : pageSelected === pageRows.length
+        ? true
+        : ("indeterminate" as const),
   );
 
   function select(ids: string[]) {
@@ -246,7 +250,8 @@
   function sortBy(column: TableSortColumn) {
     sort = {
       column,
-      direction: sort?.column === column && sort.direction === "ascending" ? "descending" : "ascending",
+      direction:
+        sort?.column === column && sort.direction === "ascending" ? "descending" : "ascending",
     };
     page = 1;
   }
@@ -259,7 +264,14 @@
     aria-sort={direction}
     class="px-2 py-2 font-medium {align === 'end' ? 'text-end' : 'text-start'}"
   >
-    <Button type="button" variant="ghost" size="sm" class="px-2" {disabled} onclick={() => sortBy(column)}>
+    <Button
+      type="button"
+      variant="ghost"
+      size="sm"
+      class="px-2"
+      {disabled}
+      onclick={() => sortBy(column)}
+    >
       {label}
       <span aria-hidden="true" class={direction ? undefined : "text-muted-foreground"}
         >{direction ? sortIndicator[direction] : "↕"}</span
@@ -290,7 +302,11 @@
         </Alert.Content>
       </Alert.Root>
     {:else if loading}
-      <div role="status" aria-busy="true" class="grid divide-y divide-border rounded-lg border border-border">
+      <div
+        role="status"
+        aria-busy="true"
+        class="grid divide-y divide-border rounded-lg border border-border"
+      >
         <span class="sr-only">Loading your invoices…</span>
         {#each Array.from({ length: pageSize }, (_, key) => key) as key (key)}
           <div aria-hidden="true" class="flex items-center gap-4 px-4 py-3">
@@ -323,7 +339,9 @@
                 Clear selection
               </Button>
               <Menu.Root size="sm" onSelect={(details) => onbatchaction?.(details.value, selected)}>
-                <Menu.Trigger {disabled}>Bulk actions <Menu.Indicator>▾</Menu.Indicator></Menu.Trigger>
+                <Menu.Trigger {disabled}
+                  >Bulk actions <Menu.Indicator>▾</Menu.Indicator></Menu.Trigger
+                >
                 <Portal>
                   <Menu.Positioner>
                     <Menu.Content>
@@ -349,7 +367,8 @@
             <thead>
               <tr class="border-b border-border">
                 <th scope="col" class="w-px py-2 ps-4 pe-2 text-start">
-                  <Checkbox.Root class="flex"
+                  <Checkbox.Root
+                    class="flex"
                     checked={pageChecked}
                     {disabled}
                     onCheckedChange={(details) => selectPage(details.checked === true)}
@@ -358,13 +377,18 @@
                       <Checkbox.Indicator>✓</Checkbox.Indicator>
                       <Checkbox.Indicator indeterminate>–</Checkbox.Indicator>
                     </Checkbox.Control>
-                    <Checkbox.Label class="sr-only">Select every invoice on this page</Checkbox.Label>
+                    <Checkbox.Label class="sr-only"
+                      >Select every invoice on this page</Checkbox.Label
+                    >
                     <Checkbox.HiddenInput />
                   </Checkbox.Root>
                 </th>
                 {@render sortableHeader("number", "Invoice", "start")}
                 {@render sortableHeader("customer", "Customer", "start")}
-                <th scope="col" class="hidden px-4 py-2 text-start text-ui-sm font-medium @lg:table-cell">
+                <th
+                  scope="col"
+                  class="hidden px-4 py-2 text-start text-ui-sm font-medium @lg:table-cell"
+                >
                   Issued
                 </th>
                 <th scope="col" class="px-4 py-2 text-start text-ui-sm font-medium">Status</th>
@@ -382,7 +406,8 @@
                   class="border-b border-border transition-colors last:border-b-0 hover:bg-muted data-selected:bg-muted"
                 >
                   <td class="w-px py-3 ps-4 pe-2">
-                    <Checkbox.Root class="flex"
+                    <Checkbox.Root
+                      class="flex"
                       checked={isSelected}
                       {disabled}
                       onCheckedChange={(details) => selectRow(invoice.id, details.checked === true)}
@@ -394,25 +419,39 @@
                       <Checkbox.HiddenInput />
                     </Checkbox.Root>
                   </td>
-                  <th scope="row" class="px-4 py-3 text-start font-medium whitespace-nowrap tabular-nums">
+                  <th
+                    scope="row"
+                    class="px-4 py-3 text-start font-medium whitespace-nowrap tabular-nums"
+                  >
                     {invoice.number}
                   </th>
                   <td class="px-4 py-3 whitespace-nowrap">
                     <span class="block">{invoice.customer}</span>
-                    <span class="hidden text-ui-sm text-muted-foreground @lg:block">{invoice.email}</span>
+                    <span class="hidden text-ui-sm text-muted-foreground @lg:block"
+                      >{invoice.email}</span
+                    >
                   </td>
-                  <td class="hidden px-4 py-3 whitespace-nowrap text-muted-foreground @lg:table-cell">
+                  <td
+                    class="hidden px-4 py-3 whitespace-nowrap text-muted-foreground @lg:table-cell"
+                  >
                     {invoice.issued}
                   </td>
                   <td class="px-4 py-3">
-                    <Badge variant={invoice.statusVariant ?? "neutral"} size="sm" dot>{invoice.status}</Badge>
+                    <Badge variant={invoice.statusVariant ?? "neutral"} size="sm" dot
+                      >{invoice.status}</Badge
+                    >
                   </td>
                   <td class="px-4 py-3 text-end font-medium whitespace-nowrap tabular-nums">
                     {formatAmount(invoice.amount)}
                   </td>
                   <td class="w-px py-3 ps-2 pe-4 text-end">
-                    <Menu.Root size="sm" onSelect={(details) => onrowaction?.(details.value, invoice.id)}>
-                      <Menu.Trigger aria-label="Actions for {invoice.number}" {disabled}>⋯</Menu.Trigger>
+                    <Menu.Root
+                      size="sm"
+                      onSelect={(details) => onrowaction?.(details.value, invoice.id)}
+                    >
+                      <Menu.Trigger aria-label="Actions for {invoice.number}" {disabled}
+                        >⋯</Menu.Trigger
+                      >
                       <Portal>
                         <Menu.Positioner>
                           <Menu.Content>
@@ -443,7 +482,9 @@
               {#snippet render(pagination)}
                 {#each pagination().pages as item, index (index)}
                   {#if item.type === "page"}
-                    <Pagination.Item {...item} disabled={disabled || undefined}>{item.value}</Pagination.Item>
+                    <Pagination.Item {...item} disabled={disabled || undefined}
+                      >{item.value}</Pagination.Item
+                    >
                   {:else}
                     <Pagination.Ellipsis {index}>…</Pagination.Ellipsis>
                   {/if}

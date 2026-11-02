@@ -3,7 +3,10 @@
 </script>
 
 <Splitter.Root
-  panels={[{ id: "sidebar", minSize: 20, collapsible: true }, { id: "main", minSize: 40 }]}
+  panels={[
+    { id: "sidebar", minSize: 20, collapsible: true },
+    { id: "main", minSize: 40 },
+  ]}
   defaultSize={[30, 70]}
 >
   <Splitter.Panel id="sidebar">Sidebar</Splitter.Panel>

@@ -20,6 +20,8 @@
   </Callout.Icon>
   <Callout.Content>
     <Callout.Title>Good to know</Callout.Title>
-    <Callout.Description>Exports run overnight, so today's changes show up tomorrow.</Callout.Description>
+    <Callout.Description
+      >Exports run overnight, so today's changes show up tomorrow.</Callout.Description
+    >
   </Callout.Content>
 </Callout.Root>

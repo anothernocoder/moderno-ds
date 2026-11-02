@@ -54,7 +54,10 @@
       </div>
     </div>
   {:else}
-    <div data-media-position={mediaPosition} class="flex flex-col items-start gap-3 @sm:flex-row @sm:gap-4 @sm:data-[media-position=end]:flex-row-reverse">
+    <div
+      data-media-position={mediaPosition}
+      class="flex flex-col items-start gap-3 @sm:flex-row @sm:gap-4 @sm:data-[media-position=end]:flex-row-reverse"
+    >
       <Avatar.Root>
         <Avatar.Fallback>{initials}</Avatar.Fallback>
         {#if avatarUrl}

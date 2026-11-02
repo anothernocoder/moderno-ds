@@ -128,7 +128,9 @@
       <Alert.Root variant="error">
         <Alert.Content>
           <Alert.Title>{error}</Alert.Title>
-          <Alert.Description>The rest of the page still works. Try again in a moment.</Alert.Description>
+          <Alert.Description
+            >The rest of the page still works. Try again in a moment.</Alert.Description
+          >
           <Alert.Action>
             <Button type="button" variant="outline" size="sm" {disabled} onclick={onretry}>
               Try again
@@ -137,7 +139,11 @@
         </Alert.Content>
       </Alert.Root>
     {:else if loading}
-      <div role="status" aria-busy="true" class="grid gap-6 @md:grid-cols-2 @lg:grid-cols-3 @lg:gap-8">
+      <div
+        role="status"
+        aria-busy="true"
+        class="grid gap-6 @md:grid-cols-2 @lg:grid-cols-3 @lg:gap-8"
+      >
         <span class="sr-only">Loading the projects…</span>
         {#each placeholders as key (key)}
           <Card.Root aria-hidden="true" class="overflow-hidden">

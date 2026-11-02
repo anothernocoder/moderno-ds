@@ -76,11 +76,11 @@ function handleSearch(event: Event) {
               >https://</span
             >
             <Field.Input
+              v-model="websiteText"
               name="website"
               inputmode="url"
               autocomplete="off"
               placeholder="your-shop.com"
-              v-model="websiteText"
               class="min-w-0 flex-1 rounded-s-none"
             />
           </div>
@@ -96,10 +96,10 @@ function handleSearch(event: Event) {
               >$</span
             >
             <Field.Input
+              v-model="priceText"
               name="price"
               inputmode="decimal"
               placeholder="0.00"
-              v-model="priceText"
               class="min-w-0 flex-1 rounded-none"
             />
             <span
@@ -139,10 +139,10 @@ function handleSearch(event: Event) {
             <Field.Label>Find a product</Field.Label>
             <div class="flex">
               <Field.Input
+                v-model="queryText"
                 name="query"
                 type="search"
                 placeholder="Name or SKU"
-                v-model="queryText"
                 class="min-w-0 flex-1 rounded-e-none"
               />
               <Button

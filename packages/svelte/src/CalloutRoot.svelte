@@ -17,6 +17,11 @@
   let { variant, role, children, ...rest }: CalloutRootProps = $props();
 </script>
 
-<div {...rest} role={role ?? "note"} {...partAttrs("callout", "root")} {...calloutRecipe({ variant })}>
+<div
+  {...rest}
+  role={role ?? "note"}
+  {...partAttrs("callout", "root")}
+  {...calloutRecipe({ variant })}
+>
   {@render children?.()}
 </div>

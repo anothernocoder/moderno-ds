@@ -166,7 +166,9 @@
                           class="flex flex-wrap items-center gap-2 @md:shrink-0 @md:flex-col @md:items-end @md:gap-1 @lg:flex-row @lg:items-center @lg:gap-3"
                         >
                           {#if item.status}
-                            <Badge variant={item.statusVariant ?? "neutral"} dot>{item.status}</Badge>
+                            <Badge variant={item.statusVariant ?? "neutral"} dot
+                              >{item.status}</Badge
+                            >
                           {/if}
                           {#if item.meta}
                             <span class="text-ui-sm text-muted-foreground">{item.meta}</span>

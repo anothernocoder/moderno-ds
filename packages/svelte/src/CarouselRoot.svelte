@@ -15,12 +15,7 @@
     type CarouselSize,
   } from "@moderno-ui/core";
 
-  let {
-    size,
-    autoplay,
-    loop,
-    ...rest
-  }: CarouselRootProps & { size?: CarouselSize } = $props();
+  let { size, autoplay, loop, ...rest }: CarouselRootProps & { size?: CarouselSize } = $props();
 
   // `false` on the server and until the client mounts, so the hydrated markup
   // matches; then it follows the media query.

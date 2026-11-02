@@ -86,13 +86,28 @@
 <div class="demo-state" data-demo-state={example}>
   {#if example === "widths"}
     <div class="demo-widths">
-      <div data-demo-state="narrow" class="demo-viewport" style="--viewport-width: 18rem" data-label="18rem">
+      <div
+        data-demo-state="narrow"
+        class="demo-viewport"
+        style="--viewport-width: 18rem"
+        data-label="18rem"
+      >
         <TimelineStage tracks={threeTracks} duration={5} />
       </div>
-      <div data-demo-state="compact" class="demo-viewport" style="--viewport-width: 30rem" data-label="30rem">
+      <div
+        data-demo-state="compact"
+        class="demo-viewport"
+        style="--viewport-width: 30rem"
+        data-label="30rem"
+      >
         <TimelineStage tracks={threeTracks} duration={5} />
       </div>
-      <div data-demo-state="panel" class="demo-viewport" style="--viewport-width: 40rem" data-label="40rem">
+      <div
+        data-demo-state="panel"
+        class="demo-viewport"
+        style="--viewport-width: 40rem"
+        data-label="40rem"
+      >
         <TimelineStage tracks={threeTracks} duration={5} />
       </div>
     </div>

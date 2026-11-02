@@ -82,7 +82,10 @@
         ? track
         : {
             ...track,
-            keyframes: [...track.keyframes, { id: `${track.id}-added-${added}`, time: keyframe.time }],
+            keyframes: [
+              ...track.keyframes,
+              { id: `${track.id}-added-${added}`, time: keyframe.time },
+            ],
           },
     );
   }

@@ -109,7 +109,8 @@
       <Alert.Root variant="error">
         <Alert.Content>
           <Alert.Title>{error}</Alert.Title>
-          <Alert.Description>The numbers are safe; only this view failed to load.</Alert.Description>
+          <Alert.Description>The numbers are safe; only this view failed to load.</Alert.Description
+          >
           <Alert.Action>
             <Button type="button" variant="outline" size="sm" {disabled} onclick={onretry}>
               Try again
@@ -134,7 +135,9 @@
       <Card.Root>
         <Card.Header class="items-center text-center">
           <Card.Title>No numbers yet</Card.Title>
-          <Card.Description>Stats appear here once there is activity in this period.</Card.Description>
+          <Card.Description
+            >Stats appear here once there is activity in this period.</Card.Description
+          >
         </Card.Header>
       </Card.Root>
     {/if}
@@ -149,7 +152,8 @@
                 <p class="font-serif text-heading tabular-nums @md:text-heading-lg">{stat.value}</p>
                 {#if stat.delta}
                   <p class="flex flex-wrap items-center gap-2">
-                    <Badge variant={toneBadge[stat.tone ?? "neutral"]} size="sm">{stat.delta}</Badge>
+                    <Badge variant={toneBadge[stat.tone ?? "neutral"]} size="sm">{stat.delta}</Badge
+                    >
                     {#if stat.caption}
                       <span class="text-ui-xs text-muted-foreground">{stat.caption}</span>
                     {/if}

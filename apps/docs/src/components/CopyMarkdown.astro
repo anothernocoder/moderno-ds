@@ -8,7 +8,10 @@ const t = useTranslations(locale);
 // Astro.url.pathname includes the configured base ("/moderno-ds/en/button"
 // on GitHub Pages), so strip it before splitting off the locale segment.
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
-const pathname = base && Astro.url.pathname.startsWith(base) ? Astro.url.pathname.slice(base.length) : Astro.url.pathname;
+const pathname =
+  base && Astro.url.pathname.startsWith(base)
+    ? Astro.url.pathname.slice(base.length)
+    : Astro.url.pathname;
 const path = pathname.replace(/^\/+|\/+$/g, "").split("/");
 const slug = path.slice(1).join("/") || "index";
 // Fetches the page's generated `.md` twin and copies it — same source the

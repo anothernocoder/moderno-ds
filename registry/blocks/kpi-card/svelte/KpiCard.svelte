@@ -89,7 +89,8 @@
         <Alert.Root variant="error">
           <Alert.Content>
             <Alert.Title>{error}</Alert.Title>
-            <Alert.Description>The number is safe; only this card failed to load.</Alert.Description>
+            <Alert.Description>The number is safe; only this card failed to load.</Alert.Description
+            >
             <Alert.Action>
               <Button type="button" variant="outline" size="sm" {disabled} onclick={onretry}>
                 Try again
@@ -108,7 +109,10 @@
             <Skeleton shape="text" class="h-8 w-2/3 @md:h-10" />
             <Skeleton shape="text" class="w-full" />
           </div>
-          <Skeleton shape="rect" class="h-12 w-full shrink-0 @sm:w-40 @md:h-14 @md:w-56 @lg:h-20 @lg:w-72" />
+          <Skeleton
+            shape="rect"
+            class="h-12 w-full shrink-0 @sm:w-40 @md:h-14 @md:w-56 @lg:h-20 @lg:w-72"
+          />
         </div>
       {:else if metric === null}
         <div class="grid gap-1 py-4 text-center">
@@ -123,7 +127,8 @@
             <p class="font-serif text-heading tabular-nums @md:text-heading-lg">{metric.value}</p>
             {#if metric.delta}
               <p class="flex flex-wrap items-center gap-2">
-                <Badge variant={toneBadge[metric.tone ?? "neutral"]} size="sm">{metric.delta}</Badge>
+                <Badge variant={toneBadge[metric.tone ?? "neutral"]} size="sm">{metric.delta}</Badge
+                >
                 {#if metric.caption}
                   <span class="text-ui-xs text-muted-foreground">{metric.caption}</span>
                 {/if}

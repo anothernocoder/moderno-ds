@@ -19,9 +19,5 @@
   let { shape, ...rest }: Props = $props();
 </script>
 
-<span
-  aria-hidden="true"
-  {...rest}
-  {...partAttrs("skeleton", "root")}
-  {...skeletonRecipe({ shape })}
+<span aria-hidden="true" {...rest} {...partAttrs("skeleton", "root")} {...skeletonRecipe({ shape })}
 ></span>

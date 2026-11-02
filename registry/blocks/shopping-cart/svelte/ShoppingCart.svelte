@@ -132,8 +132,12 @@
       <div class="grid gap-8 @lg:grid-cols-3 @lg:items-start @lg:gap-10">
         <ul class="divide-y divide-border border-y border-border @lg:col-span-2">
           {#each shownItems as item (item.id)}
-            <li class="grid grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-x-4 gap-y-4 py-6 @sm:gap-x-6">
-              <div class="relative size-20 overflow-hidden rounded-lg bg-muted @sm:row-span-2 @sm:size-24 @md:size-32">
+            <li
+              class="grid grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-x-4 gap-y-4 py-6 @sm:gap-x-6"
+            >
+              <div
+                class="relative size-20 overflow-hidden rounded-lg bg-muted @sm:row-span-2 @sm:size-24 @md:size-32"
+              >
                 {#if item.image}
                   <img
                     src={item.image.src}
@@ -162,7 +166,9 @@
               <p class="text-end text-body font-medium tabular-nums">
                 {item.price}
               </p>
-              <div class="col-span-3 flex items-center justify-between gap-3 @sm:col-span-2 @sm:col-start-2 @sm:justify-start">
+              <div
+                class="col-span-3 flex items-center justify-between gap-3 @sm:col-span-2 @sm:col-start-2 @sm:justify-start"
+              >
                 <NumberInput.Root
                   size="sm"
                   class="w-28"

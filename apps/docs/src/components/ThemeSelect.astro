@@ -25,7 +25,9 @@ const themes = siteThemes(t("siteTheme.neutral"));
   data-neutral={NEUTRAL_THEME}
   data-storage-key={SITE_THEME_STORAGE_KEY}
 >
-  {themes.map((theme) => <option value={theme.id}>{theme.label}</option>)}
+  {themes.map((theme) => (
+    <option value={theme.id}>{theme.label}</option>
+  ))}
 </select>
 
 <script>

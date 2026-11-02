@@ -50,7 +50,9 @@
       <Alert.Root variant="error">
         <Alert.Content>
           <Alert.Title>{error}</Alert.Title>
-          <Alert.Description>The rest of the page still works. Try again in a moment.</Alert.Description>
+          <Alert.Description
+            >The rest of the page still works. Try again in a moment.</Alert.Description
+          >
           <Alert.Action>
             <Button type="button" variant="outline" size="sm" {disabled} onclick={onretry}>
               Try again
@@ -61,7 +63,10 @@
     {:else if loading}
       <div role="status" aria-busy="true" class="relative">
         <span class="sr-only">Loading the story…</span>
-        <Card.Root aria-hidden="true" class="aspect-9/16 gap-4 overflow-hidden p-5 @sm:p-6 @md:gap-6 @md:p-10">
+        <Card.Root
+          aria-hidden="true"
+          class="aspect-9/16 gap-4 overflow-hidden p-5 @sm:p-6 @md:gap-6 @md:p-10"
+        >
           <div class="flex items-center gap-3">
             <Skeleton shape="circle" class="w-8" />
             <Skeleton shape="text" class="w-1/3" />

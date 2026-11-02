@@ -34,7 +34,11 @@
 
 <section class="@container moderno-block-hero text-foreground">
   {#if loading}
-    <div role="status" aria-busy="true" class="grid justify-items-center gap-6 px-4 py-12 @lg:py-24">
+    <div
+      role="status"
+      aria-busy="true"
+      class="grid justify-items-center gap-6 px-4 py-12 @lg:py-24"
+    >
       <Skeleton aria-hidden="true" shape="rect" class="h-6 w-36" />
       <div aria-hidden="true" class="grid w-full max-w-lg justify-items-center gap-3">
         <Skeleton shape="text" class="h-8 w-full @md:h-10" />
@@ -84,7 +88,13 @@
             </Button>
           {/if}
           {#if secondaryAction}
-            <Button type="button" variant="outline" size="lg" {disabled} onclick={onsecondaryaction}>
+            <Button
+              type="button"
+              variant="outline"
+              size="lg"
+              {disabled}
+              onclick={onsecondaryaction}
+            >
               {secondaryAction}
             </Button>
           {/if}

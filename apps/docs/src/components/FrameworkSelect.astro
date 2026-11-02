@@ -46,21 +46,24 @@ const FRAMEWORKS = [
 const name = uid("framework");
 ---
 
-<div class="framework-select" role="radiogroup" aria-label={t("framework.label")} data-framework-select>
-  {
-    FRAMEWORKS.map((fw) => (
-      <label class="framework-option-wrap">
-        <input
-          type="radio"
-          name={name}
-          value={fw.id}
-          class="framework-radio"
-          checked={fw.id === "react"}
-        />
-        <span class="framework-option">{fw.label}</span>
-      </label>
-    ))
-  }
+<div
+  class="framework-select"
+  role="radiogroup"
+  aria-label={t("framework.label")}
+  data-framework-select
+>
+  {FRAMEWORKS.map((fw) => (
+    <label class="framework-option-wrap">
+      <input
+        type="radio"
+        name={name}
+        value={fw.id}
+        class="framework-radio"
+        checked={fw.id === "react"}
+      />
+      <span class="framework-option">{fw.label}</span>
+    </label>
+  ))}
 </div>
 
 <script src="../scripts/framework-select.ts"></script>

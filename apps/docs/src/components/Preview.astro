@@ -72,37 +72,31 @@ const t = useTranslations(locale);
 ---
 
 <div class="preview">
-  {
-    breakpoints && (
-      <BreakpointSwitch
-        client:load
-        labels={{
-          group: t("preview.breakpoint"),
-          mobile: t("preview.mobile"),
-          tablet: t("preview.tablet"),
-          desktop: t("preview.desktop"),
-        }}
-      />
-    )
-  }
+  {breakpoints && (
+    <BreakpointSwitch
+      client:load
+      labels={{
+        group: t("preview.breakpoint"),
+        mobile: t("preview.mobile"),
+        tablet: t("preview.tablet"),
+        desktop: t("preview.desktop"),
+      }}
+    />
+  )}
   <div class="preview-panel preview-panel--demo" data-layout={layout}>
-    {
-      breakpoints ? (
-        <div class="breakpoint-frame">
-          <slot />
-        </div>
-      ) : (
+    {breakpoints ? (
+      <div class="breakpoint-frame">
         <slot />
-      )
-    }
+      </div>
+    ) : (
+      <slot />
+    )}
   </div>
   <div class="preview-panel preview-panel--code">
-    {
-      sources.map(({ fw, code }) => (
-        <div class="preview-source" data-fw={sources.length > 1 ? fw : undefined}>
-          <CodeBlock code={code} lang={LANG[fw]} collapsible={lineCount(code) > COLLAPSE_AFTER} />
-        </div>
-      ))
-    }
+    {sources.map(({ fw, code }) => (
+      <div class="preview-source" data-fw={sources.length > 1 ? fw : undefined}>
+        <CodeBlock code={code} lang={LANG[fw]} collapsible={lineCount(code) > COLLAPSE_AFTER} />
+      </div>
+    ))}
   </div>
 </div>

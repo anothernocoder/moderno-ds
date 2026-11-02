@@ -4,7 +4,10 @@
 
 <Splitter.Root
   orientation="vertical"
-  panels={[{ id: "code", minSize: 30 }, { id: "console", minSize: 20 }]}
+  panels={[
+    { id: "code", minSize: 30 },
+    { id: "console", minSize: 20 },
+  ]}
   defaultSize={[65, 35]}
 >
   <Splitter.Panel id="code">Code</Splitter.Panel>

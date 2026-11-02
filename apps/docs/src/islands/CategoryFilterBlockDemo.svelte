@@ -76,7 +76,10 @@
       count: (n: number) => (n === 1 ? "1 producto" : `${n} productos`),
       none: "Ningún producto coincide con estos filtros.",
       facets: {
-        category: ["Categoría", { mugs: "Tazas", bowls: "Cuencos", plates: "Platos", vases: "Jarrones" }],
+        category: [
+          "Categoría",
+          { mugs: "Tazas", bowls: "Cuencos", plates: "Platos", vases: "Jarrones" },
+        ],
         colour: ["Color", { sage: "Salvia", oat: "Avena", charcoal: "Carbón", clay: "Arcilla" }],
         material: ["Material", { stoneware: "Gres", porcelain: "Porcelana", glass: "Vidrio" }],
       },
@@ -174,25 +177,47 @@
 <div class="demo-state" data-demo-state={shown}>
   {#if shown === "widths"}
     <div class="demo-widths">
-      <div data-demo-state="narrow" class="demo-viewport" style="--viewport-width: 18rem" data-label="18rem">
+      <div
+        data-demo-state="narrow"
+        class="demo-viewport"
+        style="--viewport-width: 18rem"
+        data-label="18rem"
+      >
         <CategoryFilter {facets} {price}>{@render results(products.slice(0, 4))}</CategoryFilter>
       </div>
-      <div data-demo-state="compact" class="demo-viewport" style="--viewport-width: 30rem" data-label="30rem">
+      <div
+        data-demo-state="compact"
+        class="demo-viewport"
+        style="--viewport-width: 30rem"
+        data-label="30rem"
+      >
         <CategoryFilter {facets} {price}>{@render results(products.slice(0, 4))}</CategoryFilter>
       </div>
-      <div data-demo-state="panel" class="demo-viewport" style="--viewport-width: 40rem" data-label="40rem">
+      <div
+        data-demo-state="panel"
+        class="demo-viewport"
+        style="--viewport-width: 40rem"
+        data-label="40rem"
+      >
         <CategoryFilter {facets} {price}>{@render results(products.slice(0, 4))}</CategoryFilter>
       </div>
-      <div data-demo-state="wide" class="demo-viewport" style="--viewport-width: 50rem" data-label="50rem">
+      <div
+        data-demo-state="wide"
+        class="demo-viewport"
+        style="--viewport-width: 50rem"
+        data-label="50rem"
+      >
         <div class="demo-scroll">
           <div class="demo-wide">
-            <CategoryFilter {facets} {price}>{@render results(products.slice(0, 6))}</CategoryFilter>
+            <CategoryFilter {facets} {price}>{@render results(products.slice(0, 6))}</CategoryFilter
+            >
           </div>
         </div>
       </div>
     </div>
   {:else if shown === "empty"}
-    <CategoryFilter facets={[]} price={null}>{@render results(products.slice(0, 4))}</CategoryFilter>
+    <CategoryFilter facets={[]} price={null}>{@render results(products.slice(0, 4))}</CategoryFilter
+    >
   {:else if shown === "loading"}
     <CategoryFilter loading>{@render results(products.slice(0, 4))}</CategoryFilter>
   {:else if shown === "error"}

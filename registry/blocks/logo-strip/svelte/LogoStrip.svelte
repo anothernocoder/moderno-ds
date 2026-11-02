@@ -39,7 +39,6 @@
 
   const placeholders = ["first", "second", "third", "fourth", "fifth", "sixth"];
 
-
   let {
     heading = "Trusted by finance teams at more than 2,000 companies",
     logos = sampleLogos,

@@ -29,11 +29,9 @@ const pages = groupSiblings(
 ---
 
 <ul class="tier-index">
-  {
-    pages.map((p) => (
-      <li>
-        <a href={`${base}${locale}/${p.slug}/`}>{p.title}</a> — {p.description}
-      </li>
-    ))
-  }
+  {pages.map((p) => (
+    <li>
+      <a href={`${base}${locale}/${p.slug}/`}>{p.title}</a> — {p.description}
+    </li>
+  ))}
 </ul>

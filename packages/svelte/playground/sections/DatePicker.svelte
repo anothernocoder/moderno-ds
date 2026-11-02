@@ -61,7 +61,7 @@
             {#snippet render(datePicker)}
               <DatePicker.Table>
                 <DatePicker.TableBody>
-                  {#each datePicker().getMonthsGrid({ columns: 4, format: "short" }) as months, i (i)}
+                  {#each datePicker().getMonthsGrid( { columns: 4, format: "short" }, ) as months, i (i)}
                     <DatePicker.TableRow>
                       {#each months as month, j (j)}
                         <DatePicker.TableCell value={month.value}>

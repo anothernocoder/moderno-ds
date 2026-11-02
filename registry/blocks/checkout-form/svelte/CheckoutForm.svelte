@@ -63,9 +63,19 @@
       wide: true,
     },
     { name: "city", label: "City", autocomplete: "address-level2", placeholder: "San Francisco" },
-    { name: "region", label: "State / Province", autocomplete: "address-level1", placeholder: "CA" },
+    {
+      name: "region",
+      label: "State / Province",
+      autocomplete: "address-level1",
+      placeholder: "CA",
+    },
     { name: "postalCode", label: "Postal code", autocomplete: "postal-code", placeholder: "94103" },
-    { name: "country", label: "Country", autocomplete: "country-name", placeholder: "United States" },
+    {
+      name: "country",
+      label: "Country",
+      autocomplete: "country-name",
+      placeholder: "United States",
+    },
   ];
 
   const cardFields: CheckoutField[] = [
@@ -248,18 +258,30 @@
         <Alert.Root variant="error" size="sm">
           <Alert.Content>
             <Alert.Title>{error}</Alert.Title>
-            <Alert.Description>Nothing you entered is lost. Check it and try again.</Alert.Description>
+            <Alert.Description
+              >Nothing you entered is lost. Check it and try again.</Alert.Description
+            >
           </Alert.Content>
         </Alert.Root>
       {/if}
 
       {#if step === "shipping"}
-        {@render group("contact", "Contact", "We send your receipt and tracking here.", contactContent)}
+        {@render group(
+          "contact",
+          "Contact",
+          "We send your receipt and tracking here.",
+          contactContent,
+        )}
         <Divider />
         {@render group("address", "Shipping address", "Where the parcel goes.", addressContent)}
         {#if deliveryOptions.length > 0}
           <Divider />
-          {@render group("delivery", "Delivery method", "How fast it gets to you.", deliveryContent)}
+          {@render group(
+            "delivery",
+            "Delivery method",
+            "How fast it gets to you.",
+            deliveryContent,
+          )}
         {/if}
       {:else}
         {@render group("card", "Card details", "Credit or debit card.", cardContent)}

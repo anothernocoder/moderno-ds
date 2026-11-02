@@ -40,7 +40,8 @@
     en: {
       error: "We could not load your projects.",
       noResultsTitle: "No results found",
-      noResultsDescription: "Nothing matches “quarterly report”. Try another word or clear the filters.",
+      noResultsDescription:
+        "Nothing matches “quarterly report”. Try another word or clear the filters.",
       clearFilters: "Clear filters",
       caughtUpTitle: "You’re all caught up",
       caughtUpDescription: "New notifications show up here as they arrive.",
@@ -48,7 +49,8 @@
     es: {
       error: "No pudimos cargar tus proyectos.",
       noResultsTitle: "Sin resultados",
-      noResultsDescription: "Nada coincide con «informe trimestral». Prueba otra palabra o quita los filtros.",
+      noResultsDescription:
+        "Nada coincide con «informe trimestral». Prueba otra palabra o quita los filtros.",
       clearFilters: "Quitar filtros",
       caughtUpTitle: "Estás al día",
       caughtUpDescription: "Las notificaciones nuevas aparecen aquí en cuanto llegan.",
@@ -61,16 +63,36 @@
 <div class="demo-state" data-demo-state={shown}>
   {#if shown === "widths"}
     <div class="demo-widths">
-      <div data-demo-state="narrow" class="demo-viewport" style="--viewport-width: 18rem" data-label="18rem">
+      <div
+        data-demo-state="narrow"
+        class="demo-viewport"
+        style="--viewport-width: 18rem"
+        data-label="18rem"
+      >
         <EmptyState />
       </div>
-      <div data-demo-state="compact" class="demo-viewport" style="--viewport-width: 30rem" data-label="30rem">
+      <div
+        data-demo-state="compact"
+        class="demo-viewport"
+        style="--viewport-width: 30rem"
+        data-label="30rem"
+      >
         <EmptyState />
       </div>
-      <div data-demo-state="panel" class="demo-viewport" style="--viewport-width: 40rem" data-label="40rem">
+      <div
+        data-demo-state="panel"
+        class="demo-viewport"
+        style="--viewport-width: 40rem"
+        data-label="40rem"
+      >
         <EmptyState />
       </div>
-      <div data-demo-state="wide" class="demo-viewport" style="--viewport-width: 50rem" data-label="50rem">
+      <div
+        data-demo-state="wide"
+        class="demo-viewport"
+        style="--viewport-width: 50rem"
+        data-label="50rem"
+      >
         <div class="demo-scroll">
           <div class="demo-wide"><EmptyState /></div>
         </div>

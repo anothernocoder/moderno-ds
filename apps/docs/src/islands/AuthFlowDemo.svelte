@@ -44,13 +44,7 @@
   let { locale = "en" }: { locale?: "en" | "es" } = $props();
 
   /** The flow in order — what the readout walks, and what the assembly sequences. */
-  const steps: AuthStep[] = [
-    "sign-in",
-    "sign-up",
-    "forgot-password",
-    "reset-password",
-    "verify",
-  ];
+  const steps: AuthStep[] = ["sign-in", "sign-up", "forgot-password", "reset-password", "verify"];
 
   type Frame = "phone" | "tablet" | "desktop";
 

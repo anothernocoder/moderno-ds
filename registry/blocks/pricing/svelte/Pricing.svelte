@@ -99,7 +99,11 @@
         </Alert.Content>
       </Alert.Root>
     {:else if loading}
-      <div role="status" aria-busy="true" class="grid gap-4 @md:auto-cols-fr @md:grid-flow-col @lg:gap-6">
+      <div
+        role="status"
+        aria-busy="true"
+        class="grid gap-4 @md:auto-cols-fr @md:grid-flow-col @lg:gap-6"
+      >
         <span class="sr-only">Loading plans…</span>
         {#each placeholders as key (key)}
           <Card.Root size="sm" aria-hidden="true">

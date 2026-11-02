@@ -118,12 +118,22 @@
 <div class="demo-state" data-demo-state={example}>
   {#if example === "widths"}
     <div class="demo-widths">
-      <div data-demo-state="narrow" class="demo-viewport" style="--viewport-width: 16rem" data-label="16rem">
+      <div
+        data-demo-state="narrow"
+        class="demo-viewport"
+        style="--viewport-width: 16rem"
+        data-label="16rem"
+      >
         <div class="layers-frame">
           <LayersPanelStage layers={designLayers} selectedId="photo" newLayerName={copy.newLayer} />
         </div>
       </div>
-      <div data-demo-state="wide" class="demo-viewport" style="--viewport-width: 28rem" data-label="28rem">
+      <div
+        data-demo-state="wide"
+        class="demo-viewport"
+        style="--viewport-width: 28rem"
+        data-label="28rem"
+      >
         <div class="layers-frame">
           <LayersPanelStage layers={designLayers} selectedId="photo" newLayerName={copy.newLayer} />
         </div>

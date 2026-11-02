@@ -71,7 +71,9 @@
   {...rest}
   {...fileUploadRecipe({ size })}
   bind:acceptedFiles
-  ids={fieldState ? { label: fieldState.ids.label, hiddenInput: fieldState.ids.control } : undefined}
+  ids={fieldState
+    ? { label: fieldState.ids.label, hiddenInput: fieldState.ids.control }
+    : undefined}
   disabled={rest.disabled ?? fieldState?.disabled}
   invalid={rest.invalid ?? fieldState?.invalid}
   required={rest.required ?? fieldState?.required}

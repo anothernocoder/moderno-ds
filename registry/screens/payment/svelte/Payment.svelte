@@ -92,9 +92,7 @@
       </a>
     </header>
 
-    <div
-      class="mx-auto grid w-full max-w-5xl content-start gap-8 @lg:grid-cols-5 @lg:items-start"
-    >
+    <div class="mx-auto grid w-full max-w-5xl content-start gap-8 @lg:grid-cols-5 @lg:items-start">
       <div class="@lg:col-span-3">
         <CheckoutForm
           step="payment"

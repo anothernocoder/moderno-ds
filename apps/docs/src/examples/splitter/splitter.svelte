@@ -3,7 +3,10 @@
 </script>
 
 <Splitter.Root
-  panels={[{ id: "files", minSize: 20 }, { id: "editor", minSize: 30 }]}
+  panels={[
+    { id: "files", minSize: 20 },
+    { id: "editor", minSize: 30 },
+  ]}
   defaultSize={[30, 70]}
 >
   <Splitter.Panel id="files">Files</Splitter.Panel>

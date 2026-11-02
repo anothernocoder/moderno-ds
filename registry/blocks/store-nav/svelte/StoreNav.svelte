@@ -100,9 +100,7 @@
   const filters = useFilter({ sensitivity: "base" });
   const collection = $derived(
     createListCollection({
-      items: suggestions.filter((suggestion) =>
-        filters().contains(suggestion.label, query.trim()),
-      ),
+      items: suggestions.filter((suggestion) => filters().contains(suggestion.label, query.trim())),
     }),
   );
   const collapsible = $derived(!error && (loading || categories.length > 0));
@@ -203,12 +201,7 @@
       <Drawer.Root placement="right" lazyMount unmountOnExit bind:open={drawerOpen}>
         <Drawer.Trigger>
           {#snippet asChild(triggerProps)}
-            <Button
-              {...triggerProps()}
-              type="button"
-              variant="outline"
-              class="ms-auto @md:hidden"
-            >
+            <Button {...triggerProps()} type="button" variant="outline" class="ms-auto @md:hidden">
               Menu
             </Button>
           {/snippet}
@@ -227,9 +220,7 @@
                     {#each categories as category (category.id)}
                       <li>
                         {#if "links" in category}
-                          <p
-                            class="px-3 pt-3 pb-1 text-ui-sm font-semibold text-muted-foreground"
-                          >
+                          <p class="px-3 pt-3 pb-1 text-ui-sm font-semibold text-muted-foreground">
                             {category.label}
                           </p>
                           <ul class="m-0 ms-3 grid list-none gap-1 border-s border-border p-0 ps-2">
@@ -252,11 +243,7 @@
     {/if}
 
     <div class="flex w-full items-center gap-2 @lg:ms-auto @lg:w-auto @lg:max-w-sm @lg:flex-1">
-      <form
-        role="search"
-        class="relative w-32 min-w-0 flex-1"
-        onsubmit={submitSearch}
-      >
+      <form role="search" class="relative w-32 min-w-0 flex-1" onsubmit={submitSearch}>
         <Combobox.Root
           name="q"
           {collection}
@@ -307,9 +294,7 @@
           <Alert.Title>{error}</Alert.Title>
           <Alert.Description>Search and your cart still work.</Alert.Description>
           <Alert.Action>
-            <Button type="button" variant="outline" size="sm" onclick={onretry}>
-              Try again
-            </Button>
+            <Button type="button" variant="outline" size="sm" onclick={onretry}>Try again</Button>
           </Alert.Action>
         </Alert.Content>
       </Alert.Root>

@@ -57,7 +57,9 @@
       <Alert.Root variant="error" class="w-full max-w-md text-start">
         <Alert.Content>
           <Alert.Title>{error}</Alert.Title>
-          <Alert.Description>The posts still load. Try again to bring the categories back.</Alert.Description>
+          <Alert.Description
+            >The posts still load. Try again to bring the categories back.</Alert.Description
+          >
           <Alert.Action>
             <Button type="button" variant="outline" size="sm" {disabled} onclick={onretry}>
               Try again

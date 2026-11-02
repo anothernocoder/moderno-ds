@@ -40,7 +40,9 @@ interface Props {
 const { pkg, item, mode = "dependency" } = Astro.props;
 
 if ((pkg === undefined) === (item === undefined)) {
-  throw new Error("<Install> takes exactly one of `pkg` (an npm package) or `item` (a registry item)");
+  throw new Error(
+    "<Install> takes exactly one of `pkg` (an npm package) or `item` (a registry item)",
+  );
 }
 
 /**
@@ -85,22 +87,20 @@ const t = useTranslations(currentLocale(Astro.currentLocale));
   <div class="install-bar">
     <Terminal class="install-icon" aria-hidden="true" size={14} />
     <div class="install-tabs" role="radiogroup" aria-label={t("install.manager")}>
-      {
-        managers.map((m, i) => (
-          <Fragment>
-            <input
-              type="radio"
-              name={name}
-              id={`${name}-${m.id}`}
-              class="install-radio"
-              checked={i === 0}
-            />
-            <label for={`${name}-${m.id}`} class="install-tab">
-              {m.label}
-            </label>
-          </Fragment>
-        ))
-      }
+      {managers.map((m, i) => (
+        <Fragment>
+          <input
+            type="radio"
+            name={name}
+            id={`${name}-${m.id}`}
+            class="install-radio"
+            checked={i === 0}
+          />
+          <label for={`${name}-${m.id}`} class="install-tab">
+            {m.label}
+          </label>
+        </Fragment>
+      ))}
     </div>
     <button
       type="button"
@@ -114,19 +114,17 @@ const t = useTranslations(currentLocale(Astro.currentLocale));
       <Check class="code-copy-done" aria-hidden="true" size={14} />
     </button>
   </div>
-  {
-    managers.map((m) => (
-      <div class={`install-panel install-panel--${m.id}`}>
-        {perFramework ? (
-          FRAMEWORKS.map((fw) => (
-            <div data-fw={fw}>
-              <Code code={commandFor(fw)[m.id]} lang="sh" {...shikiConfig} />
-            </div>
-          ))
-        ) : (
-          <Code code={commandFor("react")[m.id]} lang="sh" {...shikiConfig} />
-        )}
-      </div>
-    ))
-  }
+  {managers.map((m) => (
+    <div class={`install-panel install-panel--${m.id}`}>
+      {perFramework ? (
+        FRAMEWORKS.map((fw) => (
+          <div data-fw={fw}>
+            <Code code={commandFor(fw)[m.id]} lang="sh" {...shikiConfig} />
+          </div>
+        ))
+      ) : (
+        <Code code={commandFor("react")[m.id]} lang="sh" {...shikiConfig} />
+      )}
+    </div>
+  ))}
 </div>

@@ -165,9 +165,7 @@
 
     <div class="mx-auto grid w-full max-w-4xl content-start gap-8">
       <div class="grid gap-1">
-        <h1 class="text-heading-sm font-semibold tracking-tight @md:text-heading">
-          Your rewards
-        </h1>
+        <h1 class="text-heading-sm font-semibold tracking-tight @md:text-heading">Your rewards</h1>
         <p class="text-ui-md text-muted-foreground">
           You get {reward} for every friend who joins with your link.
         </p>
@@ -192,7 +190,9 @@
       </section>
     </div>
 
-    <footer class="grid gap-2 text-ui-md text-muted-foreground @md:flex @md:items-center @md:justify-between">
+    <footer
+      class="grid gap-2 text-ui-md text-muted-foreground @md:flex @md:items-center @md:justify-between"
+    >
       <p>© Moderno</p>
       <nav class="flex gap-4" aria-label="Legal">
         <a

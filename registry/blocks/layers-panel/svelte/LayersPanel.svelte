@@ -1,5 +1,13 @@
 <script lang="ts">
-  import { Button, Editable, Menu, Portal, SortableList, Toggle, Tooltip } from "@moderno-ui/svelte";
+  import {
+    Button,
+    Editable,
+    Menu,
+    Portal,
+    SortableList,
+    Toggle,
+    Tooltip,
+  } from "@moderno-ui/svelte";
 
   interface Layer {
     id: string;
@@ -243,7 +251,13 @@
   <div class="flex min-h-10 items-center justify-between gap-2 border-b border-border px-3 py-1.5">
     <h2 class="m-0 text-ui-sm font-semibold">Layers</h2>
     {#if layers.length > 0}
-      <Button variant="ghost" size="sm" class="px-1.5 @sm:px-2" aria-label="Add layer" onclick={add}>
+      <Button
+        variant="ghost"
+        size="sm"
+        class="px-1.5 @sm:px-2"
+        aria-label="Add layer"
+        onclick={add}
+      >
         {@render icon(icons.add)}
         <span class="hidden @sm:inline">Add layer</span>
       </Button>
@@ -295,7 +309,12 @@
                 class="flex size-5 shrink-0 items-center justify-center overflow-hidden rounded-sm border border-border bg-muted text-muted-foreground group-data-[hidden]:opacity-50 @sm:size-8"
               >
                 {#if layer.thumbnail}
-                  <img src={layer.thumbnail} alt="" draggable="false" class="size-full object-cover" />
+                  <img
+                    src={layer.thumbnail}
+                    alt=""
+                    draggable="false"
+                    class="size-full object-cover"
+                  />
                 {:else}
                   {@render icon(kindIcon(layer.icon), "size-3.5 @sm:size-4")}
                 {/if}

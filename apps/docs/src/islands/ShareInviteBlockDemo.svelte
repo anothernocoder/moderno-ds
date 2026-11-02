@@ -26,14 +26,7 @@
 <script lang="ts">
   import ShareInvite from "../../../../registry/blocks/share-invite/svelte/ShareInvite.svelte";
 
-  type State =
-    | "default"
-    | "widths"
-    | "invite-fails"
-    | "empty"
-    | "loading"
-    | "error"
-    | "disabled";
+  type State = "default" | "widths" | "invite-fails" | "empty" | "loading" | "error" | "disabled";
 
   // `state` is read as `shown`: the name `state` would turn `$state` into a store read.
   let { locale = "en", state: shown = "default" }: { locale?: "en" | "es"; state?: State } =
@@ -54,16 +47,36 @@
 <div class="demo-state" data-demo-state={shown}>
   {#if shown === "widths"}
     <div class="demo-widths">
-      <div data-demo-state="narrow" class="demo-viewport" style="--viewport-width: 18rem" data-label="18rem">
+      <div
+        data-demo-state="narrow"
+        class="demo-viewport"
+        style="--viewport-width: 18rem"
+        data-label="18rem"
+      >
         <ShareInvite oninvite={sendInvite} />
       </div>
-      <div data-demo-state="compact" class="demo-viewport" style="--viewport-width: 30rem" data-label="30rem">
+      <div
+        data-demo-state="compact"
+        class="demo-viewport"
+        style="--viewport-width: 30rem"
+        data-label="30rem"
+      >
         <ShareInvite oninvite={sendInvite} />
       </div>
-      <div data-demo-state="panel" class="demo-viewport" style="--viewport-width: 40rem" data-label="40rem">
+      <div
+        data-demo-state="panel"
+        class="demo-viewport"
+        style="--viewport-width: 40rem"
+        data-label="40rem"
+      >
         <ShareInvite oninvite={sendInvite} />
       </div>
-      <div data-demo-state="wide" class="demo-viewport" style="--viewport-width: 50rem" data-label="50rem">
+      <div
+        data-demo-state="wide"
+        class="demo-viewport"
+        style="--viewport-width: 50rem"
+        data-label="50rem"
+      >
         <div class="demo-scroll">
           <div class="demo-wide"><ShareInvite oninvite={sendInvite} /></div>
         </div>

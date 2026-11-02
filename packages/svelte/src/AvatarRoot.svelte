@@ -9,11 +9,8 @@
   import type { AvatarRootProps } from "@ark-ui/svelte";
   import { avatarRecipe, type AvatarShape, type AvatarSize } from "@moderno-ui/core";
 
-  let {
-    size,
-    shape,
-    ...rest
-  }: AvatarRootProps & { size?: AvatarSize; shape?: AvatarShape } = $props();
+  let { size, shape, ...rest }: AvatarRootProps & { size?: AvatarSize; shape?: AvatarShape } =
+    $props();
 </script>
 
 <ArkAvatar.Root {...rest} {...avatarRecipe({ size, shape })} />

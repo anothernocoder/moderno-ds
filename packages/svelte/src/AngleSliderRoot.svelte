@@ -23,7 +23,10 @@
     trackInputModality,
     wrapAngle,
   } from "@moderno-ui/core";
-  import { setAngleSliderSettings, type ModernoAngleSliderRootProps } from "./angle-slider-props.js";
+  import {
+    setAngleSliderSettings,
+    type ModernoAngleSliderRootProps,
+  } from "./angle-slider-props.js";
 
   let {
     size,

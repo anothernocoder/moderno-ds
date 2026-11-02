@@ -198,7 +198,9 @@
 
             {#if sections.length > 0 && action}
               <div>
-                <Button type="button" variant="outline" {disabled} onclick={onaction}>{action}</Button>
+                <Button type="button" variant="outline" {disabled} onclick={onaction}
+                  >{action}</Button
+                >
               </div>
             {/if}
           </div>

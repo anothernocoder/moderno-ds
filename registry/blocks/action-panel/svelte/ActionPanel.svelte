@@ -95,9 +95,13 @@
           <Alert.Root variant="error">
             <Alert.Content>
               <Alert.Title>{error}</Alert.Title>
-              <Alert.Description>Nothing was changed. Your settings are still saved.</Alert.Description>
+              <Alert.Description
+                >Nothing was changed. Your settings are still saved.</Alert.Description
+              >
               <Alert.Action>
-                <Button type="button" variant="outline" size="sm" onclick={onretry}>Try again</Button>
+                <Button type="button" variant="outline" size="sm" onclick={onretry}
+                  >Try again</Button
+                >
               </Alert.Action>
             </Alert.Content>
           </Alert.Root>
@@ -124,7 +128,9 @@
         {#if !error && !loading && items.length === 0}
           <div class="grid gap-1 py-4 text-center">
             <p class="text-ui-md font-medium">No settings yet</p>
-            <p class="text-ui-md text-muted-foreground">Settings added to this panel show up here.</p>
+            <p class="text-ui-md text-muted-foreground">
+              Settings added to this panel show up here.
+            </p>
           </div>
         {/if}
 

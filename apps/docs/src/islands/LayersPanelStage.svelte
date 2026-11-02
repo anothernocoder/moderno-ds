@@ -21,8 +21,11 @@
     layers: initialLayers,
     selectedId: initialSelectedId = null,
     newLayerName,
-  }: { layers: Layer[]; selectedId?: string | null; newLayerName: (count: number) => string } =
-    $props();
+  }: {
+    layers: Layer[];
+    selectedId?: string | null;
+    newLayerName: (count: number) => string;
+  } = $props();
 
   // Seeded once from the props: from here on the demo owns them, like an app would.
   // svelte-ignore state_referenced_locally
@@ -44,7 +47,11 @@
   function duplicate(id: string) {
     const index = layers.findIndex((layer) => layer.id === id);
     created += 1;
-    const copy = { ...layers[index]!, id: `${id}-copy-${created}`, name: `${layers[index]!.name} 2` };
+    const copy = {
+      ...layers[index]!,
+      id: `${id}-copy-${created}`,
+      name: `${layers[index]!.name} 2`,
+    };
     layers = [...layers.slice(0, index), copy, ...layers.slice(index)];
     selectedId = copy.id;
   }

@@ -157,7 +157,9 @@
       </a>
     </header>
 
-    <div class="mx-auto grid w-full max-w-6xl content-start gap-4 @lg:grid-cols-5 @lg:items-start @lg:gap-8">
+    <div
+      class="mx-auto grid w-full max-w-6xl content-start gap-4 @lg:grid-cols-5 @lg:items-start @lg:gap-8"
+    >
       <div class="@lg:col-span-3">
         <CheckoutForm
           step="shipping"
@@ -184,7 +186,9 @@
       </div>
     </div>
 
-    <footer class="grid gap-2 text-ui-md text-muted-foreground @md:flex @md:items-center @md:justify-between">
+    <footer
+      class="grid gap-2 text-ui-md text-muted-foreground @md:flex @md:items-center @md:justify-between"
+    >
       <p>© Moderno</p>
       <nav class="flex gap-4" aria-label="Legal">
         <a

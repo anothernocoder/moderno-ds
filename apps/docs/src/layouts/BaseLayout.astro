@@ -77,15 +77,13 @@ const pageTitle = slug === "index" ? title : `${title} — Moderno`;
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical.href} />
-    {
-      locales.map((l) => (
-        <link
-          rel="alternate"
-          hreflang={l}
-          href={new URL(`${base}${l}/${slug === "index" ? "" : slug}`, site).href}
-        />
-      ))
-    }
+    {locales.map((l) => (
+      <link
+        rel="alternate"
+        hreflang={l}
+        href={new URL(`${base}${l}/${slug === "index" ? "" : slug}`, site).href}
+      />
+    ))}
     <link
       rel="alternate"
       hreflang="x-default"
@@ -103,7 +101,8 @@ const pageTitle = slug === "index" ? title : `${title} — Moderno`;
       // every page — not only the ones that render <FrameworkSelect> — since
       // the choice is remembered across pages (CONTEXT.md "Framework
       // selector"). Default React.
-      document.documentElement.dataset.framework = localStorage.getItem("moderno-framework") || "react";
+      document.documentElement.dataset.framework =
+        localStorage.getItem("moderno-framework") || "react";
     </script>
     <script
       is:inline
@@ -123,7 +122,9 @@ const pageTitle = slug === "index" ? title : `${title} — Moderno`;
     <Fragment set:html={`<style>${siteThemesCss}</style>`} />
   </head>
   <body data-copy-label={t("copy.code")} data-copied-label={t("copy.copied")}>
-    <a class="skip-link" href="#main">{t("nav.skipToContent")}</a>
+    <a class="skip-link" href="#main">
+      {t("nav.skipToContent")}
+    </a>
     <header class="site-header">
       <!-- Below 56rem the sidebar collapses behind this toggle: a checkbox the
            sidebar's CSS reads through :has(), so the menu opens without script. -->
@@ -174,25 +175,23 @@ const pageTitle = slug === "index" ? title : `${title} — Moderno`;
             data-sidebar-filter
           />
         </div>
-        {
-          sections.map((section) => (
-            <section class="sidebar-group" data-sidebar-group>
-              <h2>{section.group}</h2>
-              <ul>
-                {section.pages.map((p) => (
-                  <li data-sidebar-item>
-                    <a
-                      href={`${base}${locale}/${p.slug}`}
-                      aria-current={p.slug === slug ? "page" : undefined}
-                    >
-                      {p.title}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          ))
-        }
+        {sections.map((section) => (
+          <section class="sidebar-group" data-sidebar-group>
+            <h2>{section.group}</h2>
+            <ul>
+              {section.pages.map((p) => (
+                <li data-sidebar-item>
+                  <a
+                    href={`${base}${locale}/${p.slug}`}
+                    aria-current={p.slug === slug ? "page" : undefined}
+                  >
+                    {p.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
         <p class="sidebar-empty" data-sidebar-empty hidden>
           {t("sidebar.noMatches")}
         </p>

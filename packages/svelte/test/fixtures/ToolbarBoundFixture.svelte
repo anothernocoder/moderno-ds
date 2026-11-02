@@ -1,8 +1,7 @@
 <script lang="ts">
   import { Toolbar } from "../../src/index.js";
 
-  let { redoDisabled = false, onRedo }: { redoDisabled?: boolean; onRedo?: () => void } =
-    $props();
+  let { redoDisabled = false, onRedo }: { redoDisabled?: boolean; onRedo?: () => void } = $props();
   let bold = $state(false);
 </script>
 

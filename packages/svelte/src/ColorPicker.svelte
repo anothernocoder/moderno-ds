@@ -69,6 +69,7 @@
   const colors = $derived(colorPickerSwatches(swatches, { alpha }));
 
   // Whether the browser can pick from the screen; false until mounted, as on the server.
+  // eslint-disable-next-line svelte/prefer-writable-derived -- a $derived would be true while hydrating
   let eyeDropper = $state(false);
   $effect(() => {
     eyeDropper = supportsEyeDropper();
@@ -195,10 +196,7 @@
         {#if colors.length > 0}
           <ArkColorPicker.SwatchGroup role="group" aria-label={labels.swatches}>
             {#each colors as color (color)}
-              <ArkColorPicker.SwatchTrigger
-                value={color}
-                aria-label={`${labels.swatch} ${color}`}
-              >
+              <ArkColorPicker.SwatchTrigger value={color} aria-label={`${labels.swatch} ${color}`}>
                 <ArkColorPicker.Swatch value={color} />
               </ArkColorPicker.SwatchTrigger>
             {/each}

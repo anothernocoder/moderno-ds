@@ -46,8 +46,7 @@
       id: "sign-in",
       variant: "info",
       title: "New sign-in from Lisbon",
-      description:
-        "Chrome on macOS. Not you? End the session and change your password.",
+      description: "Chrome on macOS. Not you? End the session and change your password.",
       meta: "3 hrs ago",
       actionLabel: "Review session",
     },
@@ -160,7 +159,11 @@
 
     {#if loading}
       <Card.Root>
-        <Card.Content class="items-center justify-center text-center" role="status" aria-busy="true">
+        <Card.Content
+          class="items-center justify-center text-center"
+          role="status"
+          aria-busy="true"
+        >
           <span
             aria-hidden="true"
             class="size-5 animate-spin rounded-full border-2 border-current border-t-transparent motion-reduce:animate-none"
@@ -189,10 +192,14 @@
               <Alert.Icon>{@render statusIcon(item.variant)}</Alert.Icon>
               <Alert.Content>
                 <div class="flex items-start justify-between gap-2">
-                  <div class="grid min-w-0 flex-1 gap-1 @lg:flex @lg:items-baseline @lg:justify-between @lg:gap-4">
+                  <div
+                    class="grid min-w-0 flex-1 gap-1 @lg:flex @lg:items-baseline @lg:justify-between @lg:gap-4"
+                  >
                     <Alert.Title>{item.title}</Alert.Title>
                     {#if item.meta}
-                      <Alert.Description class="hidden text-ui-xs @sm:block">{item.meta}</Alert.Description>
+                      <Alert.Description class="hidden text-ui-xs @sm:block"
+                        >{item.meta}</Alert.Description
+                      >
                     {/if}
                   </div>
                   <Button

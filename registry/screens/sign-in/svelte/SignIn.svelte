@@ -112,15 +112,7 @@
     </header>
 
     <div class="mx-auto grid w-full max-w-sm content-center">
-      <LoginForm
-        titleLevel={1}
-        {error}
-        {loading}
-        {disabled}
-        {onsubmit}
-        {forgotHref}
-        {signUpHref}
-      />
+      <LoginForm titleLevel={1} {error} {loading} {disabled} {onsubmit} {forgotHref} {signUpHref} />
     </div>
 
     <footer
