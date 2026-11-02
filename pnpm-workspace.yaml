@@ -38,6 +38,10 @@ overrides:
   # GHSA-mrhx-c7xc-m3w5: zod memory exhaustion. @vercel/cli-config pins 4.1.11
   # exactly, and its latest release still does.
   "@vercel/cli-config>zod": "4.6.7"
+  # Same advisory. @openuidev/react-headless, in its latest release too, asks for
+  # @ag-ui/core ^0.0.53, which needs zod 3. The fix for us is @ag-ui/core 1, which
+  # accepts zod 4; only the genui playground uses it.
+  "@openuidev/react-headless>@ag-ui/core": "1.0.3"
   # GHSA-g7r4-m6w7-qqqr: esbuild. tsup 8.5 asks for ^0.27 and the fix is in 0.28.1.
   tsup>esbuild: "0.28.2"
   # GHSA-3g3m-2fjr-6pw4: glob keeps walking after an abort. @vercel/nft and
