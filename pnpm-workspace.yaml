@@ -10,8 +10,8 @@ allowBuilds:
   "@openuidev/lang-core": false
 
 # Astro (apps/docs) pulls vite 8; the framework test toolchains
-# (vite-plugin-solid/svelte/vue) are on vite 5. Pin the shared vitest toolchain
-# to vite 5 so a single vite type instance reaches each package's
+# (vite-plugin-solid/svelte/vue) are on vite 6. Pin the shared vitest toolchain
+# to vite 6 so a single vite type instance reaches each package's
 # vitest.config.ts — astro keeps its own vite 8.
 #
 # Every version-scoped key below (`pkg@N>dep`) must name a version that is
@@ -19,16 +19,15 @@ allowBuilds:
 # so a key scoped to a version the lockfile no longer has looks applied and is
 # not. Check the lockfile after any upgrade that moves these.
 overrides:
-  vitest>vite: "5.4.21"
-  vite-node>vite: "5.4.21"
-  "@vitest/mocker>vite": "5.4.21"
-  vite-plugin-solid>vite: "5.4.21"
-  "@vitejs/plugin-vue>vite": "5.4.21"
-  # @moderno-ui/svelte tests on the v4 plugin (vite 5); @astrojs/svelte pulls the
+  vitest>vite: "6.4.5"
+  "@vitest/mocker>vite": "6.4.5"
+  vite-plugin-solid>vite: "6.4.5"
+  "@vitejs/plugin-vue>vite": "6.4.5"
+  # @moderno-ui/svelte tests on the v5 plugin (vite 6); @astrojs/svelte pulls the
   # v7 plugin (vite 8). Version-scope so each resolves a single matching vite.
-  "@sveltejs/vite-plugin-svelte@4>vite": "5.4.21"
+  "@sveltejs/vite-plugin-svelte@5>vite": "6.4.5"
   # Astro's toolchain pulls @types/node 24; pin to one version so a single
-  # vite type instance is shared (avoids vite5-node22 vs vite5-node24 clashes).
+  # vite type instance is shared (avoids vite6-node22 vs vite6-node24 clashes).
   "@types/node": "22.19.21"
   # GHSA-23hp-3jrh-7fpw: node-tar decompression DoS, pulled transitively by
   # @astrojs/vercel -> @vercel/nft -> @mapbox/node-pre-gyp.
@@ -43,10 +42,6 @@ overrides:
   # @ag-ui/core ^0.0.53, which needs zod 3. The fix for us is @ag-ui/core 1, which
   # accepts zod 4; only the genui playground uses it.
   "@openuidev/react-headless>@ag-ui/core": "1.0.3"
-  # GHSA-5gmw-xhrv-c9v3, GHSA-85c8-ppgw-ccpr: tinypool prototype pollution to
-  # RCE. Vitest 3 asks for ^1.1.1 and the fix is only in 2.x, whose API matches
-  # what Vitest 3 calls. Drop this when Vitest moves to 4, which has no tinypool.
-  vitest>tinypool: "2.1.2"
   # GHSA-g7r4-m6w7-qqqr: esbuild. tsup 8.5 asks for ^0.27 and the fix is in 0.28.1.
   tsup>esbuild: "0.28.2"
   # GHSA-3g3m-2fjr-6pw4: glob keeps walking after an abort. @vercel/nft and
