@@ -85,3 +85,13 @@ Code in `packages/*` is used by many apps, so keep it easy to read and easy to g
 - Use design tokens for colors, spacing, and radius. Never hard-code values.
 - No dead code, no leftover debug logs, no unused props.
 - Add or update tests for any behavior you change.
+
+### Test each fact once
+
+A docs e2e test runs in a real browser, so each one must earn its place. Repeat a test across colour schemes, themes or widths only when the answer can change.
+
+- **Both schemes:** only what depends on colour, like contrast, hover and focus styles.
+- **One pass:** geometry and logic, like layout, centering, states and keyboard behaviour. Put these in the `<name> — either scheme` describe, outside the scheme loop.
+- **Three widths:** only layout, since only layout changes with width.
+
+Dark mode changes colours and nothing else. `packages/css/test/dark-geometry.test.ts` enforces this, so one pass is enough. Before you copy a spec, check that each repeated test can really give a different answer.
