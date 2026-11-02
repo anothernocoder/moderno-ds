@@ -116,6 +116,10 @@ _Avoid_: Typography component, custom .text-\* classes in core
 An alternative visual style (outline, sm, destructive…) expressed as `data-variant`, `data-size`, etc. on the `[data-part=root]`. CVA in `@moderno-ui/core` resolves props → data attributes; CSS in `components.css`.
 _Avoid_: Variant class, CVA Tailwind string
 
+**Focus ring**:
+Drawn on the part that shows focus with `--ring`. A bordered control draws it inset (`outline-offset: -2px`), so its resting border does not show inside the ring. Small indicator controls (Checkbox, RadioGroup and later ones like them) are exempt and keep it outset (`outline-offset: 2px`): an inset ring would cover the checked mark.
+_Avoid_: Inset ring on a 16px indicator
+
 **Machine**:
 A Zag 1.x state machine (`createMachine` from `@zag-js/core`) that holds a Primitive's behaviour: its state, the events it reacts to, and a `connect` that turns the state into props for each part. Ark ships one per component it covers; a Primitive Ark does not cover gets its own in `packages/core/src/machines/<slug>/`, on the Zag version Ark resolves, tested once in core and bound in each framework with `@zag-js/<framework>` like Ark does (ADR-0010).
 _Avoid_: controller, store, hook (for the shared behaviour)
