@@ -12,9 +12,10 @@ import { registryAliases } from "../lint/src/registry.ts";
 // project resolves those aliases.
 const manifest = fileURLToPath(new URL("../../registry/registry.json", import.meta.url));
 
-// A block that announces a change imports `announce()` from core by name, and
-// `registry/` has no `node_modules` to find it in: point the name at core's
-// source, whose own imports then resolve from core.
+// A registry source imports the primitives by name, and `registry/` has no
+// `node_modules` to find them in, so point the name at the source.
+const primitives = fileURLToPath(new URL("./src/index.ts", import.meta.url));
+// Same reason for core: a block that announces a change imports `announce()` by name.
 const core = fileURLToPath(new URL("../core/src/index.ts", import.meta.url));
 
 export default defineConfig({
@@ -22,6 +23,7 @@ export default defineConfig({
   resolve: {
     alias: [
       ...registryAliases(manifest, "svelte"),
+      { find: /^@moderno-ui\/svelte$/, replacement: primitives },
       { find: /^@moderno-ui\/core$/, replacement: core },
     ],
   },
