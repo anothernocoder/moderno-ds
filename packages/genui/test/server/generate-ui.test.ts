@@ -209,6 +209,38 @@ describe("generateUI", () => {
     expect(joined(chunks.slice(2), "program")).toBe(VALID);
   });
 
+  it("shows only the program of a retry, not the model's explanation", async () => {
+    mockedJudge.mockResolvedValue(routes("widget", { Button: 0.9, Stack: 0.8 }));
+    const { llm } = scriptedLLM(
+      [`\`\`\`openui-lang\n${INVALID}\`\`\``],
+      [`Corregí la llamada.\n\`\`\`openui-lang\n${VALID}\`\`\`\nAhora funciona.`],
+    );
+
+    const chunks = await collect(
+      generateUI({ message: "save", judge: judgeConfig, llm, manifest, contract }),
+    );
+
+    expect(chunks.map((chunk) => chunk.type)).toEqual(["program", "discard", "program"]);
+    expect(joined(chunks, "text")).toBe("");
+  });
+
+  it("falls back to text when the retry writes no program", async () => {
+    mockedJudge.mockResolvedValue(routes("widget", { Button: 0.9, Stack: 0.8 }));
+    const { llm, calls } = scriptedLLM(
+      [`\`\`\`openui-lang\n${INVALID}\`\`\``],
+      ["Corregí la llamada."],
+      ["Listo."],
+    );
+
+    const chunks = await collect(
+      generateUI({ message: "save", judge: judgeConfig, llm, manifest, contract }),
+    );
+
+    expect(calls).toHaveLength(3);
+    expect(chunks.map((chunk) => chunk.type)).toEqual(["program", "discard", "discard", "text"]);
+    expect(joined(chunks, "text")).toBe("Listo.");
+  });
+
   it("lints the QA chance card, retries with its usability errors, and keeps the fixed card", async () => {
     // No Noul passes, so the LLM gets the whole library.
     mockedJudge.mockResolvedValue(routes("widget"));

@@ -124,6 +124,15 @@ describe("env", () => {
     });
     expect(judgeFromEnv({ JEV_API_KEY: "k", GENUI_FIXTURES: "1" })).toBeUndefined();
   });
+
+  it("prefers Anthropic over OpenRouter for the LLM, and fixtures over both", () => {
+    const keys = { ANTHROPIC_API_KEY: "a", OPENROUTER_API_KEY: "o" };
+    expect(llmFromEnv(keys).name).toBe("Anthropic claude-opus-5-5");
+    expect(llmFromEnv({ OPENROUTER_API_KEY: "o", OPENROUTER_MODEL: "m" }).name).toBe(
+      "OpenRouter m",
+    );
+    expect(llmFromEnv({ ...keys, GENUI_FIXTURES: "1" }).name).toBe("fixture");
+  });
 });
 
 describe("contentDeltas", () => {

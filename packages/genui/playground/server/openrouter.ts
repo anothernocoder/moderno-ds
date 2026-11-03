@@ -12,6 +12,8 @@ export function openRouterLLM(apiKey: string, model: string): LLM {
       body: JSON.stringify({
         model,
         stream: true,
+        // OpenRouter refuses the call when the model's default maximum exceeds the key's credits.
+        max_tokens: 8192,
         messages: [{ role: "system", content: system }, ...messages],
       }),
     });
