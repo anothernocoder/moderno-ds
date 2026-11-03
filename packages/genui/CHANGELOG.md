@@ -1,5 +1,12 @@
 # @moderno-ui/genui
 
+## 0.0.2
+
+### Patch Changes
+
+- 9309aaa: A skipped optional argument no longer renders as the text "null", and a variant cut short while streaming no longer throws.
+- 1f38069: A retry's explanation no longer shows up in the chat: only its program reaches the thread. A retry with no program falls back to text.
+
 ## 0.0.1
 
 ### Patch Changes
