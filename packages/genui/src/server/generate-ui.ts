@@ -131,8 +131,9 @@ export async function* generateUI(options: GenerateUIOptions): AsyncGenerator<Ge
     ]),
     schema,
     lint,
+    { programOnly: true },
   );
-  if (retry.errors.length === 0) return;
+  if (retry.errors.length === 0 && retry.hasProgram) return;
   yield { type: "discard", errors: retry.errors };
   yield* answerInText(llm, messages);
 }
@@ -167,20 +168,29 @@ async function* answerInText(llm: LLM, messages: ChatMessage[]): AsyncGenerator<
   for await (const text of llm(TEXT_PROMPT, messages)) yield { type: "text", text };
 }
 
-/** Streams one answer, feeding its program to the parser, and returns the finished program's errors and lint failures. */
+/**
+ * Streams one answer, feeding its program to the parser, and returns the finished
+ * program's errors and lint failures. `programOnly` holds back the answer's chat text:
+ * a retry's text explains the fix to no one the chat is for.
+ */
 async function* streamProgram(
   stream: AsyncIterable<string>,
   schema: Parameters<typeof createStreamingParser>[0],
   lint: (root: ElementNode | null) => UsabilityError[],
-): AsyncGenerator<GenUIChunk, { output: string; errors: ProgramError[] }> {
+  { programOnly = false } = {},
+): AsyncGenerator<GenUIChunk, { output: string; errors: ProgramError[]; hasProgram: boolean }> {
   const parser = createStreamingParser(schema);
   let output = "";
+  let hasProgram = false;
   for await (const chunk of splitFences(stream, (text) => (output += text))) {
-    if (chunk.type === "program") parser.push(chunk.text);
-    yield chunk;
+    if (chunk.type === "program") {
+      parser.push(chunk.text);
+      hasProgram = true;
+    }
+    if (chunk.type === "program" || !programOnly) yield chunk;
   }
   const { root, meta } = parser.getResult();
-  return { output, errors: [...meta.errors, ...lint(root)] };
+  return { output, errors: [...meta.errors, ...lint(root)], hasProgram };
 }
 
 /**

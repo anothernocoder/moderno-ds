@@ -47,12 +47,16 @@ JEV_API_KEY=...
 SYSTEMONE_BASE_URL=http://localhost:11434
 SYSTEMONE_MODEL=nimble
 
-# The LLM: OpenRouter. The model is optional.
+# The LLM: Claude directly. The model is optional. When set, this wins over OpenRouter.
+ANTHROPIC_API_KEY=...
+ANTHROPIC_MODEL=claude-opus-5-5
+
+# …or OpenRouter. The model is optional.
 OPENROUTER_API_KEY=...
 OPENROUTER_MODEL=anthropic/claude-sonnet-5.5
 ```
 
-Each piece falls back to its fixture on its own: a router key with no `OPENROUTER_API_KEY` uses the real router and the canned LLM.
+Each piece falls back to its fixture on its own: a router key with no LLM key uses the real router and the canned LLM.
 
 ### Nimble on Ollama
 

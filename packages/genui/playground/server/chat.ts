@@ -5,11 +5,13 @@ import contract from "@moderno-ui/css/moderno.agent.json" with { type: "json" };
 import reactManifest from "@moderno-ui/react/moderno.agent.json" with { type: "json" };
 import { generateUI, type ChatMessage, type JudgeConfig, type LLM } from "../../src/server.ts";
 import { CLOSE_FENCE, DISCARD, OPEN_FENCE } from "../answer.ts";
+import { anthropicLLM } from "./anthropic.ts";
 import { fixtureLLM } from "./fixtures.ts";
 import { openRouterLLM } from "./openrouter.ts";
 
 type Env = Record<string, string | undefined>;
 
+export const DEFAULT_ANTHROPIC_MODEL = "claude-opus-5-5";
 export const DEFAULT_OPENROUTER_MODEL = "anthropic/claude-sonnet-5.5";
 
 /** The System One server env names, or `undefined` for the fixture one. Ollama wins over TypeSafe. */
@@ -24,10 +26,14 @@ export function judgeFromEnv(env: Env): JudgeConfig | undefined {
   return undefined;
 }
 
-/** OpenRouter when its key is set, the canned LLM otherwise. */
+/** Anthropic when its key is set, then OpenRouter, the canned LLM otherwise. */
 export function llmFromEnv(env: Env): { llm: LLM; name: string } {
-  if (env.GENUI_FIXTURES === "1" || !env.OPENROUTER_API_KEY)
-    return { llm: fixtureLLM, name: "fixture" };
+  if (env.GENUI_FIXTURES === "1") return { llm: fixtureLLM, name: "fixture" };
+  if (env.ANTHROPIC_API_KEY) {
+    const model = env.ANTHROPIC_MODEL ?? DEFAULT_ANTHROPIC_MODEL;
+    return { llm: anthropicLLM(env.ANTHROPIC_API_KEY, model), name: `Anthropic ${model}` };
+  }
+  if (!env.OPENROUTER_API_KEY) return { llm: fixtureLLM, name: "fixture" };
   const model = env.OPENROUTER_MODEL ?? DEFAULT_OPENROUTER_MODEL;
   return { llm: openRouterLLM(env.OPENROUTER_API_KEY, model), name: `OpenRouter ${model}` };
 }
