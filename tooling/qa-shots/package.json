@@ -1,0 +1,8 @@
+{
+  "name": "@moderno-ui/qa-shots",
+  "version": "0.0.1",
+  "description": "`pnpm qa:shots`: keeps the latest QA screenshots on the `qa-shots` branch and shows them in the PR description. They are for a human to look at, not a gate.",
+  "license": "MIT",
+  "type": "module",
+  "private": true
+}
