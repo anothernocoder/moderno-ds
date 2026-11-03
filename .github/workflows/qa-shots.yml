@@ -1,0 +1,50 @@
+name: QA shots
+
+# Screenshots for a human to look at, shown in the PR description. Not a gate:
+# a failing QA script still publishes what it captured, and this job is not a
+# required check. Fixture mode only, since real mode needs keys and a local model.
+on:
+  pull_request:
+    paths:
+      - "packages/genui/**"
+      - "registry/blocks/**"
+      - "tooling/qa-shots/**"
+      - ".github/workflows/qa-shots.yml"
+
+# One branch holds the shots, so two runs must not push at once.
+concurrency:
+  group: qa-shots
+
+env:
+  OPENUI_TELEMETRY_DISABLED: "1"
+
+jobs:
+  shots:
+    # A fork's or Dependabot's token cannot push the branch or edit the PR.
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .tool-versions
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm theme:build
+      - run: pnpm --filter @moderno-ui/genui... build
+      - run: pnpm --filter @moderno-ui/genui exec playwright install --with-deps chromium
+      - run: pnpm --filter @moderno-ui/genui e2e
+        continue-on-error: true
+        env:
+          QA_SHOTS: ${{ runner.temp }}/qa-shots/fixtures
+      - run: pnpm qa:shots ${{ github.event.pull_request.number }} ${{ runner.temp }}/qa-shots
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GIT_AUTHOR_NAME: github-actions[bot]
+          GIT_AUTHOR_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
+          GIT_COMMITTER_NAME: github-actions[bot]
+          GIT_COMMITTER_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
