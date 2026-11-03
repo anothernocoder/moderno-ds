@@ -78,4 +78,25 @@ describe("GenUI", () => {
       }),
     );
   });
+
+  it('treats a null argument as omitted, never as the text "null"', () => {
+    render({
+      response: [
+        "root = Stack([number])",
+        'number = Field("Número", "", null, null, "numeric", 4)',
+      ].join("\n"),
+    });
+
+    expect(container.textContent).not.toContain("null");
+    expect(container.querySelector("input")?.getAttribute("type")).not.toBe("null");
+  });
+
+  it("renders a variant cut short by the stream as its default, without errors", () => {
+    const consoleError = vi.spyOn(console, "error");
+    render({ response: 'root = Stack([send])\nsend = Button("out', isStreaming: true });
+
+    expect(consoleError).not.toHaveBeenCalled();
+    expect(container.querySelector("button")).not.toBeNull();
+    consoleError.mockRestore();
+  });
 });

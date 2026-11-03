@@ -6,6 +6,7 @@ import type { ChatMessage, Question } from "../src/server.ts";
 import { chatTurn, judgeFromEnv, llmFromEnv } from "./server/chat.ts";
 import { fixtureAnswers } from "./server/fixtures.ts";
 import { jsonRoute } from "./server/json-route.ts";
+import { blocksTailwind } from "./tailwind.ts";
 
 const repoRoot = fileURLToPath(new URL("../../..", import.meta.url));
 
@@ -28,17 +29,19 @@ function genuiChat(env: Record<string, string>): Plugin {
       );
       server.middlewares.use(
         "/api/chat",
-        jsonRoute<{ messages: ChatMessage[] }>(async ({ messages }, request, response) => {
-          const fixtureJudge = { baseUrl: `http://${request.headers.host}`, model: "fixture" };
-          response.writeHead(200, {
-            "Content-Type": "text/event-stream",
-            "Cache-Control": "no-cache",
-          });
-          for await (const event of chatTurn(messages, judge ?? fixtureJudge, llm)) {
-            response.write(`data: ${JSON.stringify(event)}\n\n`);
-          }
-          response.end();
-        }),
+        jsonRoute<{ messages: ChatMessage[]; blocks?: string[] }>(
+          async ({ messages, blocks }, request, response) => {
+            const fixtureJudge = { baseUrl: `http://${request.headers.host}`, model: "fixture" };
+            response.writeHead(200, {
+              "Content-Type": "text/event-stream",
+              "Cache-Control": "no-cache",
+            });
+            for await (const event of chatTurn(messages, judge ?? fixtureJudge, llm, blocks)) {
+              response.write(`data: ${JSON.stringify(event)}\n\n`);
+            }
+            response.end();
+          },
+        ),
       );
       server.httpServer?.once("listening", () => {
         const router = judge ? `${judge.model} at ${judge.baseUrl}` : "fixture";
@@ -49,5 +52,10 @@ function genuiChat(env: Record<string, string>): Plugin {
 }
 
 export default defineConfig(({ mode }) => ({
-  plugins: [genuiChat(loadEnv(mode, repoRoot, ""))],
+  plugins: [genuiChat(loadEnv(mode, repoRoot, "")), blocksTailwind()],
+  // The Blocks are imported from registry/, which has no node_modules: their
+  // `react` and `@moderno-ui/react` resolve to the playground's own copies, and
+  // their JSX compiles as this package's does.
+  resolve: { dedupe: ["react", "react-dom", "@moderno-ui/react"] },
+  esbuild: { jsx: "automatic" },
 }));

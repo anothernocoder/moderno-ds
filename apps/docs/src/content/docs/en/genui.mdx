@@ -16,6 +16,8 @@ import ConfirmCard from "../../../examples/genui/confirm/react.tsx";
 import confirmReact from "../../../examples/genui/confirm/react.tsx?raw";
 import TextTurn from "../../../examples/genui/text/react.tsx";
 import textReact from "../../../examples/genui/text/react.tsx?raw";
+import SalesStats from "../../../examples/genui/blocks/react.tsx";
+import blocksReact from "../../../examples/genui/blocks/react.tsx?raw";
 
 <Preview examples={{ react: baseReact }}>
   <StaticReact component={PaymentAlert} />
@@ -89,14 +91,15 @@ import { GenUI } from "@moderno-ui/genui/react";
 
 A valid program must also be usable. The prompt gives the LLM a few UI rules: pick the control by the data, one primary button per form, labels in the user's language, no emoji. Then a lint checks the program. A `NumberInput` for a code, a `Select` with no options, a form without exactly one primary button, or a primary button with its own action count as errors, so they trigger the same retry.
 
-| Option     | Type                 | Default | Description                                                       |
-| ---------- | -------------------- | ------- | ----------------------------------------------------------------- |
-| `message`  | `string`             | —       | The user's message.                                               |
-| `context`  | `ChatMessage[]`      | `[]`    | The turns before `message`, oldest first.                         |
-| `judge`    | `JudgeConfig`        | —       | The System One server the router asks.                            |
-| `llm`      | `LLM`                | —       | The model that writes the answer.                                 |
-| `manifest` | `ComponentsManifest` | —       | `@moderno-ui/react/moderno.agent.json`. The router picks from it. |
-| `contract` | `ContractManifest`   | —       | `@moderno-ui/css/moderno.agent.json`. Layout gaps come from it.   |
+| Option     | Type                 | Default | Description                                                          |
+| ---------- | -------------------- | ------- | -------------------------------------------------------------------- |
+| `message`  | `string`             | —       | The user's message.                                                  |
+| `context`  | `ChatMessage[]`      | `[]`    | The turns before `message`, oldest first.                            |
+| `judge`    | `JudgeConfig`        | —       | The System One server the router asks.                               |
+| `llm`      | `LLM`                | —       | The model that writes the answer.                                    |
+| `manifest` | `ComponentsManifest` | —       | `@moderno-ui/react/moderno.agent.json`. The router picks from it.    |
+| `contract` | `ContractManifest`   | —       | `@moderno-ui/css/moderno.agent.json`. Layout gaps come from it.      |
+| `blocks`   | `readonly string[]`  | `[]`    | The names of the Blocks your page renders. The router may pick them. |
 
 `ChatMessage` is `{ role: "user" | "assistant"; content: string }`.
 
@@ -202,6 +205,7 @@ The LLM cannot set `size`: every control in a widget renders at `md`, so their h
 | `isStreaming` | `boolean`                         | `false` | True while the program is still arriving.                                                                                            |
 | `onAction`    | `(event: ActionEvent) => void`    | —       | A component fired an action, such as a button's `@ToAssistant`. A button with no action sends its label with the values of the form. |
 | `onError`     | `(errors: OpenUIError[]) => void` | —       | The finished program has errors, such as a component that failed to render. Retry, or answer in text. `[]` clears.                   |
+| `blocks`      | `Record<string, ComponentType>`   | `{}`    | Your installed Blocks, by name: `{ StatRow }`. Give `generateUI` the same names.                                                     |
 
 ## Examples
 
@@ -228,5 +232,19 @@ When the router picks `text`, the turn has no program. Show the text and give `<
 <Preview examples={{ react: textReact }}>
   <StaticReact component={TextTurn} />
 </Preview>
+
+### Use your blocks
+
+A **Block** is a ready-made piece, like a row of stats or an order summary. When one fits, the LLM uses it instead of building it from small components.
+
+<Preview examples={{ react: blocksReact }} layout="fill">
+  <StaticReact component={SalesStats} />
+</Preview>
+
+1. Install it: `npx @moderno-ui/cli add stat-row-react`.
+2. Give it to `<GenUI>`: `<GenUI blocks={{ StatRow }} … />`.
+3. Give its name to `generateUI`: `generateUI({ …, blocks: ["StatRow"] })`.
+
+That is all. The LLM fills the Block with its own data, never the sample data.
 
 Try them all live in the playground: `pnpm --filter @moderno-ui/genui dev`.

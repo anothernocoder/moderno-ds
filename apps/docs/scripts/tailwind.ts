@@ -17,7 +17,7 @@
  *   written *against* preflight — `<ul>` with no bullets, headings with no
  *   inherited size — so previewing one without it would show a layout no
  *   consumer will ever see. The subset a block actually depends on is therefore
- *   scoped to the preview surface (`PREVIEW_PREFLIGHT` below).
+ *   scoped to the preview surface (`previewPreflight` below).
  * - **No content globs config.** The candidate set is extracted from `class`
  *   attributes in the files listed below — static class strings, which is how
  *   blocks are authored. A class assembled at runtime (`cn(cond && "p-6")`)
@@ -43,23 +43,26 @@ const require = createRequire(import.meta.url);
  * `:where()` keeps every selector at the specificity of the panel class alone,
  * so `components.css` (which targets `[data-scope][data-part]`) still paints
  * the primitives inside, and the layer order puts every utility above it.
+ *
+ * `scope` is the element that mounts blocks: the docs preview panel, or the
+ * genui playground's widget (`packages/genui/playground/tailwind.ts`).
  */
-const PREVIEW_PREFLIGHT = `@layer moderno.base {
-  .preview-panel--demo :where(*, ::before, ::after) {
+const previewPreflight = (scope: string) => `@layer moderno.base {
+  ${scope} :where(*, ::before, ::after) {
     box-sizing: border-box;
     border: 0 solid;
   }
-  .preview-panel--demo :where(h1, h2, h3, h4, h5, h6, p, figure, blockquote, dl, dd) {
+  ${scope} :where(h1, h2, h3, h4, h5, h6, p, figure, blockquote, dl, dd) {
     margin: 0;
     font-size: inherit;
     font-weight: inherit;
   }
-  .preview-panel--demo :where(ul, ol, menu) {
+  ${scope} :where(ul, ol, menu) {
     margin: 0;
     padding: 0;
     list-style: none;
   }
-  .preview-panel--demo :where(button, [type="button"], [type="reset"], [type="submit"]) {
+  ${scope} :where(button, [type="button"], [type="reset"], [type="submit"]) {
     background-color: transparent;
     background-image: none;
   }
@@ -76,7 +79,7 @@ const PREVIEW_PREFLIGHT = `@layer moderno.base {
  *   `main` also match the markup a `<Preview>` mounts, so they must lose inside
  *   the panel; unlayered (as they were) they beat everything below and a
  *   previewed block rendered at the docs prose scale, with prose margins.
- * - `moderno.base` — `PREVIEW_PREFLIGHT` above, plus `components.css`'s own
+ * - `moderno.base` — `previewPreflight` above, plus `components.css`'s own
  *   base. Above the prose so the panel's reset actually resets.
  * - `moderno.components` — the primitive rules in `components.css`.
  * - `utilities` — Tailwind. Last, so a block's `p-6` or `text-lg` beats both a
@@ -85,13 +88,20 @@ const PREVIEW_PREFLIGHT = `@layer moderno.base {
  * `docs.css` names `docs.prose`; every other layer here is declared by the
  * stylesheet that fills it.
  */
-export const DOCS_TAILWIND_ENTRY = `@layer theme, docs.prose, moderno.base, moderno.components, utilities;
+const tailwindEntry = (
+  scope: string,
+) => `@layer theme, docs.prose, moderno.base, moderno.components, utilities;
 @import "tailwindcss/theme.css" layer(theme);
 @import "@moderno-ui/css/preset";
 @import "tailwindcss/utilities.css" layer(utilities);
 
-${PREVIEW_PREFLIGHT}
+${previewPreflight(scope)}
 `;
+
+/** Where the docs mount a block: the live `<Preview>` panel. */
+const DOCS_PREVIEW = ".preview-panel--demo";
+
+export const DOCS_TAILWIND_ENTRY = tailwindEntry(DOCS_PREVIEW);
 
 /**
  * `class` / `className` / `class:list` attribute values, in the four dialects
@@ -175,9 +185,12 @@ async function loadStylesheet(id: string, base: string) {
   return { base: dirname(path), path, content: readFileSync(path, "utf8") };
 }
 
-/** Compiles the docs' utility stylesheet for an explicit candidate set. */
-export async function compileCandidates(candidates: Iterable<string>): Promise<string> {
-  const compiled = await compile(DOCS_TAILWIND_ENTRY, {
+/** Compiles the docs' utility stylesheet for an explicit candidate set, its preflight scoped to `scope`. */
+export async function compileCandidates(
+  candidates: Iterable<string>,
+  scope = DOCS_PREVIEW,
+): Promise<string> {
+  const compiled = await compile(tailwindEntry(scope), {
     base: process.cwd(),
     loadStylesheet,
     loadModule: async () => {
@@ -191,12 +204,15 @@ export async function compileCandidates(candidates: Iterable<string>): Promise<s
  * Compiles the docs' utility stylesheet from the candidates used across
  * `sourceFiles`. Returns the CSS to write; the caller decides where.
  */
-export async function buildDocsTailwind(sourceFiles: string[]): Promise<string> {
+export async function buildDocsTailwind(
+  sourceFiles: string[],
+  scope = DOCS_PREVIEW,
+): Promise<string> {
   const candidates = new Set<string>();
   for (const file of sourceFiles) {
     for (const candidate of extractCandidates(readFileSync(file, "utf8"))) {
       candidates.add(candidate);
     }
   }
-  return compileCandidates(candidates);
+  return compileCandidates(candidates, scope);
 }

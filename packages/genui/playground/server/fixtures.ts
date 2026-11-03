@@ -1,12 +1,21 @@
 // Fixture mode: a canned System One server and a canned LLM, so the demo runs
 // offline and in CI. Both read the turn the same way, so they always agree.
 import type { Answer, ChatMessage, LLM, Question } from "../../src/server.ts";
-import { confirmCard, salesCard } from "../examples.ts";
+import { chanceForm, orderBlocks, salesBlocks } from "../examples.ts";
 
-const WIDGETS = { sales: salesCard.response, order: confirmCard.response };
+const WIDGETS = {
+  sales: salesBlocks.response,
+  order: orderBlocks.response,
+  form: chanceForm.response,
+};
 type Topic = keyof typeof WIDGETS | "text";
 
-const KIND: Record<Topic, string> = { sales: "chart", order: "confirm", text: "content" };
+const KIND: Record<Topic, string> = {
+  sales: "chart",
+  order: "confirm",
+  form: "form",
+  text: "content",
+};
 
 /**
  * Once a user turn has asked for the order, the confirm card is in the chat, so
@@ -15,6 +24,7 @@ const KIND: Record<Topic, string> = { sales: "chart", order: "confirm", text: "c
  */
 function topicOf(message: string, context: ChatMessage[]): Topic {
   if (/sales|ventas/i.test(message)) return "sales";
+  if (/chance/i.test(message)) return "form";
   const cardShown = context.some(
     (turn) => turn.role === "user" && /order|pedido/i.test(turn.content),
   );
@@ -57,8 +67,9 @@ export const fixtureLLM: LLM = async function* (_system, messages) {
 function cannedReply(messages: ChatMessage[]): string {
   const message = messages.at(-1)!.content;
   const topic = topicOf(message, messages.slice(0, -1));
-  if (topic !== "text") return `Here you go.\n\`\`\`openui-lang\n${WIDGETS[topic]}\n\`\`\``;
-  if (/cancel/i.test(message)) return "Your order is cancelled.";
-  if (/order/i.test(message)) return "Your order is placed. It arrives on Friday.";
-  return "Hi! Ask me for “sales this month” or to “confirm my order”.";
+  if (topic !== "text") return `Aquí tienes.\n\`\`\`openui-lang\n${WIDGETS[topic]}\n\`\`\``;
+  if (/cancel/i.test(message)) return "Listo, cancelado.";
+  if (/order|pedido/i.test(message)) return "Tu pedido está hecho. Llega el viernes.";
+  if (/—/.test(message)) return `Listo, jugaste: ${message.slice(message.indexOf("—") + 2)}.`;
+  return "¡Hola! Pídeme las “ventas del mes”, que “confirme mi pedido” o “jugar un chance”.";
 }

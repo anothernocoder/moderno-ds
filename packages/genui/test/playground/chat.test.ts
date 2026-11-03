@@ -21,6 +21,9 @@ function stubFixtureSystemOne() {
   });
 }
 
+/** The Blocks the playground page renders (playground/blocks.ts). */
+const BLOCKS = ["FormLayout", "KpiCard", "OrderSummary", "StatRow"];
+
 async function answer(messages: ChatMessage[]): Promise<string> {
   const events: ChatEvent[] = [];
   const { llm } = llmFromEnv({});
@@ -28,6 +31,7 @@ async function answer(messages: ChatMessage[]): Promise<string> {
     messages,
     { baseUrl: "http://fixture", model: "fixture" },
     llm,
+    BLOCKS,
   ))
     events.push(event);
   expect(events.at(-1)?.type).toBe("TEXT_MESSAGE_END");
@@ -37,37 +41,61 @@ async function answer(messages: ChatMessage[]): Promise<string> {
 afterEach(() => vi.unstubAllGlobals());
 
 describe("the playground chat in fixture mode", () => {
-  it("answers 'sales this month' with a bar chart card", async () => {
+  it("answers 'ventas del mes' with a StatRow and a bar chart card", async () => {
     stubFixtureSystemOne();
-    const parts = splitAnswer(await answer([{ role: "user", content: "sales this month" }]));
+    const parts = splitAnswer(await answer([{ role: "user", content: "ventas del mes" }]));
     expect(parts.map((part) => part.type)).toEqual(["text", "program"]);
+    expect(parts[1]!.text).toContain("StatRow(");
     expect(parts[1]!.text).toContain("BarChart(");
   }, 10_000);
 
-  it("answers 'confirm my order' with a confirm card, and its button's message in text", async () => {
+  it("answers 'confirma mi pedido' with an OrderSummary, and its button's message in text", async () => {
     stubFixtureSystemOne();
-    const card = await answer([{ role: "user", content: "confirm my order" }]);
-    expect(splitAnswer(card)[1]!.text).toContain('@ToAssistant("Confirm my order")');
+    const card = await answer([{ role: "user", content: "confirma mi pedido" }]);
+    expect(splitAnswer(card)[1]!.text).toContain("OrderSummary(");
+    expect(splitAnswer(card)[1]!.text).toContain('@ToAssistant("Confirmo mi pedido")');
 
     const reply = await answer([
-      { role: "user", content: "confirm my order" },
+      { role: "user", content: "confirma mi pedido" },
       { role: "assistant", content: card },
-      { role: "user", content: "Confirm my order" },
+      { role: "user", content: "Confirmo mi pedido" },
     ]);
-    expect(splitAnswer(reply)).toEqual([{ type: "text", text: expect.stringContaining("placed") }]);
+    expect(splitAnswer(reply)).toEqual([{ type: "text", text: expect.stringContaining("hecho") }]);
   }, 10_000);
 
   it("answers a button on an earlier confirm card in text, not with the card again", async () => {
     stubFixtureSystemOne();
-    const card = await answer([{ role: "user", content: "confirm my order" }]);
+    const card = await answer([{ role: "user", content: "confirma mi pedido" }]);
     const reply = await answer([
-      { role: "user", content: "confirm my order" },
+      { role: "user", content: "confirma mi pedido" },
       { role: "assistant", content: card },
-      { role: "user", content: "hello" },
-      { role: "assistant", content: "Hi!" },
-      { role: "user", content: "Confirm my order" },
+      { role: "user", content: "hola" },
+      { role: "assistant", content: "¡Hola!" },
+      { role: "user", content: "Confirmo mi pedido" },
     ]);
-    expect(splitAnswer(reply)).toEqual([{ type: "text", text: expect.stringContaining("placed") }]);
+    expect(splitAnswer(reply)).toEqual([{ type: "text", text: expect.stringContaining("hecho") }]);
+  }, 10_000);
+
+  it("answers 'quiero jugar un chance' with a FormLayout, and its values in text", async () => {
+    stubFixtureSystemOne();
+    const form = await answer([{ role: "user", content: "quiero jugar un chance" }]);
+    expect(splitAnswer(form)[1]!.text).toContain("FormLayout(");
+
+    const reply = await answer([
+      { role: "user", content: "quiero jugar un chance" },
+      { role: "assistant", content: form },
+      { role: "user", content: "Jugar — Número (4 cifras): 4827" },
+    ]);
+    expect(splitAnswer(reply)).toEqual([
+      { type: "text", text: expect.stringContaining("Número (4 cifras): 4827") },
+    ]);
+  }, 10_000);
+
+  it("answers 'hola' in text", async () => {
+    stubFixtureSystemOne();
+    expect(splitAnswer(await answer([{ role: "user", content: "hola" }]))).toEqual([
+      { type: "text", text: expect.stringContaining("Hola") },
+    ]);
   }, 10_000);
 });
 
