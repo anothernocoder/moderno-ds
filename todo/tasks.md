@@ -1,6 +1,6 @@
 # Tasks
 
-- [x] Migrar los componentes de moderno (legacy) (solo falta cerrar #266, #72, #70 y #69)
+- [x] Migrar los componentes de moderno (legacy)
 - [ ] Fixes Moderno-DS (Epic #355)
   - [ ] Componentes del Doc Site deben ser componentes de la libreria o blocks (#361, #362)
   - [ ] Los blocks o estilo de codigo debe ser escrito clean code como los de schadcn, legibles (Epic #365: #366, #367)
