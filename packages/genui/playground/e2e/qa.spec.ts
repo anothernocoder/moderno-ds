@@ -142,6 +142,8 @@ for (const { brand, mode } of THEMES) {
         const option = page.getByRole("option").last();
         typed.push((await option.innerText()).trim());
         await option.click();
+        // The Select gives focus back to its trigger. NumberInput drops what is typed once it loses focus.
+        await expect(trigger).toBeFocused();
       }
       for (const input of await reply.locator('[data-scope="number-input"] input').all()) {
         await input.fill("7000");
